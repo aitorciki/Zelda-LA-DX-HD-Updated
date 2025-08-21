@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace LADXHD_Migrater
 {
-    internal static class Program
+    internal static class Initialization
     {
         /// <summary>
         /// The main entry point for the application.
@@ -17,12 +17,14 @@ namespace LADXHD_Migrater
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Functions.Initialize();
+            // Initialize the classes.
+            Forms.Initialize();
+            Config.Initialize();
+            XDelta3.Initialize();
 
-            if (Functions.XDeltaCheck())
-            {
-                Functions.mainDialog.ShowDialog();
-            }
+            // Only run if "xdelta3.exe" is found.
+            if (XDelta3.Exists())
+                Forms.mainDialog.ShowDialog();
         }
     }
 }

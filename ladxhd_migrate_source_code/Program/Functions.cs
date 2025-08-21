@@ -1,106 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
+using System.Runtime.Remoting.Lifetime;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Policy;
 
 namespace LADXHD_Migrater
 {
     internal class Functions
     {
-        public static string appPath;
-        public static string baseFolder;
-
-        public static string orig_Content;
-        public static string orig_Data;
-        public static string update_Content;
-        public static string update_Data;
-
-        public static string xDeltaExe;
-        public static string patches;
-
-        public static Form_MainForm mainDialog;
-        public static Form_OkayForm okayDialog; 
-
-        public static void Initialize()
+        public static string CalculateHash(string FilePath, string HashType)
         {
-            appPath        = Assembly.GetExecutingAssembly().Location;
-            baseFolder     = Path.GetDirectoryName(appPath);
-            xDeltaExe      = baseFolder + "\\ladxhd_game_source_code\\xdelta3.exe";
-            patches        = baseFolder + "\\assets_patches";
-            orig_Content   = baseFolder + "\\assets_original\\Content";
-            orig_Data      = baseFolder + "\\assets_original\\Data";
-            update_Content = baseFolder + "\\ladxhd_game_source_code\\Content";
-            update_Data    = baseFolder + "\\ladxhd_game_source_code\\Data";
-
-            mainDialog = new Form_MainForm();
-            okayDialog = new Form_OkayForm();
-        }
-
-        public static bool XDeltaCheck()
-        {
-            if (!xDeltaExe.TestPath())
-            {
-                string Title = "XDelta3 Not Found";
-                string Message = "This program requires \"xdelta3.exe\" to be present in the \"ladxhd_game_source_code\" path.";
-                okayDialog.Display(Title, Message, 240, 40, 30, 16, 15);
-                return false;
-            }
-            return true;
-        }
-
-        public static string GetXDeltaCreatePatchArguments(string OldFile, string NewFile, string PatchFile)
-        {
-		    string args = string.Empty;
-		    args = string.Concat(new string[]
-		    {
-			    args,
-			    " -f -s \"",
-			    OldFile,
-			    "\" \"",
-			    NewFile,
-			    "\" \"",
-			    PatchFile,
-			    "\""
-		    });
-            return args;
-        }
-        public static string GetXDeltaApplyPatchArguments(string Input, string PatchFile, string Output)
-        {
-		    string args = string.Empty;
-		    args = string.Concat(new string[]
-		    {
-			    args,
-			    " -d -f -s \"",
-			    Input,
-			    "\" \"",
-			    PatchFile,
-			    "\" \"",
-			    Output,
-			    "\""
-		    });
-            return args;
-        }
-        public static void RunXDelta(string arguments)
-        {
-            Process xDelta = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo 
-            {
-                WorkingDirectory = baseFolder,
-                FileName = xDeltaExe,
-                Arguments = arguments,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Normal
-            };
-            xDelta.StartInfo = startInfo;
-            xDelta.Start();
-            xDelta.WaitForExit();
+            HashAlgorithm Algorithm = HashAlgorithm.Create(HashType);
+            byte[] ByteArray = File.ReadAllBytes(FilePath);
+            return BitConverter.ToString(Algorithm.ComputeHash(ByteArray)).Replace("-", "");
         }
 
         public static void PatchCopyLoop(string orig, string update)
@@ -109,69 +22,98 @@ namespace LADXHD_Migrater
             {
                 FileItem fileItem = new FileItem(file);
 
-                string patchFile = patches + "\\" + fileItem.Name + ".xdelta";
+                string patchFile = Config.patches + "\\" + fileItem.Name + ".xdelta";
                 string destPath  = update + fileItem.DirectoryName.Replace(orig, ""); 
                 string destFile  = destPath + "\\" + fileItem.Name; 
 
                 destPath.CreatePath(true);
 
-                string arguments = GetXDeltaApplyPatchArguments(fileItem.FullName, patchFile, destFile);
+                XDelta3.Args = XDelta3.GetApplyArguments(fileItem.FullName, patchFile, destFile);
 
                 if (patchFile.TestPath())
-                    RunXDelta(arguments);
+                    XDelta3.Start();
                 else
                     File.Copy(fileItem.FullName, destFile, true);
             }
         }
         public static void MigrateFiles()
         {
-            mainDialog.ToggleDialog(false);
+            Forms.mainDialog.ToggleDialog(false);
 
-            PatchCopyLoop(orig_Content, update_Content);
-            PatchCopyLoop(orig_Data, update_Data);
+            PatchCopyLoop(Config.orig_Content, Config.update_Content);
+            PatchCopyLoop(Config.orig_Data, Config.update_Data);
 
             string Title = "Finished Migration";
             string Message = "Updated Content/Data files to latest versions.";
-            okayDialog.Display(Title, Message, 280, 40, 45, 26, 15);
+            Forms.okayDialog.Display(Title, Message, 280, 40, 45, 26, 15);
 
-            mainDialog.ToggleDialog(true);
+            Forms.mainDialog.ToggleDialog(true);
         }
 
-        public static string CalculateHash(string FilePath, string HashType)
-        {
-            HashAlgorithm Algorithm = HashAlgorithm.Create(HashType);
-            byte[] ByteArray = File.ReadAllBytes(FilePath);
-            return BitConverter.ToString(Algorithm.ComputeHash(ByteArray)).Replace("-", "");
-        }
         public static void PatchCreateLoop(string orig, string update)
         {
             foreach (string file in update.GetFiles("*", true))
             {
                 FileItem fileItem = new FileItem(file);
+
                 string oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
+                string patchName = Config.patches + "\\" + fileItem.Name + ".xdelta";
+                XDelta3.Args = XDelta3.GetCreateArguments(oldFile, fileItem.FullName, patchName);
+
                 string oldHash = CalculateHash(oldFile, "MD5");
                 string newHash = CalculateHash(fileItem.FullName, "MD5");
-                string patchName = patches + "\\" + fileItem.Name + ".xdelta";
-                string arguments = GetXDeltaCreatePatchArguments(oldFile, fileItem.FullName, patchName);
 
-                patches.CreatePath(true);
+                Config.patches.CreatePath(true);
 
                 if (oldHash != newHash & fileItem.Extension != ".mgcontent" & fileItem.Extension != ".mgstats")
-                    RunXDelta(arguments);
+                    XDelta3.Start();
             }
         }
         public static void CreatePatches()
         {
-            mainDialog.ToggleDialog(false);
+            Forms.mainDialog.ToggleDialog(false);
 
-            PatchCreateLoop(orig_Content, update_Content);
-            PatchCreateLoop(orig_Data, update_Data);
+            PatchCreateLoop(Config.orig_Content, Config.update_Content);
+            PatchCreateLoop(Config.orig_Data, Config.update_Data);
 
             string Title = "Patches Created";
             string Message = "Finished creating xdelta patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.";
-            okayDialog.Display(Title, Message, 250, 40, 27, 9, 15);
+            Forms.okayDialog.Display(Title, Message, 250, 40, 27, 9, 15);
 
-            mainDialog.ToggleDialog(true);
+            Forms.mainDialog.ToggleDialog(true);
+        }
+
+        public static void CleanBuildFiles()
+        {
+            Forms.mainDialog.ToggleDialog(false);
+
+            (Config.game_source + "\\bin").RemovePath();
+            (Config.game_source + "\\obj").RemovePath();
+            (Config.game_source + "\\Content\\bin").RemovePath();
+            (Config.game_source + "\\Content\\obj").RemovePath();
+            (Config.game_source + "\\Publish").RemovePath();
+
+            string Title = "Finished";
+            string Message = "Finished cleaning build files (obj/bin/Publish folders).";
+            Forms.okayDialog.Display(Title, Message, 260, 40, 26, 26, 15);
+
+            Forms.mainDialog.ToggleDialog(true);
+        }
+
+        public static void CreateBuild()
+        {
+            Forms.mainDialog.ToggleDialog(false);
+
+            if (DotNet.BuildGame())
+            {
+                string MoveDestination = Config.baseFolder + "\\zelda_ladxhd_build";
+                Config.publish_Path.MovePath(MoveDestination, true);
+
+                string Title = "Finished";
+                string Message = "Finished build process. If the build was successful, it can be found in the \"zelda_ladxhd_build\" folder.";
+                Forms.okayDialog.Display(Title, Message, 250, 40, 28, 16, 15);
+            }
+            Forms.mainDialog.ToggleDialog(true);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace LADXHD_Migrater
@@ -100,23 +99,58 @@ namespace LADXHD_Migrater
         public static void MovePath(this string SourcePath, string DestinationPath, bool Overwrite)
         {
             // If the path is empty then it does not exist.
-            if (SourcePath == null || SourcePath == "" || DestinationPath == null || DestinationPath == "")
+            if (SourcePath == null || SourcePath == "")
                 return;
 
             // The path exists so let's try to move it.
             if (SourcePath.TestPath())
             {
                 // The destination already exists so either remove it or exit.
-                if (DestinationPath.TestPath() & Overwrite)
-                    DestinationPath.RemovePath();
-                else
-                    return;
+                if (DestinationPath.TestPath())
+                    if (Overwrite)
+                        DestinationPath.RemovePath();
+                    else
+                        return;
+
+                // Move the folder to the new destination.
+                if (File.GetAttributes(SourcePath) == FileAttributes.Directory)
+                    Directory.Move(SourcePath, DestinationPath);
 
                 // Move the file to the new destination.
-                File.Move(SourcePath, DestinationPath);
+                else
+                    File.Move(SourcePath, DestinationPath);
             }
         }
 
+        public static void CopyPath(this string SourcePath, string DestinationPath, bool Overwrite)
+        {
+            // If the path is empty then it does not exist.
+            if (SourcePath == null || SourcePath == "")
+                return;
+
+            // The path exists so let's try to copy it.
+            if (SourcePath.TestPath())
+            {
+                // The destination already exists so either remove it or exit.
+                if (DestinationPath.TestPath())
+                    if (Overwrite)
+                        DestinationPath.RemovePath();
+                    else
+                        return;
+
+                // if a folder, copy the folder, subfolders, and files to the new destination..
+                if (File.GetAttributes(SourcePath) == FileAttributes.Directory)
+                {
+                    foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories))
+                        Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+                    foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",SearchOption.AllDirectories))
+                        File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+                }
+                // Copying a file is a much simpler process.
+                else
+                    File.Copy(SourcePath, DestinationPath);
+            }
+        }
         public static List<string> GetFiles(this string Path, string SearchPatterns = "*.*", bool Recurse = false)
         {
             // Split the search patterns using the commas into a list.
