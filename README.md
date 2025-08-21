@@ -84,6 +84,7 @@ To create a personal build, follow the steps below:
   - -OR- Go to the folder `ladxhd_game_source_code\.config` you will see `dotnet-tools.json`.
   - -AND- Right click, go to properties, check `Unblock`.
 - Run the `ladxhd_game_source_code\publish.bat` script to build the game.
+- Alternatively, the **"LADXHD_Migrater.exe"** tool can now build the game.
 - When done, the build will be in the `Publish` folder.
 
 ## Build Troubleshooting
