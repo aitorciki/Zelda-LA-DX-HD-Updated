@@ -34,17 +34,20 @@ This section explains the files and folders found in the base of this respositor
 ## Updating Source Code Assets
 
 The latest source code can be downloaded from this repository. But, you will need to provide the assets from the original v1.0.0 release. It is very important to follow the instructions carefully as some assets have been updated.
-- You will notice there is a folder in the base of this repository named **"assets_original"**. This is where the **"Content"** and **"Data"** folders go from the original v1.0.0 release.
-- Note that there is two versions of these folders, and you need to provide the correct ones.
-- Assuming you have unzipped the original release, there should be two folders: **"Content"** and **"Data"**, an executable: **"Link's Awakening DX HD.exe"**, and a 7-Zip of the source: **"source.7z"**.
+- You will notice there is a folder in the base of this repository named **"assets_original"**.
+- This is where the **"Content"** and **"Data"** folders go from the v1.0.0 release.
+- Note that there is two versions of these folders, and you must provide the correct ones.
+- Inside the original release folder are two folders: **"Content"** and **"Data"**.
 - Copy the **"Data"** folder from the original v1.0.0 game folder to the **"assets_original"** folder.
+- This is NOT the correct **"Content"** folder. You need the one from the source code.
+- There should also be a 7-Zip of the v1.0.0 source code included with the game: **"source.7z"**.
 - Unzip the **"source.7z"** file from the original v1.0.0 release.
 - Copy the **"Content"** folder from the original v1.0.0 source code folder to the **"assets_original"** folder.
-- Open the **"LADXHD_Migrater.exe"** tool that is provided.
+- After both folders are copied, open the **"LADXHD_Migrater.exe"** tool that is provided.
 - Click the button **"Migrate Assets From v1.0.0"** and wait for it to finish.
 - This will create new **"Content"** and **"Data"** folders in the **"ladxhd_game_source_code"** folder.
 - And you are done. From here you can build the game or work on the code.
-- The original **"Content/Data"** folders should be kept in **"assets_original"** so future patches can be created from new modifications.
+- The original **"Content/Data"** folders should be kept in **"assets_original"** for future patches.
 
 Again, make sure you are grabbing the correct Content and Data folders. The "Data" folder should come from the <ins>game folder</ins>, and the "Content" folder should come from the <ins>source .7z file</ins>. While it is possible the original assets would work, there have been bugs fixed and issues addressed in some of them. The patches in **"assets_patches"** never need to be interacted with directly, as the migration tool can handle both directions: updating 1.0.0 assets, and creating new patches for asset updates.
 
