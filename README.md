@@ -59,6 +59,8 @@ If you wish to work on the code in this repository.
 
 Do not make pull requests providing the assets directly, instead create xdelta patches using the **LADXHD Migrater** tool provided. These patches can then be applied to the original assets to update them.
 
+See the wiki page on [contributing to this project](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/wiki/Contributing-to-this-project) for more information.
+
 ## Build Instructions
 
 If you wish to build the code in this repository.
