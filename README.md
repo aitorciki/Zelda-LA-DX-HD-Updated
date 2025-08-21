@@ -22,7 +22,7 @@ Note that antivirus programs like Windows Defender may flag this patcher as a vi
 
 ## About This Repository
 
-This secion explains the files and folders found in the base of this respository.
+This section explains the files and folders found in the base of this respository.
 - **assets_original**: This is where the **"Content"** and **"Data"** folders from v1.0.0 should go. See **Updating Source Code Assets** section.
 - **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates. Instead of updating assets, patches should be created.
 - **ladxhd_game_source_code**: This is the source code for The Legend of Zelda: Link's Awakening DX HD minus the assets required to build it.
