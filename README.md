@@ -27,6 +27,7 @@ If you wish to work on the code in this repository.
 
 If you wish to build the code in this repository.
 - Clone this repository
+- The game's source code is in **"ladxhd_game_source_code"** folder
 - Follow the steps in **Updating Source Code Assets**
 - Open ProjectZ.sln
 - Build/run like any normal C# program
@@ -34,17 +35,17 @@ If you wish to build the code in this repository.
 ## Updating Source Code Assets
 
 The latest source code can be downloaded from this repository. But, you will need to provide the assets from the original v1.0.0 release. It is very important to follow the instructions carefully as some assets have been updated.
-- You will notice there is a folder in this repository named **".assets_original"**. This is where the **Data** and **Content** folders go. But there is two versions of these folders, and you need to provide the correct ones.
+- You will notice there is a folder in the base of this repository named **"assets_original"**. This is where the **Data** and **Content** folders go from the original v1.0.0 release. But there is two versions of these folders, and you need to provide the correct ones.
 - Assuming you have unzipped the original release, there should be two folders: **Content** and **Data**, an executable: **Link's Awakening DX HD.exe**, and a 7-Zip of the source: **source.7z**.
-- Copy the **"Data"** folder from the original v1.0.0 game folder to **".assets_original"** of this repository.
+- Copy the **"Data"** folder from the original v1.0.0 game folder to **"assets_original"** folder.
 - Unzip the **source.7z** file.
-- Copy the **"Content"** folder from the original v1.0.0 source code folder to **".assets_original"** of this repository.
+- Copy the **"Content"** folder from the original v1.0.0 source code folder to **"assets_original"** folder.
 - Open the **LADXHD_Migrater.exe** tool that is provided.
 - Click the button **Migrate Assets From v1.0.0** and wait for it to finish.
-- This will create new **Content** and **Data** folders in the main repository folder.
+- This will create new **Content** and **Data** folders in the **"ladxhd_game_source_code"** folder.
 - And you are done. From here you can build the game or work on the code.
 
-Again, make sure you are grabbing the correct Content and Data folders. The "Data" folder should come from the <ins>game folder</ins>, and the "Content" folder should come from the <ins>source .7z file</ins>. While it is possible the original assets would work, there have been bugs fixed and issues addressed in some of them. The patches in **".assets_patches"** never need to be interacted with directly, as the migration tool can handle both directions: updating 1.0.0 assets, and creating new patches for asset updates.
+Again, make sure you are grabbing the correct Content and Data folders. The "Data" folder should come from the <ins>game folder</ins>, and the "Content" folder should come from the <ins>source .7z file</ins>. While it is possible the original assets would work, there have been bugs fixed and issues addressed in some of them. The patches in **"assets_patches"** never need to be interacted with directly, as the migration tool can handle both directions: updating 1.0.0 assets, and creating new patches for asset updates.
 
 ## Contributing Assets
 
