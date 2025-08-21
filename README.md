@@ -1,6 +1,6 @@
 # The Legend of Zelda: Links Awakening DX HD - PC Port
 
-A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away. To use this fork, whether to play the game or build upon, it requires the assets from the original v1.0.0 release. Some assets have been updated, but I have created tooling to make migration easier.
+A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. To use this fork, whether to play the game or build upon, it requires the user to provide the assets from the original v1.0.0 release. Some assets have been updated, but I have created tooling to make migration easier.
 
 See the [changelog](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/CHANGELOG.md) for a list of changes from v1.0.0.
 
@@ -8,7 +8,7 @@ As of v1.1.0, the game is in a really good state and the "feel" is really close 
 
 ## Patching v1.0.0 to v1.1.0
 
-This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/releases) page.
+This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/releases) page. If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Find the v1.0.0 release originally from itch.io.
 - If you can not find it, you can search for an "archive" of it.
 - Download the patcher from the releases page.
@@ -20,28 +20,14 @@ Note that antivirus programs like Windows Defender may flag this patcher as a vi
 
 ## About This Repository
 
-This secion explains the folders found in the base of this respository.
+This secion explains the files and folders found in the base of this respository.
 - **assets_original**: This is where the **"Content"** and **"Data"** folders from v1.0.0 should go. See **Updating Source Code Assets** section.
 - **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates. Instead of updating assets, patches should be created.
 - **ladxhd_game_source_code**: This is the source code for The Legend of Zelda: Link's Awakening DX HD minus the assets required to build it.
 - **ladxhd_migrate_source_code**: This is the source code for the migration tool which uses the xdelta patches to update 1.0.0 assets or create patches from new assets.
 - **ladxhd_patcher_source_code**: This is the source code for the patcher tool which is used to update the base game of v1.0.0 to the most recent version.
-
-## Contributing Prerequisites
-
-If you wish to work on the code in this repository.
-- Basic knowledge of C# .NET and Visual Studio.
-- [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
-    - Make sure to select `.NET desktop development` components in the visual studio installer.
-
-## Build Instructions
-
-If you wish to build the code in this repository.
-- Clone this repository
-- The game's source code is in **"ladxhd_game_source_code"** folder
-- Follow the steps in **Updating Source Code Assets**
-- Open ProjectZ.sln
-- Build/run like any normal C# program
+- **LADXHD_Migrater.exe**: This is the program that can be used to migrate v1.0.0 assets found in "assets_original" to the latest versions or create new patches.
+- **Unblock-All-Files.ps1**: Visual Studio complains about files downloaded from the web. This script can be used to unblock all files automatically.
 
 ## Updating Source Code Assets
 
@@ -60,24 +46,48 @@ The latest source code can be downloaded from this repository. But, you will nee
 
 Again, make sure you are grabbing the correct Content and Data folders. The "Data" folder should come from the <ins>game folder</ins>, and the "Content" folder should come from the <ins>source .7z file</ins>. While it is possible the original assets would work, there have been bugs fixed and issues addressed in some of them. The patches in **"assets_patches"** never need to be interacted with directly, as the migration tool can handle both directions: updating 1.0.0 assets, and creating new patches for asset updates.
 
+## Contributing Prerequisites
+
+If you wish to work on the code in this repository.
+- Basic knowledge of C# .NET and Visual Studio.
+- [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
+    - Make sure to select `.NET desktop development` components in the visual studio installer.
+
 ## Contributing Assets
 
 Do not make pull requests providing the assets directly, instead create xdelta patches using the **LADXHD Migrater** tool provided. These patches can then be applied to the original assets to update them.
+
+## Build Instructions
+
+If you wish to build the code in this repository.
+- Clone or Download this repository: green `Code` Button > `Download ZIP`
+- The game's source code is in **"ladxhd_game_source_code"** folder
+- Follow the steps in **Updating Source Code Assets**
+- Run the PowerShell script "Unblock-All-Files.ps1".
+  - -OR- Go to the folder `ladxhd_game_source_code\.config` you will see `dotnet-tools.json`.
+  - -AND- Right click, go to properties, check `Unblock`.
+- Open ProjectZ.sln
+- Build/run like any normal C# program
 
 ## Personal Build / Publishing
 
 To create a personal build, follow the steps below:
 - Download and install [.NET v6.0.428 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.428-windows-x64-installer).
-- Download this repository: green `Code` Button > `Download ZIP`
+- Clone or Download this repository: green `Code` Button > `Download ZIP`
 - Unzip the repository and open up the unzipped folder.
-- Go to the folder `.config` you will see `dotnet-tools.json`.
-- Right click, go to properties, check `Unblock`.
-- One folder back, run the `publish.bat` script to build the game.
+- Follow the steps in **Updating Source Code Assets**
+- Run the PowerShell script "Unblock-All-Files.ps1".
+  - -OR- Go to the folder `ladxhd_game_source_code\.config` you will see `dotnet-tools.json`.
+  - -AND- Right click, go to properties, check `Unblock`.
+- Run the `ladxhd_game_source_code\publish.bat` script to build the game.
 - When done, the build will be in the `Publish` folder.
 
 ## Build Troubleshooting
 
-If you experience the error **The command “dotnet tool restore” exited with code 1** then make sure the file **.config\dotnet-tools.json** isn't blocked. To unblock, right click, go to Properties, check Unblock, and click OK.
+If you experience the error **The command “dotnet tool restore” exited with code 1** then make sure the file **.config\dotnet-tools.json** isn't blocked. 
+
+- To unblock all files in one go, run the included PowerShell script **"Unblock-All-Files.ps1"**.
+- To unblock a single file: Right click, go to Properties, check Unblock, and click OK.
 
 ## About This Fork
 
