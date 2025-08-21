@@ -23,13 +23,13 @@ Note that antivirus programs like Windows Defender may flag this patcher as a vi
 ## About This Repository
 
 This section explains the files and folders found in the base of this respository.
-- **assets_original**: This is where the **"Content"** and **"Data"** folders from v1.0.0 should go. See **Updating Source Code Assets** section.
-- **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates. Instead of updating assets, patches should be created.
-- **ladxhd_game_source_code**: This is the source code for The Legend of Zelda: Link's Awakening DX HD minus the assets required to build it.
-- **ladxhd_migrate_source_code**: This is the source code for the migration tool which uses the xdelta patches to update 1.0.0 assets or create patches from new assets.
-- **ladxhd_patcher_source_code**: This is the source code for the patcher tool which is used to update the base game of v1.0.0 to the most recent version.
-- **LADXHD_Migrater.exe**: This is the program that can be used to migrate v1.0.0 assets found in "assets_original" to the latest versions or create new patches.
-- **Unblock-All-Files.ps1**: Visual Studio complains about files downloaded from the web. This script can be used to unblock all files automatically.
+- **assets_original**: This is where the **"Content"** and **"Data"** folders from v1.0.0 should go.
+- **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates.
+- **ladxhd_game_source_code**: Source code for The Legend of Zelda: Link's Awakening DX HD.
+- **ladxhd_migrate_source_code**: Source code for the migration tool which can apply or create patches to the assets.
+- **ladxhd_patcher_source_code**: Source code for the patcher which is used to update the base game to the most recent version.
+- **LADXHD_Migrater.exe**: This is the migration tool used to apply or create patches to the assets.
+- **Unblock-All-Files.ps1**: This script can be used to unblock all files automatically for Visual Studio.
 
 ## Updating Source Code Assets
 
