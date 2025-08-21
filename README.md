@@ -38,11 +38,11 @@ The latest source code can be downloaded from this repository. But, you will nee
 - This is where the **"Content"** and **"Data"** folders go from the v1.0.0 release.
 - Note that there is two versions of these folders, and you must provide the correct ones.
 - Inside the original release folder are two folders: **"Content"** and **"Data"**.
-- Copy the **"Data"** folder from the original v1.0.0 game folder to the **"assets_original"** folder.
+- Copy the **"Data"** folder from the original v1.0.0 <ins>game folder</ins> to the **"assets_original"** folder.
 - This is NOT the correct **"Content"** folder. You need the one from the source code.
 - There should also be a 7-Zip of the v1.0.0 source code included with the game: **"source.7z"**.
 - Unzip the **"source.7z"** file from the original v1.0.0 release.
-- Copy the **"Content"** folder from the original v1.0.0 source code folder to the **"assets_original"** folder.
+- Copy the **"Content"** folder from the original v1.0.0 <ins>source code folder</ins> to the **"assets_original"** folder.
 - After both folders are copied, open the **"LADXHD_Migrater.exe"** tool that is provided.
 - Click the button **"Migrate Assets From v1.0.0"** and wait for it to finish.
 - This will create new **"Content"** and **"Data"** folders in the **"ladxhd_game_source_code"** folder.
