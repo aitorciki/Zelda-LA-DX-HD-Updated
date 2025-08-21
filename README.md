@@ -10,7 +10,7 @@ As of v1.1.0, the game is in a really good state and the "feel" is really close 
 
 ## Patching v1.0.0 to v1.1.0
 
-This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/releases) page. If you wish to build the game yourself, see **Personal Build / Publishing**.
+This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Find the v1.0.0 release originally from itch.io.
 - If you can not find it, you can search for an "archive" of it.
 - Download the patcher from the releases page.
