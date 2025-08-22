@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Vector2 _lastPosition;
         private int _direction;
         private bool _wasColliding;
+        private int _lives = ObjLives.MaskMimic;
 
         public EnemyMaskMimic() : base("mask mimic") { }
 
@@ -60,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateUpdate);
             _aiStunnedState = new AiStunnedState(_aiComponent, _animatorComponent, 3300, 900);
             new AiFallState(_aiComponent, _body, null, null, 300);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 2);
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             _aiComponent.ChangeState("idle");
 
             var damageBox = new CBox(EntityPosition, -7, -15, 2, 14, 15, 4);

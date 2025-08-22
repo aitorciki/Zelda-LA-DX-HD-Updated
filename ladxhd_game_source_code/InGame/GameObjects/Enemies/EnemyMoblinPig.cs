@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _moveSpeed = 0.5f;
         private int _direction;
+        private int _lives = ObjLives.MoblinPig;
 
         public EnemyMoblinPig() : base("moblinPig") { }
 
@@ -64,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalk);
             _aiComponent.States.Add("idle", stateIdle);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             // start in a waiting state changing to the walking state after a certain amount of time
             _aiComponent.ChangeState("init");

@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _speed = 0.5f;
         private int _direction;
+        private int _lives = ObjLives.Fish;
 
         // blinking
         public EnemyFish() : base("fish") { }
@@ -63,7 +64,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("swim", stateSwim);
             _aiComponent.States.Add("jump", stateJump);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1)
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
             { HitMultiplierX = 0, HitMultiplierY = 0, FlameOffset = new Point(0, 2), IsActive = false, OnBurn = OnBurn };
 
             _aiComponent.ChangeState("swim");

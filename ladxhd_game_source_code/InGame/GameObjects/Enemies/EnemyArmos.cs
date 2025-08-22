@@ -27,6 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _counter;
         private int _direction;
         private bool _collided;
+        private int _lives = ObjLives.Armos;
 
         public EnemyArmos() : base("armos") { }
 
@@ -66,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new AiFallState(_aiComponent, _body, null, null);
             new AiDeepWaterState(_body);
             _sunnedState = new AiStunnedState(_aiComponent, _animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "walking" };
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { SpawnItem = "arrow_1" };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { SpawnItem = "arrow_1" };
 
             _aiComponent.ChangeState("idle");
 

@@ -29,8 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private const float SpawnMoveSpeed = 0.5f;
         private const float FollowSpeed = 0.75f;
-        private const int Lives = 3;
 
+        private int _lives = ObjLives.GenieBottle;
         private bool _showedStunnedMessage;
 
         public BossGenieBottle() : base("genie") { }
@@ -113,7 +113,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("grabbed", stateGrabbed);
             _aiComponent.States.Add("return", stateReturn);
             _aiComponent.States.Add("thrown", stateThrown);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, Lives) { MoveBody = false, OnDeath = OnDeath, BossHitSound = true };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { MoveBody = false, OnDeath = OnDeath, BossHitSound = true };
 
             _aiComponent.ChangeState("idle");
 

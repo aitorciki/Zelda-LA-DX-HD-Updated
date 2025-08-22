@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
 
+        private int _lives = ObjLives.Zombie;
+
         public EnemyZombie() : base("zombie") { }
 
         public EnemyZombie(Map.Map map, int posX, int posY) : base(map)
@@ -50,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("spawn", stateSpawn);
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("despawn", stateDespawn);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
             _aiComponent.ChangeState("spawn");
 

@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
 
         private float _jumpVelocity = 1.0f;
+        private int _lives = ObjLives.PolsVoice;
 
         public EnemyPolsVoice() : base("pols voice") { }
 
@@ -53,7 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("jumping", stateJumping);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 4, true, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false);
             new AiFallState(_aiComponent, _body, null, null, 100);
             _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "waiting" };
 

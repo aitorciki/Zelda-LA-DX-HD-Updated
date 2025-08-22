@@ -49,6 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool _attackOut;
         private bool _isFullyOut;
+        private int _lives = ObjLives.SlimeEel;
 
         private float _moveRotation;
         private float _rotationDir = 1;
@@ -136,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("pulledOut", statePulledOut);
             _aiComponent.States.Add("blink", stateBlink);
             _aiComponent.States.Add("explode", stateExplode);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 8, false, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,

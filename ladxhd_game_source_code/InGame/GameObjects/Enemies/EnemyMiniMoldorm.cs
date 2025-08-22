@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _changeDirCount;
         private int _dir = 1;
         private const int SpriteOffsetY = 7;
+        private int _lives = ObjLives.MiniMoldorm;
 
         public EnemyMiniMoldorm(Map.Map map, int posX, int posY) : base(map, "miniMoldormHead0")
         {
@@ -64,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var stateWalking = new AiState(Update);
             _aiComp.States.Add("walking", stateWalking);
-            var damageState = new AiDamageState(this, _bodyComp, _aiComp, _sprite, 2, false)
+            var damageState = new AiDamageState(this, _bodyComp, _aiComp, _sprite, _lives, false)
             {
                 FlameOffset = new Point(0, 10 - SpriteOffsetY),
                 UpdateLastStateFire = true

@@ -33,6 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Vector2 _targetPosition;
         private int _circleDirection;
+        private int _lives = ObjLives.Vire;
 
         public EnemyVire() : base("vire") { }
 
@@ -90,7 +91,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("preDash", statePreDash);
             _aiComponent.States.Add("dash", stateDash);
             _aiComponent.States.Add("repelled", stateRepelled);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 3) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, null, null);
             new AiDeepWaterState(_body);
 

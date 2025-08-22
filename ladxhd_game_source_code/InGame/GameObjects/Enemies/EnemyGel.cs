@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _grabY;
         private int _dir;
         private int _timerOffset;
+        private int _lives = ObjLives.Gel;
 
         public EnemyGel() : base("gel") { }
 
@@ -77,7 +78,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _ai.States.Add("grabbingRelease", stateGrabbingRelease);
             new AiFallState(_ai, _body, null, null, 100);
             new AiDeepWaterState(_body);
-            var damageState = new AiDamageState(this, _body, _ai, _sprite, 1);
+            var damageState = new AiDamageState(this, _body, _ai, _sprite, _lives);
 
             _ai.Trigger.Add(_grabCooldown = new AiTriggerSwitch(2000));
 

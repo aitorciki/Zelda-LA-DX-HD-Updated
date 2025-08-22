@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float WalkSpeed = 0.5f;
 
         private int _direction;
+        private int _lives = ObjLives.Bombite;
 
         public EnemyBombite() : base("bombite") { }
 
@@ -61,7 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("pong", statePong);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false);
 
             _aiComponent.Trigger.Add(_damageCooldown = new AiTriggerSwitch(250));
 

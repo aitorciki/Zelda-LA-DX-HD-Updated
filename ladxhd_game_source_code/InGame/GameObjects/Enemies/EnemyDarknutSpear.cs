@@ -24,7 +24,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _moveSpeed = 0.5f;
         private int _direction;
-        
+        private int _lives = ObjLives.DarknutSpear;
+
         public EnemyDarknutSpear() : base("darknut spear") { }
 
         public EnemyDarknutSpear(Map.Map map, int posX, int posY) : base(map)
@@ -60,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("idle", idleState);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2);
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
 
             // start randomly idle or walking facing a random direction
             _direction = Game1.RandomNumber.Next(0, 4);

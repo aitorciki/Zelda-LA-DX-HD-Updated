@@ -25,7 +25,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly string _saveKey;
 
         private const int GrabTime = 300;
-        private const int Lives = 8;
+        private int _lives = ObjLives.Hinox;
 
         private float _runParticleCount;
 
@@ -94,7 +94,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("grab", stateGrab);
             _aiComponent.States.Add("grabbed", stateGrabbed);
             _aiComponent.States.Add("throw", stateThrow);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, Lives, true, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false)
             {
                 BossHitSound = true
             };

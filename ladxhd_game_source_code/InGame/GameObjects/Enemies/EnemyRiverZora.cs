@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Rectangle _fieldPosition;
 
         private float _floatCount;
+        private int _lives = ObjLives.RiverZora;
 
         public EnemyRiverZora() : base("river zora") { }
 
@@ -61,7 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("attacking", stateAttacking);
             _aiComponent.States.Add("despawning", stateDespawning);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1) { HitMultiplierX = 1.5f, HitMultiplierY = 1.5f, FlameOffset = new Point(0, 2) };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { HitMultiplierX = 1.5f, HitMultiplierY = 1.5f, FlameOffset = new Point(0, 2) };
 
             ToWait();
 

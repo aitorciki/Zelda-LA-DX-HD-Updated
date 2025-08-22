@@ -49,7 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly string _tileString;
 
         private int _blinkCount;
-        private int _currentLives = 5;
+        private int _lives = ObjLives.Facade;
 
         private const int DespawnTime = 1150;
 
@@ -229,7 +229,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void ThrowPot(ObjStone objPot)
         {
-            if (_currentLives <= 0)
+            if (_lives <= 0)
             {
                 objPot.LetGo();
                 return;
@@ -463,9 +463,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _wasHit = true;
 
-            _currentLives--;
+            _lives--;
 
-            if (_currentLives <= 0)
+            if (_lives <= 0)
             {
                 _spawnHoles = false;
 

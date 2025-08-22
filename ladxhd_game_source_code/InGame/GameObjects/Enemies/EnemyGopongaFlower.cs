@@ -15,6 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
         private readonly int _animationLength;
         private bool _dealsDamage = true;
+        private int _lives = ObjLives.GopongaFlower;
 
         public EnemyGopongaFlower() : base("goponga flower") { }
 
@@ -41,7 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
-            _aiDamageState = new AiDamageState(this, body, aiComponent, sprite, 4)
+            _aiDamageState = new AiDamageState(this, body, aiComponent, sprite, _lives)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,

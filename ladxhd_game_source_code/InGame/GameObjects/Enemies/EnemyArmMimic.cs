@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Vector2 _lastPosition;
         private int _direction;
         private bool _wasColliding;
+        private int _lives = ObjLives.ArmMimic;
 
         public EnemyArmMimic() : base("armMimic") { }
 
@@ -51,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             aiComponent.States.Add("idle", stateUpdate);
             new AiFallState(aiComponent, _body, null, null, 300);
-            _aiDamageState = new AiDamageState(this, _body, aiComponent, sprite, 2);
+            _aiDamageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
             _aiStunnedState = new AiStunnedState(aiComponent, animatorComponent, 3300, 900);
 
             aiComponent.ChangeState("idle");

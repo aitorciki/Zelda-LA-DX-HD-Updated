@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool _isFollowing;
         private bool _wasFollowing;
+        private int _lives = ObjLives.HardhatBeetle;
 
         public EnemyHardhatBeetle() : base("hardHatBeetle") { }
 
@@ -63,7 +64,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             aiComponent.States.Add("init", stateInit);
             aiComponent.States.Add("moving", stateMoving);
             _stunnedState = new AiStunnedState(aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
-            _damageState = new AiDamageState(this, _body, aiComponent, sprite, 1);
+            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
             new AiFallState(aiComponent, _body, OnHoleAbsorb, null);
 

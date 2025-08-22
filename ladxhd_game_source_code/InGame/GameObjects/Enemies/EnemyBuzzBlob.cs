@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly float _moveSpeed = 0.33f;
         private const int ShockTime = 550;
         private bool _isCukeman;
+        private int _lives = ObjLives.BuzzBlob;
 
         public EnemyBuzzBlob() : base("buzz blob") { }
 
@@ -58,7 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("shocking", stateShocking);
             _aiComponent.States.Add("postShock", statePostShock);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 4, false) { OnDeath = OnDeath, OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { OnDeath = OnDeath, OnBurn = OnBurn };
             _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "walking" };
             new AiFallState(_aiComponent, _body, OnHolePull, OnHoleDeath, 400);
 

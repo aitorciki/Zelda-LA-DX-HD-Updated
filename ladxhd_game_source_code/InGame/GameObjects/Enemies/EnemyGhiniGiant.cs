@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _transparency;
 
         private int _flyHeight = 7;
+        private int _lives = ObjLives.GhiniGiant;
 
         public EnemyGhiniGiant() : base("giant ghini") { }
 
@@ -66,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var damageBox = new CBox(EntityPosition, -12, -28, 0, 24, 26, 8, true);
             var hittableBox = new CBox(EntityPosition, -13, -29, 0, 26, 28, 8, true);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 8, true, false) { OnDeath = OnDeath, IsActive = !spawnAnimation };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { OnDeath = OnDeath, IsActive = !spawnAnimation };
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4) { IsActive = !spawnAnimation });
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));

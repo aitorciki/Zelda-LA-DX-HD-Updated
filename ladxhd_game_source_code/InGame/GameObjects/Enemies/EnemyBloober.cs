@@ -17,6 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Vector2 _startPosition;
 
+        private int _lives = ObjLives.Bloober;
+
         public EnemyBloober() : base("bloober") { }
 
         public EnemyBloober(Map.Map map, int posX, int posY) : base(map)
@@ -50,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moveUp", stateUp);
             _aiComponent.States.Add("moveDown", stateDown);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { HitMultiplierX = 2.0f, HitMultiplierY = 2.0f, FlameOffset = new Point(0, 3) };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { HitMultiplierX = 2.0f, HitMultiplierY = 2.0f, FlameOffset = new Point(0, 3) };
 
             ToMoveUp();
 

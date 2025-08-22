@@ -18,7 +18,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _liveTime = 1250;
 
         private const float AttackSpeed = 2.0f;
-        
         private bool _isAttackable;
 
         public EnemyVireBat(Map.Map map, Vector3 position, Vector2 direction) : base(map)

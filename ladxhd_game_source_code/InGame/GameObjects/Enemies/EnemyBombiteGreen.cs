@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _direction;
         private bool _startedAnimation;
         private bool _follow;
+        private int _lives = ObjLives.BombiteGreen;
 
         public EnemyBombiteGreen() : base("bombiteGreen") { }
 
@@ -59,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("follow", stateFollow);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false);
             _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
 
             _aiComponent.Trigger.Add(_damageCooldown = new AiTriggerSwitch(250));

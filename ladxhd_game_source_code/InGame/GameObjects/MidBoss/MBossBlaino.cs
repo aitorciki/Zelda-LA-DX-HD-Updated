@@ -55,6 +55,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private int _direction = -1;
         private int _boxCount;
         private int _jumpFollowDelay;
+        private int _lives = ObjLives.Blaino;
 
         private bool _drawGlove;
 
@@ -129,7 +130,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("swing0", stateSwing0);
             _aiComponent.States.Add("swing1", stateSwing1);
             _aiComponent.States.Add("swing2", stateSwing2);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 8, true, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
             _damageState.AddBossDamageState(OnDeath);
             _damageState.ExplosionOffsetY = 8;
             _aiComponent.ChangeState("waiting");

@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float _moveDistance;
 
         private int _fallHeight = 128;
+        private int _lives = ObjLives.SlimeEye;
 
         public BossSlimeEye() : base("slime_eye") { }
 
@@ -94,7 +95,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("spawning", stateSpawning);
             _aiComponent.States.Add("stopped", stateStopped);
             _aiComponent.States.Add("moving", stateMoving);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false);
 
             _aiComponent.ChangeState("waiting");
 

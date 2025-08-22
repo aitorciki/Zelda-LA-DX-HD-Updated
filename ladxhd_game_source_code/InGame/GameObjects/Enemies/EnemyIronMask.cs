@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _moveSpeedUnprotected = 0.75f;
         private int _direction;
         private bool _isUnprotected;
+        private int _lives = ObjLives.IronMask;
 
         public EnemyIronMask() : base("iron mask") { }
 
@@ -57,7 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("stunned", stateStunned);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
             new AiDeepWaterState(_body);
 

@@ -39,8 +39,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float _deathCount;
         private int _stoneCount;
 
-        private const int Lives = 10;
-        private int _currentLives = Lives;
+        private int _lives = ObjLives.AnglerFish;
+        private int _currentLives = ObjLives.AnglerFish;
         private bool _isAlive = true;
 
         private Vector2 _preAttackVelocity;
@@ -224,7 +224,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void SpawnFish()
         {
-            if (_isAlive || _currentLives < Lives)
+            if (_isAlive || _currentLives < _lives)
                 _fishCountdown.OnInit();
 
             var randomDir = (Game1.RandomNumber.Next(0, 2) * 2 - 1);

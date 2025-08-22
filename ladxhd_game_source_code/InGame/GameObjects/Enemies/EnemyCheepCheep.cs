@@ -27,6 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly float _movementSpeed;
         private int _dir;
+        private int _lives = ObjLives.CheepCheep;
         private readonly bool _canJump;
 
         public EnemyCheepCheep() : base("cheep cheep") { }
@@ -77,7 +78,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("pause", statePause);
             _aiComponent.States.Add("jumping", stateJumping);
             _aiComponent.States.Add("dead", stateDead);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1)
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
             {
                 HitMultiplierX = 3.0f,
                 HitMultiplierY = 2.0f,

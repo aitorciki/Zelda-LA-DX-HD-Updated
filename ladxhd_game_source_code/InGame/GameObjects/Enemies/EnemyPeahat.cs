@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _flyState;
         private float _turnSpeed;
         private int _dir = 1;
+        private int _lives = ObjLives.Peahat;
 
         public EnemyPeahat() : base("peahat") { }
 
@@ -75,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("land", stateLand);
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("stunned", stateStunned);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1, false) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("start");
 

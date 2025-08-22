@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _walkSpeed = 0.5f;
         private int _direction;
+        private int _lives = ObjLives.Beetle;
 
         private bool _finishedSpawning;
 
@@ -73,7 +74,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("moving");
 
             var damageCollider = new CBox(EntityPosition, -6, -10, 0, 12, 10, 4);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             
             AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));

@@ -27,6 +27,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private double _direction;
 
+        private int _lives = ObjLives.Ghini;
+
         private float _flyHeight = 14;
         private float _rotationDirection;
         private float _dirChangeCount;
@@ -70,7 +72,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("init", stateInit);
             _aiComponent.States.Add("spawning", stateSpawning);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 8, true, false) { IsActive = !spawnAnimation };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { IsActive = !spawnAnimation };
             _damageState.OnDeath = OnDeath;
 
             _aiComponent.ChangeState(spawnAnimation ? "init" : "flying");

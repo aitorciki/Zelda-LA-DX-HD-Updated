@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private string _saveKey;
         private int _jumpTime;
 
-        private int _lives = 8;
+        private int _lives = ObjLives.DesertLanmola;
 
         private bool _jumpLandSound;
         private bool _playerLeft = true;

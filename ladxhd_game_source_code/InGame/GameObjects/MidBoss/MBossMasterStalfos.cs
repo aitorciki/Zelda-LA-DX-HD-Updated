@@ -54,6 +54,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _flee;
         private bool _attackSound;
 
+        private int _lives = ObjLives.MStalfos;
+        private int _livesMid = ObjLives.MStalfosMid;
+
         private const int FleeTime = 400;
 
         public MBossMasterStalfos() : base("ms_shield") { }
@@ -174,9 +177,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // dummy sprite
             _sprite = new CSprite(EntityPosition);
-            var lives = 6;
-            if (_encounterNumber == 1 || _encounterNumber == 2)
-                lives = 4;
+
+            // Four encounters: less lives on middle encounters, more lives on first and last encounters.
+            int lives = (_encounterNumber == 1 || _encounterNumber == 2) 
+                ? _livesMid 
+                : _lives;
 
             _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, lives, false, false)
             { BossHitSound = true, HitMultiplierX = 3, HitMultiplierY = 3 };

@@ -7,11 +7,11 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
-    class BossFinalBossTail : GameObject
+    class BossFinalBossMoldormTail : GameObject
     {
         public readonly CSprite Sprite;
 
-        public BossFinalBossTail(Map.Map map, BossFinalBoss nightmare, string animationId, bool hittable) : base(map)
+        public BossFinalBossMoldormTail(Map.Map map, BossFinalBoss nightmare, string animationId, bool hittable) : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 

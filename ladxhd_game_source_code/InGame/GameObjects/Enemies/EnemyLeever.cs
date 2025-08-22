@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Rectangle _fieldPosition;
 
         private const float MoveSpeed = 0.5f;
+        private int _lives = ObjLives.Leever;
 
         public EnemyLeever() : base("leever") { }
 
@@ -73,7 +74,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("leaving", stateLeaving);
             _aiComponent.States.Add("waiting", stateWaiting);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("init");
 

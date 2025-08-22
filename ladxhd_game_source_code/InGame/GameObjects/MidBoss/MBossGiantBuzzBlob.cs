@@ -36,6 +36,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private int _jumpCounter;
         private bool _wasHit;
         private bool _attackable;
+        private int _lives = ObjLives.GiantBuzzBlob;
 
         public MBossGiantBuzzBlob() : base("giant buzz blob") { }
 
@@ -98,7 +99,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("postJump", statePostJump);
             _aiComponent.States.Add("endSlime", stateEndSlime);
             _aiComponent.States.Add("death", stateDeath);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 6, false, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
             {
                 HitMultiplierX = 1,
                 HitMultiplierY = 1,

@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _direction;
         private bool _hasPlayerTrapped;
         private bool _stoleShield;
+        private int _lives = ObjLives.LikeLike;
 
         public EnemyLikeLike() : base("like like") { }
 
@@ -61,7 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMove);
             _aiComponent.States.Add("trap", stateTrap);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             _damageState.OnDeath = OnDeath;
             ToMoving();
 

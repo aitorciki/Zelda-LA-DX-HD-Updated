@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _damageState;
 
+        private int _lives = ObjLives.Goomba;
         private int FadeTime = 75;
         private float _directionCounter;
         private const float WalkSpeed = 0.5f;
@@ -68,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("dead", stateDead);
             _aiComponent.States.Add("fade", stateFade);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("walking");
 

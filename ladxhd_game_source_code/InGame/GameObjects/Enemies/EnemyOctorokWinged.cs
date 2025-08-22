@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _walkSpeed = 0.5f;
         private int _direction;
         private float _flyCounter;
+        private int _lives = ObjLives.OctorokWinged;
 
         public EnemyOctorokWinged() : base("winged octorok") { }
 
@@ -75,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("flying", stateFlying);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiComponent.Trigger.Add(_damageSwitch = new AiTriggerSwitch(350));
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
 

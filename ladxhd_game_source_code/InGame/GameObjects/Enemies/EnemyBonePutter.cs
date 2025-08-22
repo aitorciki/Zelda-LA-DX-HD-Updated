@@ -28,6 +28,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _bombThrowCounter;
 
         private const float JumpSpeed = 0.25f;
+        private int _lives = ObjLives.BonePutter;
+        private int _livesWings = ObjLives.BonePutterWing;
 
         public EnemyBonePutter() : base("bone putter") { }
 
@@ -67,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("jumping", stateJumping);
             _aiComponent.States.Add("holePull", stateHole);
             new AiFallState(_aiComponent, _body, null, null, 200);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, hasWings ? 3 : 1, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, hasWings ? _livesWings : _lives, false);
             _aiComponent.ChangeState(hasWings ? "flying" : "jumping");
 
             var hittableBox = new CBox(EntityPosition, -6, -15, 2, 12, 14, 8, true);

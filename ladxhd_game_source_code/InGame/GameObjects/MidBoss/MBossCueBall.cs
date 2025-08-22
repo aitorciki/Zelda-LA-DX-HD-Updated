@@ -30,7 +30,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _spinTime;
         private const float SpinStepTime = 66.66f;
 
-        private int Lives = 8;
+        private int _lives = ObjLives.CueBall;
         private int _count;
         private int _moveClockwise = 1;
         private int _moveDirection;
@@ -81,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("spinning", stateSpinning);
             _aiComponent.States.Add("dead", stateDead);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, Lives, false, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
             { HitMultiplierX = 0, HitMultiplierY = 0, OnDeath = OnDeath, ExplosionOffsetY = 16, BossHitSound = true };
             _aiDamageState.AddBossDamageState(OnDeathEnd);
 

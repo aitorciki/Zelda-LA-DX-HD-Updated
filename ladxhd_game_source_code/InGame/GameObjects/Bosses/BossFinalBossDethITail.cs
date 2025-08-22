@@ -7,7 +7,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
-    class BossFinalBossFinalTail : GameObject
+    class BossFinalBossDethITail : GameObject
     {
         private readonly BossFinalBoss _owner;
 
@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         public readonly CSprite Sprite;
 
-        public BossFinalBossFinalTail(Map.Map map, BossFinalBoss owner, string spriteId, Vector2 position) : base(map)
+        public BossFinalBossDethITail(Map.Map map, BossFinalBoss owner, string spriteId, Vector2 position) : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 

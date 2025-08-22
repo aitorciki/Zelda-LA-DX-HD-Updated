@@ -44,26 +44,29 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private Vector2 _bodyStartPosition;
         private Vector2 _bodyTargetPosition;
 
-        private Vector2 _manTargetPosition;
+        private Vector2 _agahnimTargetPosition;
         private Vector2[] _fireballOffset = new Vector2[] { new Vector2(-15, -8), new Vector2(0, -24), new Vector2(15, -8), new Vector2(0, -4) };
 
         private Vector2[] _bodyParts = new Vector2[6];
 
         private string _saveKey;
 
+        // Group up the lives in one place.
+        private int _giantZolLives = ObjLives.F_GiantZol;
+        private int _agahnimLives = ObjLives.F_Agahnim;
+        private int _ganonLives = ObjLives.F_Ganon;
+        private int _moldormLives = ObjLives.F_Moldorm;
+        private int _dethILives = ObjLives.F_DethI;
+
         // State: Giant Zol
-        private const int SlimeDamageTime = 2200;
+        private const int GiantZolDamageTime = 2200;
         private const int RotateTime = 2500;
-        private int _slimeLives = 3;
-        private bool _slimeForm;
+        private bool _giantZolForm;
 
         // State: Agahnim's Shadow
-        private bool _manInit = true;
-        private int _manLives = 4;
+        private bool _agahnimInit = true;
 
         // State: Shadow of Ganon
-        private int _ganonLives = 12;
-
         private Vector2 _ganonTargetPosition;
 
         private const int _ganonDeathTime = 2200;
@@ -74,10 +77,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _batIndexStart;
 
         // State: Moldorm
-        private int _moldormLives = 16;
-
         private const int TailMult = 8;
-        private BossFinalBossTail[] _moldormTails = new BossFinalBossTail[4];
+        private BossFinalBossMoldormTail[] _moldormTails = new BossFinalBossMoldormTail[4];
         private AiTriggerSwitch _moldormSpeedUp;
         private Vector2[] _moldormPositions = new Vector2[6 * TailMult];
         private Vector2[] _moldormPositionsNew = new Vector2[6 * TailMult];
@@ -102,28 +103,27 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _moveCounter;
 
         // State: Lanmola
-        private float _faceParticleCounter;
+        private float _lanmolaParticleCounter;
 
         // State: DethI
         // objects used to deal damage
-        private readonly BossFinalBossFinalTail[] _finalParts = new BossFinalBossFinalTail[8];
-        private readonly string[] _spriteFinalParts = new string[] { "final_part0", "final_part1", "final_part1", "final_part2" };
-        private float[] _finalPartDistance = new float[] { 18, 10, 10, 10 };
+        private readonly BossFinalBossDethITail[] _dethIParts = new BossFinalBossDethITail[8];
+        private readonly string[] _spriteDethIParts = new string[] { "final_part0", "final_part1", "final_part1", "final_part2" };
+        private float[] _dethIPartDistance = new float[] { 18, 10, 10, 10 };
 
         private Vector2 _targetPosition;
 
-        private float _finalPartCounter;
-        private float _finalPart0 = -MathF.PI / 2;
-        private float _finalPart1 = -MathF.PI / 2;
-        private float _finalPartSpeed0 = 1 / 2500.0f * MathF.PI * 2;
-        private float _finalPartSpeed1 = 1 / 2500.0f * MathF.PI * 2;
+        private float _dethIPartCounter;
+        private float _dethIPart0 = -MathF.PI / 2;
+        private float _dethIPart1 = -MathF.PI / 2;
+        private float _dethIPartSpeed0 = 1 / 2500.0f * MathF.PI * 2;
+        private float _dethIPartSpeed1 = 1 / 2500.0f * MathF.PI * 2;
 
-        private int _finalStateLives = 16;
-        private int _finalStateDeathCounter = 2500;
+        private int _dethIStateDeathCounter = 2500;
 
-        private float _finalEyeCounter;
-        private int _finalEyeState;
-        private bool _finalState;
+        private float _dethIEyeCounter;
+        private int _dethIEyeState;
+        private bool _dethIState;
 
         private bool _hideBody;
         private bool _hideHead;
@@ -169,10 +169,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, Sprite, Vector2.Zero);
 
-            for (var i = 0; i < _finalParts.Length; i++)
+            for (var i = 0; i < _dethIParts.Length; i++)
             {
-                _finalParts[i] = new BossFinalBossFinalTail(map, this, _spriteFinalParts[i % 4], EntityPosition.Position);
-                map.Objects.SpawnObject(_finalParts[i]);
+                _dethIParts[i] = new BossFinalBossDethITail(map, this, _spriteDethIParts[i % 4], EntityPosition.Position);
+                map.Objects.SpawnObject(_dethIParts[i]);
             }
 
             _roomRectangle = map.GetField(posX, posY);
@@ -197,34 +197,34 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateWobble = new AiState(UpdateWobble) { Init = InitWobble };
             var stateDespawn = new AiState(UpdateDespawn) { Init = InitStartDespawn };
 
-            // slime
-            var stateSlimeSpawn = new AiState(UpdateSlimeSpawn) { Init = InitSlimeSpawn };
-            var stateSlimeJump = new AiState(UpdateSlimeJump) { Init = InitSlimeJump };
-            var stateSlimeWait = new AiState() { Init = InitSlimeWait };
-            stateSlimeWait.Trigger.Add(new AiTriggerCountdown(800, null, () => _aiComponent.ChangeState("slimeJump")));
-            var stateSlimeDespawn = new AiState(UpdateSlimeDespawn) { Init = InitSlimeDespawn };
-            var stateSlimeHidden = new AiState() { Init = InitSlimeHidden };
-            stateSlimeHidden.Trigger.Add(new AiTriggerCountdown(2200, null, EndSlimeHidden));
-            var stateSlimeDamaged = new AiState() { Init = InitSlimeDamaged };
-            stateSlimeDamaged.Trigger.Add(new AiTriggerCountdown(SlimeDamageTime, TickSlimeDamaged, EndSlimeDamge));
-            var stateSlimeHideExplode = new AiState() { Init = InitSlimeHideExplode };
-            stateSlimeHideExplode.Trigger.Add(new AiTriggerCountdown(2200, null, EndSlimeHidden));
-            var stateSlimeExplode = new AiState() { Init = InitSlimeExplode };
-            stateSlimeExplode.Trigger.Add(new AiTriggerCountdown(2800, null, SlimeEnd));
+            // giant zol
+            var stateGiantZolSpawn = new AiState(UpdateGiantZolSpawn) { Init = InitGiantZolSpawn };
+            var stateGiantZolJump = new AiState(UpdateGiantZolJump) { Init = InitGiantZolJump };
+            var stateGiantZolWait = new AiState() { Init = InitGiantZolWait };
+            stateGiantZolWait.Trigger.Add(new AiTriggerCountdown(800, null, () => _aiComponent.ChangeState("giantZolJump")));
+            var stateGiantZolDespawn = new AiState(UpdateGiantZolDespawn) { Init = InitGiantZolDespawn };
+            var stateGiantZolHidden = new AiState() { Init = InitGiantZolHidden };
+            stateGiantZolHidden.Trigger.Add(new AiTriggerCountdown(2200, null, EndGiantZolHidden));
+            var stateGiantZolDamaged = new AiState() { Init = InitGiantZolDamaged };
+            stateGiantZolDamaged.Trigger.Add(new AiTriggerCountdown(GiantZolDamageTime, TickGiantZolDamaged, EndGiantZolDamge));
+            var stateGiantZolHideExplode = new AiState() { Init = InitGiantZolHideExplode };
+            stateGiantZolHideExplode.Trigger.Add(new AiTriggerCountdown(2200, null, EndGiantZolHidden));
+            var stateGiantZolExplode = new AiState() { Init = InitGiantZolExplode };
+            stateGiantZolExplode.Trigger.Add(new AiTriggerCountdown(2800, null, GiantZolEnd));
 
-            // man
-            var stateManPreAttack = new AiState(UpdateManPreAttack);
-            stateManPreAttack.Trigger.Add(new AiTriggerCountdown(1100, null, () => _aiComponent.ChangeState("manAttack")));
-            var stateManAttack = new AiState(UpdateManAttack) { Init = InitManAttack };
-            var stateManPostAttack = new AiState(UpdateManPostAttack) { Init = InitPostAttack };
-            stateManPostAttack.Trigger.Add(new AiTriggerCountdown(1300, null, () => _aiComponent.ChangeState("manDespawn")));
-            var stateManDespawn = new AiState(UpdateManDespawn) { Init = InitManDespawn };
-            var stateManMove = new AiState(UpdateManMove) { Init = InitManMove };
-            var stateManMoveWait = new AiState();
-            stateManMoveWait.Trigger.Add(new AiTriggerCountdown(650, null, () => _aiComponent.ChangeState("manSpawn")));
-            var stateManSpawn = new AiState(UpdateManSpawn) { Init = InitManSpawn };
-            var stateManRotate = new AiState() { Init = InitManRotate };
-            stateManRotate.Trigger.Add(new AiTriggerCountdown(RotateTime, TickRotate, EndRotate));
+            // agahnim
+            var stateAgahnimPreAttack = new AiState(UpdateManPreAttack);
+            stateAgahnimPreAttack.Trigger.Add(new AiTriggerCountdown(1100, null, () => _aiComponent.ChangeState("manAttack")));
+            var stateAgahnimAttack = new AiState(UpdateManAttack) { Init = InitManAttack };
+            var stateAgahnimPostAttack = new AiState(UpdateManPostAttack) { Init = InitPostAttack };
+            stateAgahnimPostAttack.Trigger.Add(new AiTriggerCountdown(1300, null, () => _aiComponent.ChangeState("manDespawn")));
+            var stateAgahnimDespawn = new AiState(UpdateManDespawn) { Init = InitManDespawn };
+            var stateAgahnimMove = new AiState(UpdateManMove) { Init = InitManMove };
+            var stateAgahnimMoveWait = new AiState();
+            stateAgahnimMoveWait.Trigger.Add(new AiTriggerCountdown(650, null, () => _aiComponent.ChangeState("manSpawn")));
+            var stateAgahnimSpawn = new AiState(UpdateManSpawn) { Init = InitManSpawn };
+            var stateAgahnimRotate = new AiState() { Init = InitManRotate };
+            stateAgahnimRotate.Trigger.Add(new AiTriggerCountdown(RotateTime, TickRotate, EndRotate));
 
             // explode
             var stateExplode = new AiState() { Init = InitExplode };
@@ -263,21 +263,21 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateGanonExplode = new AiState() { Init = InitGanonExplode };
             stateGanonExplode.Trigger.Add(new AiTriggerCountdown(_ganonDeathTime, null, () => _aiComponent.ChangeState("face")));
 
-            // face
-            var stateFace = new AiState(UpdateFace) { Init = InitFace };
-            var stateFaceExplode = new AiState() { Init = InitFaceExplose };
-            stateFaceExplode.Trigger.Add(new AiTriggerCountdown(2200, null, () => _aiComponent.ChangeState("faceMove")));
-            var stateFaceMove = new AiState(UpdateFaceMove) { Init = InitFaceMove };
-            var stateFaceHidden = new AiState() { Init = InitFaceHidden };
-            stateFaceHidden.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("faceDespawn")));
-            var stateFaceDespawn = new AiState(UpdateFaceDespawn) { Init = InitFaceDespawn };
+            // lanmola
+            var stateLanmola = new AiState(UpdateLanmola) { Init = InitLanmola };
+            var stateLanmolaExplode = new AiState() { Init = InitLanmolaExplose };
+            stateLanmolaExplode.Trigger.Add(new AiTriggerCountdown(2200, null, () => _aiComponent.ChangeState("faceMove")));
+            var stateLanmolaMove = new AiState(UpdateLanmolaMove) { Init = InitLanmolaMove };
+            var stateLanmolaHidden = new AiState() { Init = InitLanmolaHidden };
+            stateLanmolaHidden.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("faceDespawn")));
+            var stateLanmolaDespawn = new AiState(UpdateLanmolaDespawn) { Init = InitLanmolaDespawn };
 
-            // final
-            var stateFinalSpawn = new AiState(UpdateFianalSpawn) { Init = InitFinalSpawn };
-            var stateFinal = new AiState(UpdateFinal) { Init = InitFinal };
-            var stateFinalBlink = new AiState() { Init = InitFinalBlink };
-            stateFinalBlink.Trigger.Add(new AiTriggerCountdown(_finalStateDeathCounter, TickFinalDespawn, () => _aiComponent.ChangeState("finalDeath")));
-            var stateFinalDeath = new AiState(UpdateFinalDeath) { Init = InitFinalDeath };
+            // dethI
+            var stateDethISpawn = new AiState(UpdateFianalSpawn) { Init = InitFinalSpawn };
+            var stateDethI = new AiState(UpdateFinal) { Init = InitFinal };
+            var stateDethIBlink = new AiState() { Init = InitFinalBlink };
+            stateDethIBlink.Trigger.Add(new AiTriggerCountdown(_dethIStateDeathCounter, TickFinalDespawn, () => _aiComponent.ChangeState("finalDeath")));
+            var stateDethIDeath = new AiState(UpdateFinalDeath) { Init = InitFinalDeath };
 
             var stateTest = new AiState();
             stateTest.Trigger.Add(new AiTriggerCountdown(1500, null, TestProjectileSpawn) { ResetAfterEnd = true });
@@ -289,25 +289,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("wobble", stateWobble);
             _aiComponent.States.Add("despawn", stateDespawn);
 
-            // slime
-            _aiComponent.States.Add("slimeSpawn", stateSlimeSpawn);
-            _aiComponent.States.Add("slimeJump", stateSlimeJump);
-            _aiComponent.States.Add("slimeWait", stateSlimeWait);
-            _aiComponent.States.Add("slimeDespawn", stateSlimeDespawn);
-            _aiComponent.States.Add("slimeHidden", stateSlimeHidden);
-            _aiComponent.States.Add("slimeDamaged", stateSlimeDamaged);
-            _aiComponent.States.Add("slimeHideExplode", stateSlimeHideExplode);
-            _aiComponent.States.Add("slimeExplode", stateSlimeExplode);
+            // giantZol
+            _aiComponent.States.Add("giantZolSpawn", stateGiantZolSpawn);
+            _aiComponent.States.Add("giantZolJump", stateGiantZolJump);
+            _aiComponent.States.Add("giantZolWait", stateGiantZolWait);
+            _aiComponent.States.Add("giantZolDespawn", stateGiantZolDespawn);
+            _aiComponent.States.Add("giantZolHidden", stateGiantZolHidden);
+            _aiComponent.States.Add("giantZolDamaged", stateGiantZolDamaged);
+            _aiComponent.States.Add("giantZolHideExplode", stateGiantZolHideExplode);
+            _aiComponent.States.Add("giantZolExplode", stateGiantZolExplode);
 
             // man
-            _aiComponent.States.Add("manPreAttack", stateManPreAttack);
-            _aiComponent.States.Add("manAttack", stateManAttack);
-            _aiComponent.States.Add("manPostAttack", stateManPostAttack);
-            _aiComponent.States.Add("manDespawn", stateManDespawn);
-            _aiComponent.States.Add("manMove", stateManMove);
-            _aiComponent.States.Add("manMoveWait", stateManMoveWait);
-            _aiComponent.States.Add("manSpawn", stateManSpawn);
-            _aiComponent.States.Add("manRotate", stateManRotate);
+            _aiComponent.States.Add("manPreAttack", stateAgahnimPreAttack);
+            _aiComponent.States.Add("manAttack", stateAgahnimAttack);
+            _aiComponent.States.Add("manPostAttack", stateAgahnimPostAttack);
+            _aiComponent.States.Add("manDespawn", stateAgahnimDespawn);
+            _aiComponent.States.Add("manMove", stateAgahnimMove);
+            _aiComponent.States.Add("manMoveWait", stateAgahnimMoveWait);
+            _aiComponent.States.Add("manSpawn", stateAgahnimSpawn);
+            _aiComponent.States.Add("manRotate", stateAgahnimRotate);
 
             // moldorm
             _aiComponent.States.Add("moldormSpawn", stateMoldormSpawn);
@@ -330,17 +330,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("ganonExplode", stateGanonExplode);
 
             // face
-            _aiComponent.States.Add("face", stateFace);
-            _aiComponent.States.Add("faceExplode", stateFaceExplode);
-            _aiComponent.States.Add("faceMove", stateFaceMove);
-            _aiComponent.States.Add("faceHidden", stateFaceHidden);
-            _aiComponent.States.Add("faceDespawn", stateFaceDespawn);
+            _aiComponent.States.Add("face", stateLanmola);
+            _aiComponent.States.Add("faceExplode", stateLanmolaExplode);
+            _aiComponent.States.Add("faceMove", stateLanmolaMove);
+            _aiComponent.States.Add("faceHidden", stateLanmolaHidden);
+            _aiComponent.States.Add("faceDespawn", stateLanmolaDespawn);
 
             // final
-            _aiComponent.States.Add("finalSpawn", stateFinalSpawn);
-            _aiComponent.States.Add("final", stateFinal);
-            _aiComponent.States.Add("finalBlink", stateFinalBlink);
-            _aiComponent.States.Add("finalDeath", stateFinalDeath);
+            _aiComponent.States.Add("finalSpawn", stateDethISpawn);
+            _aiComponent.States.Add("final", stateDethI);
+            _aiComponent.States.Add("finalBlink", stateDethIBlink);
+            _aiComponent.States.Add("finalDeath", stateDethIDeath);
 
             _aiComponent.States.Add("explode", stateExplode);
             _aiComponent.States.Add("explodeDespawn", stateExplodeDespawn);
@@ -372,16 +372,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         #region Debug
 
-        private void DebugSlimeEnd()
+        private void DebugGiantZolEnd()
         {
-            _slimeLives = 1;
-            _aiComponent.ChangeState("slimeHidden");
+            _giantZolLives = 1;
+            _aiComponent.ChangeState("giantZolHidden");
         }
 
         private void DebugMan()
         {
-            _manLives = 2;
-            _aiComponent.ChangeState("slimeExplode");
+            _agahnimLives = 2;
+            _aiComponent.ChangeState("giantZolExplode");
         }
 
         private void DebugMoldrom()
@@ -397,9 +397,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("ganonSpawn");
         }
 
-        private void DebugFace()
+        private void DebugLanmola()
         {
-            _finalStateLives = 4;
+            _dethILives = 4;
             _aiComponent.ChangeState("face");
         }
 
@@ -494,16 +494,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateDespawn()
         {
             if (!_animator.IsPlaying)
-                _aiComponent.ChangeState("slimeSpawn");
+                _aiComponent.ChangeState("giantZolSpawn");
         }
 
         #endregion
 
         #region State: Giant Zol
 
-        private void InitSlimeSpawn()
+        private void InitGiantZolSpawn()
         {
-            _slimeForm = true;
+            _giantZolForm = true;
             _hideHead = false;
             _pushRepel = true;
             _bodyShadow.IsActive = true;
@@ -514,18 +514,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _drawComponent.Layer = Values.LayerPlayer;
 
-            _animator.Play("slime_spawn");
+            _animator.Play("giantZol_spawn");
         }
 
-        private void UpdateSlimeSpawn()
+        private void UpdateGiantZolSpawn()
         {
             if (!_animator.IsPlaying)
-                _aiComponent.ChangeState("slimeJump");
+                _aiComponent.ChangeState("giantZolJump");
         }
 
-        private void InitSlimeJump()
+        private void InitGiantZolJump()
         {
-            _animator.Play("slime_jump");
+            _animator.Play("giantZol_jump");
 
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
@@ -537,85 +537,85 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body.Velocity.Z = 1.75f;
         }
 
-        private void UpdateSlimeJump()
+        private void UpdateGiantZolJump()
         {
             if (_body.IsGrounded)
             {
                 Game1.GameManager.PlaySoundEffect("D360-32-20");
 
                 if (Game1.RandomNumber.Next(0, 2) == 0)
-                    _aiComponent.ChangeState("slimeWait");
+                    _aiComponent.ChangeState("giantZolWait");
                 else
-                    _aiComponent.ChangeState("slimeDespawn");
+                    _aiComponent.ChangeState("giantZolDespawn");
             }
             else if (_body.Velocity.Y < -0.5f)
             {
-                _animator.Play("slime_land");
+                _animator.Play("giantZol_land");
             }
         }
 
-        private void InitSlimeWait()
+        private void InitGiantZolWait()
         {
-            _animator.Play("slime");
+            _animator.Play("giantZol");
         }
 
-        private void InitSlimeDespawn()
+        private void InitGiantZolDespawn()
         {
             _bodyShadow.IsActive = false;
             _damageField.IsActive = false;
             _hittableComponent.IsActive = false;
             _pushRepel = false;
 
-            _animator.Play("slime_despawn");
+            _animator.Play("giantZol_despawn");
 
             EntityPosition.Offset(new Vector2(0, -2));
         }
 
-        private void UpdateSlimeDespawn()
+        private void UpdateGiantZolDespawn()
         {
             if (!_animator.IsPlaying)
-                _aiComponent.ChangeState("slimeHidden");
+                _aiComponent.ChangeState("giantZolHidden");
         }
 
-        private void InitSlimeHidden()
+        private void InitGiantZolHidden()
         {
             _hideHead = true;
         }
 
-        private void EndSlimeHidden()
+        private void EndGiantZolHidden()
         {
             // random new position
             EntityPosition.Set(RandomRoomPosition());
 
-            _aiComponent.ChangeState("slimeSpawn");
+            _aiComponent.ChangeState("giantZolSpawn");
         }
 
-        private void InitSlimeDamaged()
+        private void InitGiantZolDamaged()
         {
-            _animator.Play("slime_damaged");
+            _animator.Play("giantZol_damaged");
             Game1.GameManager.PlaySoundEffect("D360-55-37");
         }
 
-        private void TickSlimeDamaged(double counter)
+        private void TickGiantZolDamaged(double counter)
         {
-            var time = SlimeDamageTime - counter;
+            var time = GiantZolDamageTime - counter;
             if (time < AiDamageState.CooldownTime && time % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime)
                 Sprite.SpriteShader = Resources.DamageSpriteShader0;
             else
                 Sprite.SpriteShader = null;
         }
 
-        private void EndSlimeDamge()
+        private void EndGiantZolDamge()
         {
-            _slimeForm = false;
+            _giantZolForm = false;
 
-            if (_slimeLives <= 0)
-                _aiComponent.ChangeState("slimeExplode");
+            if (_giantZolLives <= 0)
+                _aiComponent.ChangeState("giantZolExplode");
             else
-                _aiComponent.ChangeState("slimeDespawn");
+                _aiComponent.ChangeState("giantZolDespawn");
         }
 
-        private void InitSlimeHideExplode()
+        private void InitGiantZolHideExplode()
         {
             _pushRepel = false;
             _hideHead = true;
@@ -623,10 +623,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _damageField.IsActive = false;
             _hittableComponent.IsActive = false;
 
-            InitSlimeExplode();
+            InitGiantZolExplode();
         }
 
-        private void InitSlimeExplode()
+        private void InitGiantZolExplode()
         {
             EntityPosition.Offset(new Vector2(0, -2));
             Game1.GameManager.PlaySoundEffect("D370-33-21");
@@ -642,10 +642,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         // @TODO:
         // type 2 spawn rate
 
-        private void SlimeEnd()
+        private void GiantZolEnd()
         {
             _aiComponent.ChangeState("manMove");
-            _manTargetPosition = new Vector2(_roomRectangle.Center.X, _roomRectangle.Y + 43);
+            _agahnimTargetPosition = new Vector2(_roomRectangle.Center.X, _roomRectangle.Y + 43);
         }
 
         private void InitManSpawn()
@@ -669,7 +669,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             _direction = AnimationHelper.GetDirection(playerDirection);
 
-            if (_manInit)
+            if (_agahnimInit)
             {
                 _animator.Play("man_" + _direction);
                 _animator.Pause();
@@ -682,7 +682,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitManAttack()
         {
-            _manInit = false;
+            _agahnimInit = false;
             _animator.Play("man_" + _direction);
             Game1.GameManager.PlaySoundEffect("D370-34-22");
 
@@ -742,12 +742,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             Game1.GameManager.PlaySoundEffect("D360-53-35");
             _body.CollisionTypes = Values.CollisionTypes.None;
-            _manTargetPosition = RandomRoomPositionSide();
+            _agahnimTargetPosition = RandomRoomPositionSide();
         }
 
         private void UpdateManMove()
         {
-            var direction = _manTargetPosition - EntityPosition.Position;
+            var direction = _agahnimTargetPosition - EntityPosition.Position;
 
             if (direction.Length() < 2)
             {
@@ -823,7 +823,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 else
                     animationId = "moldorm_body";
 
-                _moldormTails[i] = new BossFinalBossTail(Map, this, animationId, i == _moldormTails.Length - 1);
+                _moldormTails[i] = new BossFinalBossMoldormTail(Map, this, animationId, i == _moldormTails.Length - 1);
                 Map.Objects.SpawnObject(_moldormTails[i]);
             }
         }
@@ -886,7 +886,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void MoldormExplode()
         {
             _aiComponent.ChangeState("moldormDespawn");
-            _animator.Play("slime_despawn");
+            _animator.Play("giantZol_despawn");
 
             _drawMoldormTail = false;
 
@@ -995,25 +995,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         #region State: Lanmola
 
-        private void InitFaceDespawn()
+        private void InitLanmolaDespawn()
         {
             _damageField.IsActive = false;
-            _animator.Play("slime_despawn");
+            _animator.Play("giantZol_despawn");
         }
 
-        private void UpdateFaceDespawn()
+        private void UpdateLanmolaDespawn()
         {
             // TODO: delay
             if (!_animator.IsPlaying)
                 _aiComponent.ChangeState("finalSpawn");
         }
 
-        private void InitFaceHidden()
+        private void InitLanmolaHidden()
         {
             _animator.Play("face_hidden");
         }
 
-        private void InitFaceExplose()
+        private void InitLanmolaExplose()
         {
             Game1.GameManager.SetMusic(-1, 2);
             Game1.GameManager.PlaySoundEffect("D370-16-10");
@@ -1021,12 +1021,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             ExplodeAnimation();
         }
 
-        private void InitFaceMove()
+        private void InitLanmolaMove()
         {
             Game1.GameManager.PlaySoundEffect("D360-53-35");
         }
 
-        private void UpdateFaceMove()
+        private void UpdateLanmolaMove()
         {
             var targetPosition = new Vector2(_body.FieldRectangle.X + 80, _body.FieldRectangle.Y + 40);
             var direction = targetPosition - EntityPosition.Position;
@@ -1044,7 +1044,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private void InitFace()
+        private void InitLanmola()
         {
             _damageField.IsActive = true;
             _damageField.CollisionBox = new CBox(EntityPosition, -6, -6, 0, 12, 12, 8);
@@ -1052,13 +1052,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _drawComponent.Layer = Values.LayerPlayer;
         }
 
-        private void UpdateFace()
+        private void UpdateLanmola()
         {
             // spawn paticles
-            _faceParticleCounter -= Game1.DeltaTime;
-            if (_faceParticleCounter < 0)
+            _lanmolaParticleCounter -= Game1.DeltaTime;
+            if (_lanmolaParticleCounter < 0)
             {
-                _faceParticleCounter += 125;
+                _lanmolaParticleCounter += 125;
                 var objParticle = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerBottom, "Nightmares/nightmare particle", "face_particle", true);
                 Map.Objects.SpawnObject(objParticle);
             }
@@ -1307,18 +1307,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateFinalDeath()
         {
             // spawn the parts
-            _finalPartCounter -= Game1.DeltaTime;
+            _dethIPartCounter -= Game1.DeltaTime;
 
             // despawn?
-            if (_finalPartCounter < -300)
+            if (_dethIPartCounter < -300)
                 FinalExplose();
 
             for (var i = 0; i < 4; i++)
             {
-                if (i * 300 >= _finalPartCounter)
+                if (i * 300 >= _dethIPartCounter)
                 {
-                    _finalParts[i].SetActive(false);
-                    _finalParts[i + 4].SetActive(false);
+                    _dethIParts[i].SetActive(false);
+                    _dethIParts[i + 4].SetActive(false);
                 }
             }
         }
@@ -1347,12 +1347,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // deactivate the damge fields
             _damageField.IsActive = false;
             for (var i = 0; i < 8; i++)
-                _finalParts[i].DeactivateDamageField();
+                _dethIParts[i].DeactivateDamageField();
         }
 
         private void TickFinalDespawn(double counter)
         {
-            var time = _finalStateDeathCounter - counter;
+            var time = _dethIStateDeathCounter - counter;
             Sprite.SpriteShader = time % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
         }
 
@@ -1394,7 +1394,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitFinal()
         {
-            _finalState = true;
+            _dethIState = true;
             _animator.Play("final");
         }
 
@@ -1418,38 +1418,38 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             if (!_animatorEye.IsPlaying)
-                _finalEyeCounter -= Game1.DeltaTime;
+                _dethIEyeCounter -= Game1.DeltaTime;
 
-            if (_finalEyeCounter <= 0)
+            if (_dethIEyeCounter <= 0)
             {
                 // open the eye
-                if (_finalEyeState == 0)
+                if (_dethIEyeState == 0)
                 {
-                    _finalEyeState = 1;
-                    _finalEyeCounter += 1250 + Game1.RandomNumber.Next(750);
+                    _dethIEyeState = 1;
+                    _dethIEyeCounter += 1250 + Game1.RandomNumber.Next(750);
                     _animatorEye.Play("eye_open");
                 }
                 // close the eye
-                else if (_finalEyeState == 1)
+                else if (_dethIEyeState == 1)
                 {
-                    _finalEyeState = 0;
-                    _finalEyeCounter += 2500 + Game1.RandomNumber.Next(2500);
+                    _dethIEyeState = 0;
+                    _dethIEyeCounter += 2500 + Game1.RandomNumber.Next(2500);
                     _animatorEye.Play("eye_close");
                 }
             }
 
             // spawn the parts
-            if (_finalPartCounter < 4 * 300)
-                _finalPartCounter += Game1.DeltaTime;
+            if (_dethIPartCounter < 4 * 300)
+                _dethIPartCounter += Game1.DeltaTime;
 
-            if (_finalPartCounter > 300)
+            if (_dethIPartCounter > 300)
             {
-                _finalPart0 += Game1.DeltaTime * _finalPartSpeed0;
-                _finalPart1 += Game1.DeltaTime * _finalPartSpeed1;
+                _dethIPart0 += Game1.DeltaTime * _dethIPartSpeed0;
+                _dethIPart1 += Game1.DeltaTime * _dethIPartSpeed1;
 
-                var directionPart0 = new Vector2(MathF.Cos(_finalPart0), MathF.Sin(_finalPart0));
+                var directionPart0 = new Vector2(MathF.Cos(_dethIPart0), MathF.Sin(_dethIPart0));
                 SetFinalPartsPosition(directionPart0, 0);
-                var directionPart1 = new Vector2(-MathF.Cos(_finalPart1), MathF.Sin(_finalPart1));
+                var directionPart1 = new Vector2(-MathF.Cos(_dethIPart1), MathF.Sin(_dethIPart1));
                 SetFinalPartsPosition(directionPart1, 1);
             }
         }
@@ -1460,13 +1460,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             for (var i = 0; i < 4; i++)
             {
-                if ((i + 1) * 300 > _finalPartCounter)
+                if ((i + 1) * 300 > _dethIPartCounter)
                     break;
 
-                _finalParts[i + index * 4].SetActive(true);
+                _dethIParts[i + index * 4].SetActive(true);
 
-                position += direction * _finalPartDistance[i];
-                _finalParts[i + index * 4].EntityPosition.Set(position);
+                position += direction * _dethIPartDistance[i];
+                _dethIParts[i + index * 4].EntityPosition.Set(position);
             }
         }
 
@@ -1505,7 +1505,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitDespawn()
         {
-            _animator.Play("slime_despawn");
+            _animator.Play("giantZol_despawn");
         }
 
         private void UpdateDepawn()
@@ -1557,8 +1557,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 _aiDamageState.OnHit(origin, direction, HitType.Boss, 1, false);
 
-                _manLives--;
-                if (_manLives <= 0)
+                _agahnimLives--;
+                if (_agahnimLives <= 0)
                     _aiComponent.ChangeState("manRotate");
 
                 return true;
@@ -1641,7 +1641,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 ObjectManager.SpriteBatchBegin(spriteBatch, Sprite.SpriteShader);
             }
 
-            if (_finalState && (_finalEyeState == 1 || (_finalEyeState == 0 && _animatorEye.IsPlaying)))
+            if (_dethIState && (_dethIEyeState == 1 || (_dethIEyeState == 0 && _animatorEye.IsPlaying)))
                 _animatorEye.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y + 1), Color.White);
 
             if (Sprite.SpriteShader != null)
@@ -1654,23 +1654,23 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
             // Giant Zol
-            if (_slimeForm && (damageType & HitType.MagicPowder) != 0)
+            if (_giantZolForm && (damageType & HitType.MagicPowder) != 0)
             {
                 _body.Velocity.X = direction.X;
                 _body.Velocity.Y = direction.Y;
                 if (_body.Velocity.Z > 0)
                     _body.Velocity.Z = 0;
 
-                _aiComponent.ChangeState("slimeDamaged");
-                _slimeLives--;
+                _aiComponent.ChangeState("giantZolDamaged");
+                _giantZolLives--;
 
                 return Values.HitCollision.Enemy;
             }
 
             if ((damageType & (HitType.Sword | HitType.SwordHold)) != 0 &&
-                (_aiComponent.CurrentStateId == "slimeJump" || _aiComponent.CurrentStateId == "slimeWait"))
+                (_aiComponent.CurrentStateId == "giantZolJump" || _aiComponent.CurrentStateId == "giantZolWait"))
             {
-                _aiComponent.ChangeState("slimeHideExplode");
+                _aiComponent.ChangeState("giantZolHideExplode");
                 return Values.HitCollision.Enemy;
             }
 
@@ -1725,25 +1725,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 // bow hit from below with an open eye
                 if (!_aiDamageState.IsInDamageState() && (
-                    (_finalEyeState == 0 && _animatorEye.CurrentFrameIndex < 1) || (_finalEyeState == 1 && _animatorEye.CurrentFrameIndex >= 1)) && 
+                    (_dethIEyeState == 0 && _animatorEye.CurrentFrameIndex < 1) || (_dethIEyeState == 1 && _animatorEye.CurrentFrameIndex >= 1)) && 
                     MathF.Abs(direction.Y) > MathF.Abs(direction.X) && direction.Y < 0 &&
                     (damageType & HitType.Bow) != 0 | (damageType & HitType.Boomerang) != 0)
                 {
                     _aiDamageState.SetDamageState();
 
                     if ((damageType & HitType.Boomerang) != 0)
-                        _finalStateLives = 0;
+                        _dethILives = 0;
                     else
-                        _finalStateLives--;
+                        _dethILives--;
 
-                    if (_finalStateLives <= 0)
+                    if (_dethILives <= 0)
                         _aiComponent.ChangeState("finalBlink");
 
                     Game1.GameManager.PlaySoundEffect("D370-07-07");
 
                     // randomly change the speed of the two parts
-                    _finalPartSpeed0 = (1 / 2500.0f * MathF.PI * 2) * (1 + (Game1.RandomNumber.Next(0, 101) - 50) / 500f);
-                    _finalPartSpeed1 = (1 / 2500.0f * MathF.PI * 2) * (1 + (Game1.RandomNumber.Next(0, 101) - 50) / 500f);
+                    _dethIPartSpeed0 = (1 / 2500.0f * MathF.PI * 2) * (1 + (Game1.RandomNumber.Next(0, 101) - 50) / 500f);
+                    _dethIPartSpeed1 = (1 / 2500.0f * MathF.PI * 2) * (1 + (Game1.RandomNumber.Next(0, 101) - 50) / 500f);
 
                     return Values.HitCollision.Enemy;
                 }

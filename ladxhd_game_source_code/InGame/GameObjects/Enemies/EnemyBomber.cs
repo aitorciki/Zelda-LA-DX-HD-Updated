@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Vector2 _startPosition;
 
         private float _flyHeight = 14;
+        private int _lives = ObjLives.Bomber;
 
         public EnemyBomber() : base("bomber") { }
 
@@ -57,7 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("waiting");
 

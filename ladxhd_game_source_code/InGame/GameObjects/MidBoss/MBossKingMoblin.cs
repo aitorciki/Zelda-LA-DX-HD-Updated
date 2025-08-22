@@ -13,7 +13,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
-    class MKingMoblin : GameObject
+    class MBossKingMoblin : GameObject
     {
         private readonly BodyComponent _body;
         private readonly BodyDrawComponent _bodyDrawComponent;
@@ -30,15 +30,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly string _triggerKey;
         private readonly string _saveKey;
 
-        private const int Lives = 8;
+        private int _lives = ObjLives.KingMoblin;
 
         private double _bounceTime;
         private int _direction;
         private bool _endWaiting;
 
-        public MKingMoblin() : base("king_moblin") { }
+        public MBossKingMoblin() : base("king_moblin") { }
 
-        public MKingMoblin(Map.Map map, int posX, int posY, string triggerKey, string saveKey) : base(map)
+        public MBossKingMoblin(Map.Map map, int posX, int posY, string triggerKey, string saveKey) : base(map)
         {
             // was the boss already defeated?
             if (!string.IsNullOrEmpty(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
@@ -94,7 +94,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("bounce", stateBounce);
             _aiComponent.States.Add("look", stateLook);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, Lives, true, false)
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false)
             {
                 ExplostionWidth = 22,
                 ExplostionHeight = 18

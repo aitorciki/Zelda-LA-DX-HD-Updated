@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private const int BlinkTime = 600;
         private int _direction;
+        private int _lives = ObjLives.Wizzrobe;
 
         public EnemyWizzrobe() : base("wizzrobe") { }
 
@@ -70,7 +71,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.States.Add("despawnHead", stateDespawnHead);
             _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 4, false, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false);
             new AiFallState(_aiComponent, _body, null, null, 100);
 
             _aiComponent.ChangeState("hidden");

@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _cooldownPosition;
 
         private int _fadeTime = 250;
+        private int _lives = ObjLives.BooBuddy;
 
         public EnemyBooBuddy() : base("boo buddy") { }
 
@@ -78,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("cooldown", stateCooldown);
             _aiComponent.States.Add("fleeing", stateFleeing);
             _aiComponent.States.Add("fading", stateFading);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 4, true, false);
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false);
 
             var damageCollider = new CBox(EntityPosition, -7, -20, 0, 14, 14, 8);
 

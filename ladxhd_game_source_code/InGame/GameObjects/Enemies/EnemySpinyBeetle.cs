@@ -32,6 +32,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiTriggerTimer _hiddenTimer;
         private readonly DamageFieldComponent _damageField;
 
+        private int _lives = ObjLives.SpinyBeetle;
+
         private Rectangle _fieldRectangle;
 
         // 0: grass
@@ -102,7 +104,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("running", stateRunning);
             new AiFallState(_aiComponent, _body);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1);
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives);
 
             _aiComponent.ChangeState("moving");
 

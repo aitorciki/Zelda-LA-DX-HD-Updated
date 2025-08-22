@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _flyState;
         private int _dir;
+        private int _lives = ObjLives.Keese;
 
         public EnemyKeese() : base("keese") { }
 
@@ -64,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("cooldown", stateCooldown);
             _aiComponent.States.Add("flying", stateFlying);
             new AiFallState(_aiComponent, _body, null, null, 0);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("cooldown");
 

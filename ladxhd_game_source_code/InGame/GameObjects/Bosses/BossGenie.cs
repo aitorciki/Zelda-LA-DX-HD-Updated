@@ -31,11 +31,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly CSprite _sprite;
 
         private readonly string _saveKey;
+        private int _lives = ObjLives.Genie;
 
         private const float FollowSpeed = 1.5f;
         private const int AttackTime = 10000;
         private const int RotateTime = 2100;
-        private const int Lives = 8;
 
         private Vector2 _spawnPosition;
         private readonly Vector2 _roomCenter;
@@ -109,7 +109,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("follow", stateFollow);
             _aiComponent.States.Add("rotate", stateRotate);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, Lives, true, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
             _damageState.AddBossDamageState(OnDeath);
             _damageState.ExplosionOffsetY = -8;
             _damageState.BossHitSound = true;

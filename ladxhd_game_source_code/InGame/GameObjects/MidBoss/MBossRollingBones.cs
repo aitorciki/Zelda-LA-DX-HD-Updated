@@ -26,7 +26,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly string _saveKey;
 
         private const float MoveSpeed = 1.2f;
-        private const int Lives = 8;
+
+        private int _lives = ObjLives.RollingBones;
 
         private Vector2 _moveDirection;
 
@@ -92,7 +93,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("pushed", statePushed);
             _aiComponent.States.Add("blink", stateBlink);
             _aiComponent.States.Add("death", stateDeath);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, Lives, false, false) 
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false) 
             {
                 OnDeath = OnDeath,
                 BossHitSound = true

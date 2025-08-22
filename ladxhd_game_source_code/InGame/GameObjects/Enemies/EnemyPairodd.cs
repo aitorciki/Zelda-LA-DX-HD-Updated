@@ -25,6 +25,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Rectangle _fieldRectangle;
         private readonly Vector2 _centerPosition;
 
+        private int _lives = ObjLives.Pairodd;
+
         public EnemyPairodd() : base("pairodd") { }
 
         public EnemyPairodd(Map.Map map, int posX, int posY) : base(map)
@@ -63,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.States.Add("hidden", stateHidden);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2, true, false) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { OnBurn = OnBurn };
             _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "idle" };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
 

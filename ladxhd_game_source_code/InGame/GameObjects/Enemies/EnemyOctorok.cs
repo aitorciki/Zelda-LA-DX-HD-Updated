@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _walkSpeed = 0.5f;
         private int _direction;
+        private int _lives = ObjLives.Octorok;
 
         public EnemyOctorok() : base("octorok") { }
 
@@ -66,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
             _aiComponent.ChangeState("walking");
 
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             var damageBox = new CBox(EntityPosition, -8, -13, 0, 16, 13, 4);
             var hittableBox = new CBox(EntityPosition, -7, -15, 0, 14, 15, 8);
             var pushableBox = new CBox(EntityPosition, -7, -13, 0, 14, 13, 4);

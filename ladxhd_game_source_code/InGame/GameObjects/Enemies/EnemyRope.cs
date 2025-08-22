@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private int _animationDirection;
         private int _direction;
+        private int _lives = ObjLives.Rope;
 
         public EnemyRope() : base("rope") { }
 
@@ -65,7 +66,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("run", stateRun);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
             new AiDeepWaterState(_body);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("walk");
 

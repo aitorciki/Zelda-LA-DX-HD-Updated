@@ -17,6 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Color _lightColor = new Color(255, 255, 255);
 
+        private int _lives = ObjLives.AntiFairy;
+
         public EnemyAntiFairy() : base("antiFairy") { }
 
         public EnemyAntiFairy(Map.Map map, int posX, int posY) : base(map)
@@ -50,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             aiComponent.States.Add("idle", new AiState());
             aiComponent.ChangeState("idle");
 
-            _aiDamageState = new AiDamageState(this, _body, aiComponent, sprite, 1, false)
+            _aiDamageState = new AiDamageState(this, _body, aiComponent, sprite, _lives, false)
             {
                 IgnoreZeroDamage = true,
                 FlameOffset = new Point(0, 2),

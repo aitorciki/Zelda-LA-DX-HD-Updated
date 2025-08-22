@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private string _saveKey;
         private int _jumpCount;
         private bool _hitRepelling = true;
+        private int _lives = ObjLives.ArmosKnight;
 
         private const int ShakeTime = 500;
         private const float WalkSpeed = 0.6f;
@@ -85,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("attackWait", stateAttackWait);
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("attackFinished", stateAttackFinished);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 2 * 6, false) { BossHitSound = true };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { BossHitSound = true };
             _aiDamageState.AddBossDamageState(RemoveObject);
 
             _aiComponent.ChangeState("idle");

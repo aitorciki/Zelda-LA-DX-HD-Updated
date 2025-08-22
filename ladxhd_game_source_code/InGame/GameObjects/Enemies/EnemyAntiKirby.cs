@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Vector2 _walkDirection;
 
+        private int _lives = ObjLives.AntiKirby;
         private int _direction;
         private bool _hasPlayerTrapped;
         private bool _endMove;
@@ -75,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("trap", stateTrap);
             _aiComponent.States.Add("spit", stateSpit);
             new AiFallState(_aiComponent, _body);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 8, true, false)
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false)
             {
                 HitMultiplierX = 2.5f,
                 HitMultiplierY = 2.5f,

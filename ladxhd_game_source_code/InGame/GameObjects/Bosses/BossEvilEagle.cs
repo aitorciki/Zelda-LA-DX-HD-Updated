@@ -34,12 +34,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private Vector2 _slowStart;
         private float _slowCounter;
         private float _transparency = 0;
-
+        private int _lives = ObjLives.EvilEagle;
         private int _spawnIndex;
         private int _direction;
 
         private const float FlySpeed = 2;
-        private const int Lives = 12;
 
         private Vector2 _wingStartPosition;
         private Vector2 _wingEndPosition;
@@ -133,7 +132,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("leave", stateLeave);
             _aiComponent.States.Add("gone", stateGone);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, Lives, false, false, AiDamageState.BlinkTime * 2 * 10) { ExplosionOffsetY = 8 };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false, AiDamageState.BlinkTime * 2 * 10) { ExplosionOffsetY = 8 };
             _damageState.AddBossDamageState(OnDeath);
 
             AddComponent(AiComponent.Index, _aiComponent);
@@ -177,7 +176,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
-            _damageState.CurrentLives = Lives;
+            _damageState.CurrentLives = _lives;
         }
 
         private void UpdateIdle()

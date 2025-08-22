@@ -16,6 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _aiDamageState;
 
         private int _collisionCount;
+        private int _lives = ObjLives.PokeyPart;
+
 
         public EnemyPokeyPart(Map.Map map, float posX, float posY, Vector2 velocityTarget, Vector3 velocity) : base(map)
         {
@@ -45,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("spawning", stateSpawning);
             _aiComponent.States.Add("moving", stateMoving);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { IsActive = false };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { IsActive = false };
             _aiComponent.ChangeState("spawning");
 
             var damageCollider = new CBox(EntityPosition, -6, -13, 0, 12, 12, 4, true);

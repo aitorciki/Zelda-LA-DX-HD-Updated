@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly string _saveKey;
         private readonly string _halfKey;
 
-        private const int Lives = 4;
+        private int _lives = ObjLives.SlimeEyeHalf;
         private int _jumpHeight = 100;
 
         private bool _highJump;
@@ -82,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("jumping", stateJumping);
             _aiComponent.States.Add("highJump", stateHighJumping);
             _aiComponent.States.Add("highJumpWaiting", stateHighJumpingWait);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, Lives, false) { BossHitSound = true };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false) { BossHitSound = true };
             _damageState.AddBossDamageState(OnDeath);
 
             _aiComponent.ChangeState("init");

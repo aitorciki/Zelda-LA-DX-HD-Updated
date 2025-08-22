@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _attackCounter;
         private int _dirIndex;
+        private int _lives = ObjLives.Pincer;
 
         public EnemyPincer() : base("pincer") { }
 
@@ -69,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("attacking", stateAttacking);
             _aiComponent.States.Add("attackWait", stateAttackWait);
             _aiComponent.States.Add("retract", stateRetract);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2, false) { HitMultiplierX = 1.5f, HitMultiplierY = 1.5f };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false) { HitMultiplierX = 1.5f, HitMultiplierY = 1.5f };
             _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900);
 
             _aiComponent.ChangeState("waiting");

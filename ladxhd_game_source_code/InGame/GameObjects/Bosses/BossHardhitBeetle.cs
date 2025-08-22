@@ -46,6 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private const float MoveSpeed = 0.375f;
         private int _colorIndex;
 
+        private int _lives = ObjLives.HardHitBeetle;
         private bool _isDead;
 
         private float _stalfosCounter;
@@ -93,7 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("idleDelay", stateIdleDelay);
             _aiComponent.States.Add("walk", stateWalk);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,

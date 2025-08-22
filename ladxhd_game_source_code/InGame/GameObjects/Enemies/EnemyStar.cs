@@ -14,6 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
 
+        private int _lives = ObjLives.Star;
+
         public EnemyStar() : base("star") { }
 
         public EnemyStar(Map.Map map, int posX, int posY) : base(map)
@@ -42,7 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
-            var damageState = new AiDamageState(this, _body, aiComponent, sprite, 1, false) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
 
             aiComponent.ChangeState("idle");
 

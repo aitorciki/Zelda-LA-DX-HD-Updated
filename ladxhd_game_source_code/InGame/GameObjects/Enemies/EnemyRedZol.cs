@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _jumpAcceleration = 1.5f;
 
         private bool _spawnSmallZols = true;
+        private int _lives = ObjLives.RedZol;
 
         public EnemyRedZol() : base("red zol") { }
 
@@ -66,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("shaking", stateShaking);
             _aiComponent.States.Add("jumping", stateJumping);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1)
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
             {
                 OnDeath = OnDeath,
                 OnBurn = OnBurn

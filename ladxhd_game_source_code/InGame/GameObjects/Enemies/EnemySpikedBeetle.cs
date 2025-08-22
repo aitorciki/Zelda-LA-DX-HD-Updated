@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _walkSpeed = 0.5f;
         private float _runSpeed = 1.5f;
+        private int _lives = ObjLives.SpikedBeetle;
 
         private bool _playerInsideField;
 
@@ -72,7 +73,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("stunned", stateStunned);
             _aiComponent.States.Add("back", stateBack);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             new AiFallState(_aiComponent, _body, OnAbsorption, null, 250);
             new AiDeepWaterState(_body);
 

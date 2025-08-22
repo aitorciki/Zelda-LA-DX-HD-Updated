@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly bool _fallMode;
 
+        private int _lives = ObjLives.GreenZol;
         private int _jumpsLeft;
         private bool _pushable = false;
 
@@ -80,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("shaking", stateShaking);
             _aiComponent.States.Add("despawning", stateDespawning);
             _aiComponent.States.Add("spawnDelay", stateSpawnDelay);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, null, null, 250);
             new AiDeepWaterState(_body);
 

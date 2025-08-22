@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly float _movementSpeed;
         private readonly string _strColor;
+        private int _lives = ObjLives.CamoGoblin;
 
         public EnemyCamoGoblin() : base("camo goblin") { }
 
@@ -81,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("wobble", stateWobble);
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.States.Add("holePull", stateHolePull);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, null, null, 0);
 
             var damageBox = new CBox(EntityPosition, -6, -20, 0, 12, 20, 4);

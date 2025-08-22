@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _moveSpeed = 1 / 3f;
         private int _direction;
         private int _state;
+        private int _lives = ObjLives.Pokey;
 
         public EnemyPokey() : base("pokey") { }
 
@@ -58,7 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moving", stateMoving);
             new AiFallState(_aiComponent, _body, null);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 4);
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives);
 
             _aiComponent.ChangeState("moving");
 

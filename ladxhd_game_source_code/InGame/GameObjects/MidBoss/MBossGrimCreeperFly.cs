@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Vector2 _leaveStart;
         private Vector2 _leaveEnd;
         private float _leaveCounter;
+        private int _lives = ObjLives.GrimCreeperFly;
 
         private float _circlingOffset;
         private float _circleSpeed;
@@ -80,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("fadeout", stateFadeout);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1)
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
             {
                 OnBurn = OnBurn
             };

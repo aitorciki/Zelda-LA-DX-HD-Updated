@@ -36,6 +36,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private const float WalkSpeed = 0.75f;
         private const float CarrySpeed = 0.25f;
 
+        private int _lives = ObjLives.Smasher;
         private int _direction;
         private int _jumpCount;
 
@@ -92,7 +93,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("pickup", statePickup);
             _aiComponent.States.Add("carry", stateCarry);
             _aiComponent.States.Add("postThrow", statePostThrow);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 8) { BossHitSound = true, ExplosionOffsetY = 6, OnLiveZeroed = OnLiveZeroed };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { BossHitSound = true, ExplosionOffsetY = 6, OnLiveZeroed = OnLiveZeroed };
             _damageState.AddBossDamageState(RemoveObject);
 
             _aiComponent.ChangeState("waiting");

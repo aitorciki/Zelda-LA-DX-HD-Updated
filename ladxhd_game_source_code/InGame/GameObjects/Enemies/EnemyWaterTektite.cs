@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _currentSpeed;
         private int _currentDir;
+        private int _lives = ObjLives.WaterTektite;
 
         public static Vector2[] Directions =
         {
@@ -67,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("waiting", stateWaiting);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);

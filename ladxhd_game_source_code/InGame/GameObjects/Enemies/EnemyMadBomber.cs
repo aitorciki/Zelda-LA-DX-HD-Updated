@@ -28,6 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Vector2 _spawnPosition;
         private bool _wasHit;
+        private int _lives = ObjLives.MadBomber;
 
         public EnemyMadBomber() : base("madBomber") { }
 
@@ -72,7 +73,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.ChangeState("hidden");
 
-            _damageState = new AiDamageState(this, body, _aiComponent, _sprite, 4, false)
+            _damageState = new AiDamageState(this, body, _aiComponent, _sprite, _lives, false)
             {
                 IsActive = false,
                 SpawnItems = false,

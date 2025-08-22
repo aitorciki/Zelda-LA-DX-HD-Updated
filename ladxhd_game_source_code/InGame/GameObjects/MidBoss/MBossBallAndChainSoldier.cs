@@ -27,6 +27,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private string _strKey;
 
         private float _currentBallSpeed = 300;
+        private int _lives = ObjLives.BaCSoldier;
 
         private const float BallDistance = 10;
         private const float BallDistanceThrow = 56;
@@ -92,7 +93,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8);
             AddComponent(AnimationComponent.Index, _animatorComponent);
             AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            _damageState = new AiDamageState(this, _body, _ai, _sprite, 8, false)
+            _damageState = new AiDamageState(this, _body, _ai, _sprite, _lives, false)
             {
                 OnDeath = OnDeath
             };

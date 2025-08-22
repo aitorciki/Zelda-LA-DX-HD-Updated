@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly Vector2 _spawnPosition;
         private Vector2 _targetPosition;
 
+        private int _lives = ObjLives.StoneHinox;
         private int _lastWalkFrame;
         private int _jumpCount = 0;
         private bool _wasHit;
@@ -83,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("attack", stateHitFloor);
             _aiComponent.States.Add("postAttack", statePostAttack);
             _aiComponent.States.Add("postHit", statePostHit);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, 8, false, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false, false)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,

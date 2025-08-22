@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _initShakeSpriteOffsetX;
         private bool _smallBody;
         private bool _throwDamage;
+        private int _lives = ObjLives.Karakoro;
 
         private Vector2 _holeStartPosition;
         private Vector2 _holeTargetPosition;
@@ -124,7 +125,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("holeJump", stateHoleJump);
             _aiComponent.States.Add("hole", stateHole);
             _aiComponent.States.Add("wrongHole", stateWrongHole);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2) { HitMultiplierX = 2.5f, HitMultiplierY = 2.5f };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { HitMultiplierX = 2.5f, HitMultiplierY = 2.5f };
 
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 2) == 0 ? "idle" : "walk");
             _aiComponent.ChangeState("walk");

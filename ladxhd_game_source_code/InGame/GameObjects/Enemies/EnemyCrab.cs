@@ -16,6 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
 
         private int _currentDirection;
+        private int _lives = ObjLives.Crab;
 
         public EnemyCrab() : base("crab") { }
 
@@ -56,7 +57,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("walkingV", stateWalkingV);
             _aiComponent.States.Add("walkingH", stateWalkingH);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             ToWalking();
 
             var hittableRectangle = new CBox(EntityPosition, -8, -15, 16, 15, 8);

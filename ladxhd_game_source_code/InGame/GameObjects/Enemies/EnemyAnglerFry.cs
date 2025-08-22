@@ -19,6 +19,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float MovementSpeed = 0.5f;
         private const int SpawnTime = 100;
 
+        private int _lives = ObjLives.AnglerFry;
         private float _swimCounter;
 
         public EnemyAnglerFry() : base("anglerFry") { }
@@ -55,7 +56,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.Trigger.Add(triggerCount);
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("despawning", stateDespawning);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1)
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
             { SpawnItems = false, HitMultiplierX = 6, HitMultiplierY = 6 };
             _aiComponent.ChangeState("moving");
 

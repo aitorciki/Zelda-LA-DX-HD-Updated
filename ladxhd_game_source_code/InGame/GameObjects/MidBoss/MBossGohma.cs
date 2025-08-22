@@ -39,7 +39,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         // 1: one of them is dead
         // 2: both parts are dead
         private int _bossState;
-
+        private int _lives = ObjLives.Ghoma;
         private string _saveKey;
         private bool _isOnTop;
 
@@ -117,7 +117,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("eye2", stateEye2);
             _aiComponent.States.Add("eye3", stateEye3);
 
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 12, false, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
             {
                 BossHitSound = true,
                 HitMultiplierX = 0,

@@ -28,6 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly string _roomName;
         private readonly string _entryId;
         private readonly bool _isPusher;
+        private int _lives = ObjLives.Vacuum;
 
         public EnemyVacuum() : base("vacuum") { }
 
@@ -68,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("vacuum", stateVacuum);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1)
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
             {
                 MoveBody = false,
                 ExplosionOffsetY = 4

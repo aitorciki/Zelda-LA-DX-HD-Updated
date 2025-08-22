@@ -14,7 +14,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
-    class MDodongoSnake : GameObject
+    class MBossDodongoSnake : GameObject
     {
         private readonly List<GameObject> _collidingObjects = new List<GameObject>();
 
@@ -52,12 +52,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _playedSwollowSound;
         private bool _playerInRoom;
 
-        private int _lives = 3;
+        private int _lives = ObjLives.DodongoSnake;
 
         // @TODO: it looks like the body gets left behind when we move out of the screen
-        public MDodongoSnake() : base("snake blue") { }
+        public MBossDodongoSnake() : base("snake blue") { }
 
-        public MDodongoSnake(Map.Map map, int posX, int posY, string saveKey, int color, bool resetKey) : base(map)
+        public MBossDodongoSnake(Map.Map map, int posX, int posY, string saveKey, int color, bool resetKey) : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 

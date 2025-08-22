@@ -29,6 +29,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly string _saveKey;
 
         private const float MoveSpeed = 2f;
+        private int _lives = ObjLives.HotHead;
 
         private Vector2[] _facePosition = new Vector2[2];
 
@@ -102,7 +103,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("broken", stateBroken);
             _aiComponent.States.Add("freeze", stateFrozen);
             _aiComponent.States.Add("dead", stateDead);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 20, false, false)
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,

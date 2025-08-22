@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float AttackSpeed = 0.55f;
         private const int AttackRange = 80;
 
+        private int _lives = ObjLives.StalfosKnight;
         private int _direction;
 
         private bool _isActive = true;
@@ -81,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalk);
             _aiComponent.States.Add("attack", stateAttack);
             new AiFallState(_aiComponent, Body, OnHoleAbsorb, OnAbsorbDeath);
-            _damageState = new AiDamageState(this, Body, _aiComponent, _sprite, 2)
+            _damageState = new AiDamageState(this, Body, _aiComponent, _sprite, _lives)
             {
                 OnDeath = OnDeath,
                 OnBurn = OnBurn

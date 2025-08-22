@@ -45,6 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _partBreakIndex;
         private float _partCounter = -500;
 
+        private int _lives = ObjLives.TurtleRock;
         private string _saveKey;
         private bool _attackable = false;
         private bool _isDead = false;
@@ -142,7 +143,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("return", stateReturn);
             _aiComponent.States.Add("dead", stateDead);
 
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, 16, false, false, AiDamageState.BlinkTime * 6)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false, AiDamageState.BlinkTime * 6)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,

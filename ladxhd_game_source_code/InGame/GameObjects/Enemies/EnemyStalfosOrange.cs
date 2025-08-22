@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _walkSpeed = 0.5f;
         private float _changeDirCount;
         private int _dir;
+        private int _lives = ObjLives.StalfosOrange;
 
         private float _throwCounter;
         private bool _throwBone;
@@ -66,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("jumping", stateJumping);
             new AiFallState(_aiComponent, _body, null, null, 200);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiComponent.ChangeState("walking");
 
             var damageBox = new CBox(EntityPosition, -7, -15, 2, 13, 15, 4);

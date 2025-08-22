@@ -33,6 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly int _index;
 
         private float _soundCounter;
+        private int _lives = ObjLives.FlyingTile;
 
         // initial time for the activation
         private float _activationCounter = 1500;
@@ -85,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("ascent", stateAscent);
             _aiComponent.States.Add("wait", stateWait);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 1) { OnBurn = OnBurn, FlameOffset = new Point(0, 7), ExplosionOffsetY = 7 };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn, FlameOffset = new Point(0, 7), ExplosionOffsetY = 7 };
             _aiComponent.ChangeState("idle");
 
             var damageCollider = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4, true);

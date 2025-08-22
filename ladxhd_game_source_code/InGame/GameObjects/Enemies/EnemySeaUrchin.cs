@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _soundCounter;
         private bool _dealsDamage = true;
+        private int _lives = ObjLives.SeaUrchin;
 
         public EnemySeaUrchin() : base("sea urchin") { }
 
@@ -50,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
-            var damageState = new AiDamageState(this, _body, aiComponent, sprite, 1) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives) { OnBurn = OnBurn };
             aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8, true);

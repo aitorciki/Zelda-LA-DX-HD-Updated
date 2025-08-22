@@ -28,6 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _dirRadius;
         private int _dirIndex;
         private bool _goldLeaf;
+        private int _lives = ObjLives.Crow;
 
         private const string _leafSaveKey = "ow_goldLeafCrow";
 
@@ -77,7 +78,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("start", stateStart);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2, true, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false);
 
             if (_goldLeaf)
                 _damageState.OnDeath = OnDeath;

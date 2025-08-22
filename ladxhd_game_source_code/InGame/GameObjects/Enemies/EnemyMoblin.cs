@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _moveSpeed = 0.5f;
         private int _direction;
+        private int _lives = ObjLives.Moblin;
 
         public EnemyMoblin() : base("moblin") { }
 
@@ -64,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiComponent.ChangeState("init");
 
             // stand in a random direction

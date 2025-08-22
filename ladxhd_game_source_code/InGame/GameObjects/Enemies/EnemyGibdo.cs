@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float MoveSpeed = 0.5f;
 
         private int _direction;
+        private int _lives = ObjLives.Gibdo;
 
         public EnemyGibdo() : base("gibdo") { }
 
@@ -52,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("walk", stateWalking);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 6, false)
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false)
             {
                 HitMultiplierX = 1.0f,
                 HitMultiplierY = 1.0f,
