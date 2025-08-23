@@ -1,3 +1,7 @@
+# **The Legend of Zelda: Link's Awakening v1.1.2 Changelog:**
+### **Emergency Update:**
+ * Don't apply smaller collision scale to holes already smaller than 16x16.
+
 # **The Legend of Zelda: Link's Awakening v1.1.1 Changelog:**
 ### **Minor Update:**
  * Reimplement the option to unlock FPS.
