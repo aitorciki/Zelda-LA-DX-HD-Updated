@@ -101,6 +101,10 @@ namespace ProjectZ.InGame.Things
         public string SaveName = "Link";
         public string BackupName = "Link";
 
+        // playtime tracking
+        public float TotalPlaytime = 0.0f; // total playtime across all sessions in minutes
+        public float CurrentSessionPlaytime = 0.0f; // current session playtime in minutes
+
         public float DrawPlayerOnTopPercentage;
 
         public bool FreezeWorldAroundPlayer;
@@ -239,6 +243,9 @@ namespace ProjectZ.InGame.Things
 
             if (Game1.UpdateGame && Game1.TotalGameTime > Game1.FreezeTime)
             {
+                // track playtime during active gameplay (exclude pause/menu time)
+                CurrentSessionPlaytime += Game1.DeltaTime / 1000.0f / 60.0f; // convert ms to minutes
+
                 // update the game-systems
                 foreach (var gameSystem in GameSystems)
                     gameSystem.Value.Update();
@@ -1375,6 +1382,8 @@ namespace ProjectZ.InGame.Things
             ResetStuff();
 
             SaveName = slotName;
+            TotalPlaytime = 0.0f;
+            CurrentSessionPlaytime = 0.0f;
 
             Equipment = new GameItemCollected[EquipmentSlots];
 
