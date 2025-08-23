@@ -125,6 +125,10 @@ namespace LADXHD_Migrater
             (Config.game_source + "\\Content\\obj").RemovePath();
             (Config.game_source + "\\Publish").RemovePath();
             (Config.game_source + "\\zelda_ladxhd_build").RemovePath();
+            (Config.migrate_source + "\\bin").RemovePath();
+            (Config.migrate_source + "\\obj").RemovePath();
+            (Config.patcher_source + "\\bin").RemovePath();
+            (Config.patcher_source + "\\obj").RemovePath();
 
             Forms.okayDialog.Display("Finished", 260, 40, 26, 26, 15,
                 "Finished cleaning build files (obj/bin/Publish folders).");
