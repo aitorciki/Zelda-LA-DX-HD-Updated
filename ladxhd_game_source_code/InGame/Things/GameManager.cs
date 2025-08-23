@@ -99,6 +99,7 @@ namespace ProjectZ.InGame.Things
         public bool[,] MapVisibility;
 
         public string SaveName = "Link";
+        public string BackupName = "Link";
 
         public float DrawPlayerOnTopPercentage;
 

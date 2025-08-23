@@ -3759,6 +3759,11 @@ namespace ProjectZ.InGame.GameObjects
             // used in ObjStoreItem to not return the item to the shelf
             Game1.GameManager.SaveManager.SetString("result", "0");
 
+            // Back up the player's name for a chance at redemption.
+            if (Game1.GameManager.SaveName != "Thief")
+                Game1.GameManager.BackupName = Game1.GameManager.SaveName;
+
+            // Rename the player to "Thief".
             Game1.GameManager.SaveName = "Thief";
 
             // add the item to the inventory
