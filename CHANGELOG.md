@@ -1,3 +1,15 @@
+# **The Legend of Zelda: Link's Awakening v1.1.1 Changelog:**
+### **Minor Update:**
+ * Reimplement the option to unlock FPS.
+ * Fix alligator can throw with unlocked FPS (credit @buttcheeks69).
+ * Fix incorrectly calculated custom text height for confirm button (credit @squiddingme).
+ * More accurate timing when picking up sword on beach (credit: @buttcheeks69).
+ * Show key counter on HUD when in dungeons (credit: @squiddingme)
+ * Custom sprite for key counter.
+ * Add option to display items in the bottom right (credit: @squiddingme).
+ * Pay the Shop Keeper to no longer be called "Thief" after stealing.
+ * Reduced collision size / pull strength of holes to more closely match the original game.
+
 # **The Legend of Zelda: Link's Awakening v1.1.0 Changelog:**
 ### **General:**
  * Saves and settings files are now located in "..\AppData\Local\Zelda_LA".
