@@ -16,9 +16,8 @@ namespace LADXHD_Migrater
         {
             if (!XDelta3.Exe.TestPath())
             {
-                string Title = "XDelta3 Not Found";
-                string Message = "This program requires \"xdelta3.exe\" to be present in the \"ladxhd_game_source_code\" path.";
-                Forms.okayDialog.Display(Title, Message, 240, 40, 30, 16, 15);
+                Forms.okayDialog.Display("XDelta3 Not Found", 240, 40, 30, 16, 15, 
+                    "This program requires \"xdelta3.exe\" to be present in the \"ladxhd_game_source_code\" path.");
                 return false;
             }
             return true;

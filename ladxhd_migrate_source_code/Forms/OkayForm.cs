@@ -42,7 +42,7 @@ namespace LADXHD_Migrater
             this.Close();
         }
 
-        public void Display(string Title, string Message, int SizeX, int SizeY, int OffsetX, int OffsetY, int TimeOut = 0)
+        public void Display(string Title, int SizeX, int SizeY, int OffsetX, int OffsetY, int TimeOut, string Message)
         {
             // Set the dialog properties.
             this.Text = Title;

@@ -7,6 +7,8 @@ namespace LADXHD_Migrater
     {
         public static bool BuildGame()
         {
+            if (!Config.game_source.TestPath()) return false;
+
             try
             {
                 using (Process dotnet = new Process())
@@ -31,13 +33,13 @@ namespace LADXHD_Migrater
 
                     if (!string.IsNullOrWhiteSpace(error))
                     {
-                        Forms.okayDialog.Display("Build Error", error, 250, 40, 27, 9, 15);
+                        Forms.okayDialog.Display("Build Error", 250, 40, 27, 9, 15, error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Forms.okayDialog.Display("Exception Caught", "Exception: " + ex.Message, 250, 40, 27, 9, 15);
+                Forms.okayDialog.Display("Exception Caught", 250, 40, 27, 9, 15, "Exception: " + ex.Message);
             }
             string GameExePath = Config.publish_Path + "\\Link's Awakening DX HD.exe";
             return GameExePath.TestPath();

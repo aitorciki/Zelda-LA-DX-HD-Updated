@@ -12,8 +12,19 @@ namespace LADXHD_Migrater
             byte[] ByteArray = File.ReadAllBytes(FilePath);
             return BitConverter.ToString(Algorithm.ComputeHash(ByteArray)).Replace("-", "");
         }
-
-        public static void PatchCopyLoop(string orig, string update)
+        public static bool VerifyMigrate()
+        {
+            if (!Config.orig_Content.TestPath() || !Config.orig_Data.TestPath())
+            {
+                Forms.okayDialog.Display("Error: Assets Missing", 250, 40, 26, 16, 15,
+                    "Either the original \"Content\" folder, \"Data\" folder, or both are missing from the \"assets_original\" folder.");
+                return false;
+            }
+            bool verify = Forms.yesNoDialog.Display("Confirm Migration", 250, 40, 31, 16, true, 
+                "Are you sure you wish to migrate assets? This will apply current patches and overwrite your assets!");
+            return verify;
+        }
+        public static void MigrateCopyLoop(string orig, string update)
         {
             foreach (string file in orig.GetFiles("*", true))
             {
@@ -35,19 +46,37 @@ namespace LADXHD_Migrater
         }
         public static void MigrateFiles()
         {
+            if (!VerifyMigrate()) return;
             Forms.mainDialog.ToggleDialog(false);
 
-            PatchCopyLoop(Config.orig_Content, Config.update_Content);
-            PatchCopyLoop(Config.orig_Data, Config.update_Data);
+            MigrateCopyLoop(Config.orig_Content, Config.update_Content);
+            MigrateCopyLoop(Config.orig_Data, Config.update_Data);
 
-            string Title = "Finished Migration";
-            string Message = "Updated Content/Data files to latest versions.";
-            Forms.okayDialog.Display(Title, Message, 280, 40, 45, 26, 15);
-
+            Forms.okayDialog.Display("Finished Migration", 280, 40, 45, 26, 15, 
+                "Updated Content/Data files to latest versions.");
             Forms.mainDialog.ToggleDialog(true);
         }
 
-        public static void PatchCreateLoop(string orig, string update)
+
+        public static bool VerifyCreatePatch()
+        {
+            if (!Config.orig_Content.TestPath() || !Config.orig_Data.TestPath())
+            {
+                Forms.okayDialog.Display("Error: Assets Missing", 250, 40, 26, 16, 15,
+                    "Either the original \"Content\" folder, \"Data\" folder, or both are missing from the \"assets_original\" folder.");
+                return false;
+            }
+            if (!Config.update_Content.TestPath() || !Config.update_Data.TestPath())
+            {
+                Forms.okayDialog.Display("Assets Missing", 250, 40, 34, 16, 15,
+                    "Either the \"Content\" folder, \"Data\" folder, or both are missing from \"ladxhd_game_source_code\".");
+                return false;
+            }
+            bool verify = Forms.yesNoDialog.Display("Confirm Create Patches", 250, 40, 31, 16, true, 
+                "Are you sure you wish to create patches? This will overwrite all current patches with recent changes!");
+            return verify;
+        }
+        public static void CreatePatchLoop(string orig, string update)
         {
             foreach (string file in update.GetFiles("*", true))
             {
@@ -68,20 +97,26 @@ namespace LADXHD_Migrater
         }
         public static void CreatePatches()
         {
+            if (!VerifyCreatePatch()) return;
             Forms.mainDialog.ToggleDialog(false);
 
-            PatchCreateLoop(Config.orig_Content, Config.update_Content);
-            PatchCreateLoop(Config.orig_Data, Config.update_Data);
+            CreatePatchLoop(Config.orig_Content, Config.update_Content);
+            CreatePatchLoop(Config.orig_Data, Config.update_Data);
 
-            string Title = "Patches Created";
-            string Message = "Finished creating xdelta patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.";
-            Forms.okayDialog.Display(Title, Message, 250, 40, 27, 9, 15);
-
+            Forms.okayDialog.Display("Patches Created", 250, 40, 27, 9, 15,
+                "Finished creating xdelta patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.");
             Forms.mainDialog.ToggleDialog(true);
         }
 
+        public static bool VerifyCleanFiles()
+        {
+            bool verify = Forms.yesNoDialog.Display("Clean Build Files", 250, 40, 29, 9, true, 
+                "Are you sure you wish to clean build files? This will remove all instances of \'obj\', \'bin\', \'Publish\', and \'zelda_ladxhd_build\' folders if they currently exist.");
+            return verify;
+        }
         public static void CleanBuildFiles()
         {
+            if (!VerifyCleanFiles()) return;
             Forms.mainDialog.ToggleDialog(false);
 
             (Config.game_source + "\\bin").RemovePath();
@@ -89,11 +124,10 @@ namespace LADXHD_Migrater
             (Config.game_source + "\\Content\\bin").RemovePath();
             (Config.game_source + "\\Content\\obj").RemovePath();
             (Config.game_source + "\\Publish").RemovePath();
+            (Config.game_source + "\\zelda_ladxhd_build").RemovePath();
 
-            string Title = "Finished";
-            string Message = "Finished cleaning build files (obj/bin/Publish folders).";
-            Forms.okayDialog.Display(Title, Message, 260, 40, 26, 26, 15);
-
+            Forms.okayDialog.Display("Finished", 260, 40, 26, 26, 15,
+                "Finished cleaning build files (obj/bin/Publish folders).");
             Forms.mainDialog.ToggleDialog(true);
         }
 
@@ -106,9 +140,8 @@ namespace LADXHD_Migrater
                 string MoveDestination = Config.baseFolder + "\\zelda_ladxhd_build";
                 Config.publish_Path.MovePath(MoveDestination, true);
 
-                string Title = "Finished";
-                string Message = "Finished build process. If the build was successful, it can be found in the \"zelda_ladxhd_build\" folder.";
-                Forms.okayDialog.Display(Title, Message, 250, 40, 28, 16, 15);
+                Forms.okayDialog.Display("Finished", 250, 40, 28, 16, 15,
+                    "Finished build process. If the build was successful, it can be found in the \"zelda_ladxhd_build\" folder.");
             }
             Forms.mainDialog.ToggleDialog(true);
         }
