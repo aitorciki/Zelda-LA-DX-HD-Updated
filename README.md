@@ -2,11 +2,16 @@
 
 **NOTE: THIS REPOSITORY DOES NOT INCLUDE COPYRIGHTED GAME ASSETS!**
 
-A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. To use this fork, whether to play the game or build upon, it requires the user to provide the assets from the original v1.0.0 release. Some assets have been updated, but I have created tooling to make migration easier.
+A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
+
+To use this fork, whether to play the game or build upon, it requires the user to provide the assets from the original v1.0.0 release. Some assets have been updated, but I have created tooling to make migration easier.
 
 See the [changelog](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/CHANGELOG.md) for a list of changes from v1.0.0.
 
-As of v1.1.0, the game is in a really good state and the "feel" is really close to the original game (but with all the enhancements of a PC port). There is still more that could be done, but I am taking a break from it for now.
+As of v1.1.0, the game is in a really good state and the "feel" is really close to the original game (but with all the enhancements of a PC port).
+
+This repository is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) which was silently worked on.   
+It's worth having a [link to the commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/) for the sake of the changes history.
 
 ## Patching v1.0.0 to v1.1.2
 
