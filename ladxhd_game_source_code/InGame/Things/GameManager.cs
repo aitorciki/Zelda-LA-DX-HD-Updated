@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -184,7 +184,8 @@ namespace ProjectZ.InGame.Things
         private float[] _musicCounter = new float[MusicChannels];
 
         // Muting the sound requires overwriting effect volume so store user setting.
-        public int _curEffectVolume;
+        private int _curEffectVolume = GameSettings.EffectVolume;
+        private bool _lastStateSet;
 
         public GameManager()
         {
@@ -862,16 +863,21 @@ namespace ProjectZ.InGame.Things
 
         public void HandleInactiveWindow(bool IsActive)
         {
-            if (!IsActive & GameSettings.MuteInactive)
+            // We don't need this to run every single game tick.
+            if (IsActive != _lastStateSet)
             {
-                _curEffectVolume = 0;
-                Game1.GbsPlayer.SetVolumeMultiplier(0);
+                if (!IsActive & GameSettings.MuteInactive)
+                {
+                    _curEffectVolume = 0;
+                    Game1.GbsPlayer.SetVolume(0f);
+                }
+                else
+                {
+                    _curEffectVolume = GameSettings.EffectVolume;
+                    Game1.GbsPlayer.SetVolume(GameSettings.MusicVolume / 100.0f);
+                }
             }
-            else
-            {
-                _curEffectVolume = GameSettings.EffectVolume;
-                Game1.GbsPlayer.SetVolumeMultiplier(1);
-            }
+            _lastStateSet = IsActive;
         }
 
         public void UpdateSoundEffects()
