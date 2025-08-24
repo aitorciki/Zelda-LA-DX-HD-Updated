@@ -13,6 +13,7 @@ As of v1.1.0, the game is in a really good state and the "feel" is really close 
 This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Find the v1.0.0 release originally from itch.io.
 - If you can not find it, you can search for an "archive" of it.
+- **Keep a <ins>backup</ins> of v1.0.0** as all future updates will require it.
 - Download the patcher from the releases page.
 - Drop it into the same folder as the v1.0.0 game.
 - Open the patcher. Press the "Patch" button.
