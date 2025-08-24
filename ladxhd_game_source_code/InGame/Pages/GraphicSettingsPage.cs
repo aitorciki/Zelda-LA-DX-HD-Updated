@@ -53,13 +53,11 @@ namespace ProjectZ.InGame.Pages
                 });
             contentLayout.AddElement(_toggleFullscreen);
 
-            // Shadow Setting: Currently unused, original developer note below:
-            //
-            // not sure why this should be an option; but if this should be settable then we need to still enable circular shadows  (e.g. under the player)
-            // var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
-            //    "settings_graphics_shadow", GameSettings.EnableShadows, newState => GameSettings.EnableShadows = newState);
-            // contentLayout.AddElement(shadowToggle);
-            //
+            // Shadow toggler.
+            // TODO: Also disables shadows under the player sprite. At least this shadow should be drawn.
+            var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+               "settings_graphics_shadow", GameSettings.EnableShadows, newState => GameSettings.EnableShadows = newState);
+             contentLayout.AddElement(shadowToggle);
 
             // FPS lock toggler.
             var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
