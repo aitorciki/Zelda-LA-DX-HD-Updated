@@ -1,6 +1,6 @@
 # The Legend of Zelda: Links Awakening DX HD - PC Port
 
-**NOTE: THIS REPOSITORY DOES NOT INCLUDE COPYRIGHTED GAME ASSETS!**
+### $${\color{red}THIS \space REPOSITORY \space DOES \space NOT \space INCLUDE \space COPYRIGHTED \space GAME \space ASSETS!}$$
 
 A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
 
