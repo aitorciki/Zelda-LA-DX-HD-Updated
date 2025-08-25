@@ -16,6 +16,22 @@ namespace ProjectZ.InGame.SaveLoad
         private readonly Dictionary<string, float> _floatDictionary = new Dictionary<string, float>();
         private readonly Dictionary<string, string> _stringDictionary = new Dictionary<string, string>();
 
+        public static string GetSaveFilePath()
+        {
+            string portable = Path.Combine(Values.WorkingDirectory,"portable.txt");
+            if (File.Exists(portable))
+                return "SaveFiles\\";
+            return Path.Combine(Values.AppDataFolder,"Zelda_LA","SaveFiles");
+        }
+
+        public static string GetSettingsFile()
+        {
+            string portable = Path.Combine(Values.WorkingDirectory,"portable.txt");
+            if (File.Exists(portable))
+                return "settings";
+            return Path.Combine(Values.AppDataFolder,"Zelda_LA","settings");
+        }
+
         struct HistoryFrame
         {
             public string Key;

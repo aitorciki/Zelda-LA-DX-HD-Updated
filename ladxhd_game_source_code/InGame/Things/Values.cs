@@ -1,4 +1,5 @@
 ﻿using System;
+using ProjectZ.InGame.SaveLoad;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -34,8 +35,10 @@ namespace ProjectZ.InGame.Things
 
         public static Color[] SkirtColors = { new Color(16, 168, 64), new Color(0, 38, 255), new Color(255, 0, 0) };
 
-        public static string AppDataFolder = Environment.ExpandEnvironmentVariables("%LocalAppData%/Zelda_LA/");
-        public static string PathSaveFolder = AppDataFolder + "SaveFiles/";
+        public static string WorkingDirectory = AppContext.BaseDirectory;
+        public static string AppDataFolder = Environment.ExpandEnvironmentVariables("%LocalAppData%");
+        public static string PathSaveFolder = SaveManager.GetSaveFilePath();
+
         public static string PathContentFolder = "Data/";
         public static string PathLanguageFolder => PathContentFolder + "Languages/";
         public static string PathMapsFolder => PathContentFolder + "Maps/";
