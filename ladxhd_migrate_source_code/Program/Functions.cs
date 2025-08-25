@@ -83,6 +83,9 @@ namespace LADXHD_Migrater
                 FileItem fileItem = new FileItem(file);
 
                 string oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
+
+                if (!oldFile.TestPath()) continue;
+
                 string patchName = Config.patches + "\\" + fileItem.Name + ".xdelta";
                 XDelta3.Args = XDelta3.GetCreateArguments(oldFile, fileItem.FullName, patchName);
 
