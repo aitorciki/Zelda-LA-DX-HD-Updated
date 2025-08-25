@@ -1,4 +1,6 @@
-# **The Legend of Zelda: Link's Awakening v1.1.3 Changelog:**
+# **The Legend of Zelda: Link's Awakening Changelog:**
+
+## **v1.1.3**
 ### **The Languages Update:**
   * Implement Spanish Language. Thanks to [Álcam](https://www.youtube.com/@Alcam211) (creator), [IPeluchito](https://github.com/IPeluchito) (assistance), [orderorder](https://github.com/orderorder) (suggestions).
   * Implement Italian Language. Thanks to [Ryomare123](https://itch.io/profile/ryomare123) (creator), [Ryunam](https://github.com/Ryunam) (assistance).
@@ -8,11 +10,11 @@
   * Shadow toggle in graphics options. Note that it still needs work as it removes all shadows.
   * Playtime is now tracked and visible on file selection. Thanks to [LouisSF](https://github.com/LouisSF).  
   
-# **The Legend of Zelda: Link's Awakening v1.1.2 Changelog:**
+## **v1.1.2:**
 ### **Emergency Update:**
  * Don't apply smaller collision scale to holes already smaller than 16x16.
 
-# **The Legend of Zelda: Link's Awakening v1.1.1 Changelog:**
+## **v1.1.1:**
 ### **Minor Update:**
  * Reimplement the option to unlock FPS.
  * Fix alligator can throw with unlocked FPS (credit @buttcheeks69).
@@ -24,7 +26,7 @@
  * Pay the Shop Keeper to no longer be called "Thief" after stealing.
  * Reduced collision size / pull strength of holes to more closely match the original game.
 
-# **The Legend of Zelda: Link's Awakening v1.1.0 Changelog:**
+## **v1.1.0:**
 ### **General:**
  * Saves and settings files are now located in "..\AppData\Local\Zelda_LA".
  * Intro and title screen reworked to better match original game.
