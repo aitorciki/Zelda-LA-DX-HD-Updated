@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -139,7 +140,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
-            _damageState.SetDamageState(false);
 
             if (damageType == HitType.Boomerang || damageType == HitType.Hookshot)
             {
@@ -148,12 +148,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _stunnedState.StartStun();
                 _damageField.IsActive = false;
             }
+            // Allows knockback effect from piece of power or red tunic.
+            if (pieceOfPower)
+                return _damageState.OnHit(gameObject, direction, damageType, 0, pieceOfPower);
 
+            _damageState.SetDamageState(false);
             _body.Velocity.X = direction.X * 3.0f;
             _body.Velocity.Y = direction.Y * 3.0f;
-
             Game1.GameManager.PlaySoundEffect("D360-09-09");
-
             return Values.HitCollision.Enemy;
         }
 
