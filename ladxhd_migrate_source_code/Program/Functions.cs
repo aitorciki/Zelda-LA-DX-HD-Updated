@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace LADXHD_Migrater
@@ -24,6 +25,33 @@ namespace LADXHD_Migrater
                 "Are you sure you wish to migrate assets? This will apply current patches and overwrite your assets!");
             return verify;
         }
+
+        public static void LanguagePatches(string input, string orig, string update)
+        {
+            var languageFiles  = new[] { "esp", "ita", "por", "rus" };
+            var languageDialog = new[] { "dialog_esp", "dialog_ita", "dialog_por", "dialog_rus" };
+
+            FileItem fileItem = new FileItem(input);
+
+            string[] target = null;
+            if (fileItem.Name == "eng.lng")
+                target = languageFiles;
+            else if (fileItem.Name == "dialog_eng.lng")
+                target = languageDialog;
+
+            if (target == null) return;
+
+            foreach (string lang in target)
+            {
+                string patchFile = Config.patches + "\\" + lang + ".lng.xdelta";
+                string destFile = update + fileItem.DirectoryName.Replace(orig, "") + "\\" + lang + ".lng";
+
+                if (!patchFile.TestPath()) continue;
+
+                XDelta3.Args = XDelta3.GetApplyArguments(fileItem.FullName, patchFile, destFile);
+                XDelta3.Start();
+            }
+        }
         public static void MigrateCopyLoop(string orig, string update)
         {
             foreach (string file in orig.GetFiles("*", true))
@@ -42,6 +70,9 @@ namespace LADXHD_Migrater
                     XDelta3.Start();
                 else
                     File.Copy(fileItem.FullName, destFile, true);
+
+                if (fileItem.Name == "eng.lng" || fileItem.Name == "dialog_eng.lng")
+                    LanguagePatches(fileItem.FullName, orig, update);
             }
         }
         public static void MigrateFiles()
@@ -56,7 +87,6 @@ namespace LADXHD_Migrater
                 "Updated Content/Data files to latest versions.");
             Forms.mainDialog.ToggleDialog(true);
         }
-
 
         public static bool VerifyCreatePatch()
         {
@@ -78,11 +108,21 @@ namespace LADXHD_Migrater
         }
         public static void CreatePatchLoop(string orig, string update)
         {
+            string[] LanguageFiles = new string[]{"esp","ita","por","rus" };
+            string[] LanguageDialog = new string[]{"dialog_esp","dialog_ita","dialog_por","dialog_rus" };
+
             foreach (string file in update.GetFiles("*", true))
             {
                 FileItem fileItem = new FileItem(file);
+                string oldFile = "";
 
-                string oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
+                // Hack to derive non-english langues files from english language files.
+                if (LanguageFiles.Contains(fileItem.BaseName))
+                    oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\eng.lng";
+                else if (LanguageDialog.Contains(fileItem.BaseName))
+                    oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\dialog_eng.lng";
+                else
+                    oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
 
                 if (!oldFile.TestPath()) continue;
 
