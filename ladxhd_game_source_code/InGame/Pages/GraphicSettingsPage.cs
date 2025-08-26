@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
@@ -30,18 +31,22 @@ namespace ProjectZ.InGame.Pages
                     GameSettings.GameScale = number;
                     Game1.ScaleChanged = true;
                 })
-            { SetString = number => GameSettings.GameScale == 11 ? "Auto-Detect" : " x" + (number < 1 ? "1/" + (2 - number) : number.ToString()) };
+            { SetString = number => GameScaleSliderAdjustmentString(number) };
             contentLayout.AddElement(_gameScaleSlider);
+
+            // Saved value may be larger than current size.
+            if (GameSettings.UiScale > Game1.ScreenScale)
+                GameSettings.UiScale = Game1.ScreenScale;
 
             // Slider to adjust the user interface.
             _uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
-                buttonWidth, new Point(1, 2), 0, Game1.ScreenScale - 1, 1, GameSettings.UiScale,
+                buttonWidth, new Point(1, 2), 1, Game1.ScreenScale, 1, GameSettings.UiScale - 1,
                 number =>
                 {
                     GameSettings.UiScale = number;
                     Game1.ScaleChanged = true;
                 })
-            { SetString = number => GameSettings.UiScale == 0 ? "Auto-Detect" : " x" + number };
+            { SetString = number => UIScaleSliderAdjustmentString(number) };
             contentLayout.AddElement(_uiScaleSlider);
 
             // Fullscreen toggler.
@@ -83,7 +88,6 @@ namespace ProjectZ.InGame.Pages
             }));
 
             _graphicSettingsLayout.AddElement(_bottomBar);
-
             PageLayout = _graphicSettingsLayout;
         }
 
@@ -98,6 +102,24 @@ namespace ProjectZ.InGame.Pages
             // close the page
             if (ControlHandler.ButtonPressed(CButtons.B))
                 Game1.UiPageManager.PopPage();
+        }
+
+        private string GameScaleSliderAdjustmentString(int number)
+        {   
+            string value = ((GameSettings.GameScale == 11) 
+                ? "Auto-Detect" 
+                : " x" + ((number < 1) 
+                    ? "1/" + (2 - number) 
+                    : number.ToString()));
+            return value;
+        }
+
+        private string UIScaleSliderAdjustmentString(int number)
+        {   
+            string value = (number == Game1.ScreenScale)
+                ? "Auto-Detect" 
+                : " x" + number;
+            return value;
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
@@ -115,7 +137,6 @@ namespace ProjectZ.InGame.Pages
         {
             UpdateUIScaleSlider();
         }
-
         private void UpdateFullscreenState()
         {
             var toggle = ((InterfaceToggle)_toggleFullscreen.Elements[1]);
@@ -131,8 +152,8 @@ namespace ProjectZ.InGame.Pages
 
         private void UpdateUIScaleSlider()
         {
-            GameSettings.UiScale = MathHelper.Clamp(GameSettings.UiScale, 0, Game1.ScreenScale - 1);
-            _uiScaleSlider.UpdateStepSize(0, Game1.ScreenScale - 1, 1);
+            _uiScaleSlider.UpdateStepSize(1, Game1.ScreenScale, 1);
+            _uiScaleSlider.CurrentStep = GameSettings.UiScale - 1;
         }
     }
 }
