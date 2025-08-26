@@ -1,5 +1,16 @@
 # **The Legend of Zelda: Link's Awakening Changelog:**
 
+## **v1.1.4**
+### **Bugfix Update:**
+  * Implement French language. Thanks to [JC](https://itch.io/profile/jc2111) (creator).
+  * Patcher now backs up unpatched files so future patchers don't need to rely on v1.0.0.
+  * Creating "portable.txt" next to game executable restores saving to game folder.
+  * Fix sprite of hole dug with shovel overwriting rocks pushed over it.
+  * When attacking and standing still, it's possible to change facing direction.
+  * Shooting arrows left and right when next to a south wall no longer triggers collision.
+  * Goomba can no longer be attacked after it has already been stomped.
+  * Hardhat Beetle is affected by knockback effect of piece of power and red tunic.
+
 ## **v1.1.3**
 ### **The Languages Update:**
   * Implement Spanish Language. Thanks to [Álcam](https://www.youtube.com/@Alcam211) (creator), [IPeluchito](https://github.com/IPeluchito) (assistance), [orderorder](https://github.com/orderorder) (suggestions).

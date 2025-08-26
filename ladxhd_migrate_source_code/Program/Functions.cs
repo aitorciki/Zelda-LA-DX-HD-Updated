@@ -7,6 +7,9 @@ namespace LADXHD_Migrater
 {
     internal class Functions
     {
+        private static string[] languageFiles  = new[] { "esp", "fre", "ita", "por", "rus" };
+        private static string[] languageDialog = new[] { "dialog_esp", "dialog_fre", "dialog_ita", "dialog_por", "dialog_rus" };
+
         public static string CalculateHash(string FilePath, string HashType)
         {
             HashAlgorithm Algorithm = HashAlgorithm.Create(HashType);
@@ -28,9 +31,6 @@ namespace LADXHD_Migrater
 
         public static void LanguagePatches(string input, string orig, string update)
         {
-            var languageFiles  = new[] { "esp", "ita", "por", "rus" };
-            var languageDialog = new[] { "dialog_esp", "dialog_ita", "dialog_por", "dialog_rus" };
-
             FileItem fileItem = new FileItem(input);
 
             string[] target = null;
@@ -108,18 +108,15 @@ namespace LADXHD_Migrater
         }
         public static void CreatePatchLoop(string orig, string update)
         {
-            string[] LanguageFiles = new string[]{"esp","ita","por","rus" };
-            string[] LanguageDialog = new string[]{"dialog_esp","dialog_ita","dialog_por","dialog_rus" };
-
             foreach (string file in update.GetFiles("*", true))
             {
                 FileItem fileItem = new FileItem(file);
                 string oldFile = "";
 
                 // Hack to derive non-english langues files from english language files.
-                if (LanguageFiles.Contains(fileItem.BaseName))
+                if (languageFiles.Contains(fileItem.BaseName))
                     oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\eng.lng";
-                else if (LanguageDialog.Contains(fileItem.BaseName))
+                else if (languageDialog.Contains(fileItem.BaseName))
                     oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\dialog_eng.lng";
                 else
                     oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
@@ -167,11 +164,11 @@ namespace LADXHD_Migrater
             (Config.game_source + "\\Content\\bin").RemovePath();
             (Config.game_source + "\\Content\\obj").RemovePath();
             (Config.game_source + "\\Publish").RemovePath();
-            (Config.game_source + "\\zelda_ladxhd_build").RemovePath();
             (Config.migrate_source + "\\bin").RemovePath();
             (Config.migrate_source + "\\obj").RemovePath();
             (Config.patcher_source + "\\bin").RemovePath();
             (Config.patcher_source + "\\obj").RemovePath();
+            (Config.baseFolder + "\\zelda_ladxhd_build").RemovePath();
 
             Forms.okayDialog.Display("Finished", 260, 40, 26, 26, 15,
                 "Finished cleaning build files (obj/bin/Publish folders).");
