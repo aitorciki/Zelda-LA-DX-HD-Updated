@@ -124,7 +124,9 @@ namespace ProjectZ.InGame.Overlay
 
         public override bool Execute()
         {
-            var checkState = Game1.GameManager.ThiefState == true;
+            var checkState = (_key == "savename")
+                ? (Game1.GameManager.ThiefState == true)
+                : (Game1.GameManager.SaveManager.GetString(_key, "") == _compare);
             Game1.GameManager.SaveManager.SetString(_resultKey, checkState ? "1" : "0");
             return true;
         }
