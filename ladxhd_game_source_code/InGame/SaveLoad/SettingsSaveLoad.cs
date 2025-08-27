@@ -34,11 +34,13 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
             GameSettings.LockFps = saveManager.GetBool("LockFPS", GameSettings.LockFps);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
+            GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
 
             ControlHandler.LoadButtonMap(saveManager);
+            ControlHandler.SetControllerIndex();
         }
 
         public static void SaveSettings()
@@ -62,6 +64,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);
             saveManager.SetBool("LockFPS", GameSettings.LockFps);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
+            saveManager.SetString("Controller", GameSettings.Controller);
 
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
