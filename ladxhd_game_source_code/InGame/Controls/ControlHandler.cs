@@ -64,7 +64,7 @@ namespace ProjectZ.InGame.Controls
             ["Back"]          = 8,
             ["Start"]         = 9
         };
-
+        
         public static string GetButtonName(Buttons button)
         {
             // This method should be used anywhere a button name is displayed in-game.

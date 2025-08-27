@@ -1,7 +1,15 @@
 # **The Legend of Zelda: Link's Awakening Changelog:**
+## **v1.1.5**
+### **The Features Update:**
+  * Add controller type selection to Game Settings menu: XBox, Nintendo, Playstation.
+  * Make UI Scale slider "Auto-Detect" the rightmost value.
+  * Freeze the game world while playing the ocarina.
+  * Hookshot can be retracted with a second button press.
+  * Translate "Back" and "Select" on the menus. Thanks to [xsm2](https://github.com/xsm2).
+  * Translate "Thief" across all language files. Thanks to [xsm2](https://github.com/xsm2).
 
 ## **v1.1.4**
-### **Bugfix Update:**
+### **The Bugfix Update:**
   * Implement French language. Thanks to [JC](https://itch.io/profile/jc2111) (creator).
   * Patcher now backs up unpatched files so future patchers don't need to rely on v1.0.0.
   * Creating "portable.txt" next to game executable restores saving to game folder.

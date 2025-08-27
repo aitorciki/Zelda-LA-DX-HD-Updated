@@ -835,7 +835,7 @@ namespace ProjectZ
 
         private void UpdateScale(bool EditorDelay = false)
         {
-            // Track if the maximum value was set.
+            // Track if the maximum value was set or exceeded.
             bool wasAutoDetect = (GameSettings.UiScale == Game1.ScreenScale);
 
             // Scale of the game field.

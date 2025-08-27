@@ -1,4 +1,6 @@
-﻿namespace ProjectZ.InGame.GameObjects
+﻿using System.Reflection;
+
+namespace ProjectZ.InGame.GameObjects
 {
     internal class ObjLives
     {

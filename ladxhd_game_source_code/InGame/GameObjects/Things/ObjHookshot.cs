@@ -228,7 +228,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             else
             {
                 Repell();
-
                 ComeBack();
             }
         }

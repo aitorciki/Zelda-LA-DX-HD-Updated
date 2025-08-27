@@ -645,10 +645,10 @@ namespace ProjectZ.InGame.GameObjects
 
             // mini-bosses
             ObjectTemplates.Add("mb1", new GameObjectTemplate(typeof(MBossRollingBones), new object[] { null, null }));
-            ObjectTemplates.Add("mb_king_moblin", new GameObjectTemplate(typeof(MKingMoblin), new object[] { null, null }));
+            ObjectTemplates.Add("mb_king_moblin", new GameObjectTemplate(typeof(MBossKingMoblin), new object[] { null, null }));
             ObjectTemplates.Add("mb_hinox", new GameObjectTemplate(typeof(MBossHinox), new object[] { null, 0 }));
             ObjectTemplates.Add("mb_BallAndChainSoldier", new GameObjectTemplate(typeof(MBossBallAndChainSoldier), new object[] { null }));
-            ObjectTemplates.Add("mb_dodongo_snake", new GameObjectTemplate(typeof(MDodongoSnake), new object[] { null, 0, false }));
+            ObjectTemplates.Add("mb_dodongo_snake", new GameObjectTemplate(typeof(MBossDodongoSnake), new object[] { null, 0, false }));
             ObjectTemplates.Add("mb_desert_lanmola", new GameObjectTemplate(typeof(MBossDesertLanmola), new object[] { null, null }));
             ObjectTemplates.Add("mb_cue_ball", new GameObjectTemplate(typeof(MBossCueBall), new object[] { null, null }));
             ObjectTemplates.Add("mb_MasterStalfos", new GameObjectTemplate(typeof(MBossMasterStalfos), new object[] { null, 0 }));
