@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ
 {
@@ -17,6 +18,8 @@ namespace ProjectZ
                     editorMode = true;
                 else if (arg == "loadSave")
                     loadFirstSave = true;
+                else if (arg == "exclusive")
+                    GameSettings.ExFullscreen = true;
             }
             try
             {
