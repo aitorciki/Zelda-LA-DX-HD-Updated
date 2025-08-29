@@ -1,4 +1,15 @@
 # **The Legend of Zelda: Link's Awakening Changelog:**
+
+## **v1.1.6**
+### **General Fixes Update:**
+  * Expand size of most UI elements on settings pages to better fix non-english languages.
+  * Translate "Controller" on controller selection button on Game Settings page.
+  * Restore fisherman's line "You have to have more passion. Live a little." when exiting pond early.
+  * Add option to "Audio Settings" to mute powerup music (Piece of Power/Guardian Acorn).
+  * Remember scaling settings on window resize when not set to Auto-Detect.
+  * Change "Controller" selection text to "GamePad" in all langauges.
+  * Fix potential crash when using items immediately after save is loaded.
+
 ## **v1.1.5**
 ### **The Features Update:**
   * Add controller type selection to Game Settings menu: XBox, Nintendo, Playstation.

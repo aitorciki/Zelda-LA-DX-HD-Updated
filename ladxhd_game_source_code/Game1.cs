@@ -183,8 +183,6 @@ namespace ProjectZ
 
             var thread = new Thread(ConsoleReaderThread);
             thread.Start();
-
-            this.Exiting += OnExiting;
         }
 
         private void ClientSizeChanged(object sender, EventArgs e)
@@ -208,10 +206,12 @@ namespace ProjectZ
             }
         }
         
-        protected override void OnExiting(object sender, ExitingEventArgs e)
+        protected override void OnExiting(object sender, EventArgs args)
         {
             _stopConsoleThread = true;
             GbsPlayer.OnExit();
+
+            base.OnExiting(sender, args);
         }
 
         protected override void LoadContent()
