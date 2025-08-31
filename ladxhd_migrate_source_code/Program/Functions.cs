@@ -16,6 +16,7 @@ namespace LADXHD_Migrater
             byte[] ByteArray = File.ReadAllBytes(FilePath);
             return BitConverter.ToString(Algorithm.ComputeHash(ByteArray)).Replace("-", "");
         }
+
         public static bool VerifyMigrate()
         {
             if (!Config.orig_Content.TestPath() || !Config.orig_Data.TestPath())
@@ -52,6 +53,7 @@ namespace LADXHD_Migrater
                 XDelta3.Start();
             }
         }
+
         public static void MigrateCopyLoop(string orig, string update)
         {
             foreach (string file in orig.GetFiles("*", true))
@@ -75,6 +77,7 @@ namespace LADXHD_Migrater
                     LanguagePatches(fileItem.FullName, orig, update);
             }
         }
+
         public static void MigrateFiles()
         {
             if (!VerifyMigrate()) return;
@@ -106,12 +109,28 @@ namespace LADXHD_Migrater
                 "Are you sure you wish to create patches? This will overwrite all current patches with recent changes!");
             return verify;
         }
+
+        private static string GetSpecialCases(FileItem fileItem, string orig, string update)
+        {
+            if (fileItem.Name == "menuBackgroundAlt.png")
+                return orig + fileItem.DirectoryName.Replace(update, "") + "\\menuBackground.png";
+            return "";
+        }
+
         public static void CreatePatchLoop(string orig, string update)
         {
+            // Create the folder if it does not exist.
+            Config.patches.CreatePath(true);
+
             foreach (string file in update.GetFiles("*", true))
             {
                 FileItem fileItem = new FileItem(file);
                 string oldFile = "";
+
+                // Do not get files in the "obj" or "bin" folders. Ignore 
+                if (fileItem.DirectoryName.IndexOf("content\\bin", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    fileItem.DirectoryName.IndexOf("content\\obj", StringComparison.OrdinalIgnoreCase) >= 0)
+                    continue;
 
                 // Hack to derive non-english langues files from english language files.
                 if (languageFiles.Contains(fileItem.BaseName))
@@ -121,20 +140,23 @@ namespace LADXHD_Migrater
                 else
                     oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
 
-                if (!oldFile.TestPath()) continue;
+                // Special cases are files that don't have an original but are derived from other files.
+                if (!oldFile.TestPath()) 
+                    oldFile = GetSpecialCases(fileItem, orig, update);
 
-                string patchName = Config.patches + "\\" + fileItem.Name + ".xdelta";
-                XDelta3.Args = XDelta3.GetCreateArguments(oldFile, fileItem.FullName, patchName);
-
+                if (oldFile == "") continue;
+ 
+                // Get the file hashes.
                 string oldHash = CalculateHash(oldFile, "MD5");
                 string newHash = CalculateHash(fileItem.FullName, "MD5");
 
-                Config.patches.CreatePath(true);
-
-                if (oldHash != newHash & fileItem.Extension != ".mgcontent" & fileItem.Extension != ".mgstats")
-                    XDelta3.Start();
+                // Set up the patch name and run the patcher.
+                string patchName = Config.patches + "\\" + fileItem.Name + ".xdelta";
+                XDelta3.Args = XDelta3.GetCreateArguments(oldFile, fileItem.FullName, patchName);
+                if (oldHash != newHash) XDelta3.Start();
             }
         }
+
         public static void CreatePatches()
         {
             if (!VerifyCreatePatch()) return;
@@ -154,6 +176,7 @@ namespace LADXHD_Migrater
                 "Are you sure you wish to clean build files? This will remove all instances of \'obj\', \'bin\', \'Publish\', and \'zelda_ladxhd_build\' folders if they currently exist.");
             return verify;
         }
+
         public static void CleanBuildFiles()
         {
             if (!VerifyCleanFiles()) return;
