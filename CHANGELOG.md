@@ -1,5 +1,19 @@
 # **The Legend of Zelda: Link's Awakening Changelog:**
 
+## **v1.1.7**
+### **Sword Fixes Update:**
+  * Modify attack sword hitboxes. Frame 1: hitbox added, 2: hitbox expanded, 3: hitbox reduced.
+  * Modify the hitbox of bushes to match their sprite/tile size. This fixes wonky "cutting" with sword.
+  * Allow collecting items with the sword when holding it out in charging state.
+  * Level 2 sword shot now matches height of Link and doesn't collide when standing on raised blocks.
+  * Fix the hookshot where it would never fire again when trying to use it with other weapons.
+  * Item collection box height can exceed its width or 8. Fixes collection range of items like rupees.
+  * Add a hack-fix when hitting the switch to raise blocks while jumping over them and getting stuck.
+  * Renamed FPS Lock to "Vertical Sync" as this is a far more accurate description of what it does.
+  * Make UI scale slider static 1-11, 11=Auto-Detect, and only apply scale if screen can handle it.
+  * New brick texture for main menu that better matches DX on GBC. Can swap to old texture.
+  * New Miscellaneous page. Currently only contains option to swap to old menu brick texture.
+
 ## **v1.1.6**
 ### **General Fixes Update:**
   * Expand size of most UI elements on settings pages to better fix non-english languages.

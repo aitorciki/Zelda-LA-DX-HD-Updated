@@ -13,7 +13,7 @@ As of v1.1.0, the game is in a really good state and the "feel" is really close 
 This repository is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) which was silently worked on.   
 It's worth having a [link to the commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/) for the sake of the changes history.
 
-## Patching v1.0.0 to v1.1.6
+## Patching v1.0.0 to v1.1.7
 
 This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Find the v1.0.0 release originally from itch.io.
@@ -33,7 +33,7 @@ This section explains the files and folders found in the base of this respositor
 - **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates.
 - **ladxhd_game_source_code**: Source code for The Legend of Zelda: Link's Awakening DX HD.
 - **ladxhd_migrate_source_code**: Source code for the migration tool which can apply/create assets patches.
-- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.1.6.
+- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.1.7.
 - **LADXHD_Migrater.exe**: This is the migration tool used to apply or create patches to the assets.
 - **Unblock-All-Files.ps1**: This script can be used to unblock all files automatically for Visual Studio.
 
