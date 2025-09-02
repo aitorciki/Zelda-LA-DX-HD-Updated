@@ -378,7 +378,6 @@ namespace ProjectZ.Editor
                 }
             }
 
-
             if (_currentMode == Mode.Draw)
             {
                 // draw the selection
@@ -463,24 +462,27 @@ namespace ProjectZ.Editor
             UpdateSelectedObjectParameters();
         }
 
-        public void RemoveObject(Rectangle deleteRectangle)
+        private void RemoveObject(RectangleF deleteRectangle)
         {
-            var objectList = Game1.GameManager.MapManager.CurrentMap.Objects.GetMergedObjectLists();
+            var mapObjects = Game1.GameManager.MapManager.CurrentMap.Objects;
+            var objLists = new[] { mapObjects.ObjectList, mapObjects.ObjectListB };
 
-            // remove one object that collides with the rectangle
-            for (var i = 0; i < objectList.Count; i++)
+            foreach (var objlist in objLists)
             {
-                var objectPosition = GetObjectPosition(objectList[i], true);
-                var objTemplate = EditorObjectTemplates[objectList[i].Index];
-                var scaledSize = new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height) * objTemplate.EditorIconScale;
-
-                if (objectPosition.X < deleteRectangle.X + deleteRectangle.Width &&
-                    deleteRectangle.X < objectPosition.X + scaledSize.X &&
-                    objectPosition.Y < deleteRectangle.Y + deleteRectangle.Height &&
-                    deleteRectangle.Y < objectPosition.Y + scaledSize.Y)
+                for (int i = 0; i < objlist.Count; i++)
                 {
-                    objectList.Remove(objectList[i]);
-                    return;
+                    var objectPosition = GetObjectPosition(objlist[i], true);
+                    var objTemplate = EditorObjectTemplates[objlist[i].Index];
+                    var scaledSize = new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height) * objTemplate.EditorIconScale;
+
+                    if (objectPosition.X < deleteRectangle.X + deleteRectangle.Width &&
+                        deleteRectangle.X < objectPosition.X + scaledSize.X &&
+                        objectPosition.Y < deleteRectangle.Y + deleteRectangle.Height &&
+                        deleteRectangle.Y < objectPosition.Y + scaledSize.Y)
+                    {
+                        objlist.RemoveAt(i);
+                        return;
+                    }
                 }
             }
         }
