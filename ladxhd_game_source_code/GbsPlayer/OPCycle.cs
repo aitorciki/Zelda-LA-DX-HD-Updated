@@ -1,4 +1,4 @@
-﻿namespace GbsPlayer
+﻿namespace GBSPlayer
 {
     class OpCycle
     {

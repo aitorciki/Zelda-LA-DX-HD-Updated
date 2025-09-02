@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GbsPlayer
+namespace GBSPlayer
 {
     public partial class GameBoyCPU
     {

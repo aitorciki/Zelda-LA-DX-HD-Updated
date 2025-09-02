@@ -1,4 +1,4 @@
-﻿namespace GbsPlayer
+﻿namespace GBSPlayer
 {
     public partial class GameBoyCPU
     {

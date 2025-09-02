@@ -13,6 +13,7 @@ using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Screens;
 using ProjectZ.InGame.Things;
+using GBSPlayer;
 
 #if WINDOWS
 using Forms = System.Windows.Forms;
@@ -35,7 +36,7 @@ namespace ProjectZ
         public static GameManager GameManager = new GameManager();
         public static Language LanguageManager = new Language();
 
-        public static GbsPlayer.GbsPlayer GbsPlayer = new GbsPlayer.GbsPlayer();
+        public static GbsPlayer GbsPlayer = new GbsPlayer();
 
         public static StopWatchTracker StopWatchTracker = new StopWatchTracker(120);
         public static Random RandomNumber = new Random();

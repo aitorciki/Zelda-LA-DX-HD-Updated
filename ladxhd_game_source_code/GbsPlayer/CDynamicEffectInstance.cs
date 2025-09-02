@@ -5,7 +5,7 @@ using SharpDX;
 using SharpDX.Multimedia;
 using SharpDX.XAudio2;
 
-namespace GbsPlayer
+namespace GBSPlayer
 {
     public class CDynamicEffectInstance
     {

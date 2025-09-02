@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GbsPlayer
+namespace GBSPlayer
 {
     internal class ByteBufferPool
     {

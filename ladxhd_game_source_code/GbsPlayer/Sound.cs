@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Audio;
 
-namespace GbsPlayer
+namespace GBSPlayer
 {
     public class Sound
     {
