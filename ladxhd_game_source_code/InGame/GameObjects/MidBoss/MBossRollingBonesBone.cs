@@ -5,6 +5,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -70,6 +71,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
+            if (!MapManager.ObjLink._body.IsGrounded)
+                return Values.HitCollision.None;
+
             if ((damageType & HitType.Sword) == 0)
                 return Values.HitCollision.None;
 
