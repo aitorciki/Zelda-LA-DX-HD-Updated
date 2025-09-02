@@ -34,6 +34,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _damagePlayer;
         private bool _isHeavy;
 
+        public bool OnSpinyBeetle = false;
+
         public ObjStone(Map.Map map, int posX, int posY, string spriteId, string spawnItem, string pickupKey, string dialogPath, bool isHeavy, bool potMessage) : base(map, spriteId)
         {
             var sprite = Resources.GetSprite(spriteId);

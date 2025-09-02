@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _fieldPosY;
 
         public bool RespawnGras = true;
+        public bool OnSpinyBeetle = false;
 
         public ObjBush(Map.Map map, int posX, int posY, string spawnItem, string spriteId,
             bool hasCollider, bool drawShadow, bool setGrassField, int drawLayer, string pickupKey) : base(map, spriteId)

@@ -74,9 +74,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (type == 0)
                 _carriedObject = new ObjBush(map, posX, posY, null, "bush_0", true, true, false, Values.LayerPlayer, null) { RespawnGras = false };
             else if (type == 1)
-                _carriedObject = new ObjStone(map, posX, posY, "stone_0", null, null, null, false, false);
+                _carriedObject = new ObjStone(map, posX, posY, "stone_0", null, null, null, false, false) { OnSpinyBeetle = true };
             else
-                _carriedObject = new ObjStone(map, posX, posY, "skull", null, null, null, false, false);
+                _carriedObject = new ObjStone(map, posX, posY, "skull", null, null, null, false, false) { OnSpinyBeetle = true };
 
             _type = type;
 

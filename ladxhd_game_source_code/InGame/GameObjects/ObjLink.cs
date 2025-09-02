@@ -2823,29 +2823,32 @@ namespace ProjectZ.InGame.GameObjects
 
             if (CurrentState == State.Grabbing)
             {
-                // Get object as carriable and get the type to see if it's instant pickup.
-                var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
-                Type grabbedObjectType = grabbedObject.GetType();
+                // Some objects can be picked up instantly without needing to press a direction. Because the objects
+                // on top of "Spiny Beetle" can not be referenced by their type, there is a special check for them. I
+                // have added the field "OnSpinyBeetle" to know when these objects are riding on their backs.
+                Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle) };
 
-                // Check if the object is Flying Rooster or Smasher Ball.
-                bool InstantPickup = grabbedObjectType == typeof(ObjCock) || grabbedObjectType == typeof(MBossSmasherBall) || grabbedObjectType == typeof(BossGenieBottle);
+                bool doInstantPickup = ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes) || 
+                    grabbedObject is ObjBush bush && bush.OnSpinyBeetle ||
+                    grabbedObject is ObjStone stone && stone.OnSpinyBeetle;
+
+                // Get object as carriable.
+                var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
 
                 // is the player pulling in the opposite direction?
                 var moveVec = ControlHandler.GetMoveVector2();
-
                 if (carriableComponent?.Pull != null)
                 {
                     // do not continuously play the pull animation
                     if (!carriableComponent.Pull(_pullCounter > 0 ? moveVec : Vector2.Zero) && _pullCounter < 0)
                         _pullCounter = PullResetTime;
                 }
-
                 // Check if the player is pulling away from the object or it's an instant pickup object.
-                if (moveVec.Length() > 0.5 || InstantPickup)
+                if (moveVec.Length() > 0.5 || doInstantPickup)
                 {
                     // Player is pulling in the correct direction or it's an instant pickup object.
                     var moveDir = AnimationHelper.GetDirection(moveVec);
-                    if ((moveDir + 2) % 4 == Direction || InstantPickup)
+                    if ((moveDir + 2) % 4 == Direction || doInstantPickup)
                     {
                         // Do not show the pull animation while resetting.
                         if (_pullCounter >= 0)
