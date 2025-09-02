@@ -3212,17 +3212,33 @@ namespace ProjectZ.InGame.GameObjects
                 if (hitCollision != Values.HitCollision.None &&
                     hitCollision != Values.HitCollision.NoneBlocking)
                 {
-                    _swordPoked = true;
-                    Animation.Play("poke_" + Direction);
-                    AnimatorWeapons.Play("poke_" + Direction);
-
-                    if (CurrentState == State.Blocking)
-                        CurrentState = State.AttackBlocking;
+                    // If it's repelling and the player is charging, don't interrupt the charge.
+                    if (hitCollision == Values.HitCollision.RepellingParticle && 
+                        CurrentState == State.Charging ||
+                        CurrentState == State.ChargeJumping ||
+                        CurrentState == State.ChargeBlocking)
+                    {
+                        if (_hitParticleTime + 225 < Game1.TotalGameTime)
+                        {
+                            _hitParticleTime = Game1.TotalGameTime;
+                            SpawnRepelParticle(collisionRectangle);
+                        }
+                        RepelPlayer(hitCollision, direction, 1.75f);
+                    }
+                    // If it's a standard sword attack or <other>?
                     else
-                        CurrentState = State.Attacking;
+                    {
+                        _swordPoked = true;
+                        Animation.Play("poke_" + Direction);
+                        AnimatorWeapons.Play("poke_" + Direction);
 
-                    // get repelled
-                    RepelPlayer(hitCollision, direction);
+                        if (CurrentState == State.Blocking)
+                            CurrentState = State.AttackBlocking;
+                        else
+                            CurrentState = State.Attacking;
+
+                        RepelPlayer(hitCollision, direction);
+                    }
                 }
                 else if (_swordChargeCounter > 0)
                 {
@@ -3369,13 +3385,12 @@ namespace ProjectZ.InGame.GameObjects
             if ((hitCollision & Values.HitCollision.Particle) != 0 && _hitParticleTime + 225 < Game1.TotalGameTime)
             {
                 _hitParticleTime = Game1.TotalGameTime;
-                SwordPoke(collisionRectangle);
+                SpawnRepelParticle(collisionRectangle);
             }
-
             RepelPlayer(hitCollision, direction);
         }
 
-        private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction)
+        private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
         {
             // repel the player
             if ((collisionType & Values.HitCollision.Repelling) != 0 &&
@@ -3387,8 +3402,10 @@ namespace ProjectZ.InGame.GameObjects
 
                 if ((collisionType & Values.HitCollision.Repelling0) != 0)
                     multiplier = 3.00f;
-                if ((collisionType & Values.HitCollision.Repelling1) != 0)
+                else if ((collisionType & Values.HitCollision.Repelling1) != 0)
                     multiplier = 2.25f;
+                else if (customMultiplier > 0f)
+                    multiplier = customMultiplier;
 
                 if (_bootsRunning)
                     _bootsStop = true;
@@ -3397,7 +3414,7 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
-        private void SwordPoke(RectangleF collisionRectangle)
+        private void SpawnRepelParticle(RectangleF collisionRectangle)
         {
             Game1.GameManager.PlaySoundEffect("D360-07-07");
 
@@ -3439,7 +3456,6 @@ namespace ProjectZ.InGame.GameObjects
                             _additionalPickupDialog = null;
                         }
                     }
-
                     _itemShowCounter = 250;
 
                     if (ShowItem.Name == "sword1")
