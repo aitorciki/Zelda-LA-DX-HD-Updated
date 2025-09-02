@@ -397,11 +397,9 @@ namespace ProjectZ.InGame.GameObjects
                     // run while blocking with the shield
                     Animation.Play((CarryShield ? "walkb" : "walk") + shieldString + Direction);
                 }
-
                 Animation.SpeedMultiplier = 2.0f;
                 return;
             }
-
             Animation.SpeedMultiplier = 1.0f;
 
             if ((CurrentState != State.Jumping || !Animation.IsPlaying || _waterJump) && 
@@ -426,13 +424,13 @@ namespace ProjectZ.InGame.GameObjects
                     else
                         Animation.Play("stand" + shieldString + Direction);
                 }
-                else if (!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeBlocking || CurrentState == State.ChargeJumping))
+                else if (!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping))
                     Animation.Play("stand" + shieldString + Direction);
                 else if (CurrentState == State.Carrying)
                     Animation.Play((_isWalking ? "walkc_" : "standc_") + Direction);
-                else if (_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeBlocking || CurrentState == State.ChargeJumping))
+                else if (_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping))
                     Animation.Play("walk" + shieldString + Direction);
-                else if (CurrentState == State.Blocking)
+                else if (CurrentState == State.Blocking || CurrentState == State.ChargeBlocking)
                     Animation.Play((!_isWalking ? "standb" : "walkb") + shieldString + Direction);
                 else if (CurrentState == State.Grabbing)
                     Animation.Play("grab_" + Direction);
