@@ -1,7 +1,22 @@
 # **The Legend of Zelda: Link's Awakening Changelog:**
 
+## **v1.1.8**
+### **The Long-Standing Issues Fixed Update:**
+  * Updated Spanish translation. Thanks to [IPeluchito](https://github.com/IPeluchito).
+  * Low Heart Alarm was moved to the "Audio Settings" page.
+  * When fishing, give the fish just a little bit more fight, especially the lunkers!
+  * Fix arrows freezing the game when shot in some caves due to changes in hole logic in v1.1.1.
+  * Fix shovel holes from being overwritten by flowers while also being covererable by stones.
+  * Fix certain areas on the overworld to be diggable that previously were not.
+  * Fix Tarin spawn states during the trade sequence before/after trading for bananas. 
+  * Fix behavior of Winged Octoroks to not jump and be invincible against sword spin attack.
+  * Fix setting the reset point when falling down holes if jumping while transitioning "rooms".
+  * Fix disabling powerup music to not play powerup music when transitioning dungeon floors.
+  * Fix shopkeeper name buyback. Rupee/item checks have been broken since it's implementation.
+  * Make dungeon 2 boss Genie Bottle instant pickup without needing a direction pressed.
+
 ## **v1.1.7**
-### **Sword Fixes Update:**
+### **The Sword Fixes Update:**
   * Modify attack sword hitboxes. Frame 1: hitbox added, 2: hitbox expanded, 3: hitbox reduced.
   * Modify the hitbox of bushes to match their sprite/tile size. This fixes wonky "cutting" with sword.
   * Allow collecting items with the sword when holding it out in charging state.
@@ -15,7 +30,7 @@
   * New Miscellaneous page. Currently only contains option to swap to old menu brick texture.
 
 ## **v1.1.6**
-### **General Fixes Update:**
+### **A General Fixes Update:**
   * Expand size of most UI elements on settings pages to better fix non-english languages.
   * Translate "Controller" on controller selection button on Game Settings page.
   * Restore fisherman's line "You have to have more passion. Live a little." when exiting pond early.
@@ -55,11 +70,11 @@
   * Playtime is now tracked and visible on file selection. Thanks to [LouisSF](https://github.com/LouisSF).  
   
 ## **v1.1.2:**
-### **Emergency Update:**
+### **An Emergency Update:**
  * Don't apply smaller collision scale to holes already smaller than 16x16.
 
 ## **v1.1.1:**
-### **Minor Update:**
+### **A Minor Update:**
  * Reimplement the option to unlock FPS.
  * Fix alligator can throw with unlocked FPS (credit @buttcheeks69).
  * Fix incorrectly calculated custom text height for confirm button (credit @squiddingme).
