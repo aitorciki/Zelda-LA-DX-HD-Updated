@@ -1,4 +1,15 @@
 assets_original/
 zelda_ladxhd_build/
+ladxhd_game_source_code/.vs/
+ladxhd_game_source_code/bin/
 ladxhd_game_source_code/Content/
 ladxhd_game_source_code/Data/
+ladxhd_game_source_code/obj/
+ladxhd_game_source_code/Publish/
+ladxhd_migrate_source_code/.vs/
+ladxhd_migrate_source_code/bin/
+ladxhd_migrate_source_code/obj/
+ladxhd_patcher_source_code/.vs/
+ladxhd_patcher_source_code/bin/
+ladxhd_patcher_source_code/obj/
+zelda_ladxhd_build/

@@ -25,7 +25,10 @@ namespace ProjectZ.InGame.Interface
         {
             PageLayout?.Draw(spriteBatch, position, scale, transparency);
         }
+        public virtual void OnResize()
+        {
 
+        }
         public virtual void OnResize(int newWidth, int newHeight)
         {
 

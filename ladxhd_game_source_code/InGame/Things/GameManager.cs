@@ -982,6 +982,7 @@ namespace ProjectZ.InGame.Things
 
             entry = new PlayingSoundEffect() { Volume = volume, LowerMusicVolume = lowerMusicVolume };
             entry.Instance = Resources.SoundEffects[name].CreateInstance();
+
             // the volume of the sound effects is higher than the music; so scale effect volume a little down
             entry.Instance.Volume = volume * _curEffectVolume / 100f * Values.SoundEffectVolumeMult;
             entry.Instance.Pitch = pitch;

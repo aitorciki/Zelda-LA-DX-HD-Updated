@@ -1,5 +1,30 @@
 # **The Legend of Zelda: Link's Awakening Changelog:**
 
+## **v1.1.9**
+### ** The Endless Bug Fixes Update:**
+  * Fix Marin to teach the Ocarina song after being saved on the mountain.
+  * Fix wrong enemy types in cave near pig moblins; from Buzz Blobs to Spiny Beetles in skulls.
+  * Fix shield animation when charging while blocking when in 2D mode.
+  * Fix losing powerups when transitioning between floors in Castle with the golden leaves.
+  * Fix Dream Shrine bed transition again: additional states were added but not checked for here.
+  * Fix destroyable wall sword poke sound effect to sound more impactful and not so soft.
+  * Fix being able to pick up rooster's dead bones before he was revived with the song.
+  * Fix photo mouse having no interaction and collision during fisherman photo sequence.
+  * Fix heart piece location in castle moat to be in it's proper position one tile down next to wall.
+  * Fix Arm Mimic facing direction when charging using same fix as Mask Mimic (Shy Guys).
+  * Fix Pokey (desert cactus enemy) dying in a single hit with a sword spin even at level 1 sword.
+  * Fix Crazy Tracy being able to talk to you from across her table. 
+  * Fix missing Zora south-center of overworld near tiny island with bush & seashell.
+  * Objects on top of Spiny Beetles are now picked up instantly without a direction pushed.
+  * Karakoro (the ball-type enemy in the color dungeon) is also now instantly picked up.
+  * Rolling Bone spiked roller will not interact with sword while jumping so it won't repel.
+  * Master Stalfos can be damaged with level 2 sword beam. Behavior is as close to GameBoy as possible.
+  * Don't interrupt sword charge on sources that spark when hit (spike roller, traps, masked enemies).
+  * Tweak main menus to have more usable space and make sure bottom labels are never overlapped.
+  * Added a space after the colon for GamePad on Game Settings page to match the language button.
+  * Controller buttons on inventory screen were moved one pixel upward.
+  * Dev: Fix map editor's ability to delete objects. Was broken with shovel hole changes.
+
 ## **v1.1.8**
 ### **The Long-Standing Issues Fixed Update:**
   * Updated Spanish translation. Thanks to [IPeluchito](https://github.com/IPeluchito).

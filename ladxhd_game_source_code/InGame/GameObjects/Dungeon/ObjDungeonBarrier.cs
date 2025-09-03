@@ -135,7 +135,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                             Link.CurrentState == ObjLink.State.ChargeJumping && Link._jumpStartZPos < 4.00)
                         {
                             // Run a timer to track when the jump has ended so his Z-Position can be "fixed".
-                            Timer _jumpFixHackTimer = new Timer(100);
+                            Timer _jumpFixHackTimer = new Timer(25);
                             _jumpFixHackTimer.Elapsed += (s,e) => JumpFixHack(Link,_bodyBox,s,e);
                             _jumpFixHackTimer.AutoReset = true;
                             _jumpFixHackTimer.Enabled = true;

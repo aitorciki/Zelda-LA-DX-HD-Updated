@@ -29,15 +29,12 @@ namespace ProjectZ
     {
         public static GraphicsDeviceManager Graphics;
         public static SpriteBatch SpriteBatch;
-
         public static UiManager EditorUi = new UiManager();
         public static ScreenManager ScreenManager = new ScreenManager();
         public static PageManager UiPageManager = new PageManager();
         public static GameManager GameManager = new GameManager();
         public static Language LanguageManager = new Language();
-
         public static GbsPlayer GbsPlayer = new GbsPlayer();
-
         public static StopWatchTracker StopWatchTracker = new StopWatchTracker(120);
         public static Random RandomNumber = new Random();
         public static RenderTarget2D MainRenderTarget;
