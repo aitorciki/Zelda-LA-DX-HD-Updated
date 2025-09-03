@@ -11,6 +11,7 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Systems;
 using ProjectZ.InGame.GameObjects.Bosses;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.GameObjects.MidBoss;
 using ProjectZ.InGame.GameObjects.NPCs;
 using ProjectZ.InGame.GameObjects.Things;
@@ -2817,7 +2818,7 @@ namespace ProjectZ.InGame.GameObjects
                 // Some objects can be picked up instantly without needing to press a direction. Because the objects
                 // on top of "Spiny Beetle" can not be referenced by their type, there is a special check for them. I
                 // have added the field "OnSpinyBeetle" to know when these objects are riding on their backs.
-                Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle) };
+                Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle), typeof(EnemyKarakoro) };
 
                 bool doInstantPickup = ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes) || 
                     grabbedObject is ObjBush bush && bush.OnSpinyBeetle ||
