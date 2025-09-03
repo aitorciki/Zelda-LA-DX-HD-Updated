@@ -96,6 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 damage /= 2;
 
             if ((damageType & HitType.Sword2) != 0 ||
+                (damageType & HitType.SwordSpin) != 0  ||
                 damageType == HitType.Hookshot ||
                 damageType == HitType.MagicPowder ||
                 damageType == HitType.MagicRod ||
