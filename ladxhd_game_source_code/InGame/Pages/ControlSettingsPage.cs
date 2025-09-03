@@ -25,10 +25,9 @@ namespace ProjectZ.InGame.Pages
         public ControlSettingsPage(int width, int height)
         {
             // control settings layout
-            var controlLayout = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
+            var controlLayout = new InterfaceListLayout { Size = new Point(width, height - 16), Selectable = true };
 
-            controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
-                new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
+            controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header", new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
 
             var controllerHeight = (int)(height * Values.MenuContentSize);
 
@@ -80,11 +79,11 @@ namespace ProjectZ.InGame.Pages
             }
             controlLayout.AddElement(remapButtons);
 
-            _bottomBar = new InterfaceListLayout { Size = new Point(width - 50, (int)(height * Values.MenuFooterSize)), HorizontalMode = true, Selectable = true };
+            _bottomBar = new InterfaceListLayout { Size = new Point(width - 50, (int)(height * Values.MenuFooterSize) - 20), HorizontalMode = true, Selectable = true };
             // reset button
-            _bottomBar.AddElement(new InterfaceButton(new Point(64, 20), new Point(2, 4), "settings_controls_reset", OnClickReset));
+            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_controls_reset", OnClickReset));
             // back button
-            _bottomBar.AddElement(new InterfaceButton(new Point(64, 20), new Point(2, 4), "settings_menu_back", element =>
+            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_menu_back", element =>
             {
                 Game1.UiPageManager.PopPage();
             }));

@@ -14,12 +14,11 @@ namespace ProjectZ.InGame.Pages
         public SettingsPage(int width, int height)
         {
             // Button: Settings Page Layout
-            var settingsLayout = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
+            var settingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var headerLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuHeaderSize)), ContentAlignment = InterfaceElement.Gravities.Left, HorizontalMode = true };
             {
-                _versionLabel = new InterfaceLabel("", new Point((width - 150) / 2 - 2, headerLayout.Size.Y - 22), new Point(5, 0))
-                { Translate = false, TextAlignment = InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Top };
+                _versionLabel = new InterfaceLabel("", new Point((width - 150) / 2 - 2, headerLayout.Size.Y-22), new Point(5, 0)) { Translate = false, TextAlignment = InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Top };
                 _versionLabel.SetText(Values.VersionString);
                 headerLayout.AddElement(_versionLabel);
 
@@ -27,7 +26,7 @@ namespace ProjectZ.InGame.Pages
             }
             settingsLayout.AddElement(headerLayout);
 
-            var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize)), Selectable = true };
+            var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true };
             var buttonSize = new Point(150, 20);
 
             // Button: Game Settings
@@ -64,7 +63,7 @@ namespace ProjectZ.InGame.Pages
             var bottomLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true };
 
             // Button: Back to Menu
-            bottomLayout.AddElement(new InterfaceButton(new Point(100, 20), new Point(2, 4), "settings_menu_back", element =>
+            bottomLayout.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element =>
             {
                 ExitPage();
             }));

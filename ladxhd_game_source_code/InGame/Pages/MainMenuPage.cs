@@ -50,7 +50,7 @@ namespace ProjectZ.InGame.Pages
             var smallButtonWidth = 100;
             var smallButtonMargin = 2;
 
-            var saveButtonRec = new Point(204, 30);
+            var saveButtonRec = new Point(204, 32);
             var sideSize = 70;
 
             _heartSprite = Resources.GetSprite("heart menu");
@@ -63,7 +63,7 @@ namespace ProjectZ.InGame.Pages
 
             // list of all save files
             {
-                _saveFileList = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuContentSize)), Selectable = true };
+                _saveFileList = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true };
                 for (var i = 0; i < SaveStateManager.SaveCount; i++)
                 {
                     _saveButtonLayouts[i] = new InterfaceGravityLayout { Size = new Point(saveButtonRec.X, saveButtonRec.Y) };
@@ -169,7 +169,7 @@ namespace ProjectZ.InGame.Pages
             {
                 _menuBottomBar = new InterfaceListLayout
                 {
-                    Size = new Point(saveButtonRec.X, (int)(height * Values.MenuFooterSize - 10)),
+                    Size = new Point(saveButtonRec.X, (int)(height * Values.MenuFooterSize)),
                     HorizontalMode = true,
                     Selectable = true
                 };
@@ -180,7 +180,7 @@ namespace ProjectZ.InGame.Pages
                 {
                     Size = new Point(smallButtonWidth, buttonHeight),
                     InsideElement = smallButtonLayout,
-                    Margin = new Point(smallButtonMargin, 2),
+                    Margin = new Point(smallButtonMargin, 0),
                     ClickFunction = element =>
                     {
                         Game1.UiPageManager.ChangePage(typeof(SettingsPage));
@@ -193,7 +193,7 @@ namespace ProjectZ.InGame.Pages
                 {
                     Size = new Point(smallButtonWidth, buttonHeight),
                     InsideElement = smallButtonLayout2,
-                    Margin = new Point(smallButtonMargin, 2),
+                    Margin = new Point(smallButtonMargin, 0),
                     ClickFunction = element =>
                     {
                         Game1.UiPageManager.ChangePage(typeof(QuitGamePage));
@@ -203,7 +203,7 @@ namespace ProjectZ.InGame.Pages
 
             // main layout
             {
-                _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 10), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
+                _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
 
                 _mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "main_menu_select_header", new Point(width, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
                 _mainLayout.AddElement(_saveFileList);

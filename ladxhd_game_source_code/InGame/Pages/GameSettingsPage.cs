@@ -15,13 +15,13 @@ namespace ProjectZ.InGame.Pages
         public GameSettingsPage(int width, int height)
         {
             // graphic settings layout
-            var gameSettingsList = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
+            var gameSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             var buttonWidth = 320;
 
             gameSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_game_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
 
-            var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize)), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Language Button:
             contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 18), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
@@ -49,8 +49,9 @@ namespace ProjectZ.InGame.Pages
             gameSettingsList.AddElement(contentLayout);
 
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
+
             // back button
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 20), new Point(2, 4), "settings_menu_back", element =>
+            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element =>
             {
                 Game1.UiPageManager.PopPage();
             }));
