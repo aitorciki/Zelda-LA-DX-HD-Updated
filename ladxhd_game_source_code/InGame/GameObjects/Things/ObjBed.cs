@@ -37,16 +37,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool IsStateValid(ObjLink.State currentState)
         {
-            // Certain states can cause the transition to bug out.
-            string[] invalid = new string[]{ "Attacking", "Blocking", "Charging", "AttackBlocking", "ChargeBlocking" };
-
-            string strState = currentState.ToString();
-
-            foreach (string loopState in invalid)
-                if (strState == loopState)
-                    return false;
-
-            return true;
+            return !(MapManager.ObjLink.IsAttackingState(currentState) || 
+                    MapManager.ObjLink.IsChargingState(currentState) || 
+                    MapManager.ObjLink.IsBlockingState(currentState) || 
+                    MapManager.ObjLink.IsJumpingState(currentState));
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
