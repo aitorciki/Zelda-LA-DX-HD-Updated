@@ -357,7 +357,7 @@ namespace ProjectZ.InGame.Overlay
 
                     spriteBatch.DrawString(Resources.GameFont, _itemSlotString[i], new Vector2(
                         offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4,
-                        offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 4), Color.Black);
+                        offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 5), Color.Black);
                 }
 
                 // draw the collected keys
