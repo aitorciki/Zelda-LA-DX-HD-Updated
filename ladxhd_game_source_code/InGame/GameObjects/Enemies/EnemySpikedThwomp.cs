@@ -163,7 +163,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void MoveBodies()
         {
-            // check for colliding bodies and push them forward
+            // Check for colliding bodies and push them forward.
             _collidingObjects.Clear();
             Map.Objects.GetComponentList(_collidingObjects,
                 (int)_lastCollisionBox.Left, (int)_lastCollisionBox.Back - 8,
@@ -173,15 +173,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 var body = (BodyComponent)collidingObject.Components[BodyComponent.Index];
 
-                // the enemy move into the body that was on top of him
+                // The enemy moves into the body that is standing on top of it.
                 if (body.BodyBox.Box.Front <= _lastCollisionBox.Back &&
                     body.BodyBox.Box.Front >= _collisionBox.Box.Back &&
                     body.BodyBox.Box.Intersects(_collisionBox.Box))
                 {
-                    // move the body up
-                    var offset = new Vector2(0, _collisionBox.Box.Back - body.BodyBox.Box.Front - 0.001f);
-                    SystemBody.MoveBody(body, offset, body.CollisionTypes, false, false, false);
-                    body.Position.NotifyListeners();
+                    // Snap the body into the correct offset if there has been change.
+                    float correction = _collisionBox.Box.Back - body.BodyBox.Box.Front;
+                    if (correction != 0f)
+                    {
+                        var offset = new Vector2(0, correction);
+                        SystemBody.MoveBody(body, offset, body.CollisionTypes, false, false, false);
+                        body.Position.NotifyListeners();
+                    }
                 }
             }
         }
