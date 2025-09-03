@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
     {
         public BodyComponent Body;
         public readonly Animator Animator;
+        private CSprite TracySprite;
 
         private float _lookUpdateCounter;
 
@@ -33,8 +34,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
-            var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(Animator, sprite, Vector2.Zero);
+            TracySprite = new CSprite(EntityPosition);
+            var animationComponent = new AnimationComponent(Animator, TracySprite, Vector2.Zero);
 
             Body = new BodyComponent(EntityPosition, -8, -11, 15, 11, 8);
 
@@ -43,12 +44,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(InteractComponent.Index, new InteractComponent(Body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
+            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, TracySprite, Values.LayerPlayer));
+            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(TracySprite));
+
+            // Make the "fake Tracy" on the table invisible.
+            CPosition fakeTracyPos = new CPosition(72,64,0);
+            if (Body.Position.Position == fakeTracyPos.Position)
+                TracySprite.IsVisible = false;
         }
 
         private void Update()
         {
+            // Don't update the fake tracy.
+            if (!TracySprite.IsVisible) 
+                return;
+
             _lookUpdateCounter += Game1.DeltaTime;
             if (_lookUpdateCounter > 250)
             {
