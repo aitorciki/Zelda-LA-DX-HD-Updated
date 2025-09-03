@@ -53,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _damageState;
         private bool _flee;
         private bool _attackSound;
+        private bool _instantFall;
 
         private int _lives = ObjLives.MStalfos;
         private int _livesMid = ObjLives.MStalfosMid;
@@ -443,7 +444,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _damageField.IsActive = false;
 
-            Game1.GameManager.PlaySoundEffect("D360-40-28");
+            if (!_instantFall)
+                Game1.GameManager.PlaySoundEffect("D360-40-28");
 
             for (var i = 0; i < _partVelocity.Length; i++)
             {
@@ -456,20 +458,32 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _damageState = true;
 
-            for (var i = 1; i < _partVelocity.Length; i++)
+            if (_instantFall)
             {
-                _damageCounters[i] -= Game1.DeltaTime;
-
-                // fall onto the ground
-                if (_damageCounters[i] < 0)
+                for (int i = 1; i < _partVelocity.Length; i++)
                 {
-                    _partVelocity[i] += _partGravity * Game1.TimeMultiplier;
-                    var velocityOffset = _partVelocity[i] * Game1.TimeMultiplier;
+                    _positions[i].Z = _sprites[i].SourceRectangle.Height - _partOffset[i];
+                    _partVelocity[i] = 0;
+                    _damageCounters[i] = 0;
+                }
+            }
+            else
+            {
+                for (var i = 1; i < _partVelocity.Length; i++)
+                {
+                    _damageCounters[i] -= Game1.DeltaTime;
 
-                    if (_positions[i].Z - velocityOffset > _sprites[i].SourceRectangle.Height - _partOffset[i])
-                        _positions[i].Z -= velocityOffset;
-                    else
-                        _positions[i].Z = _sprites[i].SourceRectangle.Height - _partOffset[i];
+                    // fall onto the ground
+                    if (_damageCounters[i] < 0)
+                    {
+                        _partVelocity[i] += _partGravity * Game1.TimeMultiplier;
+                        var velocityOffset = _partVelocity[i] * Game1.TimeMultiplier;
+
+                        if (_positions[i].Z - velocityOffset > _sprites[i].SourceRectangle.Height - _partOffset[i])
+                            _positions[i].Z -= velocityOffset;
+                        else
+                            _positions[i].Z = _sprites[i].SourceRectangle.Height - _partOffset[i];
+                    }
                 }
             }
         }
@@ -514,6 +528,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void StandUpEnd()
         {
+            _instantFall = false;
+            _aiDamageState.MoveBody = true;
             _damageCooldown.Reset();
             _damageField.IsActive = true;
             _damageState = false;
@@ -605,7 +621,19 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (_aiDamageState.CurrentLives <= 0 || _aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            // switch to the damaged state
+            // Do small damage with the sword beam.
+            if ((damageType & HitType.SwordShot) != 0)
+            {
+                damage = GameMath.GetRandomInt(0,1);
+                _instantFall = true;
+                _aiComponent.ChangeState("damaged");
+                _aiDamageState.MoveBody = false;
+                _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                _aiDamageState.SetDamageState(true);
+                return Values.HitCollision.Blocking;
+            }
+
+            // Fall into a pile of bones.
             if (_damageCooldown.State &&
                 _aiComponent.CurrentStateId != "preDamaged" && _aiComponent.CurrentStateId != "damaged" &&
                 _aiComponent.CurrentStateId != "attack" && _aiComponent.CurrentStateId != "wobble" && _aiComponent.CurrentStateId != "standUp")
@@ -621,7 +649,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _body.Velocity.Y = direction.Y;
             }
 
-            // can only be damaged while lying on the floor while being hit by a bomb
+            // Can be damaged on the floor with bombs.
             if ((_aiComponent.CurrentStateId == "damaged" || _aiComponent.CurrentStateId == "wobble") && damageType == HitType.Bomb)
             {
                 _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
