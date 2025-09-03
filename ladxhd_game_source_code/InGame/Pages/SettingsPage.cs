@@ -18,12 +18,12 @@ namespace ProjectZ.InGame.Pages
 
             var headerLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuHeaderSize)), ContentAlignment = InterfaceElement.Gravities.Left, HorizontalMode = true };
             {
-                _versionLabel = new InterfaceLabel("", new Point((width - 150) / 2 - 2, headerLayout.Size.Y), new Point(1, 0))
+                _versionLabel = new InterfaceLabel("", new Point((width - 150) / 2 - 2, headerLayout.Size.Y - 22), new Point(5, 0))
                 { Translate = false, TextAlignment = InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Top };
                 _versionLabel.SetText(Values.VersionString);
                 headerLayout.AddElement(_versionLabel);
 
-                headerLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_menu_header", new Point(150, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
+                headerLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_menu_header", new Point(150, (int)(height * Values.MenuHeaderSize)), new Point(-8, 0)));
             }
             settingsLayout.AddElement(headerLayout);
 
