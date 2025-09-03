@@ -357,5 +357,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             Game1.GameManager.SaveManager.SetString(_dialogId + "Moving", state ? "1" : "0");
         }
+
+        public void DisableInteractions()
+        {
+            _interactComponent.IsActive = false;
+            _collisionComponent.IsActive = false;
+        }
     }
 }

@@ -79,6 +79,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.SaveManager.GetString("photo_sequence_bridge") == null)
             {
                 _photoMouse = new ObjPhotoMouse(map, posX - 17, posY + 40, null, "mouseSeqBoat");
+                _photoMouse.DisableInteractions();
                 map.Objects.SpawnObject(_photoMouse);
             }
         }
