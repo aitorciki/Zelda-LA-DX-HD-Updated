@@ -86,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("seashell_house", new GameObjectTemplate(typeof(ObjSprite), new object[] { "seashell_house", new Vector2(24, 24), Values.LayerPlayer, "seashell_house_shadow", new Rectangle(-24, -20, 48, 12), Values.CollisionTypes.Normal }));
 
             ObjectTemplates.Add("strandplant", new GameObjectTemplate(typeof(ObjSprite), new object[] { "strandPlant", new Vector2(8, 12), Values.LayerPlayer, "strandPlantShadow", new Rectangle(-8, -8, 15, 12), Values.CollisionTypes.Normal }));
-            ObjectTemplates.Add("strandshell", new GameObjectTemplate(typeof(ObjSprite), new object[] { "strandShell", new Vector2(8, 12), Values.LayerPlayer, "strandShellShadow" }));
+            ObjectTemplates.Add("strandshell", new GameObjectTemplate(typeof(ObjSprite), new object[] { "strandShell", new Vector2(8, 12), Values.LayerPlayer, null }));
             ObjectTemplates.Add("dungeonOneStatue", new GameObjectTemplate(typeof(ObjSprite), new object[] { "dungeonOneStatue", new Vector2(8, 28), Values.LayerPlayer, "dungeonOneStatue", new Rectangle(-8, -12, 16, 16), Values.CollisionTypes.Normal }));
             ObjectTemplates.Add("dungeonOneStatueKey", new GameObjectTemplate(typeof(ObjSprite), new object[] { "dungeonOneStatueKey", new Vector2(8, 28), Values.LayerPlayer, "dungeonOneStatueKey", new Rectangle(-8, -12, 16, 16), Values.CollisionTypes.Normal }));
             ObjectTemplates.Add("dungeonStatue", new GameObjectTemplate(typeof(ObjSprite), new object[] { "dungeonStatue_0", new Vector2(8, 13), Values.LayerPlayer, "dungeonStatue_0", new Rectangle(-8, -10, 16, 13), Values.CollisionTypes.Normal }));
