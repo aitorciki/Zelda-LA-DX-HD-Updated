@@ -3338,11 +3338,10 @@ namespace ProjectZ.InGame.GameObjects
                         swordRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
                         swordRectangle.Width, swordRectangle.Height, 4);
                     var destroyableWall = DestroyableWall(swordBox);
+                    Game1.GameManager.PlaySoundEffect("D360-07-07");
 
                     if (destroyableWall)
                         Game1.GameManager.PlaySoundEffect("D378-23-17");
-                    else
-                        Game1.GameManager.PlaySoundEffect("D360-07-07");
 
                     var pokeParticle = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
                     pokeParticle.EntityPosition.X = EntityPosition.X + _pokeAnimationOffset[Direction].X;
