@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _blinkTime;
         private int _direction;
 
+        private bool _updateCarry;
         private bool _isThrown;
         private bool _slowReturn;
         private bool _freezePlayer;
@@ -45,6 +46,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             _saveKey = saveKey;
+
             // skeleton was already awakend?
             if (_saveKey != null && Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
             {
@@ -120,6 +122,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("skeleton");
                 _aiComponent.ChangeState("skeleton");
             }
+            _updateCarry = true;
+            _carriableCompnent.IsActive = false;
         }
 
         public override void SetPosition(Vector2 position)
@@ -209,13 +213,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             Game1.GameManager.PlaySoundEffect("D368-16-10");
 
-            // add the rooster as a follower
+            // Add the rooster as a follower.
             var itemRooster = new GameItemCollected("rooster") { Count = 1 };
             MapManager.ObjLink.PickUpItem(itemRooster, false);
 
             Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
             _aiComponent.ChangeState("preFollowing");
+
+            // Allow pickup soon after the rooster has been revived.
+            _carriableCompnent.IsActive = true;
         }
 
         private void EndPreFollowing()
@@ -232,15 +239,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateWalking()
         {
+            // On the first tick only, check if the rooster is alive and can be carried.
+            if (_updateCarry)
+            {
+                _carriableCompnent.IsActive = (Game1.GameManager.SaveManager.GetString("rooster_respawned", "0") == "1");
+                _updateCarry = false;
+            }
+            // Import properties from Link to apply to rooster.
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             var distance = playerDirection.Length();
             var playerSpeed = MapManager.ObjLink.LastMoveVector.Length();
 
-            // slowly transition to the full speed
+            // Slowly transition to the full speed.
             var movementSpeed = MathHelper.Clamp((distance - FollowDistance) / 4, -2, 2);
             if (Math.Abs(distance - FollowDistance) > FollowDistance + 4)
                 movementSpeed = MathHelper.Clamp(distance / (FollowDistance + 4), -2, 2);
-            // slowly walk back to the player after been thrown
+
+            // Slowly walk back to the player after have been thrown.
             if (_slowReturn)
                 movementSpeed = MathHelper.Clamp(movementSpeed, playerSpeed, 1);
 
@@ -256,11 +271,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("stand_" + _direction);
             }
 
-            // stop slow return when we reached the player or the player is moving faster away than we are moving
+            // Stop slow return when we reached the player or the player is moving faster away than we are moving.
             if (!_isThrown && (distance <= FollowDistance || playerSpeed > 1))
                 _slowReturn = false;
 
-            // fly over deep water
+            // Fly over deep water.
             if ((_body.CurrentFieldState & MapStates.FieldStates.DeepWater) != 0)
             {
                 _body.IsGrounded = false;
@@ -273,11 +288,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.IgnoresZ = false;
             }
 
-            // jump
+            // Jump.
             if (_body.IsGrounded)
             {
                 var jumpHeight = MathHelper.Clamp(distance / 18, 1, 2);
-                // while returning from a throw do not jump high
+
+                // While returning from a throw do not jump high.
                 if (_slowReturn)
                     jumpHeight = 1;
 
@@ -287,7 +303,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public void TargetVelocity(Vector2 targetVelocity, float maxSpeed, int direction)
         {
-            // move towards the target velocity
+            // Move towards the target velocity.
             var target = _body.VelocityTarget + targetVelocity * 0.05f * Game1.TimeMultiplier;
             if (target.Length() > maxSpeed)
             {
