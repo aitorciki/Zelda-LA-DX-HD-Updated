@@ -3,6 +3,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -85,7 +86,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_isActive)
                 return false;
 
-            Game1.GameManager.StartDialogPath("ice_block");
+            // Don't show the "Brrrr... this is a solid block of ice! it's very cold!" text if disabled.
+            if (!GameSettings.NoHelperText)
+                Game1.GameManager.StartDialogPath("ice_block");
+
             return false;
         }
 

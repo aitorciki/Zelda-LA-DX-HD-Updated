@@ -38,6 +38,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
             GameSettings.OldMenuBorder = saveManager.GetBool("OldMenuBorder", GameSettings.OldMenuBorder);
             GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
+            GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
@@ -70,6 +71,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetString("Controller", GameSettings.Controller);
             saveManager.SetBool("OldMenuBorder", GameSettings.OldMenuBorder);
             saveManager.SetBool("VarWidthFont", GameSettings.VarWidthFont);
+            saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
 
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);

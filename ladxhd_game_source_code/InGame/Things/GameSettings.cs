@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.Things
         public static string Controller = "XBox";
         public static bool OldMenuBorder = false;
         public static bool VarWidthFont = false;
+        public static bool NoHelperText = false;
 
         public static int MusicVolume
         {

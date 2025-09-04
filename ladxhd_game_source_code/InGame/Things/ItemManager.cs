@@ -12,7 +12,9 @@ namespace ProjectZ.InGame.Things
 
         public void Load()
         {
-            // TODO_Opt: load all the items from a file
+            // Clear the list before rebuilding as this may have been reset 
+            // when the user toggled the option "Disable Helper Messages".
+            _items.Clear();
 
             // dungeon
             // same keys but with different sounds and one does show the description
@@ -27,7 +29,7 @@ namespace ProjectZ.InGame.Things
             _items.Add("smallkeyChest", new GameItem(
                 Resources.GetSprite("smallkey"),
                 name: "smallkey",
-                pickUpDialog: "smallkey",
+                pickUpDialog: GameSettings.NoHelperText ? null : "smallkey",
                 count: 1,
                 drawLength: 1,
                 soundEffectName: "D360-01-01",
@@ -37,7 +39,7 @@ namespace ProjectZ.InGame.Things
                 Resources.GetSprite("nightmarekey"),
                 name: "nightmarekey",
                 maxCount: 1,
-                pickUpDialog: "nightmarekey",
+                pickUpDialog: GameSettings.NoHelperText ? null : "nightmarekey",
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true,
                 level: -1
@@ -47,7 +49,7 @@ namespace ProjectZ.InGame.Things
                 name: "compass",
                 count: 1,
                 maxCount: 1,
-                pickUpDialog: "compass",
+                pickUpDialog: GameSettings.NoHelperText ? null : "compass",
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
             ));
@@ -56,7 +58,7 @@ namespace ProjectZ.InGame.Things
                 name: "dmap",
                 count: 1,
                 maxCount: 1,
-                pickUpDialog: "dmap",
+                pickUpDialog: GameSettings.NoHelperText ? null : "dmap",
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
             ));
@@ -65,7 +67,7 @@ namespace ProjectZ.InGame.Things
                 name: "stonebeak",
                 count: 1,
                 maxCount: 1,
-                pickUpDialog: "stonebeak",
+                pickUpDialog: GameSettings.NoHelperText ? null : "stonebeak",
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
             ));
@@ -75,7 +77,7 @@ namespace ProjectZ.InGame.Things
                 name: "potion",
                 count: 1,
                 maxCount: 1,
-                pickUpDialog: "potion",
+                pickUpDialog: GameSettings.NoHelperText ? null : "potion",
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
             ));
@@ -90,7 +92,7 @@ namespace ProjectZ.InGame.Things
                 Resources.GetSprite("shell"),
                 Resources.GetSprite("shellMap"),
                 name: "shell",
-                pickUpDialog: "seashell",
+                pickUpDialog: GameSettings.NoHelperText ? null : "seashell",
                 count: 1,
                 soundEffectName: "D370-01-01"
             ));
@@ -98,7 +100,7 @@ namespace ProjectZ.InGame.Things
                 Resources.GetSprite("shell"),
                 Resources.GetSprite("shellMap"),
                 name: "shell",
-                pickUpDialog: "seashell",
+                pickUpDialog: GameSettings.NoHelperText ? null : "seashell",
                 count: 1,
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
@@ -106,7 +108,7 @@ namespace ProjectZ.InGame.Things
             _items.Add("shellPresent", new GameItem(
                 Resources.GetSprite("shell_present"),
                 name: "shell",
-                pickUpDialog: "seashell",
+                pickUpDialog: GameSettings.NoHelperText ? null : "seashell",
                 count: 1,
                 showAnimation: 3,
                 soundEffectName: "D370-01-01"
@@ -117,7 +119,7 @@ namespace ProjectZ.InGame.Things
             _items.Add("goldLeaf", new GameItem(
                 Resources.GetSprite("goldLeaf"), // icon used ingame, in the menu the less colorfull version is used
                 name: "goldLeaf",
-                pickUpDialog: "goldLeaf",
+                pickUpDialog: GameSettings.NoHelperText ? null : "goldLeaf",
                 soundEffectName: "D368-16-10",
                 turnDownMusic: true,
                 count: 1,
@@ -473,7 +475,7 @@ namespace ProjectZ.InGame.Things
             _items.Add("heartMeter", new GameItem(
                 Resources.GetSprite("heartMeter"),
                 name: "heartMeter",
-                pickUpDialog: "heartMeter",
+                pickUpDialog: GameSettings.NoHelperText ? null : "heartMeter",
                 count: 1,
                 maxCount: 99,
                 showAnimation: 1,
@@ -548,28 +550,28 @@ namespace ProjectZ.InGame.Things
             _items.Add("guardianAcorn", new GameItem(
                 Resources.GetSprite("guardianAcorn"),
                 name: "guardianAcorn",
-                pickUpDialog: "guardianAcorn",
+                pickUpDialog: GameSettings.NoHelperText ? null : "guardianAcorn",
                 showAnimation: 2,
                 soundEffectName: "D360-23-17"
             ));
             _items.Add("pieceOfPower", new GameItem(
                 Resources.GetSprite("pieceOfPower"),
                 name: "pieceOfPower",
-                pickUpDialog: "pieceOfPower",
+                pickUpDialog: GameSettings.NoHelperText ? null : "pieceOfPower",
                 showAnimation: 2,
                 soundEffectName: "D360-23-17"
             ));
             _items.Add("sword1PoP", new GameItem(
                 Resources.GetSprite("sword1"),
                 name: "sword1PoP",
-                pickUpDialog: "pieceOfPower",
+                pickUpDialog: GameSettings.NoHelperText ? null : "pieceOfPower",
                 showAnimation: 2,
                 soundEffectName: "D360-23-17"
             ));
             _items.Add("sword2PoP", new GameItem(
                 Resources.GetSprite("sword2"),
                 name: "sword2PoP",
-                pickUpDialog: "pieceOfPower",
+                pickUpDialog: GameSettings.NoHelperText ? null : "pieceOfPower",
                 showAnimation: 2,
                 soundEffectName: "D360-23-17"
             ));

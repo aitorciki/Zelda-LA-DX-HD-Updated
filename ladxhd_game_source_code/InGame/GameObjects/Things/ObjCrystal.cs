@@ -46,7 +46,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (pushType == PushableComponent.PushType.Impact)
                 return false;
 
-            Game1.GameManager.StartDialogPath(_dialogPath);
+            // Don't show the "Oh? What a weird object!" message if disabled.
+            if (!GameSettings.NoHelperText && _dialogPath == "crystal_hard")
+                Game1.GameManager.StartDialogPath(_dialogPath);
 
             return false;
         }

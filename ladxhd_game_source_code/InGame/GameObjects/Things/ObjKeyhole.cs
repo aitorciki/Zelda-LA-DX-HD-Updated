@@ -3,6 +3,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -48,8 +49,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (Game1.GameManager.GetItem(_itemName) == null)
             {
-                // make sure to only show the dialog the first time while being pushed and after stopping to push
-                if (!_wasPushed)
+                // Only show the dialog once on a push if the user didn't disable helper messages.
+                if (!_wasPushed && !GameSettings.NoHelperText)
                     Game1.GameManager.StartDialogPath(_strDialog);
 
                 return false;
