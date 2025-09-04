@@ -77,22 +77,16 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
+            // What really pisses me off is I wrote this but have no idea why it works. I just kept throwing stuff 
+            // in there until it worked. The selection systems for these menus absolutely sucks and make no sense.
             if (WasReload) 
             {
-                _bottomBar.Deselect(false);
-                PageLayout.Deselect(false);
-
                 PageLayout.Select(InterfaceElement.Directions.Top, false);
                 _contentLayout.Deselect(false);
-                _contentLayout.SetSelectionIndex(1);
                 _contentLayout.Select(1,true);
             }
             else
             {
-                _bottomBar.Deselect(false);
-                _bottomBar.Select(InterfaceElement.Directions.Left, false);
-                _bottomBar.Deselect(false);
-
                 PageLayout.Deselect(false);
                 PageLayout.Select(InterfaceElement.Directions.Top, false);
             }
@@ -101,10 +95,10 @@ namespace ProjectZ.InGame.Pages
 
         public void PressButtonDialogFontChange(bool newState)
         {
+            WasReload = true;
             GameSettings.VarWidthFont = newState;
             Resources.SetGameFont();
             Game1.UiPageManager.Reload(_contentManager);
-            WasReload = true;
         }
     }
 }
