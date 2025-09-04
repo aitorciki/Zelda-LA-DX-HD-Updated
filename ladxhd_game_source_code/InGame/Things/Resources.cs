@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ProjectZ.InGame.SaveLoad;
 
 namespace ProjectZ.InGame.Things
@@ -22,6 +23,18 @@ namespace ProjectZ.InGame.Things
             }
         }
 
+        public static readonly Dictionary<SpriteFontName, string> GameFontNames = new()
+        {
+            { SpriteFontName.smallFont, "Original" },
+            { SpriteFontName.smallFont_vwf, "Variable Width" },
+        };
+
+        public enum SpriteFontName
+        {
+            smallFont,
+            smallFont_vwf,
+        }
+
         public static Effect RoundedCornerEffect;
 
         public static Effect BlurEffect;
@@ -31,7 +44,6 @@ namespace ProjectZ.InGame.Things
         public static Effect BlurEffectH;
         public static Effect BBlurEffectV;
         public static Effect BBlurEffectH;
-//      public static Effect BBlurMapping;
         public static Effect FullShadowEffect;
         public static Effect SaturationEffect;
         public static Effect WobbleEffect;
@@ -55,6 +67,10 @@ namespace ProjectZ.InGame.Things
 
         public static SpriteFont EditorFont, EditorFontMonoSpace, EditorFontSmallMonoSpace;
         public static SpriteFont GameFont, GameHeaderFont;
+
+        public static SpriteFont smallFont;
+        public static SpriteFont smallFont_vwf;
+
         public static SpriteFont FontCredits, FontCreditsHeader;
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
@@ -143,8 +159,10 @@ namespace ProjectZ.InGame.Things
 
             EditorFontSmallMonoSpace = content.Load<SpriteFont>("Fonts/editor small mono font");
 
-            GameFont = content.Load<SpriteFont>("Fonts/smallFont");
-            GameFont.LineSpacing = GameFontHeight;
+            smallFont = content.Load<SpriteFont>("Fonts/smallFont");
+            smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
+
+            SetGameFont();
 
             GameHeaderFont = content.Load<SpriteFont>("Fonts/newHeaderFont");
 
@@ -337,6 +355,18 @@ namespace ProjectZ.InGame.Things
                         TilesetSizes.Add(split[0], value);
                 }
             }
+        }
+
+        public static void SetGameFont()
+        {
+            Resources.SpriteFontName fontName = GameSettings.VarWidthFont 
+                ? SpriteFontName.smallFont_vwf
+                : SpriteFontName.smallFont;
+
+            SpriteFont sprite = fontName == SpriteFontName.smallFont_vwf 
+                ? smallFont_vwf
+                : smallFont;
+            GameFont = sprite;
         }
     }
 }

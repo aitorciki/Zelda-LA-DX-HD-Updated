@@ -29,7 +29,6 @@ namespace ProjectZ.InGame.Pages
         private Vector2 _menuPosition;
 
         private double _transitionCount;
-
         private float _transitionState;
 
         private int _width;
@@ -64,6 +63,24 @@ namespace ProjectZ.InGame.Pages
             AddPage(new ExitGamePage(_width, _height));
             AddPage(new GameOverPage(_width, _height));
             AddPage(new QuitGamePage(_width, _height));
+        }
+
+        public void Reload(ContentManager content)
+        {
+            var pageTypes = new List<Type>(PageStack.Count);
+            foreach (var t in PageStack)
+                pageTypes.Add(t);
+
+            PageStack.Clear();
+            InsideElement.Clear();
+            Load(content);
+
+            for (int i = 0; i < pageTypes.Count; i++)
+            {
+                var pageType = pageTypes[i];
+                PageStack.Add(pageType);
+                InsideElement[pageType].OnLoad(null);
+            }
         }
 
         public virtual void Update(GameTime gameTime)

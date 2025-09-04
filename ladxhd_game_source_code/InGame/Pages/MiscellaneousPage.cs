@@ -11,19 +11,29 @@ namespace ProjectZ.InGame.Pages
 {
     class MiscellaneousPage : InterfacePage
     {
+        private readonly ContentManager _contentManager;
+        private readonly InterfaceListLayout _miscellaneousList;
+        private readonly InterfaceListLayout _contentLayout;
+
         private readonly InterfaceListLayout _bottomBar;
+        private readonly InterfaceListLayout _fontSelect;
+        private readonly InterfaceListLayout _toggleMenuBricks;
+
+        public static bool WasReload;
 
         public MiscellaneousPage(int width, int height, ContentManager content)
         {
+            _contentManager = content;
+
             // graphic settings layout
-            var miscellaneousList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _miscellaneousList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             var buttonWidth = 320;
-            miscellaneousList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_misc_header",
+            _miscellaneousList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_misc_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-            var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Original Menu Border:
-            var toggleMenuBricks = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            _toggleMenuBricks = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_misc_menubricks", GameSettings.OldMenuBorder, newState => 
                 { 
                     GameSettings.OldMenuBorder = newState;
@@ -35,7 +45,12 @@ namespace ProjectZ.InGame.Pages
                     var menuScreen = (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
                     menuScreen?.SetBackground(texture);
                 });
-            contentLayout.AddElement(toggleMenuBricks);
+            _contentLayout.AddElement(_toggleMenuBricks);
+
+            // Font Toggle:
+            _fontSelect = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+                "settings_misc_vwfont", GameSettings.VarWidthFont, newState => { PressButtonDialogFontChange(newState); });
+            _contentLayout.AddElement(_fontSelect);
 
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
 
@@ -45,10 +60,10 @@ namespace ProjectZ.InGame.Pages
                 Game1.UiPageManager.PopPage();
             }));
 
-            miscellaneousList.AddElement(contentLayout);
-            miscellaneousList.AddElement(_bottomBar);
+            _miscellaneousList.AddElement(_contentLayout);
+            _miscellaneousList.AddElement(_bottomBar);
 
-            PageLayout = miscellaneousList;
+            PageLayout = _miscellaneousList;
         }
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
@@ -62,9 +77,34 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
-            _bottomBar.Deselect(false);
-            PageLayout.Deselect(false);
-            PageLayout.Select(InterfaceElement.Directions.Top, false);
+            if (WasReload) 
+            {
+                _bottomBar.Deselect(false);
+                PageLayout.Deselect(false);
+
+                PageLayout.Select(InterfaceElement.Directions.Top, false);
+                _contentLayout.Deselect(false);
+                _contentLayout.SetSelectionIndex(1);
+                _contentLayout.Select(1,true);
+            }
+            else
+            {
+                _bottomBar.Deselect(false);
+                _bottomBar.Select(InterfaceElement.Directions.Left, false);
+                _bottomBar.Deselect(false);
+
+                PageLayout.Deselect(false);
+                PageLayout.Select(InterfaceElement.Directions.Top, false);
+            }
+            WasReload = false;
+        }
+
+        public void PressButtonDialogFontChange(bool newState)
+        {
+            GameSettings.VarWidthFont = newState;
+            Resources.SetGameFont();
+            Game1.UiPageManager.Reload(_contentManager);
+            WasReload = true;
         }
     }
 }
