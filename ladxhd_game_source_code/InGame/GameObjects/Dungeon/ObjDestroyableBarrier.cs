@@ -53,9 +53,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
         {
-            System.Diagnostics.Debug.WriteLine(_pushString);
-
-
             // Don't show the "this rock has many cracks" message if disabled.
             if (!GameSettings.NoHelperText && _pushString == "cracked_rock")
                 Game1.GameManager.StartDialogPath(_pushString);
