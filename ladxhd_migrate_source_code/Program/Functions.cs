@@ -118,7 +118,11 @@ namespace LADXHD_Migrater
                 return orig + fileItem.DirectoryName.Replace(update, "") + "\\items.png";
             if (fileItem.Name == "npcs_redux.png")
                 return orig + fileItem.DirectoryName.Replace(update, "") + "\\npcs.png";
+            if (fileItem.Name == "smallFont_redux.png")
+                return orig + fileItem.DirectoryName.Replace(update, "") + "\\smallFont.png";
             if (fileItem.Name == "smallFont_vwf.png")
+                return orig + fileItem.DirectoryName.Replace(update, "") + "\\smallFont.png";
+            if (fileItem.Name == "smallFont_vwf_redux.png")
                 return orig + fileItem.DirectoryName.Replace(update, "") + "\\smallFont.png";
             return "";
         }

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
-using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 

@@ -111,8 +111,9 @@ namespace ProjectZ.InGame.Pages
 
         public void PressButtonToggleUncensored(bool newState)
         {
-            // Set the new state and refresh the items group.
+            // Set the new state and refresh the fonts and items group.
             GameSettings.Uncensored = newState;
+            Resources.SetGameFont();
             Game1.GameManager.ItemManager.Load();
 
             // Swap the item texture PNG files.

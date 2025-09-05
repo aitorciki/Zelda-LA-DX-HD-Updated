@@ -21,19 +21,6 @@ namespace ProjectZ.InGame.Things
                 Name = name;
             }
         }
-
-        public static readonly Dictionary<SpriteFontName, string> GameFontNames = new()
-        {
-            { SpriteFontName.smallFont, "Original" },
-            { SpriteFontName.smallFont_vwf, "Variable Width" },
-        };
-
-        public enum SpriteFontName
-        {
-            smallFont,
-            smallFont_vwf,
-        }
-
         public static Effect RoundedCornerEffect;
 
         public static Effect BlurEffect;
@@ -67,10 +54,7 @@ namespace ProjectZ.InGame.Things
 
         public static SpriteFont EditorFont, EditorFontMonoSpace, EditorFontSmallMonoSpace;
         public static SpriteFont GameFont, GameHeaderFont;
-
-        public static SpriteFont smallFont;
-        public static SpriteFont smallFont_vwf;
-
+        public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux;
         public static SpriteFont FontCredits, FontCreditsHeader;
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
@@ -163,7 +147,9 @@ namespace ProjectZ.InGame.Things
             FontCredits = content.Load<SpriteFont>("Fonts/credits font");
             FontCreditsHeader = content.Load<SpriteFont>("Fonts/credits header font");
             smallFont = content.Load<SpriteFont>("Fonts/smallFont");
+            smallFont_redux = content.Load<SpriteFont>("Fonts/smallFont_redux");
             smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
+            smallFont_vwf_redux = content.Load<SpriteFont>("Fonts/smallFont_vwf_redux");
             SetGameFont();
 
             // load textures
@@ -372,14 +358,16 @@ namespace ProjectZ.InGame.Things
 
         public static void SetGameFont()
         {
-            Resources.SpriteFontName fontName = GameSettings.VarWidthFont 
-                ? SpriteFontName.smallFont_vwf
-                : SpriteFontName.smallFont;
+            // Updates the small font. This needs to be called any time the font should change. This includes
+            // toggling the "Variable Width Font" option as well as the "Disable Censorship" option.
 
-            SpriteFont sprite = fontName == SpriteFontName.smallFont_vwf 
-                ? smallFont_vwf
-                : smallFont;
-            GameFont = sprite;
+            GameFont = (GameSettings.VarWidthFont, GameSettings.Uncensored) switch
+            {
+                (true,  true)  => smallFont_vwf_redux,
+                (true,  false) => smallFont_vwf,
+                (false, true)  => smallFont_redux,
+                (false, false) => smallFont
+            };
         }
 
         public static void SetItemsTexture()
