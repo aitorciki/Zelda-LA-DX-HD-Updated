@@ -2,31 +2,29 @@
 
 ### $${\color{red}THIS \space REPOSITORY \space DOES \space NOT \space INCLUDE \space COPYRIGHTED \space GAME \space ASSETS!}$$
 
-A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
+To use this fork, whether to play the game or build upon, it requires the user to provide the assets from the original v1.0.0 release.   
+Some assets have been updated, but I have created tooling to make migration easier.
 
-To use this fork, whether to play the game or build upon, it requires the user to provide the assets from the original v1.0.0 release. Some assets have been updated, but I have created tooling to make migration easier.
+- See the [changelog](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/CHANGELOG.md) for a list of changes from v1.0.0.
+- As of v1.1.0, the game is in a really good state and the "feel" is really close to the original game.  
+- As of v1.2.0, the vast majority of bugs have been fixed and features from the [Redux romhack](https://github.com/ShadowOne333/Links-Awakening-Redux) were implemented.
+- This is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) and here's a link to the [commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/).
 
-See the [changelog](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/CHANGELOG.md) for a list of changes from v1.0.0.
+## Patching v1.0.0 (or v1.1.4+) to v1.2.0
 
-As of v1.1.0, the game is in a really good state and the "feel" is really close to the original game (but with all the enhancements of a PC port).
-
-This repository is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) which was silently worked on.   
-It's worth having a [link to the commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/) for the sake of the changes history.
-
-## Patching v1.0.0 to v1.2.0
-
-This is probably what most people would be here for. To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. If you wish to build the game yourself, see **Personal Build / Publishing**.
+To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. 
+If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Find the v1.0.0 release originally from itch.io.
 - If you can not find it, you can search for an "archive" of it.
-- **Keep a <ins>backup</ins> of v1.0.0** as all future updates will require it.
+- It's a good idea to keep a <ins>backup</ins> of v1.0.0.
 - Download the patcher from the releases page.
-- Drop it into the same folder as the v1.0.0 game.
+- Drop it into the same folder as v1.0.0/v1.1.4+.
 - Open the patcher. Press the "Patch" button.
 - When it is done, the patcher can be deleted.
 
-Note that antivirus programs like Windows Defender may flag this patcher as a virus. It is NOT a virus, and the source code can be found in this repository. I am working on a malware submission to Microsoft but the submission site is currently not working (as usual).
-
 ## About This Repository
+
+A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
 
 This section explains the files and folders found in the base of this respository.
 - **assets_original**: This is where the **"Content"** and **"Data"** folders from v1.0.0 should go.
@@ -39,7 +37,7 @@ This section explains the files and folders found in the base of this respositor
 
 ## Updating Source Code Assets
 
-The latest source code can be downloaded from this repository. But, you will need to provide the assets from the original v1.0.0 release. It is very important to follow the instructions carefully as some assets have been updated.
+The latest source code can be downloaded from this repository. But, you will need to provide the assets from the original v1.0.0 release. It is very important to follow the instructions carefully as many assets have been updated.
 - You will notice there is a folder in the base of this repository named **"assets_original"**.
 - This is where the **"Content"** and **"Data"** folders go from the v1.0.0 release.
 - Note that there is two versions of these folders, and you must provide the correct ones.
@@ -60,13 +58,16 @@ Again, make sure you are grabbing the correct Content and Data folders. The "Dat
 ## Contributing Prerequisites
 
 If you wish to work on the code in this repository.
-- Basic knowledge of C# .NET and Visual Studio.
+- Basic knowledge of C# .NET and Visual Studio is required.
 - [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
     - Make sure to select `.NET desktop development` components in the visual studio installer.
+- The "base" game should remain as close to the original DX version as possible.
+- Modifications are okay in the form of options, but should default to **<ins>false</ins>**.
+- Some exceptions may be okay depending on their intent.
 
 ## Contributing Assets
 
-Do not make pull requests providing the assets directly, instead create xdelta patches using the **LADXHD Migrater** tool provided. These patches can then be applied to the original assets to update them.
+Do not make pull requests providing assets directly. This includes ALL files within the **Content** and **Data** folders. Instead, use the **LADXHD Migrater** tool provided to create xdelta patches. These patches can then be applied to the original assets to update them to the latest versions also using the migration tool.
 
 See the wiki page on [contributing to this project](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/wiki/Contributing-to-this-project) for more information.
 
