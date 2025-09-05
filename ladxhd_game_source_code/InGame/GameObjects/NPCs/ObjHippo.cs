@@ -23,7 +23,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-12, -24, 24, 32);
 
-            _animator = AnimatorSaveLoad.LoadAnimator("NPCs/npc_hippo");
+            _animator = AnimatorSaveLoad.LoadAnimator("NPCs/npc_hippo", GameSettings.Uncensored);
             _animator.Play("stand_" + _direction);
 
             var sprite = new CSprite(EntityPosition);

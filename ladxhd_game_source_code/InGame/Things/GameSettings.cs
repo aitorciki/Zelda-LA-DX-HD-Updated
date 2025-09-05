@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.Things
         public static bool OldMenuBorder = false;
         public static bool VarWidthFont = false;
         public static bool NoHelperText = false;
+        public static bool Uncensored = false;
 
         public static int MusicVolume
         {

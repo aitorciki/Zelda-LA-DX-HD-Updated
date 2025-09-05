@@ -114,6 +114,8 @@ namespace LADXHD_Migrater
         {
             if (fileItem.Name == "menuBackgroundAlt.png")
                 return orig + fileItem.DirectoryName.Replace(update, "") + "\\menuBackground.png";
+            if (fileItem.Name == "items_redux.png")
+                return orig + fileItem.DirectoryName.Replace(update, "") + "\\items.png";
             if (fileItem.Name == "npcs_redux.png")
                 return orig + fileItem.DirectoryName.Replace(update, "") + "\\npcs.png";
             if (fileItem.Name == "smallFont_vwf.png")

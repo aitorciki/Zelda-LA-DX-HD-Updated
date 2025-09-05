@@ -75,7 +75,7 @@ namespace ProjectZ.InGame.Things
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
 
-        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprItem, SprNpCs;
+        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprItem, SprNpCs, SprNpCsRedux;
         public static Texture2D SprEnemies, SprMidBoss, SprNightmares, SprMiniMap;
         public static Texture2D SprShadow;
         public static Texture2D SprBlurTileset;
@@ -144,30 +144,25 @@ namespace ProjectZ.InGame.Things
             SprLink = GetTexture("link0.png");
             SprLinkCloak = GetTexture("link_cloak.png");
             SprEnemies = GetTexture("enemies.png");
-            SprNpCs = GetTexture("npcs.png");
             SprObjects = GetTexture("objects.png");
             SprObjectsAnimated = GetTexture("objects animated.png");
             SprMidBoss = GetTexture("midboss.png");
             SprNightmares = GetTexture("nightmares.png");
             SprBlurTileset = GetTexture("blur tileset.png");
+            SprNpCs = GetTexture("npcs.png");
+            SprNpCsRedux = GetTexture("npcs_redux.png");
 
             // load fonts
             EditorFont = content.Load<SpriteFont>("Fonts/editor font");
             EditorFontHeight = (int)EditorFont.MeasureString("H").Y;
-
             EditorFontMonoSpace = content.Load<SpriteFont>("Fonts/editor mono font");
-
             EditorFontSmallMonoSpace = content.Load<SpriteFont>("Fonts/editor small mono font");
-
-            smallFont = content.Load<SpriteFont>("Fonts/smallFont");
-            smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
-
-            SetGameFont();
-
             GameHeaderFont = content.Load<SpriteFont>("Fonts/newHeaderFont");
-
             FontCredits = content.Load<SpriteFont>("Fonts/credits font");
             FontCreditsHeader = content.Load<SpriteFont>("Fonts/credits header font");
+            smallFont = content.Load<SpriteFont>("Fonts/smallFont");
+            smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
+            SetGameFont();
 
             // load textures
             SprTiledBlock = new Texture2D(graphics, 2, 2);
