@@ -104,13 +104,19 @@ namespace ProjectZ.InGame.Pages
 
         public void PressButtonToggleHelpers(bool newState)
         {
+            // Set the new state and refresh the items group.
             GameSettings.NoHelperText = newState;
             Game1.GameManager.ItemManager.Load();
         }
 
         public void PressButtonToggleUncensored(bool newState)
         {
+            // Set the new state and refresh the items group.
             GameSettings.Uncensored = newState;
+            Game1.GameManager.ItemManager.Load();
+
+            // Swap the item texture PNG files.
+            Resources.SetItemsTexture();
         }
     }
 }

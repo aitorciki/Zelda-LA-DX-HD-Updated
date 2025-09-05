@@ -72,11 +72,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 var spawnPosition = new Vector2(EntityPosition.X - 48, EntityPosition.Y - 16);
                 Game1.GameManager.SaveManager.RemoveString(spawnKey);
+
                 var objNecklace = new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, null, null, "trade11", null);
                 objNecklace.SpawnBoatSequence();
                 Map.Objects.SpawnObject(objNecklace);
 
-                // spawn splash effect
                 var fallAnimation = new ObjAnimator(Map, (int)(spawnPosition.X + 8), (int)(spawnPosition.Y + 5),
                     Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
                 Map.Objects.SpawnObject(fallAnimation);

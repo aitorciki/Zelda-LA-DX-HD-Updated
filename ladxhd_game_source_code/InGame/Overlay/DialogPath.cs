@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.GameSystems;
@@ -119,13 +121,24 @@ namespace ProjectZ.InGame.Overlay
             _compare = compare;
             _resultKey = resultKey;
         }
-
+        
         public override bool Execute()
         {
-            bool checkState = _key == "savename"
-                ? Game1.GameManager.ThiefState
-                : Game1.GameManager.SaveManager.GetString(_key, "") == _compare;
+            bool checkState = false;
 
+            // Determine if it's a boolean by checking the compare values.
+            if (_compare == "true" || _compare == "false") 
+            {
+                bool saveState = (bool)(typeof(GameSettings).GetField(_key, BindingFlags.Public | BindingFlags.Static).GetValue(null));
+                checkState = Convert.ToBoolean(_compare) == Game1.GameManager.SaveManager.GetBool(_key, saveState);
+            }
+            // Otherwise assume we are getting the value of a string field.
+            else
+            {
+                checkState = _key == "savename"
+                    ? Game1.GameManager.ThiefState
+                    : Game1.GameManager.SaveManager.GetString(_key, "") == _compare;
+            }
             Game1.GameManager.SaveManager.SetString(_resultKey, checkState ? "1" : "0");
             return true;
         }

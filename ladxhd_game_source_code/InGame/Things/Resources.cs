@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using ProjectZ.InGame.SaveLoad;
 
 namespace ProjectZ.InGame.Things
@@ -44,6 +43,7 @@ namespace ProjectZ.InGame.Things
         public static Effect BlurEffectH;
         public static Effect BBlurEffectV;
         public static Effect BBlurEffectH;
+        public static Effect BBlurMapping;
         public static Effect FullShadowEffect;
         public static Effect SaturationEffect;
         public static Effect WobbleEffect;
@@ -75,7 +75,7 @@ namespace ProjectZ.InGame.Things
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
 
-        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprItem, SprNpCs, SprNpCsRedux;
+        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprItem, SprItemRedux, SprNpCs, SprNpCsRedux;
         public static Texture2D SprEnemies, SprMidBoss, SprNightmares, SprMiniMap;
         public static Texture2D SprShadow;
         public static Texture2D SprBlurTileset;
@@ -94,6 +94,7 @@ namespace ProjectZ.InGame.Things
         public static List<Texture> TextureList = new();
 
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRedux = new();
         public static Dictionary<string, int> TilesetSizes = new();
 
         public static Dictionary<string, SoundEffect> SoundEffects = new();
@@ -139,8 +140,6 @@ namespace ProjectZ.InGame.Things
             LoadTexturesFromFolder(Values.PathMapObjectFolder);
 
             SprMiniMap = GetTexture("minimap.png");
-            SprItem = GetTexture("items.png");
-
             SprLink = GetTexture("link0.png");
             SprLinkCloak = GetTexture("link_cloak.png");
             SprEnemies = GetTexture("enemies.png");
@@ -151,6 +150,9 @@ namespace ProjectZ.InGame.Things
             SprBlurTileset = GetTexture("blur tileset.png");
             SprNpCs = GetTexture("npcs.png");
             SprNpCsRedux = GetTexture("npcs_redux.png");
+            SprItem = GetTexture("items.png");
+            SprItemRedux = GetTexture("items_redux.png");
+            SetItemsTexture();
 
             // load fonts
             EditorFont = content.Load<SpriteFont>("Fonts/editor font");
@@ -296,13 +298,18 @@ namespace ProjectZ.InGame.Things
 
         public static void LoadTexture(out Texture2D texture, string strFilePath)
         {
-            using Stream stream = File.Open(strFilePath, FileMode.Open);
+            // Sprite sheets use an "atlas" file that contains various data about each sprite like position, rectangle size, etc. When loading
+            // a texture, load its corresponding atlas file. If it's a "_redux" variation, we can use the same atlas file as the original, but
+            // we store the actual textures in a separate "SpriteAtlas" to make it much easier to switch to those variations later.
 
+            using Stream stream = File.Open(strFilePath, FileMode.Open);
             texture = Texture2D.FromStream(Game1.Graphics.GraphicsDevice, stream);
 
-            // load the sprite atlas
-            var atlasFileName = strFilePath.Replace(".png", ".atlas");
-            SpriteAtlasSerialization.LoadSourceDictionary(texture, atlasFileName, SpriteAtlas);
+            string atlasFileName = strFilePath.Replace("_redux", "").Replace(".png", ".atlas");
+            string[] strFileSplit = strFilePath.Split(new char[]{ '_', '.' });
+
+            Dictionary<string, DictAtlasEntry> atlasDesignation = strFileSplit[1].Contains("redux") ? SpriteAtlasRedux : SpriteAtlas;
+            SpriteAtlasSerialization.LoadSourceDictionary(texture, atlasFileName, atlasDesignation);
         }
 
         public static Texture2D GetTexture(string name)
@@ -312,18 +319,29 @@ namespace ProjectZ.InGame.Things
                 if (TextureList[i].Name == name)
                     return TextureList[i].SprTexture;
             }
-
             return null;
         }
 
         public static Rectangle SourceRectangle(string id)
         {
-            return SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id].ScaledRectangle : Rectangle.Empty;
+            // If uncensored is enabled, try to get the redux atlas. Otherwise, get the normal sprite atlas.
+            Rectangle AtlasRect = Rectangle.Empty;
+            if (GameSettings.Uncensored)
+                AtlasRect = SpriteAtlasRedux.ContainsKey(id) ? SpriteAtlasRedux[id].ScaledRectangle : Rectangle.Empty;
+            if (AtlasRect.IsEmpty)
+                AtlasRect = SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id].ScaledRectangle : Rectangle.Empty;
+            return AtlasRect;
         }
 
         public static DictAtlasEntry GetSprite(string id)
         {
-            return SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id] : null;
+            // If uncensored is enabled, try to get the redux atlas. Otherwise, get the normal sprite atlas.
+            DictAtlasEntry sprite = null;
+            if (GameSettings.Uncensored)
+                sprite = SpriteAtlasRedux.ContainsKey(id) ? SpriteAtlasRedux[id] : null;
+            if (sprite == null)
+                sprite = SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id] : null;
+            return sprite;
         }
 
         public static void LoadTilesetSizes()
@@ -362,6 +380,17 @@ namespace ProjectZ.InGame.Things
                 ? smallFont_vwf
                 : smallFont;
             GameFont = sprite;
+        }
+
+        public static void SetItemsTexture()
+        {
+            // It's not enough to have a separate atlas for uncensored redux variations of textures, due to the
+            // fact that "SprItem" is referenced all over the place. It's much easier to just overwrite this file
+            // than to change the many instances. Some texture calls reference the "atlas", some reference "SprItem".
+            string itemPath = GameSettings.Uncensored 
+                ? "items_redux.png"
+                : "items.png";
+            SprItem = GetTexture(itemPath);
         }
     }
 }
