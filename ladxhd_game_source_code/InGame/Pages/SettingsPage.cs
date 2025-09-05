@@ -53,10 +53,10 @@ namespace ProjectZ.InGame.Pages
                 Game1.UiPageManager.ChangePage(typeof(ControlSettingsPage));
             }));
 
-            // Button: Miscellaneous
-            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_misc", element =>
+            // Button: Redux Settings
+            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_redux", element =>
             {
-                Game1.UiPageManager.ChangePage(typeof(MiscellaneousPage));
+                Game1.UiPageManager.ChangePage(typeof(ReduxOptionsPage));
             }));
 
             settingsLayout.AddElement(contentLayout);

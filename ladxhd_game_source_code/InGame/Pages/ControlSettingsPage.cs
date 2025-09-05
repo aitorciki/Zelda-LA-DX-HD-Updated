@@ -58,6 +58,7 @@ namespace ProjectZ.InGame.Pages
 
                 // Most buttons are pulled from language files except for when override text is not empty.
                 _remapButtons[index] = new InterfaceListLayout { Size = new Point(buttonWidth + lableWidth * 2, lableHeight), HorizontalMode = true };
+
                 _remapButtons[index].AddElement(_buttonLabels[index] = new InterfaceLabel("settings_controls_" + eButton, new Point(buttonWidth, lableHeight), Point.Zero)
                     { CornerRadius = 0, Color = Values.MenuButtonColor, OverrideText = overrideText });
 

@@ -514,7 +514,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _drawComponent.Layer = Values.LayerPlayer;
 
-            _animator.Play("giantZol_spawn");
+            _animator.Play("slime_spawn");
         }
 
         private void UpdateGiantZolSpawn()
@@ -525,7 +525,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitGiantZolJump()
         {
-            _animator.Play("giantZol_jump");
+            _animator.Play("slime_jump");
 
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
@@ -550,7 +550,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
             else if (_body.Velocity.Y < -0.5f)
             {
-                _animator.Play("giantZol_land");
+                _animator.Play("slime_land");
             }
         }
 
@@ -566,7 +566,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _hittableComponent.IsActive = false;
             _pushRepel = false;
 
-            _animator.Play("giantZol_despawn");
+            _animator.Play("slime_despawn");
 
             EntityPosition.Offset(new Vector2(0, -2));
         }
@@ -592,7 +592,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitGiantZolDamaged()
         {
-            _animator.Play("giantZol_damaged");
+            _animator.Play("slime_damaged");
             Game1.GameManager.PlaySoundEffect("D360-55-37");
         }
 
@@ -886,7 +886,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void MoldormExplode()
         {
             _aiComponent.ChangeState("moldormDespawn");
-            _animator.Play("giantZol_despawn");
+            _animator.Play("slime_despawn");
 
             _drawMoldormTail = false;
 
@@ -998,7 +998,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void InitLanmolaDespawn()
         {
             _damageField.IsActive = false;
-            _animator.Play("giantZol_despawn");
+            _animator.Play("slime_despawn");
         }
 
         private void UpdateLanmolaDespawn()
@@ -1505,7 +1505,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitDespawn()
         {
-            _animator.Play("giantZol_despawn");
+            _animator.Play("slime_despawn");
         }
 
         private void UpdateDepawn()

@@ -37,6 +37,9 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
             GameSettings.OldMenuBorder = saveManager.GetBool("OldMenuBorder", GameSettings.OldMenuBorder);
+            GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
+            GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
+            GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
@@ -52,7 +55,6 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetString("ContentPath", Values.PathContentFolder);
             saveManager.SetString("SavePath", Values.PathSaveFolder);
 
-            saveManager.SetInt("Version", 1);
             saveManager.SetInt("GameScale", GameSettings.GameScale);
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);
@@ -69,6 +71,9 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             saveManager.SetString("Controller", GameSettings.Controller);
             saveManager.SetBool("OldMenuBorder", GameSettings.OldMenuBorder);
+            saveManager.SetBool("VarWidthFont", GameSettings.VarWidthFont);
+            saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
+            saveManager.SetBool("Uncensored", GameSettings.Uncensored);
 
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);

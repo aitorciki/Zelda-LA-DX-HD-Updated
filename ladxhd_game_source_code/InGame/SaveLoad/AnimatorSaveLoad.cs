@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
@@ -61,23 +62,28 @@ namespace ProjectZ.InGame.SaveLoad
             File.Move(pathTemp, path);
         }
 
-        public static Animator LoadAnimator(string animatorId)
+        public static Animator LoadAnimator(string animatorId, bool redux = false)
         {
-            // TODO_End: preload all the animations
-            return LoadAnimatorFile(Values.PathAnimationFolder + animatorId + ".ani");
+            return LoadAnimatorFile(Values.PathAnimationFolder + animatorId + ".ani", redux);
         }
 
-        public static Animator LoadAnimatorFile(string filePath)
+        public static Animator LoadAnimatorFile(string filePath, bool redux = false)
         {
             if (!File.Exists(filePath))
                 return null;
 
             var reader = new StreamReader(filePath);
-
             var animator = new Animator();
-
             var version = reader.ReadLine();
-            animator.SpritePath = reader.ReadLine();
+            var spritePath = reader.ReadLine();
+
+            // If uncensored is enabled, pull from the "_redux" version of the sprite sheet.
+            if (redux)
+            {
+                string[] splitPath = spritePath.Split(new[] { '.' });
+                spritePath = splitPath[0] + "_redux." + splitPath[1];
+            }
+            animator.SpritePath = spritePath;
             animator.SprTexture = Resources.GetTexture(animator.SpritePath);
 
             // load the animations

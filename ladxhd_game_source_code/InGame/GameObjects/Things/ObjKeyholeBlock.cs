@@ -38,7 +38,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             var keyItems = Game1.GameManager.GetItem("smallkey");
             if (keyItems == null || Game1.GameManager.GetItem("smallkey").Count <= 0)
             {
-                Game1.GameManager.StartDialogPath("dungeon_keyhole_block");
+                // Don't show the "Hunh? This rock has a key hole!" message if the use disabled it.
+                if (!GameSettings.NoHelperText)
+                    Game1.GameManager.StartDialogPath("dungeon_keyhole_block");
+
                 return true;
             }
 

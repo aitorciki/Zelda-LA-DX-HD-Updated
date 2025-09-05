@@ -75,6 +75,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (!string.IsNullOrEmpty(_dialogPath))
                 AddComponent(PushableComponent.Index, new PushableComponent(collisionBox, OnPush) { InertiaTime = 50 });
+
             AddComponent(BodyComponent.Index, _body);
             AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(
                 new CRectangle(EntityPosition, new Rectangle(
@@ -140,7 +141,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (pushType == PushableComponent.PushType.Impact)
                 return false;
 
-            Game1.GameManager.StartDialogPath(_dialogPath);
+            // Don't show the "this looks really heavy text" if disabled.
+            if (!GameSettings.NoHelperText && _dialogPath == "stone")
+                Game1.GameManager.StartDialogPath(_dialogPath);
 
             return false;
         }
