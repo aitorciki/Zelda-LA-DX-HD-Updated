@@ -1,4 +1,17 @@
-# **The Legend of Zelda: Link's Awakening Changelog:**
+# **The Legend of Zelda: Link's Awakening DX HD Changelog:**
+
+## **v1.2.0**
+### ** The Redux Update:**
+  * Fix final boss "Giant Zol" form to have the correct graphics.
+  * Rename Miscellaneous options to "Redux" options on the Settings menu.
+  * Add Redux option to use a variable width font as is used in the romhack.
+  * Add Redux option to disable helper messages. This encompasses a large number of popups:
+    * Items: Keys, Compass, Map, Nightmare Key, Stone Beak, Seashell, Piece of Power, Guardian Acorn, Golden Leaf, and Piece of Heart.
+    * Objects: Stones/Pots, Crystals, Cracked Rocks, Keyhole Blocks, Dungeon Keyholes, and Ice Blocks.
+  * Add Redux option to disable censored content. This includes the hippo and mermaid sprites/text.
+  * Added Hippo missing original standing sprite and implement animation states.
+  * Alternate font versions for any combination of Variable Width Font and Disable Censorship.
+  * Shoplifting photo has been updated to have the translated text from Redux romhack.
 
 ## **v1.1.9**
 ### ** The Endless Bug Fixes Update:**
