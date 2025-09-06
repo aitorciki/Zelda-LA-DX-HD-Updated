@@ -60,7 +60,11 @@ namespace ProjectZ.InGame.Things
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
 
-        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprItem, SprItemRedux, SprNpCs, SprNpCsRedux;
+
+        public static Texture2D SprItemNorm, SprItemRedux;
+        public static Texture2D SprItem => GameSettings.Uncensored ? SprItemRedux : SprItemNorm;
+
+        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprNpCs, SprNpCsRedux;
         public static Texture2D SprEnemies, SprMidBoss, SprNightmares, SprMiniMap;
         public static Texture2D SprShadow;
         public static Texture2D SprBlurTileset;
@@ -135,9 +139,8 @@ namespace ProjectZ.InGame.Things
             SprBlurTileset = GetTexture("blur tileset.png");
             SprNpCs = GetTexture("npcs.png");
             SprNpCsRedux = GetTexture("npcs_redux.png");
-            SprItem = GetTexture("items.png");
+            SprItemNorm = GetTexture("items.png");
             SprItemRedux = GetTexture("items_redux.png");
-            SetItemsTexture();
 
             // load fonts
             EditorFont = content.Load<SpriteFont>("Fonts/editor font");
@@ -373,17 +376,6 @@ namespace ProjectZ.InGame.Things
 
             if (TextBoxOverlay != null)
                 TextBoxOverlay.ResolutionChange();
-        }
-
-        public static void SetItemsTexture()
-        {
-            // It's not enough to have a separate atlas for uncensored redux variations of textures, due to the
-            // fact that "SprItem" is referenced all over the place. It's much easier to just overwrite this file
-            // than to change the many instances. Some texture calls reference the "atlas", some reference "SprItem".
-            string itemPath = GameSettings.Uncensored 
-                ? "items_redux.png"
-                : "items.png";
-            SprItem = GetTexture(itemPath);
         }
     }
 }

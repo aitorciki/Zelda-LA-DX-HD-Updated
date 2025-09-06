@@ -33,7 +33,6 @@ namespace ProjectZ.InGame.Overlay
         private readonly Animator _animator;
 
         private readonly UiRectangle _textboxBackground;
-        //private readonly UiRectangle _textboxBackgroundSide;
         private readonly UiRectangle[] _textboxBackgroundChoice = new UiRectangle[4];
         private readonly ChoiceButton[] _textboxChoice = new ChoiceButton[4];
 
@@ -90,12 +89,8 @@ namespace ProjectZ.InGame.Overlay
         {
             _animator = AnimatorSaveLoad.LoadAnimator("dialog_arrow");
 
-            // @HACK
             _textboxBackground = new UiRectangle(Rectangle.Empty, "textboxblur", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
             Game1.EditorUi.AddElement(_textboxBackground);
-
-            //_textboxBackgroundSide = new UiRectangle(Rectangle.Empty, "textboxblur", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
-            //Game1.EditorUi.AddElement(_textboxBackgroundSide);
 
             for (var i = 0; i < _textboxBackgroundChoice.Length; i++)
             {
@@ -178,10 +173,6 @@ namespace ProjectZ.InGame.Overlay
             _textboxBackground.BackgroundColor = Values.TextboxBackgroundColor * _currentOpacity;
             _textboxBackground.BlurColor = Values.TextboxBlurColor * _currentOpacity;
             _textboxBackground.Rectangle.Y = _dialogBoxRectangle.Y + (int)_textboxOffsetY;
-
-            //_textboxBackgroundSide.BackgroundColor = Values.TextboxBackgroundSideColor * _currentOpacity;
-            //_textboxBackgroundSide.BlurColor = Values.TextboxBlurColor * _currentOpacity;
-            //_textboxBackgroundSide.Rectangle.Y = _dialogBoxRectangle.Y + (int)_textboxOffsetY;
         }
 
         private void UpdateGameState()
@@ -447,10 +438,6 @@ namespace ProjectZ.InGame.Overlay
                 _dialogBoxRectangle.Height - (_paddingV * 2) * _uiScale);
 
             _textboxBackground.Rectangle = _dialogBoxRectangle;
-
-            //_textboxBackgroundSide.Rectangle = new Rectangle(
-            //    _dialogBoxRectangle.X - 2 * _uiScale,
-            //    _dialogBoxRectangle.Y, 2 * _uiScale, _dialogBoxRectangle.Height);
         }
 
         public void StartDialog(string dialogText)
