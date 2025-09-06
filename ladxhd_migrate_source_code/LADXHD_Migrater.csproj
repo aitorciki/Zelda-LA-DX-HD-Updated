@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="Imported\Extensions.cs" />
     <Compile Include="Imported\FileItem.cs" />
+    <Compile Include="Imported\Resources.cs" />
     <Compile Include="Program\Config.cs" />
     <Compile Include="Program\DotNet.cs" />
     <Compile Include="Program\Forms.cs" />

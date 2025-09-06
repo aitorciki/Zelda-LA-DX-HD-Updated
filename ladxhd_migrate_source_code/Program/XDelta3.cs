@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace LADXHD_Migrater
 {
@@ -7,20 +9,13 @@ namespace LADXHD_Migrater
         public static string Exe;
         public static string Args;
 
+        private static Dictionary<string, object> resources = ResourceHelper.GetAllResources();
+
+        public enum Operation { Create, Apply }
+
         public static void Initialize()
         {
             XDelta3.Exe = Config.baseFolder + "\\ladxhd_game_source_code\\xdelta3.exe";
-        }
-
-        public static bool Exists()
-        {
-            if (!XDelta3.Exe.TestPath())
-            {
-                Forms.okayDialog.Display("XDelta3 Not Found", 240, 40, 30, 16, 15, 
-                    "This program requires \"xdelta3.exe\" to be present in the \"ladxhd_game_source_code\" path.");
-                return false;
-            }
-            return true;
         }
 
         public static string GetCreateArguments(string OldFile, string NewFile, string PatchFile)
@@ -73,6 +68,25 @@ namespace LADXHD_Migrater
             xDelta.StartInfo = startInfo;
             xDelta.Start();
             xDelta.WaitForExit();
+        }
+
+        public static void Execute(Operation action, string input, string diff, string output)
+        {
+            if (action == Operation.Apply)
+                XDelta3.Args = XDelta3.GetApplyArguments(input, diff, output);
+            else if (action == Operation.Create)
+                XDelta3.Args = XDelta3.GetCreateArguments(input, diff, output);
+            XDelta3.Start();
+        }
+
+        public static void Create()
+        {
+            File.WriteAllBytes(XDelta3.Exe, (byte[])resources["xdelta3.exe"]);
+        }
+
+        public static void Remove()
+        {
+            XDelta3.Exe.RemovePath();
         }
     }
 }

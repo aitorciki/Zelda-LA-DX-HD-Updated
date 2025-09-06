@@ -1,21 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using static LADXHD_Migrater.XDelta3;
 
 namespace LADXHD_Migrater
 {
     internal class Functions
     {
-        private static string[] languageFiles  = new[] { "esp", "fre", "ita", "por", "rus" };
-        private static string[] languageDialog = new[] { "dialog_esp", "dialog_fre", "dialog_ita", "dialog_por", "dialog_rus" };
+        // The top array is the name of all language files while the bottom is all dialog language files.
+        private static string[] languageFiles  = new[] {        "esp.lng",        "fre.lng",        "ita.lng",        "por.lng",        "rus.lng" };
+        private static string[] languageDialog = new[] { "dialog_esp.lng", "dialog_fre.lng", "dialog_ita.lng", "dialog_por.lng", "dialog_rus.lng" };
 
-        public static string CalculateHash(string FilePath, string HashType)
-        {
-            HashAlgorithm Algorithm = HashAlgorithm.Create(HashType);
-            byte[] ByteArray = File.ReadAllBytes(FilePath);
-            return BitConverter.ToString(Algorithm.ComputeHash(ByteArray)).Replace("-", "");
-        }
+        // The top array holds files to generate from and the bottom holds the corresponding target file it creates.
+        private static string[] specialFile   = new[] {    "menuBackground.png",       "npcs.png",       "items.png" };
+        private static string[] specialTarget = new[] { "menuBackgroundAlt.png", "npcs_redux.png", "items_redux.png" };
+
+        // This is all the fonts that the texture "smallFont" is the base of and all these are created from it.
+        private static string[] smallFonts = new[] { "smallFont_redux.png", "smallFont_vwf.png", "smallFont_vwf_redux.png" };
 
         public static bool VerifyMigrate()
         {
@@ -30,51 +33,69 @@ namespace LADXHD_Migrater
             return verify;
         }
 
-        public static void LanguagePatches(string input, string orig, string update)
+        public static void HandleLanguagePatches(FileItem fileItem, string origPath, string updatePath)
         {
-            FileItem fileItem = new FileItem(input);
-
-            string[] target = null;
-            if (fileItem.Name == "eng.lng")
-                target = languageFiles;
-            else if (fileItem.Name == "dialog_eng.lng")
-                target = languageDialog;
-
-            if (target == null) return;
-
-            foreach (string lang in target)
+            var fileTargets = new Dictionary<string, string[]>
             {
-                string patchFile = Config.patches + "\\" + lang + ".lng.xdelta";
-                string destFile = update + fileItem.DirectoryName.Replace(orig, "") + "\\" + lang + ".lng";
+                { "eng.lng", languageFiles },
+                { "dialog_eng.lng", languageDialog }
+            };
+            if (!fileTargets.TryGetValue(fileItem.Name, out var target))
+                return;
 
-                if (!patchFile.TestPath()) continue;
-
-                XDelta3.Args = XDelta3.GetApplyArguments(fileItem.FullName, patchFile, destFile);
-                XDelta3.Start();
+            foreach (string langFile in target)
+            {
+                string xdelta3File = Path.Combine(Config.patches, langFile + ".xdelta");
+                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), langFile);
+                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
             }
         }
 
-        public static void MigrateCopyLoop(string orig, string update)
+        private static void HandleSpecialUseCases(FileItem fileItem, string origPath, string updatePath)
         {
-            foreach (string file in orig.GetFiles("*", true))
+            if (specialFile.Contains(fileItem.Name))
+            {
+                int index = Array.IndexOf(specialFile, fileItem.Name);
+                string specFile = specialTarget[index];
+
+                string xdelta3File = Path.Combine(Config.patches, specFile + ".xdelta");
+                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), specFile);
+                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
+            }
+        }
+
+        private static void HandleSmallFontImages(FileItem fileItem, string origPath, string updatePath)
+        {
+            if (fileItem.Name != "smallFont.png")
+                return;
+
+            foreach (string sfontFile in smallFonts)
+            {
+                string xdelta3File = Path.Combine(Config.patches, sfontFile + ".xdelta");
+                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), sfontFile);
+                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
+            }
+        }
+
+        public static void MigrateCopyLoop(string origPath, string updatePath)
+        {
+            updatePath.RemovePath();
+
+            foreach (string file in origPath.GetFiles("*", true))
             {
                 FileItem fileItem = new FileItem(file);
 
-                string patchFile = Config.patches + "\\" + fileItem.Name + ".xdelta";
-                string destPath  = update + fileItem.DirectoryName.Replace(orig, ""); 
-                string destFile  = destPath + "\\" + fileItem.Name; 
+                string xdelta3File = Path.Combine(Config.patches, fileItem.Name + ".xdelta");
+                string patchedFile = Path.Combine((updatePath + fileItem.DirectoryName.Replace(origPath, "")).CreatePath(), fileItem.Name);
 
-                destPath.CreatePath(true);
-
-                XDelta3.Args = XDelta3.GetApplyArguments(fileItem.FullName, patchFile, destFile);
-
-                if (patchFile.TestPath())
-                    XDelta3.Start();
+                if (xdelta3File.TestPath())
+                    XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
                 else
-                    File.Copy(fileItem.FullName, destFile, true);
+                    File.Copy(fileItem.FullName, patchedFile, true);
 
-                if (fileItem.Name == "eng.lng" || fileItem.Name == "dialog_eng.lng")
-                    LanguagePatches(fileItem.FullName, orig, update);
+                HandleLanguagePatches(fileItem, origPath, updatePath);
+                HandleSpecialUseCases(fileItem, origPath, updatePath);
+                HandleSmallFontImages(fileItem, origPath, updatePath);
             }
         }
 
@@ -83,13 +104,17 @@ namespace LADXHD_Migrater
             if (!VerifyMigrate()) return;
             Forms.mainDialog.ToggleDialog(false);
 
+            XDelta3.Create();
             MigrateCopyLoop(Config.orig_Content, Config.update_Content);
             MigrateCopyLoop(Config.orig_Data, Config.update_Data);
+            XDelta3.Remove();
 
             Forms.okayDialog.Display("Finished Migration", 280, 40, 45, 26, 15, 
                 "Updated Content/Data files to latest versions.");
             Forms.mainDialog.ToggleDialog(true);
         }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
 
         public static bool VerifyCreatePatch()
         {
@@ -110,60 +135,56 @@ namespace LADXHD_Migrater
             return verify;
         }
 
-        private static string GetSpecialCases(FileItem fileItem, string orig, string update)
+        private static string GetSpecialCases(FileItem fileItem, string origPath, string updatePath)
         {
-            if (fileItem.Name == "menuBackgroundAlt.png")
-                return orig + fileItem.DirectoryName.Replace(update, "") + "\\menuBackground.png";
-            if (fileItem.Name == "items_redux.png")
-                return orig + fileItem.DirectoryName.Replace(update, "") + "\\items.png";
-            if (fileItem.Name == "npcs_redux.png")
-                return orig + fileItem.DirectoryName.Replace(update, "") + "\\npcs.png";
-            if (fileItem.Name == "smallFont_redux.png")
-                return orig + fileItem.DirectoryName.Replace(update, "") + "\\smallFont.png";
-            if (fileItem.Name == "smallFont_vwf.png")
-                return orig + fileItem.DirectoryName.Replace(update, "") + "\\smallFont.png";
-            if (fileItem.Name == "smallFont_vwf_redux.png")
-                return orig + fileItem.DirectoryName.Replace(update, "") + "\\smallFont.png";
+            // Map special cases to their actual filenames
+            var specialCases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                {   "menuBackgroundAlt.png", "menuBackground.png" },
+                {         "items_redux.png",          "items.png" },
+                {          "npcs_redux.png",           "npcs.png" },
+                {     "smallFont_redux.png",      "smallFont.png" },
+                {       "smallFont_vwf.png",      "smallFont.png" },
+                { "smallFont_vwf_redux.png",      "smallFont.png" }
+            };
+            if (specialCases.TryGetValue(fileItem.Name, out var targetName))
+                return origPath + fileItem.DirectoryName.Replace(updatePath, "") + "\\" + targetName;
+
             return "";
         }
 
-        public static void CreatePatchLoop(string orig, string update)
+        public static void CreatePatchLoop(string origPath, string updatePath)
         {
-            // Create the folder if it does not exist.
             Config.patches.CreatePath(true);
 
-            foreach (string file in update.GetFiles("*", true))
+            foreach (string file in updatePath.GetFiles("*", true))
             {
                 FileItem fileItem = new FileItem(file);
                 string oldFile = "";
 
-                // Do not get files in the "obj" or "bin" folders. Ignore 
                 if (fileItem.DirectoryName.IndexOf("content\\bin", StringComparison.OrdinalIgnoreCase) >= 0 ||
                     fileItem.DirectoryName.IndexOf("content\\obj", StringComparison.OrdinalIgnoreCase) >= 0)
                     continue;
 
-                // Hack to derive non-english langues files from english language files.
-                if (languageFiles.Contains(fileItem.BaseName))
-                    oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\eng.lng";
-                else if (languageDialog.Contains(fileItem.BaseName))
-                    oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\dialog_eng.lng";
-                else
-                    oldFile = orig + fileItem.DirectoryName.Replace(update, "") + "\\" + fileItem.Name;
+                if (languageFiles.Contains(fileItem.Name)) 
+                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), "eng.lng");
+                else if (languageDialog.Contains(fileItem.Name)) 
+                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), "dialog_eng.lng");
+                else 
+                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), fileItem.Name);
 
-                // Special cases are files that don't have an original but are derived from other files.
                 if (!oldFile.TestPath()) 
-                    oldFile = GetSpecialCases(fileItem, orig, update);
-
+                    oldFile = GetSpecialCases(fileItem, origPath, updatePath);
                 if (oldFile == "") continue;
- 
-                // Get the file hashes.
-                string oldHash = CalculateHash(oldFile, "MD5");
-                string newHash = CalculateHash(fileItem.FullName, "MD5");
 
-                // Set up the patch name and run the patcher.
-                string patchName = Config.patches + "\\" + fileItem.Name + ".xdelta";
-                XDelta3.Args = XDelta3.GetCreateArguments(oldFile, fileItem.FullName, patchName);
-                if (oldHash != newHash) XDelta3.Start();
+                string oldHash = oldFile.CalculateHash("MD5");
+                string newHash = fileItem.FullName.CalculateHash("MD5");
+
+                if (oldHash != newHash)
+                {
+                    string patchName = Path.Combine(Config.patches, fileItem.Name + ".xdelta");
+                    XDelta3.Execute(Operation.Create, oldFile, fileItem.FullName, patchName);
+                }
             }
         }
 
@@ -172,13 +193,17 @@ namespace LADXHD_Migrater
             if (!VerifyCreatePatch()) return;
             Forms.mainDialog.ToggleDialog(false);
 
+            XDelta3.Create();
             CreatePatchLoop(Config.orig_Content, Config.update_Content);
             CreatePatchLoop(Config.orig_Data, Config.update_Data);
+            XDelta3.Remove();
 
             Forms.okayDialog.Display("Patches Created", 250, 40, 27, 9, 15,
                 "Finished creating xdelta patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.");
             Forms.mainDialog.ToggleDialog(true);
         }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
 
         public static bool VerifyCleanFiles()
         {
@@ -207,6 +232,8 @@ namespace LADXHD_Migrater
                 "Finished cleaning build files (obj/bin/Publish folders).");
             Forms.mainDialog.ToggleDialog(true);
         }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------
 
         public static void CreateBuild()
         {
