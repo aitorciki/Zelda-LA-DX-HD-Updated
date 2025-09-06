@@ -341,13 +341,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 {
                     if (!rectangle.Contains(sprite.EntityPosition.Position))
                     {
-                        ((DrawComponent)sprite.Components[DrawComponent.Index]).Layer = Values.LayerPlayer;
-                        ((DrawShadowComponent)sprite.Components[DrawShadowComponent.Index]).IsActive = true;
+                        //((DrawComponent)sprite.Components[DrawComponent.Index]).Layer = Values.LayerPlayer;
+                        //((DrawShadowComponent)sprite.Components[DrawShadowComponent.Index]).IsActive = true;
                     }
                     else
                     {
-                        ((DrawComponent)sprite.Components[DrawComponent.Index]).Layer = Values.LayerBottom;
-                        ((DrawShadowComponent)sprite.Components[DrawShadowComponent.Index]).IsActive = false;
+                        //((DrawComponent)sprite.Components[DrawComponent.Index]).Layer = Values.LayerBottom;
+                        //((DrawShadowComponent)sprite.Components[DrawShadowComponent.Index]).IsActive = false;
                     }
                 }
             }

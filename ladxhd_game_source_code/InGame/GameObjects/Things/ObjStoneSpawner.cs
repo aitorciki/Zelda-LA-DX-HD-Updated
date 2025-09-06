@@ -76,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 _objSprites[i] = new ObjSprite(Map,
                     position.X + (int)stonePosition.X + centerX, position.Y + 5 + (int)stonePosition.Y,
-                    strStoneSprite, Vector2.Zero, Values.LayerPlayer, strStoneSprite);
+                    strStoneSprite, Vector2.Zero, Values.LayerBottom, null);
 
                 Map.Objects.SpawnObject(_objSprites[i]);
             }
