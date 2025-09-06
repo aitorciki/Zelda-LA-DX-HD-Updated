@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.SaveLoad;
 
 namespace ProjectZ.InGame.Things
@@ -360,7 +361,6 @@ namespace ProjectZ.InGame.Things
         {
             // Updates the small font. This needs to be called any time the font should change. This includes
             // toggling the "Variable Width Font" option as well as the "Disable Censorship" option.
-
             GameFont = (GameSettings.VarWidthFont, GameSettings.Uncensored) switch
             {
                 (true,  true)  => smallFont_vwf_redux,
@@ -368,6 +368,11 @@ namespace ProjectZ.InGame.Things
                 (false, true)  => smallFont_redux,
                 (false, false) => smallFont
             };
+            // If the instance of TextBoxOverlay was created, force a resolution change so it scales with the font.
+            var TextBoxOverlay = Game1.GameManager.InGameOverlay.TextboxOverlay;
+
+            if (TextBoxOverlay != null)
+                TextBoxOverlay.ResolutionChange();
         }
 
         public static void SetItemsTexture()
