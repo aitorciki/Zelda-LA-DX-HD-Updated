@@ -80,7 +80,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 Map.Objects.SpawnObject(_objSprites[i]);
             }
-
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 

@@ -108,8 +108,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // add the sword to the map
             Map.Objects.SpawnObject(_sword);
 
-            // make sure to update the animation to look at the player when he enters the goblin cave
-            var playerDirection = MapManager.ObjLink.NextMapPositionEnd.Value - EntityPosition.Position;
+            var playerDirection = Vector2.Zero;
+
+            if (MapManager.ObjLink.NextMapPositionEnd.HasValue)
+            {
+                playerDirection = MapManager.ObjLink.NextMapPositionEnd.Value - EntityPosition.Position;
+            }
             if (playerDirection.Length() < AttackRange)
             {
                 _aiComponent.ChangeState("attack");
