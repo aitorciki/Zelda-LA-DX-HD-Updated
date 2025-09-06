@@ -23,10 +23,8 @@ namespace ProjectZ.InGame.Things
             }
         }
         public static Effect RoundedCornerEffect;
-
         public static Effect BlurEffect;
         public static Effect RoundedCornerBlurEffect;
-
         public static Effect BlurEffectV;
         public static Effect BlurEffectH;
         public static Effect BBlurEffectV;
@@ -49,21 +47,23 @@ namespace ProjectZ.InGame.Things
         public static SpriteShader ThanosSpriteShader1;
         public static SpriteShader WindFishShader;
         public static SpriteShader ColorShader;
-
         public static SpriteShader ShockShader0;
         public static SpriteShader ShockShader1;
 
         public static SpriteFont EditorFont, EditorFontMonoSpace, EditorFontSmallMonoSpace;
-        public static SpriteFont GameFont, GameHeaderFont;
-        public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux;
+        public static SpriteFont GameHeaderFont;
         public static SpriteFont FontCredits, FontCreditsHeader;
+        public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux;
+        public static SpriteFont GameFont => (GameSettings.VarWidthFont, GameSettings.Uncensored) 
+            switch
+            {
+                (true,  true)  => smallFont_vwf_redux,
+                (true,  false) => smallFont_vwf,
+                (false, true)  => smallFont_redux,
+                (false, false) => smallFont
+            };
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
-
-
-        public static Texture2D SprItemNorm, SprItemRedux;
-        public static Texture2D SprItem => GameSettings.Uncensored ? SprItemRedux : SprItemNorm;
-
         public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprNpCs, SprNpCsRedux;
         public static Texture2D SprEnemies, SprMidBoss, SprNightmares, SprMiniMap;
         public static Texture2D SprShadow;
@@ -77,15 +77,15 @@ namespace ProjectZ.InGame.Things
         public static Texture2D SprLightRoomH;
         public static Texture2D SprLightRoomV;
         public static Texture2D NoiseTexture;
-
         public static Texture2D SprIconOptions, SprIconErase, SprIconCopy, EditorIconEdit, EditorIconSelect;
+        public static Texture2D SprItemNorm, SprItemRedux;
+        public static Texture2D SprItem => GameSettings.Uncensored ? SprItemRedux : SprItemNorm;
 
         public static List<Texture> TextureList = new();
 
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasRedux = new();
         public static Dictionary<string, int> TilesetSizes = new();
-
         public static Dictionary<string, SoundEffect> SoundEffects = new();
 
         public static int GameFontHeight = 10;
@@ -154,7 +154,6 @@ namespace ProjectZ.InGame.Things
             smallFont_redux = content.Load<SpriteFont>("Fonts/smallFont_redux");
             smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
             smallFont_vwf_redux = content.Load<SpriteFont>("Fonts/smallFont_vwf_redux");
-            SetGameFont();
 
             // load textures
             SprTiledBlock = new Texture2D(graphics, 2, 2);
@@ -358,24 +357,6 @@ namespace ProjectZ.InGame.Things
                         TilesetSizes.Add(split[0], value);
                 }
             }
-        }
-
-        public static void SetGameFont()
-        {
-            // Updates the small font. This needs to be called any time the font should change. This includes
-            // toggling the "Variable Width Font" option as well as the "Disable Censorship" option.
-            GameFont = (GameSettings.VarWidthFont, GameSettings.Uncensored) switch
-            {
-                (true,  true)  => smallFont_vwf_redux,
-                (true,  false) => smallFont_vwf,
-                (false, true)  => smallFont_redux,
-                (false, false) => smallFont
-            };
-            // If the instance of TextBoxOverlay was created, force a resolution change so it scales with the font.
-            var TextBoxOverlay = Game1.GameManager.InGameOverlay.TextboxOverlay;
-
-            if (TextBoxOverlay != null)
-                TextBoxOverlay.ResolutionChange();
         }
     }
 }

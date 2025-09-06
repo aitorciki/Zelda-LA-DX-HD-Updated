@@ -98,7 +98,7 @@ namespace ProjectZ.InGame.Pages
         {
             _reloadMenus = true;
             GameSettings.VarWidthFont = newState;
-            Resources.SetGameFont();
+            Game1.GameManager.InGameOverlay.TextboxOverlay.ResolutionChange();
             Game1.UiPageManager.Reload(_contentManager);
         }
 
@@ -113,11 +113,8 @@ namespace ProjectZ.InGame.Pages
         {
             // Set the new state and refresh the fonts and items group.
             GameSettings.Uncensored = newState;
-            Resources.SetGameFont();
+            Game1.GameManager.InGameOverlay.TextboxOverlay.ResolutionChange();
             Game1.GameManager.ItemManager.Load();
-
-            // Swap the item texture PNG files.
-            Resources.SetItemsTexture();
         }
     }
 }
