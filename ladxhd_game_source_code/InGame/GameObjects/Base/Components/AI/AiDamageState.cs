@@ -511,11 +511,11 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             if (strObject == null)
             {
-                // Drop at 35% chance. 
-                if (Game1.RandomNumber.Next(0, 100) < 35)
+                // Drop at 30% chance. 
+                if (Game1.RandomNumber.Next(0, 100) < 30)
                 {
-                    // 50/50 rupee vs heart.
-                    strObject = (Game1.RandomNumber.Next(0, 100) < 50) ? "ruby" : "heart";
+                    // 70/30 rupee vs heart.
+                    strObject = (Game1.RandomNumber.Next(0, 100) < 70) ? "ruby" : "heart";
                 }
             }
             

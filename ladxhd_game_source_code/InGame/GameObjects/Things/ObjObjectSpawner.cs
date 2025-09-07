@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (strSpawnParameter != null)
             {
                 parameter = strSpawnParameter.Split('.');
-                // @HACK: some objects have stings with dots in them...
+                // @HACK: some objects have strings with dots in them...
                 for (var i = 0; i < parameter.Length; i++)
                     parameter[i] = parameter[i].Replace("$", ".");
             }
