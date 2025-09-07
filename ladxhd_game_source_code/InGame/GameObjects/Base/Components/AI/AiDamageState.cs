@@ -459,6 +459,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             var bodyCenter = _body.BodyBox.Box.Center;
             bodyCenter.Y += ExplosionOffsetY;
             if (DeathAnimation)
+            {
                 if (!pieceOfPower)
                 {
                     Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(
@@ -471,47 +472,86 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     animation.EntityPosition.Set(new Vector2(bodyCenter.X, bodyCenter.Y - _body.Position.Z));
                     Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(animation);
                 }
-
+            }
             if (!SpawnItems)
                 return;
 
+            // Add up the kill counts.
             Game1.GameManager.GuardianAcornCount++;
             Game1.GameManager.PieceOfPowerCount++;
             Game1.GameManager.KillCount++;
 
-            // TODO_End reevaluate
-            // spawn heart or ruby
+            // Check to see if a powerup is currently active.
+            bool powerupActive = Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive;
+
+            // Piece of Power Conditions:
+            // Set up now to make things easier later. It's a 25% chance to spawn between 40–44 enemies killed with a guaranteed spawn at 45.
+
+            int count = Game1.GameManager.PieceOfPowerCount;
+            int pop_threshold = 0;
+
+            // If the count is 45 or higher then trigger the threshold.
+            if (count >= 45)
+                pop_threshold = count;
+
+            // If a dice roll of 25% lands between 40 and 44, track the threshold.
+            else if (count >= 40 && Random.Shared.NextDouble() < 0.25)
+                pop_threshold = count;
+            
+            // Guardian Acorn Conditions:
+            // Kill 12 enemies without getting hit. Easy enough.
+
+            int acorn_threshold = Game1.GameManager.GuardianAcornCount;
+
+            // Heart or Rupee Conditions:
+            // From what I can tell from the disassembly, it uses a lookup table and the values can fluctuate from
+            // monster to monster. So here, let's just do 35% to spawn an item then a 50/50 split for heart or rupee.
+
             string strObject = SpawnItem;
+
             if (strObject == null)
             {
-                var random = Game1.RandomNumber.Next(0, 100);
-                if (random < 33)
-                    strObject = "ruby";
-                else if (random < 40)
-                    strObject = "heart";
+                // Drop at 35% chance. 
+                if (Game1.RandomNumber.Next(0, 100) < 35)
+                {
+                    // 50/50 rupee vs heart.
+                    strObject = (Game1.RandomNumber.Next(0, 100) < 50) ? "ruby" : "heart";
+                }
             }
+            
+            // Spawn: Guardian Acorn.
+            // A simpler check since it's a static 12 kills. 
 
-            if (Game1.GameManager.GuardianAcornCount >= 12)
+            if (acorn_threshold >= 12)
             {
-                Game1.GameManager.GuardianAcornCount -= 12;
-
-                var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, "guardianAcorn", null, true);
-                objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
-                _gameObject.Map.Objects.SpawnObject(objItem);
+                Game1.GameManager.GuardianAcornCount -= acorn_threshold;
+                if (!powerupActive)
+                {
+                    var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, "guardianAcorn", null, true);
+                    objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
+                    _gameObject.Map.Objects.SpawnObject(objItem);
+                }
             }
-            // 40 to 45 enemies?
-            // @TODO: remove
-            else if (Game1.GameManager.PieceOfPowerCount >= 45)
+            
+            // Spawn: Piece of Power:
+            // When the threshold was met, subtract the triggering value and spawn a piece of power.
+
+            else if (pop_threshold > 0)
             {
-                Game1.GameManager.PieceOfPowerCount -= 45;
-
-                var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, "pieceOfPower", null, true);
-                objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
-                _gameObject.Map.Objects.SpawnObject(objItem);
+                Game1.GameManager.PieceOfPowerCount -= pop_threshold;
+                if (!powerupActive)
+                {
+                    var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, "pieceOfPower", null, true);
+                    objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
+                    _gameObject.Map.Objects.SpawnObject(objItem);
+                }
             }
+            
+            // Spawn: Heart or Rupee
+            // The powerups take priority even though the logic for this drop was done first.
+            
             else if (strObject != null)
             {
-                // spawn a heart or a ruby
                 var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, strObject, null, true);
                 objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
                 _gameObject.Map.Objects.SpawnObject(objItem);
