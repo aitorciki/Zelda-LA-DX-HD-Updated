@@ -56,8 +56,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // spawn the shell
             var objItem = new ObjItem(Map, (int)EntityPosition.X + 8, (int)EntityPosition.Y + 12, null, _saveKey, _itemName, null);
-            if (objItem.IsDead)
-                return;
+            //if (objItem.IsDead)
+            //    return;
 
             objItem.EntityPosition.Z = 16;
             var itemBody = (BodyComponent)objItem.Components[BodyComponent.Index];

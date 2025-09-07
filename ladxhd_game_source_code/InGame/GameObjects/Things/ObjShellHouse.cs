@@ -49,11 +49,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             var objShells = Game1.GameManager.GetItem("shell");
             if (objShells != null)
             {
-                _shellCount = objShells.Count;
+                // Prevent the bar from overflowing when hitting 20 shells.
+                _shellCount = MathHelper.Min(objShells.Count, 20);
                 _targetHeight = 16;
-                // the first 10 shells move the bar more
+                // The first 10 shells move the bar at twice the speed.
                 _targetHeight += (int)(MathHelper.Min(_shellCount, 10) / 5f * 32);
-                // the second 10 shells move the bar half as much
+                // The second 10 shells move the bar half as much as previously.
                 _targetHeight += (int)MathHelper.Max(0, (_shellCount - 10) / 10f * 32);
             }
 
@@ -107,10 +108,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                     _particle = true;
 
-                    if (_shellCount == 20)
+                    if (_shellCount >= 20)
                         _barAnimator.Play("idle");
 
-                    if (_shellCount == 5 || _shellCount == 10 || _shellCount == 20)
+                    if (_shellCount == 5 || _shellCount == 10 || _shellCount >= 20)
                         Game1.GameManager.PlaySoundEffect("D360-02-02");
                     else
                         Game1.GameManager.PlaySoundEffect("D360-29-1D");
@@ -147,7 +148,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                         objExplosion.EntityPosition.Set(new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 64));
                         Map.Objects.SpawnObject(objExplosion);
                     }
-                    else if (_shellCount == 20)
+                    else if (_shellCount >= 20)
                     {
                         Game1.GameManager.StartDialogPath("shell_mansion_sword");
                     }
