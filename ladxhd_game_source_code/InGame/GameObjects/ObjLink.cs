@@ -4774,7 +4774,16 @@ namespace ProjectZ.InGame.GameObjects
                 if (heart?.Count == 3)
                     _additionalPickupDialog = "heartMeterFilled";
             }
+            else if (itemCollected.Name == "shellPresent")
+            {
+                var currentShells = Game1.GameManager.SaveManager.GetString("shell_presents", "0");
 
+                if (int.TryParse(currentShells, out int shellsAsInt))
+                {
+                    shellsAsInt++;
+                    Game1.GameManager.SaveManager.SetString("shell_presents", shellsAsInt.ToString());
+                }
+            }
             // hearts
             if (item.Name == "heart")
             {

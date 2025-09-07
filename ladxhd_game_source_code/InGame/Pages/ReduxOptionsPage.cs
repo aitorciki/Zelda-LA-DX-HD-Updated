@@ -46,6 +46,11 @@ namespace ProjectZ.InGame.Pages
                 "settings_redux_uncensor", GameSettings.Uncensored, newState => { PressButtonToggleUncensored(newState); });
             _contentLayout.AddElement(toggleUncensored);
 
+            // Enable No Missables:
+            var toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+                "settings_redux_unmissables", GameSettings.Unmissables, newState => { PressButtonToggleUnmissables(newState); });
+            _contentLayout.AddElement(toggleUnmissables);
+
             // Bottom Bar / Back Button:
             var bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
@@ -115,6 +120,11 @@ namespace ProjectZ.InGame.Pages
             GameSettings.Uncensored = newState;
             Game1.GameManager.InGameOverlay.TextboxOverlay.ResolutionChange();
             Game1.GameManager.ItemManager.Load();
+        }
+
+        public void PressButtonToggleUnmissables(bool newState) 
+        {
+            GameSettings.Unmissables = newState;
         }
     }
 }

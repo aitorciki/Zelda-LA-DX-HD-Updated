@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.Things
         public static bool VarWidthFont = false;
         public static bool NoHelperText = false;
         public static bool Uncensored = false;
+        public static bool Unmissables = false;
 
         public static int MusicVolume
         {

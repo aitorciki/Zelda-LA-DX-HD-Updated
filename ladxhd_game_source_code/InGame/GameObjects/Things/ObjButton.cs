@@ -24,6 +24,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public ObjButton(Map.Map map, int posX, int posY, string strKey) : base(map)
         {
+            // Do not spawn the upstairs Kanalet Castle button unless the player specifically wants unmissables enabled.
+            if (strKey == "ow_castle_button_2" && !GameSettings.Unmissables)  
+                return;
+
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 

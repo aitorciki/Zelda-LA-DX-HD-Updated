@@ -19,7 +19,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private float _barHeight = 16;
         private int _shellCount;
+        private int _PresentCount;
         private int _targetHeight;
+        private int _SaveFileVersion;
         private bool _fillBar;
 
         private float _soundCounter;
@@ -42,9 +44,17 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IsDead = true;
                 return;
             }
-
             _barSprite = Resources.GetSprite("shell_bar");
             _barAnimator = AnimatorSaveLoad.LoadAnimator("Objects/shell_mansion_bar");
+
+            var shellPresentString = Game1.GameManager.SaveManager.GetString("shell_presents");
+            var savedVersionString = Game1.GameManager.SaveManager.GetString("save_version");
+
+            int.TryParse(shellPresentString, out int PresentsAsInt);
+            int.TryParse(savedVersionString, out int SaveFileAsInt);
+
+            _PresentCount = PresentsAsInt;
+            _SaveFileVersion = SaveFileAsInt;
 
             var objShells = Game1.GameManager.GetItem("shell");
             if (objShells != null)
@@ -52,18 +62,30 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // Prevent the bar from overflowing when hitting 20 shells.
                 _shellCount = MathHelper.Min(objShells.Count, 20);
                 _targetHeight = 16;
-                // The first 10 shells move the bar at twice the speed.
-                _targetHeight += (int)(MathHelper.Min(_shellCount, 10) / 5f * 32);
-                // The second 10 shells move the bar half as much as previously.
-                _targetHeight += (int)MathHelper.Max(0, (_shellCount - 10) / 10f * 32);
-            }
 
+                if (GameSettings.Unmissables && _SaveFileVersion >= 1)
+                {
+                    if (_PresentCount == 0)
+                        _targetHeight += (int)(MathHelper.Min(_shellCount, 5) / 5f * 32);
+                    else if (_PresentCount < 2)
+                        _targetHeight += (int)(MathHelper.Min(_shellCount, 10) / 5f * 32);
+                    else
+                    {
+                        _targetHeight += (int)(MathHelper.Min(_shellCount, 10) / 5f * 32);
+                        _targetHeight += (int)MathHelper.Max(0, (_shellCount - 10) / 10f * 32);
+                    }
+                }
+                else
+                {
+                    _targetHeight += (int)(MathHelper.Min(_shellCount, 10) / 5f * 32);
+                    _targetHeight += (int)MathHelper.Max(0, (_shellCount - 10) / 10f * 32);
+                }
+            }
             if (objShells == null || objShells.Count == 0)
             {
                 _triggerDialog = true;
                 _targetHeight = 0;
             }
-
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
         }
@@ -108,10 +130,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                     _particle = true;
 
-                    if (_shellCount >= 20)
+                    if (_shellCount >= 20 && (!GameSettings.Unmissables || _SaveFileVersion < 1 || _PresentCount >= 2))
                         _barAnimator.Play("idle");
 
-                    if (_shellCount == 5 || _shellCount == 10 || _shellCount >= 20)
+                    bool PlaySound = _shellCount == 5 || 
+                                     _shellCount == 10 || 
+                                     _shellCount >= 20;
+                    if (GameSettings.Unmissables && _SaveFileVersion >= 1)
+                         PlaySound = _shellCount >= 5 && _PresentCount == 0 || 
+                                     _shellCount >= 10 && _PresentCount < 2 || 
+                                     _shellCount >= 20;
+
+                    if (PlaySound)
                         Game1.GameManager.PlaySoundEffect("D360-02-02");
                     else
                         Game1.GameManager.PlaySoundEffect("D360-29-1D");
@@ -138,7 +168,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 else
                 {
                     _particle = false;
-                    if (_shellCount == 5 || _shellCount == 10)
+
+                    bool SpawnShell = _shellCount == 5 || 
+                                      _shellCount == 10;
+                    if (GameSettings.Unmissables && _SaveFileVersion >= 1)
+                         SpawnShell = _shellCount >= 5 && _PresentCount == 0 || 
+                                      _shellCount >= 10 && _PresentCount < 2;
+
+                    if (SpawnShell)
                     {
                         _spawnPresent = true;
 
@@ -166,7 +203,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 else
                 {
                     _spawnPresent = false;
-
                     var objItem = new ObjItem(Map, 0, 0, null, null, "shellPresent", null);
                     objItem.EntityPosition.Set(new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 56));
                     Map.Objects.SpawnObject(objItem);
