@@ -21,15 +21,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public ObjTracy(Map.Map map, int posX, int posY) : base(map)
         {
-            Animator = AnimatorSaveLoad.LoadAnimator("NPCs/npc_tracy");
-            Animator.Play("idle");
+            // Tracy will retain her "in-between" state between messages even when leaving the
+            // building and after reloading a save file, so clear upon entering the building.
+            Game1.GameManager.SaveManager.SetString("npc_tracy", "0");
 
-            // 28, 42 or 7
-            var price = Game1.GameManager.PieceOfPowerCount % 2 == 0 ? 0 : 1;
+            // Even kills > 28 rupees
+            // Odd kills  > 42 rupees
+            var price = Game1.GameManager.KillCount % 2 == 0 ? 0 : 1;
+
+            // Bought 8 potions > 7 rupees
             if (Game1.GameManager.SaveManager.GetInt("npc_tracy", 0) == 8)
                 price = 2;
-            
+
+            // The actual price is set in "scripts.zScripts".
             Game1.GameManager.SaveManager.SetString("npc_tracy_price", price.ToString());
+
+            Animator = AnimatorSaveLoad.LoadAnimator("NPCs/npc_tracy");
+            Animator.Play("idle");
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
