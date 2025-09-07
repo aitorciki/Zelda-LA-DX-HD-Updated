@@ -90,6 +90,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("ThiefState", gameManager.ThiefState);
             saveManager.SetInt("maxHearts", gameManager.MaxHearts);
             saveManager.SetInt("deathCount", gameManager.DeathCount);
+            saveManager.SetInt("killCount", gameManager.KillCount);
             saveManager.SetInt("currentHealth", gameManager.CurrentHealth);
             saveManager.SetInt("cloak", gameManager.CloakType);
             saveManager.SetInt("ocarinaSong", gameManager.SelectedOcarinaSong);
@@ -195,6 +196,7 @@ namespace ProjectZ.InGame.SaveLoad
             gameManager.GuardianAcornCount = saveManager.GetInt("guardianAcornCount", 0);
             gameManager.PieceOfPowerCount = saveManager.GetInt("pieceOfPowerCount", 0);
             gameManager.DeathCount = saveManager.GetInt("deathCount", 0);
+            gameManager.KillCount = saveManager.GetInt("killCount", 0);
             gameManager.TotalPlaytime = saveManager.GetFloat("totalPlaytime", 0.0f);
             gameManager.CurrentSessionPlaytime = 0.0f;
 

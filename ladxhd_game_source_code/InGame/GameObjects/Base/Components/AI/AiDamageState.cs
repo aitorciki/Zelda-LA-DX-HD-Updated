@@ -477,6 +477,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             Game1.GameManager.GuardianAcornCount++;
             Game1.GameManager.PieceOfPowerCount++;
+            Game1.GameManager.KillCount++;
 
             // TODO_End reevaluate
             // spawn heart or ruby

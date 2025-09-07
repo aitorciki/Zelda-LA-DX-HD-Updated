@@ -4124,7 +4124,6 @@ namespace ProjectZ.InGame.GameObjects
                 hearts = 5;
 
             Game1.GameManager.CurrentHealth = hearts * 4;
-
             Game1.GameManager.DeathCount++;
 
             MapInit();

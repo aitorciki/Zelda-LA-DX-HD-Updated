@@ -136,6 +136,7 @@ namespace ProjectZ.InGame.Things
         private int _maxOffsetY;
 
         public int DeathCount;
+        public int KillCount;
 
         public int MaxHearts = 3;
         public int CurrentHealth = 4 * 3;
