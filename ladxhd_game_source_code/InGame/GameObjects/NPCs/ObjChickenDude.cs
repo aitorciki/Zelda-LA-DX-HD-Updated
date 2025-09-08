@@ -13,7 +13,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 {
     internal class ObjChickenDude : GameObject
     {
-        private readonly ObjAnimator _objChicken;
+        private ObjAnimator _objChicken;
 
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -32,6 +32,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private int _powderDir = -1;
 
+        private Map.Map _map;
+
         public ObjChickenDude() : base("npc_chicken_dude") { }
 
         public ObjChickenDude(Map.Map map, int posX, int posY, string dialogId) : base(map)
@@ -44,22 +46,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/npc_chicken_dude");
             _animator.Play("idle");
 
-            if (!string.IsNullOrEmpty(_dialogId) && Game1.GameManager.SaveManager.GetString(_dialogId) == "2")
+            _map = map;
+
+            if (!string.IsNullOrEmpty(_dialogId) && (Game1.GameManager.SaveManager.GetString(_dialogId) == "2") || Game1.GameManager.SaveManager.GetString(_dialogId) == "3")
             {
-                _flyingMode = true;
-                _animator.Play("fly_forward_1");
-
-                _objChicken = new ObjAnimator(map, posX, posY, Values.LayerPlayer, "NPCs/cock", "stand_0", false);
-                _objChicken.Animator.SpeedMultiplier = 2;
-                map.Objects.SpawnObject(_objChicken);
-
-                EntityPosition.Z = 16;
-                EntityPosition.AddPositionListener(typeof(ObjChickenDude), UpdateChickenPosition);
-                UpdateChickenPosition(EntityPosition);
-
-                NewDirection();
+                StartFlying(posX, posY);
             }
-
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, Vector2.Zero);
 
@@ -95,6 +87,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
         }
 
         private void InitIdle()
@@ -112,6 +105,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             var spawnPosition = new Vector2(EntityPosition.X + _powderDir * 10, EntityPosition.Y);
             Map.Objects.SpawnObject(new ObjPowder(Map, spawnPosition.X, spawnPosition.Y, 0, false));
+        }
+
+        private void StartFlying(int posX, int posY)
+        {
+            _flyingMode = true;
+            _animator.Play("fly_forward_1");
+
+            _objChicken = new ObjAnimator(_map, posX, posY, Values.LayerPlayer, "NPCs/cock", "stand_0", false);
+            _objChicken.Animator.SpeedMultiplier = 2;
+            _map.Objects.SpawnObject(_objChicken);
+
+            EntityPosition.Z = 16;
+            EntityPosition.AddPositionListener(typeof(ObjChickenDude), UpdateChickenPosition);
+            UpdateChickenPosition(EntityPosition);
+
+            NewDirection();
         }
 
         private void NewDirection()
@@ -207,6 +216,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             Game1.GameManager.StartDialogPath(_dialogId);
             return true;
+        }
+
+        private void OnKeyChange()
+        {
+            var borrowRooster = Game1.GameManager.SaveManager.GetString("borrow_rooster");
+            if (borrowRooster == "0") 
+            {
+                StartFlying((int)EntityPosition.X, (int)EntityPosition.Y);
+                _aiComponent.ChangeState(_flyingMode ? "flying" : "idle");
+                RemoveComponent(InteractComponent.Index);
+            }
+            else if (borrowRooster == "1")
+            {
+                _aiComponent.ChangeState("idle");
+                _animator.Play("idle");
+                _map.Objects.RemoveObject(_objChicken);
+                EntityPosition.Z = 0;
+                AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
+            }
         }
     }
 }

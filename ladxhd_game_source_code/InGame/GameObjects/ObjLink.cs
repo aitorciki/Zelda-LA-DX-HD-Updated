@@ -1343,6 +1343,26 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _spawnGhost = true;
             }
+
+            var borrowRooster = Game1.GameManager.SaveManager.GetString("borrow_rooster");
+            if (borrowRooster == "0")
+            {
+                Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
+                Map.Objects.RemoveObject(_objRooster);
+                _objRooster = null;
+            }
+            if (borrowRooster == "1")
+            {
+                Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
+                var itemRooster = new GameItemCollected("rooster") { Count = 1 };
+                PickUpItem(itemRooster, false, false, true);
+                _objRooster = new ObjCock(Map, 
+                    (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X), 
+                    (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X), 
+                    "borrow_rooster");
+                Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(_objRooster);
+                _objRooster.BorrowRooster();
+            }
         }
 
         private void OnMoveCollision(Values.BodyCollision collision)

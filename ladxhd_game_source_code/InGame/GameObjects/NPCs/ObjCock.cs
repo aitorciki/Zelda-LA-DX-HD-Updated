@@ -23,7 +23,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private readonly Animator _animator;
         private readonly CSprite _sprite;
 
-        private readonly string _saveKey;
+        private string _saveKey;
 
         private const int CarryHeight = 14;
 
@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _slowReturn;
         private bool _freezePlayer;
         private bool _isActive = true;
+        private Map.Map _map;
 
         private const int FollowDistance = 18;
 
@@ -42,6 +43,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public ObjCock(Map.Map map, int posX, int posY, string saveKey) : base(map)
         {
+            _map = map;
+
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
@@ -394,6 +397,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             if (MapManager.ObjLink.IsFlying())
                 MapManager.ObjLink.SetPosition(new Vector2(newPosition.X, newPosition.Y));
+        }
+
+        public void BorrowRooster()
+        {
+            _animator.Play("stand_3");
+            Game1.GameManager.PlaySoundEffect("D368-16-10");
+            _aiComponent.ChangeState("following");
+            _carriableCompnent.IsActive = true;
+            RemoveComponent(CollisionComponent.Index);
         }
     }
 }
