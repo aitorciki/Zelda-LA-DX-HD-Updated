@@ -9,12 +9,18 @@ using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Base.Systems;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjMoveStone : GameObject
     {
+        private static bool AnotherStoneMoving => CurrentlyMoving.Count > 0;
+
+        private static readonly HashSet<ObjMoveStone> CurrentlyMoving = new HashSet<ObjMoveStone>();
+
         private readonly List<GameObject> _collidingObjects = new List<GameObject>();
+        private readonly List<GameObject> _groupOfMoveStone = new List<GameObject>();
 
         private readonly AiComponent _aiComponent;
         private readonly BodyComponent _body;
@@ -73,8 +79,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             var sprite = Resources.GetSprite(spriteId);
 
             AddComponent(AiComponent.Index, _aiComponent);
+
             if (moveDirections != 0)
                 AddComponent(BodyComponent.Index, _body);
+
             AddComponent(PushableComponent.Index, new PushableComponent(_box, OnPush) { InertiaTime = 450 });
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_box, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(0, -sprite.SourceRectangle.Height), layer));
@@ -111,8 +119,61 @@ namespace ProjectZ.InGame.GameObjects.Things
             ToMoving();
         }
 
+        private static float OverlapArea(Box a, Box b)
+        {
+            float xOverlap = Math.Max(0,
+                Math.Min(a.Right, b.Right) - Math.Max(a.Left, b.Left));
+            float yOverlap = Math.Max(0,
+                Math.Min(a.Back, b.Back) - Math.Max(a.Front, b.Front));
+
+            return xOverlap * yOverlap;
+        }
+
+        private bool IsPlayerOverlappingMoreThanOthers()
+        {
+            var playerBody = MapManager.ObjLink.Components[BodyComponent.Index] as BodyComponent;
+            if (playerBody == null) return true;
+
+            Box playerBox = playerBody.BodyBox.Box;
+            float myOverlap = OverlapArea(playerBox, _box.Box);
+            var playerCenter = new Vector2(playerBox.Center.X, playerBox.Center.Y);
+            var myCenter     = new Vector2(_box.Box.Center.X, _box.Box.Center.Y);
+            float myDist     = Vector2.DistanceSquared(playerCenter, myCenter);
+
+            _groupOfMoveStone.Clear();
+            Map.Objects.GetComponentList(_groupOfMoveStone,
+                (int)MapManager.ObjLink.EntityPosition.X - 16, 
+                (int)MapManager.ObjLink.EntityPosition.Y - 16, 
+                32, 32, BodyComponent.Mask);
+
+            const float epsilon = 0.5f;
+
+            foreach (var obj in _groupOfMoveStone)
+            {
+                if (obj is not ObjMoveStone other) continue;
+                if (other == this || other._aiComponent.CurrentStateId != "idle") continue;
+
+                float otherOverlap = OverlapArea(playerBox, other._box.Box);
+
+                if (otherOverlap > myOverlap + epsilon) return false;
+
+                if (Math.Abs(otherOverlap - myOverlap) <= epsilon)
+                {
+                    var otherCenter = new Vector2(other._box.Box.Center.X, other._box.Box.Center.Y);
+                    if (Vector2.DistanceSquared(playerCenter, otherCenter) < myDist)
+                        return false;
+                }
+            }
+            return true;
+        }
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
+            if (!IsPlayerOverlappingMoreThanOthers())
+                return false;
+
+            if (AnotherStoneMoving)
+                return false;
+
             if (type == PushableComponent.PushType.Impact ||
                 _aiComponent.CurrentStateId != "idle")
                 return false;
@@ -139,6 +200,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             _goalPosition = new Vector2(
                 _startPosition.X + pushVector.X * 16,
                 _startPosition.Y + pushVector.Y * 16);
+
+            CurrentlyMoving.Add(this);
 
             ToMoving();
 
@@ -194,6 +257,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // can fall into holes after finishing the movement animation
             _body.IgnoreHoles = false;
+
+            CurrentlyMoving.Remove(this);
         }
 
         private void InitMoved()
@@ -220,9 +285,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             EntityPosition.Set(Vector2.Lerp(_startPosition, _goalPosition, amount));
 
-            // @HACK: this kind of stuff should be inside the movement system
-
-            // check for colliding bodies and push them forward
             _collidingObjects.Clear();
             Map.Objects.GetComponentList(_collidingObjects,
                 (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 16, 17, 17, BodyComponent.Mask);
