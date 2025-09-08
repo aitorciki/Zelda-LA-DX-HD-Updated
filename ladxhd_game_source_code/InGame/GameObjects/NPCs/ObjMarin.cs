@@ -237,7 +237,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // singing for the animals
             // TODO: fade in music
-            if (mariaState == "3")
+            if (mariaState == "3" || mariaState == "8")
             {
                 if (Components[CollisionComponent.Index] != null)
                     RemoveComponent(CollisionComponent.Index);
@@ -959,5 +959,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             DrawHelper.DrawNormalized(spriteBatch, _spriteNote, position, Color.White * transparency);
         }
+
+        public void TakeLastWalk()
+        {
+            IsActive = true;
+            IsHidden = false;
+            _currentState = States.FollowPlayer;
+        }
+
     }
 }

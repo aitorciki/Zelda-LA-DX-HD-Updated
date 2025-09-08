@@ -1322,7 +1322,6 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.GameManager.StartDialogPath("npc_hidden_reject");
                 }
             }
-
             var boomerangReturnValue = Game1.GameManager.SaveManager.GetString("boomerang_trade_return");
             if (!string.IsNullOrEmpty(boomerangReturnValue))
             {
@@ -1337,13 +1336,13 @@ namespace ProjectZ.InGame.GameObjects
                 MapManager.ObjLink.PickUpItem(item, true);
                 _pickupDialogOverride = "npc_hidden_4";
             }
-
+            // Spawn the ghost.
             var spawnGhostValue = Game1.GameManager.SaveManager.GetString(_spawnGhostKey);
             if (!string.IsNullOrEmpty(spawnGhostValue))
             {
                 _spawnGhost = true;
             }
-
+            // Borrow the rooster.
             var borrowRooster = Game1.GameManager.SaveManager.GetString("borrow_rooster");
             if (borrowRooster == "0")
             {
@@ -1351,17 +1350,35 @@ namespace ProjectZ.InGame.GameObjects
                 Map.Objects.RemoveObject(_objRooster);
                 _objRooster = null;
             }
-            if (borrowRooster == "1")
+            else if (borrowRooster == "1")
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
                 var itemRooster = new GameItemCollected("rooster") { Count = 1 };
                 PickUpItem(itemRooster, false, false, true);
-                _objRooster = new ObjCock(Map, 
+                _objFollower = _objRooster = new ObjCock(Map, 
                     (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X), 
                     (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X), 
                     "borrow_rooster");
                 Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(_objRooster);
                 _objRooster.BorrowRooster();
+            }
+            // Take a walk with Marin.
+            var borrowMarin = Game1.GameManager.SaveManager.GetString("borrow_marin");
+            if (borrowMarin == "0")
+            {
+                Game1.GameManager.SaveManager.RemoveString("borrow_marin");
+                var objItem = new ObjObjectSpawner(Map, 368, 1216, "maria_state", "7", "maria", null, true);
+                Map.Objects.SpawnObject(objItem);
+            }
+            else if (borrowMarin == "1")
+            {
+                Game1.GameManager.SaveManager.RemoveString("borrow_marin");
+                var Marin = Map.Objects.GetObjectOfType((int)EntityPosition.X, (int)EntityPosition.Y, 48, 48, typeof(ObjMarin));
+                ObjMarin objMarin = (ObjMarin)(Marin);
+                var itemMarin = new GameItemCollected("marin") { Count = 1 };
+                PickUpItem(itemMarin, false, false, true);
+                _objMaria = objMarin;
+                _objMaria.TakeLastWalk();
             }
         }
 
