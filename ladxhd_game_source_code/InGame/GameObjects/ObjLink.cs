@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ProjectZ.Base;
+using ProjectZ.Base.UI;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -832,6 +834,10 @@ namespace ProjectZ.InGame.GameObjects
             _startedJumping = false;
 
             _currentWalkSpeed = Game1.GameManager.PieceOfPowerIsActive ? WalkSpeedPoP : WalkSpeed;
+
+            // Press the toggle HUD key (InGame/GameObjects/Things/Values.cs) to hide the UI.
+            if (InputHandler.KeyPressed(Keys.OemTilde) || InputHandler.KeyPressed(Keys.Delete))
+                UiManager.HideOverlay = !UiManager.HideOverlay;
         }
 
         #region Draw

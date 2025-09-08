@@ -6,6 +6,8 @@ namespace ProjectZ.Base.UI
 {
     public class UiManager
     {
+        public static bool HideOverlay = false;
+
         public string CurrentScreen
         {
             get => _currentScreen;
@@ -36,6 +38,8 @@ namespace ProjectZ.Base.UI
 
         public void DrawBlur(SpriteBatch spriteBatch)
         {
+            if (HideOverlay) { return; }
+
             for (var i = 0; i < _elementList.Count; i++)
                 if (_elementList[i].Screens.Contains(_currentScreen))
                     if (_elementList[i].IsVisible)

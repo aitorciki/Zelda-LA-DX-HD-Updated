@@ -113,6 +113,8 @@ namespace ProjectZ.InGame.Overlay
 
         public void DrawTop(SpriteBatch spriteBatch, float fadePercentage, float transparency)
         {
+            if (UiManager.HideOverlay) { return; }
+
             // draw the item slots
             int direction = GameSettings.ItemsOnRight ? 1 : -1;
             ItemSlotOverlay.Draw(spriteBatch, _itemSlotOverlay.ItemSlotPosition + new Point(direction * (int)(fadePercentage * FadeOffset * Game1.UiScale), 0), Game1.UiScale, transparency);
