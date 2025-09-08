@@ -1,5 +1,28 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.1**
+  * Add redux option "Nothing is Missable" option. This does the following:
+    * Shopkeeper name buyback has been added to this option since it's non-canon.
+    * Seashells 5/10 at seashell mansion can be obtained even if you pass the markers.
+    * A button is added upstairs to Kanalet Castle to close the gate (for Richard photo).
+    * The flying rooster can be borrowed from the Hen House after level 8 is completed.
+    * Marin will take a walk with the player for another shot at photos after level 8 is completed.
+  * Modify drop rates of rupees and hearts: 30% chance for drop, 70/30 it will be rupee/heart.
+    * Old formula had a 33% chance to drop rupees, so only a slight nerf there.
+    * Old formula had hearts at 40% but AFTER rupees, meaning only a 7% chance so a buff there.
+  * Don't stop spawning seashells when reaching 20 shells allowing all 26 to be collected.
+  * Only allow pushing a single object at a time with a bias towards the closer object.
+  * The UI can be hidden/shown with either the "Tilde (~)" key or the "Delete" key.
+  * Piece of Power and Guardian Acorn will no longer drop if a powerup is currently active.
+  * The total number of kills the player has made is now tracked in the save file.
+  * Remove 3D effect from small rocks so they don't overlap the sword and remove their shadows.
+  * Fix "error" message appearing after the final photo taken and any repeat events (like stealing).
+  * Fix dialog background size when selecting between VWF and standard font.
+  * Fix text of "Auto-Scale" for graphics slider to have a space after the colon.
+  * Fix Crazy Tracy keeping her mid-conversation state between entering/exiting her shop.
+  * Fix missing secret sound after sprinkling raccoon with powder and walking towards tail key chest.
+  * Fix potential extremely rare crash with moblin-swords under the right conditions.
+
 ## **v1.2.0**
 ### ** The Redux Update:**
   * Fix final boss "Giant Zol" form to have the correct graphics.
