@@ -26,10 +26,15 @@ namespace ProjectZ.InGame.Pages
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Original Menu Border:
-            var toggleMenuBricks = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
-                "settings_redux_menubricks", GameSettings.OldMenuBorder, newState => { PressButtonToggleMenuBricks(newState); });
-            _contentLayout.AddElement(toggleMenuBricks);
+            // Slider to adjust the game scale.
+            var menuBricksSlider = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
+                buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
+                number =>
+                {
+                    GameSettings.MenuBorder = number;
+                })
+            { SetString = number => MenuBorderScaleSliderAdjustment(number) };
+            _contentLayout.AddElement(menuBricksSlider);
 
             // Variable Width Font Toggle:
             var toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
@@ -88,15 +93,24 @@ namespace ProjectZ.InGame.Pages
             _reloadMenus = false;
         }
 
-        public void PressButtonToggleMenuBricks(bool newState)
+        private string MenuBorderScaleSliderAdjustment(int number)
         {
-            GameSettings.OldMenuBorder = newState;
-            var texture = newState
-                ? _contentManager.Load<Texture2D>("Menu/menuBackgroundAlt")
-                : _contentManager.Load<Texture2D>("Menu/menuBackground");
-
+            var texture = number switch
+            {
+                0 => _contentManager.Load<Texture2D>("Menu/menuBackground"),
+                1 => _contentManager.Load<Texture2D>("Menu/menuBackgroundB"),
+                2 => _contentManager.Load<Texture2D>("Menu/menuBackgroundC")
+            };
             var menuScreen = (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
             menuScreen?.SetBackground(texture);
+
+            string label = number switch
+            {
+                0 => ": " + Game1.LanguageManager.GetString("settings_redux_menubricksA", "error"),
+                1 => ": " + Game1.LanguageManager.GetString("settings_redux_menubricksB", "error"),
+                2 => ": " + Game1.LanguageManager.GetString("settings_redux_menubricksC", "error")
+            };
+            return label;
         }
 
         public void PressButtonDialogFontChange(bool newState)

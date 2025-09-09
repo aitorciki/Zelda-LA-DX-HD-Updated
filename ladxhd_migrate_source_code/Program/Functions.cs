@@ -9,16 +9,61 @@ namespace LADXHD_Migrater
 {
     internal class Functions
     {
-        // The top array is the name of all language files while the bottom is all dialog language files.
-        private static string[] languageFiles  = new[] {        "esp.lng",        "fre.lng",        "ita.lng",        "por.lng",        "rus.lng" };
-        private static string[] languageDialog = new[] { "dialog_esp.lng", "dialog_fre.lng", "dialog_ita.lng", "dialog_por.lng", "dialog_rus.lng" };
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        // The top array holds files to generate from and the bottom holds the corresponding target file it creates.
-        private static string[] specialFile   = new[] {    "menuBackground.png",       "npcs.png",       "items.png" };
-        private static string[] specialTarget = new[] { "menuBackgroundAlt.png", "npcs_redux.png", "items_redux.png" };
+        FILE MAPPING CODE : NOT ALL FILES AND PATCHES ARE 1:1 FROM ORIGINAL GAME VERSION. NEW FILES NEED A "BASE" TO BE CREATED FROM USING A PATCH
+       
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        // This is all the fonts that the texture "smallFont" is the base of and all these are created from it.
+        // SOME RESOURCES ARE USED TO CREATE MULTIPLE FILES OR PATCHES. EACH ARRAY BELOW HOLDS ALL VERSIONS OF A FILE THAT IS
+        // BASED OFF OF ANOTHER FILE. THE "MASTER" FILE THAT CREATES THESE VERSIONS IS LINKED TO THEM IN THE DICTIONARY BELOW
+
+        private static string[] langFiles  = new[] { "esp.lng", "fre.lng", "ita.lng", "por.lng", "rus.lng" };
+        private static string[] langDialog = new[] { "dialog_esp.lng", "dialog_fre.lng", "dialog_ita.lng", "dialog_por.lng", "dialog_rus.lng" };
         private static string[] smallFonts = new[] { "smallFont_redux.png", "smallFont_vwf.png", "smallFont_vwf_redux.png" };
+        private static string[] backGround = new[] { "menuBackgroundB.png", "menuBackgroundC.png" };
+        private static string[] npcImages  = new[] { "npcs_redux.png" };
+        private static string[] itemImages = new[] { "items_redux.png" };
+
+        // THE "KEY" IS THE MASTER FILE THAT CREATES OTHER FILES FROM IT. THE "VALUE" IS THE STRING ARRAY THAT HOLDS THOSE FILES
+
+        private static readonly Dictionary<string, string[]> fileTargets = new Dictionary<string, string[]>
+        {
+            { "eng.lng",             langFiles },
+            { "dialog_eng.lng",     langDialog },
+            { "smallFont.png",      smallFonts },
+            { "menuBackground.png", backGround },
+            { "npcs.png",            npcImages },
+            { "items.png",          itemImages }
+        };
+
+        // CREATE A REVERSE MAP OF THE DICTIONARY SO IT CAN EASILY BE SEARCHED IN EITHER DIRECTION
+
+        private static readonly Dictionary<string, string> reverseFileTargets = BuildReverseMap();
+        private static Dictionary<string, string> BuildReverseMap()
+        {
+            var reverse = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var kvp in fileTargets)
+            {
+                string shortName = kvp.Key;
+                string[] longNames = kvp.Value;
+                foreach (string longName in longNames)
+                    reverse[longName] = shortName;
+            }
+            return reverse;
+        }
+
+        public static bool InJunkFolder(FileItem fileItem)
+        {
+            return (fileItem.DirectoryName.IndexOf("content\\bin", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    fileItem.DirectoryName.IndexOf("content\\obj", StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        MIGRATION CODE : COPY OR PATCH V1.0.0 ASSETS IN "assets_original" USING PATCHES IN "assets_patches" TO CONTENT/DATA OF "ladxhd_game_source_code"
+       
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
         public static bool VerifyMigrate()
         {
@@ -33,46 +78,15 @@ namespace LADXHD_Migrater
             return verify;
         }
 
-        public static void HandleLanguagePatches(FileItem fileItem, string origPath, string updatePath)
+        private static void HandleMultiFilePatches(FileItem fileItem, string origPath, string updatePath)
         {
-            var fileTargets = new Dictionary<string, string[]>
-            {
-                { "eng.lng", languageFiles },
-                { "dialog_eng.lng", languageDialog }
-            };
             if (!fileTargets.TryGetValue(fileItem.Name, out var target))
                 return;
 
-            foreach (string langFile in target)
+            foreach (string newFile in target)
             {
-                string xdelta3File = Path.Combine(Config.patches, langFile + ".xdelta");
-                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), langFile);
-                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
-            }
-        }
-
-        private static void HandleSpecialUseCases(FileItem fileItem, string origPath, string updatePath)
-        {
-            if (specialFile.Contains(fileItem.Name))
-            {
-                int index = Array.IndexOf(specialFile, fileItem.Name);
-                string specFile = specialTarget[index];
-
-                string xdelta3File = Path.Combine(Config.patches, specFile + ".xdelta");
-                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), specFile);
-                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
-            }
-        }
-
-        private static void HandleSmallFontImages(FileItem fileItem, string origPath, string updatePath)
-        {
-            if (fileItem.Name != "smallFont.png")
-                return;
-
-            foreach (string sfontFile in smallFonts)
-            {
-                string xdelta3File = Path.Combine(Config.patches, sfontFile + ".xdelta");
-                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), sfontFile);
+                string xdelta3File = Path.Combine(Config.patches, newFile + ".xdelta");
+                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), newFile);
                 XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
             }
         }
@@ -85,6 +99,8 @@ namespace LADXHD_Migrater
             {
                 FileItem fileItem = new FileItem(file);
 
+                if (InJunkFolder(fileItem)) continue;
+
                 string xdelta3File = Path.Combine(Config.patches, fileItem.Name + ".xdelta");
                 string patchedFile = Path.Combine((updatePath + fileItem.DirectoryName.Replace(origPath, "")).CreatePath(), fileItem.Name);
 
@@ -93,9 +109,7 @@ namespace LADXHD_Migrater
                 else
                     File.Copy(fileItem.FullName, patchedFile, true);
 
-                HandleLanguagePatches(fileItem, origPath, updatePath);
-                HandleSpecialUseCases(fileItem, origPath, updatePath);
-                HandleSmallFontImages(fileItem, origPath, updatePath);
+                HandleMultiFilePatches(fileItem, origPath, updatePath);
             }
         }
 
@@ -114,7 +128,11 @@ namespace LADXHD_Migrater
             Forms.mainDialog.ToggleDialog(true);
         }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        PATCHES CODE : CREATE PATCHES FROM CONTENT/DATA IN "ladxhd_game_source_code" VS. FILES IN "assets_original" TO FOLDER "assets_patches"
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
         public static bool VerifyCreatePatch()
         {
@@ -135,24 +153,6 @@ namespace LADXHD_Migrater
             return verify;
         }
 
-        private static string GetSpecialCases(FileItem fileItem, string origPath, string updatePath)
-        {
-            // Map special cases to their actual filenames
-            var specialCases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                {   "menuBackgroundAlt.png", "menuBackground.png" },
-                {         "items_redux.png",          "items.png" },
-                {          "npcs_redux.png",           "npcs.png" },
-                {     "smallFont_redux.png",      "smallFont.png" },
-                {       "smallFont_vwf.png",      "smallFont.png" },
-                { "smallFont_vwf_redux.png",      "smallFont.png" }
-            };
-            if (specialCases.TryGetValue(fileItem.Name, out var targetName))
-                return origPath + fileItem.DirectoryName.Replace(updatePath, "") + "\\" + targetName;
-
-            return "";
-        }
-
         public static void CreatePatchLoop(string origPath, string updatePath)
         {
             Config.patches.CreatePath(true);
@@ -162,19 +162,13 @@ namespace LADXHD_Migrater
                 FileItem fileItem = new FileItem(file);
                 string oldFile = "";
 
-                if (fileItem.DirectoryName.IndexOf("content\\bin", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    fileItem.DirectoryName.IndexOf("content\\obj", StringComparison.OrdinalIgnoreCase) >= 0)
-                    continue;
+                if (InJunkFolder(fileItem)) continue;
 
-                if (languageFiles.Contains(fileItem.Name)) 
-                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), "eng.lng");
-                else if (languageDialog.Contains(fileItem.Name)) 
-                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), "dialog_eng.lng");
-                else 
-                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), fileItem.Name);
+                oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), fileItem.Name);
 
-                if (!oldFile.TestPath()) 
-                    oldFile = GetSpecialCases(fileItem, origPath, updatePath);
+                if (!oldFile.TestPath() && reverseFileTargets.TryGetValue(fileItem.Name, out string shortName))
+                    oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), shortName);
+
                 if (oldFile == "") continue;
 
                 string oldHash = oldFile.CalculateHash("MD5");
@@ -203,7 +197,11 @@ namespace LADXHD_Migrater
             Forms.mainDialog.ToggleDialog(true);
         }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        CLEAN BUILD FILES CODE : REMOVE ALL "bin" / "obj" FOLDERS AND REMOVE PREVIOUS BUILD FOLDERS "publish" / "zelda_ladxhd_build"
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
         public static bool VerifyCleanFiles()
         {
@@ -233,7 +231,11 @@ namespace LADXHD_Migrater
             Forms.mainDialog.ToggleDialog(true);
         }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        CREATE NEW BUILD CODE: BUILD A NEW VERSION USING THE CURRENT ASSETS AND MOVE TO THE FOLDER "zelda_ladxhd_build"
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
         public static void CreateBuild()
         {

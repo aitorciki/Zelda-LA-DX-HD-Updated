@@ -36,7 +36,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.LockFps = saveManager.GetBool("LockFPS", GameSettings.LockFps);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
-            GameSettings.OldMenuBorder = saveManager.GetBool("OldMenuBorder", GameSettings.OldMenuBorder);
+            GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
             GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
             GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
             GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
@@ -71,7 +71,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("LockFPS", GameSettings.LockFps);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             saveManager.SetString("Controller", GameSettings.Controller);
-            saveManager.SetBool("OldMenuBorder", GameSettings.OldMenuBorder);
+            saveManager.SetInt("MenuBorder", GameSettings.MenuBorder);
             saveManager.SetBool("VarWidthFont", GameSettings.VarWidthFont);
             saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
             saveManager.SetBool("Uncensored", GameSettings.Uncensored);

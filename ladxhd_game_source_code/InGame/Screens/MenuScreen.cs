@@ -32,12 +32,13 @@ namespace ProjectZ.InGame.Screens
 
         public override void Load(ContentManager content)
         {
-            // Choose the correct background based on the saved setting
-            string textureName = GameSettings.OldMenuBorder
-                ? "Menu/menuBackgroundAlt"
-                : "Menu/menuBackground";
-
-            _sprBackground = content.Load<Texture2D>(textureName);
+            string texture = (GameSettings.MenuBorder) switch
+            {
+                0 => "Menu/menuBackground",
+                1 => "Menu/menuBackgroundB",
+                2 => "Menu/menuBackgroundC"
+            };
+            _sprBackground = content.Load<Texture2D>(texture);
 
             _linkAnimation = AnimatorSaveLoad.LoadAnimator("menu_link");
             _linkAnimation.Play("idle");

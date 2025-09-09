@@ -19,7 +19,7 @@ namespace ProjectZ.InGame.Things
         public static bool LockFps = true;
         public static bool ItemsOnRight = false;
         public static string Controller = "XBox";
-        public static bool OldMenuBorder = false;
+        public static int MenuBorder = 0;
         public static bool VarWidthFont = false;
         public static bool NoHelperText = false;
         public static bool Uncensored = false;
