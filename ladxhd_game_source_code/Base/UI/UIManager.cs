@@ -15,46 +15,64 @@ namespace ProjectZ.Base.UI
         }
 
         private readonly List<UiElement> _elementList = new List<UiElement>();
+        private readonly List<UiElement> _elementListNoHide = new List<UiElement>();
 
         private string _currentScreen;
 
-        public void Update()
-        {
-            //remove elements
-            _elementList.RemoveAll(element => element.Remove);
+        private IEnumerable<UiElement> AllElements => _elementList.Concat(_elementListNoHide);
 
-            foreach (var element in _elementList)
+        private static void RemoveMarked(List<UiElement> list) =>
+            list.RemoveAll(e => e.Remove);
+
+        private void UpdateElements(List<UiElement> list)
+        {
+            foreach (var element in list)
                 if (element.Screens.Contains(_currentScreen))
                     element.Update();
         }
 
+        public void Update()
+        {
+            RemoveMarked(_elementList);
+            RemoveMarked(_elementListNoHide);
+            UpdateElements(_elementList);
+            UpdateElements(_elementListNoHide);
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (var i = 0; i < _elementList.Count; i++)
-                if (_elementList[i].Screens.Contains(_currentScreen))
-                    if (_elementList[i].IsVisible)
-                        _elementList[i].Draw(spriteBatch);
+            foreach (var element in AllElements)
+                if (element.Screens.Contains(_currentScreen) && element.IsVisible)
+                    element.Draw(spriteBatch);
         }
 
         public void DrawBlur(SpriteBatch spriteBatch)
         {
-            if (HideOverlay) { return; }
+            // Always draw no-hide elements.
+            foreach (var element in _elementListNoHide)
+                if (element.Screens.Contains(_currentScreen) && element.IsVisible)
+                    element.DrawBlur(spriteBatch);
 
-            for (var i = 0; i < _elementList.Count; i++)
-                if (_elementList[i].Screens.Contains(_currentScreen))
-                    if (_elementList[i].IsVisible)
-                        _elementList[i].DrawBlur(spriteBatch);
+            if (HideOverlay) return;
+
+            // Draw normal elements if the overlay is not hidden.
+            foreach (var element in _elementList)
+                if (element.Screens.Contains(_currentScreen) && element.IsVisible)
+                    element.DrawBlur(spriteBatch);
         }
 
         public void SizeChanged()
         {
-            foreach (var uiElement in _elementList)
+            foreach (var uiElement in AllElements)
                 uiElement.SizeUpdate?.Invoke(uiElement);
         }
-
-        public UiElement AddElement(UiElement element)
+        public UiElement AddElement(UiElement element, bool alwaysDraw = false)
         {
-            if (element != null)
+            if (element == null) return null;
+
+            if (alwaysDraw)
+                _elementListNoHide.Add(element);
+            else
                 _elementList.Add(element);
 
             return element;
@@ -62,19 +80,14 @@ namespace ProjectZ.Base.UI
 
         public UiElement GetElement(string elementId)
         {
-            //search for the elementId
-            for (var i = 0; i < _elementList.Count; i++)
-                if (_elementList[i].ElementId == elementId)
-                    return _elementList[i];
-
-            return null;
+            return AllElements.FirstOrDefault(e => e.ElementId == elementId);
         }
 
         public void RemoveElement(string elementId, string screenId)
         {
-            for (var i = 0; i < _elementList.Count; i++)
-                if (_elementList[i].ElementId.Contains(elementId) && _elementList[i].Screens.Contains(screenId))
-                    _elementList[i].Remove = true;
+            foreach (var element in AllElements)
+                if (element.ElementId.Contains(elementId) && element.Screens.Contains(screenId))
+                    element.Remove = true;
         }
     }
 }

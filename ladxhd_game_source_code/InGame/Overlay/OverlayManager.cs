@@ -86,9 +86,8 @@ namespace ProjectZ.InGame.Overlay
 
         public OverlayManager()
         {
-            // setup blurry overlay
             _blurRectangle = (UiRectangle)Game1.EditorUi.AddElement(
-                new UiRectangle(Rectangle.Empty, "background", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null));
+                new UiRectangle(Rectangle.Empty, "background", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null), true);
         }
 
         public void Load(ContentManager content)
