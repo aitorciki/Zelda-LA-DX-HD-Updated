@@ -538,6 +538,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _body.IsActive = false;
                 _hittableComponent.IsActive = false;
 
+                // stop music
+                Game1.GameManager.StopMusic(20, 0);
+                Game1.GameManager.StopMusic(20, 1);
+                Game1.GameManager.StopMusic(20, 2);
+
                 Game1.GameManager.StartDialogPath("grim_creeper_4");
 
                 _damageState.OnDeathBoss(pieceOfPower);
