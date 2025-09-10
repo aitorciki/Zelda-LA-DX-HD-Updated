@@ -26,7 +26,7 @@ namespace ProjectZ.InGame.Pages
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Slider to adjust the game scale.
+            // Menu Border Slider:
             var menuBricksSlider = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
                 buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
                 number =>

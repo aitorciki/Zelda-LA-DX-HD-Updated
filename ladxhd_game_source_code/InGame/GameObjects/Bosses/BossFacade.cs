@@ -500,7 +500,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void SpawnHeart()
         {
             // spawn big heart
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y + 8, "j", _saveKeyHeart, "heartMeterFull", null));
+            Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y + 8, "j", "d6_nHeart", "heartMeterFull", null));
         }
     }
 }

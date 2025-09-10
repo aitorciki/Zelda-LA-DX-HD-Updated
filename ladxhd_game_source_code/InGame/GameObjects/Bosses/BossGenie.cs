@@ -449,8 +449,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (!string.IsNullOrEmpty(_saveKey))
                 Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
-            // stop boss music
-            Game1.GameManager.SetMusic(-1, 2);
+            // stop music
+            Game1.GameManager.StopMusic(20, 0);
+            Game1.GameManager.StopMusic(20, 1);
+            Game1.GameManager.StopMusic(20, 2);
 
             var heartPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             var centerDistance = heartPosition - _roomCenter;

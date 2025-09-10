@@ -195,7 +195,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void SpawnHeart()
         {
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)_startPosition.X - 8, (int)_startPosition.Y, null, _saveKey + "_heart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(new ObjItem(Map, (int)_startPosition.X - 8, (int)_startPosition.Y, null, "d7_nHeart", "heartMeterFull", null));
         }
 
         private void InitPreAttack()

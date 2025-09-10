@@ -311,13 +311,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void OnDeath()
         {
             // spawn a heart
-            var objItem = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", "d5_nHeart", "heartMeterFull", null);
-            Map.Objects.SpawnObject(objItem);
+            Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", "d5_nHeart", "heartMeterFull", null));
 
             Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
-            // stop boss music
-            Game1.GameManager.SetMusic(-1, 2);
+            // stop music
+            Game1.GameManager.StopMusic(20, 0);
+            Game1.GameManager.StopMusic(20, 1);
+            Game1.GameManager.StopMusic(20, 2);
 
             DespawnObjects();
         }

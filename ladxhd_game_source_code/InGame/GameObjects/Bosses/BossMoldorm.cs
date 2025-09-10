@@ -20,7 +20,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private AiComponent _aiComponent;
         private CSprite _sprite;
 
-
         private Rectangle _headSourceRectangle = new Rectangle(2, 4, 28, 24);
         private Rectangle _headSourceRectangleDamage = new Rectangle(34, 4, 28, 24);
 
@@ -234,8 +233,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 {
                     Map.Objects.DeleteObjects.Add(this);
 
-                    // stop boss music
-                    Game1.GameManager.SetMusic(-1, 2);
+                    // stop music
+                    Game1.GameManager.StopMusic(20, 0);
+                    Game1.GameManager.StopMusic(20, 1);
+                    Game1.GameManager.StopMusic(20, 2);
 
                     // set the save key
                     Game1.GameManager.SaveManager.SetString(_saveKey, "1");

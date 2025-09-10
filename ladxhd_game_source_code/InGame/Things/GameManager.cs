@@ -818,8 +818,8 @@ namespace ProjectZ.InGame.Things
                 // finished playing the music?
                 if (_musicCounter[i] <= 0)
                 {
-                    _musicCounter[i] = 0;
                     _musicArray[i] = -1;
+                    _musicCounter[i] = 0;
                     PlayMusic();
                 }
             }

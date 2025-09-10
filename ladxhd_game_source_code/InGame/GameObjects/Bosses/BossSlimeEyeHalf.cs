@@ -241,12 +241,15 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 else
                 {
                     Game1.GameManager.PlaySoundEffect("D378-26-1A");
-                    Game1.GameManager.SetMusic(-1, 2);
                     Game1.GameManager.SaveManager.SetString(_saveKey, "1");
+
+                    Game1.GameManager.StopMusic(20, 0);
+                    Game1.GameManager.StopMusic(20, 1);
+                    Game1.GameManager.StopMusic(20, 2);
 
                     // spawn big heart
                     Map.Objects.SpawnObject(new ObjItem(Map,
-                        (int)EntityPosition.X - 8, (int)EntityPosition.Y - 24, "j", "d3_heartMeter", "heartMeterFull", null));
+                        (int)EntityPosition.X - 8, (int)EntityPosition.Y - 24, "j", "d3_nHeart", "heartMeterFull", null));
                 }
             }
 

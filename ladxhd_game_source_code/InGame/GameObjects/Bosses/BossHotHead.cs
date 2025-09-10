@@ -320,18 +320,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // spawn big heart
             var spawnPosition = new Vector2((int)(MapManager.ObjLink.EntityPosition.X / 16) * 16, (int)((MapManager.ObjLink.EntityPosition.Y - 1) / 16) * 16);
+
             // make sure to not spawn the heart over the lava   
             if (Map.GetFieldState(spawnPosition) != MapStates.FieldStates.None)
                 spawnPosition = new Vector2((int)_spawnPosition.X, (int)_spawnPosition.Y + 32);
 
-            var objHeart = new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, "d", _saveKey + "Heart", "heartMeterFull", null);
-            Map.Objects.SpawnObject(objHeart);
+            Map.Objects.SpawnObject(new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, "j", "d8_nHeart", "heartMeterFull", null));
         }
 
         private void SpawnHeart()
         {
-            var objHeart = new ObjItem(Map, (int)_spawnPosition.X, (int)_spawnPosition.Y + 32, "d", _saveKey + "Heart", "heartMeterFull", null);
-            Map.Objects.SpawnObject(objHeart);
+            Map.Objects.SpawnObject(new ObjItem(Map, (int)_spawnPosition.X, (int)_spawnPosition.Y + 32, "j", "d8_nHeart", "heartMeterFull", null));
         }
 
         private void OnMoveCollision(Values.BodyCollision collision)

@@ -305,8 +305,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             Game1.GameManager.PlaySoundEffect("D378-26-1A");
 
-            // stop boss music
-            Game1.GameManager.SetMusic(-1, 2);
+            // stop music
+            Game1.GameManager.StopMusic(20, 0);
+            Game1.GameManager.StopMusic(20, 1);
+            Game1.GameManager.StopMusic(20, 2);
 
             Map.Objects.DeleteObjects.Add(this);
         }
