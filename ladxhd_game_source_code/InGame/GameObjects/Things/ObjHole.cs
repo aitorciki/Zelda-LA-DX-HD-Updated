@@ -38,9 +38,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             // the edges as soon as he cross the boundary of the sprite. This limits the distance at which it starts pulling, which matches
             // the behavior of the original game. The modifications below make hole collision size 14x8 pixels instead of 16x16 pixels.
             float rectOffsetX = (width == 16 && height == 16) ? posX + offsetX + 1 : posX + offsetX;
-            float rectOffsetY = (width == 16 && height == 16) ? posY + offsetY + 4 : posY + offsetY;
+            float rectOffsetY = (width == 16 && height == 16) ? posY + offsetY + 3 : posY + offsetY;
             float rectWidth   = (width == 16 && height == 16) ? width - 2          : width;
-            float rectHeight  = (width == 16 && height == 16) ? height - 8         : height;
+            float rectHeight  = (width == 16 && height == 16) ? height - 6         : height;
 
             _collisionComponent = new BoxCollisionComponent(new CBox(rectOffsetX, rectOffsetY, 0, rectWidth, rectHeight, 16), Values.CollisionTypes.Hole);
             AddComponent(CollisionComponent.Index, _collisionComponent);
