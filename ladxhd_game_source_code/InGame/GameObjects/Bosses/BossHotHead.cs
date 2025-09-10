@@ -108,7 +108,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 4,
-                BossHitSound = true
+                BossHitSound = true,
+                PlayDeathSound = false
             };
             _damageState.AddBossDamageState(OnDeath);
 
@@ -325,6 +326,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (Map.GetFieldState(spawnPosition) != MapStates.FieldStates.None)
                 spawnPosition = new Vector2((int)_spawnPosition.X, (int)_spawnPosition.Y + 32);
 
+            Game1.GameManager.PlaySoundEffect("D378-26-1A");
+
             Map.Objects.SpawnObject(new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, "j", "d8_nHeart", "heartMeterFull", null));
         }
 
@@ -350,7 +353,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 _damageField.IsActive = false;
             }
-            if (damageType != HitType.MagicRod || _damageState.CurrentLives <= 0)
+            if ((damageType != HitType.MagicRod && damageType != HitType.SwordShot) || _damageState.CurrentLives <= 0)
                 return Values.HitCollision.None;
 
             if (_aiComponent.CurrentStateId == "breaking" || _aiComponent.CurrentStateId == "broken" ||
@@ -397,6 +400,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 // freeze in the air + show final dialog
                 if (_damageState.CurrentLives <= 0)
                 {
+                    Game1.GameManager.SetMusic(93,2);
+                    Game1.GameManager.PlaySoundEffect("D370-16-10");
+
                     _body.IsActive = false;
                     Game1.GameManager.StartDialogPath("hot_head_death");
                 }
