@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ProjectZ.InGame.GameSystems;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Overlay;
@@ -860,12 +861,16 @@ namespace ProjectZ.InGame.Things
 
         public void SetMusic(int trackID, int priority, bool startPlaying = true)
         {
-            // @HACK: Don't restart the overworld track if the version with the intro was already started.
-            // Make sure to not restart the music while showing the overworld in the final sequence.
-            if ((trackID == 4 && _musicArray[priority] == 48) || (priority != 2 && _musicArray[2] == 62))
+            // HACK: Don't restart the overworld track if the version with the intro was already started. But if it's the part
+            // of the game where Marin joins the player and the beach photo is taken, we need to allow song 4 to replace 48.
+            if (trackID == 4 && _musicArray[priority] == 48 && Game1.GameManager.SaveManager.GetString("maria_state") != "3")
                 return;
 
-            // @HACK: Mabe and Animal Villages should always play the music even when the player has a piece of
+            // HACK: Make sure to not restart the music while showing the overworld in the final sequence. 
+            if (priority != 2 && _musicArray[2] == 62)
+                return;
+
+            // HACK: Mabe and Animal Villages should always play the music even when the player has a piece of
             // power or guardian acorn. This hack forces it to play and restores the power up music when leaving.
             if ((trackID == 3 || trackID == 10) && _musicArray[1] == 72)
                 _musicArray[1] = trackID;
