@@ -422,20 +422,20 @@ namespace ProjectZ.InGame.Things
             _items.Add("ruby30", new GameItem(
                 Resources.GetSprite("rubyRed"),
                 name: "ruby",
-                pickUpDialog: "ruby30",
+                pickUpDialog: GameSettings.NoHelperText ? null : "ruby30",
                 count: 30,
                 soundEffectName: "D370-05-05"
             ));
             _items.Add("ruby50", new GameItem(
                 name: "ruby",
-                pickUpDialog: "ruby50",
+                pickUpDialog: GameSettings.NoHelperText ? null : "ruby50",
                 count: 50,
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
             ));
             _items.Add("ruby100", new GameItem(
                 name: "ruby",
-                pickUpDialog: "ruby100",
+                pickUpDialog: GameSettings.NoHelperText ? null : "ruby100",
                 count: 100,
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
@@ -443,7 +443,7 @@ namespace ProjectZ.InGame.Things
             _items.Add("ruby200", new GameItem(
                 Resources.GetSprite("rubyBlue"),
                 name: "ruby",
-                pickUpDialog: "ruby200",
+                pickUpDialog: GameSettings.NoHelperText ? null : "ruby200",
                 count: 200,
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
