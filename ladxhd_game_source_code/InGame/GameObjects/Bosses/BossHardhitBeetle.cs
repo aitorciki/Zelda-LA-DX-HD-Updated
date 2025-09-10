@@ -45,6 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private const int CooldownTime = 250;
         private const float MoveSpeed = 0.375f;
         private int _colorIndex;
+        private int _lastcolorIndex;
 
         private int _lives = ObjLives.HardHitBeetle;
         private bool _isDead;
@@ -149,7 +150,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _colorIndex = MathHelper.Clamp(_colorIndex + offset, 0, _colors.Length - 1);
 
-            if (_colorIndex == 0)
+            if (_colorIndex == 0 && _colorIndex != _lastcolorIndex)
                 Game1.GameManager.StartDialogPath("hardhit_beetle_1");
 
             if (_colorIndex < 4)
@@ -164,6 +165,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _spawnedStalfos = true;
                 _stalfosCounter = 250;
             }
+            _lastcolorIndex = _colorIndex;
         }
 
         private void OnColorReset()

@@ -93,7 +93,7 @@ namespace ProjectZ.InGame.Things
 
         public static int LayerBackground = 0;  // layer behind tileset
         public static int LayerBottom = 1;      // layer under the player (grass, water, flowers, etc.)
-        public static int LayerPlayer = 2;      // same player as the player
+        public static int LayerPlayer = 2;      // same layer as the player
         public static int LayerTop = 3;         // on top of the player
 
         public static int LightLayer0 = 0;  // lamp
