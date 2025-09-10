@@ -225,7 +225,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.ChangeState("preFollowing");
 
             // Allow pickup soon after the rooster has been revived.
-            _carriableCompnent.IsActive = true;
+            if (!Map.DungeonMode)
+                _carriableCompnent.IsActive = true;
         }
 
         private void EndPreFollowing()
@@ -243,7 +244,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateWalking()
         {
             // On the first tick only, check if the rooster is alive and can be carried.
-            if (_updateCarry)
+            if (_updateCarry && !Map.DungeonMode)
             {
                 _carriableCompnent.IsActive = (Game1.GameManager.SaveManager.GetString("rooster_respawned", "0") == "1");
                 _updateCarry = false;
