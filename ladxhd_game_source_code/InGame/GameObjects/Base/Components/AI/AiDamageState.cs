@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         public bool UpdateLastStateFire;
         public bool DeathAnimation = true;
         public bool SpawnItems = true;
+        public bool PlayDeathSound = true;
 
         private readonly GameObject _gameObject;
         private readonly BodyComponent _body;
@@ -434,7 +435,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
         public void OnDeathBoss(bool pieceOfPower)
         {
-            Game1.GameManager.PlaySoundEffect("D370-16-10");
+            if (PlayDeathSound)
+                Game1.GameManager.PlaySoundEffect("D370-16-10");
 
             IsActive = false;
 

@@ -142,7 +142,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 16,
-                BossHitSound = true
+                BossHitSound = true,
+                PlayDeathSound = false
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 
@@ -311,15 +312,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void OnDeath()
         {
             // spawn a heart
+            Game1.GameManager.PlaySoundEffect("D378-26-1A");
             Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", "d5_nHeart", "heartMeterFull", null));
-
             Game1.GameManager.SaveManager.SetString(_saveKey, "1");
-
-            // stop music
-            Game1.GameManager.StopMusic(20, 0);
-            Game1.GameManager.StopMusic(20, 1);
-            Game1.GameManager.StopMusic(20, 2);
-
             DespawnObjects();
         }
 
@@ -531,6 +526,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (_aiDamageState.CurrentLives <= 0 && wasAlive)
             {
+                Game1.GameManager.SetMusic(93,2);
+                Game1.GameManager.PlayMusic(true);
+                Game1.GameManager.PlaySoundEffect("D370-16-10");
+
                 Game1.GameManager.StartDialogPath("slime_eel_1");
                 _eelSpawner.ToDespawn();
 
