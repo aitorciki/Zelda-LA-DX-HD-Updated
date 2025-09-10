@@ -317,6 +317,7 @@ namespace ProjectZ.InGame.GameObjects
         private Vector2[] _hookshotOffset;
         private bool _hookshotPull;
         private bool _hookshotActive;
+        private float _hookshotCounter;
 
         // magic rod
         private Vector2[] _magicRodOffset;
@@ -2532,8 +2533,7 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
                 ReturnToIdle();
 
-            if (CurrentState == State.Hookshot)
-                UpdateHookshot();
+            UpdateHookshot();
 
             if (CurrentState == State.Digging)
                 UpdateDigging();
@@ -2920,6 +2920,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
             }
             _hookshotActive = true;
+            _hookshotCounter = 0;
 
             var hookshotDirection = CurrentState == State.Swimming ? _swimDirection : Direction;
 
@@ -3540,12 +3541,27 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateHookshot()
         {
-            if (Hookshot.IsMoving)
-                return;
+            _hookshotCounter += Game1.DeltaTime;
 
-            _hookshotActive = false;
-            _body.IgnoreHoles = false;
-            ReturnToIdle();
+            if (_hookshotCounter > 1350)
+            {
+                _hookshotCounter = 0;
+                if (_hookshotActive)
+                {
+                    _hookshotActive = false;
+                    return;
+                }
+            }
+            if (CurrentState == State.Hookshot)
+            {
+                if (Hookshot.IsMoving)
+                    return;
+
+                _hookshotActive = false;
+                _hookshotCounter = 0;
+                _body.IgnoreHoles = false;
+                ReturnToIdle();
+            }
         }
 
         private void UpdateDigging()
