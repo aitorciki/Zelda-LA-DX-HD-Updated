@@ -138,6 +138,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
+            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+        }
+
+        private void OnSongPlayed(int songIndex)
+        {
+            if (songIndex == 0)
+            {
+                ToEye0();
+            }
         }
 
         private void OnKeyChange()
