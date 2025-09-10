@@ -283,10 +283,12 @@ namespace ProjectZ.InGame.SaveLoad
             }
 
             // write the free objects
-            objectManager.ObjectList.Sort();
-            writer.WriteLine(objectManager.ObjectList.Count);
+            var objectList = Game1.GameManager.MapManager.CurrentMap.Objects.GetMergedObjectLists();
 
-            foreach (var gameObject in objectManager.ObjectList)
+            objectList.Sort();
+            writer.WriteLine(objectList.Count);
+
+            foreach (var gameObject in objectList)
             {
                 // don't save objects that are not in the game
                 if (!GameObjectTemplates.ObjectTemplates.ContainsKey(gameObject.Index))
