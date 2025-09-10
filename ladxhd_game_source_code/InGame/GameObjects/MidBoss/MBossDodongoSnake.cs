@@ -49,8 +49,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _bodyDistance;
         private bool _wallCollision = true;
         private bool _stopDraggin = true;
-        private bool _playedSwollowSound;
         private bool _playerInRoom;
+        private bool _playedExplosion;
 
         private int _lives = ObjLives.DodongoSnake;
 
@@ -168,10 +168,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void ToExploding()
         {
-            _playedSwollowSound = false;
             _aiComponent.ChangeState("explosion");
             _bodyExplosionPosition = _bodyPosition;
             _damageState.SetDamageState();
+            _playedExplosion = false;
         }
 
         private void UpdateExplosion()
@@ -179,17 +179,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.VelocityTarget = Vector2.Zero;
             _explosionCounter += Game1.DeltaTime;
 
-            // swollow sound effect
-            if (!_playedSwollowSound && _explosionCounter > 55 / 0.06)
-            {
-                _playedSwollowSound = true;
-                Game1.GameManager.PlaySoundEffect("D360-42-2A");
-            }
-
             if (_explosionCounter > 94 / 0.06 && _explosionCounter - Game1.DeltaTime < 94 / 0.06)
             {
-                Game1.GameManager.PlaySoundEffect("D378-12-0C");
-
                 var particlePosition = EntityPosition.Position + AnimationHelper.DirectionOffset[_direction] * 13;
                 Map.Objects.SpawnObject(new ObjAnimator(Map,
                     (int)particlePosition.X, (int)particlePosition.Y, -8, -16, Values.LayerPlayer, "Particles/spawn", "run", true));
@@ -223,7 +214,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // stop the boss music
             Game1.GameManager.SetMusic(-1, 2);
-
             Game1.GameManager.PlaySoundEffect("D378-26-1A");
 
             // spawn fairy
@@ -344,6 +334,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                         bomb.IsActive = false;
                         bomb.Map.Objects.DeleteObjects.Add(bomb);
 
+                        // Play the bomb eating sound effect.
+                        Game1.GameManager.PlaySoundEffect("D360-42-2A");
                         ToExploding();
                     }
                 }
@@ -402,6 +394,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 {
                     bodyRectangle = _spriteBody2.ScaledRectangle;
                     _sprite.DrawOffset += AnimationHelper.DirectionOffset[_direction] * 4;
+
+                    if (!_playedExplosion)
+                    {
+                        Game1.GameManager.PlaySoundEffect("D378-12-0C");
+                        _playedExplosion = true;
+                    }
                 }
                 else if (_explosionCounter < 92 / 0.06)
                 {
