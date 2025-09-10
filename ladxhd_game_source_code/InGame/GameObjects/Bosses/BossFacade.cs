@@ -474,6 +474,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
                 _hittable = false;
                 _shakeScreen = false;
+                Game1.GameManager.SetMusic(93,2);
+                Game1.GameManager.PlayMusic(true);
+                Game1.GameManager.PlaySoundEffect("D370-16-10");
 
                 _aiComponent.ChangeState("preDeath");
                 Game1.GameManager.StartDialogPath("facade_death");
