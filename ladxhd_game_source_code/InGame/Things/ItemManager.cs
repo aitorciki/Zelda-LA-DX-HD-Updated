@@ -413,7 +413,7 @@ namespace ProjectZ.InGame.Things
             ));
             _items.Add("ruby20", new GameItem(
                 name: "ruby",
-                pickUpDialog: "ruby20",
+                pickUpDialog: GameSettings.NoHelperText ? null : "ruby20",
                 count: 20,
                 soundEffectName: "D360-01-01",
                 turnDownMusic: true
