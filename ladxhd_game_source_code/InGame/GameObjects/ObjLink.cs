@@ -4814,7 +4814,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 var heart = Game1.GameManager.GetItem("heartMeter");
                 // hearts was expanded => show different dialog
-                if (heart?.Count == 3)
+                if (heart?.Count == 3 && !GameSettings.NoHelperText)
                     _additionalPickupDialog = "heartMeterFilled";
             }
             else if (itemCollected.Name == "shellPresent")
