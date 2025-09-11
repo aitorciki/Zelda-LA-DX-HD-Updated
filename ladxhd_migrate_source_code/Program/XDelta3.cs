@@ -6,8 +6,8 @@ namespace LADXHD_Migrater
 {
     internal class XDelta3
     {
-        public static string Exe;
-        public static string Args;
+        private static string Exe;
+        private static string Args;
 
         private static Dictionary<string, object> resources = ResourceHelper.GetAllResources();
 
@@ -18,7 +18,7 @@ namespace LADXHD_Migrater
             XDelta3.Exe = Config.baseFolder + "\\ladxhd_game_source_code\\xdelta3.exe";
         }
 
-        public static string GetCreateArguments(string OldFile, string NewFile, string PatchFile)
+        private static string GetCreateArguments(string OldFile, string NewFile, string PatchFile)
         {
 		    string args = string.Empty;
 		    args = string.Concat(new string[]
@@ -35,7 +35,7 @@ namespace LADXHD_Migrater
             return args;
         }
 
-        public static string GetApplyArguments(string OldFile, string PatchFile, string NewFile)
+        private static string GetApplyArguments(string OldFile, string PatchFile, string NewFile)
         {
 		    string args = string.Empty;
 		    args = string.Concat(new string[]
@@ -52,7 +52,7 @@ namespace LADXHD_Migrater
             return args;
         }
 
-        public static void Start()
+        private static void Start()
         {
             Process xDelta = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo 
@@ -70,13 +70,16 @@ namespace LADXHD_Migrater
             xDelta.WaitForExit();
         }
 
-        public static void Execute(Operation action, string input, string diff, string output)
+        public static void Execute(Operation action, string input, string diff, string output, string target = "")
         {
             if (action == Operation.Apply)
                 XDelta3.Args = XDelta3.GetApplyArguments(input, diff, output);
             else if (action == Operation.Create)
                 XDelta3.Args = XDelta3.GetCreateArguments(input, diff, output);
             XDelta3.Start();
+
+            if (!string.IsNullOrEmpty(target))
+                output.MovePath(target, true);
         }
 
         public static void Create()

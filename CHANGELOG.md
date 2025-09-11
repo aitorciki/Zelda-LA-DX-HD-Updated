@@ -1,6 +1,35 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.2**
+### ** The Fix Everything Update:**
+  * Disable Helper Messages also includes completing heart containers and opening rupee chests.
+  * Menu border in Redux options has been turned into a slider with a black border option.
+  * Add translated text to the boat in the fisherman falling in the water photo.
+  * Play the "secret sound" when monkey's finish fixing the bridge near Kanalet Castle.
+  * When meeting Marin at the beach, play a jingle and silence the music to where only the ocean is heard.
+  * Playing Ballad of the Windfish opens Gohma's eyes (mid-boss of Level 5 dungeon).
+  * Add Horse Heads and Ball in level 7 to the list of instant pickup items.
+  * Potentially fix cave on path to level 7 that is always bombed open before ever even visting it.
+  * Fix hookshot getting stuck when picking up a powerup at close range by using a reset countdown timer.
+  * Fix playing the correct overworld music after taking the photo with Marin at the beach cliff.
+  * Fix dungeon music cues: silence after boss kill, clear music after boss defeat.
+  * Put extra effort into dungeons/bosses: Slime Eel, Facade, Evil Eagle, and Hot Head.
+  * Fix the timing of gobble/explosion sound effects when feeding Dodongo Snakes bombs.
+  * Fix missing pathing blocker over torch in dungeon 2 room with skeleton, switch, and up/down blocks.
+  * Fix the textbox background from going missing and inventory transparency when hiding the UI.
+  * Fix Color Dungeon boss Hardhit Beetle from spamming the message about resetting when blue color.
+  * Fix Hardhit Beetle projectile to be on a lower layer than link so it doesn't overwrite his sprite.
+  * Fix editor not saving the position of "moveStone" in dungeons (another dig hole map bug).
+  * Fix the exits of several caves and passageways to push you in the correct direction.
+  * Fix picking up an invisible rooster in level 7. Yes he's always with you until the level is finished...
+  * Fix Link sleeping sprite drifting upward under the right conditions when jumping into Dream Shrine bed.
+  * Fix 1.2.1 bug: Button would not open the door outside of Kanalet Castle.
+  * Fix 1.2.1 bug: Madam MeowMeow has the wrong dialog when village is under attack.
+  * Fix 1.2.1 bug: Alligator trading sequence was broken. He would not ask for bananas.
+
 ## **v1.2.1**
+### ** The "Break Everything" Update:**
+  * Don't play this version. It has some game breaking bugs that prevent progression.
   * Add redux option "Nothing is Missable" option. This does the following:
     * Shopkeeper name buyback has been added to this option since it's non-canon.
     * Seashells 5/10 at seashell mansion can be obtained even if you pass the markers.
@@ -16,6 +45,7 @@
   * Piece of Power and Guardian Acorn will no longer drop if a powerup is currently active.
   * The total number of kills the player has made is now tracked in the save file.
   * Remove 3D effect from small rocks so they don't overlap the sword and remove their shadows.
+  * Massive overhaul of "scripts.zScript" to make it more readable and contiguous.
   * Fix "error" message appearing after the final photo taken and any repeat events (like stealing).
   * Fix dialog background size when selecting between VWF and standard font.
   * Fix text of "Auto-Scale" for graphics slider to have a space after the colon.
