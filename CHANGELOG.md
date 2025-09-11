@@ -1,5 +1,13 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.3**
+### **The Last Boss Update:**
+  * Fix final boss "Giant Zol" form for real this time. It was getting stuck in the elongated state.
+  * Increase chance "Agahnim" state of final boss will shoot exploding shot from 25% to 33%.
+  * Stop music after "Lanmola" state of the final boss. It's supposed to be silent for DethI transition.
+  * Fix DethI to be able to be damaged from bombs (more specifically, bomb arrows which I did as a kid).
+  * Disable the low hearts alarm if the final boss is defeated while at low health so its not beeping through the ending.
+
 ## **v1.2.2**
 ### **The "Fix Everything" Update:**
   * Disable Helper Messages also includes completing heart containers and opening rupee chests.
