@@ -1,7 +1,7 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
 ## **v1.2.2**
-### ** The Fix Everything Update:**
+### **The "Fix Everything" Update:**
   * Disable Helper Messages also includes completing heart containers and opening rupee chests.
   * Menu border in Redux options has been turned into a slider with a black border option.
   * Add translated text to the boat in the fisherman falling in the water photo.
@@ -28,7 +28,7 @@
   * Fix 1.2.1 bug: Alligator trading sequence was broken. He would not ask for bananas.
 
 ## **v1.2.1**
-### ** The "Break Everything" Update:**
+### **The "Break Everything" Update:**
   * Don't play this version. It has some game breaking bugs that prevent progression.
   * Add redux option "Nothing is Missable" option. This does the following:
     * Shopkeeper name buyback has been added to this option since it's non-canon.
@@ -54,7 +54,7 @@
   * Fix potential extremely rare crash with moblin-swords under the right conditions.
 
 ## **v1.2.0**
-### ** The Redux Update:**
+### **The Redux Update:**
   * Fix final boss "Giant Zol" form to have the correct graphics.
   * Rename Miscellaneous options to "Redux" options on the Settings menu.
   * Add Redux option to use a variable width font as is used in the romhack.
@@ -67,7 +67,7 @@
   * Shoplifting photo has been updated to have the translated text from Redux romhack.
 
 ## **v1.1.9**
-### ** The Endless Bug Fixes Update:**
+### **The Endless Bug Fixes Update:**
   * Fix Marin to teach the Ocarina song after being saved on the mountain.
   * Fix wrong enemy types in cave near pig moblins; from Buzz Blobs to Spiny Beetles in skulls.
   * Fix shield animation when charging while blocking when in 2D mode.
@@ -271,4 +271,5 @@
  * Turtle Rock (dungeon 8) fixed locked door that took a key but did not open.
  * Turtle Rock (dungeon 8) breakable wall was fixed (it couldn't be broken).
  * Play the secret discovery chime when taking the correct path in the egg.
+
 
