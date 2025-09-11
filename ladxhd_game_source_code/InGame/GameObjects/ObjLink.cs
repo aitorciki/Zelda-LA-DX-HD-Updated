@@ -402,6 +402,7 @@ namespace ProjectZ.InGame.GameObjects
 
         // low hearts
         private float _lowHealthBeepCounter;
+        private bool _enableHealthBeep;
 
         // other stuff
         public Point CollisionBoxSize;
@@ -2224,7 +2225,7 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateHeartWarningSound()
         {
             // Don't play the beep if the user disabled it.
-            if (!GameSettings.HeartBeep) return;
+            if (!GameSettings.HeartBeep || !_enableHealthBeep) return;
 
             // Calculate the pecentage of heart's remaining.
             double currentHP = Game1.GameManager.CurrentHealth;
@@ -5196,6 +5197,11 @@ namespace ProjectZ.InGame.GameObjects
         public bool IsUsingHookshot()
         {
             return CurrentState == State.Hookshot;
+        }
+
+        public void ToggleLowHealthBeep(bool toggle)
+        {
+            _enableHealthBeep = toggle;
         }
 
         #endregion

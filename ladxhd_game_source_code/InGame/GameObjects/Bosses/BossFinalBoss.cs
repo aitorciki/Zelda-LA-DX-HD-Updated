@@ -201,7 +201,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateGiantZolSpawn = new AiState(UpdateGiantZolSpawn) { Init = InitGiantZolSpawn };
             var stateGiantZolJump = new AiState(UpdateGiantZolJump) { Init = InitGiantZolJump };
             var stateGiantZolWait = new AiState() { Init = InitGiantZolWait };
-            stateGiantZolWait.Trigger.Add(new AiTriggerCountdown(800, null, () => _aiComponent.ChangeState("giantZolJump")));
+            stateGiantZolWait.Trigger.Add(new AiTriggerCountdown(800, null, () => _aiComponent.ChangeState("slimeJump")));
             var stateGiantZolDespawn = new AiState(UpdateGiantZolDespawn) { Init = InitGiantZolDespawn };
             var stateGiantZolHidden = new AiState() { Init = InitGiantZolHidden };
             stateGiantZolHidden.Trigger.Add(new AiTriggerCountdown(2200, null, EndGiantZolHidden));
@@ -290,14 +290,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("despawn", stateDespawn);
 
             // giantZol
-            _aiComponent.States.Add("giantZolSpawn", stateGiantZolSpawn);
-            _aiComponent.States.Add("giantZolJump", stateGiantZolJump);
-            _aiComponent.States.Add("giantZolWait", stateGiantZolWait);
-            _aiComponent.States.Add("giantZolDespawn", stateGiantZolDespawn);
-            _aiComponent.States.Add("giantZolHidden", stateGiantZolHidden);
-            _aiComponent.States.Add("giantZolDamaged", stateGiantZolDamaged);
-            _aiComponent.States.Add("giantZolHideExplode", stateGiantZolHideExplode);
-            _aiComponent.States.Add("giantZolExplode", stateGiantZolExplode);
+            _aiComponent.States.Add("slimeSpawn", stateGiantZolSpawn);
+            _aiComponent.States.Add("slimeJump", stateGiantZolJump);
+            _aiComponent.States.Add("slimeWait", stateGiantZolWait);
+            _aiComponent.States.Add("slimeDespawn", stateGiantZolDespawn);
+            _aiComponent.States.Add("slimeHidden", stateGiantZolHidden);
+            _aiComponent.States.Add("slimeDamaged", stateGiantZolDamaged);
+            _aiComponent.States.Add("slimeHideExplode", stateGiantZolHideExplode);
+            _aiComponent.States.Add("slimeExplode", stateGiantZolExplode);
 
             // man
             _aiComponent.States.Add("manPreAttack", stateAgahnimPreAttack);
@@ -375,13 +375,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void DebugGiantZolEnd()
         {
             _giantZolLives = 1;
-            _aiComponent.ChangeState("giantZolHidden");
+            _aiComponent.ChangeState("slimeHidden");
         }
 
         private void DebugMan()
         {
             _agahnimLives = 2;
-            _aiComponent.ChangeState("giantZolExplode");
+            _aiComponent.ChangeState("slimeExplode");
         }
 
         private void DebugMoldrom()
@@ -494,7 +494,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateDespawn()
         {
             if (!_animator.IsPlaying)
-                _aiComponent.ChangeState("giantZolSpawn");
+                _aiComponent.ChangeState("slimeSpawn");
         }
 
         #endregion
@@ -520,7 +520,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateGiantZolSpawn()
         {
             if (!_animator.IsPlaying)
-                _aiComponent.ChangeState("giantZolJump");
+                _aiComponent.ChangeState("slimeJump");
         }
 
         private void InitGiantZolJump()
@@ -544,9 +544,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 Game1.GameManager.PlaySoundEffect("D360-32-20");
 
                 if (Game1.RandomNumber.Next(0, 2) == 0)
-                    _aiComponent.ChangeState("giantZolWait");
+                    _aiComponent.ChangeState("slimeWait");
                 else
-                    _aiComponent.ChangeState("giantZolDespawn");
+                    _aiComponent.ChangeState("slimeDespawn");
             }
             else if (_body.Velocity.Y < -0.5f)
             {
@@ -556,7 +556,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitGiantZolWait()
         {
-            _animator.Play("giantZol");
+            _animator.Play("slime");
         }
 
         private void InitGiantZolDespawn()
@@ -574,7 +574,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateGiantZolDespawn()
         {
             if (!_animator.IsPlaying)
-                _aiComponent.ChangeState("giantZolHidden");
+                _aiComponent.ChangeState("slimeHidden");
         }
 
         private void InitGiantZolHidden()
@@ -587,7 +587,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // random new position
             EntityPosition.Set(RandomRoomPosition());
 
-            _aiComponent.ChangeState("giantZolSpawn");
+            _aiComponent.ChangeState("slimeSpawn");
         }
 
         private void InitGiantZolDamaged()
@@ -610,9 +610,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _giantZolForm = false;
 
             if (_giantZolLives <= 0)
-                _aiComponent.ChangeState("giantZolExplode");
+                _aiComponent.ChangeState("slimeExplode");
             else
-                _aiComponent.ChangeState("giantZolDespawn");
+                _aiComponent.ChangeState("slimeDespawn");
         }
 
         private void InitGiantZolHideExplode()
@@ -1015,7 +1015,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitLanmolaExplose()
         {
-            Game1.GameManager.SetMusic(-1, 2);
+            Game1.GameManager.StopMusic(20, 0);
+            Game1.GameManager.StopMusic(20, 1);
+            Game1.GameManager.StopMusic(20, 2);
+
             Game1.GameManager.PlaySoundEffect("D370-16-10");
             _body.VelocityTarget = Vector2.Zero;
             ExplodeAnimation();
@@ -1661,16 +1664,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 if (_body.Velocity.Z > 0)
                     _body.Velocity.Z = 0;
 
-                _aiComponent.ChangeState("giantZolDamaged");
+                _aiComponent.ChangeState("slimeDamaged");
                 _giantZolLives--;
 
                 return Values.HitCollision.Enemy;
             }
 
             if ((damageType & (HitType.Sword | HitType.SwordHold)) != 0 &&
-                (_aiComponent.CurrentStateId == "giantZolJump" || _aiComponent.CurrentStateId == "giantZolWait"))
+                (_aiComponent.CurrentStateId == "slimeJump" || _aiComponent.CurrentStateId == "slimeWait"))
             {
-                _aiComponent.ChangeState("giantZolHideExplode");
+                _aiComponent.ChangeState("slimeHideExplode");
                 return Values.HitCollision.Enemy;
             }
 
@@ -1727,16 +1730,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 if (!_aiDamageState.IsInDamageState() && (
                     (_dethIEyeState == 0 && _animatorEye.CurrentFrameIndex < 1) || (_dethIEyeState == 1 && _animatorEye.CurrentFrameIndex >= 1)) && 
                     MathF.Abs(direction.Y) > MathF.Abs(direction.X) && direction.Y < 0 &&
-                    (damageType & HitType.Bow) != 0 | (damageType & HitType.Boomerang) != 0)
+                    (damageType & HitType.Bow) != 0 | (damageType & HitType.Boomerang) != 0 | (damageType & HitType.Bomb) != 0)
                 {
                     _aiDamageState.SetDamageState();
 
                     if ((damageType & HitType.Boomerang) != 0)
-                        _dethILives = 0;
+                        _dethILives -= damage * 8;
                     else
                         _dethILives--;
 
                     if (_dethILives <= 0)
+                        MapManager.ObjLink.ToggleLowHealthBeep(false);
                         _aiComponent.ChangeState("finalBlink");
 
                     Game1.GameManager.PlaySoundEffect("D370-07-07");

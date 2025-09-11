@@ -95,7 +95,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _isMoving = true;
             _aiComponent.ChangeState("moving");
 
-            if (Game1.RandomNumber.Next(0, 4) == 0)
+            if (Game1.RandomNumber.Next(0, 3) == 0)
             {
                 _damageState = true;
                 _body.MoveCollision = OnMoveCollision;

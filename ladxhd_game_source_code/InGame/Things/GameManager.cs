@@ -1525,6 +1525,7 @@ namespace ProjectZ.InGame.Things
             MapManager.ObjLink.EntityPosition.Z = 0;
             MapManager.ObjLink.TransitionOutWalking = false;
             MapManager.ObjLink.TransitionInWalking = false;
+            MapManager.ObjLink.ToggleLowHealthBeep(true);
 
             // load the map
             var transitionSystem = ((MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]);
