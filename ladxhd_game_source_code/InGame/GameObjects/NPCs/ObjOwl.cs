@@ -200,11 +200,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // game will softlock when attempting to crack open the egg as the owl never leaves.
             var noFreeze = Game1.GameManager.SaveManager.GetString("d8_instrument");
 
+            // Force Link back into an "idle" state when encountering the owl.
+            ObjLink Link = MapManager.ObjLink;
+            Link.Animation.Play("stand_" + Link.Direction);
+            Link.CurrentState = ObjLink.State.Idle;
+            Link.EntityPosition.Z = 0;
+
             // Freeze the game as the owl enters the map.
             if (noFreeze != "1")
                 Game1.GameManager.SaveManager.SetString("freezeGame", "1");
 
-            MapManager.ObjLink.FreezePlayer();
+            Link.FreezePlayer();
             _wasTriggered = true;
 
             _drawComponent.IsActive = true;
