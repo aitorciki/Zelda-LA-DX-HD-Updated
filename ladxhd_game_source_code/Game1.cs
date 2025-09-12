@@ -248,6 +248,13 @@ namespace ProjectZ
             // set the fps settings of the game
             UpdateFpsSettings();
 
+            // Create a backup of enemy HP.
+            ObjLives.BackupDefaultHP();
+
+            // Add extra HP if the user set it.
+            if (GameSettings.EnemyBonusHP > 0)
+                ObjLives.AddToEnemyHP(GameSettings.EnemyBonusHP);
+
 #if WINDOWS
             _windowForm.ResizeBegin += OnResizeBegin;
             _windowForm.Resize += OnResize;

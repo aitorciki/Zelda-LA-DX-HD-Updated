@@ -59,6 +59,12 @@ namespace ProjectZ.InGame.Pages
                 Game1.UiPageManager.ChangePage(typeof(ReduxOptionsPage));
             }));
 
+            // Button: Modifier Settings
+            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_mods", element =>
+            {
+                Game1.UiPageManager.ChangePage(typeof(ModifiersPage));
+            }));
+
             settingsLayout.AddElement(contentLayout);
             var bottomLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true };
 

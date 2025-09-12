@@ -24,6 +24,9 @@ namespace ProjectZ.InGame.Things
         public static bool NoHelperText = false;
         public static bool Uncensored = false;
         public static bool Unmissables = false;
+        public static int EnemyBonusHP = 0;
+        public static int DmgMultiplier = 0;
+        public static float MoveSpeedAdded = 0;
 
         public static int MusicVolume
         {

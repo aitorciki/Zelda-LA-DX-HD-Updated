@@ -41,6 +41,9 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
             GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
+            GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
+            GameSettings.DmgMultiplier = saveManager.GetInt("DmgMultiplier", GameSettings.DmgMultiplier);
+            GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
@@ -76,6 +79,9 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
             saveManager.SetBool("Uncensored", GameSettings.Uncensored);
             saveManager.SetBool("Unmissables", GameSettings.Unmissables);
+            saveManager.SetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
+            saveManager.SetInt("DmgMultiplier", GameSettings.DmgMultiplier);
+            saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
 
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);

@@ -78,9 +78,9 @@ namespace ProjectZ.InGame.GameObjects
         public float PosY => EntityPosition.Y;
         public float PosZ => EntityPosition.Z;
 
-        private const float WalkSpeed = 1.0f;
-        private const float WalkSpeedPoP = 20 / 16f;
-        private const float BootsRunningSpeed = 2.0f;
+        float WalkSpeed = 1.0f;
+        float WalkSpeedPoP = 1.25f;
+        float BootsRunningSpeed = 2.0f;
         private const float SwimSpeed = 0.5f;
         private const float SwimSpeedA = 1.0f;
 
@@ -544,8 +544,10 @@ namespace ProjectZ.InGame.GameObjects
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
 
             EntityPosition.AddPositionListener(typeof(CarriableComponent), UpdatePositionCarriedObject);
-        }
 
+            // Set the move speed value the user chose.
+            AlterMoveSpeed(GameSettings.MoveSpeedAdded);
+        }
 
         private void Update()
         {
@@ -5199,11 +5201,22 @@ namespace ProjectZ.InGame.GameObjects
             return CurrentState == State.Hookshot;
         }
 
+        #endregion
+
         public void ToggleLowHealthBeep(bool toggle)
         {
             _enableHealthBeep = toggle;
         }
 
-        #endregion
+        public void AlterMoveSpeed(float amount)
+        {
+            float walkSpeedBase = 1.0f;
+            float walkSpeedPoPBase = 1.25f;
+            float bootsRunningSpeed = 2.0f;
+
+            WalkSpeed = walkSpeedBase + amount;
+            WalkSpeedPoP = walkSpeedPoPBase + amount;
+            BootsRunningSpeed = bootsRunningSpeed + amount;
+        }
     }
 }

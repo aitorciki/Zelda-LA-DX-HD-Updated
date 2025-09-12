@@ -1,4 +1,7 @@
-﻿namespace ProjectZ.InGame.GameObjects
+﻿using System.Collections.Generic;
+using System.Reflection;
+
+namespace ProjectZ.InGame.GameObjects
 {
     internal class ObjLives
     {
@@ -110,5 +113,42 @@
         public static int SlimeEel         = 8;
         public static int SlimeEye         = 2;   // - I think this is how many hits it takes to split?
         public static int SlimeEyeHalf     = 4;
+
+        // Holds a list of all enemy HP default values.
+        private static Dictionary<string, int> _defaultValues;
+
+        public static void BackupDefaultHP()
+        {
+            _defaultValues = new Dictionary<string, int>();
+
+            var enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
+            foreach (var enemy in enemyHP)
+            {
+                if (enemy.FieldType == typeof(int))
+                    _defaultValues[enemy.Name] = (int)enemy.GetValue(null);
+            }
+        }
+        public static void RestoreDefaultHP()
+        {
+            var enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
+            foreach (var enemy in enemyHP)
+            {
+                if (enemy.FieldType == typeof(int) && _defaultValues.TryGetValue(enemy.Name, out int value))
+                    enemy.SetValue(null, value);
+            }
+        }
+
+        public static void AddToEnemyHP(int amount)
+        {
+            var enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
+            foreach (var enemy in enemyHP)
+            {
+                if (enemy.FieldType == typeof(int))
+                {
+                    int current = (int)enemy.GetValue(null);
+                    enemy.SetValue(null, current + amount);
+                }
+            }
+        }
     }
 }
