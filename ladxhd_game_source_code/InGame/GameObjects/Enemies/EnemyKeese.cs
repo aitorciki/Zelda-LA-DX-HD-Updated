@@ -48,7 +48,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None,
+                CollisionTypes = Values.CollisionTypes.NPCWall,
                 MoveCollision = OnCollision,
                 FieldRectangle = fieldRectangle
             };
