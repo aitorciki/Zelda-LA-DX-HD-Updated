@@ -99,8 +99,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
         {
-            // spawn small zols if the damage is not over 1
-            if (damage > 1)
+            // spawn small zols if the damage is not over the amount of HP they have
+            if (damage > _lives)
             {
                 ((HittableComponent)Components[HittableComponent.Index]).IsActive = false;
                 _spawnSmallZols = false;
