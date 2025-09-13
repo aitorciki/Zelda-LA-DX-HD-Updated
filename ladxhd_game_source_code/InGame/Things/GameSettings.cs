@@ -28,6 +28,7 @@ namespace ProjectZ.InGame.Things
         public static int EnemyBonusHP = 0;
         public static int DmgMultiplier = 0;
         public static float MoveSpeedAdded = 0;
+        public static bool NoDamageLaunch = false;
 
         public static int MusicVolume
         {

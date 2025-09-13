@@ -45,6 +45,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             GameSettings.DmgMultiplier = saveManager.GetInt("DmgMultiplier", GameSettings.DmgMultiplier);
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
+            GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
@@ -84,6 +85,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             saveManager.SetInt("DmgMultiplier", GameSettings.DmgMultiplier);
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
+            saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
 
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);

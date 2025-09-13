@@ -137,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             _damageBlink = blink;
             DamageTrigger.OnInit();
 
-            if (pieceOfPower)
+            if (pieceOfPower && !GameSettings.NoDamageLaunch)
             {
                 _body.Velocity.X = direction.X * 3;
                 _body.Velocity.Y = direction.Y * 3;
@@ -210,7 +210,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     Game1.GameManager.PlaySoundEffect("D370-07-07");
             }
 
-            if (pieceOfPower)
+            if (pieceOfPower && !GameSettings.NoDamageLaunch)
                 _aiComponent.ChangeState("pieceOfPower");
             else
             {
@@ -227,7 +227,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             if (MoveBody)
             {
-                if (pieceOfPower)
+                if (pieceOfPower && !GameSettings.NoDamageLaunch)
                 {
                     _body.Velocity.X = direction.X * 3;
                     _body.Velocity.Y = direction.Y * 3;
