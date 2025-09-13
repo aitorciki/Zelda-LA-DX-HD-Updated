@@ -543,10 +543,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 Game1.GameManager.PlaySoundEffect("D360-32-20");
 
-                if (Game1.RandomNumber.Next(0, 2) == 0)
-                    _aiComponent.ChangeState("slimeWait");
-                else
+                if (Game1.RandomNumber.Next(0, 3) == 0)
                     _aiComponent.ChangeState("slimeDespawn");
+                else
+                    _aiComponent.ChangeState("slimeWait");
             }
             else if (_body.Velocity.Y < -0.5f)
             {
