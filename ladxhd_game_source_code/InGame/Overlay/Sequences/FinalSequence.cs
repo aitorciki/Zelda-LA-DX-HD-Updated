@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.Overlay.Sequences
 {
@@ -110,6 +110,9 @@ namespace ProjectZ.InGame.Overlay.Sequences
         private bool _finishedCredits;
         private bool _marinEnding;
         private bool _marinEndingTriggered;
+        private bool _marinSeagull;
+        private bool[] _marinSeagullScree = new bool[3];
+        private SeqAnimation _marSeagull;
 
         private string _creditsHeader;
         private string _creditsContent;
@@ -401,7 +404,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _playedIslandSound = true;
                 Game1.GameManager.PlaySoundEffect("D378-53-35");
             }
-
             var percentage = MathHelper.Clamp((float)(_screen0Counter - 3000) / 3000, 0, 1);
             // start slow and speed up
             var sinPercentage = 1 - MathF.Sin(-MathF.PI * 0.45f + percentage * MathF.PI * 0.45f) / MathF.Sin(-MathF.PI * 0.45f);
@@ -432,7 +434,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _segullSoundCounter += Game1.RandomNumber.Next(1500, 2500);
                 Game1.GameManager.PlaySoundEffect("D360-33-21");
             }
-
             _waveSoundCounter -= Game1.DeltaTime;
             if (_waveSoundCounter < 0)
             {
@@ -457,7 +458,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 InitScreen2();
                 return;
             }
-
             _fadeCounter -= Game1.DeltaTime;
             if (_fadeCounter < 0)
                 _fadeCounter = 0;
@@ -485,7 +485,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 InitScreen3();
                 return;
             }
-
             _s2Link.Position.Y = _s2LinkPosY + MathF.Round(MathF.Sin((float)_screen2Counter / 2000 * MathF.PI * 2));
             _s2Log0.Position.Y = _s2Log0PosY + MathF.Round(0.5f + MathF.Sin((float)(_screen2Counter - 450) / 2000 * MathF.PI * 2) * 0.5f);
             _s2Log1.Position.Y = _s2Log1PosY + MathF.Round(0.5f + MathF.Sin((float)(_screen2Counter + 350) / 2000 * MathF.PI * 2) * 0.5f);
@@ -560,7 +559,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _s4LookedUp = true;
                 _s4Link.Animator.Play("look_up");
             }
-
             if (!_playedWaleSound0 && _s4Wale.Position.Y < 62)
             {
                 _playedWaleSound0 = true;
@@ -571,7 +569,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _playedWaleSound1 = true;
                 Game1.GameManager.PlaySoundEffect("D370-23-17");
             }
-
             if (_s4Wale.Position.Y < 24)
             {
                 _s4Sun0.Color = Color.White;
@@ -600,7 +597,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _screen5Smile = true;
                 _s5Link.Animator.Play("smile");
             }
-
             // start fade out
             if (_screen5Counter > 14000 - ScreenFadeTime && _screenFadeCounter == 0)
                 _screenFadeCounter = ScreenFadeTime * 2;
@@ -610,7 +606,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
             {
                 InitScreen6();
             }
-
             // brighten up the sprite
             var brighness = 155 + (int)(100 * MathHelper.Clamp((_screen5Counter - 750) / 500, 0, 1));
             _s5Link.Color = new Color(brighness, brighness, brighness);
@@ -623,43 +618,105 @@ namespace ProjectZ.InGame.Overlay.Sequences
             _s5Link.Position.Y = _sequenceHeight + posY + MathF.Round(2 + MathF.Sin(_screen5Counter / 3000 * MathF.PI * 2) * 2);
             _s5Background.Position.Y = posY;
         }
-
+        
         private void UpdateScreen6()
         {
+            // Check if the credits are finished.
             if (_finishedCredits)
             {
+                // If the secret ending was triggered via no deaths or unmissables being set.
                 if (_marinEndingTriggered)
                 {
                     _screen6Counter += Game1.DeltaTime;
 
-                    if (_screen6Counter > 13000)
+                    // Spawn the seagull at 7 and a half seconds.
+                    if (_screen6Counter > 7500 && !_marinSeagull)
                     {
-                        // hide marin
-                        _s6MarinTransparency = AnimationHelper.MoveToTarget(_s6MarinTransparency, 0, 0.025f * Game1.TimeMultiplier);
+                        _marinSeagull = true;
+                        _marSeagull = new SeqAnimation("Sequences/seagull big final", "idle",
+                            new Vector2(_s6Marin.Position.X + 25, _s6Marin.Position.Y + 33), 2);
 
-                        var musicVolume = Math.Clamp(((_s6MarinTransparency - 13000) / 1000), 0, 1);
-                        Game1.GbsPlayer.SetVolumeMultiplier(musicVolume);
+                        _marSeagull.Color = Color.White * 0f;
+                        Sprites.Add(_marSeagull);
+
+                        Game1.GameManager.PlaySoundEffect("D360-28-1C");
                     }
-                    // fade the singing out
+                    // Fade in marin and set seagull transparency.
+                    if (_screen6Counter <= 7500)
+                    {
+                        float fadeInDuration = 2250f;
+                        float t = Math.Min(_screen6Counter / fadeInDuration, 1f);
+
+                        _s6MarinTransparency = MathHelper.Lerp(0f, 1f, t);
+                        if (_marSeagull != null)
+                            _marSeagull.Color = Color.White * 0f;
+
+                        Game1.GbsPlayer.SetVolumeMultiplier(t);
+                    }
+                    // Fade out Marin and music while fading in the seagull.
+                    else if (_screen6Counter > 7500 && _screen6Counter <= 12000)
+                    {
+                        float t = (_screen6Counter - 7500f) / 4500f;
+
+                        _s6MarinTransparency = MathHelper.Lerp(1f, 0f, t);
+                        float seagullAlpha = MathHelper.Lerp(0f, 1f, t);
+                        if (_marSeagull != null)
+                            _marSeagull.Color = Color.White * seagullAlpha;
+
+                        Game1.GbsPlayer.SetVolumeMultiplier(1f - t);
+                    }
+                    // The fade is complete.
                     else
                     {
-                        // show marin
-                        _s6MarinTransparency = AnimationHelper.MoveToTarget(_s6MarinTransparency, 1, 0.025f * Game1.TimeMultiplier);
+                        _s6MarinTransparency = 0f;
+                        if (_marSeagull != null)
+                            _marSeagull.Color = Color.White;
 
-                        Game1.GbsPlayer.SetVolumeMultiplier(0);
+                        Game1.GbsPlayer.SetVolumeMultiplier(0f);
                     }
-
+                    // Seagull sound triggers.
+                    if (_screen6Counter > 12800 && !_marinSeagullScree[0])
+                    {
+                        Game1.GameManager.PlaySoundEffect("D360-33-21");
+                        _marinSeagullScree[0] = true;
+                    }
+                    if (_screen6Counter > 16000 && !_marinSeagullScree[1])
+                    {
+                        Game1.GameManager.PlaySoundEffect("D360-33-21");
+                        _marinSeagullScree[1] = true;
+                    }
+                    if (_screen6Counter > 16800 && !_marinSeagullScree[2])
+                    {
+                        Game1.GameManager.PlaySoundEffect("D360-33-21");
+                        _marinSeagullScree[2] = true;
+                    }
+                    // Segull starts flying away at 14.2 seconds.
+                    if (_screen6Counter > 14200 && _marSeagull != null)
+                    {
+                        _marSeagull.Position.X += 0.5f * Game1.TimeMultiplier;
+                        _marSeagull.Position.Y -= (1f / 2.75f) * Game1.TimeMultiplier;
+                    }
                     _s6Marin.Color = Color.White * _s6MarinTransparency;
 
-                    if (_screen6Counter > 16000)
-                        ExitToIntro();
-                }
+                    // Exit to the title screen after 20 seconds.
+                    if (_screen6Counter > 20000)
+                    {
+                        for (int i = 0; i < _marinSeagullScree.Length; i++)
+                            _marinSeagullScree[i] = false;
 
-                // return to the intro screen
+                        _screen6Counter = 0;
+                        _marSeagull = null;
+                        _marinSeagull = false;
+
+                        ExitToIntro();
+                    }
+                }
+                // Check if a button is pressed.
                 if (ControlHandler.ButtonPressed(CButtons.Start) ||
                     ControlHandler.ButtonPressed(CButtons.A))
                 {
-                    if (_marinEnding)
+                    // If the Marin ending was unlocked or the player has non-missables enabled.
+                    if (_marinEnding || GameSettings.Unmissables)
                     {
                         _creditsHeader = null;
                         _creditsContent = null;
@@ -667,18 +724,16 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
                         Game1.GameManager.SetMusic(46, 2);
                     }
+                    // Exit to the intro scene.
                     else
-                    {
                         ExitToIntro();
-                    }
                 }
-
                 return;
             }
-
+            // Add to the scene timer.
             _screen6Counter += Game1.DeltaTime;
 
-            // move the camera up
+            // Move the camera up.
             if (_screen6Counter > 72500)
             {
                 _s6CameraPosition -= 1 / 8f * Game1.TimeMultiplier;
@@ -687,7 +742,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
             }
             _cameraPosition = new Vector2(0, _s6CameraPosition);
 
-            // link move up and down
+            // Link is bobbing up and down on the raft.
             _s6Link.Position.Y = _s6LinkPosition + MathF.Round(MathF.Sin(_screen6Counter / 3000 * MathF.PI * 2) * 2);
 
             if (_s6CameraPosition < 128)
@@ -695,8 +750,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _s6Wale.Position.X += 1 / 8f * Game1.TimeMultiplier;
                 _s6Wale.Position.Y -= 1 / 4f / 8f * Game1.TimeMultiplier;
             }
-
-            // credits
+            // Show the credits.
             {
                 _creditCounter += Game1.DeltaTime;
                 if (_creditCounter > 3450)
