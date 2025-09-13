@@ -1,5 +1,24 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.4**
+### **The "Final Touches" Update:**
+  * Fully implemented the "secret ending" that is shown after the credits with 0 deaths.
+  * The secret ending can also be viewed if the Redux option "Nothing is Missable" is enabled.
+  * Add Spanish textures for title screen, menus, objects, items, various others. Thanks to [IPeluchito](https://github.com/IPeluchito).
+  * Photographs are now sepia by default. A "Redux" option has been added to use colored photos instead.
+  * Implement a "Modifiers" page that can alter the difficulty of gameplay.
+    * Extra Enemy HP: Adds up to 30 additional hit points to all enemies and bosses.
+    * Damage Taken Multiplier: Increases damage taken from 1x up to 10x.
+    * Added Move Speed: Increases movement speed from 10% up to 100%.
+    * No Damage Launch: Piece of Power / Red Tunic do not launch enemies.
+    * No Heart Drops: Disable hearts dropping from all sources (enemy, bushes, digging).
+  * Force Link into "idle" state with 0 depth when encountering the owl so he's not frozen in weird poses.
+  * Reduce final boss "Giant Zol" chance to despawn after a jump from 50% to 33%.
+  * Fix Dungeon 1 room with 4 Keese so that they can not fly outside the bounds of the room and trap you in.
+  * Fix potential issue with Madam MeowMeow not getting excited when Bow-Wow is kidnapped.
+  * Fix Red Zol from losing its hitbox and not splitting if damage was somehow less than 1.
+  * Fix holes near Kanalet Castle leading to seashell by adding pathing blockers to the tops of the trees.
+
 ## **v1.2.3**
 ### **The Last Boss Update:**
   * Fix final boss "Giant Zol" form for real this time. It was getting stuck in the elongated state.
