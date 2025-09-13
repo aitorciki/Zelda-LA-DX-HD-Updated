@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Box _activationBox;
 
+        private float _flapcounter;
         private double _dirRadius;
         private int _dirIndex;
         private bool _goldLeaf;
@@ -158,6 +159,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _hittableComponent.HittableBox = _hittableBoxFly;
         }
 
+        private void UpdateFlyingSound()
+        {
+            _flapcounter += Game1.DeltaTime;
+
+            if (_lives > 0 && _flapcounter > 430)
+            {
+                Game1.GameManager.PlaySoundEffect("D378-45-2D");
+                _flapcounter = 0;
+            }
+        }
+
         private void UpdateStart()
         {
             _animator.Play("fly_" + _dirIndex);
@@ -174,6 +186,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageState.IsActive = true;
                 _dirRadius = Math.Atan2(MapManager.ObjLink.PosY - EntityPosition.Y, MapManager.ObjLink.PosX - EntityPosition.X);
             }
+            UpdateFlyingSound();
         }
 
         private void UpdateFlying()
@@ -195,6 +208,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _dirIndex = velocity.X < 0 ? -1 : 1;
             _animator.Play("fly_" + _dirIndex);
+
+            UpdateFlyingSound();
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
