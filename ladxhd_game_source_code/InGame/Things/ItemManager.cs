@@ -454,7 +454,7 @@ namespace ProjectZ.InGame.Things
                 name: "heart",
                 count: 1,
                 maxCount: 999,
-                soundEffectName: "D370-06-06"
+                soundEffectName: "D360-20-14"
             ));
             _items.Add("heart_1", new GameItem(
                 Resources.GetSprite("heart"),
@@ -462,7 +462,7 @@ namespace ProjectZ.InGame.Things
                 pickUpDialog: "heart",
                 count: 1,
                 maxCount: 999,
-                soundEffectName: "D370-06-06"
+                soundEffectName: "D360-20-14"
             ));
             _items.Add("heart_3", new GameItem(
                 Resources.GetSprite("heart"),

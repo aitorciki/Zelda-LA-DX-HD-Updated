@@ -4849,8 +4849,14 @@ namespace ProjectZ.InGame.GameObjects
             // hearts
             if (item.Name == "heart")
             {
+                // Play the healing sound effect if HP is lower than current max.
+                if (Game1.GameManager.CurrentHealth < Game1.GameManager.MaxHearts * 4)
+                    Game1.GameManager.PlaySoundEffect("D370-06-06");
+
+                // Add 4 HP to current health.
                 Game1.GameManager.CurrentHealth += itemCollected.Count * 4;
 
+                // If the amount of healing exceeds max health then correct it to max.
                 if (Game1.GameManager.CurrentHealth > Game1.GameManager.MaxHearts * 4)
                     Game1.GameManager.CurrentHealth = Game1.GameManager.MaxHearts * 4;
             }
