@@ -143,9 +143,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 (int)EntityPosition.X, (int)EntityPosition.Y - 4, 0, 0, Values.LayerTop, "Particles/despawnParticle", "orange", true);
             Map.Objects.SpawnObject(animation);
 
-            // spawn a heart
-            Map.Objects.SpawnObject(new ObjItem(Map,
-                (int)EntityPosition.X - 8, (int)EntityPosition.Y - 12, "j", null, "heart", null, true));
+            // Spawn a heart if they are not disabled.
+            if (!GameSettings.NoHeartDrops)
+                Map.Objects.SpawnObject(new ObjItem(Map,
+                    (int)EntityPosition.X - 8, (int)EntityPosition.Y - 12, "j", null, "heart", null, true));
         }
 
         private void DespawnTick(double time)

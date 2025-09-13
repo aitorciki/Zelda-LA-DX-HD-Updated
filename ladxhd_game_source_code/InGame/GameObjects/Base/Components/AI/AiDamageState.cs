@@ -513,14 +513,16 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             if (strObject == null)
             {
-                // Drop at 30% chance. 
+                // Drop at 30% chance with a 70/30 rupee vs heart if heart drops are not disabled.
                 if (Game1.RandomNumber.Next(0, 100) < 30)
                 {
-                    // 70/30 rupee vs heart.
-                    strObject = (Game1.RandomNumber.Next(0, 100) < 70) ? "ruby" : "heart";
+                    if (GameSettings.NoHeartDrops)
+                        strObject = "ruby";
+                    else
+                        strObject = (Game1.RandomNumber.Next(0, 100) < 70) ? "ruby" : "heart";
                 }
             }
-            
+
             // Spawn: Guardian Acorn.
             // A simpler check since it's a static 12 kills. 
 

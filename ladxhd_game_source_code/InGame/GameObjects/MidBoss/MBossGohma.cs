@@ -323,9 +323,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void OnDeath()
         {
-            // spawn a heart
-            var objItem = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, "j", null, "heart", null);
-            Map.Objects.SpawnObject(objItem);
+            // Spawn a heart if not disabled.
+            if (!GameSettings.NoHeartDrops)
+                Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, "j", null, "heart", null));
 
             Game1.GameManager.SaveManager.SetInt(_saveKey, _bossState + 1);
 
