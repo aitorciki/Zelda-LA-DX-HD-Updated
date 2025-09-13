@@ -13,7 +13,7 @@ namespace ProjectZ.InGame.Pages
 
         public SettingsPage(int width, int height)
         {
-            // Button: Settings Page Layout
+            // Settings Page Layout
             var settingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var headerLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuHeaderSize)), ContentAlignment = InterfaceElement.Gravities.Left, HorizontalMode = true };
@@ -66,15 +66,11 @@ namespace ProjectZ.InGame.Pages
             }));
 
             settingsLayout.AddElement(contentLayout);
+
+            // Bottom Bar / Exit Button:
             var bottomLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true };
-
-            // Button: Back to Menu
-            bottomLayout.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element =>
-            {
-                ExitPage();
-            }));
+            bottomLayout.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { ExitPage(); }));
             settingsLayout.AddElement(bottomLayout);
-
             PageLayout = settingsLayout;
         }
 

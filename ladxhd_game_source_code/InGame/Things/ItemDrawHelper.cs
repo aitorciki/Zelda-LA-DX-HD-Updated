@@ -70,6 +70,16 @@ namespace ProjectZ.InGame.Things
             KeySize = new Point((RecLetters.Width + LetterMargin) * 3 + RecKey.Width, RecKey.Height);
         }
 
+        public static void RefreshImagesUI()
+        {
+            // There isn't really a need to do this as these don't change from language to language, but just in case mods
+            // or something else in the future want to swap out these textures let's reload them anyway.
+            SpriteLetter = Resources.GetSprite("ui letter");
+            SpriteHeart = Resources.GetSprite("ui heart");
+            SpriteRubee = Resources.GetSprite("ui ruby");
+            SpriteKey = Resources.GetSprite("ui key");
+        }
+
         public static void Init()
         {
             _rubyAnimation = false;

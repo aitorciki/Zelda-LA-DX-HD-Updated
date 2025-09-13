@@ -32,8 +32,8 @@ namespace ProjectZ
         public static UiManager EditorUi = new UiManager();
         public static ScreenManager ScreenManager = new ScreenManager();
         public static PageManager UiPageManager = new PageManager();
-        public static GameManager GameManager = new GameManager();
         public static Language LanguageManager = new Language();
+        public static GameManager GameManager = new GameManager();
         public static GbsPlayer GbsPlayer = new GbsPlayer();
         public static StopWatchTracker StopWatchTracker = new StopWatchTracker(120);
         public static Random RandomNumber = new Random();
@@ -842,7 +842,7 @@ namespace ProjectZ
         public void UpdateFpsSettings()
         {
             IsFixedTimeStep = false;
-            Graphics.SynchronizeWithVerticalRetrace = GameSettings.LockFps;
+            Graphics.SynchronizeWithVerticalRetrace = GameSettings.VerticalSync;
             Graphics.ApplyChanges();
         }
 

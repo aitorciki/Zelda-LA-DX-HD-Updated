@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.SaveLoad;
+using ProjectZ.InGame.Screens;
 
 namespace ProjectZ.InGame.Things
 {
@@ -54,6 +55,7 @@ namespace ProjectZ.InGame.Things
         public static SpriteFont GameHeaderFont;
         public static SpriteFont FontCredits, FontCreditsHeader;
         public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux;
+
         public static SpriteFont GameFont => (GameSettings.VarWidthFont, GameSettings.Uncensored) 
             switch
             {
@@ -64,11 +66,10 @@ namespace ProjectZ.InGame.Things
             };
 
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
-        public static Texture2D SprWhite, SprTiledBlock, SprObjects, SprObjectsAnimated, SprNpCs, SprNpCsRedux;
-        public static Texture2D SprEnemies, SprMidBoss, SprNightmares, SprMiniMap;
+        public static Texture2D SprWhite, SprTiledBlock, SprObjectsAnimated, SprNpCs, SprNpCsRedux;
+        public static Texture2D SprEnemies, SprMidBoss, SprNightmares;
         public static Texture2D SprShadow;
         public static Texture2D SprBlurTileset;
-        public static Texture2D SprPhotos;
         public static Texture2D SprLink, SprLinkCloak;
         public static Texture2D SprGameSequences;
         public static Texture2D SprGameSequencesFinal;
@@ -78,13 +79,47 @@ namespace ProjectZ.InGame.Things
         public static Texture2D SprLightRoomV;
         public static Texture2D NoiseTexture;
         public static Texture2D SprIconOptions, SprIconErase, SprIconCopy, EditorIconEdit, EditorIconSelect;
-        public static Texture2D SprItemNorm, SprItemRedux;
-        public static Texture2D SprItem => GameSettings.Uncensored ? SprItemRedux : SprItemNorm;
+        public static Texture2D SprPhotosEng, SprPhotosEngRedux, SprPhotosEsp, SprPhotosEspRedux;
+
+        public static Texture2D SprObjectsEng, SprObjectsEsp;
+        public static Texture2D SprObjects => (Game1.LanguageManager.CurrentLanguageIndex) 
+            switch
+            {
+                1 => SprObjectsEng,
+                _ => SprObjectsEng
+            };
+
+        public static Texture2D SprMiniMapEng, SprMiniMapEsp;
+        public static Texture2D SprMiniMap => (Game1.LanguageManager.CurrentLanguageIndex) 
+            switch
+            {
+                1 => SprMiniMapEsp,
+                _ => SprMiniMapEng
+            };
+
+        public static Texture2D SprItemEng, SprItemEngRedux, SprItemEsp, SprItemEspRedux;
+        public static Texture2D SprItem => (Game1.LanguageManager.CurrentLanguageIndex, GameSettings.Uncensored) 
+            switch
+            {
+                (1, false) => SprItemEsp,
+                (_, false) => SprItemEng,
+                (1, true)  => SprItemEspRedux,
+                (_, true)  => SprItemEngRedux
+            };
 
         public static List<Texture> TextureList = new();
+        public static List<Texture> ReloadQueue = new();
+
+        // TODO: Sprite atlas dictionaries should probably be converted into an array eventually so it's easier to manage when more languages
+        // graphics are implemented. This should both make it easier to track and clean up the code since language is an index. But with that
+        // said, when more than two languages are implemented, it's going to be a pain in the ass to code them all either way.
 
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasRedux = new();
+
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasEsp = new();
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasEspRedux = new();
+
         public static Dictionary<string, int> TilesetSizes = new();
         public static Dictionary<string, SoundEffect> SoundEffects = new();
 
@@ -116,31 +151,41 @@ namespace ProjectZ.InGame.Things
 
             LoadTexture(out SprGameSequences, Values.PathContentFolder + "Sequences/game sequences.png");
             LoadTexture(out SprGameSequencesFinal, Values.PathContentFolder + "Sequences/end sequence.png");
-            LoadTexture(out SprPhotos, Values.PathContentFolder + "Photo Mode/photos.png");
+            LoadTexture(out SprPhotosEng, Values.PathContentFolder + "Photo Mode/photos.png");
+            LoadTexture(out SprPhotosEngRedux, Values.PathContentFolder + "Photo Mode/photos_redux.png");
+            LoadTexture(out SprPhotosEsp, Values.PathContentFolder + "Photo Mode/photos_esp.png");
+            LoadTexture(out SprPhotosEspRedux, Values.PathContentFolder + "Photo Mode/photos_redux_esp.png");
             LoadTexture(out _, Values.PathContentFolder + "Editor/editorIcons4x.png");
             LoadTexture(out _, Values.PathContentFolder + "ui.png");
+            LoadTexture(out _, Values.PathContentFolder + "ui_esp.png");
 
             LoadTexturesFromFolder(Values.PathContentFolder + "/Sequences/");
             LoadTexturesFromFolder(Values.PathContentFolder + "/Light/");
 
             // load all the tileset textures
             LoadTexturesFromFolder(Values.PathTilesetFolder);
-
             LoadTexturesFromFolder(Values.PathMapObjectFolder);
 
-            SprMiniMap = GetTexture("minimap.png");
+            // Static resources that never change.
             SprLink = GetTexture("link0.png");
             SprLinkCloak = GetTexture("link_cloak.png");
             SprEnemies = GetTexture("enemies.png");
-            SprObjects = GetTexture("objects.png");
             SprObjectsAnimated = GetTexture("objects animated.png");
             SprMidBoss = GetTexture("midboss.png");
             SprNightmares = GetTexture("nightmares.png");
             SprBlurTileset = GetTexture("blur tileset.png");
+
+            // Dynamic resources that change depending on options set.
+            SprObjectsEng = GetTexture("objects.png");
+            SprObjectsEsp = GetTexture("objects_esp.png");
+            SprMiniMapEng = GetTexture("minimap.png");
+            SprMiniMapEsp = GetTexture("minimap_esp.png");
             SprNpCs = GetTexture("npcs.png");
             SprNpCsRedux = GetTexture("npcs_redux.png");
-            SprItemNorm = GetTexture("items.png");
-            SprItemRedux = GetTexture("items_redux.png");
+            SprItemEng = GetTexture("items.png");
+            SprItemEngRedux = GetTexture("items_redux.png");
+            SprItemEsp = GetTexture("items_esp.png");
+            SprItemEspRedux = GetTexture("items_redux_esp.png");
 
             // load fonts
             EditorFont = content.Load<SpriteFont>("Fonts/editor font");
@@ -261,12 +306,20 @@ namespace ProjectZ.InGame.Things
             SoundEffects.TryAdd(fileName, soundEffect);
         }
 
+        public static string FindAtlasFile(string textureName)
+        {
+            var parts = textureName
+                .Replace(".png", "")
+                .Split('_')
+                .Where(name => name != "redux" && name != "esp");
+
+            return string.Join("_", parts) + ".atlas";
+        }
+
         public static void LoadContentTextureWithAtlas(ContentManager content, string filePath)
         {
             var texture = content.Load<Texture2D>(filePath);
-
-            // load the sprite atlas
-            var atlasPath = Values.PathContentFolder + filePath + ".atlas";
+            var atlasPath = FindAtlasFile(Values.PathContentFolder + filePath);
             SpriteAtlasSerialization.LoadSourceDictionary(texture, atlasPath, SpriteAtlas);
         }
 
@@ -276,11 +329,14 @@ namespace ProjectZ.InGame.Things
 
             foreach (var filePath in texturePaths)
             {
-                if (!filePath.Contains(".png"))
+                var _filePath = filePath.Replace("//","/");
+
+                if (!_filePath.Contains(".png"))
                     continue;
 
-                var newTexture = new Texture(Path.GetFileName(filePath));
-                LoadTexture(out newTexture.SprTexture, filePath);
+                var newTexture = new Texture(Path.GetFileName(_filePath));
+
+                LoadTexture(out newTexture.SprTexture, _filePath);
                 TextureList.Add(newTexture);
             }
         }
@@ -294,10 +350,19 @@ namespace ProjectZ.InGame.Things
             using Stream stream = File.Open(strFilePath, FileMode.Open);
             texture = Texture2D.FromStream(Game1.Graphics.GraphicsDevice, stream);
 
-            string atlasFileName = strFilePath.Replace("_redux", "").Replace(".png", ".atlas");
-            string[] strFileSplit = strFilePath.Split(new char[]{ '_', '.' });
+            string atlasFileName = FindAtlasFile(strFilePath);
+            string[] strFileSplit = strFilePath.Split(new[] { '_', '.' });
 
-            Dictionary<string, DictAtlasEntry> atlasDesignation = strFileSplit[1].Contains("redux") ? SpriteAtlasRedux : SpriteAtlas;
+            bool isSpanish = strFileSplit.Contains("esp");
+            bool isRedux   = strFileSplit.Contains("redux");
+
+            Dictionary<string, DictAtlasEntry> atlasDesignation = (isSpanish, isRedux) switch
+            {
+                (true,  false) => SpriteAtlasEsp,
+                (false, false) => SpriteAtlas,
+                (true,  true)  => SpriteAtlasEspRedux,
+                (false, true)  => SpriteAtlasRedux,
+            };
             SpriteAtlasSerialization.LoadSourceDictionary(texture, atlasFileName, atlasDesignation);
         }
 
@@ -313,50 +378,78 @@ namespace ProjectZ.InGame.Things
 
         public static Rectangle SourceRectangle(string id)
         {
-            // If uncensored is enabled, try to get the redux atlas. Otherwise, get the normal sprite atlas.
-            Rectangle AtlasRect = Rectangle.Empty;
-            if (GameSettings.Uncensored)
-                AtlasRect = SpriteAtlasRedux.ContainsKey(id) ? SpriteAtlasRedux[id].ScaledRectangle : Rectangle.Empty;
-            if (AtlasRect.IsEmpty)
-                AtlasRect = SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id].ScaledRectangle : Rectangle.Empty;
-            return AtlasRect;
+            // We don't need to get any special atlas since all versions share the same dimensions.
+            return SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id].ScaledRectangle : Rectangle.Empty;
         }
 
-        public static DictAtlasEntry GetSprite(string id)
+        private static DictAtlasEntry GetSpriteInternal(string id, bool variation)
         {
-            // If uncensored is enabled, try to get the redux atlas. Otherwise, get the normal sprite atlas.
-            DictAtlasEntry sprite = null;
-            if (GameSettings.Uncensored)
-                sprite = SpriteAtlasRedux.ContainsKey(id) ? SpriteAtlasRedux[id] : null;
-            if (sprite == null)
-                sprite = SpriteAtlas.ContainsKey(id) ? SpriteAtlas[id] : null;
-            return sprite;
+            // All sprites use the current langage to search for variations, most sprites will also use "GameSettings.Uncensored" to determine if
+            // there is a "redux" uncensored version, and the photograph sprites will use "GameSettings.PhotosColor" to get the colored versions.
+            // All "search" chains in the switch below should end with "SpriteAtlas" as it will always contains an entry.
+
+            var atlases = (Game1.LanguageManager.CurrentLanguageIndex, variation) switch
+            {
+                (1, false) => new[] { SpriteAtlasEsp, SpriteAtlas },
+                (_, false) => new[] { SpriteAtlas },
+                (1, true)  => new[] { SpriteAtlasEspRedux, SpriteAtlasEsp, SpriteAtlas },
+                (_, true)  => new[] { SpriteAtlasRedux, SpriteAtlas }
+            };
+            // Check each atlas and see if it contains the ID of the sprite we are trying to load. If not, go to the next in the chain.
+            foreach (var atlas in atlases)
+                if (atlas.TryGetValue(id, out var sprite))
+                    return sprite;
+
+            // We should NEVER get here, but just as a fail safe check the standard "SpriteAtlas" one more time.
+            return SpriteAtlas.TryGetValue(id, out var fallback) ? fallback : null;
         }
+
+        public static DictAtlasEntry GetSprite(string id) =>
+            GetSpriteInternal(id, GameSettings.Uncensored);
+
+        public static DictAtlasEntry GetPhotoSprite(string id) =>
+            GetSpriteInternal(id, GameSettings.PhotosColor);
 
         public static void LoadTilesetSizes()
         {
-            var fileName = Values.PathTilesetFolder + "tileset size.txt";
+            var fileName = Path.Combine(Values.PathTilesetFolder, "tileset size.txt");
 
-            if (File.Exists(fileName))
+            if (!File.Exists(fileName))
+                return;
+
+            foreach (var line in File.ReadLines(fileName))
             {
-                using var reader = new StreamReader(fileName);
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+                    continue;
 
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-
-                    // comment?
-                    if (line.StartsWith("//"))
-                        continue;
-
-                    var split = line.Split(':');
-                    if (split.Length != 2)
-                        continue;
-
-                    if (int.TryParse(split[1], out var value))
-                        TilesetSizes.Add(split[0], value);
-                }
+                var split = line.Split(':', 2, StringSplitOptions.TrimEntries);
+                if (split.Length == 2 && int.TryParse(split[1], out var value))
+                    TilesetSizes[split[0]] = value;
             }
+        }
+
+        public static void RefreshMenuBorderTexture(ContentManager content, int index)
+        {
+            var texture = index switch
+            {
+                0 => content.Load<Texture2D>("Menu/menuBackground"),
+                1 => content.Load<Texture2D>("Menu/menuBackgroundB"),
+                2 => content.Load<Texture2D>("Menu/menuBackgroundC")
+            };
+            var menuScreen = (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
+            menuScreen?.SetBackground(texture);
+        }
+
+        public static void RefreshDynamicResources()
+        {
+            // Reload photo album photos so proper photos are displayed.
+            Game1.GameManager.InGameOverlay.RefreshPhotoOverlay();
+
+            // Refresh title screen resources so proper logo is displayed.
+            Game1.ScreenManager.Intro.RefreshIntroResources();
+
+            // Reload the UI textures (hearts, rupee icon, small key icon, game over, etc). 
+            ItemDrawHelper.RefreshImagesUI();
         }
     }
 }

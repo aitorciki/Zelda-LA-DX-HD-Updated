@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -8,7 +9,6 @@ using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {

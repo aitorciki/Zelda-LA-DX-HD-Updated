@@ -13,9 +13,16 @@ namespace ProjectZ.InGame.Screens
     {
         private Texture2D _sprOcean;
         private Texture2D _sprRain;
-        private Texture2D _sprIntro;
         private Texture2D _sprWaves;
         private Texture2D _sprCloud;
+        public static Texture2D _sprIntro_eng, _sprIntro_esp;
+
+        public static Texture2D _sprIntro => (Game1.LanguageManager.CurrentLanguageIndex) 
+            switch
+            {
+                1 => _sprIntro_esp,
+                _ => _sprIntro_eng
+            };
 
         private Animator _loadingAnimator;
         private Animator _marinAnimator;
@@ -184,7 +191,6 @@ namespace ProjectZ.InGame.Screens
             _loaded = true;
 
             _spriteOceanBoat = Resources.GetSprite("intro_boat");
-
             _spriteBackground = Resources.GetSprite("intro_background");
             _spriteMountain = Resources.GetSprite("intro_mountain");
             _spriteLogo0 = Resources.GetSprite("intro_logo_0");
@@ -209,7 +215,12 @@ namespace ProjectZ.InGame.Screens
 
             _sprOcean = Resources.GetTexture("ocean.png");
             _sprRain = Resources.GetTexture("rain.png");
-            _sprIntro = Resources.GetTexture("intro.png");
+
+            _sprIntro_eng = Resources.GetTexture("intro.png");
+            _sprIntro_esp = Resources.GetTexture("intro_esp.png");
+
+            System.Diagnostics.Debug.WriteLine(Game1.LanguageManager.CurrentLanguageIndex);
+
             _sprCloud = Resources.GetTexture("cloud.png");
             _sprWaves = Resources.GetTexture("waves.png");
 
@@ -223,6 +234,12 @@ namespace ProjectZ.InGame.Screens
             _marinAnimator = AnimatorSaveLoad.LoadAnimator("Intro/maria");
             _linkAnimator = AnimatorSaveLoad.LoadAnimator("Intro/link");
             _lightAnimation = AnimatorSaveLoad.LoadAnimator("Intro/light");
+        }
+
+        public void RefreshIntroResources()
+        {
+            _spriteLogo0 = Resources.GetSprite("intro_logo_0");
+            _spriteLogo1 = Resources.GetSprite("intro_logo_1");
         }
 
         public override void OnLoad()

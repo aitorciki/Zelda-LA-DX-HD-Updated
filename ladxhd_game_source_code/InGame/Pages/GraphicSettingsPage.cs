@@ -15,14 +15,14 @@ namespace ProjectZ.InGame.Pages
 
         public GraphicSettingsPage(int width, int height)
         {
-            // Graphics settings layout.
+            // Graphics Settings Layout
             var _graphicSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             var buttonWidth = 320;
             _graphicSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_graphics_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Slider to adjust the game scale.
+            // Slider: Game Scale
             _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
                 buttonWidth, new Point(1, 2), -1, 11, 1, GameSettings.GameScale + 1,
                 number =>
@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.Pages
             { SetString = number => GameScaleSliderAdjustmentString(number) };
             contentLayout.AddElement(_gameScaleSlider);
 
-            // Slider to adjust the user interface.
+            // Slider: UI Scale
             _uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
                 buttonWidth, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1,
                 number =>
@@ -44,7 +44,7 @@ namespace ProjectZ.InGame.Pages
             { SetString = number => UIScaleSliderAdjustmentString(number) };
             contentLayout.AddElement(_uiScaleSlider);
 
-            // Fullscreen toggler.
+            // Button: Fullscreen
             _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_game_fullscreen_mode", GameSettings.IsFullscreen,
                 newState => {
@@ -53,35 +53,30 @@ namespace ProjectZ.InGame.Pages
                 });
             contentLayout.AddElement(_toggleFullscreen);
 
-            // Shadow toggler.
+            // Button: Shadows
             // TODO: Also disables shadows under the player sprite. At least this shadow should be drawn.
             var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                "settings_graphics_shadow", GameSettings.EnableShadows, newState => GameSettings.EnableShadows = newState);
              contentLayout.AddElement(shadowToggle);
 
-            // FPS lock toggler.
+            // Button: Vertical Sync
             var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
-                "settings_graphics_fps_lock", GameSettings.LockFps, newState =>
+                "settings_graphics_fps_lock", GameSettings.VerticalSync, newState =>
                 {
-                    GameSettings.LockFps = newState;
+                    GameSettings.VerticalSync = newState;
                     Game1.FpsSettingChanged = true;
                 });
             contentLayout.AddElement(toggleFpsLock);
 
-            // Smooth camera toggler.
+            // Button: Smooth Camera
             var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_game_change_smooth_camera", GameSettings.SmoothCamera, newState => { GameSettings.SmoothCamera = newState; });
             contentLayout.AddElement(smoothCameraToggle);
             _graphicSettingsLayout.AddElement(contentLayout);
 
+            // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-
-            // Back button.
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element =>
-            {
-                Game1.UiPageManager.PopPage();
-            }));
-
+            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
             _graphicSettingsLayout.AddElement(_bottomBar);
             PageLayout = _graphicSettingsLayout;
         }
@@ -131,6 +126,7 @@ namespace ProjectZ.InGame.Pages
         {
 
         }
+
         private void UpdateFullscreenState()
         {
             var toggle = ((InterfaceToggle)_toggleFullscreen.Elements[1]);
@@ -142,11 +138,6 @@ namespace ProjectZ.InGame.Pages
         {
             var currentScale = GameSettings.GameScale;
             _gameScaleSlider.CurrentStep = currentScale + 1;
-        }
-
-        private void UpdateUIScaleSlider()
-        {
-
         }
     }
 }

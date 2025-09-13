@@ -39,7 +39,14 @@ namespace ProjectZ.InGame.Overlay
             _spriteOk = Resources.GetSprite("photo_ok");
 
             for (var i = 0; i < 12; i++)
-                _spritePhotos[i] = Resources.GetSprite("photo_" + (i + 1));
+                _spritePhotos[i] = Resources.GetPhotoSprite("photo_" + (i + 1));
+        }
+
+        public void Reload()
+        {
+            _spritePhotos = new DictAtlasEntry[12];
+            for (var i = 0; i < 12; i++)
+                _spritePhotos[i] = Resources.GetPhotoSprite("photo_" + (i + 1));
         }
 
         public void OnOpen()
@@ -55,7 +62,7 @@ namespace ProjectZ.InGame.Overlay
             // set to alt image or not?
             var altPhoto = Game1.GameManager.SaveManager.GetString("photo_1_alt");
             var useAltPhoto = !string.IsNullOrEmpty(altPhoto);
-            _spritePhotos[0] = Resources.GetSprite(useAltPhoto ? "photo_1_alt" : "photo_1");
+            _spritePhotos[0] = Resources.GetPhotoSprite(useAltPhoto ? "photo_1_alt" : "photo_1");
         }
 
         public void Update()

@@ -14,7 +14,7 @@ namespace ProjectZ.InGame.Pages
         {
             var margin = 6;
 
-            // yes no layout
+            // Yes / No Layout
             var yesNoLayoutInside = new InterfaceListLayout() { Size = new Point(150 + margin * 2, 55), Selectable = true };
             yesNoLayoutInside.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_exit_header", new Point(150, 30), new Point(1, 2)) { TextColor = Color.White });
             var hLayout = new InterfaceListLayout() { Size = new Point(150, 25), Margin = new Point(0, 2), Selectable = true, HorizontalMode = true };

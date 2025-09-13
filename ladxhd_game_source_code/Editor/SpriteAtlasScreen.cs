@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +9,7 @@ using ProjectZ.Base.UI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
+
 #if WINDOWS
 using System.Windows.Forms;
 #endif
@@ -526,7 +527,8 @@ namespace ProjectZ.Editor
             _sourceData.Clear();
 
             // load the sprite atlas if there is one
-            var atlasFileName = _lastFileName.Replace(".png", ".atlas");
+            var atlasFileName = Resources.FindAtlasFile(_lastFileName);
+
             if (!SpriteAtlasSerialization.LoadSpriteAtlas(atlasFileName, _spriteAtlas))
                 AddAtlasEntry();
 

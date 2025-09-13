@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.Things
         public static bool SmoothCamera = true;
         public static bool IsFullscreen = false;
         public static bool ExFullscreen = false;
-        public static bool LockFps = true;
+        public static bool VerticalSync = true;
         public static bool ItemsOnRight = false;
         public static string Controller = "XBox";
         public static int MenuBorder = 0;
@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.Things
         public static bool NoHelperText = false;
         public static bool Uncensored = false;
         public static bool Unmissables = false;
+        public static bool PhotosColor = false;
         public static int EnemyBonusHP = 0;
         public static int DmgMultiplier = 0;
         public static float MoveSpeedAdded = 0;

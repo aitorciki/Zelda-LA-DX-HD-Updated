@@ -21,12 +21,14 @@ namespace ProjectZ.InGame.Screens
         private bool _changeScreen;
         private bool _finishedLoading;
 
+        public IntroScreen Intro;
+
         public void LoadIntro(ContentManager content)
         {
-            var introScreen = new IntroScreen(Values.ScreenNameIntro);
-            introScreen.Load(content);
+            Intro = new IntroScreen(Values.ScreenNameIntro);
+            Intro.Load(content);
 
-            _screens.Add(introScreen);
+            _screens.Add(Intro);
 
             ChangeScreen(Values.ScreenNameIntro);
         }

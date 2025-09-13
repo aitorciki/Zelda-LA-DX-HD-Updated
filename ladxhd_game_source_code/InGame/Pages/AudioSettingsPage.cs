@@ -12,7 +12,7 @@ namespace ProjectZ.InGame.Pages
 
         public AudioSettingsPage(int width, int height)
         {
-            // graphic settings layout
+            // Audio Settings Layout
             var graphicSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
@@ -22,42 +22,37 @@ namespace ProjectZ.InGame.Pages
 
             var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize - 12)), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Music Volume Slider:
+            // Slider: Music Volume
             contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_music_volume",
                 buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.MusicVolume, number => { GameSettings.MusicVolume = number; })
             { SetString = number => " " + number + "%" });
 
-            // Sound Effect Volume Slider:
+            // Slider: Sound Effects Volume
             contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_effect_volume",
                 buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, number => { GameSettings.EffectVolume = number; })
             { SetString = number => " " + number + "%" });
 
-            // Mute Inactive Window Toggle:
+            // Button: Mute Inactive Window
             var toggleAudioMute = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_audio_mute_inactive", GameSettings.MuteInactive, newState => { GameSettings.MuteInactive = newState; });
             contentLayout.AddElement(toggleAudioMute);
 
-            // Low Heart Alarm Toggle:
+            // Button: Low Hearts Alarm
             var toggleHeartBeep = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_game_heartbeep", GameSettings.HeartBeep, newState => { GameSettings.HeartBeep = newState; });
             contentLayout.AddElement(toggleHeartBeep);
 
-            // Mute Powerup Music Toggle:
+            // Button: Mute Powerup Music
             var toggleNoPowerupMusic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_audio_mute_powerups", GameSettings.MutePowerups, newState => { GameSettings.MutePowerups = newState; });
             contentLayout.AddElement(toggleNoPowerupMusic);
 
             graphicSettingsLayout.AddElement(contentLayout);
 
+            // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            // back button
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element =>
-            {
-                Game1.UiPageManager.PopPage();
-            }));
-
+            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
             graphicSettingsLayout.AddElement(_bottomBar);
-
             PageLayout = graphicSettingsLayout;
         }
 

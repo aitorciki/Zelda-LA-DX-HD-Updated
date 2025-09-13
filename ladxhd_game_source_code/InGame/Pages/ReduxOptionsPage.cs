@@ -11,16 +11,16 @@ namespace ProjectZ.InGame.Pages
 {
     class ReduxOptionsPage : InterfacePage
     {
-        private readonly ContentManager _contentManager;
+        private readonly ContentManager _content;
         private readonly InterfaceListLayout _contentLayout;
         public static bool _reloadMenus;
 
         public ReduxOptionsPage(int width, int height, ContentManager content)
         {
-            _contentManager = content;
+            _content = content;
             var buttonWidth = 320;
 
-            // Redux Settings Layout:
+            // Redux Settings Layout
             var reduxOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             reduxOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_redux_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -56,11 +56,14 @@ namespace ProjectZ.InGame.Pages
                 "settings_redux_unmissables", GameSettings.Unmissables, newState => { PressButtonToggleUnmissables(newState); });
             _contentLayout.AddElement(toggleUnmissables);
 
+            // Colored Photos:
+            var togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+                "settings_redux_photoscolor", GameSettings.PhotosColor, newState => { PressButtonTogglePhotosColor(newState); });
+            _contentLayout.AddElement(togglePhotosColor);
+
             // Bottom Bar / Back Button:
             var bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
-
-            // Add everything to interface layout.
             reduxOptionsList.AddElement(_contentLayout);
             reduxOptionsList.AddElement(bottomBar);
             PageLayout = reduxOptionsList;
@@ -95,14 +98,8 @@ namespace ProjectZ.InGame.Pages
 
         private string MenuBorderScaleSliderAdjustment(int number)
         {
-            var texture = number switch
-            {
-                0 => _contentManager.Load<Texture2D>("Menu/menuBackground"),
-                1 => _contentManager.Load<Texture2D>("Menu/menuBackgroundB"),
-                2 => _contentManager.Load<Texture2D>("Menu/menuBackgroundC")
-            };
-            var menuScreen = (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
-            menuScreen?.SetBackground(texture);
+            // Swap out the menu border with it's replacement.
+            Resources.RefreshMenuBorderTexture(_content, number);
 
             string label = number switch
             {
@@ -118,7 +115,7 @@ namespace ProjectZ.InGame.Pages
             _reloadMenus = true;
             GameSettings.VarWidthFont = newState;
             Game1.GameManager.InGameOverlay.TextboxOverlay.ResolutionChange();
-            Game1.UiPageManager.Reload(_contentManager);
+            Game1.UiPageManager.Reload(_content);
         }
 
         public void PressButtonToggleHelpers(bool newState)
@@ -139,6 +136,12 @@ namespace ProjectZ.InGame.Pages
         public void PressButtonToggleUnmissables(bool newState) 
         {
             GameSettings.Unmissables = newState;
+        }
+
+        public void PressButtonTogglePhotosColor(bool newState) 
+        {
+            GameSettings.PhotosColor = newState;
+            Resources.RefreshDynamicResources();
         }
     }
 }

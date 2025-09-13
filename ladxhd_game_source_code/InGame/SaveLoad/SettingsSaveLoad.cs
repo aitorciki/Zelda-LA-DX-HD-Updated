@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.ScreenShake = saveManager.GetBool("ScreenShake", GameSettings.ScreenShake);
             GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
             GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
-            GameSettings.LockFps = saveManager.GetBool("LockFPS", GameSettings.LockFps);
+            GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
             GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
@@ -41,6 +41,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
             GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
+            GameSettings.PhotosColor = saveManager.GetBool("PhotosColor", GameSettings.PhotosColor);
             GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             GameSettings.DmgMultiplier = saveManager.GetInt("DmgMultiplier", GameSettings.DmgMultiplier);
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
@@ -71,7 +72,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("ScreenShake", GameSettings.ScreenShake);
             saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
             saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);
-            saveManager.SetBool("LockFPS", GameSettings.LockFps);
+            saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             saveManager.SetString("Controller", GameSettings.Controller);
             saveManager.SetInt("MenuBorder", GameSettings.MenuBorder);
@@ -79,6 +80,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
             saveManager.SetBool("Uncensored", GameSettings.Uncensored);
             saveManager.SetBool("Unmissables", GameSettings.Unmissables);
+            saveManager.SetBool("PhotosColor", GameSettings.PhotosColor);
             saveManager.SetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             saveManager.SetInt("DmgMultiplier", GameSettings.DmgMultiplier);
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);

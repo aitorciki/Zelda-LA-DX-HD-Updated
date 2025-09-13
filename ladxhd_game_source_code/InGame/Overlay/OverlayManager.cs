@@ -122,6 +122,11 @@ namespace ProjectZ.InGame.Overlay
             _photoOverlay.Load();
         }
 
+        public void RefreshPhotoOverlay()
+        {
+            _photoOverlay.Reload();
+        }
+
         public void OnLoad()
         {
             CloseOverlay();
