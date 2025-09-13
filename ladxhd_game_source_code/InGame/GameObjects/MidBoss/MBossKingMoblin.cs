@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private double _bounceTime;
         private int _direction;
+        private int _throws;
         private bool _endWaiting;
 
         public MBossKingMoblin() : base("king_moblin") { }
@@ -204,18 +205,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 {
                     _direction = EntityPosition.X < MapManager.ObjLink.EntityPosition.X ? 2 : 0;
 
-                    if (Game1.RandomNumber.Next(0, 4) == 0)
+                    // On update: charge if thrown at least 2 spears + 1/3 chance, or always after 4 throws.
+                    if (_throws >= 2 && Game1.RandomNumber.Next(0, 3) == 0 || _throws == 4) 
                     {
-                        ToThrowSpear();
-                        return;
-                    }
-                    if (Game1.RandomNumber.Next(0, 4) == 0)
-                    {
+                        _throws = 0;
                         ToPreAttack();
                         return;
                     }
+                    // On update: a 1/3 chance to throw a spear.
+                    if (Game1.RandomNumber.Next(0, 3) == 0)
+                    {
+                        _throws++;
+                        ToThrowSpear();
+                        return;
+                    }
                 }
-
                 _animator.Play("idle_" + _direction);
 
                 var targetPosition = new Vector2(MapManager.ObjLink.EntityPosition.X + (_direction == 0 ? 50 : -50), MapManager.ObjLink.EntityPosition.Y);
