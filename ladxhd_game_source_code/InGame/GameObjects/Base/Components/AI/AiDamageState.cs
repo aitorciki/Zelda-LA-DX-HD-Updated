@@ -161,6 +161,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             // directly delete the gameObject if the attack comes from a bowwow
             if (damageType == HitType.BowWow)
             {
+                // Bow-Wow has a custom sound for attacking so disable the normal sound and play this one.
+                Game1.GameManager.PlaySoundEffect("D360-03-03");
+                PlayDeathSound = false;
                 DeathAnimation = false;
                 OnDeath(false);
                 return Values.HitCollision.Enemy;
@@ -424,7 +427,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 return;
             _deathCount -= 100;
 
-            Game1.GameManager.PlaySoundEffect("D378-19-13");
+            if (PlayDeathSound)
+                Game1.GameManager.PlaySoundEffect("D378-19-13");
 
             var posX = (int)_gameObject.EntityPosition.X - ExplostionWidth / 2 + Game1.RandomNumber.Next(0, ExplostionWidth) - 8;
             var posY = (int)_gameObject.EntityPosition.Y - (int)_gameObject.EntityPosition.Z + ExplosionOffsetY - ExplostionHeight + Game1.RandomNumber.Next(0, ExplostionHeight) - 8;
@@ -455,7 +459,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             if (pieceOfPower)
                 Game1.GameManager.PlaySoundEffect("D370-18-12");
 
-            Game1.GameManager.PlaySoundEffect("D378-19-13");
+            // play death sound
+            if (PlayDeathSound)
+                Game1.GameManager.PlaySoundEffect("D378-19-13");
 
             // spawn explosion effect
             var bodyCenter = _body.BodyBox.Box.Center;
