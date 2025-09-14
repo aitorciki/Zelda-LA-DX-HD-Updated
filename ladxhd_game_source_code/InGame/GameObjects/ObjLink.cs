@@ -3456,83 +3456,81 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdatePickup()
         {
-            if (ShowItem == null)
-                return;
-
-            _itemShowCounter -= Game1.DeltaTime;
-
-            if (_itemShowCounter <= 0)
+            if (ShowItem != null)
             {
-                // show pick up text
-                if (_showItem && CurrentState == State.PickingUp)
+                _itemShowCounter -= Game1.DeltaTime;
+
+                if (_itemShowCounter <= 0)
                 {
-                    _showItem = false;
-
-                    // show pickup dialog
-                    if (ShowItem.PickUpDialog != null)
+                    // show pick up text
+                    if (_showItem && CurrentState == State.PickingUp)
                     {
-                        if (string.IsNullOrEmpty(_pickupDialogOverride))
-                            Game1.GameManager.StartDialogPath(ShowItem.PickUpDialog);
-                        else
+                        _showItem = false;
+
+                        // show pickup dialog
+                        if (ShowItem.PickUpDialog != null)
                         {
-                            Game1.GameManager.StartDialogPath(_pickupDialogOverride);
-                            _pickupDialogOverride = null;
+                            if (string.IsNullOrEmpty(_pickupDialogOverride))
+                                Game1.GameManager.StartDialogPath(ShowItem.PickUpDialog);
+                            else
+                            {
+                                Game1.GameManager.StartDialogPath(_pickupDialogOverride);
+                                _pickupDialogOverride = null;
+                            }
+
+                            if (!string.IsNullOrEmpty(_additionalPickupDialog))
+                            {
+                                Game1.GameManager.StartDialogPath(_additionalPickupDialog);
+                                _additionalPickupDialog = null;
+                            }
                         }
+                        _itemShowCounter = 250;
 
-                        if (!string.IsNullOrEmpty(_additionalPickupDialog))
-                        {
-                            Game1.GameManager.StartDialogPath(_additionalPickupDialog);
-                            _additionalPickupDialog = null;
-                        }
-                    }
-                    _itemShowCounter = 250;
-
-                    if (ShowItem.Name == "sword1")
-                        _itemShowCounter = 5650; 
-                    else if (ShowItem.Name.StartsWith("instrument"))
-                        _itemShowCounter = 1000;
-                }
-                else
-                {
-                    Game1.GameManager.SaveManager.SetString("player_shows_item", "0");
-
-                    // add the item to the inventory
-                    if (_collectedShowItem != null)
-                    {
-                        Game1.GameManager.CollectItem(_collectedShowItem, 0);
-                        _collectedShowItem = null;
-                    }
-
-                    // spawn the follower if one was picked up
-                    UpdateFollower(false);
-
-                    // sword spin
-                    if (ShowItem.Name == "sword1")
-                    {
-                        Game1.GameManager.PlaySoundEffect("D378-03-03");
-                        Animation.Play("swing_3");
-                        AnimatorWeapons.Play("swing_3");
-                        CurrentState = State.SwordShow0;
-                        _swordChargeCounter = 1; // don't blink
-                        ShowItem = null;
-                    }
-                    else if (ShowItem.Name.StartsWith("instrument"))
-                    {
-                        // make sure that the music is not playing
-                        Game1.GameManager.StopPieceOfPower();
-                        Game1.GameManager.StopGuardianAcorn();
-
-                        _instrumentCounter = 0;
-                        CurrentState = State.ShowInstrumentPart0;
+                        if (ShowItem.Name == "sword1")
+                            _itemShowCounter = 5650; 
+                        else if (ShowItem.Name.StartsWith("instrument"))
+                            _itemShowCounter = 1000;
                     }
                     else
                     {
-                        ShowItem = null;
-                        if (CurrentState == State.PickingUp)
-                            CurrentState = State.Idle;
+                        Game1.GameManager.SaveManager.SetString("player_shows_item", "0");
+
+                        // add the item to the inventory
+                        if (_collectedShowItem != null)
+                        {
+                            Game1.GameManager.CollectItem(_collectedShowItem, 0);
+                            _collectedShowItem = null;
+                        }
+                        // sword spin
+                        if (ShowItem.Name == "sword1")
+                        {
+                            Game1.GameManager.PlaySoundEffect("D378-03-03");
+                            Animation.Play("swing_3");
+                            AnimatorWeapons.Play("swing_3");
+                            CurrentState = State.SwordShow0;
+                            _swordChargeCounter = 1; // don't blink
+                            ShowItem = null;
+                        }
+                        else if (ShowItem.Name.StartsWith("instrument"))
+                        {
+                            // make sure that the music is not playing
+                            Game1.GameManager.StopPieceOfPower();
+                            Game1.GameManager.StopGuardianAcorn();
+
+                            _instrumentCounter = 0;
+                            CurrentState = State.ShowInstrumentPart0;
+                        }
+                        else
+                        {
+                            ShowItem = null;
+                            if (CurrentState == State.PickingUp)
+                                CurrentState = State.Idle;
+                        }
                     }
                 }
             }
+            // spawn the follower if one was picked up
+            UpdateFollower(false);
         }
 
         private void EndPickup()
