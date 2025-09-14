@@ -1727,10 +1727,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_aiComponent.CurrentStateId == "final")
             {
                 // bow hit from below with an open eye
-                if (!_aiDamageState.IsInDamageState() && (
-                    (_dethIEyeState == 0 && _animatorEye.CurrentFrameIndex < 1) || (_dethIEyeState == 1 && _animatorEye.CurrentFrameIndex >= 1)) && 
-                    MathF.Abs(direction.Y) > MathF.Abs(direction.X) && direction.Y < 0 &&
-                    (damageType & HitType.Bow) != 0 | (damageType & HitType.Boomerang) != 0 | (damageType & HitType.Bomb) != 0)
+                if (!_aiDamageState.IsInDamageState() && 
+                    ((_dethIEyeState == 0 && _animatorEye.CurrentFrameIndex < 1) || (_dethIEyeState == 1 && _animatorEye.CurrentFrameIndex >= 1)) && 
+                    ((damageType & HitType.Bow) != 0 || (damageType & HitType.Boomerang) != 0 || (damageType & HitType.Bomb) != 0) &&
+                    MathF.Abs(direction.Y) > MathF.Abs(direction.X) && direction.Y < 0)
                 {
                     _aiDamageState.SetDamageState();
 
@@ -1740,9 +1740,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                         _dethILives--;
 
                     if (_dethILives <= 0)
+                    {
                         MapManager.ObjLink.ToggleLowHealthBeep(false);
                         _aiComponent.ChangeState("finalBlink");
-
+                    }
                     Game1.GameManager.PlaySoundEffect("D370-07-07");
 
                     // randomly change the speed of the two parts
