@@ -68,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _counter += Game1.DeltaTime;
             _animationCounter += Game1.DeltaTime;
 
-            if (!_spawnedSword)
+            if (!_spawnedSword || _animationCounter < 10500)
             {
                 MapManager.ObjLink.FreezePlayer();
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
