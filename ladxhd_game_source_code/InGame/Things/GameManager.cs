@@ -861,30 +861,44 @@ namespace ProjectZ.InGame.Things
             Game1.GbsPlayer.Stop();
         }
 
-        public void SetMusic(int trackID, int priority, bool startPlaying = true)
+        public bool CheckSetMusicConditions(int trackID, int priority)
         {
-            // HACK: Don't restart the overworld track if the version with the intro was already started. But if it's the part
+            // Don't restart the overworld track if the version with the intro was already started. But if it's the part
             // of the game where Marin joins the player and the beach photo is taken, we need to allow song 4 to replace 48.
             if (trackID == 4 && _musicArray[priority] == 48 && Game1.GameManager.SaveManager.GetString("maria_state") != "3")
-                return;
+                return false;
 
-            // HACK: Make sure to not restart the music while showing the overworld in the final sequence. 
+            // Make sure to not restart the music while showing the overworld in the final sequence. 
             if (priority != 2 && _musicArray[2] == 62)
-                return;
+                return false;
 
-            // HACK: Mabe and Animal Villages should always play the music even when the player has a piece of
-            // power or guardian acorn. This hack forces it to play and restores the power up music when leaving.
-            if ((trackID == 3 || trackID == 10) && _musicArray[1] == 72)
+            // When entering a village (3: Mabe Village, 10: Animal Village) with (72: Piece of Power Music)
+            // backup the piece of power music and force the new song onto the piece of power slot.
+            if ((trackID == 3 || trackID == 10) && _musicArray[1] == 72 && priority == 0)
+            {
+                _musicArray[0] = 72;
                 _musicArray[1] = trackID;
-            else if ((trackID != 3 && trackID != 10) && (_musicArray[1] == 3 || _musicArray[1] == 10))
+            }
+            // When leaving the village, restore piece of power music and write new track to it's proper slot.
+            else if ((trackID != 3 || trackID != 10) && _musicArray[0] == 72 && priority == 0)
             {
                 _musicArray[0] = trackID;
                 _musicArray[1] = 72;
             }
+            // In any other cases, just handle music normally.
             else
+            {
                 _musicArray[priority] = trackID;
+            }
+            // Play the music.
+            return true;
+        }
 
-            PlayMusic(startPlaying);
+        public void SetMusic(int trackID, int priority, bool startPlaying = true)
+        {
+            // See if we should play music and if there is any nuances to take care of before playing the music.
+            if (CheckSetMusicConditions(trackID, priority))
+                PlayMusic(startPlaying);
         }
 
         public int GetCurrentMusic()
