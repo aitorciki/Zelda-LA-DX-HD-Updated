@@ -3738,11 +3738,6 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _jumpStartZPos = 0;
 
-                if ((_body.CurrentFieldState & (MapStates.FieldStates.Water | MapStates.FieldStates.DeepWater)) == 0)
-                    Game1.GameManager.PlaySoundEffect("D378-07-07");
-                if ((_body.CurrentFieldState & MapStates.FieldStates.DeepWater) == 0)
-                    Game1.GameManager.PlaySoundEffect("D360-14-0E");
-
                 // Keep the charging state if it was held during a jump.
                 if (CurrentState == State.ChargeJumping)
                     CurrentState = State.Charging;

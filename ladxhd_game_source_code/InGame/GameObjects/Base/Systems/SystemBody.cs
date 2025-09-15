@@ -16,6 +16,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
         private readonly List<GameObject> _objectList = new List<GameObject>();
         private readonly List<GameObject> _holeList = new List<GameObject>();
+        private readonly List<GameObject> _dropList = new List<GameObject>();
+
+        private bool _inAir;
+        private bool _onHole;
 
         public void Update(int threadIndex, int threadCount, Type[] objectTypes = null)
         {
@@ -333,8 +337,45 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     }
                 }
             }
-
             return collisionType;
+        }
+
+        private void PlayDroppingSoundEffect(BodyComponent body)
+        {
+            // If it was Link in the air for any reason, play the "landing" sound effect.
+            if (body != MapManager.ObjLink._body || !_inAir)
+                return;
+
+            // Get the position of Link and the current map objects.
+            var linkPos = MapManager.ObjLink.EntityPosition;
+            var objects = Game1.GameManager.MapManager.CurrentMap.Objects;
+
+            // Find objects within the same tile as where Link hit the ground.
+            objects.GetComponentList(_dropList,
+                (int)linkPos.X - 8, (int)linkPos.Y - 8, 16, 16, 
+                CollisionComponent.Mask);
+
+            // For now at least, we are only looking when landing on a hole.
+            foreach (var hole in _dropList) 
+            { 
+                if (hole is not ObjHole other) continue; 
+                ObjHole objHole = hole as ObjHole; 
+
+                _onHole = body.BodyBox.Box.Intersects(objHole.collisionBox.Box); 
+                if (_onHole) break; 
+            }
+            // The sound played depends on hitting land or water.
+            if (!_onHole)
+            {
+                if ((body.CurrentFieldState & (MapStates.FieldStates.Water | MapStates.FieldStates.DeepWater)) == 0)
+                    Game1.GameManager.PlaySoundEffect("D378-07-07");
+                else if ((body.CurrentFieldState & MapStates.FieldStates.DeepWater) == 0)
+                    Game1.GameManager.PlaySoundEffect("D360-14-0E");
+            }
+            // Reset the variables for the next jump.
+            _inAir = false;
+            _onHole = false;
+            _dropList.Clear();
         }
 
         private Values.BodyCollision UpdateVelocityZ(BodyComponent body)
@@ -373,6 +414,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
                 body.Position.Z += body.Velocity.Z * Game1.TimeMultiplier;
                 body.IsGrounded = false;
+
+                // If this is Link's body, track when he's in the air.
+                if (body == MapManager.ObjLink._body)
+                    _inAir = true;
             }
             else
             {
@@ -403,8 +448,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
                 body.JumpStartHeight = body.Position.Z;
                 body.IsGrounded = true;
-            }
 
+                // Try to play the sound effect when hitting the ground.
+                PlayDroppingSoundEffect(body);
+            }
             return collision;
         }
 

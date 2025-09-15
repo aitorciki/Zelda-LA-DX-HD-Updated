@@ -13,6 +13,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public readonly Vector2 Center;
         public readonly int Color;
+        public CBox collisionBox;
+
 
         public ObjHole() : base("hole_0") { }
 
@@ -42,7 +44,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             float rectWidth   = (width == 16 && height == 16) ? width - 2          : width;
             float rectHeight  = (width == 16 && height == 16) ? height - 6         : height;
 
-            _collisionComponent = new BoxCollisionComponent(new CBox(rectOffsetX, rectOffsetY, 0, rectWidth, rectHeight, 16), Values.CollisionTypes.Hole);
+            // Store the collision box in a public field so it can be referenced from other places. Currently used to detect if landing on a hole when jumping.
+            collisionBox = new CBox(rectOffsetX, rectOffsetY, 0, rectWidth, rectHeight, 16);
+            _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Hole);
             AddComponent(CollisionComponent.Index, _collisionComponent);
 
             // visible hole?
