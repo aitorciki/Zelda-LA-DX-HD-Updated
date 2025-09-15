@@ -43,6 +43,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private string _saveKey;
         private bool _isOnTop;
 
+        // Used when playing ballad of the windfish. Opens eye for longer and doesn't launch a fireball.
+        AiState _stateEye1;
+        AiTriggerCountdown _stateEye1trigger;
+        private bool _noAttack;
+        private bool _playedOcarina;
+
         public MBossGohma(Map.Map map, int posX, int posY, string saveKey, bool onTop) : base(map, "gohma")
         {
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
@@ -65,7 +71,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 {
                     Game1.GameManager.SaveManager.SetInt(_saveKey, 0);
                 }
-
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             }
 
@@ -98,8 +103,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var stateEye0 = new AiState();
             stateEye0.Trigger.Add(new AiTriggerCountdown(1000, null, ToEye1));
-            var stateEye1 = new AiState();
-            stateEye1.Trigger.Add(new AiTriggerCountdown(400, null, ToEye2));
+            _stateEye1 = new AiState();
+            _stateEye1.Trigger.Add(_stateEye1trigger = new AiTriggerCountdown(400, null, ToEye2));
             var stateEye2 = new AiState();
             stateEye2.Trigger.Add(new AiTriggerCountdown(350, null, ToEye3));
             var stateEye3 = new AiState();
@@ -113,7 +118,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("attackReturn", stateAttackReturn);
             _aiComponent.States.Add("wait", stateWait);
             _aiComponent.States.Add("eye0", stateEye0);
-            _aiComponent.States.Add("eye1", stateEye1);
+            _aiComponent.States.Add("eye1", _stateEye1);
             _aiComponent.States.Add("eye2", stateEye2);
             _aiComponent.States.Add("eye3", stateEye3);
 
@@ -143,8 +148,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void OnSongPlayed(int songIndex)
         {
+            // When playing Ballad of the Windfish, open the eye for 1.5 seconds and don't attack.
             if (songIndex == 0)
             {
+                _playedOcarina = true;
+                _noAttack = true;
+                _stateEye1.Trigger.Remove(_stateEye1trigger);
+                _stateEye1.Trigger.Add(_stateEye1trigger = new AiTriggerCountdown(1500, null, ToEye2));
                 ToEye0();
             }
         }
@@ -212,15 +222,23 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void ToEye2()
         {
             // spawn a fireball
-            Map.Objects.SpawnObject(new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 1.25f));
+            if (!_noAttack)
+                Map.Objects.SpawnObject(new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 1.25f));
 
             _aiComponent.ChangeState("eye2");
         }
 
         private void ToEye3()
         {
+            // Restore normal behavior. This will be changed if ocarina was played.
+            if (_playedOcarina)
+            {
+                _playedOcarina = false;
+                _noAttack = false;
+                _stateEye1.Trigger.Remove(_stateEye1trigger);
+                _stateEye1.Trigger.Add(_stateEye1trigger = new AiTriggerCountdown(400, null, ToEye2));
+            }
             _animator.Play("stand");
-
             _aiComponent.ChangeState("eye3");
         }
 
