@@ -1,5 +1,19 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.6**
+### **The "Neverending" Update:**
+  * NOTE: If Marin doesn't spawn after the beach scene, try a sword slash and report to me if it makes her appear or not.
+  * Reset powerup counter when powerup ends. Fixes-example: Get acorn; Kill 11 monsters; Lose it; Kill 1 enemy; Another acorn.
+  * Set Kanalet Castle upstairs button state to "pressed" after finishing level 2 so it's in the proper state.
+  * Revert Arm Mimics to their previous behavior. Following facing direction when charging was not correct.
+  * Add two extra cliff jumps to Tal Tal Mountain range near the hen house for slightly easier travel.
+  * Modified the Ghost photograph to better match the in-game colors before the photograph is taken.
+  * Don't play the "landing" sound effect when jumping directly into an overworld teleporter hole.
+  * When hookshotting Iron Mask and stealing it's mask, play the "collection" sound effect (same as fairy).
+  * Playing Ballad of the Windfish when fighting Gohma opens it's eyes for 1.5 seconds and doesn't shoot fireballs.
+  * Add enemy wall between North/South Face Shrines to try to keep Mushroom Bomber from interacting when at South Shrine path.
+  * Don't store save file and content paths in the "settings" file. It was counterintuitive when moving between "portable.txt".
+  
 ## **v1.2.5**
 ### **The "Even More Polish" Update:**
   * A 'potential' fix for Marin sometimes disappearing when she joins you after the beach scene.

@@ -3313,6 +3313,8 @@ namespace ProjectZ.InGame.GameObjects
 
             _swordChargeCounter = SwordChargeTime;
             _isSwordSpinning = true;
+
+            UpdateFollower(false);
         }
 
         private void UpdateAttacking()
