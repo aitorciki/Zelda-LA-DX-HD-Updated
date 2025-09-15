@@ -97,20 +97,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     {
                         moved = true;
 
-                        ObjLink Link = MapManager.ObjLink;
-                        if (!Link.IsChargingState(Link.CurrentState))
-                        {
-                            // deadzone to not have a fixed point where the direction gets changed
-                            if (Math.Abs(direction.X) * ((_direction % 2 == 0) ? 1.1f : 1f) >
-                                Math.Abs(direction.Y) * ((_direction % 2 != 0) ? 1.1f : 1f))
-                                _direction = direction.X < 0 ? 0 : 2;
-                            else
-                                _direction = direction.Y < 0 ? 1 : 3;
-                        }
-                        var playAnimation = "walk_" + _direction;
+                        _direction = AnimationHelper.GetDirection(direction);
 
-                        if (_animator.CurrentAnimation.Id != playAnimation)
-                            _animator.Play(playAnimation);
+                        if (_animator.CurrentAnimation.Id != "walk_" + _direction)
+                            _animator.Play("walk_" + _direction);
                         else
                             _animator.Continue();
                     }
