@@ -1,5 +1,18 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.5**
+### **The "Even More Polish" Update:**
+  * A 'potential' fix for Marin sometimes disappearing when she joins you after the beach scene.
+  * Fix music priorities between villages, powerups, and Marin singing. A combination of these could get jumbled.
+  * Fix hearts to have the proper sound effect and use the old effect for when a heart heals.
+  * Fix King Moblin to have more accurate behavior to the original game.
+  * Fix Bow-Wow to have the proper sound effect when munching on an enemy.
+  * Fix Crows to have the "flapping wings" sound effect loop when attacking.
+  * Fix Kanalet Castle buttons (again) to hopefully properly close and open the front gate.
+  * Fix playing the landing sound any time Link is airborne and hits the ground.
+  * Fix DethI dying in a single hit from any damage source (only the boomerang should do this).
+  * When spawning level 2 sword, freeze the player a little longer to prevent a glitch grabbing sword too early.
+
 ## **v1.2.4**
 ### **The "Final Touches" Update:**
   * Fully implemented the "secret ending" that is shown after the credits with 0 deaths.
