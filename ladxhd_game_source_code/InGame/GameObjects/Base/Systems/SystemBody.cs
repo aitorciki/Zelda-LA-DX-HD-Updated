@@ -357,12 +357,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
             // For now at least, we are only looking when landing on a hole.
             foreach (var hole in _dropList) 
-            { 
-                if (hole is not ObjHole other) continue; 
-                ObjHole objHole = hole as ObjHole; 
-
-                _onHole = body.BodyBox.Box.Intersects(objHole.collisionBox.Box); 
-                if (_onHole) break; 
+            {
+                if (hole is ObjHole objHole)
+                    _onHole = body.BodyBox.Box.Intersects(objHole.collisionBox.Box);
+                else if (hole is ObjOverworldTeleporter objTeleporter)
+                    _onHole = body.BodyBox.Box.Intersects(objTeleporter.collisionBox.Box);
+                else
+                    continue;
             }
             // The sound played depends on hitting land or water.
             if (!_onHole)

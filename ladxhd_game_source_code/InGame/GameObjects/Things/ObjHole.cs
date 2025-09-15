@@ -10,11 +10,9 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private readonly DrawSpriteComponent _drawComponent;
         private readonly BoxCollisionComponent _collisionComponent;
-
         public readonly Vector2 Center;
         public readonly int Color;
         public CBox collisionBox;
-
 
         public ObjHole() : base("hole_0") { }
 

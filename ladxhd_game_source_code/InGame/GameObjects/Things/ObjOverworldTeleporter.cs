@@ -13,10 +13,10 @@ namespace ProjectZ.InGame.GameObjects.Things
     internal class ObjOverworldTeleporter : GameObject
     {
         public static Dictionary<int, ObjOverworldTeleporter> TeleporterDictionary = new Dictionary<int, ObjOverworldTeleporter>();
-
         private readonly Rectangle _field;
         private readonly int _teleporterId;
         private bool _registred;
+        public CBox collisionBox;
 
         public ObjOverworldTeleporter(Map.Map map, int posX, int posY, int teleporterId) : base(map)
         {
@@ -40,8 +40,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             var animationComponent = new AnimationComponent(animator, sprite, new Vector2(8, 8));
 
             var collisionRectangle = new Rectangle(posX, posY, 16, 16);
+
+            // Store the collision box in a public field so it can be referenced from other places. Currently used to detect if landing on a teleporter when jumping.
+            collisionBox = new CBox(posX + 1, posY + 1, 0, 14, 14, 16);
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(posX + 1, posY + 1, 0, 14, 14, 16), Values.CollisionTypes.Hole));
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Hole));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
