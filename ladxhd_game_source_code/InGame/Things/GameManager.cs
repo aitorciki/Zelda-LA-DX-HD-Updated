@@ -730,7 +730,10 @@ namespace ProjectZ.InGame.Things
             {
                 GuardianAcornDamageCount++;
                 if (GuardianAcornDamageCount >= 3)
+                {
                     StopGuardianAcorn();
+                    Game1.GameManager.GuardianAcornCount = 0;
+                }
             }
 
             // piece of power
@@ -738,7 +741,10 @@ namespace ProjectZ.InGame.Things
             {
                 PieceOfPowerDamageCount++;
                 if (PieceOfPowerDamageCount >= 3)
+                {
                     StopPieceOfPower();
+                    Game1.GameManager.PieceOfPowerCount = 0;
+                }
             }
         }
 
