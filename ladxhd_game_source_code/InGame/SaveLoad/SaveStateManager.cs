@@ -1,4 +1,5 @@
-﻿using ProjectZ.InGame.Things;
+﻿using System.IO;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.SaveLoad
 {
@@ -25,7 +26,7 @@ namespace ProjectZ.InGame.SaveLoad
                 var saveManager = new SaveManager();
 
                 // check if the save was loaded or not
-                if (saveManager.LoadFile(Values.PathSaveFolder + SaveGameSaveLoad.SaveFileName + i))
+                if (saveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + i)))
                 {
                     SaveStates[i] = new SaveState();
                     SaveStates[i].Thief = saveManager.GetBool("ThiefState", false);

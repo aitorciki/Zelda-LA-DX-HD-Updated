@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
@@ -19,7 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
-            _musicData = DataMapSerializer.LoadData(Values.PathContentFolder + "musicOverworld.data");
+            _musicData = DataMapSerializer.LoadData(Path.Combine(Values.PathContentFolder, "musicOverworld.data"));
         }
 
         private void Update()

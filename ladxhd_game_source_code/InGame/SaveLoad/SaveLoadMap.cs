@@ -214,7 +214,7 @@ namespace ProjectZ.InGame.SaveLoad
         public static void LoadMap(string mapName, Map.Map map)
         {
             map.MapName = mapName;
-            LoadMapFile(Values.PathMapsFolder + mapName, map);
+            LoadMapFile(Path.Combine(Values.PathMapsFolder, mapName), map);
         }
 
         public static void LoadMapFile(string fileName, Map.Map map)

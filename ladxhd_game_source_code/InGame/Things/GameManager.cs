@@ -1,11 +1,11 @@
 ﻿﻿using System;
+﻿using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using ProjectZ.InGame.GameSystems;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Overlay;
@@ -219,7 +219,7 @@ namespace ProjectZ.InGame.Things
             ItemManager.Load();
 
             // load the dialog paths
-            DialogPathLoader.LoadScripts(Values.PathContentFolder + "scripts.zScript", _dialogPaths);
+            DialogPathLoader.LoadScripts(Path.Combine(Values.PathContentFolder, "scripts.zScript"), _dialogPaths);
         }
 
         public void OnLoad()
@@ -1104,7 +1104,7 @@ namespace ProjectZ.InGame.Things
                 return true;
 
             // load the mini map
-            var fileName = Values.PathMinimapFolder + mapName + ".txt";
+            var fileName = Path.Combine(Values.PathMinimapFolder, mapName) + ".txt";
             var dungeonMap = SaveLoadMap.LoadMiniMap(fileName);
 
             if (dungeonMap == null)

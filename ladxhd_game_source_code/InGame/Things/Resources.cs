@@ -134,7 +134,7 @@ namespace ProjectZ.InGame.Things
             SprWhite = new Texture2D(graphics, 1, 1);
             SprWhite.SetData(new[] { Color.White });
 
-            LoadTexturesFromFolder(Values.PathContentFolder + "/Intro/");
+            LoadTexturesFromFolder(Path.Combine(Values.PathContentFolder, "Intro"));
 
             BlurEffect = content.Load<Effect>("Shader/EffectBlur");
             RoundedCornerBlurEffect = content.Load<Effect>("Shader/RoundedCornerEffectBlur");
@@ -149,18 +149,18 @@ namespace ProjectZ.InGame.Things
             // load the tileset sizes
             LoadTilesetSizes();
 
-            LoadTexture(out SprGameSequences, Values.PathContentFolder + "Sequences/game sequences.png");
-            LoadTexture(out SprGameSequencesFinal, Values.PathContentFolder + "Sequences/end sequence.png");
-            LoadTexture(out SprPhotosEng, Values.PathContentFolder + "Photo Mode/photos.png");
-            LoadTexture(out SprPhotosEngRedux, Values.PathContentFolder + "Photo Mode/photos_redux.png");
-            LoadTexture(out SprPhotosEsp, Values.PathContentFolder + "Photo Mode/photos_esp.png");
-            LoadTexture(out SprPhotosEspRedux, Values.PathContentFolder + "Photo Mode/photos_redux_esp.png");
-            LoadTexture(out _, Values.PathContentFolder + "Editor/editorIcons4x.png");
-            LoadTexture(out _, Values.PathContentFolder + "ui.png");
-            LoadTexture(out _, Values.PathContentFolder + "ui_esp.png");
+            LoadTexture(out SprGameSequences, Path.Combine(Values.PathContentFolder, "Sequences", "game sequences.png"));
+            LoadTexture(out SprGameSequencesFinal, Path.Combine(Values.PathContentFolder, "Sequences", "end sequence.png"));
+            LoadTexture(out SprPhotosEng, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos.png"));
+            LoadTexture(out SprPhotosEngRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux.png"));
+            LoadTexture(out SprPhotosEsp, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_esp.png"));
+            LoadTexture(out SprPhotosEspRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_esp.png"));
+            LoadTexture(out _, Path.Combine(Values.PathContentFolder, "Editor", "editorIcons4x.png"));
+            LoadTexture(out _, Path.Combine(Values.PathContentFolder, "ui.png"));
+            LoadTexture(out _, Path.Combine(Values.PathContentFolder, "ui_esp.png"));
 
-            LoadTexturesFromFolder(Values.PathContentFolder + "/Sequences/");
-            LoadTexturesFromFolder(Values.PathContentFolder + "/Light/");
+            LoadTexturesFromFolder(Path.Combine(Values.PathContentFolder, "Sequences"));
+            LoadTexturesFromFolder(Path.Combine(Values.PathContentFolder, "Light"));
 
             // load all the tileset textures
             LoadTexturesFromFolder(Values.PathTilesetFolder);
@@ -319,7 +319,7 @@ namespace ProjectZ.InGame.Things
         public static void LoadContentTextureWithAtlas(ContentManager content, string filePath)
         {
             var texture = content.Load<Texture2D>(filePath);
-            var atlasPath = FindAtlasFile(Values.PathContentFolder + filePath);
+            var atlasPath = FindAtlasFile(Path.Combine(Values.PathContentFolder, filePath));
             SpriteAtlasSerialization.LoadSourceDictionary(texture, atlasPath, SpriteAtlas);
         }
 

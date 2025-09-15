@@ -63,7 +63,7 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static Animator LoadAnimator(string animatorId, bool redux = false)
         {
-            return LoadAnimatorFile(Values.PathAnimationFolder + animatorId + ".ani", redux);
+            return LoadAnimatorFile(Path.Combine(Values.PathAnimationFolder, animatorId + ".ani"), redux);
         }
 
         public static Animator LoadAnimatorFile(string filePath, bool redux = false)

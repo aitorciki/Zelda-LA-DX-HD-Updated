@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -219,8 +220,6 @@ namespace ProjectZ.InGame.Screens
             _sprIntro_eng = Resources.GetTexture("intro.png");
             _sprIntro_esp = Resources.GetTexture("intro_esp.png");
 
-            System.Diagnostics.Debug.WriteLine(Game1.LanguageManager.CurrentLanguageIndex);
-
             _sprCloud = Resources.GetTexture("cloud.png");
             _sprWaves = Resources.GetTexture("waves.png");
 
@@ -278,7 +277,7 @@ namespace ProjectZ.InGame.Screens
             if (Game1.FinishedLoading && Game1.LoadFirstSave)
             {
                 Game1.LoadFirstSave = false;
-                if (SaveManager.FileExists(Values.PathSaveFolder + SaveGameSaveLoad.SaveFileName + "0"))
+                if (SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + 0)))
                 {
                     // change to the game screen
                     Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);

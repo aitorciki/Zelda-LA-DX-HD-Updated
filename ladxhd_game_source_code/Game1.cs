@@ -1,4 +1,5 @@
 ﻿﻿using System;
+﻿using System.IO;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -220,7 +221,7 @@ namespace ProjectZ
             SettingsSaveLoad.LoadSettings();
 
             // init gbs player; load gbs file
-            GbsPlayer.LoadFile(Values.PathContentFolder + "Music/awakening.gbs");
+            GbsPlayer.LoadFile(Path.Combine(Values.PathContentFolder, "Music", "awakening.gbs"));
             GbsPlayer.StartThread();
 
             // start loading the resources that are needed after the intro

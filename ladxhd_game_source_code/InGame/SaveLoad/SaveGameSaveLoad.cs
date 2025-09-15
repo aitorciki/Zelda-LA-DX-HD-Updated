@@ -16,14 +16,14 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static bool SaveExists(int slot)
         {
-            return SaveManager.FileExists(Values.PathSaveFolder + SaveFileName + slot) &&
-                   SaveManager.FileExists(Values.PathSaveFolder + SaveFileNameGame + slot);
+            return SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)) &&
+                   SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
         }
 
         public static bool CopySaveFile(int from, int to)
         {
-            return CopySaveFile(Values.PathSaveFolder + SaveFileName + from, Values.PathSaveFolder + SaveFileName + to) &&
-                   CopySaveFile(Values.PathSaveFolder + SaveFileNameGame + from, Values.PathSaveFolder + SaveFileNameGame + to);
+            return CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + from), Path.Combine(Values.PathSaveFolder, SaveFileName + to)) &&
+                   CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + from), Path.Combine(Values.PathSaveFolder, SaveFileNameGame + to));
         }
 
         public static bool CopySaveFile(string fromFile, string toFile)
@@ -43,8 +43,8 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static bool DeleteSaveFile(int slot)
         {
-            return DeleteSaveFile(Values.PathSaveFolder + SaveFileName + slot) &&
-                   DeleteSaveFile(Values.PathSaveFolder + SaveFileNameGame + slot);
+            return DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)) &&
+                   DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
         }
 
         private static bool DeleteSaveFile(string filePath)
@@ -61,14 +61,14 @@ namespace ProjectZ.InGame.SaveLoad
         public static void SaveGame(GameManager gameManager)
         {
             // save the game variables
-            gameManager.SaveManager.Save(Values.PathSaveFolder + SaveFileNameGame + gameManager.SaveSlot, Values.SaveRetries);
+            gameManager.SaveManager.Save(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + gameManager.SaveSlot), Values.SaveRetries);
 
             // player variables
             // is this state already created before starting a sequence?
             if (playerSaveState == null)
                 FillSaveState(ref playerSaveState, gameManager);
 
-            playerSaveState.Save(Values.PathSaveFolder + SaveFileName + gameManager.SaveSlot, Values.SaveRetries);
+            playerSaveState.Save(Path.Combine(Values.PathSaveFolder, SaveFileName + gameManager.SaveSlot), Values.SaveRetries);
             playerSaveState = null;
         }
 
@@ -174,7 +174,7 @@ namespace ProjectZ.InGame.SaveLoad
         public static void LoadSaveFile(GameManager gameManager, int slot)
         {
             // save game variables
-            if (!gameManager.SaveManager.LoadFile(Values.PathSaveFolder + SaveFileNameGame + slot))
+            if (!gameManager.SaveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot)))
                 return;
 
             var saveManager = new SaveManager();
@@ -184,7 +184,7 @@ namespace ProjectZ.InGame.SaveLoad
             gameManager.CollectedItems.Clear();
             gameManager.DungeonMaps = new Dictionary<string, GameManager.MiniMap>();
 
-            if (!saveManager.LoadFile(Values.PathSaveFolder + SaveFileName + slot))
+            if (!saveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)))
                 return;
 
             gameManager.SaveName = saveManager.GetString("savename");

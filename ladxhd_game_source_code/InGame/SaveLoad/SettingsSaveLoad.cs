@@ -10,14 +10,8 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static void LoadSettings()
         {
-            var saveManager = new SaveManager();
-
-            // error loading file
-            if (!saveManager.LoadFile(SettingsFilePath))
+            if (new SaveManager() is not { } saveManager || !saveManager.LoadFile(SettingsFilePath))
                 return;
-
-            Values.PathContentFolder = saveManager.GetString("ContentPath", Values.PathContentFolder);
-            Values.PathSaveFolder = saveManager.GetString("SavePath", Values.PathSaveFolder);
 
             GameSettings.GameScale = saveManager.GetInt("GameScale", GameSettings.GameScale);
             GameSettings.GameScale = MathHelper.Clamp(GameSettings.GameScale, -1, 11);
@@ -59,9 +53,6 @@ namespace ProjectZ.InGame.SaveLoad
         {
             var saveManager = new SaveManager();
 
-            saveManager.SetString("ContentPath", Values.PathContentFolder);
-            saveManager.SetString("SavePath", Values.PathSaveFolder);
-
             saveManager.SetInt("GameScale", GameSettings.GameScale);
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);
@@ -88,7 +79,6 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             saveManager.SetBool("NoHeartDrops", GameSettings.NoHeartDrops);
-
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
 

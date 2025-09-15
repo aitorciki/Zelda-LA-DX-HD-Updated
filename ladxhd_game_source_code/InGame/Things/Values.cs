@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ProjectZ.InGame.SaveLoad;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -39,14 +40,14 @@ namespace ProjectZ.InGame.Things
         public static string AppDataFolder = Environment.ExpandEnvironmentVariables("%LocalAppData%");
         public static string PathSaveFolder = SaveManager.GetSaveFilePath();
 
-        public static string PathContentFolder = "Data/";
-        public static string PathLanguageFolder => PathContentFolder + "Languages/";
-        public static string PathMapsFolder => PathContentFolder + "Maps/";
-        public static string PathTilesetFolder => PathContentFolder + "Maps/Tilesets/";
-        public static string PathMapObjectFolder => PathContentFolder + "Map Objects/";
-        public static string PathLightsFolder => PathContentFolder + "Lights/";
-        public static string PathAnimationFolder => PathContentFolder + "Animations/";
-        public static string PathMinimapFolder => PathContentFolder + "Dungeon/";
+        public static string PathContentFolder = "Data";
+        public static string PathLanguageFolder => Path.Combine(PathContentFolder, "Languages");
+        public static string PathMapsFolder => Path.Combine(PathContentFolder, "Maps");
+        public static string PathTilesetFolder => Path.Combine(PathContentFolder, "Maps", "Tilesets");
+        public static string PathMapObjectFolder => Path.Combine(PathContentFolder, "Map Objects");
+        public static string PathLightsFolder => Path.Combine(PathContentFolder, "Lights");
+        public static string PathAnimationFolder => Path.Combine(PathContentFolder, "Animations");
+        public static string PathMinimapFolder => Path.Combine(PathContentFolder, "Dungeon");
 
         public const string EditorUiObjectEditor = "objectEditor";
         public const string EditorUiObjectSelection = "objectSelection";
