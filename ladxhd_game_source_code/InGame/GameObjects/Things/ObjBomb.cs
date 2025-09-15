@@ -32,12 +32,18 @@ namespace ProjectZ.InGame.GameObjects.Things
         private double _lastHitTime;
         private double _deepWaterCounter;
 
+        private Map.Map _map; 
+
         private bool _exploded;
         private bool _arrowMode;
 
         public ObjBomb(Map.Map map, float posX, float posY, bool playerBomb, bool floorExplode, int explosionTime = ExplosionTime) : base(map)
         {
-            if (!map.Is2dMap)
+            // For some reason, getting the map from the parameter avoids a crash that *sometimes* happens when shooting a bomb arrow into the 
+            // mouth of a Dodongo Snake. This was originally coded to use "Map" directly, but for reasons unknown it could end up being null!
+            _map = map;
+
+            if (!_map.Is2dMap)
                 EntityPosition = new CPosition(posX, posY, 5);
             else
                 EntityPosition = new CPosition(posX, posY - 5, 0);
@@ -57,7 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IgnoreInsideCollision = false,
             };
 
-            if (map.Is2dMap)
+            if (_map.Is2dMap)
             {
                 Body.OffsetY = -1;
                 Body.Height = 1;
@@ -115,7 +121,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 // remove bomb if the animation is finished
                 if (!_animator.IsPlaying)
-                    Map.Objects.DeleteObjects.Add(this);
+                    _map.Objects.DeleteObjects.Add(this);
             }
             else
             {
@@ -134,20 +140,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             // fall into the water
-            if (!Map.Is2dMap && Body.IsGrounded && Body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater))
+            if (!_map.Is2dMap && Body.IsGrounded && Body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater))
             {
                 _deepWaterCounter -= Game1.DeltaTime;
 
                 if (_deepWaterCounter <= 0)
                 {
                     // spawn splash effect
-                    var fallAnimation = new ObjAnimator(Map,
+                    var fallAnimation = new ObjAnimator(_map,
                         (int)(Body.Position.X + Body.OffsetX + Body.Width / 2.0f),
                         (int)(Body.Position.Y + Body.OffsetY + Body.Height / 2.0f),
                         Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
-                    Map.Objects.SpawnObject(fallAnimation);
+                    _map.Objects.SpawnObject(fallAnimation);
 
-                    Map.Objects.DeleteObjects.Add(this);
+                    _map.Objects.DeleteObjects.Add(this);
                 }
             }
             else if (Body.IsGrounded)
@@ -170,9 +176,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             fallAnimation.EntityPosition.Set(new Vector2(
                 Body.Position.X + Body.OffsetX + Body.Width / 2.0f - 5,
                 Body.Position.Y + Body.OffsetY + Body.Height / 2.0f - 5));
-            Map.Objects.SpawnObject(fallAnimation);
+            _map.Objects.SpawnObject(fallAnimation);
 
-            Map.Objects.DeleteObjects.Add(this);
+            _map.Objects.DeleteObjects.Add(this);
         }
 
         private Vector3 CarryInit()
@@ -191,7 +197,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             EntityPosition.X = newPosition.X;
 
-            if (!Map.Is2dMap)
+            if (!_map.Is2dMap)
             {
                 EntityPosition.Y = newPosition.Y;
                 EntityPosition.Z = newPosition.Z;
@@ -221,7 +227,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             else
                 Body.Velocity = new Vector3(velocity.X * 0.45f, velocity.Y * 0.45f, 1.25f);
 
-            if (Map.Is2dMap)
+            if (_map.Is2dMap)
                 Body.Velocity.Y = -0.75f;
 
             Body.CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore;
@@ -239,7 +245,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // deals damage to the player or to the enemies
             if (_playerBomb || DamageEnemies)
-                Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y),
+                _map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y),
                     new Box(EntityPosition.X - 20, EntityPosition.Y - 20 - 5, 0, 40, 40, 16), HitType.Bomb, 2, false);
 
             Game1.GameManager.PlaySoundEffect("D378-12-0C");
@@ -260,7 +266,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnCollision(Values.BodyCollision collision)
         {
-            if (Map.Is2dMap)
+            if (_map.Is2dMap)
             {
                 if ((collision & Values.BodyCollision.Horizontal) != 0)
                 {
@@ -331,7 +337,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Body.Velocity.X += direction.X * 4;
             Body.Velocity.Y += direction.Y * 4;
 
-            if (Map.Is2dMap)
+            if (_map.Is2dMap)
             {
                 Body.DragAir = 0.925f;
                 Body.Velocity.Y = direction.Y * 2f;
