@@ -3152,8 +3152,6 @@ namespace ProjectZ.InGame.GameObjects
             if (!IsBlockingState(CurrentState))
                 return;
 
-            _wasBlocking = true;
-
             if (CurrentState == State.AttackBlocking)
                 CurrentState = State.Attacking;
             if (CurrentState == State.ChargeBlocking)
