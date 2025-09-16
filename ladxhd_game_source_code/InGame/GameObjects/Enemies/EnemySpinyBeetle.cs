@@ -93,7 +93,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             stateInit.Trigger.Add(new AiTriggerCountdown(1500, null, () => _aiComponent.ChangeState("hiding")));
             var stateHiding = new AiState(UpdateHiding);
             stateHiding.Trigger.Add(_hiddenTimer = new AiTriggerTimer(500));
-            var stateMoving = new AiState();
+            var stateMoving = new AiState(UpdateMoving);
             stateMoving.Trigger.Add(new AiTriggerRandomTime(ToHide, 550, 850));
             var stateRunning = new AiState();
             stateRunning.Trigger.Add(new AiTriggerRandomTime(ChangeDirection, 550, 850));
@@ -169,6 +169,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             UpdateObjPosition(EntityPosition);
         }
 
+        private void CheckCarrier()
+        {
+            // object was destroyed or picked up?
+            if (_carriedObject.IsDead || (_carriableComponent != null && _carriableComponent.IsPickedUp))
+            {
+                ToRunning();
+                _body.VelocityTarget = Vector2.Zero;
+            }
+        }
+
+        private void UpdateMoving()
+        {
+            CheckCarrier();
+        }
+
         private void UpdateHiding()
         {
             var playerDirection = PlayerDirection();
@@ -177,13 +192,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 ToWalk();
                 _body.VelocityTarget = AnimationHelper.DirectionOffset[playerDirection];
             }
-
-            // object was destroyed or picked up?
-            if (_carriedObject.IsDead || (_carriableComponent != null && _carriableComponent.IsPickedUp))
-            {
-                ToRunning();
-                _body.VelocityTarget = Vector2.Zero;
-            }
+            CheckCarrier();
         }
 
         private void Show()
