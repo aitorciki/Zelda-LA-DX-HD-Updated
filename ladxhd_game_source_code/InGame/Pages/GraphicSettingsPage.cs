@@ -72,11 +72,11 @@ namespace ProjectZ.InGame.Pages
             var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
                 "settings_game_change_smooth_camera", GameSettings.SmoothCamera, newState => { GameSettings.SmoothCamera = newState; });
             contentLayout.AddElement(smoothCameraToggle);
-            _graphicSettingsLayout.AddElement(contentLayout);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _graphicSettingsLayout.AddElement(contentLayout);
             _graphicSettingsLayout.AddElement(_bottomBar);
             PageLayout = _graphicSettingsLayout;
         }

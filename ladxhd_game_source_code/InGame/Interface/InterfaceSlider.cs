@@ -64,7 +64,7 @@ namespace ProjectZ.InGame.Interface
         public InterfaceSlider(SpriteFont font, string key, int width, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
         {
             Font = font;
-            Size = new Point(width, 11 + 2 + _sliderSize.Y * 4);
+            Size = new Point(width, 11 + _sliderSize.Y * 4);
             Margin = margin;
 
             Start = start;

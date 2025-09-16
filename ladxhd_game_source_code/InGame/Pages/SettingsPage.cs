@@ -65,11 +65,10 @@ namespace ProjectZ.InGame.Pages
                 Game1.UiPageManager.ChangePage(typeof(ModifiersPage));
             }));
 
-            settingsLayout.AddElement(contentLayout);
-
             // Bottom Bar / Exit Button:
             var bottomLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true };
             bottomLayout.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { ExitPage(); }));
+            settingsLayout.AddElement(contentLayout);
             settingsLayout.AddElement(bottomLayout);
             PageLayout = settingsLayout;
         }
