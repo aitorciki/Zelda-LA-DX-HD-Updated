@@ -1,8 +1,17 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.7**
+### **The "Missing Marin" Test Update**
+  * Add alternate method to spawn Marin after the beach scene. Please report if it works or doesn't work!
+  * This version is being released quicker than usual to get it into the hands of anyone who can test if new Marin method works.
+  * Add a "Game Setting" to greatly reduce the flashing of shop keeper revenge and the bat that upgrades powder/bombs/arrows.
+  * Add the flapping wing sound to Ravens which are the birds you can find around Turtle Rock.
+  * Fix a potential crash when shooting bomb arrows into the mouth of Dodongo Snakes.
+  * Fix Spiny Beetle sometimes losing its hitbox and becoming invincible if lifting the object off its back while moving.
+
 ## **v1.2.6**
 ### **The "Neverending" Update:**
-  * NOTE: If Marin doesn't spawn after the beach scene, try a sword slash and report to me if it makes her appear or not.
+  * NOTE: If Marin doesn't spawn after the beach scene, try a swordspin and report to me if it makes her appear or not.
   * Reset powerup counter when powerup ends. Fixes-example: Get acorn; Kill 11 monsters; Lose it; Kill 1 enemy; Another acorn.
   * Set Kanalet Castle upstairs button state to "pressed" after finishing level 2 so it's in the proper state.
   * Revert Arm Mimics to their previous behavior. Following facing direction when charging was not correct.
