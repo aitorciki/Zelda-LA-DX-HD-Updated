@@ -1367,6 +1367,25 @@ namespace ProjectZ.InGame.GameObjects
                 _objRooster.BorrowRooster();
             }
             // Take a walk with Marin.
+            var getMarin = Game1.GameManager.SaveManager.GetString("get_marin");
+            if (getMarin == "0")
+            {
+                Game1.GameManager.SaveManager.RemoveString("get_marin");
+                var objItem = new ObjObjectSpawner(Map, 368, 1216, "maria_state", "3", "maria", null, true);
+                Map.Objects.SpawnObject(objItem);
+            }
+            else if (getMarin == "1")
+            {
+                Game1.GameManager.SaveManager.RemoveString("get_marin");
+                var Marin = Map.Objects.GetObjectOfType((int)EntityPosition.X, (int)EntityPosition.Y, 48, 48, typeof(ObjMarin));
+                ObjMarin objMarin = (ObjMarin)(Marin);
+                var itemMarin = new GameItemCollected("marin") { Count = 1 };
+                PickUpItem(itemMarin, true, true, true);
+                _objMaria = objMarin;
+                _objMaria.TakeLastWalk();
+                UpdateFollower(false);
+            }
+            // Take a walk with Marin.
             var borrowMarin = Game1.GameManager.SaveManager.GetString("borrow_marin");
             if (borrowMarin == "0")
             {
@@ -1383,6 +1402,7 @@ namespace ProjectZ.InGame.GameObjects
                 PickUpItem(itemMarin, false, false, true);
                 _objMaria = objMarin;
                 _objMaria.TakeLastWalk();
+                UpdateFollower(false);
             }
         }
 
