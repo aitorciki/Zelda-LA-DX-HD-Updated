@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
             GameSettings.HeartBeep = saveManager.GetBool("HeartBeep", GameSettings.HeartBeep);
             GameSettings.ScreenShake = saveManager.GetBool("ScreenShake", GameSettings.ScreenShake);
+            GameSettings.EpilepsySafe = saveManager.GetBool("EpilepsySafe", GameSettings.EpilepsySafe);
             GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
             GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
@@ -63,6 +64,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("Autosave", GameSettings.Autosave);
             saveManager.SetBool("HeartBeep", GameSettings.HeartBeep);
             saveManager.SetBool("ScreenShake", GameSettings.ScreenShake);
+            saveManager.SetBool("EpilepsySafe", GameSettings.EpilepsySafe);
             saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
             saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);

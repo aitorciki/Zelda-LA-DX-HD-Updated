@@ -320,14 +320,18 @@ namespace ProjectZ.InGame.Things
 
             if (UseShockEffect)
             {
-                ChangeRenderTarget();
+                // Greatly reduces the flashing lights when shopkeeper gets revenge or the Bat grants more item bag space.
+                if (!GameSettings.EpilepsySafe)
+                {
+                    ChangeRenderTarget();
 
-                var usedShader = MapManager.CurrentMap.UseLight ? Resources.ShockShader1 : Resources.ShockShader0;
-                ObjectManager.SetSpriteShader(usedShader);
+                    var usedShader = MapManager.CurrentMap.UseLight ? Resources.ShockShader1 : Resources.ShockShader0;
+                    ObjectManager.SetSpriteShader(usedShader);
 
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, usedShader.Effect);
-                spriteBatch.Draw(_inactiveRenderTarget1, Vector2.Zero, Color.White);
-                spriteBatch.End();
+                    spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, usedShader.Effect);
+                    spriteBatch.Draw(_inactiveRenderTarget1, Vector2.Zero, Color.White);
+                    spriteBatch.End();
+                }
             }
 
             // @Move into the World class?

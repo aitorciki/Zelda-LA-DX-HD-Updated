@@ -46,6 +46,11 @@ namespace ProjectZ.InGame.Pages
                 "settings_game_screenshake", GameSettings.ScreenShake, newState => { GameSettings.ScreenShake = newState; });
             contentLayout.AddElement(toggleScreenShake);
 
+            // Button: Epilepsy Safe
+            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+                "settings_game_epilepsysafe", GameSettings.EpilepsySafe, newState => { GameSettings.EpilepsySafe = newState; });
+            contentLayout.AddElement(toggleEpilepsySafe);
+
             gameSettingsList.AddElement(contentLayout);
 
             // Bottom Bar / Back Button:

@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.Things
         public static bool Autosave = true;
         public static bool HeartBeep = true;
         public static bool ScreenShake = true;
+        public static bool EpilepsySafe = false;
         public static bool SmoothCamera = true;
         public static bool IsFullscreen = false;
         public static bool ExFullscreen = false;
