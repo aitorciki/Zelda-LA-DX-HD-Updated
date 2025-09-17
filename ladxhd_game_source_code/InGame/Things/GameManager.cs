@@ -199,6 +199,7 @@ namespace ProjectZ.InGame.Things
         // Muting the sound requires overwriting effect volume so store user setting.
         private int _curEffectVolume = GameSettings.EffectVolume;
         private bool _lastStateSet;
+        private bool _muteInactive;
 
         public GameManager()
         {
@@ -927,13 +928,13 @@ namespace ProjectZ.InGame.Things
             {
                 if (!IsActive & GameSettings.MuteInactive)
                 {
-                    _curEffectVolume = 0;
                     Game1.GbsPlayer.SetVolume(0f);
+                    _muteInactive = true;
                 }
                 else
                 {
-                    _curEffectVolume = GameSettings.EffectVolume;
                     Game1.GbsPlayer.SetVolume(GameSettings.MusicVolume / 100.0f);
+                    _muteInactive = false;
                 }
             }
             _lastStateSet = IsActive;
@@ -942,6 +943,9 @@ namespace ProjectZ.InGame.Things
         public void UpdateSoundEffects()
         {
             var lowerVolume = false;
+
+            // Set the volume to 0 if window is inactive otherwise use the volume set by the player.
+            _curEffectVolume = _muteInactive ? 0 : GameSettings.EffectVolume;
 
             // we use ToList to be able to remove entries in the foreach loop
             foreach (var soundEffect in CurrentSoundEffects.ToList())
