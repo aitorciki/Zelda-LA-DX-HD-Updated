@@ -1,5 +1,15 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.8**
+### **The "Sorry Marin I Give up For Now" Update**
+  * Revert back to the old method to attempt to spawn Marin at the beach as this created more problems than it solved.
+  * I have to give up on the "Marin not spawning" issue for now. I don't have a clue as to why this is happening to some people.
+  * Fix the "Sound Effects" volume slider that has been broken since v1.1.0. So basically, the whole time.
+  * Move the owl 8 pixels to the left when first entering Mysterious Wood to match his position in the original game.
+  * Play the "bump" sound effect when attacking Goponga Flowers without being strong enough to destroy them.
+  * Octorok's now have a cooldown between shots so they don't sometimes fire off like a machine gun.
+  * Potentially fix the shield sound effect when blocking from sometimes not playing.
+
 ## **v1.2.7**
 ### **The "Missing Marin" Test Update**
   * Add alternate method to spawn Marin after the beach scene. Please report if it works or doesn't work!
