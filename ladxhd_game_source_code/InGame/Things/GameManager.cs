@@ -1508,6 +1508,9 @@ namespace ProjectZ.InGame.Things
             // randomize the directions of the egg
             Game1.GameManager.SaveManager.SetString("eggDirections", Game1.RandomNumber.Next(0, 4).ToString());
 
+            // Reset the "thief state".
+            Game1.GameManager.ThiefState = false;
+
             // create empty map
             MapManager.CurrentMap = Map.Map.CreateEmptyMap();
 
