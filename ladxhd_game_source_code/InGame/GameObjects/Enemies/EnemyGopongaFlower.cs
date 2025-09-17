@@ -17,6 +17,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _dealsDamage = true;
         private int _lives = ObjLives.GopongaFlower;
 
+        private float _soundCooldown;
+        private bool _blockSound = false;
+
         public EnemyGopongaFlower() : base("goponga flower") { }
 
         public EnemyGopongaFlower(Map.Map map, int posX, int posY) : base(map)
@@ -62,6 +65,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
+            if (_blockSound)
+            {
+                _soundCooldown += Game1.DeltaTime;
+                if (_soundCooldown > 220) 
+                {
+                    _soundCooldown = 0;
+                    _blockSound = false;
+                }
+            }
             // @HACK: this is used to sync all the animations with the same length
             // otherwise they would not be in sync if they did not get updated at the same time
             _animator.SetFrame(0);
@@ -104,6 +116,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     return _aiDamageState.OnHit(originObject, direction, type, damage, pieceOfPower);
                 }
                 return Values.HitCollision.None;
+            }
+            if (!_blockSound)
+            {
+                Game1.GameManager.PlaySoundEffect("D360-09-09");
+                _blockSound = true;
             }
             return Values.HitCollision.Blocking;
         }

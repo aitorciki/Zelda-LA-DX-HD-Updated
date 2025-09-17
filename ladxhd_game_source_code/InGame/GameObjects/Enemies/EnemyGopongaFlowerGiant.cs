@@ -1,7 +1,8 @@
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -16,6 +17,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
         private bool _dealsDamage = true;
         private int _lives = ObjLives.GopongaGiant;
+
+        private float _soundCooldown;
+        private bool _blockSound = false;
 
         public EnemyGopongaFlowerGiant() : base("giant goponga flower") { }
 
@@ -56,7 +60,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer) { WaterOutline = false });
+        }
+
+        private void Update()
+        {
+            if (_blockSound)
+            {
+                _soundCooldown += Game1.DeltaTime;
+                if (_soundCooldown > 220) 
+                {
+                    _soundCooldown = 0;
+                    _blockSound = false;
+                }
+            }
         }
 
         private bool ValidateHit(HitType hitType, bool pieceOfPower)
@@ -86,6 +104,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     return _aiDamageState.OnHit(originObject, direction, type, damage, pieceOfPower);
                 }
                 return Values.HitCollision.None;
+            }
+            if (!_blockSound)
+            {
+                Game1.GameManager.PlaySoundEffect("D360-09-09");
+                _blockSound = true;
             }
             return Values.HitCollision.Blocking;
         }
