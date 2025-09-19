@@ -80,7 +80,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             splashAnimator.EntityPosition.Set(EntityPosition.Position - new Vector2(8, 8));
             Map.Objects.SpawnObject(splashAnimator);
 
-            // TODO: add sound effect
+            Game1.GameManager.PlaySoundEffect("D360-03-03");
             Map.Objects.DeleteObjects.Add(this);
         }
     }

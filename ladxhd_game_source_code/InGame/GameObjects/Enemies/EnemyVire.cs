@@ -248,6 +248,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(vireball0);
             var vireball1 = new EnemyVireball(Map, startPosition, new Vector2(MathF.Cos(radiant + dist), MathF.Sin(radiant + dist) * 1.5f));
             Map.Objects.SpawnObject(vireball1);
+            Game1.GameManager.PlaySoundEffect("D378-13-0D");
         }
 
         private void UpdateAttack()
