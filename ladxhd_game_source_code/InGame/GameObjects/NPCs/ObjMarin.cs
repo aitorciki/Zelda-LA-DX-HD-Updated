@@ -967,5 +967,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _currentState = States.FollowPlayer;
         }
 
+        public void SetFacingDirection(ObjMarin marinObj, int direction)
+        {
+            marinObj._animator.Play("stand_" + direction);
+            _lastDirection = direction;
+            _walkDirection = direction;
+        }
     }
 }

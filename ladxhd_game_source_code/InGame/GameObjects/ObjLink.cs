@@ -1383,7 +1383,6 @@ namespace ProjectZ.InGame.GameObjects
                 PickUpItem(itemMarin, false, false, true);
                 _objMaria = objMarin;
                 _objMaria.TakeLastWalk();
-                UpdateFollower(false);
             }
         }
 
@@ -3312,8 +3311,6 @@ namespace ProjectZ.InGame.GameObjects
 
             _swordChargeCounter = SwordChargeTime;
             _isSwordSpinning = true;
-
-            UpdateFollower(false);
         }
 
         private void UpdateAttacking()
@@ -3502,6 +3499,9 @@ namespace ProjectZ.InGame.GameObjects
                             Game1.GameManager.CollectItem(_collectedShowItem, 0);
                             _collectedShowItem = null;
                         }
+                        // spawn the follower if one was picked up
+                        UpdateFollower(false);
+
                         // sword spin
                         if (ShowItem.Name == "sword1")
                         {
@@ -3530,8 +3530,6 @@ namespace ProjectZ.InGame.GameObjects
                     }
                 }
             }
-            // spawn the follower if one was picked up
-            UpdateFollower(false);
         }
 
         private void EndPickup()
@@ -3943,19 +3941,44 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
+        private static Vector2 GetMarinSpawnOffset(int direction, float distance)
+        {
+            return direction switch
+            {
+                0 => new Vector2(distance, 0),
+                1 => new Vector2(0, distance),
+                2 => new Vector2(-distance, 0),
+                3 => new Vector2(0, -distance),
+                _ => Vector2.Zero
+            };
+        }
+
         private void UpdateFollower(bool mapInit)
         {
             var hasFollower = false;
 
-            // check if marin is following the player
+            // Check if marin is following the player.
             var itemMarin = Game1.GameManager.GetItem("marin");
             if (itemMarin != null && itemMarin.Count > 0)
             {
-                _objFollower = _objMaria;
+                if (_objFollower == null)
+                {
+                    Vector2 offset = GetMarinSpawnOffset(Direction, 13f);
+                    Vector2 marinSpawnPos = new Vector2(_body.Position.X, _body.Position.Y) + offset;
+                    _objMaria = new ObjMarin(Map, (int)EntityPosition.X, (int)EntityPosition.Y);
+                    Map.Objects.SpawnObject(_objMaria);
+                    _objMaria.SetFacingDirection(_objMaria, Direction);
+                    _objMaria.SetPosition(marinSpawnPos);
+                    _objFollower = _objMaria;
+                }
+                else
+                {
+                    _objFollower = _objMaria;
+                }
                 hasFollower = true;
             }
 
-            // check if the rooster is following the player
+            // Check if the rooster is following the player.
             var itemRooster = Game1.GameManager.GetItem("rooster");
             if (itemRooster != null && itemRooster.Count > 0)
             {
@@ -3963,17 +3986,16 @@ namespace ProjectZ.InGame.GameObjects
                 hasFollower = true;
             }
 
-            // check if the ghost is following the player
+            // Check if the ghost is following the player.
             var itemGhost = Game1.GameManager.GetItem("ghost");
             if (itemGhost != null && itemGhost.Count > 0)
             {
                 _objFollower = _objGhost;
                 hasFollower = true;
             }
-
+            // Check if there is a follower and it is already spawned.
             if (hasFollower)
             {
-                // check if the follower is already spawned
                 if (_objFollower.Map != Map)
                 {
                     if (mapInit && NextMapPositionStart.HasValue)
@@ -3985,7 +4007,7 @@ namespace ProjectZ.InGame.GameObjects
                     Map.Objects.SpawnObject(_objFollower);
                 }
             }
-            // remove the current follower from the map
+            // Remove the current follower from the map.
             else if (_objFollower != null)
             {
                 Map.Objects.DeleteObjects.Add(_objFollower);
