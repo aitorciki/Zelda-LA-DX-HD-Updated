@@ -4802,7 +4802,6 @@ namespace ProjectZ.InGame.GameObjects
             _showItem = false;
             _pickingUpInstrument = false;
             _pickingUpSword = false;
-            _blockButton = false;
 
             var equipmentPosition = 0;
             if (item.Name == "sword1")
@@ -4880,6 +4879,9 @@ namespace ProjectZ.InGame.GameObjects
             // pick up item is an accessory
             else if ((item.ShowAnimation == 1 || item.ShowAnimation == 2) && showItem)
             {
+                // Reset the block button sound effect.
+                _blockButton = false;
+
                 // stop player movement
                 _body.Velocity = Vector3.Zero;
                 _body.VelocityTarget = Vector2.Zero;
