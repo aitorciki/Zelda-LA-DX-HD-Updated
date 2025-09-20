@@ -54,21 +54,26 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
                 return;
             }
 
-            var left = (int)(gameObject.EntityPosition.X / TileWidth);
-            var bottom = (int)(gameObject.EntityPosition.Y / TileHeight);
+            var left = (int)((gameObject.EntityPosition.X + gameObject.EntitySize.X) / TileWidth);
+            var right = (int)((gameObject.EntityPosition.X + gameObject.EntitySize.X + gameObject.EntitySize.Width) / TileWidth);
+
+            var top = (int)((gameObject.EntityPosition.Y + gameObject.EntitySize.Y) / TileHeight);
+            var bottom = (int)((gameObject.EntityPosition.Y + gameObject.EntitySize.Y + gameObject.EntitySize.Height) / TileHeight);
 
             left = MathHelper.Clamp(left, 0, ComponentTiles.GetLength(0) - 1);
+            right = MathHelper.Clamp(right, 0, ComponentTiles.GetLength(0) - 1);
+            top = MathHelper.Clamp(top, 0, ComponentTiles.GetLength(1) - 1);
             bottom = MathHelper.Clamp(bottom, 0, ComponentTiles.GetLength(1) - 1);
 
-            ComponentTiles[left, bottom].DrawComponents.Add(gameObject.Components[DrawComponent.Index] as DrawComponent);
+            for (var y = top; y <= bottom; y++)
+                for (var x = left; x <= right; x++)
+                    ComponentTiles[x, y].DrawComponents.Add(gameObject.Components[DrawComponent.Index] as DrawComponent);
 
-            gameObject.EntityPosition.LastPosition = gameObject.EntityPosition.Position;
-
-            // update tile placement after position the entity changes its position
-            gameObject.EntityPosition.AddPositionListener(typeof(ComponentDrawPool), newPosition => { UpdatePartition(gameObject); });
+            // update tile placement after the entity changes its position
+            gameObject.EntityPosition.AddPositionListener(typeof(ComponentPool), position => UpdatePartition(gameObject));
         }
 
-        public virtual void RemoveEntity(GameObject gameObject)
+        public void RemoveEntity(GameObject gameObject)
         {
             if (gameObject.EntityPosition == null)
             {
@@ -76,52 +81,74 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
                 return;
             }
 
-            gameObject.EntityPosition.PositionChangedDict.Remove(typeof(ComponentDrawPool));
+            gameObject.EntityPosition.PositionChangedDict.Remove(typeof(ComponentPool));
 
-            var left = (int)(gameObject.EntityPosition.X / TileWidth);
-            var bottom = (int)(gameObject.EntityPosition.Y / TileHeight);
+            var left = (int)((gameObject.EntityPosition.X + gameObject.EntitySize.X) / TileWidth);
+            var right = (int)((gameObject.EntityPosition.X + gameObject.EntitySize.X + gameObject.EntitySize.Width) / TileWidth);
+
+            var top = (int)((gameObject.EntityPosition.Y + gameObject.EntitySize.Y) / TileHeight);
+            var bottom = (int)((gameObject.EntityPosition.Y + gameObject.EntitySize.Y + gameObject.EntitySize.Height) / TileHeight);
 
             left = MathHelper.Clamp(left, 0, ComponentTiles.GetLength(0) - 1);
+            right = MathHelper.Clamp(right, 0, ComponentTiles.GetLength(0) - 1);
+            top = MathHelper.Clamp(top, 0, ComponentTiles.GetLength(1) - 1);
             bottom = MathHelper.Clamp(bottom, 0, ComponentTiles.GetLength(1) - 1);
 
-            ComponentTiles[left, bottom].DrawComponents.Remove(gameObject.Components[DrawComponent.Index] as DrawComponent);
+            for (var y = top; y <= bottom; y++)
+                for (var x = left; x <= right; x++)
+                    ComponentTiles[x, y].DrawComponents.Remove(gameObject.Components[DrawComponent.Index] as DrawComponent);
         }
 
         private void UpdatePartition(GameObject gameObject)
         {
-            var leftPre = (int)(gameObject.EntityPosition.LastPosition.X / TileWidth);
-            var bottomPre = (int)(gameObject.EntityPosition.LastPosition.Y / TileHeight);
+            var left = (int)((gameObject.EntityPosition.LastPosition.X + gameObject.EntitySize.X) / TileWidth);
+            var right = (int)((gameObject.EntityPosition.LastPosition.X + gameObject.EntitySize.X + gameObject.EntitySize.Width) / TileWidth);
 
-            leftPre = MathHelper.Clamp(leftPre, 0, ComponentTiles.GetLength(0) - 1);
-            bottomPre = MathHelper.Clamp(bottomPre, 0, ComponentTiles.GetLength(1) - 1);
+            var top = (int)((gameObject.EntityPosition.LastPosition.Y + gameObject.EntitySize.Y) / TileHeight);
+            var bottom = (int)((gameObject.EntityPosition.LastPosition.Y + gameObject.EntitySize.Y + gameObject.EntitySize.Height) / TileHeight);
 
-            var leftNow = (int)(gameObject.EntityPosition.Position.X / TileWidth);
-            var bottomNow = (int)(gameObject.EntityPosition.Position.Y / TileHeight);
+            left = MathHelper.Clamp(left, 0, ComponentTiles.GetLength(0) - 1);
+            right = MathHelper.Clamp(right, 0, ComponentTiles.GetLength(0) - 1);
+            top = MathHelper.Clamp(top, 0, ComponentTiles.GetLength(1) - 1);
+            bottom = MathHelper.Clamp(bottom, 0, ComponentTiles.GetLength(1) - 1);
 
-            leftNow = MathHelper.Clamp(leftNow, 0, ComponentTiles.GetLength(0) - 1);
-            bottomNow = MathHelper.Clamp(bottomNow, 0, ComponentTiles.GetLength(1) - 1);
+            var leftNew = (int)((gameObject.EntityPosition.X + gameObject.EntitySize.X) / TileWidth);
+            var rightNew = (int)((gameObject.EntityPosition.X + gameObject.EntitySize.X + gameObject.EntitySize.Width) / TileWidth);
 
-            // moved to another tile?
-            if (leftNow == leftPre && bottomNow == bottomPre)
-                return;
+            var topNew = (int)((gameObject.EntityPosition.Y + gameObject.EntitySize.Y) / TileHeight);
+            var bottomNew = (int)((gameObject.EntityPosition.Y + gameObject.EntitySize.Y + gameObject.EntitySize.Height) / TileHeight);
 
-            // remove from the old tile 
-            ComponentTiles[leftPre, bottomPre].DrawComponents.Remove(gameObject.Components[DrawComponent.Index] as DrawComponent);
-            // add to the new tile
-            ComponentTiles[leftNow, bottomNow].DrawComponents.Add(gameObject.Components[DrawComponent.Index] as DrawComponent);
+            leftNew = MathHelper.Clamp(leftNew, 0, ComponentTiles.GetLength(0) - 1);
+            rightNew = MathHelper.Clamp(rightNew, 0, ComponentTiles.GetLength(0) - 1);
+            topNew = MathHelper.Clamp(topNew, 0, ComponentTiles.GetLength(1) - 1);
+            bottomNew = MathHelper.Clamp(bottomNew, 0, ComponentTiles.GetLength(1) - 1);
+
+            // remove the entity at the old position
+            for (var y = top; y <= bottom; y++)
+                for (var x = left; x <= right; x++)
+                    if (!(leftNew <= x && x <= rightNew &&
+                       topNew <= y && y <= bottomNew))
+                        ComponentTiles[x, y].DrawComponents.Remove(gameObject.Components[DrawComponent.Index] as DrawComponent);
+
+            // add the entity at the new position
+            for (var y = topNew; y <= bottomNew; y++)
+                for (var x = leftNew; x <= rightNew; x++)
+                    if (!(left <= x && x <= right &&
+                          top <= y && y <= bottom))
+                        ComponentTiles[x, y].DrawComponents.Add(gameObject.Components[DrawComponent.Index] as DrawComponent);
         }
 
         public void DrawPool(SpriteBatch spriteBatch, int posX, int posY, int width, int height, int startLayer, int endLayer)
         {
-            var left = (posX - TileWidth) / TileWidth;
+            var left = posX / TileWidth;
             var right = (posX + width) / TileWidth;
-            var top = (posY - TileHeight) / TileHeight;
+            var top = posY / TileHeight;
             var bottom = (posY + height) / TileHeight;
 
             left = MathHelper.Clamp(left, 0, ComponentTiles.GetLength(0) - 1);
             right = MathHelper.Clamp(right, 0, ComponentTiles.GetLength(0) - 1);
             top = MathHelper.Clamp(top, 0, ComponentTiles.GetLength(1) - 1);
-            bottom = MathHelper.Clamp(bottom + 1, 0, ComponentTiles.GetLength(1) - 1);
+            bottom = MathHelper.Clamp(bottom, 0, ComponentTiles.GetLength(1) - 1);
 
             // sort the tiles
             if (startLayer == 0)
@@ -141,7 +168,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
             for (var z = startLayer; z < endLayer; z++)
             {
                 for (var y = top; y <= bottom; y++)
-                    DrawTileRow(spriteBatch, z, y, left, right);
+                    DrawTileRow(spriteBatch, z, y, left, right, top, bottom);
 
                 for (; _noneTiledIndex < NoneTiledObjects.Count; _noneTiledIndex++)
                 {
@@ -157,13 +184,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
             }
         }
 
-        void DrawTileRow(SpriteBatch spriteBatch, int layer, int y, int left, int right)
+        private void DrawTileRow(SpriteBatch spriteBatch, int layer, int y, int left, int right, int top, int bottom)
         {
             var currentX = left;
             var finishedX = left;
 
             for (var x = left; x <= right; x++)
             {
+                // finished drawing the tile?
                 if (ComponentTiles[x, y].DrawIndex == ComponentTiles[x, y].DrawComponents.Count ||
                     ComponentTiles[x, y].DrawComponents[ComponentTiles[x, y].DrawIndex].Layer > layer)
                 {
@@ -177,6 +205,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
 
             while (finishedX <= right)
             {
+                // skip tile if it is already drawn
                 if (ComponentTiles[currentX, y].DrawPosition == float.MaxValue)
                 {
                     currentX++;
@@ -188,14 +217,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
 
                 while (ComponentTiles[currentX, y].DrawPosition < float.MaxValue)
                 {
+                    // TODO_Opt: this does only support components that are not split over more than one tile to the left or right of the Position.X tile
                     // tile on the left needs to be drawn first?
-                    if (currentX - 1 >= left && ComponentTiles[currentX, y].DrawPosition > ComponentTiles[currentX - 1, y].DrawPosition)
+                    if (left <= currentX - 1 && ComponentTiles[currentX - 1, y].DrawPosition < ComponentTiles[currentX, y].DrawPosition)
                     {
                         currentX--;
                         break;
                     }
-
-                    // does the tile to the right need to draw first?
+                    // does the tile on the right need to be drawn first?
                     if (currentX + 1 <= right && ComponentTiles[currentX, y].DrawPosition > ComponentTiles[currentX + 1, y].DrawPosition)
                     {
                         currentX++;
@@ -203,8 +232,17 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
                     }
 
                     // draw the object
-                    if (ComponentTiles[currentX, y].DrawComponents[ComponentTiles[currentX, y].DrawIndex].Owner.IsActive)
-                        ComponentTiles[currentX, y].DrawComponents[ComponentTiles[currentX, y].DrawIndex].Draw(spriteBatch);
+                    var drawComponent = ComponentTiles[currentX, y].DrawComponents[ComponentTiles[currentX, y].DrawIndex];
+                    var posX = (int)(drawComponent.Position.X / TileWidth);
+                    var posY = (int)(drawComponent.Position.Y / TileHeight);
+                    // make sure to only draw the component only one time
+                    if (drawComponent.Owner.IsActive &&
+                        (posX == currentX || posX < left && currentX == left || right < posX && currentX == right) &&
+                          (posY == y || posY < top && y == top || bottom < posY && y == bottom))
+                    {
+                        drawComponent.Draw(spriteBatch);
+                    }
+
                     ComponentTiles[currentX, y].DrawIndex++;
 
                     // all objects in the tile are drawn?
@@ -216,7 +254,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
                         continue;
                     }
 
-                    // update the draw position of the pool
+                    // update the draw position of the tile
                     ComponentTiles[currentX, y].DrawPosition =
                         ComponentTiles[currentX, y].DrawComponents[ComponentTiles[currentX, y].DrawIndex].Position.Y;
                 }

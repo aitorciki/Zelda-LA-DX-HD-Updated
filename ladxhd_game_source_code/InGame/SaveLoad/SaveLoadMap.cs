@@ -320,56 +320,6 @@ namespace ProjectZ.InGame.SaveLoad
                 var objectIndex = Convert.ToInt32(objectSplit[0]);
                 var strIndex = objectList[objectIndex];
 
-                // this can be used to replace object names
-                
-                //if (false)
-                //    if (strIndex == "e1" ||
-                //        strIndex == "e2" ||
-                //        strIndex == "e3" ||
-                //        strIndex == "e4" ||
-                //        strIndex == "e5" ||
-                //        strIndex == "e9" ||
-                //        strIndex == "e12" ||
-                //        strIndex == "e15" ||
-                //        strIndex == "e16" ||
-                //        strIndex == "e17" ||
-                //        strIndex == "e19" ||
-                //        strIndex == "moblinSword" ||
-                //        strIndex == "e_pokey" ||
-                //        strIndex == "e_darknut" ||
-                //        strIndex == "e_darknutSpear" ||
-                //        strIndex == "shroudedStalfos" ||
-                //        strIndex == "e_raven" ||
-                //        strIndex == "e_moblinPigSword" ||
-                //        strIndex == "e_armos" ||
-                //        strIndex == "e_spinyBeetle" ||
-                //        strIndex == "e_tektite" ||
-                //        strIndex == "e_bomber" ||
-                //        strIndex == "e_wingedOctorok" ||
-                //        strIndex == "e20" ||
-                //        strIndex == "goponga_flower" ||
-                //        strIndex == "goponga_flower_giant")
-                //    {
-                //        var newParameters = new string[5];
-                //        newParameters[0] = objectSplit[0];
-                //        newParameters[1] = objectSplit[1];
-                //        newParameters[2] = objectSplit[2];
-                //        newParameters[3] = strIndex;
-                //        newParameters[4] = "";
-
-                //        if (objectSplit.Length > 3)
-                //        {
-                //            var combinedString = objectSplit[3];
-                //            for (var j = 4; j < objectSplit.Length; j++)
-                //                combinedString += "$" + objectSplit[j];
-
-                //            newParameters[4] = combinedString;
-                //        }
-
-                //        objectSplit = newParameters;
-                //        strIndex = "enemy_respawner";
-                //    }
-
                 // check if the object exists
                 if (GameObjectTemplates.ObjectTemplates.ContainsKey(strIndex))
                 {

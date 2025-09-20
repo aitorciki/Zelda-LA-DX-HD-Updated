@@ -140,12 +140,6 @@ namespace ProjectZ.Editor
                 "collision mode", "bt1", screenId, ui => { ((UiButton)ui).Marked = _collisionRectangleMode; },
                 ui => { _collisionRectangleMode = !_collisionRectangleMode; }));
 
-            //// loop checkbox
-            //_checkBoxLoop = new CheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-            //    "loop", "cbloop", screenId, false, ui => { ((CheckBox)ui).CurrentState = _animator.CurrentAnimation.Looping; },
-            //    ui => { _animator.CurrentAnimation.Looping = ((CheckBox)ui).CurrentState; });
-            //Game1.EditorUi.AddElement(_checkBoxLoop);
-
             Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "Loops", "flable", screenId, null));
             _loopCountInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
@@ -193,10 +187,6 @@ namespace ProjectZ.Editor
             // animation offset
             Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
                 buttonWidth, labelHeight), Resources.EditorFont, "animation offset", "lableX", screenId, null));
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += Resources.EditorFontHeight + buttonDist,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "x", "lableX", screenId, null));
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "y", "lableX", screenId, null));
             _niAnOffsetX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, -100, 100, 1, "animationWidth", screenId, null,
                 ui => { _animator.Animations[_selectedAnimation].Offset.X = (int)((UiNumberInput)ui).Value; });
@@ -210,9 +200,6 @@ namespace ProjectZ.Editor
             // labels
             Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
                 buttonWidth, labelHeight), Resources.EditorFont, "rectangle", "rectangle", screenId, null));
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "y", "lableX", screenId, null));
-            // number picker
             _numberInputX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, 0, 1000, 1, "numberX", screenId, null,
                 ui =>
@@ -229,12 +216,6 @@ namespace ProjectZ.Editor
                 });
             Game1.EditorUi.AddElement(_numberInputX);
             Game1.EditorUi.AddElement(_numberInputY);
-            //// labels
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "width", "lableX", screenId, null));
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "height", "lableX", screenId, null));
-            // number picker
             _numberInputWidth = new UiNumberInput(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, 0, 1000, 1, "numberWidth", screenId, null, ui =>
                 {
@@ -254,11 +235,6 @@ namespace ProjectZ.Editor
             // labels
             Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
                 buttonWidth, labelHeight), Resources.EditorFont, "frame offset", "lableX", screenId, null));
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight / 2,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "x", "lableX", screenId, null));
-            //Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY,
-            //    buttonWidthHalf, labelHeight), Resources.EditorFont, "y", "lableX", screenId, null));
-            // number picker
             _niOffsetX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, -100, 100, 1, "numberX", screenId, null, ui =>
                 {

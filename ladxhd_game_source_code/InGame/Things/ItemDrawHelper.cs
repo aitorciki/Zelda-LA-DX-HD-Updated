@@ -495,23 +495,5 @@ namespace ProjectZ.InGame.Things
                         RecHeart.Y, RecHeart.Width, RecHeart.Height), color);
             }
         }
-
-        //public static void DrawCollectedItem(SpriteBatch spriteBatch, string strName, Point offset, Rectangle drawPosition, int scale, Color backgroundColor)
-        //{
-
-
-        //    var keySourceRec = Game1.GameManager.GetItem(strName);
-
-        //    // draw the item
-        //    if (keySourceRec != null)
-        //    {
-        //        var position = new Rectangle(
-        //            drawPosition.X * scale + offset.X,
-        //            drawPosition.Y * scale + offset.Y,
-        //            drawPosition.Width * scale, drawPosition.Height * scale);
-
-        //        DrawItemWithInfo(spriteBatch, keySourceRec, position, scale, Color.White);
-        //    }
-        //}
     }
 }

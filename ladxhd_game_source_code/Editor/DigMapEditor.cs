@@ -36,8 +36,6 @@ namespace ProjectZ.Editor
             _colorStack.Push(Color.Purple);
             _colorStack.Push(Color.Orange);
             _colorStack.Push(Color.Red);
-            //_colorStack.Push(Color.Blue);
-            //_colorStack.Push(Color.Green);
 
             _colorMap.Add("", Color.White * 0.5f);
             _colorMap.Add("1", Color.Green);

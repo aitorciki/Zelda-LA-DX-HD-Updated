@@ -592,29 +592,6 @@ namespace ProjectZ.Editor
             ((UiButton)ui).ButtonIcon = LayerVisibility[layer] ? Resources.EditorEyeOpen : Resources.EditorEyeClosed;
         }
 
-        private void DeleteTilelayer(int layer)
-        {
-            if (layer >= TileMap.ArrayTileMap.GetLength(2) ||
-                TileMap.ArrayTileMap.GetLength(2) <= 0)
-                return;
-
-            var newTilemap = new int[
-                TileMap.ArrayTileMap.GetLength(0),
-                TileMap.ArrayTileMap.GetLength(1),
-                TileMap.ArrayTileMap.GetLength(2) - 1];
-
-            // move the content to a new tilemap without copying the deleted layer
-            for (var z = 0; z < newTilemap.GetLength(2); z++)
-                for (var y = 0; y < newTilemap.GetLength(1); y++)
-                    for (var x = 0; x < newTilemap.GetLength(0); x++)
-                    {
-                        var posZ = z == layer ? z + 1 : z;
-                        newTilemap[x, y, posZ] = TileMap.ArrayTileMap[x, y, z];
-                    }
-
-            TileMap.ArrayTileMap = newTilemap;
-        }
-
         private void RemoveTileContent(int layer)
         {
             if (layer >= TileMap.ArrayTileMap.GetLength(2) ||

@@ -12,31 +12,6 @@ namespace ProjectZ.InGame.SaveLoad
     {
         public static void AddObject(Map.Map map, GameObjectItem gameObject, bool altList = false)
         {
-            // this can be used to update gameobjects
-            //if (gameObject.Index == "door")
-            //{
-            //    var parameterArray = GetParameterArray("newDoor");
-
-            //    // set the object position
-            //    parameterArray[1] = gameObject.Parameter[1];
-            //    parameterArray[2] = gameObject.Parameter[2];
-
-            //    parameterArray[5] = gameObject.Parameter[3];
-            //    parameterArray[6] = gameObject.Parameter[4];
-            //    parameterArray[7] = gameObject.Parameter[3];
-            //    parameterArray[8] = gameObject.Parameter[5];
-
-            //    var newDoor = new GameObjectItem("newDoor", parameterArray);
-
-            //    map.Objects.ObjectList.Add(newDoor);
-            //}
-
-            //if (gameObject.Index == "gravestone" || gameObject.Index == "moveStone" ||
-            //    gameObject.Index == "moveStoneCave")
-            //{
-            //    gameObject.Parameter[3] = 0x01 << (int)gameObject.Parameter[3];
-            //}
-
             // @HACK: we need this value to be set before calling any object constructor
             if (gameObject.Index == "link2dspawner")
                 map.Is2dMap = true;

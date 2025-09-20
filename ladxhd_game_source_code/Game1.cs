@@ -20,10 +20,6 @@ using GBSPlayer;
 using Forms = System.Windows.Forms;
 #endif
 
-#if DEBUG
-using ProjectZ.InGame.Tests;
-#endif
-
 namespace ProjectZ
 {
     public class Game1 : Game
@@ -36,7 +32,6 @@ namespace ProjectZ
         public static Language LanguageManager = new Language();
         public static GameManager GameManager = new GameManager();
         public static GbsPlayer GbsPlayer = new GbsPlayer();
-        public static StopWatchTracker StopWatchTracker = new StopWatchTracker(120);
         public static Random RandomNumber = new Random();
         public static RenderTarget2D MainRenderTarget;
 
@@ -138,12 +133,6 @@ namespace ProjectZ
         private static bool _initRenderTargets;
         public static bool FinishedLoading => _finishedLoading;
         public static bool LoadFirstSave;
-
-#if DEBUG
-        private MapTest _mapTest;
-        private SequenceTester _sequenceTester;
-        private DialogTester _dialogTester;
-#endif
 
         public Game1(bool editorMode, bool loadFirstSave)
         {
@@ -261,12 +250,6 @@ namespace ProjectZ
             _windowForm.Resize += OnResize;
             _windowForm.ResizeEnd += OnResizeEnd;
 #endif
-
-#if DEBUG
-            SaveCondition.TestCondition();
-            _mapTest = new MapTest();
-            _sequenceTester = new SequenceTester();
-#endif
         }
 
         private void LoadContentThreaded(Object obj)
@@ -288,9 +271,6 @@ namespace ProjectZ
 
             if (EditorMode)
                 SetUpEditorUi();
-#if DEBUG
-            _dialogTester = new DialogTester();
-#endif
 
             _finishedLoading = true;
         }
@@ -413,13 +393,6 @@ namespace ProjectZ
                 // update the game ui
                 UiPageManager.Update(gameTime);
             }
-
-#if DEBUG
-            _mapTest.Update();
-            _sequenceTester.Update();
-            if (_finishedLoading)
-                _dialogTester.Update();
-#endif
 
             // update the screen manager
             UpdateGame = true;

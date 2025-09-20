@@ -216,15 +216,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _collectionRectangle.OffsetSize.Height = 8;
                 _collectionRectangle.UpdateRectangle(EntityPosition);
             }
-/*
-            if (_itemName == "shell")
-            {
-                // dont spawn additional shells if the player already found 20
-                var state = Game1.GameManager.SaveManager.GetString("shellsFound", "0");
-                if (state == "1")
-                    IsDead = true;
-            }
-*/
+
             if (_itemName == "sword2")
             {
                 _bodyDrawComponent.Layer = Values.LayerBottom;

@@ -25,8 +25,6 @@ namespace ProjectZ.Editor
 
         private int _tileWidth = 16;
         private int _tileHeight = 16;
-        //private int _tileWidth = 160;
-        //private int _tileHeight = 128;
 
         private bool _roomMode;
 
@@ -81,9 +79,6 @@ namespace ProjectZ.Editor
             DataMapSerializer.LoadDialog(ref _dataArray);
 
             UpdateColor();
-
-            //_tileWidth = (Game1.GameManager.MapManager.CurrentMap.MapWidth * Values.TileSize) / _dataArray.GetLength(0);
-            //_tileHeight = (Game1.GameManager.MapManager.CurrentMap.MapHeight * Values.TileSize) / _dataArray.GetLength(1);
         }
 
         private void UpdateColor()

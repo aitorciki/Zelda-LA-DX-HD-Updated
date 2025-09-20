@@ -32,8 +32,8 @@ namespace ProjectZ.InGame.Map
         private List<GameObject> _poolSpawnedObjects = new List<GameObject>();
 
         private ComponentPool _gameObjectPool;
-        private ComponentDrawPoolNew _drawPool;
-        private ComponentDrawPoolNew _drawPoolB;
+        private ComponentDrawPool _drawPool;
+        private ComponentDrawPool _drawPoolB;
 
         private SystemBody _systemBody = new SystemBody();
         private SystemAi _systemAi = new SystemAi();
@@ -104,8 +104,8 @@ namespace ProjectZ.InGame.Map
             // TODO_End tweak the size for best performance for the finished game
             // the size of the pools can be tweaked for faster update times
             _gameObjectPool = new ComponentPool(Owner, Owner.MapWidth, Owner.MapHeight, 32, 32);
-            _drawPool = new ComponentDrawPoolNew(Owner.MapWidth, Owner.MapHeight, 32, 32);
-            _drawPoolB = new ComponentDrawPoolNew(Owner.MapWidth, Owner.MapHeight, 32, 32);
+            _drawPool = new ComponentDrawPool(Owner.MapWidth, Owner.MapHeight, 32, 32);
+            _drawPoolB = new ComponentDrawPool(Owner.MapWidth, Owner.MapHeight, 32, 32);
 
             _systemAnimator.Pool = _gameObjectPool;
             _systemAi.Pool = _gameObjectPool;

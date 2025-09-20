@@ -100,13 +100,6 @@ namespace ProjectZ.Editor
             Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save removed", "default", Values.EditorUiTileExtractor, null, ButtonSaveRemoveTileset));
             Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save .txt", "default", Values.EditorUiTileExtractor, null, ButtonSaveTilemap));
 
-            //Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "reload", "default", Values.EditorUiTileExtractor, null, ui => { TileTexture(); }));
-
-            //Game1.EditorUi.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonDistY + 20, buttonWidth, 25), Resources.EditorFont, "add del txt", "checkBox", screenId, false, null, (UiElement _ui) => { addDeletedTextures = ((CheckBox)_ui).currentState; }));
-            //Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "add to map", "default", screenId, null, (UiElement _ui) => { AddToMap(); }));
-
-            //Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonDistY + 20, buttonWidth, 25), Resources.EditorFont, "remove untiled", "default", screenId, null, (UiElement _ui) => { untiledParts.Clear(); LoadOutput(); }));
-
             //output width
             Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "output width", "default", Values.EditorUiTileExtractor, null));
             Game1.EditorUi.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, _maxWidth, 5, 25, 1,
@@ -195,27 +188,6 @@ namespace ProjectZ.Editor
             // remove selected tile
             if (InputHandler.MouseLeftPressed() && _selectedOutputTile >= 0 && _selectedOutputTile < _sprTiled.Count)
                 RemoveSelectedTile();
-
-            //if (InputHandler.MouseLeftStart() && selectedInputTile >= 0)
-            //    startPosition = selectedInputTile;
-            //if (InputHandler.MouseLeftReleased() && startPosition >= 0 && selectedInputTile >= 0)
-            //{
-            //    int left = Math.Min(startPosition % (inputTexture.Width / tileSize.X),
-            //                        selectedInputTile % (inputTexture.Width / tileSize.X));
-            //    int right = Math.Max(startPosition % (inputTexture.Width / tileSize.X),
-            //                        selectedInputTile % (inputTexture.Width / tileSize.X));
-            //    int upper = Math.Min(startPosition / (inputTexture.Width / tileSize.X),
-            //                        selectedInputTile / (inputTexture.Width / tileSize.X));
-            //    int down = Math.Max(startPosition / (inputTexture.Width / tileSize.X),
-            //                        selectedInputTile / (inputTexture.Width / tileSize.X));
-
-            //    untiledParts.Add(new Rectangle(left * tileSize.X, upper * tileSize.Y,
-            //        (right - left + 1) * tileSize.X, (down - upper + 1) * tileSize.Y));
-
-            //    startPosition = -1;
-
-            //    LoadOutput();
-            //}
         }
 
         public override void Draw(SpriteBatch spriteBatch)

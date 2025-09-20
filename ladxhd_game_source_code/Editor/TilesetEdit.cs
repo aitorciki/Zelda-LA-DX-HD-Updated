@@ -113,57 +113,6 @@ namespace ProjectZ.Editor
             }
             else
                 _currentSelection = -1;
-
-            //if (InputHandler.MouseRightStart() && currentSelection != -1)
-            //{
-            //    selectionStart = currentSelection;
-            //}
-
-            //if (InputHandler.MouseRightPressed())
-            //{
-            //    if (_currentSelection != -1)
-            //    {
-            //        for (var y = 0; y < SelectedTiles.GetLength(1); y++)
-            //        {
-            //            for (var x = 0; x < SelectedTiles.GetLength(0); x++)
-            //            {
-            //                var pos = SelectedTiles[x, y];
-            //                var dir = pos - SelectedTiles[0, 0] + _currentSelection;
-
-            //                var temp = _tiles[pos];
-            //                _tiles[pos] = _tiles[dir];
-            //                _tiles[dir] = temp;
-
-            //                // UpdatePosition(pos, dir);
-            //            }
-            //        }
-            //    }
-            //}
-
-            //// select a tile
-            //if (InputHandler.MouseLeftStart() && _currentSelection != -1)
-            //{
-            //    _selecting = true;
-            //    _selectionStart = _currentSelection;
-            //}
-            //if (InputHandler.MouseLeftReleased() && _selecting)
-            //{
-            //    _selecting = false;
-
-            //    // select multiple tiles
-            //    var start = Math.Min(_selectionStart, _selctionEnd);
-            //    var end = Math.Max(_selectionStart, _selctionEnd);
-            //    SelectedTiles = new int[Math.Abs(end % _world.TileMap.TileCountX - start % _world.TileMap.TileCountX) + 1,
-            //        end / _world.TileMap.TileCountX - start / _world.TileMap.TileCountX + 1];
-
-            //    for (var y = start / _world.TileMap.TileCountX; y <= end / _world.TileMap.TileCountX; y++)
-            //        for (var x = Math.Min(start % _world.TileMap.TileCountX, end % _world.TileMap.TileCountX);
-            //            x <= Math.Max(start % _world.TileMap.TileCountX, end % _world.TileMap.TileCountX); x++)
-            //        {
-            //            SelectedTiles[x - Math.Min(start % _world.TileMap.TileCountX, end % _world.TileMap.TileCountX),
-            //                y - start / _world.TileMap.TileCountX] = x + y * _world.TileMap.TileCountX;
-            //        }
-            //}
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -176,9 +125,6 @@ namespace ProjectZ.Editor
                 new Rectangle(0, 0,
                     (_outputWidth * _tileSize) / _tileSize * 2,
                     (_outputHeight * _tileSize) / _tileSize * 2), Color.White);
-
-            // draw the tileset
-            //spriteBatch.Draw(Resources.sprTileset, new Rectangle(drawPosition.X, drawPosition.Y, (int)(Resources.sprTileset.Width * drawScale), (int)(Resources.sprTileset.Height * drawScale)), Color.White);
 
             // draw all the tiles
             for (var i = 0; i < _tileSetData.Count; i++)
@@ -209,30 +155,6 @@ namespace ProjectZ.Editor
 
                 posY += tileMap.ArrayTileMap.GetLength(1) * 16 + 8;
             }
-            //// draw the selection
-            //if (SelectedTiles != null)
-            //{
-            //    for (var y = 0; y < SelectedTiles.GetLength(1); y++)
-            //        for (var x = 0; x < SelectedTiles.GetLength(0); x++)
-            //        {
-            //            spriteBatch.Draw(Resources.SprWhite, new Rectangle(_drawPosition.X + (SelectedTiles[x, y] % _world.TileMap.TileCountX) * (int)(_tileSize * _drawScale),
-            //                _drawPosition.Y + (SelectedTiles[x, y] / _world.TileMap.TileCountX) * (int)(_tileSize * _drawScale),
-            //                (int)(_tileSize * _drawScale), (int)(_tileSize * _drawScale)), Color.Red * 0.5f);
-            //        }
-            //}
-
-            //if (_selecting)
-            //{
-            //    var start = Math.Min(_selectionStart, _selctionEnd);
-            //    var end = Math.Max(_selectionStart, _selctionEnd);
-
-            //    spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-            //        _drawPosition.X + Math.Min(_selectionStart % _world.TileMap.TileCountX, _selctionEnd % _world.TileMap.TileCountX) * (int)(_tileSize * _drawScale),
-            //        _drawPosition.Y + Math.Min(_selectionStart / _world.TileMap.TileCountX, _selctionEnd / _world.TileMap.TileCountX) * (int)(_tileSize * _drawScale),
-            //        (Math.Abs(_selectionStart % _world.TileMap.TileCountX - _selctionEnd % _world.TileMap.TileCountX) + 1) * (int)(_tileSize * _drawScale),
-            //        (Math.Abs(_selectionStart / _world.TileMap.TileCountX - _selctionEnd / _world.TileMap.TileCountX) + 1) * (int)(_tileSize * _drawScale)), Color.PaleVioletRed * 0.5f);
-            //}
-
             spriteBatch.End();
         }
 

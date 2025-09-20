@@ -91,11 +91,6 @@ namespace ProjectZ.Editor
                 var halfButtonWidth = buttonWidth / 2 - 2;
                 var buttonHeight = 30;
 
-                //Game1.EditorUi.AddElement(new UiButton(
-                //    new Rectangle(5, posY += (int)(buttonHeight * 1.5f) + 5, buttonWidth, buttonHeight),
-                //    Resources.EditorFont,
-                //    "add obj at selected tile", "bt1", Values.EditorUiObjectEditor, null, ui => { AddObjectsAt(); }));
-
                 Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY, buttonWidth, buttonHeight),
                     Resources.EditorFont, "Mode", "bt1", Values.EditorUiObjectEditor, null));
 
@@ -135,20 +130,6 @@ namespace ProjectZ.Editor
 
                     gridValue *= 2;
                 }
-
-                //_cublicBezier = new CubicBezier(100, Vector2.Zero, Vector2.One);
-                //Game1.EditorUi.AddElement(_bezier0 = new UiNumberInput(
-                //    new Rectangle(5, posY += buttonHeight, buttonWidth, buttonHeight),
-                //    Resources.EditorFont, 0, 0, 100, 1, "tx", Values.EditorUiObjectEditor, null, ui => UpdateBezierCurve()));
-                //Game1.EditorUi.AddElement(_bezier1 = new UiNumberInput(
-                //    new Rectangle(5, posY += buttonHeight, buttonWidth, buttonHeight),
-                //    Resources.EditorFont, 0, 0, 100, 1, "tx", Values.EditorUiObjectEditor, null, ui => UpdateBezierCurve()));
-                //Game1.EditorUi.AddElement(_bezier2 = new UiNumberInput(
-                //    new Rectangle(5, posY += buttonHeight, buttonWidth, buttonHeight),
-                //    Resources.EditorFont, 0, 0, 100, 1, "tx", Values.EditorUiObjectEditor, null, ui => UpdateBezierCurve()));
-                //Game1.EditorUi.AddElement(_bezier3 = new UiNumberInput(
-                //    new Rectangle(5, posY += buttonHeight, buttonWidth, buttonHeight),
-                //    Resources.EditorFont, 0, 0, 100, 1, "tx", Values.EditorUiObjectEditor, null, ui => UpdateBezierCurve()));
             }
 
             {
@@ -214,12 +195,6 @@ namespace ProjectZ.Editor
                     Game1.EditorUi.AddElement(element);
             }
         }
-
-        //private void UpdateBezierCurve()
-        //{
-        //    _cublicBezier.FirstPoint = new Vector2(_bezier0.Value / 100.0f, _bezier1.Value / 100.0f);
-        //    _cublicBezier.SecondPoint = new Vector2(_bezier2.Value / 100.0f, _bezier3.Value / 100.0f);
-        //}
 
         public void UpdateObjectSelection(GameTime gameTime)
         {
@@ -413,38 +388,6 @@ namespace ProjectZ.Editor
                 0, Game1.WindowHeight - _leftToolbarWidth, _leftToolbarWidth, _leftToolbarWidth);
 
             _objectSelectionSelectionScreen.DrawSelectedObject(spriteBatch, rectangle);
-
-            //var curveSize = 200;
-            //var curvePosition = new Vector2(300, 300);
-            
-            //for (var i = 0; i < _cublicBezier.Data.Length; i++)
-            //{
-            //    spriteBatch.Draw(Resources.SprWhite, new Vector2(
-            //        curvePosition.X + (i / (float)(_cublicBezier.Data.Length - 1)) * curveSize,
-            //        curvePosition.Y - _cublicBezier.Data[i] * curveSize) - new Vector2(1, 1), 
-            //        new Rectangle(0, 0, 3, 3), Color.Green);
-            //}
-
-            //var smallCurveSize = 450;
-            //for (var i = 0; i < smallCurveSize; i++)
-            //{
-            //    var percentage = i / (float)(smallCurveSize - 1);
-            //    var curve = _cublicBezier.EvaluateX(percentage);
-            //    spriteBatch.Draw(Resources.SprWhite, new Vector2(curvePosition.X + percentage * curveSize, curvePosition.Y - curve * curveSize), Color.Red);
-            //}
-
-            //for (var i = 0; i < curveSize; i++)
-            //{
-            //    var percentage = i / (float)(curveSize - 1);
-            //    var curve = _cublicBezier.EvaluatePosition(percentage);
-            //    spriteBatch.Draw(Resources.SprWhite, new Vector2(curvePosition.X + curve.X * curveSize, curvePosition.Y - curve.Y * curveSize), Color.White);
-            //}
-            
-            //spriteBatch.Draw(Resources.SprWhite, curvePosition + 
-            //    new Vector2(_cublicBezier.FirstPoint.X, -_cublicBezier.FirstPoint.Y) * curveSize - new Vector2(1, 1), new Rectangle(0, 0, 3, 3), Color.Blue);
-            //spriteBatch.Draw(Resources.SprWhite, curvePosition + 
-            //    new Vector2(_cublicBezier.SecondPoint.X, -_cublicBezier.SecondPoint.Y) * curveSize - new Vector2(1, 1), new Rectangle(0, 0, 3, 3), Color.Red);
-
         }
 
         public bool InsideField()

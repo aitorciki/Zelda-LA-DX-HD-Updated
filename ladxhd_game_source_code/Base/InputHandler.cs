@@ -115,9 +115,6 @@ namespace ProjectZ.Base
 
             /* Sonderelemente. */
             _alphabet.Add(new InputCharacter(" ", " ", Keys.Space));
-            //InputHandler.alphabet.Add(new InputCharacter("Ü", "ü", Keys.OemSemicolon));
-            //InputHandler.alphabet.Add(new InputCharacter("Ö", "ö", Keys.OemTilde));
-            //InputHandler.alphabet.Add(new InputCharacter("Ä", "ä", Keys.OemQuotes));
             _alphabet.Add(new InputCharacter(";", ",", Keys.OemComma));
             _alphabet.Add(new InputCharacter("*", "+", "~", Keys.OemPlus));
             _alphabet.Add(new InputCharacter("'", "#", Keys.OemQuestion));
@@ -125,9 +122,6 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("_", "-", Keys.OemMinus));
             _alphabet.Add(new InputCharacter("?", "", Keys.OemOpenBrackets));
             _alphabet.Add(new InputCharacter(">", "<", "|", Keys.OemBackslash));
-            //InputHandler.alphabet.Add(new InputCharacter("`", "´", Keys.OemCloseBrackets));
-
-            //InputHandler.alphabet.Add(new InputCharacter("°", "^", Keys.OemPipe));
         }
 
         #endregion
