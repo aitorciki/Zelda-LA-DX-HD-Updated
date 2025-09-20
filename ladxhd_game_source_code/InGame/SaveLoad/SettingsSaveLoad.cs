@@ -42,6 +42,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             GameSettings.NoHeartDrops = saveManager.GetBool("NoHeartDrops", GameSettings.NoHeartDrops);
+            GameSettings.SwordBlock = saveManager.GetBool("SwordBlock", GameSettings.SwordBlock);
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
@@ -81,6 +82,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             saveManager.SetBool("NoHeartDrops", GameSettings.NoHeartDrops);
+            saveManager.SetBool("SwordBlock", GameSettings.SwordBlock);
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
 

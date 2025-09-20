@@ -149,15 +149,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
-            if (_aiComponent.CurrentStateId != "despawn")
-                _aiComponent.ChangeState("despawn");
-            else
-                return Values.HitCollision.None;
+            bool swordBlock = GameSettings.SwordBlock 
+                ? (damageType & HitType.Sword) != 0 && (damageType & HitType.SwordHold) == 0 
+                : false;
 
+            if (_aiComponent.CurrentStateId != "despawn" && swordBlock)
+            {
+                _aiComponent.ChangeState("despawn");
+            }
+            else
+            {
+                return Values.HitCollision.None;
+            }
             _body.Velocity = new Vector3(direction.X, direction.Y, 1.5f);
             _body.VelocityTarget = Vector2.Zero;
 
-            return Values.HitCollision.Enemy;
+            return Values.HitCollision.None;
         }
 
         private void OnCollision(Values.BodyCollision direction)

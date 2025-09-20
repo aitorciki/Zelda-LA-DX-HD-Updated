@@ -138,6 +138,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
+            bool swordBlock = GameSettings.SwordBlock 
+                ? (damageType & HitType.Sword) == 0 && (damageType & HitType.SwordHold) != 0 
+                : true;
+
+            if (swordBlock)
+            {
+                return Values.HitCollision.None;
+            }
             if (_despawnPercentage < 1)
                 return Values.HitCollision.None;
 

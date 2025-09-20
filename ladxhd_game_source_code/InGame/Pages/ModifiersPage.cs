@@ -66,6 +66,11 @@ namespace ProjectZ.InGame.Pages
                 "settings_mods_nohearts", GameSettings.NoHeartDrops, newState => { GameSettings.NoHeartDrops = newState; });
             _contentLayout.AddElement(toggleNoHearts);
 
+            // Button: Sword Block Projectiles
+            var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+                "settings_mods_swordblock", GameSettings.SwordBlock, newState => { GameSettings.SwordBlock = newState; });
+            _contentLayout.AddElement(toggleSwordBlock);
+
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
