@@ -35,7 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition.AddPositionListener(typeof(ObjBoomerang), UpdateItemPosition);
             EntitySize = new Rectangle(-8, -12, 16, 16);
 
-            _damageBox = new CBox(EntityPosition, -5, -5, 0, 10, 10, 4, true);
+            _damageBox = new CBox(EntityPosition, -5, -5, 0, 10, 10, 20, true);
 
             var animation = AnimatorSaveLoad.LoadAnimator("Objects/boomerang");
             animation.Play("run");
