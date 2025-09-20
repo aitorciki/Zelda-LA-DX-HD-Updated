@@ -1654,8 +1654,10 @@ namespace ProjectZ.InGame.GameObjects
             }
             else if (CurrentState == State.ShowInstrumentPart2)
             {
-                _instrumentCounter += Game1.DeltaTime;
+                // Some update caused music to continue playing after instrument screen goes white so don't let this happen. 
+                Game1.GameManager.StopMusic(true);
 
+                _instrumentCounter += Game1.DeltaTime;
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
                 transitionSystem.SetColorMode(Color.White, MathHelper.Clamp(_instrumentCounter / 500f, 0, 1));
 
@@ -3078,7 +3080,6 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.StartDialogPath("ocarina_bad");
                 return;
             }
-
             if (_ocarinaSong == 1)
             {
                 CurrentState = State.OcarinaTelport;
@@ -3345,7 +3346,6 @@ namespace ProjectZ.InGame.GameObjects
                     MathHelper.Lerp(collisionRectangle.Width, collisionRectangleNextFrame.Width, frameState),
                     MathHelper.Lerp(collisionRectangle.Height, collisionRectangleNextFrame.Height, frameState));
             }
-
             SwordDamageBox = new Box(
                 collisionRectangle.X + EntityPosition.X + _animationOffsetX,
                 collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
@@ -3362,7 +3362,6 @@ namespace ProjectZ.InGame.GameObjects
                 damage *= 2;
                 hitType |= HitType.SwordSpin;
             }
-
             if (_bootsRunning)
                 damage *= 2;
 
@@ -3400,7 +3399,6 @@ namespace ProjectZ.InGame.GameObjects
                     Map.Objects.SpawnObject(pokeParticle);
                 }
             }
-
             if (hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
                 _stopCharging = true;
 
@@ -3577,7 +3575,6 @@ namespace ProjectZ.InGame.GameObjects
                 if (_canDig)
                     Map.Dig(_digPosition, EntityPosition.Position, Direction);
             }
-
             if (!Animation.IsPlaying)
                 CurrentState = State.Idle;
         }
@@ -3593,7 +3590,6 @@ namespace ProjectZ.InGame.GameObjects
 
                 return;
             }
-
             // stop running but start charging with a time boost
             if (_bootsStop && _body.Velocity.Length() < 0.25f)
             {
@@ -3601,7 +3597,6 @@ namespace ProjectZ.InGame.GameObjects
                 _bootsRunning = false;
                 _bootsCounter = _bootsRunTime - 300;
             }
-
             if (_bootsHolding || _bootsRunning)
             {
                 var lastCounter = _bootsCounter;
@@ -3630,7 +3625,6 @@ namespace ProjectZ.InGame.GameObjects
                         Map.Objects.SpawnObject(animator);
                     }
                 }
-
                 // start running
                 if (!_bootsRunning && _bootsCounter > _bootsRunTime)
                 {
@@ -3736,7 +3730,6 @@ namespace ProjectZ.InGame.GameObjects
                     _lastMoveVelocity = Vector2.Zero;
                 }
             }
-
             // touched the ground
             if (!_railJump && _body.IsGrounded && _body.Velocity.Z <= 0)
             {
@@ -3859,7 +3852,6 @@ namespace ProjectZ.InGame.GameObjects
             {
                 Count = int.Parse(strCount)
             };
-
             // gets picked up
             PickUpItem(item, false, false);
 
@@ -3908,7 +3900,6 @@ namespace ProjectZ.InGame.GameObjects
                 ItemDrawHelper.EnableHeartAnimationSound();
                 return;
             }
-
             Game1.GameManager.StopMusic(true);
             Game1.GameManager.PlaySoundEffect("D370-08-08");
 
