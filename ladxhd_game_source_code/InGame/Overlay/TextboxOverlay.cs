@@ -547,6 +547,20 @@ namespace ProjectZ.InGame.Overlay
         {
             // put in the players name
             inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
+            inputString = inputString.Replace("[TRADE0]", "¯");
+            inputString = inputString.Replace("[TRADE1]", "¢");
+            inputString = inputString.Replace("[TRADE2]", "£");
+            inputString = inputString.Replace("[TRADE3]", "¤");
+            inputString = inputString.Replace("[TRADE4]", "¥");
+            inputString = inputString.Replace("[TRADE5]", "¦");
+            inputString = inputString.Replace("[TRADE6]", "§");
+            inputString = inputString.Replace("[TRADE7]", "¨");
+            inputString = inputString.Replace("[TRADE8]", "©");
+            inputString = inputString.Replace("[TRADE9]", "ª");
+            inputString = inputString.Replace("[TRADE10]", "«");
+            inputString = inputString.Replace("[TRADE11]", "¬");
+            inputString = inputString.Replace("[TRADE12]", "­");
+            inputString = inputString.Replace("[TRADE13]", "®");
 
             inputString = ReplaceKeys(inputString);
 

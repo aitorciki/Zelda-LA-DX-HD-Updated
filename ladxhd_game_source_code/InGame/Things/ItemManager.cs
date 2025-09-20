@@ -217,7 +217,7 @@ namespace ProjectZ.InGame.Things
                 showTime: 1500
             ));
 
-            // trade items
+            // TRADE 0: Yoshi Doll
             _items.Add("trade0", new GameItem(
                 Resources.GetSprite("trade0"),
                 name: "trade0",
@@ -228,6 +228,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 1: Ribbon
             _items.Add("trade1", new GameItem(
                 Resources.GetSprite("trade1"),
                 name: "trade1",
@@ -237,6 +238,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 2: Dog Food
             _items.Add("trade2", new GameItem(
                 Resources.GetSprite("trade2"),
                 name: "trade2",
@@ -246,6 +248,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 3: Bananas
             _items.Add("trade3", new GameItem(
                 Resources.GetSprite("trade3"),
                 name: "trade3",
@@ -255,6 +258,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 4: Stick
             _items.Add("trade4", new GameItem(
                 Resources.GetSprite("trade4"),
                 name: "trade4",
@@ -265,6 +269,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 5: Honeycomb
             _items.Add("trade5", new GameItem(
                 Resources.GetSprite("trade5"),
                 mapSprite: Resources.GetSprite("trade5Map"),
@@ -276,6 +281,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 6: Pineapple
             _items.Add("trade6", new GameItem(
                 Resources.GetSprite("trade6"),
                 name: "trade6",
@@ -286,6 +292,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 7: Hibiscus
             _items.Add("trade7", new GameItem(
                 Resources.GetSprite("trade7"),
                 name: "trade7",
@@ -296,6 +303,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 8: Goat's Letter
             _items.Add("trade8", new GameItem(
                 Resources.GetSprite("trade8"),
                 name: "trade8",
@@ -306,6 +314,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 9: Broom
             _items.Add("trade9", new GameItem(
                 // shown icon is browner
                 Resources.GetSprite("trade9"),
@@ -317,6 +326,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 10: Fishing Hook
             _items.Add("trade10", new GameItem(
                 Resources.GetSprite("trade10"),
                 name: "trade10",
@@ -327,6 +337,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 11: Mermaid's Necklace / Pink Bra
             _items.Add("trade11", new GameItem(
                 Resources.GetSprite("trade11"),
                 name: "trade11",
@@ -337,6 +348,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 12: Mermaid's Scale
             _items.Add("trade12", new GameItem(
                 Resources.GetSprite("trade12"),
                 name: "trade12",
@@ -347,6 +359,7 @@ namespace ProjectZ.InGame.Things
                 maxCount: 1,
                 showAnimation: 1
             ));
+            // TRADE 13: Magnifying Lens
             _items.Add("trade13", new GameItem(
                 Resources.GetSprite("trade13"),
                 name: "trade13",
