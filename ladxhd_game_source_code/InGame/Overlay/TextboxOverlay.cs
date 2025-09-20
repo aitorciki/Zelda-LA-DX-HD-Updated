@@ -263,6 +263,9 @@ namespace ProjectZ.InGame.Overlay
                     // set the choice variable
                     if (_isChoice)
                         Game1.GameManager.SaveManager.SetString(_choiceKey, _currentChoiceSelection.ToString());
+
+                    // If player was blocking before interaction, block button state can get "stuck" and next shield draw won't play sound effect.
+                    MapManager.ObjLink.ToggleBlockButton(false);
                 }
                 else
                 {

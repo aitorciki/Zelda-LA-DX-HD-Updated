@@ -4802,6 +4802,7 @@ namespace ProjectZ.InGame.GameObjects
             _showItem = false;
             _pickingUpInstrument = false;
             _pickingUpSword = false;
+            _blockButton = false;
 
             var equipmentPosition = 0;
             if (item.Name == "sword1")
@@ -5128,6 +5129,8 @@ namespace ProjectZ.InGame.GameObjects
 
         public void EndTransitioning()
         {
+            _blockButton = false;
+
             _body.HoleAbsorption = Vector2.Zero;
 
             IsTransitioning = false;
@@ -5224,6 +5227,11 @@ namespace ProjectZ.InGame.GameObjects
         }
 
         #endregion
+
+        public void ToggleBlockButton(bool toggle)
+        {
+            _blockButton = toggle;
+        }
 
         public void ToggleLowHealthBeep(bool toggle)
         {
