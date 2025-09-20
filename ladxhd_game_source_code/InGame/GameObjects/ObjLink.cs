@@ -2064,6 +2064,11 @@ namespace ProjectZ.InGame.GameObjects
                     else if (Direction % 2 == 0)
                         _moveVelocity.Y += walkVelocity.Y;
                 }
+                if (_isTrapped)
+                {
+                    _bootsStop = true;
+                    _moveVelocity = Vector2.Zero;
+                }
             }
             else if (walkVelLength > Values.ControllerDeadzone)
             {
@@ -2164,6 +2169,7 @@ namespace ProjectZ.InGame.GameObjects
                 _moveVelocity = _lastMoveVelocity;
             }
         }
+
         private void UpdateAnimation()
         {
             if (Game1.GameManager.UseShockEffect)
@@ -2182,7 +2188,6 @@ namespace ProjectZ.InGame.GameObjects
                     // run while blocking with the shield
                     Animation.Play((CarryShield ? "walkb" : "walk") + shieldString + Direction);
                 }
-
                 Animation.SpeedMultiplier = 2.0f;
                 return;
             }
@@ -4424,8 +4429,8 @@ namespace ProjectZ.InGame.GameObjects
 
         public bool StealShield()
         {
-            // steal the shield if it is in the first 4 slots
-            for (var i = 0; i < 4; i++)
+            // Steal the shield if it's equipped to a usable button.
+            for (var i = 0; i < 6; i++)
             {
                 if (Game1.GameManager.Equipment[i] != null &&
                     Game1.GameManager.Equipment[i].Name == "shield")
@@ -4434,7 +4439,6 @@ namespace ProjectZ.InGame.GameObjects
                     return true;
                 }
             }
-
             return false;
         }
 

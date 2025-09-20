@@ -114,7 +114,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (_stoleShield)
                     _damageState.SpawnItem = "shieldBack";
             }
-
             _animator.SpeedMultiplier = 2.0f;
             _aiComponent.ChangeState("trap");
             _body.VelocityTarget = Vector2.Zero;
