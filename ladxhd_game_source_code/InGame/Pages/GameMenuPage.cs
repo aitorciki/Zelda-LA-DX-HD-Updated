@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
@@ -22,6 +23,7 @@ namespace ProjectZ.InGame.Pages
 
             contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_back_to_game", e => ClosePage()) { Margin = new Point(0, 2) });
             contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_settings", OnClickSettings) { Margin = new Point(0, 2) });
+            contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_save_continue", OnClickSaveContinue) { Margin = new Point(0, 2) });
             contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_exit_to_the_menu", OnClickBackToMenu) { Margin = new Point(0, 2) });
             contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_exit_the_game", OnClickExitGame) { Margin = new Point(0, 2) });
 
@@ -71,6 +73,12 @@ namespace ProjectZ.InGame.Pages
         public void OnClickBackToMenu(InterfaceElement element)
         {
             Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
+        }
+
+        public void OnClickSaveContinue(InterfaceElement element)
+        {
+            SaveGameSaveLoad.SaveGame(Game1.GameManager);
+            Game1.GameManager.InGameOverlay.CloseOverlay();
         }
 
         public void OnClickExitGame(InterfaceElement element)
