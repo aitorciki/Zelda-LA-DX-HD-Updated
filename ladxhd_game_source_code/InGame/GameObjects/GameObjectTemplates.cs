@@ -119,8 +119,6 @@ namespace ProjectZ.InGame.GameObjects
 
             ObjectTemplates.Add("vase_empty", new GameObjectTemplate(typeof(ObjSprite), new object[] { "vase_empty", new Vector2(8, 16), Values.LayerPlayer, "vase_empty" }));
             ObjectTemplates.Add("vase_flower", new GameObjectTemplate(typeof(ObjSprite), new object[] { "vase_flower", new Vector2(8, 16), Values.LayerPlayer, "vase_flower" }));
-
-            ObjectTemplates.Add("painting", new GameObjectTemplate(typeof(ObjSprite), new object[] { "painting", new Vector2(8, 16), Values.LayerPlayer, "painting", new Rectangle(-8, -12, 16, 12), Values.CollisionTypes.Normal }));
             ObjectTemplates.Add("owl_statue", new GameObjectTemplate(typeof(ObjSprite), new object[] { "owl_statue", new Vector2(0, 12), Values.LayerPlayer, "owl_statue_shadow", new Rectangle(0, -12, 16, 16), Values.CollisionTypes.Normal }));
             ObjectTemplates.Add("photohouse_light", new GameObjectTemplate(typeof(ObjSprite), new object[] { "photohouse_light", new Vector2(0, 24), Values.LayerPlayer, "photohouse_light" }));
 
@@ -515,6 +513,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("chickenDude", new GameObjectTemplate(typeof(ObjChickenDude), new object[] { null }));
             ObjectTemplates.Add("painter", new GameObjectTemplate(typeof(ObjPainter), new object[] { }));
             ObjectTemplates.Add("hippo", new GameObjectTemplate(typeof(ObjHippo), new object[] { }));
+            ObjectTemplates.Add("painting", new GameObjectTemplate(typeof(ObjPainting), new object[] { null, "painting", new Rectangle(0, 4, 16, 12), 1 }));
             ObjectTemplates.Add("trendy", new GameObjectTemplate(typeof(ObjTrendy), new object[] { }));
 
             ObjectTemplates.Add("BowWow", new GameObjectTemplate(typeof(ObjBowWow), new object[] { null }));

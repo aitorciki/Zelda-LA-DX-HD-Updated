@@ -104,6 +104,7 @@ namespace ProjectZ.InGame.Overlay
             _gameSequences.Add("gravestone", new GravestoneSequence());
             _gameSequences.Add("weatherBird", new WeatherBirdSequence());
             _gameSequences.Add("final", new FinalSequence());
+            _gameSequences.Add("painting", new PaintingSequence());
 
             _mapSize = new Point(144 + 2 * _marginMap, 144 + 2 * _marginMap);
             _dungeonSize = new Point(80, 106);
