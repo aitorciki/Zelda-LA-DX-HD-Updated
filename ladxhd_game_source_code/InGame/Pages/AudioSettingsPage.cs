@@ -29,7 +29,11 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Sound Effects Volume
             contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_effect_volume",
-                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, number => { GameSettings.EffectVolume = number; })
+                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, number => 
+                { 
+                    Game1.GameManager.UpdateSoundEffects();
+                    GameSettings.EffectVolume = number; 
+                })
             { SetString = number => " " + number + "%" });
 
             // Button: Mute Inactive Window

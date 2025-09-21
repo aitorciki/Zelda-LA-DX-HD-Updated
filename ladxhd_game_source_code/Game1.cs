@@ -209,6 +209,9 @@ namespace ProjectZ
             // load game settings
             SettingsSaveLoad.LoadSettings();
 
+            // Sound effects volume will not apply without at least one forced call of this.
+            GameManager.UpdateSoundEffects();
+
             // init gbs player; load gbs file
             GbsPlayer.LoadFile(Path.Combine(Values.PathContentFolder, "Music", "awakening.gbs"));
             GbsPlayer.StartThread();
