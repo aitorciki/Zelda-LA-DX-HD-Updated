@@ -1,5 +1,22 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.2.9**
+### **The "MARIN IS FINALLY FIXED" Update**
+  * Marin will no longer despawn after talking to her on the beach if playing up to that point uninterrupted.
+  * Sword no longer blocks projectiles but a "Modifier" has been added to somewhat restore the functionality.
+  * The "Sword Blocking" modifier can block projectiles when swinging, but can no longer block just by holding/charging it.
+  * Add missing sound effects to "Vire" enemy in level 8 when attacking and when destroying it's fireball.
+  * Don't preserve the "Thief" state when deleting a save with it and creating a new file in it's place.
+  * Fill missing hearts when collecting the Level 2 Sword at Seashell Mansion.
+  * Fix Like Like not stealing your shield when it is equipped to the top controller buttons as opposed to the face button.
+  * Fix running through Like Like with boots which "traps" the player but keeps running invisible leaving a trail of smoke.
+  * Fix several "trade icon" mistakes in various languages (especially Russian and Spanish) along with other minor fixes.
+  * Fix Boomerang to deal damage to enemies regardless of the player Z-position. This mostly affected the blocks in level 7.
+  * Fix the shield sometimes not playing the sound effect when pressing the button to block with it.
+  * Fix travelling through an unspawned staircase in level 8 that could put you in the corner of the map.
+  * Fix the "dungeon clear" music sometimes resuming after picking up the instrument at the end of a dungeon.
+  * Fix applying sound effects volume at game load and when moving the slider before a save file is selected.
+
 ## **v1.2.8**
 ### **The "Sorry Marin I Give up For Now" Update**
   * Revert back to the old method to attempt to spawn Marin at the beach as this created more problems than it solved.
