@@ -13,9 +13,9 @@ namespace ProjectZ.Base
         private readonly string _lower;
         private readonly string _alt;
 
-        private readonly Keys _code;
+        private readonly Keys[] _code;
 
-        public InputCharacter(string upper, string lower, string alt, Keys code)
+        public InputCharacter(string upper, string lower, string alt, params Keys[] code)
         {
             _upper = upper;
             _lower = lower;
@@ -23,8 +23,8 @@ namespace ProjectZ.Base
             _code = code;
         }
 
-        public InputCharacter(string upper, string lower, Keys code) :
-            this(upper, lower, lower, code)
+        public InputCharacter(string upper, string lower, params Keys[] code)
+            : this(upper, lower, lower, code)
         { }
 
         public string ReturnCharacter(bool shiftDown, bool altDown)
@@ -32,7 +32,7 @@ namespace ProjectZ.Base
             return altDown ? _alt : shiftDown ? _upper : _lower;
         }
 
-        public Keys ReturnKey()
+        public Keys[] ReturnKeys()
         {
             return _code;
         }
@@ -42,13 +42,10 @@ namespace ProjectZ.Base
     internal class InputHandler : GameComponent
     {
         private static List<InputCharacter> _alphabet;
-        
+
         public static KeyboardState KeyboardState => _keyboardState;
-
         public static KeyboardState LastKeyboardState => _lastKeyboardState;
-
         public static MouseState MouseState => _mouseState;
-
         public static MouseState LastMousState => _lastMouseState;
 
         private static KeyboardState _keyboardState;
@@ -60,7 +57,7 @@ namespace ProjectZ.Base
         private static GamePadState _gamePadState;
         private static GamePadState _lastGamePadState;
         private static float _gamePadAccuracy = 0.2f;
-        
+
         #region Constructor Region
 
         public InputHandler(Game game)
@@ -100,20 +97,19 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("Y", "y", Keys.Y));
             _alphabet.Add(new InputCharacter("Z", "z", Keys.Z));
 
-            /* Dezimalzahlen. */
-            _alphabet.Add(new InputCharacter("!", "1", Keys.D1));
-            _alphabet.Add(new InputCharacter("\"", "2", "²", Keys.D2));
-            _alphabet.Add(new InputCharacter("§", "3", "³", Keys.D3));
-            _alphabet.Add(new InputCharacter("$", "4", Keys.D4));
-            _alphabet.Add(new InputCharacter("%", "5", Keys.D5));
-            _alphabet.Add(new InputCharacter("&", "6", "|", Keys.D6));
-            _alphabet.Add(new InputCharacter("/", "7", "{", Keys.D7));
-            _alphabet.Add(new InputCharacter("(", "8", "[", Keys.D8));
-            _alphabet.Add(new InputCharacter(")", "9", "]", Keys.D9));
-            _alphabet.Add(new InputCharacter("=", "0", "}", Keys.D0));
+            /* Decimal numbers. */
+            _alphabet.Add(new InputCharacter("!", "1", Keys.D1, Keys.NumPad1));
+            _alphabet.Add(new InputCharacter("\"", "2", "²", Keys.D2, Keys.NumPad2));
+            _alphabet.Add(new InputCharacter("§", "3", "³", Keys.D3, Keys.NumPad3));
+            _alphabet.Add(new InputCharacter("$", "4", Keys.D4, Keys.NumPad4));
+            _alphabet.Add(new InputCharacter("%", "5", Keys.D5, Keys.NumPad5));
+            _alphabet.Add(new InputCharacter("&", "6", "|", Keys.D6, Keys.NumPad6));
+            _alphabet.Add(new InputCharacter("/", "7", "{", Keys.D7, Keys.NumPad7));
+            _alphabet.Add(new InputCharacter("(", "8", "[", Keys.D8, Keys.NumPad8));
+            _alphabet.Add(new InputCharacter(")", "9", "]", Keys.D9, Keys.NumPad9));
+            _alphabet.Add(new InputCharacter("=", "0", "}", Keys.D0, Keys.NumPad0));
 
-
-            /* Sonderelemente. */
+            /* Special characters. */
             _alphabet.Add(new InputCharacter(" ", " ", Keys.Space));
             _alphabet.Add(new InputCharacter(";", ",", Keys.OemComma));
             _alphabet.Add(new InputCharacter("*", "+", "~", Keys.OemPlus));
@@ -342,16 +338,18 @@ namespace ProjectZ.Base
             var shiftDown = _keyboardState.IsKeyDown(Keys.LeftShift) || _keyboardState.IsKeyDown(Keys.RightShift);
             var altDown = _keyboardState.IsKeyDown(Keys.LeftAlt) || _keyboardState.IsKeyDown(Keys.RightAlt);
 
-            //var pressedKeys = _keyboardState.GetPressedKeys();
-
             foreach (var character in _alphabet)
             {
-                if (KeyPressed(character.ReturnKey()))
-                    return character.ReturnCharacter(shiftDown, altDown);
+                foreach (var key in character.ReturnKeys())
+                {
+                    if (KeyPressed(key))
+                        return character.ReturnCharacter(shiftDown, altDown);
+                }
             }
 
             return "";
         }
+
 
         /// <summary>
         /// returns pressed number from d0-d9 and numpad0-numpad9
@@ -365,6 +363,7 @@ namespace ProjectZ.Base
 
             return -1;
         }
+
         #endregion
     }
 }
