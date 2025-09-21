@@ -14,7 +14,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly Animator _animator;
         private readonly Color _lightColor = new Color(255, 255, 255) * 0.5f;
-        
+        private bool _flashState;
+        private double _lastFlashTime;
+
         public EnemyGiantBubble() : base("giant bubble") { }
 
         public EnemyGiantBubble(Map.Map map, int posX, int posY) : base(map)
@@ -65,9 +67,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            // blink
             var animationFramePercentage = _animator.FrameCounter / _animator.CurrentFrame.FrameTime;
-            var state = animationFramePercentage % 0.5 < 0.25;
+            bool state = animationFramePercentage % 0.5 < 0.25;
+
+            if (GameSettings.EpilepsySafe)
+            {
+                double totalSeconds = Game1.TotalGameTime * 0.001;
+                if (totalSeconds - _lastFlashTime >= 0.50)
+                {
+                    _lastFlashTime = totalSeconds;
+                    _flashState = !_flashState;
+                }
+                state = _flashState;
+            }
             _sprite.SpriteShader = state ? Resources.DamageSpriteShader0 : null;
         }
 

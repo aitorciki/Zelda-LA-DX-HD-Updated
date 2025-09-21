@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Dungeon;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -14,10 +14,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly AiDamageState _aiDamageState;
+        private readonly Animator _animator;
 
         private readonly Color _lightColor = new Color(255, 255, 255);
 
         private int _lives = ObjLives.AntiFairy;
+
+        bool _lastEpSafe;
 
         public EnemyAntiFairy() : base("antiFairy") { }
 
@@ -29,11 +32,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
 
-            var animator = AnimatorSaveLoad.LoadAnimator("Enemies/anti-fairy");
-            animator.Play("idle");
+            _animator = AnimatorSaveLoad.LoadAnimator("Enemies/anti-fairy");
+            _animator.Play("idle");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(animator, sprite, new Vector2(-8, -8));
+            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -8));
 
             _body = new BodyComponent(EntityPosition, -6, -6, 12, 12, 8)
             {
@@ -90,6 +93,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
+            // No sense in constantly updating the value.
+            if (_lastEpSafe != GameSettings.EpilepsySafe)
+            {
+                if (GameSettings.EpilepsySafe)
+                    _animator.SpeedMultiplier = 0.25f;
+                else
+                    _animator.SpeedMultiplier = 1f;
+
+                _lastEpSafe = GameSettings.EpilepsySafe;
+            }
             DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 25, (int)EntityPosition.Y - 25, 50, 50), _lightColor * 0.5f);
         }
 

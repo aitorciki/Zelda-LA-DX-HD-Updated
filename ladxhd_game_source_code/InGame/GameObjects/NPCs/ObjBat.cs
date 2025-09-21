@@ -185,7 +185,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_showThunder)
             {
                 _punishCount += Game1.DeltaTime;
-                Game1.GameManager.UseShockEffect = _punishCount % 100 < 50;
+
+                if (!GameSettings.EpilepsySafe)
+                    Game1.GameManager.UseShockEffect = _punishCount % 100 < 50;
             }
         }
 

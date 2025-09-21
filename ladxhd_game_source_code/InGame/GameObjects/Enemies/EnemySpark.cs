@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemySpark : GameObject
     {
+        private readonly Animator _animator;
         private readonly BodyComponent _body;
 
         private readonly Color _lightColor = new Color(255, 255, 255);
@@ -28,6 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _wasTouchingWall;
         private bool _gettingDestroyed;
         private bool _init;
+
+        bool _lastEpSafe;
 
         public EnemySpark() : base("spark") { }
 
@@ -45,11 +48,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _goingClockwise = clockwise;
             _destructionKey = destructionKey;
 
-            var animator = AnimatorSaveLoad.LoadAnimator("Enemies/spark");
-            animator.Play("idle");
+            _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spark");
+            _animator.Play("idle");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(animator, sprite, new Vector2(-8, -8));
+            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -8));
 
             _body = new BodyComponent(EntityPosition, -4, -4, 8, 8, 8)
             {
@@ -159,6 +162,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
+            // No sense in constantly updating the value.
+            if (_lastEpSafe != GameSettings.EpilepsySafe)
+            {
+                if (GameSettings.EpilepsySafe)
+                    _animator.SpeedMultiplier = 0.10f;
+                else
+                    _animator.SpeedMultiplier = 1f;
+
+                _lastEpSafe = GameSettings.EpilepsySafe;
+            }
             DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 32, (int)EntityPosition.Y - 32, 64, 64),
                 _lightColor * (0.125f + _lightState * 0.25f));
         }

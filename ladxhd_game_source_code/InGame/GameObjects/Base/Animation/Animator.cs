@@ -128,25 +128,6 @@ namespace ProjectZ.InGame.GameObjects.Base
                 (CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
         }
 
-        //public void DrawShadow(SpriteBatch spriteBatch)
-        //{
-        //    if (!IsVisible || !ShadowVisible)
-        //        return;
-
-        //    var normX = (int)Math.Round(PosX * (int)MapManager.Camera.Scale, 0, MidpointRounding.AwayFromZero) / MapManager.Camera.Scale;
-        //    var normY = (int)Math.Round(PosY * (int)MapManager.Camera.Scale, 0, MidpointRounding.AwayFromZero) / MapManager.Camera.Scale;
-
-        //    DrawHelper.DrawShadow(SprTexture, new Vector2(
-        //            normX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),
-        //            normY + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y)), CurrentFrame.SourceRectangle,
-        //          CurrentFrame.MirroredH, Color.White);
-
-        //    //spriteBatch.Draw(SprAnimator, new Vector2(
-        //    //        drawPosX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),
-        //    //        drawPosY + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y)),
-        //    //        new Rectangle(-SprAnimator.Width, 0, SprAnimator.Width * 3, SprAnimator.Height * 2), Color.Black * 0.4f);
-        //}
-
         public void ResetFrameCounter()
         {
             _frameCounter = 0;
