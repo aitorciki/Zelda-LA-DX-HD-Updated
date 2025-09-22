@@ -20,6 +20,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly AiDamageState _aiDamageState;
         private readonly ShadowBodyDrawComponent _shadowComponent;
         private readonly AiTriggerSwitch _damageCooldown;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private SheetAnimator _animator;
 
@@ -197,8 +199,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
             var hittableBox = new CBox(EntityPosition, -12, -26, 0, 24, 24, 8);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -540,6 +542,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _flee = true;
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void OnBossDeath()

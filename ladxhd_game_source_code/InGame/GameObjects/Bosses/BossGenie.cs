@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly AiComponent _aiComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
         private readonly ShadowBodyDrawComponent _shadowComponent;
 
         private readonly BossGenieBottle _objBottle;
@@ -118,7 +119,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { IsActive = false });
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
@@ -273,6 +274,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _shadowComponent.IsActive = false;
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
             _body.VelocityTarget = Vector2.Zero;
             var centerOffset = new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - RotationOffsetY) - _roomCenter;
             _currentRotation = MathF.Atan2(centerOffset.Y, centerOffset.X);

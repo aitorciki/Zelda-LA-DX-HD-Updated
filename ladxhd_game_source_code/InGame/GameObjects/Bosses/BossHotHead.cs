@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
         private readonly CSprite _sprite;
         private readonly Animator _animator;
         private readonly Animator _animatorFaceTrail;
@@ -122,7 +123,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var hittableBox = new CBox(EntityPosition, -8, -14, 0, 16, 14, 8, true);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 16));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
@@ -352,6 +353,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (_damageState.CurrentLives <= 0)
             {
                 _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
             }
             if ((damageType != HitType.MagicRod && damageType != HitType.SwordShot) || _damageState.CurrentLives <= 0)
                 return Values.HitCollision.None;

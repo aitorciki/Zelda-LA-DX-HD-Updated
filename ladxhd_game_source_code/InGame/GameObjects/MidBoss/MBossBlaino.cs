@@ -25,6 +25,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly Animator _animator;
         private readonly AnimationComponent _animationComponent;
         private readonly DamageFieldComponent _damageFieldComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private readonly string _saveKey;
 
@@ -139,8 +141,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageBox = new CBox(EntityPosition, -8, -14, 0, 16, 14, 8, true);
 
             AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageBox, OnPush));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
@@ -562,11 +564,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 _objGlove.OnDeath();
                 _damageFieldComponent.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
                 _animator.IsPlaying = false;
                 _body.VelocityTarget = Vector2.Zero;
                 Map.Objects.DeleteObjects.Add(_objGlove);
             }
-
             return Values.HitCollision.Enemy;
         }
 

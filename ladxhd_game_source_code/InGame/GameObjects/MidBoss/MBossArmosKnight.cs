@@ -20,6 +20,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly AiDamageState _aiDamageState;
         private readonly AiTriggerSwitch _knockbackSwitch;
         private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private string _saveKey;
         private int _jumpCount;
@@ -314,8 +316,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
                 if (_aiDamageState.CurrentLives <= 0)
+                {
                     _damageField.IsActive = false;
-
+                    _hitComponent.IsActive = false;
+                    _pushComponent.IsActive = false;
+                }
                 // boss should start jumping directly after getting hit
                 _jumpCount = 0;
 

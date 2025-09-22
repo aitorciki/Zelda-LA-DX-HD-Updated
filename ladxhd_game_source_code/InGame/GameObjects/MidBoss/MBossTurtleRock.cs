@@ -29,6 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _aiDamageState;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private readonly DictAtlasEntry _spriteNeck;
 
@@ -160,11 +162,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, 0, 16, 14, 8), Values.CollisionTypes.Enemy));
-
         }
 
         public override void Init()
@@ -420,6 +422,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            return true;
+        }
+
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
         {
             if (_aiDamageState.CurrentLives <= 0)
@@ -444,6 +451,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _body.VelocityTarget = Vector2.Zero;
                 _aiComponent.ChangeState("dead");
                 _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+
                 Game1.GameManager.StartDialogPath("turtle_rock_killed");
             }
 

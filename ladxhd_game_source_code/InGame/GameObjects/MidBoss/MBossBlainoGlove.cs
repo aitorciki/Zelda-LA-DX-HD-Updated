@@ -11,7 +11,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
     internal class MBossBlainoGlove : GameObject
     {
         private readonly MBossBlaino _blaino;
-        private readonly DamageFieldComponent _damageFieldComponent;
+        private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
         private readonly string _resetDoor;
 
         private int _hitDirection;
@@ -24,9 +26,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             EntitySize = new Rectangle(0, 0, 11, 11);
 
             var damageCollider = new CBox(EntityPosition, 0, 0, 0, 11, 11, 8);
-            AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { OnDamage = DamagePlayer, PushMultiplier = 2.25f });
-            AddComponent(HittableComponent.Index, new HittableComponent(damageCollider, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { OnDamage = DamagePlayer, PushMultiplier = 2.25f });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
 
             _blaino = blaino;
             _resetDoor = resetDoor;
@@ -65,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return false;
             }
 
-            var damagedPlayer = _damageFieldComponent.DamagePlayer();
+            var damagedPlayer = _damageField.DamagePlayer();
 
             if (_knockoutMode)
             {
@@ -103,7 +105,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public void OnDeath()
         {
-            _damageFieldComponent.IsActive = false;
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
     }
 }

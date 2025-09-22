@@ -22,6 +22,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly AiTriggerCountdown _attackAbortTrigger;
         private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private const int ShakeTime = 1500;
         private const int BodyWidth = 28;
@@ -136,8 +138,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -14, -14, 0, 28, 14, 8);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
             // RepelMultiplier needs to be high so that the player does not end in the boss
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1.5f });
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1.5f });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
@@ -395,8 +397,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
             if (_aiDamageState.CurrentLives <= 0)
+            {
                 _damageField.IsActive = false;
-
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             return Values.HitCollision.Enemy;
         }
     }

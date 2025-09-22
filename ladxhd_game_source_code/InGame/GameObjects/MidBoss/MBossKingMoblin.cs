@@ -17,6 +17,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
     {
         private readonly BodyComponent _body;
         private readonly BodyDrawComponent _bodyDrawComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly CSprite _sprite;
@@ -110,9 +112,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             if (!string.IsNullOrEmpty(_triggerKey))
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1 });
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1 });
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { OnDamagedPlayer = OnDamagedPlayer });
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -360,8 +362,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
             if (_damageState.CurrentLives <= 0)
+            {
                 _damageField.IsActive = false;
-
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             return Values.HitCollision.Enemy;
         }
 

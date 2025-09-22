@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly CSprite _sprite;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _aiDamageState;
 
@@ -155,7 +156,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
         }
@@ -534,6 +535,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _eelSpawner.ToDespawn();
 
                 _damageField.IsActive = false;;
+                _hitComponent.IsActive = false;;
 
                 foreach (var part in _tailParts)
                     if (part != null)

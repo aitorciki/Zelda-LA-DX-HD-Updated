@@ -22,6 +22,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly CSprite _sprite;
         private readonly AiTriggerCountdown _hitCooldown;
         private readonly AiTriggerCountdown _colorCountdown;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly DamageFieldComponent _damageField;
 
         private EnemyStalfosGreen[] _stalfos = new EnemyStalfosGreen[2];
@@ -110,8 +112,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var hittableBox = new CBox(EntityPosition, -13, -34, 0, 26, 30, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -269,6 +271,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _isDead = true;
                 _animator.Pause();
                 _damageField.IsActive = false;
+                _pushComponent.IsActive = false;
+                _hitComponent.IsActive = false;
                 _body.VelocityTarget = Vector2.Zero;
                 _aiDamageState.OnHit(gameObject, direction, damageType, damage, false);
             }

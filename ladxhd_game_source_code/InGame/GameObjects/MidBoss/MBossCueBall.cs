@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _aiDamageState;
         private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private const float MovementSpeed = 1.25f;
 
@@ -90,8 +92,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (!string.IsNullOrEmpty(enterKey))
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 50 });
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 50 });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -213,6 +215,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity.Y = _body.VelocityTarget.Y;
             _body.VelocityTarget = Vector2.Zero;
             _damageField.IsActive = false;
+            _pushComponent.IsActive = false;
+            _hitComponent.IsActive = false;
         }
 
         private void OnDeath(bool pieceOfPower)

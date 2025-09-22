@@ -22,7 +22,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly Animator _animator;
         private readonly CubicBezier _pickupCurveX;
         private readonly CubicBezier _pickupCurveY;
-        private readonly DamageFieldComponent _damageComponent;
+        private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private readonly RectangleF _triggerRectangle;
         private Vector2 _moveDirection;
@@ -101,11 +103,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 14, true);
             var hittableBox = new CBox(EntityPosition, -9, -14, 0, 18, 14, 16, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 18, ShadowHeight = 6 });
@@ -357,8 +359,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // remove damage box on death
             if (_damageState.CurrentLives <= 0)
-                _damageComponent.IsActive = false;
-
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             return Values.HitCollision.RepellingParticle;
         }
 

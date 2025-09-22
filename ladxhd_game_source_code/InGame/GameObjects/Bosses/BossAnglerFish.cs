@@ -25,6 +25,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private readonly Color _lightColor = new Color(255, 200, 200);
 
@@ -122,10 +124,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _aiComponent.ChangeState("waiting");
 
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableRectangle, OnHit));
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
@@ -352,6 +354,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     _aiComponent.ChangeState("blink");
                     _body.VelocityTarget = Vector2.Zero;
                     _damageField.IsActive = false;
+                    _hitComponent.IsActive = false;
+                    _pushComponent.IsActive = false;
                     return Values.HitCollision.Repelling;
                 }
                 else

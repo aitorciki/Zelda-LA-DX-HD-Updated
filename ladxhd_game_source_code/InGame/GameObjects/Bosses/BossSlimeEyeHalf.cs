@@ -17,6 +17,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly Animator _animator;
+        private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushableComponent;
         private readonly BodyDrawShadowComponent _shadowComponent;
         private readonly DamageFieldComponent _damageComponent;
@@ -91,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(PushableComponent.Index, _pushableComponent);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableRectangle, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
@@ -270,6 +271,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (_damageState.CurrentLives <= 0)
             {
+                _hitComponent.IsActive = false;
+                _pushableComponent.IsActive = false;
                 _damageComponent.IsActive = false;
             }
             return Values.HitCollision.Enemy;

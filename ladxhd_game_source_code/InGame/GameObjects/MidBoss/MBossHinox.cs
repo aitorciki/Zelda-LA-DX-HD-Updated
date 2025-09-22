@@ -19,8 +19,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _aiDamageState;
-        private readonly DamageFieldComponent _damageFieldComponent;
+        private readonly DamageFieldComponent _damageField;
         private readonly CBox _grabBox;
+        private readonly PushableComponent _pushComponent;
+        private readonly HittableComponent _hitComponent;
 
         private readonly string _saveKey;
 
@@ -105,9 +107,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _grabBox = new CBox(EntityPosition, -20, -20, 0, 40, 24, 8);
             var damageCollider = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
             var hittableBox = new CBox(EntityPosition, -14, -28, 0, 28, 28, 8);
-            AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -136,7 +138,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _body.VelocityTarget = Vector2.Zero;
 
-            _damageFieldComponent.IsActive = false;
+            _damageField.IsActive = false;
 
             if (MapManager.ObjLink.PosX < EntityPosition.X)
                 _grabDirection = 1;
@@ -168,7 +170,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             MapManager.ObjLink.StartThrow(new Vector3(-4.5f * _grabDirection, 2.5f, 0));
             Game1.GameManager.InflictDamage(4);
 
-            _damageFieldComponent.IsActive = true;
+            _damageField.IsActive = true;
             _animator.SetFrame(_grabDirection == 1 ? 1 : 0);
         }
 
@@ -361,7 +363,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // stop walking and stop the animation when dead
             if (_aiDamageState.CurrentLives <= 0)
             {
-                _damageFieldComponent.IsActive = false;
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
 
                 _animator.Stop();
                 _body.VelocityTarget = Vector2.Zero;
