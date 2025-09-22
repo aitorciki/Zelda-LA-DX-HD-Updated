@@ -50,6 +50,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         AiTriggerCountdown _stateEye1trigger;
         private bool _noAttack;
         private bool _playedOcarina;
+        private bool _isDying;
 
         public MBossGohma(Map.Map map, int posX, int posY, string saveKey, bool onTop) : base(map, "gohma")
         {
@@ -151,7 +152,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void OnSongPlayed(int songIndex)
         {
             // When playing Ballad of the Windfish, open the eye for 1.5 seconds and don't attack.
-            if (songIndex == 0)
+            if (songIndex == 0 && !_isDying)
             {
                 _playedOcarina = true;
                 _noAttack = true;
@@ -398,6 +399,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             if (_aiDamageState.CurrentLives <= 0)
             {
+                _isDying = true;
                 _damageField.IsActive = false;
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
