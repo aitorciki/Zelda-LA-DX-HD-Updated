@@ -45,7 +45,7 @@ namespace ProjectZ.InGame.Pages
             contentLayout.AddElement(_uiScaleSlider);
 
             // Button: Fullscreen
-            _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_game_fullscreen_mode", GameSettings.IsFullscreen,
                 newState => {
                     Game1.ToggleFullscreen();
@@ -55,12 +55,12 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Shadows
             // TODO: Also disables shadows under the player sprite. At least this shadow should be drawn.
-            var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                "settings_graphics_shadow", GameSettings.EnableShadows, newState => GameSettings.EnableShadows = newState);
              contentLayout.AddElement(shadowToggle);
 
             // Button: Vertical Sync
-            var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_graphics_fps_lock", GameSettings.VerticalSync, newState =>
                 {
                     GameSettings.VerticalSync = newState;
@@ -69,9 +69,14 @@ namespace ProjectZ.InGame.Pages
             contentLayout.AddElement(toggleFpsLock);
 
             // Button: Smooth Camera
-            var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_game_change_smooth_camera", GameSettings.SmoothCamera, newState => { GameSettings.SmoothCamera = newState; });
             contentLayout.AddElement(smoothCameraToggle);
+
+            // Button: Epilepsy Safe
+            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+                "settings_game_epilepsysafe", GameSettings.EpilepsySafe, newState => { GameSettings.EpilepsySafe = newState; });
+            contentLayout.AddElement(toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };

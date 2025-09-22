@@ -37,17 +37,17 @@ namespace ProjectZ.InGame.Pages
             { SetString = number => " " + number + "%" });
 
             // Button: Mute Inactive Window
-            var toggleAudioMute = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleAudioMute = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_audio_mute_inactive", GameSettings.MuteInactive, newState => { GameSettings.MuteInactive = newState; });
             contentLayout.AddElement(toggleAudioMute);
 
             // Button: Low Hearts Alarm
-            var toggleHeartBeep = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleHeartBeep = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_game_heartbeep", GameSettings.HeartBeep, newState => { GameSettings.HeartBeep = newState; });
             contentLayout.AddElement(toggleHeartBeep);
 
             // Button: Mute Powerup Music
-            var toggleNoPowerupMusic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleNoPowerupMusic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_audio_mute_powerups", GameSettings.MutePowerups, newState => { GameSettings.MutePowerups = newState; });
             contentLayout.AddElement(toggleNoPowerupMusic);
 

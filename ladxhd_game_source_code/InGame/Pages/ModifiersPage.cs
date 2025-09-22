@@ -57,17 +57,17 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(movementSlider);
 
             // Button: No Damage Launch
-            var toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, newState => { GameSettings.NoDamageLaunch = newState; });
             _contentLayout.AddElement(toggleNoDmgLaunch);
 
             // Button: No Heart Drops
-            var toggleNoHearts = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleNoHearts = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_mods_nohearts", GameSettings.NoHeartDrops, newState => { GameSettings.NoHeartDrops = newState; });
             _contentLayout.AddElement(toggleNoHearts);
 
             // Button: Sword Block Projectiles
-            var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_mods_swordblock", GameSettings.SwordBlock, newState => { GameSettings.SwordBlock = newState; });
             _contentLayout.AddElement(toggleSwordBlock);
 

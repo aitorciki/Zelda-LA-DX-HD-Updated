@@ -24,32 +24,27 @@ namespace ProjectZ.InGame.Pages
             var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Button: Language
-            contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 18), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
+            contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 16), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
 
             // Button: Controller Type
             // There wasn't a way to just display what we want on the button so a little bit of hackery was needed.
-            contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, 18), new Point(0, 2), "", PressButtonSetController)) ;
+            contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, 16), new Point(0, 2), "", PressButtonSetController)) ;
             _controllerType.InsideLabel.OverrideText = Game1.LanguageManager.GetString("settings_game_controller", "error") + ": " + GameSettings.Controller;
 
             // Button: AutoSave
-            var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
             contentLayout.AddElement(toggleAutosave);
 
             // Button: Items on Right
-            var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_game_items_on_right", GameSettings.ItemsOnRight, newState => { GameSettings.ItemsOnRight = newState; });
             contentLayout.AddElement(toggleItemSlotSide);
 
             // Button: Screen-Shake
-            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_game_screenshake", GameSettings.ScreenShake, newState => { GameSettings.ScreenShake = newState; });
             contentLayout.AddElement(toggleScreenShake);
-
-            // Button: Epilepsy Safe
-            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
-                "settings_game_epilepsysafe", GameSettings.EpilepsySafe, newState => { GameSettings.EpilepsySafe = newState; });
-            contentLayout.AddElement(toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };

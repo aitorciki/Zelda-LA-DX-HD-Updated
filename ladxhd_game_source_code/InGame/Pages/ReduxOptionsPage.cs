@@ -37,27 +37,27 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(menuBricksSlider);
 
             // Variable Width Font Toggle:
-            var toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_redux_vwfont", GameSettings.VarWidthFont, newState => { PressButtonDialogFontChange(newState); });
             _contentLayout.AddElement(toggleVariableFont);
 
             // Disable Helper Interactions:
-            var toggleHelperText = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleHelperText = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_redux_nohelptext", GameSettings.NoHelperText, newState => { PressButtonToggleHelpers(newState); });
             _contentLayout.AddElement(toggleHelperText);
 
             // Disable Censorship:
-            var toggleUncensored = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleUncensored = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_redux_uncensor", GameSettings.Uncensored, newState => { PressButtonToggleUncensored(newState); });
             _contentLayout.AddElement(toggleUncensored);
 
             // Enable No Missables:
-            var toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_redux_unmissables", GameSettings.Unmissables, newState => { PressButtonToggleUnmissables(newState); });
             _contentLayout.AddElement(toggleUnmissables);
 
             // Colored Photos:
-            var togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
+            var togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_redux_photoscolor", GameSettings.PhotosColor, newState => { PressButtonTogglePhotosColor(newState); });
             _contentLayout.AddElement(togglePhotosColor);
 
