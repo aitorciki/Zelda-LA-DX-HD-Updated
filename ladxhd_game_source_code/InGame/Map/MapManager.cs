@@ -85,8 +85,13 @@ namespace ProjectZ.InGame.Map
 
         private void UpdateOffsetCoords()
         {
+            if (GameSettings.CameraLock)
+            {
+                CameraOffset = Vector2.Zero;
+                return;
+            }
             var direction = ControlHandler.GetCamVector2();
-            float cameraSpeed = 1;
+            float cameraSpeed = 0.60f;
             CameraOffset += direction * cameraSpeed * Game1.DeltaTime;
         }
 
