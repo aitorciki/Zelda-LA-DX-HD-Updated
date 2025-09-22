@@ -43,12 +43,12 @@ namespace ProjectZ.InGame.Pages
             controlLayout.AddElement(remapHeader);
 
             var remapButtons = new InterfaceListLayout { AutoSize = true, Margin = new Point(2, 0), Selectable = true };
-            _remapButtons = new InterfaceListLayout[Enum.GetValues(typeof(CButtons)).Length - 1];
+            _remapButtons = new InterfaceListLayout[Enum.GetValues(typeof(CButtons)).Length - 3];
             var index = 0;
 
             foreach (CButtons eButton in Enum.GetValues(typeof(CButtons)))
             {
-                if (eButton == CButtons.None)
+                if (eButton == CButtons.None || eButton == CButtons.LS || eButton == CButtons.RS)
                     continue;
 
                 // Override the button text when we reach the face and top buttons.
@@ -161,6 +161,9 @@ namespace ProjectZ.InGame.Pages
             // This method is responsible for displaying the keyboard and controller buttons.
             foreach (var bEntry in ControlHandler.ButtonDictionary)
             {
+                if (bEntry.Key == CButtons.LS || bEntry.Key == CButtons.RS)
+                    continue;
+
                 var str = "";
 
                 for (var j = 0; j < bEntry.Value.Keys.Length; j++)

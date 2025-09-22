@@ -20,7 +20,6 @@ namespace ProjectZ.InGame.Controls
         private const int ScrollTime = 100;
 
         private static float _scrollCounter;
-
         private static bool _initDirection;
 
         public static string[] ControllerNames;
@@ -92,6 +91,8 @@ namespace ProjectZ.InGame.Controls
             ButtonDictionary.Add(CButtons.RT, new ButtonMapper(new[] { Keys.OemCloseBrackets }, new[] { Buttons.RightTrigger }));
             ButtonDictionary.Add(CButtons.Select, new ButtonMapper(new[] { Keys.Space }, new[] { Buttons.Back }));
             ButtonDictionary.Add(CButtons.Start, new ButtonMapper(new[] { Keys.Enter }, new[] { Buttons.Start }));
+            ButtonDictionary.Add(CButtons.LS, new ButtonMapper(new[] { Keys.Q }, new[] { Buttons.LeftStick }));
+            ButtonDictionary.Add(CButtons.RS, new ButtonMapper(new[] { Keys.W }, new[] { Buttons.RightStick }));
         }
 
         public static void SaveButtonMaps(SaveManager saveManager)
@@ -169,7 +170,13 @@ namespace ProjectZ.InGame.Controls
                 if (ButtonDown(CButtons.Down))
                     vec += new Vector2(0, 1);
             }
+            return vec;
+        }
 
+        public static Vector2 GetCamVector2()
+        {
+            var gamepadState = GamePad.GetState(PlayerIndex.One);
+            var vec = new Vector2(gamepadState.ThumbSticks.Right.X, -gamepadState.ThumbSticks.Right.Y);
             return vec;
         }
 

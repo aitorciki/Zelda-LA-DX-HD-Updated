@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -10,8 +11,8 @@ namespace ProjectZ.InGame.Map
     {
         public static Camera Camera;
         public static ObjLink ObjLink;
-
         public static BlendState LightBlendState = new BlendState();
+        public static Vector2 CameraOffset;
 
         public Map CurrentMap;
         public Map NextMap;
@@ -45,9 +46,7 @@ namespace ProjectZ.InGame.Map
         {
             // update the objects on the map
             CurrentMap.Objects.Update(frozen);
-
             CurrentMap.UpdateMapUpdateState();
-
             UpdateCamera();
         }
 
@@ -58,33 +57,42 @@ namespace ProjectZ.InGame.Map
 
         public Vector2 GetCameraTarget()
         {
-            // update the camera
             if (CurrentMap.CameraTarget.HasValue)
+            {
                 return CurrentMap.CameraTarget.Value * Camera.Scale;
-
+            }
             return GetCameraTargetLink();
         }
 
         public Vector2 GetCameraTargetLink()
         {
-            return new Vector2(ObjLink.PosX, ObjLink.PosY - 4) * Camera.Scale;
+            return (new Vector2 (ObjLink.PosX, ObjLink.PosY - 4) + CameraOffset) * Camera.Scale;
         }
 
         public void UpdateCamera()
         {
-            //if (!UpdateCameraX)
-            //centerPosition.Y -= ObjLink.EntityPosition.Z;
-
-            // center the map vertical if it is smaller than the screen
-            // not so sure about this
-            //if (CurrentMap.MapHeight * 16 * Camera.Scale < Game1.WindowHeight)
-            //    centerPosition.Y = CurrentMap.MapHeight * 8 * Camera.Scale;
+            UpdateOffsetCoords();
 
             if (UpdateCameraX || UpdateCameraY)
                 Camera.Center(GetCameraTarget(), UpdateCameraX, UpdateCameraY);
 
             UpdateCameraX = true;
             UpdateCameraY = true;
+
+            if (ControlHandler.ButtonPressed(CButtons.RS))
+                ResetOffset();
+        }
+
+        private void UpdateOffsetCoords()
+        {
+            var direction = ControlHandler.GetCamVector2();
+            float cameraSpeed = 1;
+            CameraOffset += direction * cameraSpeed * Game1.DeltaTime;
+        }
+
+        public static void ResetOffset()
+        {
+            CameraOffset = Vector2.Zero;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -92,12 +100,8 @@ namespace ProjectZ.InGame.Map
             // draw the objects under the tilemap
             CurrentMap.Objects.DrawBottom(spriteBatch);
 
-            //Game1.StopWatchTracker.Start("draw tile layers");
-
             // draw the tile map
             CurrentMap.TileMap.Draw(spriteBatch);
-
-            //Game1.StopWatchTracker.Stop();
 
             // draw the objects draw over the tileset
             CurrentMap.Objects.DrawMiddle(spriteBatch);
@@ -196,11 +200,8 @@ namespace ProjectZ.InGame.Map
         public void DrawLight(SpriteBatch spriteBatch)
         {
             Game1.Graphics.GraphicsDevice.Clear(CurrentMap.LightColor);
-
             spriteBatch.Begin(SpriteSortMode.Deferred, LightBlendState, SamplerState.AnisotropicClamp, null, null, null, Camera.TransformMatrix);
-
             CurrentMap.Objects.DrawLight(spriteBatch);
-
             spriteBatch.End();
         }
 

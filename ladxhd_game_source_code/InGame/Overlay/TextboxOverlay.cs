@@ -163,7 +163,6 @@ namespace ProjectZ.InGame.Overlay
 
                 }
             }
-
             UpdateGameState();
         }
 
