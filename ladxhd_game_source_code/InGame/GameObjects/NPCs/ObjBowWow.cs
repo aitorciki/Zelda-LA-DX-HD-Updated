@@ -104,7 +104,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 5 });
@@ -113,6 +112,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (!_followMode)
             {
+                AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
                 AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             }
 
