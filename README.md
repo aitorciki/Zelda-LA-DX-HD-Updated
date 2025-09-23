@@ -10,7 +10,7 @@ Some assets have been updated, but I have created tooling to make migration easi
 - As of v1.2.0, the vast majority of bugs have been fixed and features from the [Redux romhack](https://github.com/ShadowOne333/Links-Awakening-Redux) were implemented.
 - This is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) and here's a link to the [commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/).
 
-## Patching v1.0.0 (or v1.1.4+) to v1.2.9
+## Patching v1.0.0 (or v1.1.4+) to v1.3.0
 
 To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. 
 If you wish to build the game yourself, see **Personal Build / Publishing**.
@@ -31,7 +31,7 @@ This section explains the files and folders found in the base of this respositor
 - **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates.
 - **ladxhd_game_source_code**: Source code for The Legend of Zelda: Link's Awakening DX HD.
 - **ladxhd_migrate_source_code**: Source code for the migration tool which can apply/create assets patches.
-- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.2.9.
+- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.3.0.
 - **LADXHD_Migrater.exe**: This is the migration tool used to apply or create patches to the assets.
 - **Unblock-All-Files.ps1**: This script can be used to unblock all files automatically for Visual Studio.
 

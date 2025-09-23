@@ -1,5 +1,22 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.0**
+### **The "Even MORE Features and Fixes" Update**
+  * Implement free camera which can be moved around with the right stick. Press in the right stick to recenter on Link.
+  * You can enable this "free camera" by entering the "Game Settings" and unchecking "Lock Camera".
+  * Implement a "sprite shadow" for certain game objects when dynamic shadows are disabled. This will be expanded on later.
+  * Sword spin attack now spins clockwise when facing right like in original games. Other directions go counter clockwise.
+  * Added missing sound effects when opening/navigating the island map from the inventory screen.
+  * The painting by Schule Donavitch (the alligator with the hippo in Animal Village) can now be viewed.
+  * Further reduce flashing effects with Epilepsy Safe: Upgrade Bat, Anti-Fairy, Spark, Giant Bubble, and Rooster Spirit.
+  * Add "Save & Continue" option to save and keep playing. Rename "Quit to Menu" to "Save & Quit to Menu".
+  * Play proper boss music during the level 8 boss Hot Head, which was playing the miniboss music.
+  * When taking Bow-Wow for a walk, disable the "push component" which is what makes the shield "bump" him.
+  * Bosses can no longer be interacted with in any way when they are defeated and in the "dying" phase.
+  * Winged Octoroks now have an attack cooldown like regular Octoroks. This cooldown is also refreshed after jumping.
+  * Fix Manbo's song to warp to level 8 entrance when entering the dungeon through the top two entrances from warp point.
+  * Fix Gohma resurrecting and going invincible if playing "Ballad of the Windfish" when it is in "dying" phase.
+
 ## **v1.2.9**
 ### **The "MARIN IS FINALLY FIXED" Update**
   * Marin will no longer despawn after talking to her on the beach if playing up to that point uninterrupted.
