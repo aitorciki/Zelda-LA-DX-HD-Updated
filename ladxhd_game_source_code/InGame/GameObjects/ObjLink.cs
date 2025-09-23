@@ -404,6 +404,9 @@ namespace ProjectZ.InGame.GameObjects
         private float _lowHealthBeepCounter;
         private bool _enableHealthBeep;
 
+        // sprite shadow
+        private ObjSpriteShadow _spriteShadow;
+
         // other stuff
         public Point CollisionBoxSize;
         private MapStates.FieldStates _lastFieldState;
@@ -1937,6 +1940,41 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.Idle;
 
             _lastFieldState = _body.CurrentFieldState;
+
+            // If shadows is disabled then draw a sprite shadow.
+            if (!GameSettings.EnableShadows)
+            {
+                if(_spriteShadow == null)
+                {
+                    _spriteShadow = new ObjSpriteShadow(this, -8, -14, Map);
+                }
+            }
+            // Remove the sprite shadow if shadows was enabled.
+            else
+            {
+                if (_spriteShadow != null)
+                {
+                    Map.Objects.RemoveObject(_spriteShadow);
+                    _spriteShadow = null;
+                }
+            }
+            // Update sprite shadow if normal shadows are disabled.
+            UpdateSpriteShadow();
+        }
+
+        private void UpdateSpriteShadow()
+        {
+            // If the shadow is spawned.
+            if (_spriteShadow != null) 
+            {
+                // But currently spawned on this map.
+                if (_spriteShadow.Map != Map)
+                {
+                    // Spawn the shadow.
+                    _spriteShadow.Map = Map;
+                    Map.Objects.SpawnObject(_spriteShadow);
+                }
+            }
         }
 
         private void UpdateSwimming()
@@ -4180,6 +4218,9 @@ namespace ProjectZ.InGame.GameObjects
 
             if (_objFollower != null)
                 _objFollower.EntityPosition.Set(NextMapPositionStart.Value);
+
+            if (_spriteShadow != null)
+                _spriteShadow.EntityPosition.Set(NextMapPositionStart.Value);
         }
 
         public void Respawn()
@@ -4754,18 +4795,22 @@ namespace ProjectZ.InGame.GameObjects
             CurrentState = State.TeleportFallWait;
 
             var positionDistance = EntityPosition.Position - newPosition;
-            var fallPosition = new Vector3(newPosition.X, newPosition.Y, 128);
-            EntityPosition.Set(fallPosition);
+            var fallPositionV2 = new Vector2(newPosition.X, newPosition.Y);
+            var fallPositionV3 = new Vector3(newPosition.X, newPosition.Y, 128);
+            EntityPosition.Set(fallPositionV3);
 
             if (_objFollower != null)
             {
                 var itemGhost = Game1.GameManager.GetItem("ghost");
                 if (itemGhost != null && itemGhost.Count >= 0)
-                    _objFollower.EntityPosition.Set(new Vector2(fallPosition.X, fallPosition.Y));
+                    _objFollower.EntityPosition.Set(fallPositionV2);
                 else
-                    _objFollower.EntityPosition.Set(fallPosition);
+                    _objFollower.EntityPosition.Set(fallPositionV3);
             }
-
+            if (_spriteShadow != null)
+            {
+                _spriteShadow.EntityPosition.Set(fallPositionV2);
+}
             // only jump to the new position if it is a different teleporter at a different location
             if (positionDistance.Length() > 64)
                 MapManager.Camera.ForceUpdate(Game1.GameManager.MapManager.GetCameraTarget());

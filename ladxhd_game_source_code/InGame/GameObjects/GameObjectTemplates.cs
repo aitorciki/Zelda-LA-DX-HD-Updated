@@ -515,6 +515,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("hippo", new GameObjectTemplate(typeof(ObjHippo), new object[] { }));
             ObjectTemplates.Add("painting", new GameObjectTemplate(typeof(ObjPainting), new object[] { null, "painting", new Rectangle(0, 4, 16, 12), 1 }));
             ObjectTemplates.Add("trendy", new GameObjectTemplate(typeof(ObjTrendy), new object[] { }));
+            ObjectTemplates.Add("sprshadow", new GameObjectTemplate(typeof(ObjSpriteShadow), new object[] { }));
 
             ObjectTemplates.Add("BowWow", new GameObjectTemplate(typeof(ObjBowWow), new object[] { null }));
             ObjectTemplates.Add("npcMonkey", new GameObjectTemplate(typeof(ObjMonkey), new object[] { }));
