@@ -153,15 +153,16 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Draw(SpriteBatch spriteBatch)
         {
             // debug points
-            //for (int i = 0; i < _circleCenters.Length; i++)
-            //    spriteBatch.Draw(Resources.SprWhite, _circleCenters[i] - new Vector2(1, 1), new Rectangle(0, 0, 2, 2), Color.Red);
+            // for (int i = 0; i < _circleCenters.Length; i++)
+            //     spriteBatch.Draw(Resources.SprWhite, _circleCenters[i] - new Vector2(1, 1), new Rectangle(0, 0, 2, 2), Color.Red);
 
-            // blink
             var color = (Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime) ? _color0 : _color1;
+
+            if (GameSettings.EpilepsySafe)
+                color = _color1;
 
             for (int i = 0; i < _sprites.Length; i++)
             {
-                // zero vector => invisible
                 if (_positions[i].Position != Vector2.Zero)
                 {
                     _sprites[i].Color = color;
@@ -174,7 +175,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             for (int i = 0; i < _sprites.Length; i++)
             {
-                // zero vector => invisible
                 if (_positions[i].Position != Vector2.Zero)
                 {
                     var sizeMult = i == 0 ? 1 : 0.75f;// (4 - i) / 4f;
