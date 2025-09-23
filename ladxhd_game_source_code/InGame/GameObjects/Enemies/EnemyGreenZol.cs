@@ -1,16 +1,17 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
-    class EnemyGreenZol : GameObject
+    class EnemyGreenZol : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -25,6 +26,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = ObjLives.GreenZol;
         private int _jumpsLeft;
         private bool _pushable = false;
+
+        public bool IsVisible { get; private set; }
 
         public EnemyGreenZol() : base("green zol") { }
 
@@ -106,8 +109,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.IsActive = false;
                 _damageState.IsActive = false;
                 _damageField.IsActive = false;
-                _sprite.IsVisible = false;
+                _sprite.IsVisible = IsVisible = false;
             }
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         /// <summary>
@@ -117,7 +121,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _body.IgnoresZ = true;
             _animator.Play("idle");
-            _sprite.IsVisible = true;
+            _sprite.IsVisible = IsVisible = true;
             _aiComponent.ChangeState("spawnDelay");
         }
 
@@ -161,8 +165,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _jumpsLeft = Game1.RandomNumber.Next(3, 5);
             _animator.Play("spawn");
-            _sprite.IsVisible = true;
-
+            _sprite.IsVisible = IsVisible = true;
             _aiComponent.ChangeState("spawning");
         }
 
@@ -268,7 +271,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_animator.IsPlaying)
                 return;
 
-            _sprite.IsVisible = false;
+            _sprite.IsVisible = IsVisible = false;
             _aiComponent.ChangeState("hidden");
         }
 

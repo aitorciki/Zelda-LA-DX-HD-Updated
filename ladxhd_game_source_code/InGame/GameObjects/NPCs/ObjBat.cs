@@ -88,6 +88,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
 
             Game1.GameManager.SaveManager.SetString("npcBatThunder", "0");
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void OnKeyChange()

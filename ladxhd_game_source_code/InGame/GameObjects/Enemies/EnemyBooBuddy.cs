@@ -2,9 +2,10 @@ using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -95,6 +96,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
 
             _aiComponent.ChangeState("attacking");
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void KeyChanged()

@@ -246,8 +246,10 @@ namespace ProjectZ.InGame.Map
 
             foreach (var gameObject in _updateGameObject)
             {
-                if (gameObject.IsActive)
-                    (gameObject.Components[UpdateComponent.Index] as UpdateComponent)?.UpdateFunction();
+                var updateComponent = gameObject.Components[UpdateComponent.Index] as UpdateComponent;
+
+                if (updateComponent != null && gameObject.IsActive && updateComponent.IsActive)
+                    updateComponent.UpdateFunction?.Invoke();
             }
         }
 

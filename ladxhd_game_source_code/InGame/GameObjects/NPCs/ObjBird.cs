@@ -4,6 +4,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -84,6 +85,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         public void InitAttackMode()

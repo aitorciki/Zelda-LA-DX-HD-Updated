@@ -121,6 +121,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _currentDirectionOffset = AnimationHelper.DirectionOffset[_direction];
 
             SetFollowMode(_followMode);
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)

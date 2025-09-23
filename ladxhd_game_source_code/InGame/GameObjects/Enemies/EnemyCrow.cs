@@ -100,6 +100,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerTop));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void OnDeath(bool pieceofpower)

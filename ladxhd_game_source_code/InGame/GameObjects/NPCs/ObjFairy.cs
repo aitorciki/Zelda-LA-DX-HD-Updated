@@ -5,13 +5,14 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
-    internal class ObjFairy : GameObject
+    internal class ObjFairy : GameObject, IHasVisibility
     {
         private readonly CSprite _sprite;
         private readonly BodyComponent _body;
@@ -26,6 +27,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private const int DespawnStart = 4000;
         private const int HealingStart = 500;
         private const int HealingStepTime = 250;
+
+        public bool IsVisible { get; private set; }
 
         private Color _color;
 
@@ -77,6 +80,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("despawning", stateDespawning);
 
             _aiComponent.ChangeState("idle");
+            IsVisible = true;
 
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(animator, _sprite, new Vector2(-11, -25));
@@ -87,6 +91,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerTop, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void UpdatePosition()
@@ -108,9 +114,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _shadowComponent.Transparency = _spawnState;
 
             // delay the spawning a little bit
-            if (_hiddenStartTime + 10000 < Game1.TotalGameTime &&
+            if (_hiddenStartTime + 10000 < Game1.TotalGameTime && 
                 Game1.GameManager.CurrentHealth < Game1.GameManager.MaxHearts * 4)
+            {
                 _aiComponent.ChangeState("idle");
+                IsVisible = true;
+            }
         }
 
         private void UpdateIdle()
@@ -124,7 +133,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // hide when the player has full health
             if (_healMode && Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4)
+            {
+                IsVisible = false;
                 _aiComponent.ChangeState("hidden");
+            }
         }
 
         private void InitHealing()
@@ -189,6 +201,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_despawnCounter <= 0)
             {
                 _spawnState = 0;
+                IsVisible = false;
                 _aiComponent.ChangeState("hidden");
             }
 

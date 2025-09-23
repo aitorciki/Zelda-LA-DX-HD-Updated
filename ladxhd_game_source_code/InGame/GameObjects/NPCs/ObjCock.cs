@@ -127,6 +127,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             _updateCarry = true;
             _carriableCompnent.IsActive = false;
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         public override void SetPosition(Vector2 position)

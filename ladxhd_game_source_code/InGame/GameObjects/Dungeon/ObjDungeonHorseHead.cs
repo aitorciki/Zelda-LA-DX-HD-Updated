@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -68,6 +69,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             DecrementUpState();
             UpdateSprite();
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void IncrementUpState()

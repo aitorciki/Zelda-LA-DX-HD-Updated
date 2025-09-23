@@ -16,7 +16,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
-    public class ObjMarin : GameObjectFollower
+    public class ObjMarin : GameObjectFollower, IHasVisibility
     {
         private enum States { Idle, Sequence, Fade, Singing, SingingFinal, AnimalSinging, SingingDuo, PostDuo, SingingWalrus, FollowPlayer, Jumping, Saved, DungeonReturn };
         private States _currentState = States.Idle;
@@ -108,6 +108,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool _isMoving;
 
+        public bool IsVisible { get; internal set; }
+
         public ObjMarin() : base("marin") { }
 
         public ObjMarin(Map.Map map, int posX, int posY) : base(map)
@@ -144,6 +146,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         public override void Init()
@@ -177,16 +181,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (IsHidden)
             {
                 IsHidden = false;
-                base.IsActive = false;
+                base.IsActive = IsVisible = false;
             }
             else if (_wasHidden)
             {
-                base.IsActive = true;
+                base.IsActive = IsVisible = true;
             }
             _wasHidden = wasHidden;
 
             if (_dungeonLeaveSequence)
-                base.IsActive = true;
+                base.IsActive = IsVisible = true;
 
             if (IsActive)
                 Activate();
@@ -245,9 +249,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 var marinDungeonState = Game1.GameManager.SaveManager.GetString("maria_dungeon");
                 if (!string.IsNullOrEmpty(marinDungeonState) && marinDungeonState == "1")
                 {
-                    IsActive = false;
+                    IsActive = IsVisible = false;
                     return;
                 }
+                else
+                    IsVisible = true;
 
                 if (_dungeonLeaveSequence)
                 {
@@ -962,7 +968,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public void TakeLastWalk()
         {
-            IsActive = true;
+            IsActive = IsVisible = true;
             IsHidden = false;
             _currentState = States.FollowPlayer;
         }

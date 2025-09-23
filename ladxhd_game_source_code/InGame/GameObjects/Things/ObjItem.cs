@@ -11,7 +11,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
-    internal class ObjItem : GameObject
+    internal class ObjItem : GameObject, IHasVisibility
     {
         public bool IsJumping;
         public bool Collectable;
@@ -47,13 +47,15 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _isFlying;
         private bool _isSwimming;
-        private bool _isVisible = true;
+        public bool IsVisible { get; internal set; }
         private bool _despawn;
 
         public ObjItem() : base("item") { }
 
         public ObjItem(Map.Map map, int posX, int posY, string strType, string saveKey, string itemName, string locationBound, bool despawn = false) : base(map)
         {
+            IsVisible = true;
+
             if (!string.IsNullOrEmpty(saveKey))
             {
                 SaveKey = saveKey;
@@ -133,6 +135,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     EntityPosition.Z = 10;
                     Collectable = true;
                     _isFlying = true;
+                    new ObjSpriteShadow(this, Values.LayerPlayer, map);
                 }
                 // item is in the water
                 else if (strType == "s")
@@ -156,7 +159,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             stateDelay.Trigger.Add(_delayCountdown = new AiTriggerCountdown(0, null, () =>
             {
                 _aiComponent.ChangeState("idle");
-                _isVisible = true;
+                IsVisible = true;
                 if (!Map.Is2dMap)
                     _body.Velocity.Z = 1f;
                 else
@@ -258,7 +261,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void SetSpawnDelay(int delay)
         {
-            _isVisible = false;
+            IsVisible = false;
             _delayCountdown.StartTime = delay;
             _aiComponent.ChangeState("delay");
         }
@@ -334,7 +337,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (!_isVisible)
+            if (!IsVisible)
                 return;
 
             ItemDrawHelper.DrawItem(spriteBatch, _item,

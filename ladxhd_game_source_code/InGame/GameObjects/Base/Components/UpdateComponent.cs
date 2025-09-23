@@ -8,8 +8,10 @@
         public new static int Index = 12;
         public static int Mask = 0x01 << Index;
 
-        protected UpdateComponent() { }
+        public bool IsActive = true;
 
+        protected UpdateComponent() { }
+        
         public UpdateComponent(UpdateTemplate updateFunction)
         {
             UpdateFunction = updateFunction;

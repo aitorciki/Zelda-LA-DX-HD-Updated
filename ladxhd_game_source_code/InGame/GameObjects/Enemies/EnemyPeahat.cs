@@ -1,9 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -91,6 +92,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { DeepWaterOutline = true });
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)

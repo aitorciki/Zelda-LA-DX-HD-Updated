@@ -10,14 +10,16 @@ using ProjectZ.InGame.Map;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
-    internal class EnemyVireBat : GameObject
+    internal class EnemyVireBat : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly CSprite _sprite;
         private double _liveTime = 1250;
 
         private const float AttackSpeed = 2.0f;
-        private bool _isAttackable;
+        private bool _isAttackable;        
+
+        public bool IsVisible { get; internal set; }
 
         public EnemyVireBat(Map.Map map, Vector3 position, Vector2 direction) : base(map)
         {
@@ -25,6 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-8, -48, 16, 48);
+            IsVisible = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/vire bat");
             animator.Play("idle");
@@ -66,6 +69,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void InitAttack()

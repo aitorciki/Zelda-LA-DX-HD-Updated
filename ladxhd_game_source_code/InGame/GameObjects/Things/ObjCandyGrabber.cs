@@ -7,7 +7,6 @@ using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
-using ProjectZ.InGame.GameObjects.NPCs;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -75,6 +74,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, shadowComponent);
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, 0, -14, map);
         }
 
         private void Update()

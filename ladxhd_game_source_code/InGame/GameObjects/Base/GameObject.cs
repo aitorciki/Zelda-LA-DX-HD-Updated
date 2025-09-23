@@ -7,6 +7,12 @@ using System.Diagnostics;
 
 namespace ProjectZ.InGame.GameObjects.Base
 {
+    public interface IHasVisibility
+    {
+        // Implemented in some objects that have visibility states (Green Zol, Great Fairy).
+        bool IsVisible { get; }
+    }
+
     public class GameObject
     {
         // editor stuff

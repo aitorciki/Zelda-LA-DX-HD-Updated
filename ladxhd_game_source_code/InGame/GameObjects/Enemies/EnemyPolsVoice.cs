@@ -1,9 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -72,6 +73,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
             AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void OnSongPlayed(int songIndex)

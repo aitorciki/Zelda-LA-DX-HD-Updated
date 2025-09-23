@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -99,6 +100,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, _sprite));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void Update()

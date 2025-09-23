@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Dungeon;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -86,6 +87,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition));
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void UpdateSpawning()

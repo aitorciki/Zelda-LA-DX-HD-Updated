@@ -113,6 +113,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _batRight = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(0.75f, 0)) { IsActive = false };
             Map.Objects.SpawnObject(_batLeft);
             Map.Objects.SpawnObject(_batRight);
+
+            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         private void UpdateIdle()
@@ -161,9 +163,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(splashAnimator);
 
             // spawn the bats
-            _batLeft.IsActive = true;
+            _batLeft.IsActive = _batLeft.IsVisible = true;
             _batLeft.EntityPosition.Set(spawnPosition);
-            _batRight.IsActive = true;
+            _batRight.IsActive = _batRight.IsVisible = true;
             _batRight.EntityPosition.Set(spawnPosition);
 
             Map.Objects.DeleteObjects.Add(this);

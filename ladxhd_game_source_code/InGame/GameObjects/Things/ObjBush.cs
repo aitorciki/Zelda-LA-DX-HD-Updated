@@ -108,7 +108,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                         Resources.SprObjects, EntityPosition, sprite.ScaledRectangle,
                         new Vector2(sprite.Origin.X + 1.0f, sprite.Origin.Y - 1.0f), 1.0f, 0.0f));
                 else
+                {
                     AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+                    new ObjSpriteShadow(this, Values.LayerPlayer, map);
+                }
             }
         }
 

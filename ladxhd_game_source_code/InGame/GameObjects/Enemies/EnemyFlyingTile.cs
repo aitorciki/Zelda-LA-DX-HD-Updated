@@ -108,6 +108,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 else
                     Game1.GameManager.SaveManager.SetString(_strKey, "0");
             }
+            new ObjSpriteShadow(this, Values.LayerBottom, map);
         }
 
         public override void Init()
