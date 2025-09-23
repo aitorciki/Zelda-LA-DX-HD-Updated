@@ -3133,6 +3133,13 @@ namespace ProjectZ.InGame.GameObjects
 
                 if (Map.DungeonMode)
                 {
+                    // HACK: If the player used the warp above level 8 and entered the dungeon, the save position is set to the warp
+                    // rather than the dungeon 8 entrance. So if the last position is the warp, overwrite it with dungeon 8 entrance.
+                    if (MapManager.ObjLink.SavePosition == new Vector2(280,102) && MapManager.ObjLink.SaveMap == "overworld.map")
+                    {
+                        MapManager.ObjLink.SavePosition = new Vector2(576,1048);
+                        MapManager.ObjLink.SaveMap = "dungeon8.map";
+                    }
                     // respawn at the dungeon entry
                     MapManager.ObjLink.SetNextMapPosition(MapManager.ObjLink.SavePosition);
                     transitionSystem.AppendMapChange(MapManager.ObjLink.SaveMap, null, false, false, Color.White, true);
@@ -3142,12 +3149,9 @@ namespace ProjectZ.InGame.GameObjects
                     // append a map change
                     transitionSystem.AppendMapChange("overworld.map", "ocarina_entry", false, false, Color.White, true);
                 }
-
                 transitionSystem.StartTeleportTransition = true;
-
                 return;
             }
-
             CurrentState = State.Idle;
 
             var recInteraction = new RectangleF(EntityPosition.X - 64, EntityPosition.Y - 64 - 8, 128, 128);
@@ -4850,7 +4854,7 @@ namespace ProjectZ.InGame.GameObjects
                 _pickingUpSword = true;
                 Game1.GameManager.SetMusic(14, 2);
 
-                //Freeze the game. The "sword1Collected:0" event in "scripts.zScript" will unfreeze after a time.
+                // Freeze the game. The "sword1Collected:0" event in "scripts.zScript" will unfreeze after a time.
                 Game1.GameManager.SaveManager.SetString("freezeGame", "1");
             }
             else if (item.Name == "sword2")
