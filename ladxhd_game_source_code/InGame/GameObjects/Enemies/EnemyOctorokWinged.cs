@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _direction;
         private float _flyCounter;
         private int _lives = ObjLives.OctorokWinged;
+        private float _shotCooldown = 50;
 
         public EnemyOctorokWinged() : base("winged octorok") { }
 
@@ -106,6 +107,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("stand_" + _direction);
             _body.VelocityTarget = new Vector2(0, 0);
 
+            if (_shotCooldown > 0)
+                _shotCooldown -= Game1.DeltaTime;
+
             // shoot if the player is in the range and in the right direction
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             if (playerDirection.Length() < 80)
@@ -114,9 +118,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     playerDirection.Normalize();
                 var direction = AnimationHelper.GetDirection(playerDirection);
 
-                if (direction == _direction)
+                if (direction == _direction && _shotCooldown <= 0)
                 {
                     // shoot
+                    _shotCooldown = 50;
                     var shot = new EnemyOctorokShot(Map,
                         EntityPosition.X + _shotOffset[_direction].X,
                         EntityPosition.Y + _shotOffset[_direction].Y,
@@ -128,6 +133,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitWalking()
         {
+            if (_shotCooldown > 0)
+                _shotCooldown -= Game1.DeltaTime;
+
             // random new direction
             _direction = Game1.RandomNumber.Next(0, 4);
             _animator.Play("walk_" + _direction);
@@ -162,6 +170,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_body.IsGrounded && _body.Velocity.Z <= 0)
             {
+                _shotCooldown = 0;
                 _flyCounter = 0;
                 _aiComponent.ChangeState("idle");
                 _damageSwitch.Reset();
