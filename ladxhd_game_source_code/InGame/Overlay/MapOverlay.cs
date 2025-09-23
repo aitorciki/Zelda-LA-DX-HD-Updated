@@ -279,10 +279,16 @@ namespace ProjectZ.InGame.Overlay
                 newPosition.Y < Game1.GameManager.MapVisibility.GetLength(1) &&
                 (_fullMap || Game1.GameManager.MapVisibility[newPosition.X, newPosition.Y]))
             {
+                Game1.GameManager.PlaySoundEffect("D360-10-0A");
+
                 _selectionPosition = newPosition;
 
                 _animationSelection.Stop();
                 _animationSelection.Play("idle");
+            }
+            else
+            {
+                Game1.GameManager.PlaySoundEffect("D360-09-09");
             }
         }
 

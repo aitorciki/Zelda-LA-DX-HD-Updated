@@ -84,6 +84,8 @@ namespace ProjectZ.InGame.Overlay
         private bool _AutoScaleSet;
         private int _StoredScale = -2;
 
+        private bool _mapOpened;
+
         public OverlayManager()
         {
             _blurRectangle = (UiRectangle)Game1.EditorUi.AddElement(
@@ -387,6 +389,11 @@ namespace ProjectZ.InGame.Overlay
         public void ToggleInventoryMap()
         {
             _isChanging = true;
+
+            if (!_mapOpened)
+                Game1.GameManager.PlaySoundEffect("D360-19-13");
+
+            _mapOpened = !_mapOpened;
         }
 
         public bool UpdateCameraAndAnimation()
@@ -440,7 +447,10 @@ namespace ProjectZ.InGame.Overlay
             if (_currentMenuState == MenuState.None)
                 SetState(newState);
             else
+            {
+                _mapOpened = false;
                 CloseOverlay();
+            }
         }
 
         private void SetState(MenuState newState)
