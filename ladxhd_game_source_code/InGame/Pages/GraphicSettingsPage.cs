@@ -53,8 +53,7 @@ namespace ProjectZ.InGame.Pages
                 });
             contentLayout.AddElement(_toggleFullscreen);
 
-            // Button: Shadows
-            // TODO: Also disables shadows under the player sprite. At least this shadow should be drawn.
+            // Button: Dynamic Shadows
             var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                "settings_graphics_shadow", GameSettings.EnableShadows, newState => GameSettings.EnableShadows = newState);
              contentLayout.AddElement(shadowToggle);
