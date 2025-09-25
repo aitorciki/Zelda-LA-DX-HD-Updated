@@ -15,14 +15,12 @@ namespace ProjectZ.InGame.GameObjects.Things
     class ObjCandyGrabber : GameObject
     {
         private readonly Rectangle _recTop;
-        // why is this split into left and right?
+
         private readonly Rectangle _recGrabberLeft;
         private readonly Rectangle _recGrabberRight;
         private readonly Rectangle _recGrabberLeftClosed;
         private readonly Rectangle _recGrabberRightClosed;
         private readonly Rectangle _recLine;
-
-        //private readonly CPosition EntityPosition;
 
         private readonly List<GameObject> _collidingObjects = new List<GameObject>();
 
@@ -44,9 +42,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         enum State
         {
-            Idle, MoveX, IdleY, WaitY, MoveY, Grab0, Grab1, Grab2, Grab3, BackY, BackX, BackWait
+            Idle, MoveX, IdleY, WaitY, MoveY,
+            Grab0, Grab1, Grab2, Grab3,
+            BackY, BackX, BackWait, ResetClaw 
         }
-
         private State _currentState = State.Idle;
 
         public ObjCandyGrabber() : base("candy_grabber") { }
@@ -54,7 +53,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         public ObjCandyGrabber(Map.Map map, int posX, int posY) : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 38, 0);
-            //EntityPosition = new CPosition(EntityPosition.X, EntityPosition.Y, EntityPosition.Z);
 
             _recTop = Resources.SourceRectangle("candy_grabber_top");
             _recGrabberLeft = Resources.SourceRectangle("candy_grabber_left");
@@ -62,7 +60,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             _recGrabberLeftClosed = Resources.SourceRectangle("candy_grabber_left_closed");
             _recGrabberRightClosed = Resources.SourceRectangle("candy_grabber_right_closed");
             _recLine = Resources.SourceRectangle("candy_grabber_line");
-
             _vecStart = new Vector2(posX, posY + 38);
 
             var shadowSourceRectangle = new Rectangle(0, 0, 65, 66);
@@ -75,166 +72,189 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, shadowComponent);
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, 0, -14, map);
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, 0, -14, map);
         }
 
         private void Update()
         {
-            _blinkCount += Game1.DeltaTime;
-            if (_blinkCount > 500)
-                _blinkCount -= 500;
-
+            _blinkCount = (_blinkCount + Game1.DeltaTime) % 500;
             _grabberRectangle = new Box(EntityPosition.X + 6, EntityPosition.Y - 3, 0, 4, 4, 2);
 
-            switch (_currentState)
-            {
-                case State.Idle:
-                    if (ControlHandler.ButtonDown(CButtons.B))
-                        StartGrabbing();
-
-                    break;
-                case State.MoveX:
-                    if ((_marinGame || ControlHandler.ButtonDown(CButtons.B)) &&
-                        EntityPosition.X < _vecStart.X + 112)
-                    {
-                        Game1.GameManager.PlaySoundEffect("D378-32-20", false);
-
-                        EntityPosition.Move(new Vector2(MoveSpeed, 0));
-
-                        if (EntityPosition.X > _vecStart.X + 112)
-                            EntityPosition.Set(new Vector2(_vecStart.X + 112, EntityPosition.Y));
-                    }
-                    else
-                    {
-                        Game1.GameManager.StopSoundEffect("D378-32-20");
-                        Game1.GameManager.SaveManager.SetString("trendy_button_1", "0");
-                        Game1.GameManager.SaveManager.SetString("trendy_button_2", "1");
-                        _currentState = _marinGame ? State.WaitY : State.IdleY;
-                    }
-
-                    break;
-                case State.IdleY:
-                    if (ControlHandler.ButtonDown(CButtons.A))
-                        _currentState = State.MoveY;
-
-                    break;
-                case State.WaitY:
-                    _waitCounter += Game1.DeltaTime;
-                    if (_waitCounter > 1000)
-                        _currentState = State.MoveY;
-
-                    break;
-                case State.MoveY:
-                    if ((_marinGame || ControlHandler.ButtonDown(CButtons.A)) &&
-                        EntityPosition.Y < _vecStart.Y + 64)
-                    {
-                        Game1.GameManager.PlaySoundEffect("D378-32-20", false);
-
-                        EntityPosition.Move(new Vector2(0, MoveSpeed));
-
-                        if (EntityPosition.Y > _vecStart.Y + 64)
-                            EntityPosition.Set(new Vector2(EntityPosition.X, _vecStart.Y + 64));
-                    }
-                    else
-                    {
-                        Game1.GameManager.StopSoundEffect("D378-32-20");
-                        Game1.GameManager.SaveManager.SetString("trendy_button_2", "0");
-
-                        _waitCounter = 0;
-                        _currentState = State.Grab0;
-                    }
-
-                    break;
-                case State.Grab0:
-                    _waitCounter += Game1.DeltaTime;
-
-                    if (_waitCounter > 1200)
-                    {
-                        _waitCounter = 0;
-                        // open the grabber
-                        _grab2Count = 0;
-                        _currentState = State.Grab1;
-                    }
-
-                    break;
-                case State.Grab1:
-                    _waitCounter += Game1.DeltaTime;
-
-                    if (_waitCounter > 1200)
-                    {
-                        _currentState = State.Grab2;
-                    }
-
-                    break;
-                case State.Grab2:
-                    _grabState += MoveSpeedGrab * Game1.TimeMultiplier;
-
-                    if (_grabState > 15)
-                    {
-                        _grabState = 15;
-                        _currentState = State.Grab3;
-                    }
-
-                    break;
-                case State.Grab3:
-                    _grab2Count += Game1.DeltaTime;
-
-                    if (_grab2Count > 500)
-                        _grabState = 16;
-
-                    if (_grab2Count > 2000)
-                        Grab();
-
-                    if (_grab2Count > 3000)
-                        _currentState = State.BackY;
-
-                    break;
-                case State.BackY:
-                    _grabState -= MoveSpeedGrab * Game1.TimeMultiplier;
-                    if (_grabState < 0)
-                    {
-                        _grabState = 0;
-                        _currentState = State.BackX;
-                    }
-                    break;
-                case State.BackX:
-                    Game1.GameManager.PlaySoundEffect("D378-32-20", false);
-
-                    var vecBack = _vecStart - EntityPosition.Position;
-                    vecBack.Normalize();
-
-                    EntityPosition.Move(vecBack * MoveSpeedBack);
-
-                    if (EntityPosition.X <= _vecStart.X && EntityPosition.Y <= _vecStart.Y)
-                    {
-                        Game1.GameManager.StopSoundEffect("D378-32-20");
-
-                        _waitCounter = 0;
-                        _currentState = State.BackWait;
-
-                        EntityPosition.Set(_vecStart);
-
-                    }
-                    break;
-                case State.BackWait:
-                    _waitCounter += Game1.DeltaTime;
-
-                    if (_waitCounter > 1500)
-                    {
-                        _grab2Count = 0;
-                        _currentState = State.Idle;
-                        // release the item
-                        EndGrabbing();
-                    }
-
-                    break;
-            }
+            _currentState = _currentState switch
+            { 
+                State.Idle      => HandleIdle(),
+                State.MoveX     => HandleMoveX(),
+                State.IdleY     => HandleIdleY(),
+                State.WaitY     => HandleWaitY(),
+                State.MoveY     => HandleMoveY(),
+                State.Grab0     => HandleGrab0(),
+                State.Grab1     => HandleGrab1(),
+                State.Grab2     => HandleGrab2(),
+                State.Grab3     => HandleGrab3(),
+                State.BackY     => HandleBackY(),
+                State.BackX     => HandleBackX(),
+                State.BackWait  => HandleBackWait(),
+                State.ResetClaw => HandleResetClaw(),
+                _               => _currentState
+            };
 
             if (_currentState != State.Idle)
                 MapManager.ObjLink.FreezePlayer();
 
-            // update the position of the grabbed body
             UpdateItemPos();
+
+            State HandleIdle()
+            {
+                if (ControlHandler.ButtonDown(CButtons.B))
+                    StartGrabbing();
+                return _currentState;
+            }
+
+            State HandleMoveX()
+            {
+                if ((_marinGame || ControlHandler.ButtonDown(CButtons.B)) &&
+                    EntityPosition.X < _vecStart.X + 112)
+                {
+                    Game1.GameManager.PlaySoundEffect("D378-32-20", false);
+                    EntityPosition.Move(new Vector2(MoveSpeed, 0));
+
+                    if (EntityPosition.X > _vecStart.X + 112)
+                        EntityPosition.Set(new Vector2(_vecStart.X + 112, EntityPosition.Y));
+
+                    return _currentState;
+                }
+                Game1.GameManager.StopSoundEffect("D378-32-20");
+                Game1.GameManager.SaveManager.SetString("trendy_button_1", "0");
+                Game1.GameManager.SaveManager.SetString("trendy_button_2", "1");
+                return _marinGame ? State.WaitY : State.IdleY;
+            }
+
+            State HandleIdleY()
+            {
+                return ControlHandler.ButtonDown(CButtons.A) ? State.MoveY : _currentState;
+            }
+
+            State HandleWaitY()
+            {
+                _waitCounter += Game1.DeltaTime;
+                return _waitCounter > 1000 ? State.MoveY : _currentState;
+            }
+
+            State HandleMoveY()
+            {
+                if ((_marinGame || ControlHandler.ButtonDown(CButtons.A)) &&
+                    EntityPosition.Y < _vecStart.Y + 64)
+                {
+                    Game1.GameManager.PlaySoundEffect("D378-32-20", false);
+                    EntityPosition.Move(new Vector2(0, MoveSpeed));
+
+                    if (EntityPosition.Y > _vecStart.Y + 64)
+                        EntityPosition.Set(new Vector2(EntityPosition.X, _vecStart.Y + 64));
+
+                    return _currentState;
+                }
+
+                Game1.GameManager.StopSoundEffect("D378-32-20");
+                Game1.GameManager.SaveManager.SetString("trendy_button_2", "0");
+                _waitCounter = 0;
+                return State.Grab0;
+            }
+
+            State HandleGrab0()
+            {
+                _waitCounter += Game1.DeltaTime;
+                if (_waitCounter > 1200)
+                {
+                    _waitCounter = 0;
+                    _grab2Count = 0; // open grabber
+                    return State.Grab1;
+                }
+                return _currentState;
+            }
+
+            State HandleGrab1()
+            {
+                _waitCounter += Game1.DeltaTime;
+                return _waitCounter > 1200 ? State.Grab2 : _currentState;
+            }
+
+            State HandleGrab2()
+            {
+                _grabState += MoveSpeedGrab * Game1.TimeMultiplier;
+                if (_grabState > 15)
+                {
+                    _grabState = 15;
+                    return State.Grab3;
+                }
+                return _currentState;
+            }
+
+            State HandleGrab3()
+            {
+                _grab2Count += Game1.DeltaTime;
+
+                if (_grab2Count > 500)
+                    _grabState = 16;
+                if (_grab2Count > 2000)
+                    Grab();
+                if (_grab2Count > 3000)
+                    return State.BackY;
+                return _currentState;
+            }
+
+            State HandleBackY()
+            {
+                _grabState -= MoveSpeedGrab * Game1.TimeMultiplier;
+                if (_grabState < 0)
+                {
+                    _grabState = 0;
+                    return State.BackX;
+                }
+                return _currentState;
+            }
+
+            State HandleBackX()
+            {
+                Game1.GameManager.PlaySoundEffect("D378-32-20", false);
+
+                var vecBack = _vecStart - EntityPosition.Position;
+                vecBack.Normalize();
+                EntityPosition.Move(vecBack * MoveSpeedBack);
+
+                if (EntityPosition.X <= _vecStart.X && EntityPosition.Y <= _vecStart.Y)
+                {
+                    Game1.GameManager.StopSoundEffect("D378-32-20");
+                    _waitCounter = 0;
+                    EntityPosition.Set(_vecStart);
+                    return State.BackWait;
+                }
+                return _currentState;
+            }
+
+            State HandleBackWait()
+            {
+                _waitCounter += Game1.DeltaTime;
+                if (_waitCounter > 1500)
+                {
+                    _grab2Count = 0;
+                    EndGrabbing();
+                    _waitCounter = 0;
+                    return State.ResetClaw;
+                }
+                return _currentState;
+            }
+
+            State HandleResetClaw()
+            {
+                _waitCounter += Game1.DeltaTime;
+                if (_waitCounter > 1500)
+                {
+                    ResetClaw();
+                    _waitCounter = 0;
+                    return State.Idle;
+                }
+                return _currentState;
+            }
         }
 
         private void OnKeyChange()
@@ -251,7 +271,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void StartGrabbing()
         {
-            // allowed to play and standing on the right spot?
             if (!Game1.GameManager.SaveManager.GetBool("trendy_ready", false))
                 return;
 
@@ -265,7 +284,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Grab()
         {
-            // already grabbed an item
             if (_grabbedBody != null)
                 return;
 
@@ -273,7 +291,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.GetComponentList(_collidingObjects,
                 (int)_grabberRectangle.Left, (int)_grabberRectangle.Back, (int)_grabberRectangle.Width, (int)_grabberRectangle.Height, BodyComponent.Mask);
 
-            // grab the first body the grabber is colliding with
             foreach (var gameObject in _collidingObjects)
             {
                 var objBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
@@ -296,7 +313,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateItemPos()
         {
-            // update the position of the grabbed object
             _grabbedBody?.Position.Set(new Vector3(
                 EntityPosition.X + 8, EntityPosition.Y + 0.001f, 13 - _grabState));
         }
@@ -306,41 +322,31 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_grabbedBody == null)
                 return;
 
-            //_grabbedBody.Height = 0;
             _grabbedBody.AdditionalMovementVT = new Vector2(0, 1 / 6.0f);
             _grabbedBody.IgnoresZ = false;
             _grabbedBody = null;
         }
 
+        private void ResetClaw()
+        {
+            _grabState = 0;
+            _grab2Count = float.MaxValue;
+        }
+
         private void Draw(SpriteBatch spriteBatch)
         {
-            // draw the top
             spriteBatch.Draw(Resources.SprObjects, new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 38),
                 new Rectangle(_recTop.X, _recTop.Y + (_blinkCount >= 250 ? _recTop.Height : 0), _recTop.Width, _recTop.Height), Color.White);
-
-            // line
             spriteBatch.Draw(Resources.SprObjects, new Vector2(
                 EntityPosition.X + 6, EntityPosition.Y - 38 + _recTop.Height),
                 new Rectangle(_recLine.X, _recLine.Y, _recLine.Width, (int)Math.Ceiling(_grabState)), Color.White);
-
-            // left claw
             spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                    EntityPosition.X, EntityPosition.Y - 38 + _recTop.Height + _grabState),
+                EntityPosition.X, EntityPosition.Y - 38 + _recTop.Height + _grabState),
                 _grab2Count > 1000 ? _recGrabberLeftClosed : _recGrabberLeft, Color.White);
-
-            // right claw
             spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                    EntityPosition.X + _recGrabberLeft.Width,
-                    EntityPosition.Y - 38 + _recTop.Height + _grabState),
+                EntityPosition.X + _recGrabberLeft.Width,
+                EntityPosition.Y - 38 + _recTop.Height + _grabState),
                 _grab2Count > 2000 ? _recGrabberRightClosed : _recGrabberRight, Color.White);
-
-            // draw the collision rectangle
-            if (Game1.DebugMode)
-            {
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    (int)(_grabberRectangle.X), (int)(_grabberRectangle.Y),
-                    (int)(_grabberRectangle.Width), (int)(_grabberRectangle.Height)), Color.SaddleBrown * 0.5f);
-            }
         }
     }
 }
