@@ -12,7 +12,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
-    class BossGenie : GameObject
+    class BossGenie : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -45,8 +45,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _fireballCount;
         private int _fireballIndex;
 
-        private bool _isVisible;
-
         private const int RotationOffsetY = 38;
         private float _currentRotation;
         private float _rotationDistance;
@@ -56,6 +54,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float _spawnCounter;
         private bool _drawSmoke;
         private bool _attackMode;
+
+        public bool IsVisible { get; private set; }
 
         public BossGenie(Map.Map map, string saveKey, Vector3 position, BossGenieBottle objBottle) : base(map)
         {
@@ -124,6 +124,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 18, ShadowHeight = 6 });
+
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         public void Spawn(Vector3 position)
@@ -184,7 +186,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // despawn the genie
             if (_smokeTop.CurrentFrameIndex > 0)
-                _isVisible = false;
+                IsVisible = false;
         }
 
         private void DespawnEnd()
@@ -218,7 +220,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // spawn the genie
             if (_smokeTop.CurrentFrameIndex == 6)
-                _isVisible = true;
+                IsVisible = true;
         }
 
         private void SpawnEnd()
@@ -274,7 +276,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _shadowComponent.IsActive = false;
             _damageField.IsActive = false;
-            _hitComponent.IsActive = false;
             _body.VelocityTarget = Vector2.Zero;
             var centerOffset = new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - RotationOffsetY) - _roomCenter;
             _currentRotation = MathF.Atan2(centerOffset.Y, centerOffset.X);
@@ -395,7 +396,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            if (_isVisible)
+            if (IsVisible)
             {
                 var color = Color.White;
 
