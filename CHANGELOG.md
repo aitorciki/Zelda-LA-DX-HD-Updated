@@ -1,5 +1,13 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.1**
+### **Emergency & Sprite Shadows Update**
+  * Implement many more sprite shadows. At this point it should be nearly feature complete aside from some objects.
+  * Rename the Graphics Settings "Shadows" option to "Dynamic Shadows" since disabling still creates sprite shadows.
+  * Fix the level 2 boss Genie from going invincible after the first hit after breaking his bottle.
+  * Fix the level 7 boss Evil Eagle intro to wait until the top of the tower is reached.
+  * Fix the Trendy Game crane to close back up after dropping an item off.
+  
 ## **v1.3.0**
 ### **The "Even MORE Features and Fixes" Update**
   * Implement free camera which can be moved around with the right stick. Press in the right stick to recenter on Link.
