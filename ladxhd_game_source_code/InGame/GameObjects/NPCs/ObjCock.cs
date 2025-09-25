@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -11,7 +12,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
-    public class ObjCock : GameObjectFollower
+    public class ObjCock : GameObjectFollower, IHasVisibility
     {
         private ObjCockParticle _objParticle;
 
@@ -35,15 +36,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _slowReturn;
         private bool _freezePlayer;
         private bool _isActive = true;
-        private Map.Map _map;
 
         private const int FollowDistance = 18;
 
+        private ObjSpriteShadow _spriteShadow;
+
+        public bool IsVisible { get; internal set; }
+
         public ObjCock() : base("cock") { }
+
+        private Map.Map _map;
 
         public ObjCock(Map.Map map, int posX, int posY, string saveKey) : base(map)
         {
             _map = map;
+
+            IsVisible = false;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -127,8 +135,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             _updateCarry = true;
             _carriableCompnent.IsActive = false;
-
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
         }
 
         public override void SetPosition(Vector2 position)
@@ -138,6 +144,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void SetActive(bool isActive)
         {
+            IsVisible = isActive;
             _isActive = isActive;
             _drawComponent.IsActive = isActive;
             _shadowCompnent.IsActive = isActive;
@@ -160,6 +167,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (_freezePlayer)
                 MapManager.ObjLink.FreezePlayer();
+
+            if (_spriteShadow == null || _map != Map)
+            {
+                if (_aiComponent.States.Keys.ToList().IndexOf(_aiComponent.CurrentStateId) > 5)
+                {
+                    IsVisible = _isActive;
+                    _map = Map;
+                    _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
+                }
+            }
         }
 
         private void ToActiveState()

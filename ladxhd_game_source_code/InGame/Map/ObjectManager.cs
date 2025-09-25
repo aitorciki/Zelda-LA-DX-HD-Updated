@@ -59,7 +59,6 @@ namespace ProjectZ.InGame.Map
         private readonly List<GameObject> _pushableObjectList = new List<GameObject>();
         private readonly List<GameObject> _interactableObjectList = new List<GameObject>();
 
-        private readonly List<GameObject> db_hittableList = new List<GameObject>();
         private readonly List<GameObject> db_damageList = new List<GameObject>();
         private readonly List<GameObject> db_bodyList = new List<GameObject>();
         private readonly List<GameObject> db_gameObjectList = new List<GameObject>();
@@ -247,7 +246,6 @@ namespace ProjectZ.InGame.Map
             foreach (var gameObject in _updateGameObject)
             {
                 var updateComponent = gameObject.Components[UpdateComponent.Index] as UpdateComponent;
-
                 if (updateComponent != null && gameObject.IsActive && updateComponent.IsActive)
                     updateComponent.UpdateFunction?.Invoke();
             }

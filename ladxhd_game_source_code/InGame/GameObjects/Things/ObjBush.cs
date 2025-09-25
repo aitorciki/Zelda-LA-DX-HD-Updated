@@ -110,7 +110,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 else
                 {
                     AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
-                    new ObjSpriteShadow(this, Values.LayerPlayer, map);
+                    new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
                 }
             }
         }

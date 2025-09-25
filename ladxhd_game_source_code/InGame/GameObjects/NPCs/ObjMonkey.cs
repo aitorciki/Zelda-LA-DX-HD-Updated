@@ -132,7 +132,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private void KeyChanged()

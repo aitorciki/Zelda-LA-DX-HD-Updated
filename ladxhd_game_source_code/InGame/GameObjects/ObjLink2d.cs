@@ -86,6 +86,11 @@ namespace ProjectZ.InGame.GameObjects
 
         private void Update2D()
         {
+            if (_spriteShadow != null)
+            {
+                Map.Objects.RemoveObject(_spriteShadow);
+                _spriteShadow = null;
+            }
             var initState = CurrentState;
 
             var box = Box.Empty;

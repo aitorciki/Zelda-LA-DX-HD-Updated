@@ -11,7 +11,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
-    internal class EnemyGhiniGiant : GameObject
+    internal class EnemyGhiniGiant : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -33,10 +33,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _flyHeight = 7;
         private int _lives = ObjLives.GhiniGiant;
 
+        public bool IsVisible { get; private set; }
+
         public EnemyGhiniGiant() : base("giant ghini") { }
 
         public EnemyGhiniGiant(Map.Map map, int posX, int posY, bool spawnAnimation) : base(map)
         {
+            IsVisible = false;
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16 + 7, spawnAnimation ? 0 : _flyHeight);
@@ -78,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 24, ShadowHeight = 6 });
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void UpdateSpawning()
@@ -95,6 +98,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageState.IsActive = true;
                 _damageField.IsActive = true;
             }
+            if (_transparency > 0.5f)
+                IsVisible = true;
         }
 
         private void UpdateFlying()

@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             DecrementUpState();
             UpdateSprite();
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private void IncrementUpState()

@@ -122,7 +122,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             SetFollowMode(_followMode);
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)

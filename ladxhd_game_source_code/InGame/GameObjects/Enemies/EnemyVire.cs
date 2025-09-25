@@ -114,7 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(_batLeft);
             Map.Objects.SpawnObject(_batRight);
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private void UpdateIdle()

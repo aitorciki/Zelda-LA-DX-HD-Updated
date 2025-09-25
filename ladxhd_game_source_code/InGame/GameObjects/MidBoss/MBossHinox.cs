@@ -115,6 +115,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
+
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void UpdateIdle()

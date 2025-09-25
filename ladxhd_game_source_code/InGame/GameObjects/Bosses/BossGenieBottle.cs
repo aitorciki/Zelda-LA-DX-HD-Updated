@@ -127,6 +127,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(pushableBox, Values.CollisionTypes.Enemy) { IsActive = false });
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 6 });
+
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private void UpdateIdle()

@@ -1,16 +1,17 @@
+using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
-    internal class ObjOwl : GameObject
+    internal class ObjOwl : GameObject, IHasVisibility
     {
         private readonly CSprite _sprite;
         private readonly BodyDrawComponent _drawComponent;
@@ -48,18 +49,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _sitMode;
         private int _mode; // 0: leave after talking; 1: stay after talking; 2: spawn from the top
 
+        private ObjSpriteShadow _spriteShadow;
+
+        public bool IsVisible { get; internal set; }
+
         public ObjOwl() : base("owl") { }
 
         public ObjOwl(Map.Map map, int posX, int posY, string keyCondition, Rectangle triggerRectangle, bool hoveMode, string strKey, int mode) : base(map)
         {
+            IsVisible = false;
+
             _strKey = strKey;
             _keyCondition = keyCondition;
             _hoverMode = hoveMode;
             _mode = mode;
-
-            // always gets updated
-            //EntityPosition = new CPosition(posX, posY, 0);
-            //EntitySize = new Rectangle(-16, -32, 48, 64);
 
             originX = posX + 8;
             originY = posY + 16;
@@ -76,7 +79,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
 
-            //var stateDebug = new AiState();
             var stateWait = new AiState(UpdateWait);
             var stateEnter = new AiState(UpdateEnter) { Init = InitEnter };
             var stateTalk = new AiState(UpdateTalk) { Init = InitTalking };
@@ -85,7 +87,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var stateSit = new AiState(UpdateSit) { };
 
             _aiComponent = new AiComponent();
-            //_aiComponent.States.Add("debug", stateDebug);
             _aiComponent.States.Add("wait", stateWait);
             _aiComponent.States.Add("enter", stateEnter);
             _aiComponent.States.Add("talk", stateTalk);
@@ -101,6 +102,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, _drawShadowComponent = new BodyDrawShadowComponent(body, _sprite) { OffsetY = 0 });
             var enterRectangle = new Rectangle(posX + 8 + triggerRectangle.X, posY + 8 + triggerRectangle.Y, triggerRectangle.Width, triggerRectangle.Height);
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(enterRectangle, OnCollision));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(UpdateSpriteShadow));
 
             _sprite.Color = Color.Transparent;
             _drawComponent.IsActive = false;
@@ -140,6 +142,18 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _triggerCollided = true;
         }
 
+        private void UpdateSpriteShadow()
+        {
+            if (_spriteShadow == null)
+                _spriteShadow = new ObjSpriteShadow("sprshadowm", Values.LayerPlayer, _owlPosition.Position.X-8, _owlPosition.Position.Y-14, Map);
+
+            if (!GameSettings.EnableShadows && _spriteShadow != null)
+            {
+                _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows && IsVisible);
+                _spriteShadow.EntityPosition.Set(new CPosition(_owlPosition.Position.X-8, _owlPosition.Position.Y-14, 0));
+            }
+        }
+
         private void UpdateSit()
         {
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - _owlPosition.Position;
@@ -161,6 +175,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void InitEnter()
         {
+            IsVisible = true;
+
             if (_wasTriggered)
                 return;
 
@@ -326,7 +342,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("fly");
                 _animator.SpeedMultiplier = 1.5f;
             }
-
             // stop playing music
             Game1.GameManager.SetMusic(-1, 2);
 
@@ -342,7 +357,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _flySoundCount = 175;
                 Game1.GameManager.PlaySoundEffect("D378-05-05");
             }
-
             _airCount += Game1.DeltaTime;
 
             if (_airCount > _enterTime)
@@ -358,10 +372,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 Map.Objects.DeleteObjects.Add(this);
             }
-
             // fade out
             if (time >= 0.9f)
+            {
+                IsVisible = false;
+                _spriteShadow.Destroy();
                 _sprite.Color = Color.White * ((1 - time) / 0.1f);
+            }
             else
                 _sprite.Color = Color.White;
         }

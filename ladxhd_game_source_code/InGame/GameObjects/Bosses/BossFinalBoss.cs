@@ -12,7 +12,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
-    class BossFinalBoss : GameObject
+    class BossFinalBoss : GameObject, IHasVisibility
     {
         public readonly CSprite Sprite;
 
@@ -62,6 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private const int GiantZolDamageTime = 2200;
         private const int RotateTime = 2500;
         private bool _giantZolForm;
+        private float _shadowTimer;
 
         // State: Agahnim's Shadow
         private bool _agahnimInit = true;
@@ -132,10 +133,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool _pushRepel;
 
+        private ObjSpriteShadow _spriteShadow;
+        public bool IsVisible { get; private set; }
+
         public BossFinalBoss() : base("nightmare_head") { }
 
         public BossFinalBoss(Map.Map map, int posX, int posY, string saveKey) : base(map)
         {
+            IsVisible = true;
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
@@ -370,41 +375,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             //DebugMan();
         }
 
-        #region Debug
-
-        private void DebugGiantZolEnd()
-        {
-            _giantZolLives = 1;
-            _aiComponent.ChangeState("slimeHidden");
-        }
-
-        private void DebugMan()
-        {
-            _agahnimLives = 2;
-            _aiComponent.ChangeState("slimeExplode");
-        }
-
-        private void DebugMoldrom()
-        {
-            _moveCounter = 1;
-            _moldormLives = 1;
-            _aiComponent.ChangeState("moldormSpawn");
-        }
-
-        private void DebugGanon()
-        {
-            _ganonLives = 1;
-            _aiComponent.ChangeState("ganonSpawn");
-        }
-
-        private void DebugLanmola()
-        {
-            _dethILives = 4;
-            _aiComponent.ChangeState("face");
-        }
-
-        #endregion
-
         #region State: Init
 
         private void InitIdle()
@@ -513,14 +483,24 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _hittableComponent.IsActive = true;
 
             _drawComponent.Layer = Values.LayerPlayer;
-
             _animator.Play("slime_spawn");
+
+            if (_spriteShadow == null)
+                _spriteShadow = new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, -8, -7, Map);
         }
 
         private void UpdateGiantZolSpawn()
         {
             if (!_animator.IsPlaying)
                 _aiComponent.ChangeState("slimeJump");
+
+            _shadowTimer += Game1.DeltaTime;
+
+            if (_shadowTimer > 400)
+            {
+                IsVisible = true;
+                _shadowTimer = 0;
+            }
         }
 
         private void InitGiantZolJump()
@@ -569,6 +549,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _animator.Play("slime_despawn");
 
             EntityPosition.Offset(new Vector2(0, -2));
+            IsVisible = false;
         }
 
         private void UpdateGiantZolDespawn()
@@ -610,13 +591,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _giantZolForm = false;
 
             if (_giantZolLives <= 0)
+            {
                 _aiComponent.ChangeState("slimeExplode");
+                _spriteShadow.Destroy();
+            }
             else
                 _aiComponent.ChangeState("slimeDespawn");
         }
 
         private void InitGiantZolHideExplode()
         {
+            IsVisible = false;
             _pushRepel = false;
             _hideHead = true;
             _bodyShadow.IsActive = false;
@@ -628,6 +613,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitGiantZolExplode()
         {
+
             EntityPosition.Offset(new Vector2(0, -2));
             Game1.GameManager.PlaySoundEffect("D370-33-21");
 

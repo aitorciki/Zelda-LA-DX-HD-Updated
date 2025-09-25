@@ -1,14 +1,15 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.Base;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
@@ -117,6 +118,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _ball = new MBossSmasherBall(map, new Vector2(EntityPosition.X + 56, EntityPosition.Y + 16));
             map.Objects.SpawnObject(_ball);
+
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void Update()

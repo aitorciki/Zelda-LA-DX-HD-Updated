@@ -4,14 +4,14 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
-    internal class MBossDesertLanmolaHead : GameObject
+    internal class MBossDesertLanmolaHead : GameObject, IHasVisibility
     {
-        public bool IsVisible = true;
         public readonly CSprite Sprite;
 
         private readonly MBossDesertLanmola _owner;
@@ -21,8 +21,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private int _direction;
 
+        public bool IsVisible { get; internal set; }
+
         public MBossDesertLanmolaHead(Map.Map map, MBossDesertLanmola owner, Vector2 position) : base(map)
         {
+            IsVisible = true;
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-8, -48, 16, 48);
 
@@ -41,6 +44,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
+
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)

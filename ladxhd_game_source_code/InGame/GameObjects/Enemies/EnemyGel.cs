@@ -1,16 +1,17 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
-    internal class EnemyGel : GameObject
+    internal class EnemyGel : GameObject, IHasVisibility
     {
         private readonly Animator _animator;
         private readonly AiComponent _ai;
@@ -26,10 +27,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _timerOffset;
         private int _lives = ObjLives.Gel;
 
+        public bool IsVisible { get; private set; }
+
         public EnemyGel() : base("gel") { }
 
         public EnemyGel(Map.Map map, int posX, int posY) : base(map)
         {
+            IsVisible = false;
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
@@ -91,6 +95,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, _animatorComponent);
             AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+
+            new ObjSpriteShadow("sprshadows", this, Values.LayerPlayer, map);
         }
 
         public void InitSpawn()
@@ -100,6 +106,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
+            IsVisible = IsActive;
+
             _body.VelocityTarget = Vector2.Zero;
             _animator.Play(_dir.ToString());
         }

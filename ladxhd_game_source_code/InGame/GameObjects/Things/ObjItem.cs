@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -49,6 +50,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isSwimming;
         public bool IsVisible { get; internal set; }
         private bool _despawn;
+
+        string[] shadowListSmall  = { "heart", "ruby" };
+        string[] shadowListMedium = { "pieceOfPower", "guardianAcorn" };
 
         public ObjItem() : base("item") { }
 
@@ -127,6 +131,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                     // needed because at the first frame the value is still true
                     _body.IsGrounded = false;
                     _body.RestAdditionalMovement = true;
+
+                    new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
                 }
                 // fly
                 else if (strType == "w")
@@ -135,18 +141,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                     EntityPosition.Z = 10;
                     Collectable = true;
                     _isFlying = true;
-                    new ObjSpriteShadow(this, Values.LayerPlayer, map);
+                    new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
                 }
                 // item is in the water
                 else if (strType == "s")
-                {
                     _isSwimming = true;
-                }
             }
             else
-            {
                 Collectable = true;
-            }
 
             var stateIdle = new AiState(UpdateIdle);
             // despawn after 15sec, but only if it was jumping or fall from the sky
@@ -166,7 +168,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                     _body.Velocity.Y = -1f;
                 EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 0));
             }));
-
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("boomerang", new AiState());
@@ -208,7 +209,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 AddComponent(DrawComponent.Index, _bodyDrawComponent);
                 AddComponent(DrawShadowComponent.Index, _shadowComponent);
             }
-
             if (_itemName == "shellPresent")
             {
                 _shadowComponent.IsActive = false;
@@ -219,11 +219,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _collectionRectangle.OffsetSize.Height = 8;
                 _collectionRectangle.UpdateRectangle(EntityPosition);
             }
-
             if (_itemName == "sword2")
-            {
                 _bodyDrawComponent.Layer = Values.LayerBottom;
-            }
+
+            if (shadowListSmall.Contains(itemName))
+                new ObjSpriteShadow("sprshadows", this, Values.LayerPlayer, map);
+            if (shadowListMedium.Contains(itemName))
+                new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         public override void Init()

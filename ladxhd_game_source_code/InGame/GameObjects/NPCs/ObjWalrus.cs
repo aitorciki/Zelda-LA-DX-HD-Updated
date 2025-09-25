@@ -32,6 +32,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isFalling;
         private bool _splashed;
 
+        ObjSpriteShadow _spriteShadow;
+
         public ObjWalrus() : base("walrus") { }
 
         public ObjWalrus(Map.Map map, int posX, int posY, string strDespawnKey) : base(map)
@@ -86,6 +88,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+
+            _spriteShadow = new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void KeyChanged()
@@ -231,6 +235,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 _splashed = true;
                 ((BodyDrawShadowComponent)Components[BodyDrawShadowComponent.Index]).IsActive = false;
+                _spriteShadow.Destroy();
             }
         }
 

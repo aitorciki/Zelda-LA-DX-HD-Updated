@@ -51,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(cSprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, cSprite) { ShadowWidth = 12, ShadowHeight = 6 });
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         public void Destroy()

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -152,10 +151,6 @@ namespace ProjectZ.InGame.SaveLoad
                         strOutput += ((float) parameter[i]).ToString(CultureInfo.InvariantCulture);
                     else if (parameter[i] is Rectangle rectangle)
                         strOutput += rectangle.X + "." + rectangle.Y + "." + rectangle.Width + "." + rectangle.Height;
-                    else
-                    {
-                        Debug.Fail("tried to save not supported type " + objectIndex + " argument " + i);
-                    }
                 }
 
                 // saves space
@@ -193,11 +188,6 @@ namespace ProjectZ.InGame.SaveLoad
                         return false;
                 }
             }
-            else
-            {
-                Debug.Fail("can not compare objects from type " + parameterOne.GetType() + "; need to implement missing type");
-            }
-
             return true;
         }
     }

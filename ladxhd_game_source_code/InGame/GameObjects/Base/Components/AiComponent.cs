@@ -15,7 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public string CurrentStateId;
         public string LastStateId;
-
+        
         public void ChangeState(string newStateId, bool silentMode = false)
         {
             LastStateId = CurrentStateId;

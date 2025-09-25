@@ -4,6 +4,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -71,6 +72,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+
+            string endingstate = Game1.GameManager.SaveManager.GetString("final_show", "0");
+
+            if (map.MapName != "overworld.map" && endingstate != "1")
+                new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private void OnKeyChange()

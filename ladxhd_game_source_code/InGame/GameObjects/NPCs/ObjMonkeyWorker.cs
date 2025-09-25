@@ -3,6 +3,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -25,6 +26,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private const int FadeTime = 150;
 
         private int _direction;
+
+        private ObjSpriteShadow _spriteShadow;
 
         public ObjMonkeyWorker(Map.Map map, Vector2 startPosition, Vector2 workPosition, Vector2 endPosition) : base(map)
         {
@@ -76,6 +79,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(UpdateSpriteShadow));
         }
 
         private void OnCollision(Values.BodyCollision moveCollision)
@@ -91,6 +95,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _animator.Play("idle_u_" + _direction);
 
                 _body.Velocity = Vector3.Zero;
+            }
+        }
+        private void UpdateSpriteShadow()
+        {
+            if (_spriteShadow == null)
+                _spriteShadow = new ObjSpriteShadow("sprshadowm", Values.LayerPlayer, _monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, Map);
+
+            if (!GameSettings.EnableShadows && _spriteShadow != null)
+            {
+                _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows);
+                _spriteShadow.EntityPosition.Set(new CPosition(_monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, 0));
             }
         }
 
@@ -163,7 +178,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // start fading away
             if (distance < 48)
+            {
                 _aiComponent.ChangeState("fade");
+                _spriteShadow.Destroy();
+            }
         }
 
         private void TickFade(double time)

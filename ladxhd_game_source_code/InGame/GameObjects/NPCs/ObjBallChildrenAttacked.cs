@@ -4,7 +4,9 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
@@ -83,6 +85,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+
+            new ObjSpriteShadow("sprshadowm", _firstPerson, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", _secondPerson, Values.LayerPlayer, map);
         }
 
         private void Update()

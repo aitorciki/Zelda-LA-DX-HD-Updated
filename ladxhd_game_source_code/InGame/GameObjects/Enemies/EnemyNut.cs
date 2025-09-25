@@ -45,6 +45,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var shadow = new DrawShadowSpriteComponent(Resources.SprShadow, EntityPosition, new Rectangle(0, 0, 65, 66), new Vector2(-6, -6), 12, 6);
             AddComponent(DrawShadowComponent.Index, shadow);
+
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

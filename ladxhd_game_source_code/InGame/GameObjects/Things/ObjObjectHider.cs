@@ -52,11 +52,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 if (gameObject.Tags != Values.GameObjectTag.Enemy &&
                     !(gameObject is ObjSprite) &&
-                    !(gameObject is ObjPersonNew))
+                    !(gameObject is ObjPersonNew) &&
+                    !(gameObject is ObjSpriteShadow))
                     continue;
 
                 // deactivate the person and the sprites
-                if (gameObject is ObjPersonNew || gameObject is ObjSprite)
+                if (gameObject is ObjPersonNew || gameObject is ObjSprite || gameObject is ObjSpriteShadow)
                 {
                     gameObject.IsActive = visibility;
                     continue;

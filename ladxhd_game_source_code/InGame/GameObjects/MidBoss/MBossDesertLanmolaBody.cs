@@ -2,21 +2,24 @@ using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
-    internal class MBossDesertLanmolaBody : GameObject
+    internal class MBossDesertLanmolaBody : GameObject, IHasVisibility
     {
-        public bool IsVisible = true;
         public readonly CSprite Sprite;
 
         private readonly ShadowBodyDrawComponent _shadowComponent;
         private readonly DamageFieldComponent _damageComponent;
 
+        public bool IsVisible { get; internal set; }
+
         public MBossDesertLanmolaBody(Map.Map map, Vector2 position, bool isTail) : base(map)
         {
+            IsVisible = true;
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-8, -48, 16, 48);
 
@@ -32,6 +35,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
+
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         public void Hide()

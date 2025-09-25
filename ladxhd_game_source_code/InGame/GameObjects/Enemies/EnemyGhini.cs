@@ -12,7 +12,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
-    internal class EnemyGhini : GameObject
+    internal class EnemyGhini : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -37,6 +37,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool _mainGhini;
 
+        public bool IsVisible { get; private set; }
+
         public EnemyGhini() : base("ghini") { }
 
         public EnemyGhini(Map.Map map, int posX, int posY, bool mainGhini, bool spawnAnimation) : base(map)
@@ -47,6 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntitySize = new Rectangle(-8, -32, 16, 32);
 
             _mainGhini = mainGhini;
+            IsVisible = mainGhini;
 
             _triggerField = map.GetField(posX, posY);
             _centerPosition = new Vector2(_triggerField.Center.X, _triggerField.Center.Y + 16);
@@ -88,7 +91,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition));
 
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         private void UpdateSpawning()
@@ -105,6 +108,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageState.IsActive = true;
                 _damageField.IsActive = true;
             }
+            if (_transparency > 0.5f)
+                IsVisible = true;
         }
 
         private void UpdateFlying()

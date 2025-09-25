@@ -111,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageField.IsActive = false;
                 _sprite.IsVisible = IsVisible = false;
             }
-            new ObjSpriteShadow(this, Values.LayerPlayer, map);
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         /// <summary>

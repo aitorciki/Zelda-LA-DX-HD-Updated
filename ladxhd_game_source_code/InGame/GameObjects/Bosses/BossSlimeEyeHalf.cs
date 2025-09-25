@@ -105,6 +105,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             });
 
             _damageState.SetDamageState();
+
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void InitJump()

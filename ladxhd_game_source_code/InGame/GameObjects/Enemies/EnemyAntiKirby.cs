@@ -102,6 +102,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             map.Objects.SpawnObject(_suckParticles);
 
             _aiComponent.ChangeState("idle");
+
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void InitSuck()

@@ -12,7 +12,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
-    class MBossMasterStalfos : GameObject
+    class MBossMasterStalfos : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -62,10 +62,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private const int FleeTime = 400;
 
+        public bool IsVisible { get; internal set; }
+
         public MBossMasterStalfos() : base("ms_shield") { }
 
         public MBossMasterStalfos(Map.Map map, int posX, int posY, string saveKey, int encounterNumber) : base(map)
         {
+            IsVisible = false;
             EntityPosition = new CPosition(posX + 16, posY + 32, 100);
             EntitySize = new Rectangle(-24, -38, 48, 38);
 
@@ -216,7 +219,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 if (encounterState == "4" && _encounterNumber == 3)
                     SpawnHookshot();
             }
-
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, Map);
             // TODO: need to find a way to draw shadow for this
             //AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
@@ -253,6 +256,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 Game1.GameManager.SaveManager.SetString(_saveKey, (_encounterNumber + 1).ToString());
 
             Map.Objects.DeleteObjects.Add(this);
+            IsVisible = false;
         }
 
         private void UpdateHidden()
@@ -273,6 +277,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animator.Play("stand1");
             _shadowComponent.IsActive = true;
             _body.IsActive = true;
+            IsVisible = true;
         }
 
         private void UpdateFall()

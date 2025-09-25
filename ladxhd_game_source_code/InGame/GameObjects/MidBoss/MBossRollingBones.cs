@@ -133,6 +133,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _bone = new MBossRollingBonesBone(map, posX, posY, boneOffset);
             map.Objects.SpawnObject(_bone);
+
+            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
         private void OnMoveCollision(Values.BodyCollision collision)

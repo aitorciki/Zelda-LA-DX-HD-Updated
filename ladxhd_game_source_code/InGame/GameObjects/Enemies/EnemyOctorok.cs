@@ -1,15 +1,16 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
-using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
-    internal class EnemyOctorok : GameObject
+    internal class EnemyOctorok : GameObject, IHasVisibility
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -27,10 +28,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = ObjLives.Octorok;
         private float _shotCooldown = 50;
 
+        public bool IsVisible { get; internal set; }
+
         public EnemyOctorok() : base("octorok") { }
 
         public EnemyOctorok(Map.Map map, int posX, int posY) : base(map)
         {
+            IsVisible = true;
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 12, 0);
@@ -81,6 +85,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
+
+            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
         public override void Init()
@@ -88,8 +94,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             base.Init();
 
             if (!IsActive)
+            {
+                IsVisible = false;
                 return;
-
+            }
             // random start position/state
             _direction = Game1.RandomNumber.Next(0, 4);
             _animator.Play("walk_" + _direction);
