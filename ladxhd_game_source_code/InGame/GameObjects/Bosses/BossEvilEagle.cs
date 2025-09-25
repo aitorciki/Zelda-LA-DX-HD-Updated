@@ -181,11 +181,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateIdle()
         {
-            if (MapManager.ObjLink.EntityPosition.Y > _startPosition.Y + 90 || !MapManager.ObjLink.IsClimbing())
+            if (MapManager.ObjLink.EntityPosition.Y > 80f || MapManager.ObjLink.IsClimbing() || MapManager.ObjLink.IsJumping())
                 return;
 
             if (!_playedIntro)
             {
+                MapManager.ObjLink.Animation.Play("stand_0");
                 Game1.GameManager.StartDialogPath("grim_creeper_3");
                 _aiComponent.ChangeState("spawnDelay");
             }
