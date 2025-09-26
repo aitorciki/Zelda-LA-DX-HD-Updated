@@ -21,12 +21,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Vector2 _vecDirection;
 
         private float _maxSpeed;
-        private float _acceleration;
-        private float _currentSpeed;
 
         private bool _isFollowing;
         private bool _wasFollowing;
         private int _lives = ObjLives.HardhatBeetle;
+
+        private float speedChange;
 
         public EnemyHardhatBeetle() : base("hardHatBeetle") { }
 
@@ -70,10 +70,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             aiComponent.ChangeState("init");
 
-            // randomize speed and acceleration
-            _maxSpeed = Game1.RandomNumber.Next(30, 60) / 100f;
-            _acceleration = Game1.RandomNumber.Next(30, 60) / 2000f;
-
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableRectangle = new CBox(EntityPosition, -8, -14, 16, 14, 8);
 
@@ -94,11 +90,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateMoving()
         {
-            // accelerate
-            _currentSpeed += (float)Math.Pow(_acceleration, Game1.TimeMultiplier);
-            if (_currentSpeed > _maxSpeed)
-                _currentSpeed = _maxSpeed;
-
+            // Give them a random speed that fluctuates every 3/4 second to prevent them from stacking on
+            // top of each other. This also more closely matches their behavior from the original games.
+            if ((speedChange += Game1.DeltaTime) > 750)
+            {
+                _maxSpeed = GameMath.GetRandomFloat(0.25f, 0.55f);
+                speedChange = 0;
+            }
             if (_vecDirection != Vector2.Zero)
             {
                 var oldPercentage = (float)Math.Pow(0.9f, Game1.TimeMultiplier);
@@ -182,10 +180,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                         _vecDirection.Y = 0;
                     }
                 }
-
                 return;
             }
-
             _body.VelocityTarget = Vector2.Zero;
 
             // collide with a wall
