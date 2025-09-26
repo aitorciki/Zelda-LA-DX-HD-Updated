@@ -8,6 +8,7 @@ Some assets have been updated, but I have created tooling to make migration easi
 - See the [changelog](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/CHANGELOG.md) for a list of changes from v1.0.0.
 - As of v1.1.0, the game is in a really good state and the "feel" is really close to the original game.  
 - As of v1.2.0, the vast majority of bugs have been fixed and features from the [Redux romhack](https://github.com/ShadowOne333/Links-Awakening-Redux) were implemented.
+- As of v1.3.0, I consider the work that I've done to be "feature complete" and everything from this point is gravy.
 - This is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) and here's a link to the [commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/).
 
 ## Patching v1.0.0 (or v1.1.4+) to v1.3.1
