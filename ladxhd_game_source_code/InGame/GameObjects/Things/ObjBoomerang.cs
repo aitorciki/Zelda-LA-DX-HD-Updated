@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly CBox _damageBox;
 
         private ObjItem _item;
+        private ObjDungeonFairy _fairy;
 
         private Vector2 _startPosition;
         private Vector2 _direction;
@@ -33,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             EntityPosition = new CPosition(0, 0, 4);
             EntityPosition.AddPositionListener(typeof(ObjBoomerang), UpdateItemPosition);
+            EntityPosition.AddPositionListener(typeof(ObjBoomerang), UpdateFairyPosition);
             EntitySize = new Rectangle(-8, -12, 16, 16);
 
             _damageBox = new CBox(EntityPosition, -5, -5, 0, 10, 10, 20, true);
@@ -154,7 +156,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
                     {
                         ObjItem newItem = (collisionObject.Owner as ObjItem);
-
                         if (!newItem.Collected)
                         {
                             _item = newItem;
@@ -164,8 +165,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     // Boomerang comes in contact with a fairy.
                     else if (collisionObject.Owner.GetType() == (typeof(ObjDungeonFairy)))
                     {
-                        ObjDungeonFairy grabbedFairy = (collisionObject.Owner as ObjDungeonFairy);
-                        grabbedFairy.BoomerangCollect();
+                        _fairy = collisionObject.Owner as ObjDungeonFairy;
                     }
                 }
             }
@@ -174,6 +174,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void UpdateItemPosition(CPosition position)
         {
             _item?.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
+        }
+
+        private void UpdateFairyPosition(CPosition position)
+        {
+            _fairy?.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
         }
 
         private void OnCollision(Values.BodyCollision collision)

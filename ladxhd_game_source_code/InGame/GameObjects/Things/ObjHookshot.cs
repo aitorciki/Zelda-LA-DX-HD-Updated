@@ -5,6 +5,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -20,6 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly List<GameObject> _itemList = new List<GameObject>();
         private readonly CPosition _hookshotPosition;
         private ObjItem _item;
+        private ObjDungeonFairy _fairy;
 
         private readonly DictAtlasEntry _spriteChain;
         private readonly DictAtlasEntry _spriteHook;
@@ -42,6 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             _hookshotPosition = new CPosition(0, 0, 0);
             _hookshotPosition.AddPositionListener(typeof(ObjHookshot), UpdateItemPosition);
+            _hookshotPosition.AddPositionListener(typeof(ObjHookshot), UpdateFairyPosition);
 
             EntitySize = new Rectangle(-10, -10, 20, 20);
 
@@ -189,11 +192,21 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if ((collisionObject.CollisionType & Values.CollisionTypes.Item) != 0 &&
                     collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox))
                 {
-                    var newItem = (ObjItem)collisionObject.Owner;
-                    if (newItem.IsActive && !newItem.Collected)
+                    // Hookshot comes in contact with item.
+                    if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
                     {
-                        _item = newItem;
-                        _item.InitCollection();
+                        ObjItem newItem = (collisionObject.Owner as ObjItem);
+                        if (newItem.IsActive && !newItem.Collected)
+                        {
+                            _item = newItem;
+                            _item.InitCollection();
+                            ComeBack();
+                        }
+                    }
+                    // Hookshot comes in contact with a fairy.
+                    else if (collisionObject.Owner.GetType() == (typeof(ObjDungeonFairy)))
+                    {
+                        _fairy = collisionObject.Owner as ObjDungeonFairy;
                         ComeBack();
                     }
                 }
@@ -203,6 +216,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void UpdateItemPosition(CPosition position)
         {
             _item?.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
+        }
+
+        private void UpdateFairyPosition(CPosition position)
+        {
+            _fairy?.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
         }
 
         private void ComeBack()
