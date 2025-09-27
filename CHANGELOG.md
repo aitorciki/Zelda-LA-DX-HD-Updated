@@ -1,5 +1,13 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.2**
+### **A Bug Fixes Update**
+  * When handing the witch the toadstool to make powder, reset the music when it speeds up, and reset again afterwards.
+  * Modify the movements of the Hardhat Beetle to more closely resemble the original game versions.
+  * Reset the "free" camera when qutting to main menu and selecting a save file so it doesn't persist through saves.
+  * Fix crash from Hookshot grabbing fairies and modify the Boomerang to grab fairies instead of instant collecting them.
+  * Fix crash with French and Italian languages in places where an invalid apostrophe was used.
+  
 ## **v1.3.1**
 ### **Emergency & Sprite Shadows Update**
   * Implement many more sprite shadows. At this point it should be nearly feature complete aside from some objects.

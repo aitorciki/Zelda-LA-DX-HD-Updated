@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -70,15 +71,16 @@ namespace ProjectZ.InGame.Pages
             Game1.UiPageManager.ChangePage(typeof(SettingsPage));
         }
 
-        public void OnClickBackToMenu(InterfaceElement element)
-        {
-            Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
-        }
-
         public void OnClickSaveContinue(InterfaceElement element)
         {
             SaveGameSaveLoad.SaveGame(Game1.GameManager);
             Game1.GameManager.InGameOverlay.CloseOverlay();
+        }
+
+        public void OnClickBackToMenu(InterfaceElement element)
+        {
+            Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
+            MapManager.CameraOffset = Vector2.Zero;
         }
 
         public void OnClickExitGame(InterfaceElement element)
