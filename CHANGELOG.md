@@ -4,7 +4,9 @@
 ### **A Bug Fixes Update**
   * When handing the witch the toadstool to make powder, reset the music when it speeds up, and reset again afterwards.
   * Modify the movements of the Hardhat Beetle to more closely resemble the original game versions.
-  * Reset the "free" camera when qutting to main menu and selecting a save file so it doesn't persist through saves.
+  * Reset the "free" camera when qutting to main menu and/or selecting a save file so it doesn't persist through saves.
+  * Restore ability to set animals on fire with Magic Powder and Fire Rod.
+  * Add option to completely disable animal damage in "Redux" options.
   * Fix crash from Hookshot grabbing fairies and modify the Boomerang to grab fairies instead of instant collecting them.
   * Fix crash with French and Italian languages in places where an invalid apostrophe was used.
   
