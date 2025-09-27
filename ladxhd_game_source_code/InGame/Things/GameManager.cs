@@ -1550,6 +1550,7 @@ namespace ProjectZ.InGame.Things
             MapManager.ObjLink.Map = MapManager.CurrentMap;
             MapManager.ObjLink.SetWalkingDirection(SaveDirection);
 
+            MapManager.CameraOffset = Vector2.Zero;
             MapManager.Camera.ForceUpdate(MapManager.GetCameraTargetLink());
 
             MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
