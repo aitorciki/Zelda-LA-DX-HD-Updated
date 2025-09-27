@@ -61,6 +61,11 @@ namespace ProjectZ.InGame.Pages
                 "settings_redux_photoscolor", GameSettings.PhotosColor, newState => { PressButtonTogglePhotosColor(newState); });
             _contentLayout.AddElement(togglePhotosColor);
 
+            // No Animal Damage:
+            var toggleAnimalDamage = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+                "settings_redux_noanimaldmg", GameSettings.NoAnimalDamage, newState => { PressButtonNoAnimalDamage(newState); });
+            _contentLayout.AddElement(toggleAnimalDamage);
+
             // Bottom Bar / Back Button:
             var bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
@@ -142,6 +147,11 @@ namespace ProjectZ.InGame.Pages
         {
             GameSettings.PhotosColor = newState;
             Resources.RefreshDynamicResources();
+        }
+
+        public void PressButtonNoAnimalDamage(bool newState) 
+        {
+            GameSettings.NoAnimalDamage = newState;
         }
     }
 }

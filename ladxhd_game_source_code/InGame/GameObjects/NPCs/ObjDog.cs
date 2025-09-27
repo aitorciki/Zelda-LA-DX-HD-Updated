@@ -62,21 +62,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("listening", stateListening);
             _aiComponent.States.Add("preAttack", statePreAttack);
             _aiComponent.States.Add("attack", stateAttack);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 10) < 5 ? "idle" : "walking");
 
             var box = new CBox(EntityPosition, -7, -14, 14, 14, 8);
 
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false });
+            AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
-            AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
+            AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
@@ -155,6 +155,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     }
                 }
             }
+        }
+
+        private void OnBurn()
+        {
+            _damageField.IsActive = false;
+            _animator.Pause();
         }
 
         private void UpdateListening()
@@ -257,6 +263,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
         {
+            if (GameSettings.NoAnimalDamage)
+                return Values.HitCollision.None;
+
+            if (type == HitType.MagicPowder || type == HitType.MagicRod)
+            {
+                if (_aiComponent.CurrentStateId != "burning")
+                {
+                    _aiComponent.ChangeState("burning");
+                    var speedMultiply = (type == HitType.MagicPowder ? 0.125f : 0.5f);
+
+                    Game1.GameManager.PlaySoundEffect("D378-18-12");
+
+                    return Values.HitCollision.Enemy;
+                }
+            }
             if (_aiComponent.CurrentStateId == "idle" ||
                 _aiComponent.CurrentStateId == "walking")
             {
@@ -268,7 +289,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 return Values.HitCollision.Enemy;
             }
-
             return Values.HitCollision.None;
         }
 

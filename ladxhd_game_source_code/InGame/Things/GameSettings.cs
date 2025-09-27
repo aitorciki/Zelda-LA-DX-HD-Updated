@@ -27,6 +27,7 @@ namespace ProjectZ.InGame.Things
         public static bool Uncensored = false;
         public static bool Unmissables = false;
         public static bool PhotosColor = false;
+        public static bool NoAnimalDamage = false;
         public static int EnemyBonusHP = 0;
         public static int DmgMultiplier = 0;
         public static float MoveSpeedAdded = 0;

@@ -38,6 +38,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
             GameSettings.PhotosColor = saveManager.GetBool("PhotosColor", GameSettings.PhotosColor);
+            GameSettings.NoAnimalDamage = saveManager.GetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
             GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             GameSettings.DmgMultiplier = saveManager.GetInt("DmgMultiplier", GameSettings.DmgMultiplier);
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
@@ -79,6 +80,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("Uncensored", GameSettings.Uncensored);
             saveManager.SetBool("Unmissables", GameSettings.Unmissables);
             saveManager.SetBool("PhotosColor", GameSettings.PhotosColor);
+            saveManager.SetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
             saveManager.SetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             saveManager.SetInt("DmgMultiplier", GameSettings.DmgMultiplier);
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);

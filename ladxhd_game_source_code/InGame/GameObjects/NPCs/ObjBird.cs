@@ -72,7 +72,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("fleeingWalking", stateFleeWalking);
             _aiComponent.States.Add("fleeing", stateFleeing);
             _aiComponent.States.Add("attack", stateAttack);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2) { OnBurn = OnBurn };
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 10) < 5 ? "idle" : "walking");
 
             var box = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
@@ -159,6 +159,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
         }
 
+        private void OnBurn()
+        {
+            _damageField.IsActive = false;
+            _animator.Pause();
+        }
+
         private void InitIdle()
         {
             // stop and wait
@@ -223,6 +229,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
+            if (GameSettings.NoAnimalDamage)
+                return Values.HitCollision.None;
+
+            if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
+            {
+                if (_aiComponent.CurrentStateId != "burning")
+                {
+                    _aiComponent.ChangeState("burning");
+                    var speedMultiply = (damageType == HitType.MagicPowder ? 0.125f : 0.5f);
+
+                    Game1.GameManager.PlaySoundEffect("D378-18-12");
+
+                    return Values.HitCollision.Enemy;
+                }
+            }
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
