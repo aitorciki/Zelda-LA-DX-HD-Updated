@@ -38,7 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             var animatorComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
-            _body = new BodyComponent(EntityPosition, -5, -10, 10, 10, 8)
+            _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
             {
                 AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 IsSlider = true,
@@ -57,7 +57,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             aiComponent.ChangeState("idle");
 
-            var hittableBox = new CBox(EntityPosition, -6, -15, 2, 12, 15, 8);
+            var hittableBox = new CBox(EntityPosition, -8, -16, 2, 16, 16, 8);
             var damageBox = new CBox(EntityPosition, -6, -12, 2, 12, 12, 4);
             var pushableBox = new CBox(EntityPosition, -5, -14, 2, 10, 14, 4);
 
