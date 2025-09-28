@@ -560,6 +560,15 @@ namespace ProjectZ.InGame.Overlay
             inputString = inputString.Replace("[TRADE11]", "¬");
             inputString = inputString.Replace("[TRADE12]", "­");
             inputString = inputString.Replace("[TRADE13]", "®");
+            inputString = inputString.Replace("[LEFT]", "°");
+            inputString = inputString.Replace("[RIGHT]", "±");
+            inputString = inputString.Replace("[DOWN]", "²");
+            inputString = inputString.Replace("[UP]", "³");
+            inputString = inputString.Replace("[DPAD]", "´");
+            inputString = inputString.Replace("[SKULL]", "µ");
+            inputString = inputString.Replace("[MARIN]", "¶");
+            inputString = inputString.Replace("[LINK]", "·");
+
 
             inputString = ReplaceKeys(inputString);
 
