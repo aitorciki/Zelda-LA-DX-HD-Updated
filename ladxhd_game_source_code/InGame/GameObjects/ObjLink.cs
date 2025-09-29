@@ -3999,7 +3999,10 @@ namespace ProjectZ.InGame.GameObjects
             var itemMarin = Game1.GameManager.GetItem("marin");
             if (itemMarin != null && itemMarin.Count > 0)
             {
-                if (_objFollower == null)
+                // For some reason, the "_objFollower" is always null after a map transition. Most of the time, we can just safely respawn Marin
+                // so this isn't a problem. This code is also what works around the beach issue where she doesn't spawn. But, it doesn't work if
+                // leaving a dungeon and she's currently waiting for Link to come out. So in that case, don't run this code, use the backup path.
+                if (_objFollower == null && !_objMaria._dungeonLeaveSequence)
                 {
                     Vector2 offset = GetMarinSpawnOffset(Direction, 13f);
                     Vector2 marinSpawnPos = new Vector2(_body.Position.X, _body.Position.Y) + offset;
@@ -5130,9 +5133,32 @@ namespace ProjectZ.InGame.GameObjects
                 UpdateAnimation();
         }
 
+        public void SetFollowerMapState(Map.Map map)
+        {
+            string[] noFollowerMaps = 
+            { 
+                "pond.map", "dreamShrine01.map", "dreamShrine02.map", "shellhouse.map", "shellhouse.map", "dungeon1.map", "dungeon2.map", 
+                "dungeon3.map", "dungeon4.map", "dungeon5.map", "dungeon6.map", "dungeon7.map", "dungeon8.map", "dungeon_color.map", 
+                "egg_entry.map", "egg_lower_floor", "egg_boss_room", "final stairs"
+            };
+            // Disable the follower on the maps listed above, or disable them on 2D maps.
+            for (int i = 0; i < noFollowerMaps.Length; i++)
+            {
+                if (noFollowerMaps[i] == map.MapName || map.Is2dMap)
+                {
+                    _objFollower.IsActive = false;
+                    break;
+                }
+                else
+                {
+                    _objFollower.IsActive = true;
+                }
+            }
+        }
+
         public void UpdateMapTransitionIn(float state)
         {
-            // make sure to not start falling while transitioning into a 2d map with a ladder
+            // Make sure to not start falling while transitioning into a 2d map with a ladder.
             if (state == 0 && Map.Is2dMap)
                 _body.IgnoresZ = true;
 
@@ -5144,27 +5170,26 @@ namespace ProjectZ.InGame.GameObjects
                 var newPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state);
                 SetPosition(newPosition);
 
-                // transition the follower out
-                if (_objFollower != null && NextMapPositionStart.Value != NextMapPositionEnd.Value)
+                // Transition the follower out of the map. I'm not sure why this check existed, but the commented off code used to be part of the check.
+                if (_objFollower != null) // && NextMapPositionStart.Value != NextMapPositionEnd.Value)
                 {
                     var followerPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state * 0.5f);
                     _objFollower.SetPosition(followerPosition);
+                    SetFollowerMapState(Map);
                 }
             }
-
-            // lock the camera while transitioning
+            // Lock the camera while transitioning.
             if (!Map.Is2dMap || Direction == 1)
                 Game1.GameManager.MapManager.UpdateCameraY = NextMapPositionStart == NextMapPositionEnd;
 
             _isWalking = TransitionInWalking;
 
-            // set the hole and water reset position to be at the transition entrance
+            // Set the hole and water reset position to be at the transition entrance.
             _holeResetPoint = EntityPosition.Position;
             _holeResetPointZ = EntityPosition.Z;
             _drownResetPosition = EntityPosition.Position;
 
             UpdateSwimming();
-
             UpdateIgnoresZ();
 
             if (Is2DMode)
@@ -5176,7 +5201,6 @@ namespace ProjectZ.InGame.GameObjects
         public void EndTransitioning()
         {
             _blockButton = false;
-
             _body.HoleAbsorption = Vector2.Zero;
 
             IsTransitioning = false;
@@ -5186,7 +5210,6 @@ namespace ProjectZ.InGame.GameObjects
                 _body.Velocity.X = 0;
                 _body.Velocity.Y = 0;
             }
-
             // This is because the water is deeper than 0.
             if ((SystemBody.GetFieldState(_body) & MapStates.FieldStates.DeepWater) == 0 && CurrentState != State.Swimming && !_isClimbing)
                 _body.IgnoresZ = false;

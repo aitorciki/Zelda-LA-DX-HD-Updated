@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         public bool EnterDungeonMessage;
 
         private bool _enterDungeonMessage;
-        private bool _dungeonLeaveSequence;
+        public bool _dungeonLeaveSequence;
 
         private Rectangle _field;
 
