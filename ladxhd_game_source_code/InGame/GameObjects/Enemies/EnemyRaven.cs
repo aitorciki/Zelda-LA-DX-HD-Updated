@@ -19,6 +19,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly AiDamageState _damageState;
         private readonly AiTriggerTimer _followTimer;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly DamageFieldComponent _damageField;
 
         private readonly Box _activationBox;
 
@@ -66,9 +69,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // the player can jump over the enemy...
             var damageCollider = new CBox(EntityPosition, -6, -14, 0, 12, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(damageCollider, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -76,25 +79,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-        }
-
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (damageType == HitType.MagicPowder)
-                return Values.HitCollision.None;
-
-            if (damageType == HitType.Bow || damageType == HitType.MagicRod)
-                damage /= 2;
-
-            // start attacking?
-            if (_aiComponent.CurrentStateId == "waiting" && (damageType == HitType.Bomb || damageType == HitType.ThrownObject))
-            {
-                _aiComponent.ChangeState("start");
-
-                return Values.HitCollision.None;
-            }
-
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
 
         private void UpdateWaiting()
@@ -168,6 +152,30 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity = new Vector3(direction * 1.75f, _body.Velocity.Z);
 
             return true;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (damageType == HitType.MagicPowder)
+                return Values.HitCollision.None;
+
+            if (damageType == HitType.Bow || damageType == HitType.MagicRod)
+                damage /= 2;
+
+            // start attacking?
+            if (_aiComponent.CurrentStateId == "waiting" && (damageType == HitType.Bomb || damageType == HitType.ThrownObject))
+            {
+                _aiComponent.ChangeState("start");
+
+                return Values.HitCollision.None;
+            }
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

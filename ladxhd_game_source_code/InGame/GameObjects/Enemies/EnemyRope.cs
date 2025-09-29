@@ -14,8 +14,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
+        private readonly AiDamageState _damageState;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private const float WalkSpeed = 0.5f;
         private const float RunSpeed = 1.0f;
@@ -66,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("run", stateRun);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
             new AiDeepWaterState(_body);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("walk");
 
@@ -75,11 +78,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var pushableBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
         }
@@ -159,6 +162,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.SpeedMultiplier = 3f;
             _animator.Continue();
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

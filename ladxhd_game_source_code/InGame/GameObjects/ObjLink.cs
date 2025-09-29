@@ -311,6 +311,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool CarryShield;
         private bool _wasBlocking;
         private bool _blockButton;
+        public Box shieldBox;
 
         // hookshot
         public ObjHookshot Hookshot = new ObjHookshot();
@@ -3160,7 +3161,7 @@ namespace ProjectZ.InGame.GameObjects
             Map.Objects.GetComponentList(_ocarinaList,
                 (int)recInteraction.X, (int)recInteraction.Y, (int)recInteraction.Width, (int)recInteraction.Height, OcarinaListenerComponent.Mask);
 
-            // notify ocarina listener components around the player
+            // Notify ocarina listener components around the player.
             foreach (var objOcarinaListener in _ocarinaList)
             {
                 if (recInteraction.Contains(objOcarinaListener.EntityPosition.Position))
@@ -3219,22 +3220,45 @@ namespace ProjectZ.InGame.GameObjects
             _bootsHolding = true;
         }
 
+        private Box GetShieldRectangle()
+        {
+            // The mirror shield requires a slightly different offset than the normal shield
+            // when facing south. I have no clue why this is the case, but it is what it is.
+            var mirrorShield = Game1.GameManager.GetItem("mirrorShield");
+            var hasMirrorShield = mirrorShield?.Count >= 1;
+            var rect = Animation.CollisionRectangle;
+            var key = (Direction, hasMirrorShield);
+
+            var offsets = key switch
+            {
+                (1, _)       => (-6, -17, -2, +2),
+                (3, true)    => (-5, -17, -2, +2),
+                (3, false)   => (-6, -17, -2, +2),
+                (2, _)       => (-11, -13, +2, -4),
+                (_, _)       => (-5, -13, +2, -4),
+            };
+            // Assign the results of the switch.
+            var (xOff, yOff, wOff, hOff) = offsets;
+
+            // Return the proper shield rectangle based on direction.
+            return new Box(
+                EntityPosition.X + rect.X + xOff,
+                EntityPosition.Y + rect.Y + yOff, 0,
+                rect.Width + wOff,
+                rect.Height + hOff, 12);
+        }
+
         private void UpdateShieldPush()
         {
+            // Check if the collision rectangle is empty or if the player is trapped (Like-Like / Anti-Kirby).
             if (Animation.CollisionRectangle.IsEmpty || _isTrapped)
                 return;
 
-            // push with the shield
-            var shieldRectangle = new Box(
-                EntityPosition.X + Animation.CollisionRectangle.X - 7,
-                EntityPosition.Y + Animation.CollisionRectangle.Y - 16, 0,
-                Animation.CollisionRectangle.Width,
-                Animation.CollisionRectangle.Height, 12);
+            // Get the shield rectangle.
+            shieldBox = GetShieldRectangle();
+            var pushedRectangle = Map.Objects.PushObject(shieldBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
 
-            var pushedRectangle = Map.Objects.PushObject(shieldRectangle,
-                _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
-
-            // get repelled from the pushed object
+            // Push the object and get repelled from the pushed object.
             if (pushedRectangle != null)
             {
                 _bootsRunning = false;
@@ -3244,24 +3268,23 @@ namespace ProjectZ.InGame.GameObjects
                     -_walkDirection[Direction].X * pushedRectangle.RepelMultiplier,
                     -_walkDirection[Direction].Y * pushedRectangle.RepelMultiplier, 0);
 
+                // Spawn the "poke" particle.
                 if (pushedRectangle.RepelParticle)
                 {
-                    // poke particle
                     Map.Objects.SpawnObject(new ObjAnimator(Map,
                         (int)(pushedRectangle.PushableBox.Box.X + pushedRectangle.PushableBox.Box.Width / 2),
                         (int)(pushedRectangle.PushableBox.Box.Y + pushedRectangle.PushableBox.Box.Height / 2),
                         Values.LayerTop, "Particles/swordPoke", "run", true));
                 }
+                // Play the "bumping" sound effect.
                 else
-                {
                     Game1.GameManager.PlaySoundEffect("D360-09-09");
-                }
             }
         }
 
         private void UpdateCharging()
         {
-            // HACK: Keep the charging state until rail jump has finished.
+            //  Keep the charging state until rail jump has finished.
             if (_railJump && CurrentState == State.ChargeJumping)
                 _isHoldingSword = true;
 
@@ -3375,8 +3398,7 @@ namespace ProjectZ.InGame.GameObjects
 
             RectangleF collisionRectangle = AnimatorWeapons.CollisionRectangle;
 
-            // this lerps the collision box between frames
-            // a rotation collision box would probably be a better option
+            // This lerps the collision box between frames.
             if (AnimatorWeapons.CurrentAnimation.Frames.Length > AnimatorWeapons.CurrentFrameIndex + 1)
             {
                 var frameState = (float)(AnimatorWeapons.FrameCounter / AnimatorWeapons.CurrentFrame.FrameTime);
@@ -3407,11 +3429,9 @@ namespace ProjectZ.InGame.GameObjects
             if (_bootsRunning)
                 damage *= 2;
 
-            // piece of power double the damage
             if (Game1.GameManager.PieceOfPowerIsActive)
                 damage *= 2;
 
-            // red cloak doubles the damage
             if (Game1.GameManager.CloakType == GameManager.CloakRed)
                 damage *= 2;
 
@@ -3444,7 +3464,7 @@ namespace ProjectZ.InGame.GameObjects
             if (hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
                 _stopCharging = true;
 
-            // shoot the sword if the player has the l2 sword and full health
+            // Shoot the sword if the player has the Level 2 sword and full health.
             if (!_shotSword && Game1.GameManager.SwordLevel == 2 && Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 && AnimatorWeapons.CurrentFrameIndex == 2)
             {
                 _shotSword = true;
@@ -3453,7 +3473,7 @@ namespace ProjectZ.InGame.GameObjects
                 Map.Objects.SpawnObject(objSwordShot);
             }
 
-            // spawn hit particle?
+            // Spawn hit particle?
             if ((hitCollision & Values.HitCollision.Particle) != 0 && _hitParticleTime + 225 < Game1.TotalGameTime)
             {
                 _hitParticleTime = Game1.TotalGameTime;
@@ -3464,7 +3484,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
         {
-            // repel the player
+            // Repel the player.
             if ((collisionType & Values.HitCollision.Repelling) != 0 &&
                 _hitRepelTime + 225 < Game1.TotalGameTime)
             {
@@ -3490,7 +3510,7 @@ namespace ProjectZ.InGame.GameObjects
         {
             Game1.GameManager.PlaySoundEffect("D360-07-07");
 
-            // poke particle
+            // Spawn the poke particle.
             Map.Objects.SpawnObject(new ObjAnimator(Map,
                 (int)(EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2),
                 (int)(EntityPosition.Y - 15 + collisionRectangle.Y + collisionRectangle.Height / 2),
@@ -4311,56 +4331,71 @@ namespace ProjectZ.InGame.GameObjects
                 UpdateAnimation();
         }
 
-        public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f)
+        private bool WasBlocked(Box box, RectangleF boxRect, Vector2 boxCenter, Vector2 bodyCenter, Vector2 direction)
         {
-            var boxDir = BodyRectangle.Center - box.Center;
+            // Get the difference between the centers.
+            Vector2 delta = bodyCenter - boxCenter;
 
-            // if the player is standing inside the box the hit is not blockable
-            var blockable = Math.Abs(boxDir.X) > box.Width / 2 ||
-                            Math.Abs(boxDir.Y) > box.Height / 2;
+            float halfW = boxRect.Width / 2f;
+            float halfH = boxRect.Height / 2f;
 
-            var intersection = BodyRectangle.GetIntersection(box.Rectangle());
-            var direction = BodyRectangle.Center - intersection.Center;
+            // A check to see if the two boxes are colliding.
+            bool inside = Math.Abs(delta.X) <= halfW && Math.Abs(delta.Y) <= halfH;
 
-            if (direction == Vector2.Zero)
-                direction = boxDir;
-            if (direction != Vector2.Zero)
-                direction.Normalize();
+            // Get the opposite direction 
+            bool facingDir = (Direction == ToDirection(-direction));
 
-            return HitPlayer(direction * pushMultiplier, type, damage, blockable);
+            return !inside && facingDir || box.Intersects(shieldBox);
         }
 
-        public bool HitPlayer(Vector2 direction, HitType type, int damage, bool blockable, int damageCooldown = CooldownTime)
+        public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f)
         {
-            if (_hitCount > 0 ||
-                CurrentState == State.Dying ||
-                CurrentState == State.PickingUp ||
-                CurrentState == State.Drowning ||
-                CurrentState == State.Drowned ||
-                CurrentState == State.Knockout ||
-                IsDiving() ||
-                Game1.GameManager.UseShockEffect ||
-                !UpdatePlayer ||
-                _isTrapped)
-                return false;
+            // Get the box as a floats rectangle.
+            RectangleF boxRect = box.Rectangle();
 
-            // block the attack?
-            if (blockable && (IsBlockingState(CurrentState) || 
-                _bootsRunning && CarryShield))
+            // Get the centers of the rectangles.
+            Vector2 boxCenter = new Vector2(boxRect.X + boxRect.Width / 2f, boxRect.Y + boxRect.Height / 2f);;
+            Vector2 bodyCenter = BodyRectangle.Center;
+            Vector2 boxDir = bodyCenter - boxCenter;
+            Vector2 direction;
+
+            // Get the intersecting rectangle.
+            RectangleF intersection = BodyRectangle.GetIntersection(box.Rectangle());
+
+            // If the rectangle isn't empty then use the box to calculate the direction.
+            if (intersection.Width <= 0 || intersection.Height <= 0)
+                direction = boxDir;
+            else
             {
-                _bootsHolding = false;
-                _bootsRunning = false;
-                _bootsCounter = 0;
+                Vector2 interCenter = new Vector2(intersection.X + intersection.Width / 2f, intersection.Y + intersection.Height / 2f);
+                direction = bodyCenter - interCenter;
+            }
+            // Normalize the direction vector.
+            direction.Normalize();
 
-                // is the player blocking this direction
-                var vectorDirection = ToDirection(-direction);
-                if (Direction == vectorDirection & _hitCount <= 0)
-                {
-                    if (type == HitType.Projectile)
-                        Game1.GameManager.PlaySoundEffect("D360-22-16");
+            // Check if it's a projectile that was successfully blocked.
+            bool blocked = WasBlocked(box, boxRect, boxCenter, bodyCenter, direction);
 
-                    return false;
-                }
+            // Try to damage the player.
+            return HitPlayer(direction * pushMultiplier, type, damage, blocked);
+        }
+
+        public bool HitPlayer(Vector2 direction, HitType type, int damage, bool blocked, int damageCooldown = CooldownTime)
+        {
+            // Check conditions where the player wouldn't take damage.
+            if (_hitCount > 0 || CurrentState == State.Dying || CurrentState == State.PickingUp ||
+                CurrentState == State.Drowning || CurrentState == State.Drowned || CurrentState == State.Knockout ||
+                IsDiving() || Game1.GameManager.UseShockEffect || !UpdatePlayer || _isTrapped)
+            {
+                return false;
+            }
+            // Check if the block conditions passed + Link is in blocking state or running with the shield.
+            if (blocked && (IsBlockingState(CurrentState) || _bootsRunning && CarryShield))
+            {
+                if (type == HitType.Projectile)
+                    Game1.GameManager.PlaySoundEffect("D360-22-16");
+
+                return false;
             }
             // jump a little if we get hit by a spike
             if ((type & HitType.Spikes) != 0)
@@ -4557,7 +4592,7 @@ namespace ProjectZ.InGame.GameObjects
             MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position + direction * 80;
             TransitionOutWalking = false;
 
-            // append a map change
+            // Append a map change.
             var transitionSystem = ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]);
             transitionSystem.AppendMapChange(Map.MapName, resetDoor, false, false, Color.White, false);
             transitionSystem.StartKnockoutTransition = true;
@@ -4565,7 +4600,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public void GroundStun(int stunTime = 1250)
         {
-            // do not stun the player when he is in the air
+            // Do not stun the player when he is in the air.
             if (!IsJumpingState(CurrentState) && _body.IsGrounded)
                 Stun(stunTime);
         }

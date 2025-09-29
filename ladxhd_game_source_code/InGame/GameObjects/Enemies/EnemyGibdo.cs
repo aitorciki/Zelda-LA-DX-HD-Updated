@@ -17,6 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly AiStunnedState _aiStunnedState;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private const float MoveSpeed = 0.5f;
 
@@ -69,10 +71,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
@@ -80,30 +82,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("walk");
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-        }
-
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (damageType == HitType.Bomb)
-                damage = 3;
-            if (damageType == HitType.Boomerang)
-                damage = 2;
-            if (damageType == HitType.Bow)
-                damage = 1;
-
-            if (damageType == HitType.Hookshot)
-            {
-                _body.VelocityTarget = Vector2.Zero;
-                _body.Velocity.X += direction.X * 0.75f;
-                _body.Velocity.Y += direction.Y * 0.75f;
-                _damageField.IsActive = false;
-                _aiStunnedState.StartStun();
-                _animator.Pause();
-
-                return Values.HitCollision.Enemy;
-            }
-
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
 
         private void OnBurn()
@@ -160,6 +138,33 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void OnHoleAbsorb()
         {
             _animator.SpeedMultiplier = 3f;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (damageType == HitType.Bomb)
+                damage = 3;
+            if (damageType == HitType.Boomerang)
+                damage = 2;
+            if (damageType == HitType.Bow)
+                damage = 1;
+            if (damageType == HitType.Hookshot)
+            {
+                _body.VelocityTarget = Vector2.Zero;
+                _body.Velocity.X += direction.X * 0.75f;
+                _body.Velocity.Y += direction.Y * 0.75f;
+                _damageField.IsActive = false;
+                _aiStunnedState.StartStun();
+                _animator.Pause();
+                return Values.HitCollision.Enemy;
+            }
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

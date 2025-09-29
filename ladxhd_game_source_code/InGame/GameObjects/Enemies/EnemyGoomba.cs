@@ -18,7 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly BoxCollisionComponent _bodyCollision;
         private readonly DamageFieldComponent _damageField;
-        private readonly HittableComponent _hitcomponent;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly AiDamageState _damageState;
 
         private int _lives = ObjLives.Goomba;
@@ -83,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (Map.Is2dMap)
                 _damageState.HitMultiplierY = 1.0f;
-            AddComponent(HittableComponent.Index, _hitcomponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
@@ -93,16 +94,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 var collisionBox = new CBox(EntityPosition, -6, -8, 0, 12, 8, 4);
                 AddComponent(CollisionComponent.Index, _bodyCollision = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
             }
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-        }
-
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
-                _body.VelocityTarget = Vector2.Zero;
-
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
 
         private void InitWalking()
@@ -188,7 +181,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("dead");
             _body.VelocityTarget = Vector2.Zero;
             _damageField.IsActive = false;
-            _hitcomponent.IsActive = false;
+            _hitComponent.IsActive = false;
             if (_bodyCollision != null)
                 _bodyCollision.IsActive = false;
         }
@@ -209,6 +202,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // stop walking into the wall
             if (!Map.Is2dMap && (direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
                 _aiComponent.ChangeState("walking");
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
+                _body.VelocityTarget = Vector2.Zero;
+
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

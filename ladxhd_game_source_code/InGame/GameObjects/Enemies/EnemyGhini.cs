@@ -20,6 +20,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
         private readonly CSprite _sprite;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private readonly Rectangle _triggerField;
         private readonly Vector2 _centerPosition;
@@ -34,7 +36,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _rotationDirection;
         private float _dirChangeCount;
         private float _transparency;
-
         private bool _mainGhini;
 
         public bool IsVisible { get; private set; }
@@ -78,18 +79,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("flying", stateFlying);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { IsActive = !spawnAnimation };
             _damageState.OnDeath = OnDeath;
-
             _aiComponent.ChangeState(spawnAnimation ? "init" : "flying");
 
             var damageCollider = new CBox(EntityPosition, -6, -14, 0, 12, 14, 8, true);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { IsActive = !spawnAnimation });
-            AddComponent(HittableComponent.Index, new HittableComponent(damageCollider, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
@@ -138,7 +139,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             _velocity *= (float)Math.Pow(0.95f, Game1.TimeMultiplier);
-
             _velocity += new Vector2((float)Math.Cos(_direction), (float)Math.Sin(_direction)) * 0.035f * Game1.TimeMultiplier;
             _direction += _rotationDirection * Game1.TimeMultiplier;
 
@@ -148,9 +148,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _velocity.Normalize();
                 _velocity *= 1.75f;
             }
-
             _body.VelocityTarget = _velocity;
-
             _animator.Play("fly_" + (_body.VelocityTarget.X < 0 ? -1 : 1));
         }
 
@@ -165,19 +163,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // spawns a fairy
                 Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, (int)EntityPosition.Z));
             }
-
             _damageState.BaseOnDeath(pieceOfPower);
-        }
-
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            if (type == HitType.MagicPowder)
-                return Values.HitCollision.None;
-
-            if (type == HitType.Bomb || type == HitType.Bow || type == HitType.MagicRod)
-                damage *= 2;
-
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
 
         private void KillOtherGhinies()
@@ -196,6 +182,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     aiComponent?.ChangeState("damageDeath");
                 }
             }
+        }
+
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            if (type == PushableComponent.PushType.Impact)
+                _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
+
+            return true;
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            if (type == HitType.MagicPowder)
+                return Values.HitCollision.None;
+
+            if (type == HitType.Bomb || type == HitType.Bow || type == HitType.MagicRod)
+                damage *= 2;
+
+            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
     }
 }

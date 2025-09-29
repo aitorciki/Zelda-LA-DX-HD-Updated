@@ -2,8 +2,9 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
 
@@ -13,6 +14,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly CSprite _sprite;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly DamageFieldComponent _damageField;
 
         private int _collisionCount;
         private bool _wasHit;
@@ -37,9 +41,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.Velocity = direction;
 
             var hitBox = new CBox(EntityPosition, -5, -11, 0, 10, 10, 10, true);
-            AddComponent(PushableComponent.Index, new PushableComponent(hitBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(hitBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hitBox, OnPush));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hitBox, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hitBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
 
@@ -97,6 +101,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_wasHit)
                 return Values.HitCollision.None;
+
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
 
             _body.Velocity = new Vector3(direction.X, direction.Y, 0.1f) * 3.5f;
             EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0));

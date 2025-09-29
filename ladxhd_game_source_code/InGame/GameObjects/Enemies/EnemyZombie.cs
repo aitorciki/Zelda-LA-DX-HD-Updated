@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private int _lives = ObjLives.Zombie;
 
@@ -61,9 +63,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -6, -14, 0, 12, 14, 4);
             var pushableBox = new CBox(EntityPosition, -6, -13, 0, 12, 13, 8);
 
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -138,11 +140,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
-        }
-
         private void OnCollision(Values.BodyCollision direction)
         {
             if (_aiComponent.CurrentStateId == "walking")
@@ -158,6 +155,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         public void OnHoleAbsorb()
         {
             _animator.SpeedMultiplier = 2f;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

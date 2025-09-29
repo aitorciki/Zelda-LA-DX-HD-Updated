@@ -10,9 +10,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyGopongaFlower : GameObject
     {
-        private readonly AiDamageState _aiDamageState;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
+        private readonly BoxCollisionComponent _collisionComponent;
+
         private readonly int _animationLength;
         private bool _dealsDamage = true;
         private int _lives = ObjLives.GopongaFlower;
@@ -45,7 +48,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
-            _aiDamageState = new AiDamageState(this, body, aiComponent, sprite, _lives)
+            _damageState = new AiDamageState(this, body, aiComponent, sprite, _lives)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
@@ -55,8 +58,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(AiComponent.Index, aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 4));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -106,14 +109,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (ValidateHit(type, pieceOfPower))
             {
-                if (type != HitType.BowWow && (type == HitType.MagicRod || damage >= _aiDamageState.CurrentLives))
+                if (type != HitType.BowWow && (type == HitType.MagicRod || damage >= _damageState.CurrentLives))
                 {
-                    _aiDamageState.HitMultiplierX = 4;
-                    _aiDamageState.HitMultiplierY = 4;
+                    _damageState.HitMultiplierX = 4;
+                    _damageState.HitMultiplierY = 4;
                 }
                 if (_dealsDamage)
                 {
-                    return _aiDamageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+                    if (_damageState.CurrentLives <= 0)
+                    {
+                        _damageField.IsActive = false;
+                        _hitComponent.IsActive = false;
+                        _collisionComponent.IsActive = false;
+                    }
+                    return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
                 }
                 return Values.HitCollision.None;
             }

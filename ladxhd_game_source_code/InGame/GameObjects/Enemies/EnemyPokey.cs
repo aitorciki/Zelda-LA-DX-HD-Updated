@@ -17,9 +17,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _aiDamageState;
         private readonly CSprite _sprite;
-
+        private readonly AiDamageState _damageState;
         private readonly DictAtlasEntry _spriteHead;
         private readonly DictAtlasEntry _spriteBody;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly DamageFieldComponent _damageField;
 
         private float _moveSpeed = 1 / 3f;
         private int _direction;
@@ -59,18 +62,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moving", stateMoving);
             new AiFallState(_aiComponent, _body, null);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives);
 
             _aiComponent.ChangeState("moving");
 
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 16);
             var hittableBox = new CBox(EntityPosition, -7, -14, 14, 14, 24);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 10, ShadowHeight = 5 });
         }
@@ -85,43 +88,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // random new direction
             _direction = Game1.RandomNumber.Next(0, 4);
             _body.VelocityTarget = AnimationHelper.DirectionOffset[_direction] * _moveSpeed;
-        }
-
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (_aiDamageState.IsInDamageState())
-                return Values.HitCollision.None;
-
-            if (damageType == HitType.Bomb || damageType == HitType.Bow)
-                damage /= 2;
-
-            if ((damageType & HitType.Sword2) != 0 ||
-                (damageType & HitType.SwordSpin) != 0  ||
-                damageType == HitType.Hookshot ||
-                damageType == HitType.MagicPowder ||
-                damageType == HitType.MagicRod ||
-                pieceOfPower)
-                damage *= 2;
-
-            var hitType = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
-
-            if (_aiDamageState.CurrentLives > 0)
-            {
-                _state += 1;
-                if (_state <= 2)
-                {
-                    EntityPosition.Z = 14;
-                    _body.Velocity.Z = -0.5f;
-
-                    var bodyPart = new EnemyPokeyPart(Map, EntityPosition.X, EntityPosition.Y, direction * 2f, _body.Velocity);
-                    Map.Objects.SpawnObject(bodyPart);
-                }
-            }
-
-            if (_state == 2)
-                _sprite.SetSprite(_spriteHead);
-
-            return hitType;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -175,6 +141,48 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 spriteBatch.End();
                 ObjectManager.SpriteBatchBegin(spriteBatch, null);
             }
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_aiDamageState.IsInDamageState())
+                return Values.HitCollision.None;
+
+            if (damageType == HitType.Bomb || damageType == HitType.Bow)
+                damage /= 2;
+
+            if ((damageType & HitType.Sword2) != 0 ||
+                (damageType & HitType.SwordSpin) != 0  ||
+                damageType == HitType.Hookshot ||
+                damageType == HitType.MagicPowder ||
+                damageType == HitType.MagicRod ||
+                pieceOfPower)
+                damage *= 2;
+
+            var hitType = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+
+            if (_aiDamageState.CurrentLives > 0)
+            {
+                _state += 1;
+                if (_state <= 2)
+                {
+                    EntityPosition.Z = 14;
+                    _body.Velocity.Z = -0.5f;
+
+                    var bodyPart = new EnemyPokeyPart(Map, EntityPosition.X, EntityPosition.Y, direction * 2f, _body.Velocity);
+                    Map.Objects.SpawnObject(bodyPart);
+                }
+            }
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            if (_state == 2)
+                _sprite.SetSprite(_spriteHead);
+
+            return hitType;
         }
     }
 }

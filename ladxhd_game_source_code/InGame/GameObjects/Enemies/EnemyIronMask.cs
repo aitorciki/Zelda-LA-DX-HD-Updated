@@ -16,6 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private float _moveSpeed = 0.5f;
         private float _moveSpeedUnprotected = 0.75f;
@@ -75,10 +77,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var pushableBox = new CBox(EntityPosition, -7, -12, 14, 12, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
@@ -117,6 +119,37 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                    (_isUnprotected ? _moveSpeedUnprotected : _moveSpeed);
         }
 
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            if (type == PushableComponent.PushType.Impact)
+                _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
+
+            return true;
+        }
+
+        private void OnCollision(Values.BodyCollision direction)
+        {
+            if (_aiComponent.CurrentStateId != "walking")
+                return;
+
+            // stop walking
+            _aiComponent.ChangeState("idle");
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+        }
+
+        private void OnHoleAbsorb()
+        {
+            _animator.SpeedMultiplier = 3f;
+
+            if (!_isUnprotected)
+                _animator.Play("walk_" + _direction);
+        }
+
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
         {
             // can be hit if the damage source is coming from the back
@@ -149,39 +182,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity = new Vector3(direction, 0);
                 _aiComponent.ChangeState("stunned");
             }
-
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             return Values.HitCollision.RepellingParticle;
-        }
-
-        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
-        {
-            if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
-
-            return true;
-        }
-
-        private void OnCollision(Values.BodyCollision direction)
-        {
-            if (_aiComponent.CurrentStateId != "walking")
-                return;
-
-            // stop walking
-            _aiComponent.ChangeState("idle");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
-        }
-
-        private void OnHoleAbsorb()
-        {
-            _animator.SpeedMultiplier = 3f;
-
-            if (!_isUnprotected)
-                _animator.Play("walk_" + _direction);
         }
     }
 }

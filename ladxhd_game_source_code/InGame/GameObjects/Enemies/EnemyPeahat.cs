@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiTriggerCountdown _flyCounter;
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private const int StartTime = 2500;
         private const int FlyTime = 7500;
@@ -85,8 +87,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -6, -14, 0, 12, 14, 4, true);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
@@ -94,23 +96,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-        }
-
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            if (_aiComponent.CurrentStateId == "stunned")
-                return Values.HitCollision.None;
-
-            if (_animator.SpeedMultiplier > 0.25f)
-            {
-                _aiComponent.ChangeState("stunned");
-                _animator.SpeedMultiplier = 0;
-                _body.VelocityTarget = Vector2.Zero;
-
-                return Values.HitCollision.RepellingParticle;
-            }
-
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
 
         private void OnCollision(Values.BodyCollision collision)
@@ -203,6 +188,28 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _aiComponent.ChangeState("idle");
             EntityPosition.Z = 0;
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            if (_aiComponent.CurrentStateId == "stunned")
+                return Values.HitCollision.None;
+
+            if (_animator.SpeedMultiplier > 0.25f)
+            {
+                _aiComponent.ChangeState("stunned");
+                _animator.SpeedMultiplier = 0;
+                _body.VelocityTarget = Vector2.Zero;
+
+                return Values.HitCollision.RepellingParticle;
+            }
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
     }
 }

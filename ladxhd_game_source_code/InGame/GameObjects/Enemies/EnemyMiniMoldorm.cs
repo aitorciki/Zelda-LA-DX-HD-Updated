@@ -15,6 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyMiniMoldorm : GameObject
     {
         private readonly AiComponent _aiComp;
+        private readonly AiDamageState _damageState;
         private readonly BodyComponent _bodyComp;
         private readonly BodyDrawComponent _bodyDrawComp;
         private readonly CSprite _sprite;
@@ -23,6 +24,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DictAtlasEntry _spritePart0;
         private readonly DictAtlasEntry _spritePart1;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private Vector2 _tailOnePosition;
         private Vector2 _tailTwoPosition;
@@ -65,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var stateWalking = new AiState(Update);
             _aiComp.States.Add("walking", stateWalking);
-            var damageState = new AiDamageState(this, _bodyComp, _aiComp, _sprite, _lives, false)
+            _damageState = new AiDamageState(this, _bodyComp, _aiComp, _sprite, _lives, false)
             {
                 FlameOffset = new Point(0, 10 - SpriteOffsetY),
                 UpdateLastStateFire = true
@@ -78,8 +81,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(AiComponent.Index, _aiComp);
             AddComponent(BodyComponent.Index, _bodyComp);
-            AddComponent(PushableComponent.Index, new PushableComponent(_bodyComp.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_bodyComp.BodyBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             _bodyDrawComp = new BodyDrawComponent(_bodyComp, _sprite, Values.LayerPlayer);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
@@ -219,6 +222,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var fallAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 5, (int)EntityPosition.Y - 5 - SpriteOffsetY, Values.LayerBottom, "Particles/fall", "idle", true);
             Map.Objects.SpawnObject(fallAnimation);
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

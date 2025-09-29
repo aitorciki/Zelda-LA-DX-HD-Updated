@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly CBox _collisionBox;
         private readonly AiTriggerTimer _collisionTimer;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private float _moveSpeed = 0.5f;
         private int _direction;
@@ -73,10 +75,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var boxHittable = new CBox(EntityPosition, -7, -14, 14, 14, 8);
             _collisionBox = new CBox(EntityPosition, -5, -10, 10, 8, 2);
 
-            AddComponent(HittableComponent.Index, new HittableComponent(boxHittable, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(boxHittable, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
@@ -136,22 +138,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = AnimationHelper.DirectionOffset[_direction] * _moveSpeed;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (_hasPlayerTrapped && (damageType & HitType.Sword) != 0)
-                return Values.HitCollision.None;
-
-            if (_hasPlayerTrapped && (damageType == HitType.Boomerang || damageType == HitType.Bow ||
-                                      damageType == HitType.Hookshot || damageType == HitType.MagicRod))
-            {
-                _hasPlayerTrapped = false;
-                MapManager.ObjLink.FreeTrappedPlayer();
-                direction = MapManager.ObjLink.ForwardVector;
-            }
-
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
-        }
-
         private void OnDeath(bool pieceOfPower)
         {
             _damageState.BaseOnDeath(pieceOfPower);
@@ -184,6 +170,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void OnHoleAbsorb()
         {
             _animator.SpeedMultiplier = 3f;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_hasPlayerTrapped && (damageType & HitType.Sword) != 0)
+                return Values.HitCollision.None;
+
+            if (_hasPlayerTrapped && (damageType == HitType.Boomerang || damageType == HitType.Bow ||
+                                      damageType == HitType.Hookshot || damageType == HitType.MagicRod))
+            {
+                _hasPlayerTrapped = false;
+                MapManager.ObjLink.FreeTrappedPlayer();
+                direction = MapManager.ObjLink.ForwardVector;
+            }
+            if (_damageState.CurrentLives <= 0)
+            {
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

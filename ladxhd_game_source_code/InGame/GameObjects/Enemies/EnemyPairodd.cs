@@ -13,14 +13,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
+        private readonly AiTriggerTimer _teleportCooldown;
+        private readonly AiTriggerCountdown _shootCountdown;
+        private readonly DrawShadowCSpriteComponent _shadowComponent;
+        private readonly AiStunnedState _aiStunnedState;
+        private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+
         private readonly BodyComponent _body;
         private readonly Animator _animator;
         private readonly CSprite _sprite;
-        private readonly DrawShadowCSpriteComponent _shadowComponent;
-        private readonly AiTriggerTimer _teleportCooldown;
-        private readonly AiTriggerCountdown _shootCountdown;
-        private readonly AiStunnedState _aiStunnedState;
-        private readonly DamageFieldComponent _damageField;
 
         private readonly Rectangle _fieldRectangle;
         private readonly Vector2 _centerPosition;
@@ -73,11 +76,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -14, 14, 14, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new DrawShadowCSpriteComponent(_sprite));
 
@@ -220,6 +223,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (damageType == HitType.Bomb)
                 damage = 1;
 
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }

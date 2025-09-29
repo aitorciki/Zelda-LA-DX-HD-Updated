@@ -13,9 +13,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyKeese : GameObject
     {
         private readonly BodyComponent _body;
+        private readonly AiDamageState _damageState;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private readonly float _turnSpeed;
 
@@ -65,17 +68,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("cooldown", stateCooldown);
             _aiComponent.States.Add("flying", stateFlying);
             new AiFallState(_aiComponent, _body, null, null, 0);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("cooldown");
 
             var damageCollider = new CBox(EntityPosition, -5, -20, 0, 10, 8, 4);
+            var pushableBox = new CBox(EntityPosition, -4, -18, 0, 8, 6, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, damageState.OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
@@ -127,6 +132,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void OnCollision(Values.BodyCollision direction)
         {
             _flyState += (float)Math.PI;
+        }
+
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            if (type == PushableComponent.PushType.Impact)
+            {
+                _body.Velocity.X = direction.X * 0.75f;
+                _body.Velocity.Y = direction.Y * 0.75f;
+            }
+            return true;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

@@ -10,9 +10,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyStar : GameObject
     {
+        private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private int _lives = ObjLives.Star;
 
@@ -44,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
-            var damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
 
             aiComponent.ChangeState("idle");
 
@@ -52,8 +55,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 13, 8);
             var pushableBox = new CBox(EntityPosition, -6, -13, 0, 12, 12, 8);
 
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
@@ -90,6 +93,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.VelocityTarget.X = -_body.VelocityTarget.X;
             if ((collider & Values.BodyCollision.Vertical) != 0)
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

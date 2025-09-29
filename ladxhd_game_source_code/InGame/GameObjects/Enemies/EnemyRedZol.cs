@@ -19,6 +19,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly AnimationComponent _animationComponent;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private readonly EnemyGel _gel0;
         private readonly EnemyGel _gel1;
@@ -82,10 +84,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -6, -11, 12, 11, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
@@ -98,23 +100,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(_gel1);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-        }
-
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            // spawn small zols if the damage is not over the amount of HP they have
-            if (damage > _lives)
-            {
-                ((HittableComponent)Components[HittableComponent.Index]).IsActive = false;
-                _spawnSmallZols = false;
-            }
-            else
-            {
-                _damageState.SpawnItems = false;
-                _damageState.DeathAnimation = false;
-            }
-
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
 
         private void InitWaiting()
@@ -223,6 +208,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _gel1.EntityPosition.Set(new Vector2(EntityPosition.X + 2.9f + Game1.RandomNumber.Next(0, 2), EntityPosition.Y - Game1.RandomNumber.Next(0, 2)));
             _gel1.IsActive = true;
             _gel1.InitSpawn();
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            // spawn small zols if the damage is not over the amount of HP they have
+            if (damage > _lives)
+            {
+                ((HittableComponent)Components[HittableComponent.Index]).IsActive = false;
+                _spawnSmallZols = false;
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            else
+            {
+                _damageState.SpawnItems = false;
+                _damageState.DeathAnimation = false;
+            }
+            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
     }
 }

@@ -58,9 +58,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
-
             _aiComponent.ChangeState("waiting");
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             var hittableBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 8, true);
             var damageBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 4, true);
@@ -83,20 +82,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.DragAir = 0.9f;
             _body.Bounciness = 0.5f;
             _damageField.IsActive = false;
-        }
-
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            // can only be attacked with the sword while holding it
-            if ((damageType & HitType.Sword) != 0 && (damageType & HitType.SwordHold) == 0 && (damageType & HitType.SwordSpin) == 0)
-            {
-                _body.Velocity.X = direction.X * 5;
-                _body.Velocity.Y = direction.Y * 5;
-
-                return Values.HitCollision.None;
-            }
-
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
 
         private void InitWaiting()
@@ -148,6 +133,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Math.Clamp(((maxDistance - directionToStart.Length()) / maxDistance), 0, 1);
 
             _body.VelocityTarget = new Vector2((float)Math.Cos(randomDir), (float)Math.Sin(randomDir)) * 0.5f;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            // can only be attacked with the sword while holding it
+            if ((damageType & HitType.Sword) != 0 && (damageType & HitType.SwordHold) == 0 && (damageType & HitType.SwordSpin) == 0)
+            {
+                _body.Velocity.X = direction.X * 5;
+                _body.Velocity.Y = direction.Y * 5;
+
+                return Values.HitCollision.None;
+            }
+
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

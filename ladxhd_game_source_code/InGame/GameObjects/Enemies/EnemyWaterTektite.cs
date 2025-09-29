@@ -11,10 +11,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyWaterTektite : GameObject
     {
         private readonly BodyComponent _body;
+        private readonly AiDamageState _damageState;
         private readonly AiComponent _aiComponent;
         private readonly AiTriggerRandomTime _movementTimer;
         private readonly DamageFieldComponent _damageField;
         private readonly Animator _animator;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private float _currentSpeed;
         private int _currentDir;
@@ -68,12 +71,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("waiting", stateWaiting);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
@@ -135,6 +138,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
 
             return true;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

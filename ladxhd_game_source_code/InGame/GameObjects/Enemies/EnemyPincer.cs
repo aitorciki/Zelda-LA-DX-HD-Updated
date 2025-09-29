@@ -106,33 +106,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (damageType == HitType.MagicPowder)
-            {
-                _stunnedState.StartStun();
-                return Values.HitCollision.Enemy;
-            }
-
-            // can only attack while the enemy is attacking
-            if (_aiComponent.CurrentStateId != "attacking" &&
-                _aiComponent.CurrentStateId != "attackWait" &&
-                _aiComponent.CurrentStateId != "retract" &&
-                !_stunnedState.IsStunned())
-                return Values.HitCollision.None;
-
-            if (_aiComponent.CurrentStateId == "attacking")
-                _aiComponent.ChangeState("attackWait");
-
-            _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
-
-            // make sure to not fly away like for other enemies
-            if (pieceOfPower)
-                _body.Drag = 0.75f;
-
-            return Values.HitCollision.Enemy;
-        }
-
         private void ToWaiting()
         {
             _aiComponent.ChangeState("waiting");
@@ -222,6 +195,33 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _dirIndex = (int)((degree + 22.5f) / 45) % 8;
 
             _animator.Play(_dirIndex.ToString());
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (damageType == HitType.MagicPowder)
+            {
+                _stunnedState.StartStun();
+                return Values.HitCollision.Enemy;
+            }
+
+            // can only attack while the enemy is attacking
+            if (_aiComponent.CurrentStateId != "attacking" &&
+                _aiComponent.CurrentStateId != "attackWait" &&
+                _aiComponent.CurrentStateId != "retract" &&
+                !_stunnedState.IsStunned())
+                return Values.HitCollision.None;
+
+            if (_aiComponent.CurrentStateId == "attacking")
+                _aiComponent.ChangeState("attackWait");
+
+            _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+
+            // make sure to not fly away like for other enemies
+            if (pieceOfPower)
+                _body.Drag = 0.75f;
+
+            return Values.HitCollision.Enemy;
         }
     }
 }

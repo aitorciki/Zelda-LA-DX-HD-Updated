@@ -19,6 +19,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
         private readonly CSprite _sprite;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private Rectangle _fieldRectangle;
         private Vector2 _velocity;
@@ -74,12 +76,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { OnDeath = OnDeath, IsActive = !spawnAnimation };
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4) { IsActive = !spawnAnimation });
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 24, ShadowHeight = 6 });
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
 
             new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
@@ -147,17 +150,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("fly_" + (_body.VelocityTarget.X < 0 ? -1 : 1));
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            if (type == HitType.MagicPowder)
-                return Values.HitCollision.None;
-
-            if (type == HitType.Bomb || type == HitType.Bow || type == HitType.MagicRod)
-                damage *= 2;
-
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
-        }
-
         private void OnDeath(bool pieceOfPower)
         {
             if (Game1.RandomNumber.Next(0, 100) < 75)
@@ -168,6 +160,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             _damageState.BaseOnDeath(pieceOfPower);
+        }
+
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            if (type == PushableComponent.PushType.Impact)
+                _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
+
+            return true;
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            if (type == HitType.MagicPowder)
+                return Values.HitCollision.None;
+
+            if (type == HitType.Bomb || type == HitType.Bow || type == HitType.MagicRod)
+                damage *= 2;
+
+            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
     }
 }

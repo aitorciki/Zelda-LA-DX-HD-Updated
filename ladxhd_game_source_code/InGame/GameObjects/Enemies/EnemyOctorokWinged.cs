@@ -14,13 +14,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyOctorokWinged : GameObject
     {
+        private readonly AiDamageState _damageState;
+        private readonly PushableComponent _pushComponent;
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
-        private readonly AiDamageState _aiDamageState;
         private readonly BodyDrawComponent _bodyDrawComponent;
         private readonly AiTriggerSwitch _damageSwitch;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
 
         private readonly Rectangle _wingRectangle = new Rectangle(160, 67, 8, 18);
 
@@ -78,7 +80,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("flying", stateFlying);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiComponent.Trigger.Add(_damageSwitch = new AiTriggerSwitch(350));
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
 
@@ -94,11 +96,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _bodyDrawComponent = new BodyDrawComponent(_body, sprite, Values.LayerPlayer);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { Height = 1.0f, Rotation = 0.1f, ShadowWidth = 10, ShadowHeight = 5 });
 
@@ -197,11 +199,37 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _bodyDrawComponent.Draw(spriteBatch);
         }
 
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            if (type == PushableComponent.PushType.Impact)
+                _body.Velocity = new Vector3(direction.X * 1.75f, direction.Y * 1.75f, _body.Velocity.Z);
+
+            return true;
+        }
+
+        private void OnCollision(Values.BodyCollision direction)
+        {
+            if (_aiComponent.CurrentStateId == "walking")
+                _aiComponent.ChangeState("idle");
+        }
+
+        private void OnHoleAbsorb()
+        {
+            _animator.SpeedMultiplier = 3f;
+            _animator.Play("walk_" + _direction);
+        }
+
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             // Sword spin ignores the jumping logic.
             if ((damageType & HitType.SwordSpin) != 0)
-                return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
             // Sword can't deal damage while flying.
             if ((damageType & HitType.Sword) != 0 && !_body.IsGrounded)
@@ -224,27 +252,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return Values.HitCollision.None;
             }
             // If we got here, it was probably a hit from the back or another weapon than sword.
-            return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
-        }
-
-        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
-        {
-            if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 1.75f, direction.Y * 1.75f, _body.Velocity.Z);
-
-            return true;
-        }
-
-        private void OnCollision(Values.BodyCollision direction)
-        {
-            if (_aiComponent.CurrentStateId == "walking")
-                _aiComponent.ChangeState("idle");
-        }
-
-        private void OnHoleAbsorb()
-        {
-            _animator.SpeedMultiplier = 3f;
-            _animator.Play("walk_" + _direction);
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

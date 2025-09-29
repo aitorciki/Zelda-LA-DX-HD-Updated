@@ -21,6 +21,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyDrawShadowComponent _shadowComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private ObjHole _objHole;
 
@@ -94,12 +96,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { OnDamagedPlayer = OnDamagePlayer, IsActive = false });
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(hittableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(sprite, Values.LayerBottom));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, sprite) { IsActive = false, OffsetY = 5 });
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
 
             if (!string.IsNullOrEmpty(_strKey))
             {
@@ -229,20 +231,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            if (_aiComponent.CurrentStateId == "idle")
-                return Values.HitCollision.None;
-
-            // burn
-            if (type == HitType.MagicRod || type == HitType.MagicPowder)
-                return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
-
-            OnDeath(new Vector3(direction * 1.0f, 0.1f));
-
-            return Values.HitCollision.Enemy;
-        }
-
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (_aiComponent.CurrentStateId == "idle")
@@ -292,6 +280,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // remove the object
             Map.Objects.DeleteObjects.Add(this);
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            if (_aiComponent.CurrentStateId == "idle")
+                return Values.HitCollision.None;
+
+            if (type == HitType.MagicRod || type == HitType.MagicPowder)
+                return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            OnDeath(new Vector3(direction * 1.0f, 0.1f));
+            return Values.HitCollision.Enemy;
         }
     }
 }

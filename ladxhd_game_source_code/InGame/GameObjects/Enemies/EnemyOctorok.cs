@@ -12,10 +12,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyOctorok : GameObject, IHasVisibility
     {
+        private readonly AiDamageState _damageState;
+        private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
-        private readonly DamageFieldComponent _damageField;
 
         private readonly Vector2[] _shotOffset =
         {
@@ -72,17 +75,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
             _aiComponent.ChangeState("walking");
 
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             var damageBox = new CBox(EntityPosition, -8, -13, 0, 16, 13, 4);
             var hittableBox = new CBox(EntityPosition, -7, -15, 0, 14, 15, 8);
             var pushableBox = new CBox(EntityPosition, -7, -13, 0, 14, 13, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
 
@@ -168,6 +171,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.SpeedMultiplier = 3f;
             _animator.Play("walk_" + _direction);
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

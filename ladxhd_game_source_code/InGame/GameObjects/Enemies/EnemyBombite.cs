@@ -18,6 +18,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly AiTriggerSwitch _damageCooldown;
         private readonly CBox _pongCollider;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly DamageFieldComponent _damageField;
 
         private const float WalkSpeed = 0.5f;
 
@@ -72,12 +75,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -6, -13, 0, 12, 12, 4);
             _pongCollider = new CBox(EntityPosition, -6, -12, 0, 12, 11, 8);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
         }
@@ -110,34 +113,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (!_damageCooldown.State || gameObject == this)
-                return Values.HitCollision.None;
-            _damageCooldown.Reset();
-
-            if (damageType == HitType.Bomb && !(gameObject is EnemyBombite))
-            {
-                // spawn a bomb
-                _damageState.SpawnItem = "bomb_1";
-                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
-            }
-
-            // hookshot/boomerang freeze
-
-            _body.FieldRectangle = RectangleF.Empty;
-
-            if (damageType != HitType.MagicPowder)
-                _body.VelocityTarget = direction * 3;
-            else
-                _body.VelocityTarget = Vector2.Zero;
-
-            _animator.Play("damage");
-            _aiComponent.ChangeState("pong");
-
-            return Values.HitCollision.Enemy;
-        }
-
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
@@ -163,6 +138,39 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.SpeedMultiplier = 3f;
             _animator.Play("idle");
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (!_damageCooldown.State || gameObject == this)
+                return Values.HitCollision.None;
+            _damageCooldown.Reset();
+
+            if (damageType == HitType.Bomb && !(gameObject is EnemyBombite))
+            {
+                if (_damageState.CurrentLives <= 0)
+                {
+                    _damageField.IsActive = false;
+                    _hitComponent.IsActive = false;
+                    _pushComponent.IsActive = false;
+                }
+                // spawn a bomb
+                _damageState.SpawnItem = "bomb_1";
+                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            }
+
+            // hookshot/boomerang freeze
+            _body.FieldRectangle = RectangleF.Empty;
+
+            if (damageType != HitType.MagicPowder)
+                _body.VelocityTarget = direction * 3;
+            else
+                _body.VelocityTarget = Vector2.Zero;
+
+            _animator.Play("damage");
+            _aiComponent.ChangeState("pong");
+
+            return Values.HitCollision.Enemy;
         }
     }
 }

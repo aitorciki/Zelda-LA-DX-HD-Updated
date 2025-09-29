@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -13,8 +12,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyGopongaFlowerGiant : GameObject
     {
         private readonly Animator _animator;
-        private readonly AiDamageState _aiDamageState;
         private readonly DamageFieldComponent _damageField;
+        private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
+        private readonly BoxCollisionComponent _collisionComponent;
+
         private bool _dealsDamage = true;
         private int _lives = ObjLives.GopongaGiant;
 
@@ -45,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState(() => { }));
-            _aiDamageState = new AiDamageState(this, body, aiComponent, sprite, _lives)
+            _damageState = new AiDamageState(this, body, aiComponent, sprite, _lives)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
@@ -55,8 +57,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             aiComponent.ChangeState("idle");
 
             AddComponent(AiComponent.Index, aiComponent);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -90,29 +92,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return false;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            if (ValidateHit(type, pieceOfPower))
-            {
-                if (type != HitType.BowWow && (type == HitType.MagicRod || damage >= _aiDamageState.CurrentLives))
-                {
-                    _aiDamageState.HitMultiplierX = 4;
-                    _aiDamageState.HitMultiplierY = 4;
-                }
-                if (_dealsDamage)
-                {
-                    return _aiDamageState.OnHit(originObject, direction, type, damage, pieceOfPower);
-                }
-                return Values.HitCollision.None;
-            }
-            if (!_blockSound)
-            {
-                Game1.GameManager.PlaySoundEffect("D360-09-09");
-                _blockSound = true;
-            }
-            return Values.HitCollision.Blocking;
-        }
-
         private void OnBurn()
         {
             _animator.Pause();
@@ -139,6 +118,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // continue with the idle animation and don't start an attack
                 _animator.Play("idle");
             }
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            if (ValidateHit(type, pieceOfPower))
+            {
+                if (type != HitType.BowWow && (type == HitType.MagicRod || damage >= _damageState.CurrentLives))
+                {
+                    _damageState.HitMultiplierX = 4;
+                    _damageState.HitMultiplierY = 4;
+                }
+                if (_dealsDamage)
+                {
+                    if (_damageState.CurrentLives <= 0)
+                    {
+                        _damageField.IsActive = false;
+                        _hitComponent.IsActive = false;
+                        _collisionComponent.IsActive = false;
+                    }
+                    return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+                }
+                return Values.HitCollision.None;
+            }
+            if (!_blockSound)
+            {
+                Game1.GameManager.PlaySoundEffect("D360-09-09");
+                _blockSound = true;
+            }
+            return Values.HitCollision.Blocking;
         }
     }
 }

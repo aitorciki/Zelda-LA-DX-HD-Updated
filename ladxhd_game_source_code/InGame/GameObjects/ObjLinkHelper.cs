@@ -37,16 +37,19 @@ namespace ProjectZ.InGame.GameObjects
         /// <returns></returns>
         private int ToDirection(Vector2 direction)
         {
-            int value;
+            // Fail safe in case the impossible happens.
+            if (direction == Vector2.Zero) { return Direction; }
 
-            // this makes it so that if you start walking diagonal the player won't change the direction
-            var dirMultiply = (Direction == 0 || Direction == 2) ? 1.05f : 0.95f;
-            if (Math.Abs(direction.X) * dirMultiply > Math.Abs(direction.Y))
-                value = direction.X > 0 ? 2 : 0;
-            else
-                value = direction.Y > 0 ? 3 : 1;
+            // Get angle in degrees 0-360.
+            float angle = (float)Math.Atan2(direction.Y, direction.X);
+            float deg = MathHelper.ToDegrees(angle);
+            if (deg < 0) { deg += 360f; }
 
-            return value;
+            // 0:Left 1:Up 2:Right 3:Down
+            if (deg >= 315 || deg < 45)   return 2;
+            if (deg >= 45  && deg < 135)  return 3;
+            if (deg >= 135 && deg < 225)  return 0;
+            return 1;
         }
     }
 }

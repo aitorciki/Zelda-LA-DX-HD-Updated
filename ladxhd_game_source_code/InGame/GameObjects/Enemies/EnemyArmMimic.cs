@@ -14,10 +14,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly Animator _animator;
-        private readonly AiDamageState _aiDamageState;
+        private readonly AiDamageState _damageState;
         private readonly AiTriggerTimer _repelTimer;
         private readonly AiStunnedState _aiStunnedState;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private Vector2 _lastPosition;
         private int _direction;
@@ -44,7 +46,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IsSlider = true,
                 MaxSlideDistance = 4.0f
             };
-
             var stateUpdate = new AiState(Update);
 
             var aiComponent = new AiComponent();
@@ -52,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             aiComponent.States.Add("idle", stateUpdate);
             new AiFallState(aiComponent, _body, null, null, 300);
-            _aiDamageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
+            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
             _aiStunnedState = new AiStunnedState(aiComponent, animatorComponent, 3300, 900);
 
             aiComponent.ChangeState("idle");
@@ -62,11 +63,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var pushableBox = new CBox(EntityPosition, -5, -14, 2, 10, 14, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 12));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
         }
@@ -113,7 +114,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _wasColliding = false;
                 _body.VelocityTarget = Vector2.Zero;
             }
-
             if (!moved)
                 _animator.Pause();
         }
@@ -150,7 +150,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (damageType != HitType.PegasusBootsSword && damageType != HitType.SwordShot && (damageType & HitType.SwordSpin) == 0 && !pieceOfPower)
                 damage = 0;
 
-            return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }

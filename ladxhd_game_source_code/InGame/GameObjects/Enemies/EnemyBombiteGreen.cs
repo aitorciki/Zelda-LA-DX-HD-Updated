@@ -19,6 +19,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiTriggerSwitch _damageCooldown;
         private readonly AiStunnedState _aiStunnedState;
         private readonly CSprite _sprite;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly DamageFieldComponent _damageField;
 
         private const float WalkSpeed = 0.5f;
 
@@ -70,12 +73,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var damageCollider = new CBox(EntityPosition, -6, -13, 0, 12, 12, 4);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite) { Height = 1.0f, Rotation = 0.1f });
         }
@@ -139,6 +142,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.DeleteObjects.Add(this);
         }
 
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            if (type == PushableComponent.PushType.Impact)
+                _body.Velocity = new Vector3(direction.X * 1.75f, direction.Y * 1.75f, _body.Velocity.Z);
+
+            return true;
+        }
+
+        private void OnHoleAbsorb()
+        {
+            _animator.SpeedMultiplier = 3f;
+            _animator.Play("idle");
+        }
+
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
             if (_damageState.IsInDamageState())
@@ -146,6 +163,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (damageType == HitType.Bomb && !(gameObject is EnemyBombite))
             {
+                if (_damageState.CurrentLives <= 0)
+                {
+                    _damageField.IsActive = false;
+                    _hitComponent.IsActive = false;
+                    _pushComponent.IsActive = false;
+                }
                 // spawn a bomb
                 _damageState.SpawnItem = "bomb_1";
                 return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
@@ -191,20 +214,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _follow = true;
 
             return Values.HitCollision.Enemy;
-        }
-
-        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
-        {
-            if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 1.75f, direction.Y * 1.75f, _body.Velocity.Z);
-
-            return true;
-        }
-
-        private void OnHoleAbsorb()
-        {
-            _animator.SpeedMultiplier = 3f;
-            _animator.Play("idle");
         }
     }
 }

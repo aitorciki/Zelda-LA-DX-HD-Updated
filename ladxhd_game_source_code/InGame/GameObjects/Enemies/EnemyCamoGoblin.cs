@@ -19,6 +19,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly Animator _animator;
         private readonly AnimationComponent _animationComponent;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private readonly float _movementSpeed;
         private readonly string _strColor;
@@ -90,11 +92,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var pushableBox = new CBox(EntityPosition, -6, -20, 0, 12, 20, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new DrawShadowCSpriteComponent(sprite));
 
@@ -182,16 +184,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("holePull");
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
-        {
-            // can only be hit in the wobble state
-            if (_aiComponent.CurrentStateId != "spawn" &&
-                _aiComponent.CurrentStateId != "wobble")
-                return Values.HitCollision.None;
-
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
-        }
-
         private void OnBurn()
         {
             _animator.Pause();
@@ -209,6 +201,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
 
             return true;
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
+            if (_aiComponent.CurrentStateId != "spawn" &&
+                _aiComponent.CurrentStateId != "wobble")
+                return Values.HitCollision.None;
+
+            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
     }
 }

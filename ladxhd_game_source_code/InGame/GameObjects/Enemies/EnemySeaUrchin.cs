@@ -12,7 +12,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemySeaUrchin : GameObject
     {
+        private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly BodyCollisionComponent _collisionComponent;
 
         private readonly float _moveSpeed = 0.25f;
         private readonly int _collisionDamage = 2;
@@ -52,7 +56,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
-            var damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives) { OnBurn = OnBurn };
             aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8, true);
@@ -60,9 +64,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(AiComponent.Index, aiComponent);
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 0 });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 0 });
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
 
@@ -107,6 +111,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 MapManager.ObjLink.HitPlayer(-direction, HitType.Enemy, _collisionDamage, true);
             }
             return false;
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        {
+            if (_damageState.CurrentLives <= 0)
+            {
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+                _collisionComponent.IsActive = false;
+            }
+            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
 }
