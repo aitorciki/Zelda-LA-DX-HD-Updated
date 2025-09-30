@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = _position;
 
             AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(_sprite, _layer));
-            UpdateVisibility(GameSettings.EnableShadows);
+            UpdateVisibility(!GameSettings.EnableShadows);
         }
 
         public ObjSpriteShadow(string spriteName, GameObject host, int layer, float offsetX, float offsetY, Map.Map map) : this(spriteName, host, layer, map)
