@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Timers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private float _transitionState;
 
         private bool _isUp;
+        private ObjLink LinkHack;
 
         public ObjDungeonBarrier(Map.Map map, int posX, int posY, string strKey, bool negate, int type) : base(map)
         {
@@ -102,71 +103,41 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 EntityPosition.Z = _transitionState - 4;
                 EntityPosition.NotifyListeners();
 
-                // check for colliding bodies and push them forward
+                // Check for game objects (enemy units, Link) that are currently standing over the barrier.
                 _collidingObjects.Clear();
-                Map.Objects.GetComponentList(_collidingObjects,
-                    (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 1, 11, 8, BodyComponent.Mask);
+                Map.Objects.GetComponentList(
+                    _collidingObjects, (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 1, 11, 8, BodyComponent.Mask);
 
                 foreach (var collidingObject in _collidingObjects)
                 {
-                    var body = (BodyComponent)collidingObject.Components[BodyComponent.Index];
+                    BodyComponent collisionBody = collidingObject.Components[BodyComponent.Index] as BodyComponent;
+                    Box collisionBodyBox = collisionBody.BodyBox.Box;
 
-                    if (body.BodyBox.Box.Intersects(_bodyBox.Box))
+                    // Lift the game object up with the barrier.
+                    if (collisionBodyBox.Intersects(_bodyBox.Box))
                     {
-                        if (!body.BodyBox.Box.Intersects(lastBox))
+                        if (!collisionBodyBox.Intersects(lastBox))
                         {
-                            body.Position.Z = EntityPosition.Z + _bodyBox.Box.Depth;
-                            body.Position.NotifyListeners();
+                            collisionBody.Position.Z = EntityPosition.Z + _bodyBox.Box.Depth;
+                            collisionBody.Position.NotifyListeners();
                         }
                     }
-                    // HACK: This is a gross, gross hack that will detect if link is jumping while the blocks are changing to the upward
-                    // state. A jump will want to return him to "0" Z-position which will cause him to get stuck into the blocks unable to
-                    // move. The timer detects if a jump was performed at 0-3.99 elevation and will set him to "4" Z-Position when he lands.
-                    // A proper fix should go into: GameObjects > Base > Systems > SystemBody >>> "UpdateVelocityZ" but it's beyond me.
-
-                    if (collidingObject.GetType() == typeof(ObjLink))
+                    // If Link is jumping when the transition starts, it will bug out his height so wait until he lands to fix his Z-Position.
+                    if (collidingObject.GetType() == typeof(ObjLink) && LinkHack == null)
                     {
-                        // Get the colliding object if it's link.
-                        ObjLink Link = (ObjLink)collidingObject;
+                        LinkHack = collidingObject as ObjLink;
 
-                        // Check if Link was jumping and his jumping off point was less than 4 on Z-Axis.
-                        if (Link.CurrentState == ObjLink.State.Jumping || 
-                            Link.CurrentState == ObjLink.State.AttackJumping  || 
-                            Link.CurrentState == ObjLink.State.ChargeJumping && Link._jumpStartZPos < 4.00)
-                        {
-                            // Run a timer to track when the jump has ended so his Z-Position can be "fixed".
-                            Timer _jumpFixHackTimer = new Timer(25);
-                            _jumpFixHackTimer.Elapsed += (s,e) => JumpFixHack(Link,_bodyBox,s,e);
-                            _jumpFixHackTimer.AutoReset = true;
-                            _jumpFixHackTimer.Enabled = true;
-                        }
+                        // He must be both jumping and his starting jump height must be less than 4.00.
+                        if (!LinkHack.IsJumpingState(LinkHack.CurrentState) && LinkHack._jumpStartZPos >= 4.00)
+                            LinkHack = null;
                     }
                 }
             }
-        }
-
-        private static void JumpFixHack(ObjLink Link, CBox TrapBody, object sender, ElapsedEventArgs e)
-        {
-            // This is the part of the gross, gross hack that fixes Link's Z-Position if he jumped while blocks were going into the upward state.
-            Timer jumpFixHackTimer = (sender as Timer);
-
-            // Detect when the jump has ended.
-            if (Link._body.IsGrounded &&
-                Link.CurrentState != ObjLink.State.Jumping && 
-                Link.CurrentState != ObjLink.State.Attacking && 
-                Link.CurrentState != ObjLink.State.AttackJumping && 
-                Link.CurrentState != ObjLink.State.Powdering && 
-                Link.CurrentState != ObjLink.State.Pushing && 
-                Link.CurrentState != ObjLink.State.Charging &&
-                Link.CurrentState != ObjLink.State.ChargeJumping ||
-                Link.CurrentState == ObjLink.State.Idle )
+            // If Link is still over the boxes then fix his Z-Position.
+            if (LinkHack != null && LinkHack._body.IsGrounded && 
+                LinkHack._body.BodyBox.Box.Intersects(_bodyBox.Box))
             {
-                // If he's still over the boxes, then fix his Z-Position.
-                if (Link._body.BodyBox.Box.Intersects(TrapBody.Box))
-                    Link._body.Position.Z = 4;
-
-                jumpFixHackTimer.Stop();
-                jumpFixHackTimer.Dispose();
+                LinkHack._body.Position.Z = 4;
             }
         }
 
