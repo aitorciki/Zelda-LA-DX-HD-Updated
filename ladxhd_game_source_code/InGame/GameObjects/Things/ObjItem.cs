@@ -46,8 +46,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _moveStopTime = 250;
         private int _lastFieldTime;
 
-        private bool _isFlying;
-        private bool _isSwimming;
+        public bool _isFlying;
+        public bool _isSwimming;
+
         public bool IsVisible { get; internal set; }
         private bool _despawn;
 

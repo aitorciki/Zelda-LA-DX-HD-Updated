@@ -121,7 +121,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                     Map.Objects.DeleteObjects.Add(this);
                 }
             }
-
             CollectItem();
 
             var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.Boomerang, 32, false);
@@ -135,16 +134,19 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void CollectItem()
         {
+            // I once experienced a strange crash where "Map" was null. Not sure how... so prevent that I guess.
+            if (Map == null) { return; }
+
             if (_item != null && !_item.Collected)
                 return;
 
             _item = null;
-
             _itemList.Clear();
+
             Map.Objects.GetComponentList(_itemList, (int)_damageBox.Box.X, (int)_damageBox.Box.Y,
                 (int)_damageBox.Box.Width, (int)_damageBox.Box.Height, CollisionComponent.Mask);
 
-            // check if an item was found
+            // Check if an item was found.
             foreach (var gameObject in _itemList)
             {
                 var collidingBox = Box.Empty;
@@ -156,7 +158,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
                     {
                         ObjItem newItem = (collisionObject.Owner as ObjItem);
-                        if (!newItem.Collected)
+                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying)
                         {
                             _item = newItem;
                             _item.InitCollection();

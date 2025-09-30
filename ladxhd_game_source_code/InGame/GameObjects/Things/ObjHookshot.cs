@@ -175,6 +175,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void CollectItem()
         {
+            // I once experienced a strange crash where "Map" was null. Not sure how... so prevent that I guess.
+            if (Map == null) { return; }
+
             if (_item != null && !_item.Collected)
                 return;
 
@@ -196,7 +199,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
                     {
                         ObjItem newItem = (collisionObject.Owner as ObjItem);
-                        if (newItem.IsActive && !newItem.Collected)
+                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying)
                         {
                             _item = newItem;
                             _item.InitCollection();
