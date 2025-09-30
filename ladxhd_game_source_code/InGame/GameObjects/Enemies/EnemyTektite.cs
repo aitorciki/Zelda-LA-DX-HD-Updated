@@ -60,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("jumping", stateJumping);
             new AiFallState(_aiComponent, _body, null, null, 300);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiComponent.ChangeState("idle");
 
             var damageBox = new CBox(EntityPosition, -6, -12, 0, 12, 12, 4);
