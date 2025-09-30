@@ -7,6 +7,7 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Base.Systems;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -20,6 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly List<GameObject> _collidingObjects = new List<GameObject>();
         private readonly List<GameObject> _groupOfMoveStone = new List<GameObject>();
+        private readonly List<GameObject> _groupOfBarrier = new List<GameObject>();
 
         private readonly AiComponent _aiComponent;
         private readonly BodyComponent _body;
@@ -253,6 +255,21 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             else
                 _aiComponent.ChangeState("moved");
+
+            // Get any dungeon barriers nearby.
+            _groupOfBarrier.Clear();
+            Map.Objects.GetComponentList(_groupOfBarrier,
+                (int)_body.BodyBox.Box.X, 
+                (int)_body.BodyBox.Box.Y, 
+                4, 4, CollisionComponent.Mask);
+
+            // Loop through the barriers and remove the first one found.
+            foreach (var obj in _groupOfBarrier)
+            {
+                if (obj is not ObjDungeonBarrier barrier) continue;
+                Map.Objects.DeleteObjects.Add(barrier);
+                break;
+            }
 
             // can fall into holes after finishing the movement animation
             _body.IgnoreHoles = false;
