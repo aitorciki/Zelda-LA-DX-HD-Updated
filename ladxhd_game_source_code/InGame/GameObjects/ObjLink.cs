@@ -3231,11 +3231,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _)       => (-6, -17, -2, +2),
-                (3, true)    => (-5, -17, -2, +2),
-                (3, false)   => (-6, -17, -2, +2),
+                (1, _)       => ( -6, -17, -2, +2),
                 (2, _)       => (-11, -13, +2, -4),
-                (_, _)       => (-5, -13, +2, -4),
+                (3, true)    => ( -5, -17, -2, +2),
+                (3, false)   => ( -6, -17, -2, +2),
+                (_, _)       => ( -5, -13, +2, -4),
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
@@ -5172,9 +5172,9 @@ namespace ProjectZ.InGame.GameObjects
         {
             string[] noFollowerMaps = 
             { 
-                "pond.map", "dreamShrine01.map", "dreamShrine02.map", "shellhouse.map", "shellhouse.map", "dungeon1.map", "dungeon2.map", 
-                "dungeon3.map", "dungeon4.map", "dungeon5.map", "dungeon6.map", "dungeon7.map", "dungeon8.map", "dungeon_color.map", 
-                "egg_entry.map", "egg_lower_floor", "egg_boss_room", "final stairs"
+                "pond.map", "dreamShrine01.map", "dreamShrine02.map", "shellhouse.map", "dungeon1.map", "dungeon2.map", 
+                "dungeon3.map", "dungeon4.map", "dungeon5.map", "dungeon6.map", "dungeon7.map", "dungeon8.map", 
+                "dungeon_color.map", "egg_entry.map", "egg_lower_floor", "egg_boss_room", "final stairs"
             };
             // Disable the follower on the maps listed above, or disable them on 2D maps.
             for (int i = 0; i < noFollowerMaps.Length; i++)
