@@ -107,19 +107,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _soundCounter += 250;
                 Game1.GameManager.PlaySoundEffect("D378-58-3A");
             }
-
             var rectangle = _animator.CollisionRectangle;
 
-            // collider is mirrored because the animation only supports one collider
+            // Collision box is mirrored because the animation only supports one collider.
             var collisionBox0 = new Box(EntityPosition.X + rectangle.X, EntityPosition.Y + rectangle.Y, 0, rectangle.Width, rectangle.Height, 8);
-            var collisionBox1 = new Box(EntityPosition.X - rectangle.X - rectangle.Width,
-                EntityPosition.Y - rectangle.Y - rectangle.Height, 0, rectangle.Width, rectangle.Height, 8);
+            var collisionBox1 = new Box(EntityPosition.X - rectangle.X - rectangle.Width, EntityPosition.Y - rectangle.Y - rectangle.Height, 0, rectangle.Width, rectangle.Height, 8);
 
-            // hit the player
-            if (collisionBox0.Intersects(MapManager.ObjLink._body.BodyBox.Box))
+            // Check to see if the player collides with either hitbox.
+            Box bodyBox = MapManager.ObjLink._body.BodyBox.Box;
+            if (collisionBox0.Intersects(bodyBox) || collisionBox1.Intersects(bodyBox))
                 MapManager.ObjLink.HitPlayer(collisionBox0, HitType.Enemy, 1);
-            if (collisionBox1.Intersects(MapManager.ObjLink._body.BodyBox.Box))
-                MapManager.ObjLink.HitPlayer(collisionBox1, HitType.Enemy, 1);
         }
 
         private void Draw(SpriteBatch spriteBatch)
