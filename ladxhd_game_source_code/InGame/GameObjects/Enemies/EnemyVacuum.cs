@@ -24,11 +24,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Box _absorbBox;
         private Box _rangeBox;
         private Rectangle _fieldRectangle;
+        private Rectangle _limitRectangle;
 
         private readonly string _roomName;
         private readonly string _entryId;
         private readonly bool _isPusher;
         private int _lives = ObjLives.Vacuum;
+
+        private bool _isRotating;
 
         public EnemyVacuum() : base("vacuum") { }
 
@@ -45,7 +48,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _isPusher = isPusher;
 
             _rangeBox = map.GetFieldBox(posX, posY, 64, isPusher ? 0 : 8);
+
+            // Field rectangle is the size of the room. Limit rectangle is slightly smaller so the "UpdateLeaveRoom" method is called in the doorway.
             _fieldRectangle = map.GetField(posX, posY);
+            _limitRectangle = new Rectangle(_fieldRectangle.X + 15, _fieldRectangle.Y + 15, _fieldRectangle.Width - 30, _fieldRectangle.Height - 30);
+
             _absorbBox = new Box(posX, posY, 0, 16, 16, 32);
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/vacuum");
@@ -82,6 +89,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
+            AddComponent(UpdateComponent.Index, new UpdateComponent(UpdateLeaveRoom));
 
             if (!_isPusher)
             {
@@ -104,17 +112,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 damageType == HitType.Boomerang)
                 return Values.HitCollision.None;
 
+            if (_damageState.CurrentLives <= 0)
+            {
+                EndRotation();
+            }
             // dont draw trail particle
             return _damageState.OnHit(gameObject, direction, damageType, damage, false);
+        }
+
+        private void UpdateLeaveRoom()
+        {
+            if (_isRotating && !_limitRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+                EndRotation();
         }
 
         private void OnCollision(GameObject gameObject)
         {
             MapManager.ObjLink.HoleResetRoom = _roomName;
             MapManager.ObjLink.HoleResetEntryId = _entryId;
-
             MapManager.ObjLink.MapTransitionStart = null;
             MapManager.ObjLink.MapTransitionEnd = null;
+            EndRotation();
         }
 
         private void ToVacuum()
@@ -128,6 +146,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitIdle()
         {
+            if (!_isPusher)
+                EndRotation();
             _animator.Play("idle");
         }
 
@@ -185,14 +205,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 {
                     // rotate player
                     if (collidingObject is ObjLink)
+                    {
+                        _isRotating = true;
                         MapManager.ObjLink.RotatePlayer();
-
+                    }
                     body.AdditionalMovementVT.X = 0.5f * direction.X;
                     body.AdditionalMovementVT.Y = 0.5f * direction.Y;
                 }
 
                 body.DisableVelocityTargetMultiplier = true;
             }
+        }
+
+        private void EndRotation()
+        {
+            _isRotating = false;
+            MapManager.ObjLink.StopRotating();
         }
     }
 }

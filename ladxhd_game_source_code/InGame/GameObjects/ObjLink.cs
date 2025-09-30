@@ -387,6 +387,9 @@ namespace ProjectZ.InGame.GameObjects
 
         // used by the vaccuum
         private float _rotationCounter;
+        private bool _isRotating;
+        private bool _wasRotating;
+        public int _rotateDirection;
 
         // stunned state
         private float _stunnedCounter;
@@ -1448,6 +1451,9 @@ namespace ProjectZ.InGame.GameObjects
                 OnMoveCollision2D(collision);
             else
             {
+                if (_isRotating) 
+                    return;
+
                 // colliding horizontally or vertically? -> start pushing
                 if (CurrentState == State.Idle && _isWalking && (
                         (collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
@@ -2213,28 +2219,45 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateAnimation()
         {
+            // If under the effects of a vacuum, use the rotational direction.
+            var animDirection = _isRotating
+                ? _rotateDirection
+                : Direction;
+
             if (Game1.GameManager.UseShockEffect)
                 return;
 
-            var shieldString = Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_";
-            if (!CarryShield)
-                shieldString = "_";
+            // Include the shield in the animation string if available ("s_" for shield, "ms_" for mirror shield).
+            string shieldString = CarryShield 
+                ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_" 
+                : "_";
 
+            // Pegasus boots running animation.
             if (_bootsHolding || _bootsRunning)
             {
+                // Running in place charging, or run with the shield in front of the player.
                 if (!_bootsRunning)
-                    Animation.Play("walk" + shieldString + Direction);
+                    Animation.Play("walk" + shieldString + animDirection);
                 else
-                {
-                    // run while blocking with the shield
-                    Animation.Play((CarryShield ? "walkb" : "walk") + shieldString + Direction);
-                }
+                    Animation.Play((CarryShield ? "walkb" : "walk") + shieldString + animDirection);
+
+                // Movement speed is doubled.
                 Animation.SpeedMultiplier = 2.0f;
                 return;
             }
+            // When the rotation from a vacuum ends, the body and weapon animators need to be resynced.
+            if (IsChargingState(CurrentState) && _wasRotating)
+            {
+                Direction = _rotateDirection;
+                Animation.Play("stand" + shieldString + Direction);
+                AnimatorWeapons.Play("stand_" + Direction);
+            }
+            _wasRotating = false;
 
+            // Restore normal animation speed.
             Animation.SpeedMultiplier = 1.0f;
 
+            // Play animation based on Link's current state and other factors.
             if (CurrentState == State.Idle && !_isWalking ||
                 CurrentState == State.Charging && !_isWalking ||
                 CurrentState == State.Rafting && !_isWalking ||
@@ -2243,31 +2266,31 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.TeleportFall ||
                 CurrentState == State.TeleporterUp ||
                 CurrentState == State.FallRotateEntry)
-                Animation.Play("stand" + shieldString + Direction);
+                Animation.Play("stand" + shieldString + animDirection);
             else if ((CurrentState == State.Idle ||
                 CurrentState == State.Charging ||
                 CurrentState == State.Rafting) && _isWalking)
-                Animation.Play("walk" + shieldString + Direction);
+                Animation.Play("walk" + shieldString + animDirection);
             else if (CurrentState == State.Blocking || CurrentState == State.ChargeBlocking)
-                Animation.Play((!_isWalking ? "standb" : "walkb") + shieldString + Direction);
+                Animation.Play((!_isWalking ? "standb" : "walkb") + shieldString + animDirection);
             else if ((CurrentState == State.Carrying || CurrentState == State.CarryingItem) && !_isFlying)
-                Animation.Play((!_isWalking ? "standc_" : "walkc_") + Direction);
+                Animation.Play((!_isWalking ? "standc_" : "walkc_") + animDirection);
             else if (CurrentState == State.Carrying && _isFlying)
-                Animation.Play("flying_" + Direction);
+                Animation.Play("flying_" + animDirection);
             else if (CurrentState == State.Pushing)
-                Animation.Play("push_" + Direction);
+                Animation.Play("push_" + animDirection);
             else if (CurrentState == State.Grabbing)
-                Animation.Play("grab_" + Direction);
+                Animation.Play("grab_" + animDirection);
             else if (CurrentState == State.Pulling)
-                Animation.Play("pull_" + Direction);
+                Animation.Play("pull_" + animDirection);
             else if (CurrentState == State.Swimming)
             {
-                Animation.Play(_diveCounter > 0 ? "dive" : "swim_" + Direction);
+                Animation.Play(_diveCounter > 0 ? "dive" : "swim_" + animDirection);
                 if (_swimVelocity.Length() < 0.1 && !IsTransitioning)
                     Animation.IsPlaying = false;
             }
             else if (CurrentState == State.Drowning)
-                Animation.Play(_drownCounter > 300 ? "swim_" + Direction : "dive");
+                Animation.Play(_drownCounter > 300 ? "swim_" + animDirection : "dive");
         }
 
         private void UpdateHeartWarningSound()
@@ -4729,22 +4752,46 @@ namespace ProjectZ.InGame.GameObjects
 
         public void RotatePlayer()
         {
+            // Don't try to spin the player when running with boots.
             if (_bootsRunning)
                 return;
 
+            // If rotation hasn't started yet, capture the current direction and start rotation.
+            if (!_isRotating)
+            {
+                _rotateDirection = Direction;
+                _isRotating = true;
+            }
+            // Update rotation every 8 frames.
             _rotationCounter += Game1.DeltaTime;
-            // 8 frames per direction
+
             if (_rotationCounter > 133)
             {
                 _rotationCounter -= 133;
-                if (!_isWalking)
+
+                // Update the facing value of Link.
+                _rotateDirection = (_rotateDirection + 1) % 4;
+
+                // Get the correct shield string for forced animations.
+                var shieldString = Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_";
+
+                if (!CarryShield)
+                    shieldString = "_";
+
+                // Force charging or blocking animations when being rotated.
+                if (IsChargingState(CurrentState))
                 {
-                    Direction = (Direction + 1) % 4;
-                    // rotate the sword if the player is currently charging
-                    if (IsChargingState(CurrentState))
-                        AnimatorWeapons.Play("stand_" + Direction);
+                    Animation.Play("stand" + shieldString + _rotateDirection);
+                    AnimatorWeapons.Play("stand_" + _rotateDirection);
                 }
             }
+        }
+
+        public void StopRotating()
+        {
+            // Used to restore "real" direction after rotation ends.
+            _wasRotating = _isRotating;
+            _isRotating = false;
         }
 
         public void StartTeleportation(ObjDungeonTeleporter teleporter)
@@ -4757,7 +4804,6 @@ namespace ProjectZ.InGame.GameObjects
             _teleportState = 0;
             _teleportCounter = 0;
             _teleportCounterFull = 0;
-
         }
 
         public void ShockPlayer(int time)
