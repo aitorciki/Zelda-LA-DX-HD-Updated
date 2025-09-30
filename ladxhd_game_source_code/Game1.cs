@@ -875,20 +875,30 @@ namespace ProjectZ
             // Scale of the game field.
             ScreenScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 25);
 
-            // float scale
+            // Calculate the game scale that is used for auto scaling.
             gameScale = MathHelper.Clamp(Math.Min(WindowWidth / (float)Values.MinWidth, WindowHeight / (float)Values.MinHeight), 1, 25);
 
-            // autoscale or size set in the menu
-            MapManager.Camera.Scale = GameSettings.GameScale == 11 ? MathF.Ceiling(gameScale) : GameSettings.GameScale;
+            // If set to autoscale (11) used the calculated value. Otherwise use the value set by the user.
+            MapManager.Camera.Scale = GameSettings.GameScale == 11 
+                ? MathF.Ceiling(gameScale) 
+                : GameSettings.GameScale;
 
+            // The game scale must be at least 1x.
             if (MapManager.Camera.Scale < 1)
             {
                 MapManager.Camera.Scale = 1 / (2 - MapManager.Camera.Scale);
                 GameManager.SetGameScale(1);
             }
+            // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional 
+            // values while manually setting the scale only allows upscaling using integer values.
             else
             {
-                GameManager.SetGameScale(GameSettings.GameScale == 11 ? gameScale : GameSettings.GameScale);
+                // If set to autoscale (11) use that. Otherwise use the value set by the user.
+                float newGameScale = GameSettings.GameScale == 11 
+                    ? gameScale 
+                    : GameSettings.GameScale;
+
+                GameManager.SetGameScale(newGameScale);
             }
             // Scale of the user interface.
             if (GameSettings.UiScale > ScreenScale)
