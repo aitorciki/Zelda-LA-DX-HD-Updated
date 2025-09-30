@@ -9,7 +9,6 @@ namespace ProjectZ.InGame.GameObjects.Things
     internal class ObjSpriteShadow : GameObject
     {
         private DrawComponent _drawComponent;
-        private UpdateComponent _updateComponent;
 
         public GameObject _host;
         public CSprite _sprite;
@@ -21,10 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public ObjSpriteShadow() : this("sprshadows") { }
 
-        public ObjSpriteShadow(string spriteName) : base(spriteName)
-        {
-
-        }
+        public ObjSpriteShadow(string spriteName) : base(spriteName) { }
 
         public ObjSpriteShadow(string spriteName, int layer, float posX, float posY, Map.Map map) : base(map)
         {
@@ -37,12 +33,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = _position;
 
             AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(_sprite, _layer));
+            UpdateVisibility(GameSettings.EnableShadows);
         }
 
         public ObjSpriteShadow(string spriteName, GameObject host, int layer, float offsetX, float offsetY, Map.Map map) : this(spriteName, host, layer, map)
         {
             _currentMap = map;
             _offset = new Vector2(offsetX, offsetY);
+            _drawComponent.IsActive = !GameSettings.EnableShadows;
         }
 
         public ObjSpriteShadow(string spriteName, GameObject host, int layer, Map.Map map) : base(map)
@@ -62,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = _position;
 
             AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(_sprite, _layer));
-            AddComponent(UpdateComponent.Index, _updateComponent = new UpdateComponent(Update));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
         private void Update()
@@ -94,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         public void UpdateVisibility(bool visible)
         {
             _sprite.IsVisible = visible;
-            _drawComponent.IsActive = !GameSettings.EnableShadows;
+            _drawComponent.IsActive = visible;
         }
     }
 }

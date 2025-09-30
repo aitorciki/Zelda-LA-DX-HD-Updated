@@ -102,9 +102,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_spriteShadow == null)
                 _spriteShadow = new ObjSpriteShadow("sprshadowm", Values.LayerPlayer, _monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, Map);
 
+            _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows);
+
             if (!GameSettings.EnableShadows && _spriteShadow != null)
             {
-                _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows);
                 _spriteShadow.EntityPosition.Set(new CPosition(_monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, 0));
             }
         }

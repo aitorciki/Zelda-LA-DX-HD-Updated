@@ -147,9 +147,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_spriteShadow == null)
                 _spriteShadow = new ObjSpriteShadow("sprshadowm", Values.LayerPlayer, _owlPosition.Position.X-8, _owlPosition.Position.Y-14, Map);
 
+            _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows && IsVisible);
+
             if (!GameSettings.EnableShadows && _spriteShadow != null)
             {
-                _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows && IsVisible);
                 _spriteShadow.EntityPosition.Set(new CPosition(_owlPosition.Position.X-8, _owlPosition.Position.Y-14, 0));
             }
         }
