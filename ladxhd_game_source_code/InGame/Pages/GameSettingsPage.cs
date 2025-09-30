@@ -11,6 +11,7 @@ namespace ProjectZ.InGame.Pages
     {
         private readonly InterfaceListLayout _bottomBar;
         private readonly InterfaceButton _controllerType;
+        private readonly InterfaceSlider _subLangSlider;
 
         public GameSettingsPage(int width, int height)
         {
@@ -25,6 +26,16 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Language
             contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 16), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
+
+            // Slider: Sub-Language
+            _subLangSlider = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
+                buttonWidth, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
+                number =>
+                {
+                    Game1.LanguageManager.CurrentSubLanguageIndex = number;
+                })
+            { SetString = number => LangSliderAdjustment(number) };
+            contentLayout.AddElement(_subLangSlider);
 
             // Button: Controller Type
             // There wasn't a way to just display what we want on the button so a little bit of hackery was needed.
@@ -77,6 +88,17 @@ namespace ProjectZ.InGame.Pages
 
             PageLayout.Deselect(false);
             PageLayout.Select(InterfaceElement.Directions.Top, false);
+        }
+
+        private string LangSliderAdjustment(int number)
+        {
+            string langKey = number switch
+            {
+                1 => "settings_game_sublanguage_02",
+                2 => "settings_game_sublanguage_03",
+                _ => "settings_game_sublanguage_01"
+            };
+            return " " + Game1.LanguageManager.GetString(langKey, "error");
         }
 
         public void PressButtonLanguageChange(InterfaceElement element)

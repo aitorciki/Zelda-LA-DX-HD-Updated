@@ -12,12 +12,14 @@ namespace ProjectZ.InGame.Things
         private Dictionary<string, string>[] _languageStrings;
 
         public int CurrentLanguageIndex;
+        public int CurrentSubLanguageIndex;
 
         public void Load()
         {
             // go through the .lng files and fill the _languageStrings dictionary array
             var files = Directory.GetFiles(Values.PathLanguageFolder);
             var languageStrings = new Dictionary<string, Dictionary<string, string>>();
+
             // the default (first) entry is english
             languageStrings.Add("eng", new Dictionary<string, string>());
 
@@ -49,7 +51,6 @@ namespace ProjectZ.InGame.Things
                         LoadFile(dict, files[i]);
                 }
             }
-
             _languageStrings = languageStrings.Values.ToArray();
             CurrentLanguageIndex = Math.Clamp(CurrentLanguageIndex, 0, _languageStrings.Length - 1);
         }

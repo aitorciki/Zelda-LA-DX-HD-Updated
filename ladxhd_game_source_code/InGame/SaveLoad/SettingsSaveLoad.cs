@@ -48,6 +48,7 @@ namespace ProjectZ.InGame.SaveLoad
 
             Values.ControllerDeadzone = saveManager.GetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
+            Game1.LanguageManager.CurrentSubLanguageIndex = saveManager.GetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
 
             ControlHandler.LoadButtonMap(saveManager);
             ControlHandler.SetControllerIndex();
@@ -89,6 +90,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("SwordBlock", GameSettings.SwordBlock);
             saveManager.SetFloat("ControllerDeadzone", Values.ControllerDeadzone);
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
+            saveManager.SetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
 
             ControlHandler.SaveButtonMaps(saveManager);
 

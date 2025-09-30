@@ -34,7 +34,19 @@ namespace ProjectZ.InGame.Overlay
             if (Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
                 return false;
 
-            Game1.GameManager.StartDialog(_key);
+            string _setKey = Game1.LanguageManager.CurrentSubLanguageIndex switch
+            {
+                1 => _key + "_mod",
+                2 => _key + "_alt",
+                _ => _key
+            };
+            string testString = Game1.LanguageManager.GetString(_setKey, "noKey");
+
+            if (testString == "noKey")
+                Game1.GameManager.StartDialog(_key);
+            else
+                Game1.GameManager.StartDialog(_setKey);
+
             return true;
         }
     }

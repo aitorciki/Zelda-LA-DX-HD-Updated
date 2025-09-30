@@ -569,7 +569,6 @@ namespace ProjectZ.InGame.Overlay
             inputString = inputString.Replace("[MARIN]", "¶");
             inputString = inputString.Replace("[LINK]", "·");
 
-
             inputString = ReplaceKeys(inputString);
 
             return SetUpStringSplit(inputString);
