@@ -55,7 +55,7 @@ namespace ProjectZ.InGame.Things
             CurrentLanguageIndex = Math.Clamp(CurrentLanguageIndex, 0, _languageStrings.Length - 1);
         }
 
-        public static string ReplacePlaceholderTag(string inputString)
+        public string ReplacePlaceholderTag(string inputString)
         {
             // put in the players name
             inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
