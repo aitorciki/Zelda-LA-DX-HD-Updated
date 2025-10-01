@@ -544,33 +544,8 @@ namespace ProjectZ.InGame.Overlay
 
         public string SetUpString(string inputString)
         {
-            // put in the players name
-            inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
-            inputString = inputString.Replace("[TRADE0]", "¯");
-            inputString = inputString.Replace("[TRADE1]", "¢");
-            inputString = inputString.Replace("[TRADE2]", "£");
-            inputString = inputString.Replace("[TRADE3]", "¤");
-            inputString = inputString.Replace("[TRADE4]", "¥");
-            inputString = inputString.Replace("[TRADE5]", "¦");
-            inputString = inputString.Replace("[TRADE6]", "§");
-            inputString = inputString.Replace("[TRADE7]", "¨");
-            inputString = inputString.Replace("[TRADE8]", "©");
-            inputString = inputString.Replace("[TRADE9]", "ª");
-            inputString = inputString.Replace("[TRADE10]", "«");
-            inputString = inputString.Replace("[TRADE11]", "¬");
-            inputString = inputString.Replace("[TRADE12]", "­");
-            inputString = inputString.Replace("[TRADE13]", "®");
-            inputString = inputString.Replace("[LEFT]", "°");
-            inputString = inputString.Replace("[RIGHT]", "±");
-            inputString = inputString.Replace("[DOWN]", "²");
-            inputString = inputString.Replace("[UP]", "³");
-            inputString = inputString.Replace("[DPAD]", "´");
-            inputString = inputString.Replace("[SKULL]", "µ");
-            inputString = inputString.Replace("[MARIN]", "¶");
-            inputString = inputString.Replace("[LINK]", "·");
-
+            inputString = Game1.LanguageManager.ReplacePlaceholderTag(inputString);
             inputString = ReplaceKeys(inputString);
-
             return SetUpStringSplit(inputString);
         }
 

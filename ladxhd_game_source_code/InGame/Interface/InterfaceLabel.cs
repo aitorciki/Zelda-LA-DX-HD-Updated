@@ -83,9 +83,15 @@ namespace ProjectZ.InGame.Interface
         public void UpdateLanguageText()
         {
             if (OverrideText == "")
-                SetText(Game1.LanguageManager.GetString(_textKey, "error"));
+            {
+                string setText = Game1.LanguageManager.GetString(_textKey, "error");
+                setText = Game1.LanguageManager.ReplacePlaceholderTag(setText);
+                SetText(setText);
+            }
             else
+            {
                 SetText(OverrideText);
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
