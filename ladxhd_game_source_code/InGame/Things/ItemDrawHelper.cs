@@ -121,7 +121,6 @@ namespace ProjectZ.InGame.Things
                 MathHelper.Clamp((byte)(colorB * 240), 0, 255));
 
             UpdateRubyAnimation();
-
             UpdateHeartAnimation();
         }
 
@@ -461,7 +460,6 @@ namespace ProjectZ.InGame.Things
             // draw the number
             DrawNumber(spriteBatch, position.X, position.Y, keyItem.Count, 3, scale, Color.Black * (color.A / 255f));
         }
-
 
         public static Rectangle GetHeartRectangle(Point position, int scale)
         {

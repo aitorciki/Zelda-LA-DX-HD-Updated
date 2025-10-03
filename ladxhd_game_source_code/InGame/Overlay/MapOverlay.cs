@@ -88,7 +88,7 @@ namespace ProjectZ.InGame.Overlay
             _mapIcons[1, 3] = 2;
             _mapIcons[6, 3] = 4;
             _mapIcons[7, 3] = 1;
-            _mapIcons[15, 3] = 3;
+            _mapIcons[15, 3] = 1;
 
             _mapIcons[1, 4] = 4;
             _mapIcons[5, 4] = 1;
@@ -105,7 +105,7 @@ namespace ProjectZ.InGame.Overlay
             _mapIcons[10, 8] = 2;
             _mapIcons[12, 8] = 3;
 
-            _mapIcons[3, 9] = 2;
+            _mapIcons[3, 9] = 1;
             _mapIcons[12, 9] = 4;
             _mapIcons[13, 9] = 4;
 
