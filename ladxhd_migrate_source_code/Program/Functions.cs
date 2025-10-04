@@ -176,14 +176,8 @@ namespace LADXHD_Migrater
 
                 oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), fileItem.Name);
 
-                Console.WriteLine(oldFile);
-
                 if (!oldFile.TestPath() && reverseFileTargets.TryGetValue(fileItem.Name, out string shortName))
                     oldFile = Path.Combine(origPath + fileItem.DirectoryName.Replace(updatePath, ""), shortName);
-
-                Console.WriteLine(oldFile);
-                Console.WriteLine(fileItem.FullName);
-                Console.WriteLine("");
 
                 if (oldFile == "") continue;
 
