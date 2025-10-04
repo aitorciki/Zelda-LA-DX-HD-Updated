@@ -46,7 +46,7 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Fullscreen
             _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_game_fullscreen_mode", GameSettings.IsFullscreen,
+                "settings_graphics_fullscreen", GameSettings.IsFullscreen,
                 newState => {
                     Game1.ToggleFullscreen();
                     Game1.ScaleChanged = true;
@@ -69,12 +69,12 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Smooth Camera
             var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_game_change_smooth_camera", GameSettings.SmoothCamera, newState => { GameSettings.SmoothCamera = newState; });
+                "settings_graphics_smoothcamera", GameSettings.SmoothCamera, newState => { GameSettings.SmoothCamera = newState; });
             contentLayout.AddElement(smoothCameraToggle);
 
             // Button: Epilepsy Safe
             var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_game_epilepsysafe", GameSettings.EpilepsySafe, newState => { GameSettings.EpilepsySafe = newState; });
+                "settings_graphics_epilepsysafe", GameSettings.EpilepsySafe, newState => { GameSettings.EpilepsySafe = newState; });
             contentLayout.AddElement(toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:

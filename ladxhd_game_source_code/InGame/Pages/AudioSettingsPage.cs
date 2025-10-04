@@ -43,7 +43,7 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Low Hearts Alarm
             var toggleHeartBeep = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_game_heartbeep", GameSettings.HeartBeep, newState => { GameSettings.HeartBeep = newState; });
+                "settings_audio_heartbeep", GameSettings.HeartBeep, newState => { GameSettings.HeartBeep = newState; });
             contentLayout.AddElement(toggleHeartBeep);
 
             // Button: Mute Powerup Music
