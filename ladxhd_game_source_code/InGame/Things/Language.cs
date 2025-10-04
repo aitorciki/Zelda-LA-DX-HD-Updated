@@ -14,7 +14,7 @@ namespace ProjectZ.InGame.Things
         public int CurrentLanguageIndex;
         public int CurrentSubLanguageIndex;
 
-        public List<string> LanguageCode { get; private set; }
+        public List<string> LanguageCode { get; private set; } = new List<string> { "eng" };
 
         public void Load()
         {
@@ -53,8 +53,10 @@ namespace ProjectZ.InGame.Things
                         LoadFile(dict, files[i]);
                 }
             }
-            LanguageCode = languageStrings.Keys.ToList();
-            _languageStrings = languageStrings.Values.ToArray();
+            LanguageCode = new List<string> { "eng" };
+            LanguageCode.AddRange(languageStrings.Keys.Where(k => k != "eng"));
+
+            _languageStrings = LanguageCode.Select(k => languageStrings[k]).ToArray();
             CurrentLanguageIndex = Math.Clamp(CurrentLanguageIndex, 0, _languageStrings.Length - 1);
         }
 
