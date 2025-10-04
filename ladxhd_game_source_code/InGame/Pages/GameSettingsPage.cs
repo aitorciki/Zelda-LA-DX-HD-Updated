@@ -118,8 +118,10 @@ namespace ProjectZ.InGame.Pages
 
         public void PressButtonLanguageChange(InterfaceElement element)
         {
-            // Because of the hacky way that text is imposed on the Controller button, we need to manually update the language change.
+            // Update the selected language.
             Game1.LanguageManager.ToggleLanguage();
+
+            // Because of the hacky way that text is imposed on the Controller button, we need to manually update the language change.
             _controllerType.InsideLabel.OverrideText = Game1.LanguageManager.GetString("settings_game_controller", "error") + ": " + GameSettings.Controller;
 
             // Refresh any textures that need refreshed.

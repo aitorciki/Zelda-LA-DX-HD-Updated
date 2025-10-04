@@ -16,12 +16,17 @@ namespace ProjectZ.InGame.Screens
         private Texture2D _sprRain;
         private Texture2D _sprWaves;
         private Texture2D _sprCloud;
-        public static Texture2D _sprIntro_eng, _sprIntro_esp;
+        public static Texture2D _sprIntro_eng, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
 
-        public static Texture2D _sprIntro => (Game1.LanguageManager.CurrentLanguageIndex) 
+        public static Texture2D _sprIntro => (Game1.LanguageManager.LanguageCode[Game1.LanguageManager.CurrentLanguageIndex])
             switch
             {
-                1 => _sprIntro_esp,
+                "deu" => _sprIntro_deu,
+                "esp" => _sprIntro_esp,
+                "fre" => _sprIntro_fre,
+                "ita" => _sprIntro_ita,
+                "por" => _sprIntro_por,
+                "rus" => _sprIntro_rus,
                 _ => _sprIntro_eng
             };
 
@@ -218,7 +223,12 @@ namespace ProjectZ.InGame.Screens
             _sprRain = Resources.GetTexture("rain.png");
 
             _sprIntro_eng = Resources.GetTexture("intro.png");
+            _sprIntro_deu = Resources.GetTexture("intro_deu.png");
             _sprIntro_esp = Resources.GetTexture("intro_esp.png");
+            _sprIntro_fre = Resources.GetTexture("intro_fre.png");
+            _sprIntro_ita = Resources.GetTexture("intro_ita.png");
+            _sprIntro_por = Resources.GetTexture("intro_por.png");
+            _sprIntro_rus = Resources.GetTexture("intro_rus.png");
 
             _sprCloud = Resources.GetTexture("cloud.png");
             _sprWaves = Resources.GetTexture("waves.png");
