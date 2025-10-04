@@ -1,5 +1,27 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.3**
+### **German Language Added Update**
+  * Implement German language + textures. Thanks to [MasterPhW](https://github.com/MasterPhW) (creator).
+  * Created language textures for French language that covers inventory, shops, map icons, photos, and title screen.
+  * Support loading alternate images when changing language setting (like German and Spanish) for all supported languages.
+  * Completely rework shield mechanics: hitbox reworked, no damage if object collides with both shield + bodybox.
+  * New option to swap the "Confirm" and "Cancel" buttons. This works with any controller, and only swaps the functionality.
+  * When enemies are defeated, remove all components. This prevents situations like bumping them when dashing with shield.
+  * Add language option to load alternate scripts of the same language. Supports Switch remake and alternate scripts.
+  * Implement more placeholder tags for font glyphs that represent font sprites like trade icons, marin face, etc.
+  * Increase size of hitbox and bodybox of Arm Mimic. This makes dashing through them in dream shrine more like the original games.
+  * Greatly simplify the hack fix used for when Link jumps over dungeon barriers as they are entering the raised state.
+  * Make is so Link can lift up chickens and throw them with the Power Bracelet since it could be done in the original games.
+  * Fix map icons for Mabe Village Shop to have "shop" icon instead of "!?" and Raft Shop to have "shop icon" instead of "cave".
+  * Fix followers to not appear in certain maps. This includes fishing pond, shell mansion, dungeons, and dream shrine.
+  * Fix a dungeon barrier in Level 7 to not pop through when a block is pushed over top of it by removing it.
+  * Fix vacuum enemies in Level 2 and Level 8 to cause Link to properly spin when they are sucking him towards them.
+  * Fix misplaced sprite shadows that spawn by the Level 8 sub-entrances when Dynamic Shadows is enabled.
+  * Fix Level 8 midbosses Hinox and Rolling Bone to respawn after they have been defeated whenever the map is reloaded.
+  * Fix final boss Ganon form weapon from potentially dealing double damage if both sides hit at the same time.
+  * Fix Boomerang and Hookshot to not grab items that are flying and fix a crash with Hookshot when grabbing a fairy.
+
 ## **v1.3.2**
 ### **A Bug Fixes Update**
   * When handing the witch the toadstool to make powder, reset the music when it speeds up, and reset again afterwards.
