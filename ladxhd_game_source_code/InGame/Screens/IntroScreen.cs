@@ -18,18 +18,29 @@ namespace ProjectZ.InGame.Screens
         private Texture2D _sprCloud;
         public static Texture2D _sprIntro_eng, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
 
-        public static Texture2D _sprIntro => (Game1.LanguageManager.LanguageCode[Game1.LanguageManager.CurrentLanguageIndex])
-            switch
+        public static Texture2D _sprIntro
+        {
+            get
             {
-                "deu" => _sprIntro_deu,
-                "esp" => _sprIntro_esp,
-                "fre" => _sprIntro_fre,
-                "ita" => _sprIntro_ita,
-                "por" => _sprIntro_por,
-                "rus" => _sprIntro_rus,
-                _ => _sprIntro_eng
-            };
+                var langList = Game1.LanguageManager.LanguageCode;
+                if (langList.Count == 0)
+                    return _sprIntro_eng;
 
+                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
+                string lang = langList[idx];
+
+                return lang switch
+                {
+                    "deu" => _sprIntro_deu,
+                    "esp" => _sprIntro_esp,
+                    "fre" => _sprIntro_fre,
+                    "ita" => _sprIntro_ita,
+                    "por" => _sprIntro_por,
+                    "rus" => _sprIntro_rus,
+                    _     => _sprIntro_eng
+                };
+            }
+        }
         private Animator _loadingAnimator;
         private Animator _marinAnimator;
         private Animator _linkAnimator;

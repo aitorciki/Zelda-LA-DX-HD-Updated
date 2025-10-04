@@ -11,8 +11,8 @@ namespace ProjectZ.InGame.Things
 
         private Dictionary<string, string>[] _languageStrings;
 
-        public int CurrentLanguageIndex;
-        public int CurrentSubLanguageIndex;
+        public int CurrentLanguageIndex = 0;
+        public int CurrentSubLanguageIndex = 0;
 
         public List<string> LanguageCode { get; private set; } = new List<string> { "eng" };
 

@@ -276,6 +276,9 @@ namespace ProjectZ
                 SetUpEditorUi();
 
             _finishedLoading = true;
+
+            // Now that everything has been loaded in, make sure the proper language textures are reloaded.
+            Resources.RefreshDynamicResources();
         }
 
         private void UpdateConsoleInput()

@@ -56,15 +56,19 @@ namespace ProjectZ.InGame.Things
         public static SpriteFont FontCredits, FontCreditsHeader;
         public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux;
 
-        public static SpriteFont GameFont => (GameSettings.VarWidthFont, GameSettings.Uncensored) 
-            switch
+        public static SpriteFont GameFont 
+        {
+            get
             {
-                (true,  true)  => smallFont_vwf_redux,
-                (true,  false) => smallFont_vwf,
-                (false, true)  => smallFont_redux,
-                (false, false) => smallFont
-            };
-
+                return (GameSettings.VarWidthFont, GameSettings.Uncensored) switch
+                {
+                    (true,  true)  => smallFont_vwf_redux,
+                    (true,  false) => smallFont_vwf,
+                    (false, true)  => smallFont_redux,
+                    (false, false) => smallFont
+                };
+            }
+        }
         public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
         public static Texture2D SprWhite, SprTiledBlock, SprObjectsAnimated, SprNpCs, SprNpCsRedux;
         public static Texture2D SprEnemies, SprMidBoss, SprNightmares;
@@ -94,51 +98,87 @@ namespace ProjectZ.InGame.Things
         public static Texture2D SprPhotosEngRedux, SprPhotosDeuRedux, SprPhotosEspRedux, SprPhotosFreRedux, SprPhotosItaRedux, SprPhotosPorRedux, SprPhotosRusRedux;
 
         public static Texture2D SprObjectsEng, SprObjectsDeu, SprObjectsEsp, SprObjectsFre, SprObjectsIta, SprObjectsPor, SprObjectsRus;
-        public static Texture2D SprObjects => Game1.LanguageManager.LanguageCode[Game1.LanguageManager.CurrentLanguageIndex]
-            switch
+
+        public static Texture2D SprObjects
+        {
+            get
             {
-                "deu" => SprObjectsDeu,
-                "esp" => SprObjectsEsp,
-                "fre" => SprObjectsFre,
-                "ita" => SprObjectsIta,
-                "por" => SprObjectsPor,
-                "rus" => SprObjectsRus,
-                _ => SprObjectsEng
-            };
+                var langList = Game1.LanguageManager.LanguageCode;
+                if (langList.Count == 0) 
+                    return SprObjectsEng;
+
+                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
+                return langList[idx] switch
+                {
+                    "deu" => SprObjectsDeu,
+                    "esp" => SprObjectsEsp,
+                    "fre" => SprObjectsFre,
+                    "ita" => SprObjectsIta,
+                    "por" => SprObjectsPor,
+                    "rus" => SprObjectsRus,
+                    _     => SprObjectsEng
+                };
+            }
+        }
 
         public static Texture2D SprMiniMapEng, SprMiniMapDeu, SprMiniMapEsp, SprMiniMapFre, SprMiniMapIta, SprMiniMapPor, SprMiniMapRus;
-        public static Texture2D SprMiniMap => Game1.LanguageManager.LanguageCode[Game1.LanguageManager.CurrentLanguageIndex]
-            switch
+        public static Texture2D SprMiniMap
+        {
+            get
             {
-                "deu" => SprMiniMapDeu,
-                "esp" => SprMiniMapEsp,
-                "fre" => SprMiniMapFre,
-                "ita" => SprMiniMapIta,
-                "por" => SprMiniMapPor,
-                "rus" => SprMiniMapRus,
-                _ => SprMiniMapEng
-            };
+                var langList = Game1.LanguageManager.LanguageCode;
+                if (langList.Count == 0) 
+                    return SprMiniMapEng;
+
+                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
+                string lang = langList[idx];
+
+                return lang switch
+                {
+                    "deu" => SprMiniMapDeu,
+                    "esp" => SprMiniMapEsp,
+                    "fre" => SprMiniMapFre,
+                    "ita" => SprMiniMapIta,
+                    "por" => SprMiniMapPor,
+                    "rus" => SprMiniMapRus,
+                    _     => SprMiniMapEng
+                };
+            }
+        }
 
         public static Texture2D SprItemEng, SprItemDeu, SprItemEsp, SprItemFre, SprItemIta, SprItemPor, SprItemRus;
         public static Texture2D SprItemEngRedux, SprItemDeuRedux, SprItemEspRedux, SprItemFreRedux, SprItemItaRedux, SprItemPorRedux, SprItemRusRedux;
-        public static Texture2D SprItem => (Game1.LanguageManager.LanguageCode[Game1.LanguageManager.CurrentLanguageIndex], GameSettings.Uncensored) 
-            switch
+        public static Texture2D SprItem
+        {
+            get
             {
-                ("deu", false) => SprItemDeu,
-                ("esp", false) => SprItemEsp,
-                ("fre", false) => SprItemFre,
-                ("ita", false) => SprItemIta,
-                ("por", false) => SprItemPor,
-                ("rus", false) => SprItemRus,
-                (_, false) => SprItemEng,
-                ("deu", true)  => SprItemDeuRedux,
-                ("esp", true)  => SprItemEspRedux,
-                ("fre", true)  => SprItemFreRedux,
-                ("ita", true)  => SprItemItaRedux,
-                ("por", true)  => SprItemPorRedux,
-                ("rus", true)  => SprItemRusRedux,
-                (_, true)  => SprItemEngRedux
-            };
+                var langList = Game1.LanguageManager.LanguageCode;
+                if (langList.Count == 0)
+                    return GameSettings.Uncensored ? SprItemEngRedux : SprItemEng;
+
+                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
+                string lang = langList[idx];
+
+                return (lang, GameSettings.Uncensored) switch
+                {
+                    ("deu", false) => SprItemDeu,
+                    ("esp", false) => SprItemEsp,
+                    ("fre", false) => SprItemFre,
+                    ("ita", false) => SprItemIta,
+                    ("por", false) => SprItemPor,
+                    ("rus", false) => SprItemRus,
+                    (_, false)     => SprItemEng,
+
+                    ("deu", true)  => SprItemDeuRedux,
+                    ("esp", true)  => SprItemEspRedux,
+                    ("fre", true)  => SprItemFreRedux,
+                    ("ita", true)  => SprItemItaRedux,
+                    ("por", true)  => SprItemPorRedux,
+                    ("rus", true)  => SprItemRusRedux,
+                    (_, true)      => SprItemEngRedux,
+                };
+            }
+        }
 
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeu = new();
@@ -503,7 +543,8 @@ namespace ProjectZ.InGame.Things
         {
             // All sprites use the current langage to search for variations, most sprites will also use "GameSettings.Uncensored" to determine if
             // there is a "redux" uncensored version, and the photograph sprites will use "GameSettings.PhotosColor" to get the colored versions.
-            string lang = Game1.LanguageManager.LanguageCode[Game1.LanguageManager.CurrentLanguageIndex];
+            int index = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, Game1.LanguageManager.LanguageCode.Count - 1);
+            string lang = Game1.LanguageManager.LanguageCode[index];
 
             // All "search" chains in the switch below should end with "SpriteAtlas" as it will always contains an entry.
             var atlases = (lang, variation) switch
@@ -529,7 +570,6 @@ namespace ProjectZ.InGame.Things
                 if (atlas.TryGetValue(id, out var sprite))
                     return sprite;
 
-            // We should NEVER get here, but just as a fail safe check the standard "SpriteAtlas" one more time.
             return SpriteAtlas.TryGetValue(id, out var fallback) ? fallback : null;
         }
 
