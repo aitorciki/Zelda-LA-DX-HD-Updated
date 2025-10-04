@@ -17,12 +17,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly AiTriggerSwitch _changeDirectionSwitch;
+        private readonly CarriableComponent _carriableCompnent;
         private readonly DamageFieldComponent _damageField;
         private readonly Animator _animator;
         private readonly CSprite _sprite;
 
         private int _direction;
-
         private float _attackCounter;
         private float _attackingCounter;
         private float _attackTransparency;
@@ -41,7 +41,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 MoveCollision = OnCollision,
                 Bounciness = 0.25f,
-                Drag = 0.9f,
+                Drag = 0.15f,
+                DragAir = 1.0f,
                 Gravity = -0.1f,
                 CollisionTypes =
                     Values.CollisionTypes.Normal |
@@ -64,6 +65,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             stateFleeWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("fleeingIdle"), 750, 1500));
             var stateFleeing = new AiState(UpdateFleeing);
             var stateAttack = new AiState(UpdateAttack);
+            var stateThrown = new AiState(UpdateThrown);
+            var statePickedUp = new AiState(UpdatePickedUp);
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
@@ -72,11 +75,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("fleeingWalking", stateFleeWalking);
             _aiComponent.States.Add("fleeing", stateFleeing);
             _aiComponent.States.Add("attack", stateAttack);
+            _aiComponent.States.Add("thrown", stateThrown);
+            _aiComponent.States.Add("pickedUp", statePickedUp);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2) { OnBurn = OnBurn };
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 10) < 5 ? "idle" : "walking");
 
             var box = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
 
+            AddComponent(CarriableComponent.Index, _carriableCompnent = new CarriableComponent(
+                new CRectangle(EntityPosition, new Rectangle(-6, -14, 12, 14)), CarryInit, CarryUpdate, CarryThrow));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false });
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
@@ -225,6 +232,48 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _direction = _body.VelocityTarget.X < 0 ? 0 : 1;
             _animator.Play("walk_" + _direction);
+        }
+
+        private Vector3 CarryInit()
+        {
+            _body.IgnoresZ = true;
+            _body.Velocity = Vector3.Zero;
+            _body.VelocityTarget = Vector2.Zero;
+            _body.CollisionTypes = MapManager.ObjLink._body.CollisionTypes;
+
+            _animator.SpeedMultiplier = 2.0f;
+            _aiComponent.ChangeState("pickedUp");
+
+            return new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z);
+        }
+
+        private bool CarryUpdate(Vector3 position)
+        {
+            EntityPosition.Set(new Vector3(position.X, position.Y, position.Z));
+            return true;
+        }
+
+        private void CarryThrow(Vector2 velocity)
+        {
+            _body.IgnoresZ = false;
+            _body.IsGrounded = false;
+            _body.Velocity = new Vector3(velocity.X, velocity.Y, 0) * 0.95f;
+            _aiComponent.ChangeState("thrown");
+        }
+
+        private void UpdatePickedUp()
+        {
+            Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
+            UpdateAnimation();
+        }
+
+        private void UpdateThrown()
+        {
+            if (_body.IsGrounded)
+            {
+                _aiComponent.ChangeState("walking");
+            }
+            UpdateAnimation();
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
