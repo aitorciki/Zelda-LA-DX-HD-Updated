@@ -295,7 +295,7 @@ namespace ProjectZ.InGame.Screens
 #endif
 
             if (Game1.FinishedLoading &&
-                (ControlHandler.ButtonPressed(CButtons.A) || ControlHandler.ButtonPressed(CButtons.Start)))
+                (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) || ControlHandler.ButtonPressed(CButtons.Start)))
             {
                 if (_currentState == States.StrandLogo)
                 {
@@ -371,7 +371,6 @@ namespace ProjectZ.InGame.Screens
                             _thunderPositions[i] = new Vector2(randomX, 14);
                     }
                 }
-
                 _oceanPosition0 = new Vector2(_cameraCenter.X * 0.1f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500) * 1));
                 _oceanPosition1 = new Vector2(_cameraCenter.X * 0.05f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.1) * 2));
                 _oceanPosition2 = new Vector2(-_cameraCenter.X * 0.05f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.2) * 3));
@@ -381,7 +380,6 @@ namespace ProjectZ.InGame.Screens
             else if (_currentState == States.OceanPicture)
             {
                 _cameraCenter = new Vector2(0, 0);
-
                 _linkBoatAnimator.Update();
 
                 if (_oceanFrameIndex != _linkBoatAnimator.CurrentFrameIndex &&
@@ -389,7 +387,6 @@ namespace ProjectZ.InGame.Screens
                 {
                     Game1.GameManager.PlaySoundEffect("D378-12-0C", true);
                 }
-
                 _oceanFrameIndex = _linkBoatAnimator.CurrentFrameIndex;
 
                 // transition to next state
@@ -427,13 +424,11 @@ namespace ProjectZ.InGame.Screens
 
                 // center the camera
                 _cameraCenter = new Vector2(0, 55);
-
                 _oceanPosition0 = new Vector2(_cameraCenter.X * 0.1f, 60);
                 _oceanPosition1 = new Vector2(_cameraCenter.X * 0.05f, 60);
                 _oceanPosition2 = new Vector2(-_cameraCenter.X * 0.05f, 60);
                 _oceanPosition3 = new Vector2(-_cameraCenter.X * 0.25f, 60);
                 _oceanBoatPosition = new Vector2(-16 + _cameraCenter.X * 0.05f, 47);
-
                 _thunderPositions[0] = new Vector2(-2, -17);
             }
         }
@@ -448,14 +443,11 @@ namespace ProjectZ.InGame.Screens
         private void InitBeach()
         {
             _currentState = States.StrandFading;
-
             _cameraCenter = new Vector2(-400, 210);
             _linkPosition = new Vector2(-8, 225);
             _marinPosition = new Vector2(-250, 219);
-
             _marinAnimator.Play("stand");
             _marinAnimator.SpeedMultiplier = 1.0f;
-
             _logoState = 0;
             _strandFadeCount = 3700 + StrandFadeTime;
             _marinIndex = 0;
@@ -508,7 +500,6 @@ namespace ProjectZ.InGame.Screens
                     _cameraState = 0;
                     _cameraStart = _cameraCenter;
                     _cameraTarget = new Vector2(_cameraCenter.X, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
-
                     _logoCounter = 0;
                     _currentState = States.StrandPanning;
                 }
@@ -536,7 +527,6 @@ namespace ProjectZ.InGame.Screens
                 if (!_lightAnimation.IsPlaying)
                 {
                     _lightAnimation.Play("idle");
-
                     _lightIndex = (_lightIndex + Game1.RandomNumber.Next(1, _lightPositions.Length)) % _lightPositions.Length;
                     _ligthPosition = _lightPositions[_lightIndex];
                 }
@@ -555,11 +545,9 @@ namespace ProjectZ.InGame.Screens
             {
                 UpdateCamera(new Vector2(_marinPosition.X + 18, 210), _currentState == States.StrandMarin ? 1.0f : 0.54f);
             }
-
             _marinAnimator.Update();
             _linkAnimator.Update();
             _lightAnimation.Update();
-
             _cloundLeftPosition = new Vector2(-_sprCloud.Width, 47);
 
             // update wave animation
@@ -609,7 +597,6 @@ namespace ProjectZ.InGame.Screens
 
             _cameraState += speed * Game1.TimeMultiplier;
             _cameraState = Math.Clamp(_cameraState, 0, 1);
-
             _cameraCenter = Vector2.Lerp(_cameraStart, _cameraTarget, 0.5f + MathF.Sin(-MathF.PI * 0.5f + _cameraState * MathF.PI) * 0.5f);
 
             return true;
@@ -620,7 +607,6 @@ namespace ProjectZ.InGame.Screens
             if (marinState == MarinState.Stand)
             {
                 _marinAnimator.Play("stand");
-
                 _marinStateCounter -= Game1.DeltaTime;
                 if (_marinStateCounter <= 0)
                     NextState();

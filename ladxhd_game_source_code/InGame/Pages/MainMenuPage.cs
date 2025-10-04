@@ -294,7 +294,7 @@ namespace ProjectZ.InGame.Pages
                     selectedSaveIndex = i;
             }
 
-            if (ControlHandler.ButtonPressed(CButtons.B))
+            if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             {
                 _selectedSaveIndex = selectedSaveIndex;
 

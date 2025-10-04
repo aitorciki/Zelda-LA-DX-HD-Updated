@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
@@ -12,6 +13,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _bottomBar;
         private readonly InterfaceButton _controllerType;
         private readonly InterfaceSlider _subLangSlider;
+        private float _controlCooldown = 0f;
 
         public GameSettingsPage(int width, int height)
         {
@@ -25,7 +27,7 @@ namespace ProjectZ.InGame.Pages
             var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Button: Language
-            contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 16), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
+            contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 14), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
 
             // Slider: Sub-Language
             _subLangSlider = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
@@ -39,26 +41,36 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Controller Type
             // There wasn't a way to just display what we want on the button so a little bit of hackery was needed.
-            contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, 16), new Point(0, 2), "", PressButtonSetController)) ;
+            contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, 14), new Point(0, 2), "", PressButtonSetController)) ;
             _controllerType.InsideLabel.OverrideText = Game1.LanguageManager.GetString("settings_game_controller", "error") + ": " + GameSettings.Controller;
 
+            // Button: Swap Confirm & Cancel
+            var toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+                "settings_game_swapbuttons", GameSettings.SwapButtons, newState => 
+                { 
+                    _controlCooldown = 500f;
+                    GameSettings.SwapButtons = newState;
+                    ControlHandler.SetConfirmCancelButtons();
+                });
+            contentLayout.AddElement(toggleSwapButtons);
+
             // Button: AutoSave
-            var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+            var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
             contentLayout.AddElement(toggleAutosave);
 
             // Button: Items on Right
-            var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+            var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_items_on_right", GameSettings.ItemsOnRight, newState => { GameSettings.ItemsOnRight = newState; });
             contentLayout.AddElement(toggleItemSlotSide);
 
             // Button: Screen-Shake
-            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_screenshake", GameSettings.ScreenShake, newState => { GameSettings.ScreenShake = newState; });
             contentLayout.AddElement(toggleScreenShake);
 
             // Button: Camera Lock
-            var toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+            var toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_cameralock", GameSettings.CameraLock, newState => { GameSettings.CameraLock = newState; });
             contentLayout.AddElement(toggleCameraLock);
 
@@ -74,8 +86,11 @@ namespace ProjectZ.InGame.Pages
         {
             base.Update(pressedButtons, gameTime);
 
+            if (_controlCooldown > 0f)
+                _controlCooldown -= Game1.DeltaTime;
+
             // close the page
-            if (ControlHandler.ButtonPressed(CButtons.B))
+            if (_controlCooldown <= 0f && ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                 Game1.UiPageManager.PopPage();
         }
 

@@ -105,14 +105,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleIdle()
             {
-                if (ControlHandler.ButtonDown(CButtons.B))
+                if (ControlHandler.ButtonDown(ControlHandler.CancelButton))
                     StartGrabbing();
                 return _currentState;
             }
 
             State HandleMoveX()
             {
-                if ((_marinGame || ControlHandler.ButtonDown(CButtons.B)) &&
+                if ((_marinGame || ControlHandler.ButtonDown(ControlHandler.CancelButton)) &&
                     EntityPosition.X < _vecStart.X + 112)
                 {
                     Game1.GameManager.PlaySoundEffect("D378-32-20", false);
@@ -131,7 +131,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleIdleY()
             {
-                return ControlHandler.ButtonDown(CButtons.A) ? State.MoveY : _currentState;
+                return ControlHandler.ButtonDown(ControlHandler.ConfirmButton) ? State.MoveY : _currentState;
             }
 
             State HandleWaitY()
@@ -142,7 +142,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleMoveY()
             {
-                if ((_marinGame || ControlHandler.ButtonDown(CButtons.A)) &&
+                if ((_marinGame || ControlHandler.ButtonDown(ControlHandler.ConfirmButton)) &&
                     EntityPosition.Y < _vecStart.Y + 64)
                 {
                     Game1.GameManager.PlaySoundEffect("D378-32-20", false);

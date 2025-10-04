@@ -13,6 +13,8 @@ namespace ProjectZ.InGame.Controls
         public static Dictionary<CButtons, ButtonMapper> ButtonDictionary = new Dictionary<CButtons, ButtonMapper>();
 
         public static CButtons DebugButtons;
+        public static CButtons ConfirmButton = CButtons.A;
+        public static CButtons CancelButton  = CButtons.B;
 
         public static bool LastKeyboardDown;
 
@@ -93,6 +95,7 @@ namespace ProjectZ.InGame.Controls
             ButtonDictionary.Add(CButtons.Start, new ButtonMapper(new[] { Keys.Enter }, new[] { Buttons.Start }));
             ButtonDictionary.Add(CButtons.LS, new ButtonMapper(new[] { Keys.Q }, new[] { Buttons.LeftStick }));
             ButtonDictionary.Add(CButtons.RS, new ButtonMapper(new[] { Keys.W }, new[] { Buttons.RightStick }));
+            SetConfirmCancelButtons();
         }
 
         public static void SaveButtonMaps(SaveManager saveManager)
@@ -141,6 +144,21 @@ namespace ProjectZ.InGame.Controls
                 // set the loaded buttons
                 if (gamepadButtons.Count > 0)
                     buttonMap.Value.Buttons = gamepadButtons.ToArray();
+            }
+            SetConfirmCancelButtons();
+        }
+
+        public static void SetConfirmCancelButtons()
+        {
+            if (GameSettings.SwapButtons)
+            {
+                ConfirmButton = CButtons.B;
+                CancelButton  = CButtons.A;
+            }
+            else
+            {
+                ConfirmButton = CButtons.A;
+                CancelButton  = CButtons.B;
             }
         }
 

@@ -81,7 +81,6 @@ namespace ProjectZ.InGame.Things
             inputString = inputString.Replace("[SKULL]", "µ");
             inputString = inputString.Replace("[MARIN]", "¶");
             inputString = inputString.Replace("[LINK]", "·");
-
             return inputString;
         }
 
@@ -105,12 +104,10 @@ namespace ProjectZ.InGame.Things
                     dictionary.Add(strKey, "");
                     continue;
                 }
-
                 var strValue = strLine.Substring(spacePosition + 1);
 
                 dictionary.Add(strKey, strValue);
             }
-
             reader.Close();
         }
 

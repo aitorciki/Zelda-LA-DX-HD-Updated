@@ -713,7 +713,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 }
                 // Check if a button is pressed.
                 if (ControlHandler.ButtonPressed(CButtons.Start) ||
-                    ControlHandler.ButtonPressed(CButtons.A))
+                    ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
                 {
                     // If the Marin ending was unlocked or the player has non-missables enabled.
                     if (_marinEnding || GameSettings.Unmissables)

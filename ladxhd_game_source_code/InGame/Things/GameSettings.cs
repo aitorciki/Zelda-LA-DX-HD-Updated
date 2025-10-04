@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.Things
         public static bool ExFullscreen = false;
         public static bool VerticalSync = true;
         public static bool ItemsOnRight = false;
+        public static bool SwapButtons = false;
         public static string Controller = "XBox";
         public static int MenuBorder = 0;
         public static bool VarWidthFont = false;

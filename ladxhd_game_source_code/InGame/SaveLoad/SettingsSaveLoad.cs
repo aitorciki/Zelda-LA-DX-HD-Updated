@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
+            GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
             GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
             GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
             GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
@@ -75,6 +76,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             saveManager.SetString("Controller", GameSettings.Controller);
+            saveManager.SetBool("SwapButtons", GameSettings.SwapButtons);
             saveManager.SetInt("MenuBorder", GameSettings.MenuBorder);
             saveManager.SetBool("VarWidthFont", GameSettings.VarWidthFont);
             saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
