@@ -15,7 +15,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
-        private readonly AiDamageState _aiDamageState;
         private readonly CSprite _sprite;
         private readonly AiDamageState _damageState;
         private readonly DictAtlasEntry _spriteHead;
@@ -145,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
-            if (_aiDamageState.IsInDamageState())
+            if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
             if (damageType == HitType.Bomb || damageType == HitType.Bow)
@@ -159,9 +158,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 pieceOfPower)
                 damage *= 2;
 
-            var hitType = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            var hitType = _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
-            if (_aiDamageState.CurrentLives > 0)
+            if (_damageState.CurrentLives > 0)
             {
                 _state += 1;
                 if (_state <= 2)
