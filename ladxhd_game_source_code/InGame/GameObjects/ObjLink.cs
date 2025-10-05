@@ -985,18 +985,25 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentState == State.FinalInstruments)
                 DrawFinalInstruments(spriteBatch);
 
+            // Draw boxes when pressing F2 and Debug/Editor is enabled.
             if (Game1.DebugMode)
             {
-                // draw the save hole position
+                // Draw the save hole position.
                 spriteBatch.Draw(Resources.SprWhite,
                     new Vector2(_holeResetPoint.X - 5, _holeResetPoint.Y - 5), new Rectangle(0, 0,
                        10, 10), Color.HotPink * 0.65f);
 
-                // weapon damage rectangle
+                // Draw weapon damage rectangle.
                 var swordRectangle = SwordDamageBox.Rectangle();
                 spriteBatch.Draw(Resources.SprWhite,
                     new Vector2(swordRectangle.X, swordRectangle.Y), new Rectangle(0, 0,
                         (int)swordRectangle.Width, (int)swordRectangle.Height), Color.Blue * 0.75f);
+
+                // Draw shield rectangle.
+                var shieldRectangle = shieldBox.Rectangle();
+                spriteBatch.Draw(Resources.SprWhite,
+                    new Vector2(shieldRectangle.X, shieldRectangle.Y), new Rectangle(0, 0,
+                        (int)shieldRectangle.Width, (int)shieldRectangle.Height), Color.Green * 0.75f);
             }
         }
 
@@ -3246,7 +3253,7 @@ namespace ProjectZ.InGame.GameObjects
         private Box GetShieldRectangle()
         {
             // The mirror shield requires a slightly different offset than the normal shield
-            // when facing south. I have no clue why this is the case, but it is what it is.
+            // when facing south. I'm guessing that it's actually one pixel larger facing down.
             var mirrorShield = Game1.GameManager.GetItem("mirrorShield");
             var hasMirrorShield = mirrorShield?.Count >= 1;
             var rect = Animation.CollisionRectangle;
@@ -3254,11 +3261,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _)       => ( -6, -17, -2, +2),
-                (2, _)       => (-11, -13, +2, -4),
-                (3, true)    => ( -5, -17, -2, +2),
-                (3, false)   => ( -6, -17, -2, +2),
-                (_, _)       => ( -5, -13, +2, -4),
+                (1, _)       => ( -7, -17,  0, +2),
+                (2, _)       => (-11, -14, +2, -2),
+                (3, true)    => ( -6, -17,  0, +2),
+                (3, false)   => ( -7, -17,  0, +2),
+                (_, _)       => ( -5, -14, +2, -2),
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
