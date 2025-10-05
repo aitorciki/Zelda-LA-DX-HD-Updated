@@ -1,5 +1,10 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.4**
+### **Emergency Crash-Fix Update**
+  * Fix crash that happens when attacking Pokey in Yarna Desert.
+  * Adjust shield hitbox so that it completely covers the body box.
+
 ## **v1.3.3**
 ### **German Language Added Update**
   * Implement German language + textures. Thanks to [MasterPhW](https://github.com/MasterPhW) (creator).
