@@ -4401,7 +4401,8 @@ namespace ProjectZ.InGame.GameObjects
                 direction = bodyCenter - interCenter;
             }
             // Normalize the direction vector.
-            direction.Normalize();
+            if (direction.LengthSquared() > 0.000001f)
+                direction.Normalize();
 
             // Check if it's a projectile that was successfully blocked.
             bool blocked = WasBlocked(box, boxRect, boxCenter, bodyCenter, direction);
