@@ -17,7 +17,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly AiTriggerSwitch _changeDirectionSwitch;
-        private readonly CarriableComponent _carriableCompnent;
+        private readonly CarriableComponent _carriableComponent;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly Animator _animator;
         private readonly CSprite _sprite;
@@ -82,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             var box = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
 
-            AddComponent(CarriableComponent.Index, _carriableCompnent = new CarriableComponent(
+            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(
                 new CRectangle(EntityPosition, new Rectangle(-6, -14, 12, 14)), CarryInit, CarryUpdate, CarryThrow));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false });
             AddComponent(BodyComponent.Index, _body);
@@ -90,8 +92,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
@@ -169,6 +171,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void OnBurn()
         {
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+            _carriableComponent.IsActive = false;
             _animator.Pause();
         }
 
