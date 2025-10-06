@@ -206,6 +206,11 @@ namespace ProjectZ.InGame.Pages
                 Game1.GameManager.SetMusic(59, 2);
                 Game1.UiPageManager.PopPage();
             }
+            else if (name == "zeldabop")
+            {
+                Game1.GameManager.SetMusic(95, 2);
+                Game1.UiPageManager.PopPage();
+            }
             else
             {
                 // change to the game screen
