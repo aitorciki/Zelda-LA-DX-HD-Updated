@@ -199,12 +199,22 @@ namespace ProjectZ.InGame.Pages
 
         private void OnClickNewGameButton(InterfaceElement element)
         {
-            // change to the game screen
-            Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);
-            // create new save file
-            Game1.GameManager.StartNewGame(_selectedSaveSlot, _strNameInput);
-            // close the gameui
-            Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+            string name = _strNameInput.ToLower();
+
+            if (name == "totaka" || name == "totakeke" || name == "moyse")
+            {
+                Game1.GameManager.SetMusic(59, 2);
+                Game1.UiPageManager.PopPage();
+            }
+            else
+            {
+                // change to the game screen
+                Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);
+                // create new save file
+                Game1.GameManager.StartNewGame(_selectedSaveSlot, _strNameInput);
+                // close the gameui
+                Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+            }
         }
 
         private void OnClickBackButton(InterfaceElement element)
