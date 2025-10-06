@@ -1325,14 +1325,19 @@ namespace ProjectZ.InGame.GameObjects
             {
                 Game1.GameManager.SaveManager.RemoveString("boomerang_trade");
 
-                if (Game1.GameManager.Equipment[1] != null &&
-                    (Game1.GameManager.Equipment[1].Name == "shovel" ||
-                     Game1.GameManager.Equipment[1].Name == "feather" ||
-                     Game1.GameManager.Equipment[1].Name == "magicRod" ||
-                     Game1.GameManager.Equipment[1].Name == "hookshot"))
+                int index = GameSettings.SwapButtons ? 0 : 1;
+
+                System.Diagnostics.Debug.WriteLine(index);
+                System.Diagnostics.Debug.WriteLine(Game1.GameManager.Equipment[index].Name);
+
+                if (Game1.GameManager.Equipment[index] != null &&
+                    (Game1.GameManager.Equipment[index].Name == "shovel" ||
+                     Game1.GameManager.Equipment[index].Name == "feather" ||
+                     Game1.GameManager.Equipment[index].Name == "magicRod" ||
+                     Game1.GameManager.Equipment[index].Name == "hookshot"))
                 {
-                    Game1.GameManager.SaveManager.SetString("tradded_item", Game1.GameManager.Equipment[1].Name);
-                    Game1.GameManager.Equipment[1] = null;
+                    Game1.GameManager.SaveManager.SetString("tradded_item", Game1.GameManager.Equipment[index].Name);
+                    Game1.GameManager.Equipment[index] = null;
 
                     Game1.GameManager.StartDialogPath("npc_hidden_boomerang");
                 }

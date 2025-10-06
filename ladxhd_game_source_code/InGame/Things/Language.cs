@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ProjectZ.InGame.Controls;
 
 namespace ProjectZ.InGame.Things
 {
@@ -86,6 +87,8 @@ namespace ProjectZ.InGame.Things
             inputString = inputString.Replace("[SKULL]", "µ");
             inputString = inputString.Replace("[MARIN]", "¶");
             inputString = inputString.Replace("[LINK]", "·");
+            inputString = inputString.Replace("[CANCEL]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]));
+            inputString = inputString.Replace("[CONFIRM]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.ConfirmButton].Buttons[0]));
             return inputString;
         }
 
