@@ -63,8 +63,10 @@ namespace ProjectZ.InGame.Things
 
         public string ReplacePlaceholderTag(string inputString)
         {
-            // put in the players name
+            // Inserts the players name.
             inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
+
+            // Inserts the trade icons.
             inputString = inputString.Replace("[TRADE0]", "¯");
             inputString = inputString.Replace("[TRADE1]", "¢");
             inputString = inputString.Replace("[TRADE2]", "£");
@@ -79,16 +81,22 @@ namespace ProjectZ.InGame.Things
             inputString = inputString.Replace("[TRADE11]", "¬");
             inputString = inputString.Replace("[TRADE12]", "­");
             inputString = inputString.Replace("[TRADE13]", "®");
+
+            // Inserts special icons.
+            inputString = inputString.Replace("[SKULL]", "µ");
+            inputString = inputString.Replace("[MARIN]", "¶");
+            inputString = inputString.Replace("[LINK]", "·");
+
+            // Inserts controller icons.
             inputString = inputString.Replace("[LEFT]", "°");
             inputString = inputString.Replace("[RIGHT]", "±");
             inputString = inputString.Replace("[DOWN]", "²");
             inputString = inputString.Replace("[UP]", "³");
             inputString = inputString.Replace("[DPAD]", "´");
-            inputString = inputString.Replace("[SKULL]", "µ");
-            inputString = inputString.Replace("[MARIN]", "¶");
-            inputString = inputString.Replace("[LINK]", "·");
-            inputString = inputString.Replace("[CANCEL]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]));
             inputString = inputString.Replace("[CONFIRM]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.ConfirmButton].Buttons[0]));
+            inputString = inputString.Replace("[CANCEL]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]));
+            inputString = inputString.Replace("[START]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.Start].Buttons[0]));
+            inputString = inputString.Replace("[SELECT]", ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.Select].Buttons[0]));
             return inputString;
         }
 
