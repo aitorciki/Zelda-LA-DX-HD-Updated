@@ -3307,6 +3307,8 @@ namespace ProjectZ.InGame.GameObjects
                         (int)(pushedRectangle.PushableBox.Box.X + pushedRectangle.PushableBox.Box.Width / 2),
                         (int)(pushedRectangle.PushableBox.Box.Y + pushedRectangle.PushableBox.Box.Height / 2),
                         Values.LayerTop, "Particles/swordPoke", "run", true));
+
+                    Game1.GameManager.PlaySoundEffect("D360-07-07");
                 }
                 // Play the "bumping" sound effect.
                 else
