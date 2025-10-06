@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isColliding;
         private bool _wasColliding;
         public bool _savePosition;
+        public bool _backdoorLevel8;
         private bool _isTransitioning;
 
         public ObjDoor() : base("editor door")
@@ -55,21 +56,24 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _collisionRectangle = new Rectangle(posX + 6, posY + 6, width - 12, height - 12);
                 _positionOffset = 4;
             }
-
             if (mode == 4)
             {
                 _collisionRectangle.Height = 10;
             }
-
             _entryId = entryId;
             _direction = direction;
             _mode = mode;
             _savePosition = savePosition;
 
-            // has the player just entered this door?
+            // Get the door that the player entered through. If the player entered
+            // level 8 through a backdoor, activate the backdoor hack.
             if (_entryId != null && MapManager.ObjLink.NextMapPositionId == _entryId)
-                PlacePlayer();
+            {
+                if (map.MapName == "dungeon8.map" && (entryId == "d8_left" || entryId == "d8_right"))
+                    _backdoorLevel8 = true;
 
+                PlacePlayer();
+            }
             _nextMap = nextMapId;
             _exitId = exitId;
 
@@ -220,21 +224,27 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 MapManager.ObjLink.NextMapFallRotateStart = true;
             }
-
+            // If it's an autosave door then store current map stuff.
             if (_savePosition)
             {
                 MapManager.ObjLink.SaveMap = Map.MapName;
                 MapManager.ObjLink.SavePosition = transitionEnd;
                 MapManager.ObjLink.SaveDirection = _direction;
 
-                // save settings?
+                // If autosave is enabled, then save the game now.
                 if (GameSettings.Autosave)
                 {
                     SaveGameSaveLoad.SaveGame(Game1.GameManager);
                     Game1.GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
                 }
             }
-
+            // If it's a Level 8 backdoor then force front entrance info.
+            if (_backdoorLevel8)
+            {
+                MapManager.ObjLink.SaveMap = "dungeon8.map";
+                MapManager.ObjLink.SavePosition = new Vector2(576, 1048);
+                MapManager.ObjLink.SaveDirection = 1;
+            }
             MapManager.ObjLink.NextMapPositionStart = transitionStart;
             MapManager.ObjLink.NextMapPositionEnd = transitionEnd;
             MapManager.ObjLink.TransitionInWalking = transitionStart != transitionEnd;
