@@ -102,6 +102,7 @@ namespace ProjectZ.InGame.GameObjects
         private Point _lastTilePosition;
 
         public int Direction;
+        public int AttackDirection;
         private bool _isWalking;
 
         // player animations
@@ -2721,6 +2722,7 @@ namespace ProjectZ.InGame.GameObjects
             AnimatorWeapons.Stop();
             Animation.Play("attack_" + Direction);
             AnimatorWeapons.Play("attack_" + Direction);
+            AttackDirection = Direction;
             _swordChargeCounter = SwordChargeTime;
             IsPoking = false;
             _pokeStart = false;
@@ -3494,12 +3496,19 @@ namespace ProjectZ.InGame.GameObjects
             if (hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
                 _stopCharging = true;
 
+            // Default beam direction to current direction.
+            var beamDirection = Direction;
+
+            // If swimming on 2D map, use the current attacking direction.
+            if (IsSwimmingState(CurrentState) && Map.Is2dMap)
+                beamDirection = AttackDirection;
+
             // Shoot the sword if the player has the Level 2 sword and full health.
             if (!_shotSword && Game1.GameManager.SwordLevel == 2 && Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 && AnimatorWeapons.CurrentFrameIndex == 2)
             {
                 _shotSword = true;
-                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[Direction].X, EntityPosition.Y + _shootSwordOffset[Direction].Y, EntityPosition.Z);
-                var objSwordShot = new ObjSwordShot(Map, spawnPosition, Direction);
+                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y, EntityPosition.Z);
+                var objSwordShot = new ObjSwordShot(Map, spawnPosition, beamDirection);
                 Map.Objects.SpawnObject(objSwordShot);
             }
 
