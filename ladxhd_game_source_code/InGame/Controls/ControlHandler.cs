@@ -259,6 +259,7 @@ namespace ProjectZ.InGame.Controls
         public static bool ButtonDown(CButtons button)
         {
             var direction = GetGamepadDirection();
+
             if (direction.Length() >= Values.ControllerDeadzone)
             {
                 var dir = AnimationHelper.GetDirection(direction);
@@ -276,6 +277,23 @@ namespace ProjectZ.InGame.Controls
             for (var i = 0; i < ButtonDictionary[button].Buttons.Length; i++)
                 if (InputHandler.GamePadDown(ButtonDictionary[button].Buttons[i]))
                     return true;
+
+            return false;
+        }
+
+        public static bool TrendyButtonDown(CButtons button)
+        {
+            // Check keyboard bindings.
+            foreach (var key in ButtonDictionary[button].Keys)
+                if (InputHandler.KeyDown(key))
+                    return true;
+
+            // Check gamepad bindings.
+            if (button == CancelButton)
+                return InputHandler.GamePadDown(GameSettings.SwapButtons ? Buttons.A : Buttons.B);
+
+            if (button == ConfirmButton)
+                return InputHandler.GamePadDown(GameSettings.SwapButtons ? Buttons.B : Buttons.A);
 
             return false;
         }

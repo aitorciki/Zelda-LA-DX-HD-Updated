@@ -20,11 +20,27 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _buttonFrame;
         private int _animationSpeed = 100;
 
-        public ObjCandyGrabberControls() : base("candy_grabber_controls_top") { }
+        public static string ControlsTexture 
+        {
+            get
+            {
+                return (GameSettings.Controller, GameSettings.SwapButtons) switch
+                {
+                    ("XBox",  false)       => "candy_grabber_controls_top",
+                    ("XBox",  true)        => "candy_grabber_controls_top_rev",
+                    ("Nintendo", false)    => "candy_grabber_controls_top_rev",
+                    ("Nintendo", true)     => "candy_grabber_controls_top",
+                    ("Playstation", false) => "candy_grabber_controls_psx_rev",
+                    ("Playstation", true)  => "candy_grabber_controls_psx"
+                };
+            }
+        }
+
+        public ObjCandyGrabberControls() : base(ControlsTexture) { }
 
         public ObjCandyGrabberControls(Map.Map map, int posX, int posY) : base(map)
         {
-            _sourceTop = Resources.SourceRectangle("candy_grabber_controls_top");
+            _sourceTop = Resources.SourceRectangle(ControlsTexture);
             _sourceButton0 = Resources.SourceRectangle("candy_grabber_controls_button_0");
             _sourceButton1 = Resources.SourceRectangle("candy_grabber_controls_button_1");
 
