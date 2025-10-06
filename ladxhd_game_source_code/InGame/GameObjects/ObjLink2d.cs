@@ -640,30 +640,27 @@ namespace ProjectZ.InGame.GameObjects
 
         private void Jump2D()
         {
-            // TODO: In 2d you can adjust the jump height by pressing shorter/longer
-
-            // swim faster
+            // Ascend in the water faster.
             if (CurrentState == State.Swimming)
-                _swimVelocity.Y = -0.9f;
-
-            if (CurrentState == State.Carrying ||
-                (CurrentState != State.Idle &&
-                 CurrentState != State.Attacking &&
-                 CurrentState != State.AttackBlocking &&
-                 CurrentState != State.Charging  &&
-                 CurrentState != State.ChargeBlocking))
+            {
+                Game1.GameManager.PlaySoundEffect("D360-13-0D");
+                _swimVelocity.Y = -1.185f;
+            }
+            // Must not be carrying or must be in one of the following states.
+            if (CurrentState == State.Carrying || (CurrentState != State.Idle && CurrentState != State.Attacking && 
+                CurrentState != State.AttackBlocking && CurrentState != State.Charging  && CurrentState != State.ChargeBlocking))
                 return;
 
+            // All three states need to pass simultaneously to return.
             if (!_body.IsGrounded && !_wasInWater && !_isClimbing)
                 return;
 
+            // If climbing, set the direction.
             if (_isClimbing)
-            {
                 if (Math.Abs(_moveVector2D.X) > Math.Abs(_moveVector2D.Y))
                     Direction = _moveVector2D.X < 0 ? 0 : 2;
                 else
                     Direction = 1;
-            }
 
             Game1.GameManager.PlaySoundEffect("D360-13-0D");
 
@@ -676,10 +673,8 @@ namespace ProjectZ.InGame.GameObjects
             _waterJump = false;
 
             // while attacking the player can still jump but without the animation
-            if (CurrentState != State.Attacking && 
-                CurrentState != State.AttackBlocking &&
-                CurrentState != State.Charging && 
-                CurrentState != State.ChargeBlocking)
+            if (CurrentState != State.Attacking && CurrentState != State.AttackBlocking &&
+                CurrentState != State.Charging && CurrentState != State.ChargeBlocking)
             {
                 _playedJumpAnimation = false;
 
@@ -689,9 +684,7 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Jumping;
             }
             else
-            {
                 _playedJumpAnimation = true;
-            }
         }
 
         private void OnMoveCollision2D(Values.BodyCollision collision)
