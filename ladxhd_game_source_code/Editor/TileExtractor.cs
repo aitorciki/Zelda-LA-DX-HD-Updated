@@ -92,43 +92,43 @@ namespace ProjectZ.Editor
             _camera.Location = new Point(_toolBarWidth + 10, Values.ToolBarHeight + 10 + 20);
 
             // left background bar
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0), "left", Values.EditorUiTileExtractor, Color.Transparent, Color.Black * 0.5f,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0), "left", Values.EditorUiTileExtractor, Color.Transparent, Color.Black * 0.5f,
                 ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY, buttonWidth, buttonHeight), Resources.EditorFont, "load image", "default", Values.EditorUiTileExtractor, null, Button_LoadImage));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save tileSet", "default", Values.EditorUiTileExtractor, null, ButtonSaveTileset));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save removed", "default", Values.EditorUiTileExtractor, null, ButtonSaveRemoveTileset));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save .txt", "default", Values.EditorUiTileExtractor, null, ButtonSaveTilemap));
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY, buttonWidth, buttonHeight), Resources.EditorFont, "load image", "default", Values.EditorUiTileExtractor, null, Button_LoadImage));
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save tileSet", "default", Values.EditorUiTileExtractor, null, ButtonSaveTileset));
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save removed", "default", Values.EditorUiTileExtractor, null, ButtonSaveRemoveTileset));
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save .txt", "default", Values.EditorUiTileExtractor, null, ButtonSaveTilemap));
 
             //output width
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "output width", "default", Values.EditorUiTileExtractor, null));
-            Game1.EditorUi.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, _maxWidth, 5, 25, 1,
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "output width", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, _maxWidth, 5, 25, 1,
                 "outputWidth", Values.EditorUiTileExtractor, null, ui => { MaxWidth = (int)((UiNumberInput)ui).Value; }));
 
             // padding
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "padding", "default", Values.EditorUiTileExtractor, null));
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += 15, buttonWidthHalf, 25), Resources.EditorFont, "x", "default", Values.EditorUiTileExtractor, null));
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, "y", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "padding", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += 15, buttonWidthHalf, 25), Resources.EditorFont, "x", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, "y", "default", Values.EditorUiTileExtractor, null));
 
-            Game1.EditorUi.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25), Resources.EditorFont, _distance.X, -10, 10, 1,
+            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25), Resources.EditorFont, _distance.X, -10, 10, 1,
                 "outputWidth", Values.EditorUiTileExtractor, null, ui => { Distance = new Point((int)((UiNumberInput)ui).Value, _distance.Y); }));
-            Game1.EditorUi.AddElement(new UiNumberInput(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, _distance.Y, -10, 10, 1,
+            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, _distance.Y, -10, 10, 1,
                 "outputWidth", Values.EditorUiTileExtractor, null, ui => { Distance = new Point(_distance.X, (int)((UiNumberInput)ui).Value); }));
 
             // tilesize
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "tile size", "default", Values.EditorUiTileExtractor, null));
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += 15, buttonWidthHalf, 25), Resources.EditorFont, "x", "default", Values.EditorUiTileExtractor, null));
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, "y", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "tile size", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += 15, buttonWidthHalf, 25), Resources.EditorFont, "x", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, "y", "default", Values.EditorUiTileExtractor, null));
 
-            Game1.EditorUi.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25), Resources.EditorFont, _tileSize.X, 1, 200, 1,
+            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25), Resources.EditorFont, _tileSize.X, 1, 200, 1,
                 "outputWidth", Values.EditorUiTileExtractor, null, ui => { TileSize = new Point((int)((UiNumberInput)ui).Value, _tileSize.Y); }));
-            Game1.EditorUi.AddElement(new UiNumberInput(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, _tileSize.Y, 1, 200, 1,
+            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, _tileSize.Y, 1, 200, 1,
                 "outputWidth", Values.EditorUiTileExtractor, null, ui => { TileSize = new Point(_tileSize.X, (int)((UiNumberInput)ui).Value); }));
         }
 
         public override void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiTileExtractor;
+            Game1.UiManager.CurrentScreen = Values.EditorUiTileExtractor;
 
             var mousePosition = InputHandler.MousePosition();
 

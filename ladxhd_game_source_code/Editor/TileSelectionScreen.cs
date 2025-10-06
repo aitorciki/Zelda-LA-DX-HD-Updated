@@ -30,7 +30,7 @@ namespace ProjectZ.Editor
 
         public void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiTileSelection;
+            Game1.UiManager.CurrentScreen = Values.EditorUiTileSelection;
 
             _tileMap = Game1.GameManager.MapManager.CurrentMap.TileMap;
 

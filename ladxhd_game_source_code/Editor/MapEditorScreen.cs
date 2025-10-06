@@ -83,7 +83,7 @@ namespace ProjectZ.Editor
             var strScreenName = $"{Values.EditorUiTileEditor}:{Values.EditorUiObjectEditor}:{Values.EditorUiDigTileEditor}:{Values.EditorUiMusicTileEditor}";
 
             // left background
-            Game1.EditorUi.AddElement(new UiRectangle(Rectangle.Empty, "left", strScreenName,
+            Game1.UiManager.AddElement(new UiRectangle(Rectangle.Empty, "left", strScreenName,
                 Values.ColorBackgroundLight, Color.White,
                 ui =>
                 {
@@ -91,70 +91,70 @@ namespace ProjectZ.Editor
                         Game1.WindowHeight - Values.ToolBarHeight);
                 }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "Load", "", strScreenName, null, ui => SaveLoadMap.LoadMap(Game1.GameManager.MapManager.CurrentMap)));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "Save as...", "", strScreenName, null, ui => SaveLoadMap.SaveMapDialog(Game1.GameManager.MapManager.CurrentMap)));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "Save...", "", strScreenName, null, ui => SaveLoadMap.SaveMap(Game1.GameManager.MapManager.CurrentMap)));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "Update Maps", "", strScreenName, null, ui => SaveLoadMap.UpdateMaps()));
 
             // map offset
-            Game1.EditorUi.AddElement(_niOffsetX = new UiNumberInput(
+            Game1.UiManager.AddElement(_niOffsetX = new UiNumberInput(
                 new Rectangle(5, posY += buttonHeight + dist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeMapOffsetX));
-            Game1.EditorUi.AddElement(_niOffsetY = new UiNumberInput(
+            Game1.UiManager.AddElement(_niOffsetY = new UiNumberInput(
                 new Rectangle(5 + buttonWidthHalf + dist, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeMapOffsetY));
 
-            Game1.EditorUi.AddElement(new UiNumberInput(
+            Game1.UiManager.AddElement(new UiNumberInput(
                 new Rectangle(5, posY += buttonHeight + dist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeOffsetX));
-            Game1.EditorUi.AddElement(new UiNumberInput(
+            Game1.UiManager.AddElement(new UiNumberInput(
                 new Rectangle(5 + buttonWidthHalf + dist, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeOffsetY));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Offset Map", "", strScreenName, null, ButtonPressedOffsetMap));
 
             // show grid button
-            Game1.EditorUi.AddElement(new UiCheckBox(
+            Game1.UiManager.AddElement(new UiCheckBox(
                 new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "show grid", "cb", strScreenName, false, null,
                 ui => { ShowGrid = ((UiCheckBox)ui).CurrentState; }));
 
             // tile/object mode switch
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + bigDist, buttonQWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + bigDist, buttonQWidth, buttonHeight),
                 Resources.EditorFont, "Tiles", "", strScreenName,
                 element => ((UiButton)element).Marked = _currentMode == EditorModes.TileMode,
                 element => _currentMode = EditorModes.TileMode));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
                     Resources.EditorFont, "", "bt1", strScreenName, null, ButtonUpdateTilesVisibility)
             { ButtonIcon = Resources.EditorEyeOpen });
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight),
                 Resources.EditorFont, "Objects", "", strScreenName,
                 element => ((UiButton)element).Marked = _currentMode == EditorModes.ObjectMode,
                 element => _currentMode = EditorModes.ObjectMode));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
                     Resources.EditorFont, "", "bt1", strScreenName, null, ButtonUpdateObjectsVisibility)
             { ButtonIcon = Resources.EditorEyeOpen });
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Dig Map", "", strScreenName,
                 element => ((UiButton)element).Marked = _currentMode == EditorModes.DigMode,
                 element => _currentMode = EditorModes.DigMode));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Music", "", strScreenName,
                 element => ((UiButton)element).Marked = _currentMode == EditorModes.MusicMode,
                 element => _currentMode = EditorModes.MusicMode));

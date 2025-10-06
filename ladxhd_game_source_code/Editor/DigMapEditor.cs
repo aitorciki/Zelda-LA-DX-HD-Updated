@@ -48,18 +48,18 @@ namespace ProjectZ.Editor
             var buttonHeight = 35;
             var distanceY = buttonHeight + 5;
 
-            Game1.EditorUi.AddElement(new UiTextInput(new Rectangle(5, posY, buttonWidth, 50),
+            Game1.UiManager.AddElement(new UiTextInput(new Rectangle(5, posY, buttonWidth, 50),
                 Resources.EditorFontMonoSpace, 50, "Mode", Values.EditorUiDigTileEditor,
                 uiElement => ((UiTextInput)uiElement).StrValue = _selection ?? "",
                 uiElement => _selection = ((UiTextInput)uiElement).StrValue));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += 55, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += 55, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Fill Map", "button", Values.EditorUiDigTileEditor, null, FillMap));
         }
 
         public void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiDigTileEditor;
+            Game1.UiManager.CurrentScreen = Values.EditorUiDigTileEditor;
 
             if (LastMap != CurrentMap.MapFileName)
             {

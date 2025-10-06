@@ -88,7 +88,7 @@ namespace ProjectZ.InGame.Overlay
 
         public OverlayManager()
         {
-            _blurRectangle = (UiRectangle)Game1.EditorUi.AddElement(
+            _blurRectangle = (UiRectangle)Game1.UiManager.AddElement(
                 new UiRectangle(Rectangle.Empty, "background", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null), true);
         }
 
@@ -247,7 +247,6 @@ namespace ProjectZ.InGame.Overlay
                         // when the resololution is not wide enough move the inventory to the left
                         dungeonOffset = Math.Clamp((_margin + _dungeonSize.X) * _scale / 2, -16, (Game1.WindowWidth - _overlayWidth) / 2 - 8);
                     }
-
                     spriteBatch.Draw(_menuRenderTarget2D, new Rectangle(
                         (int)_menuPosition.X + dungeonOffset, (int)(_menuPosition.Y - menuY), _overlayWidth, _overlayHeight), menuColor);
                 }
@@ -274,6 +273,33 @@ namespace ProjectZ.InGame.Overlay
             }
         }
 
+        private void EnsureMenuRenderTarget()
+        {
+            // skip creation if width/height invalid (can happen during resize or at startup)
+            if (_overlayWidth <= 0 || _overlayHeight <= 0)
+                return;
+
+            if (_menuRenderTarget2D == null
+                || _menuRenderTarget2D.IsDisposed
+                || _menuRenderTarget2D.Width != _overlayWidth
+                || _menuRenderTarget2D.Height != _overlayHeight)
+            {
+                try
+                {
+                    _menuRenderTarget2D?.Dispose();
+                    _menuRenderTarget2D = new RenderTarget2D(Game1.Graphics.GraphicsDevice,
+                        Math.Max(1, _overlayWidth),
+                        Math.Max(1, _overlayHeight));
+                }
+                catch (Exception ex)
+                {
+                    // optional: log for debugging
+                    System.Diagnostics.Debug.WriteLine($"MenuRenderTarget creation failed: {ex.Message}");
+                    _menuRenderTarget2D = null;
+                }
+            }
+        }
+
         public void DrawRenderTarget(SpriteBatch spriteBatch)
         {
             if (_fadeAnimationPercentage > 0 && (_currentMenuState == MenuState.GameSequence || _lastMenuState == MenuState.GameSequence))
@@ -281,11 +307,16 @@ namespace ProjectZ.InGame.Overlay
 
             if (_currentMenuState == MenuState.Inventory)
             {
+                // Ensure the render target exists and has valid size
+                EnsureMenuRenderTarget();
+
+                if (_menuRenderTarget2D == null)
+                    return; // can't safely draw if it failed to create
+
                 _mapOverlay.DrawRenderTarget(spriteBatch);
                 _inventoryOverlay.DrawRT(spriteBatch);
                 _dungeonOverlay.DrawOnRenderTarget(spriteBatch);
 
-                // draw the inventory on a separate rendertarget
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(_menuRenderTarget2D);
                 Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
@@ -332,6 +363,9 @@ namespace ProjectZ.InGame.Overlay
 
             _menuPosition = new Vector2(
                 Game1.WindowWidth / 2 - _overlayWidth / 2, Game1.WindowHeight / 2 - _overlayHeight / 2);
+
+            // ensure RTs resized properly
+            EnsureMenuRenderTarget();
         }
 
         public void UpdateRenderTarget()

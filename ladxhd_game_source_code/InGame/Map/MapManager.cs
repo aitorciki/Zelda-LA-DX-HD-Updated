@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects;
@@ -130,76 +131,126 @@ namespace ProjectZ.InGame.Map
 
         private void DrawBlur(SpriteBatch spriteBatch, RenderTarget2D blurRT0, RenderTarget2D blurRT1, RenderTarget2D blurRT2)
         {
-            /// RT:CRASH BYPASS
-            if (blurRT0 == null) return;
-
-            var matrixPosition = Vector2.Zero;
-
-            if (!Game1.GameManager.UseShockEffect)
-            {
-                Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT0);
-                Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-
-                var cameraPosition = new Vector2(Camera.RoundX / Camera.Scale, Camera.RoundY / Camera.Scale);
-                // offset the position a little bit because we render a bigger region to avoid artefacts at the edges
-                matrixPosition = new Vector2((int)cameraPosition.X - 1, (int)cameraPosition.Y - 1);
-
-                blurMatrix = Matrix.CreateScale(1) *
-                             Matrix.CreateTranslation(new Vector3(-matrixPosition.X, -matrixPosition.Y, 0)) *
-                             Matrix.CreateTranslation(new Vector3(
-                                (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f),
-                                (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f), 0)) *
-                             Matrix.CreateScale(new Vector3(
-                                (float)blurRT0.Width / Game1.GameManager.SideBlurRenderTargetWidth,
-                                (float)blurRT0.Height / Game1.GameManager.SideBlurRenderTargetHeight, 0));
-            }
-
-            DrawBegin(spriteBatch, null);
-
-            // draw object blur stuff
-            CurrentMap.Objects.DrawBlur(spriteBatch);
-
-            // blur tile maps
-            CurrentMap.TileMap.DrawBlurLayer(spriteBatch);
-
-            spriteBatch.End();
-
-            if (Game1.GameManager.UseShockEffect)
+            // Defensive: require all RTs to be valid
+            if (blurRT0 == null || blurRT1 == null || blurRT2 == null)
                 return;
 
-            Resources.BBlurEffectH.Parameters["pixelX"].SetValue(1.0f / blurRT1.Width);
-            Resources.BBlurEffectV.Parameters["pixelY"].SetValue(1.0f / blurRT1.Height);
+            if (blurRT0.Width <= 0 || blurRT0.Height <= 0 ||
+                blurRT1.Width <= 0 || blurRT1.Height <= 0 ||
+                blurRT2.Width <= 0 || blurRT2.Height <= 0)
+                return;
 
-            // v blur
-            Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT1);
-            Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-            // offset the render target so that we always sample at the same position
-            var blurX = -(matrixPosition.X % 2) / 2 + (blurRT1.Width % 2 * 0.5f);
-            var blurY = -(matrixPosition.Y % 2) / 2 + (blurRT1.Height % 2 * 0.5f);
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BBlurEffectV, null);
-            spriteBatch.Draw(blurRT0, new Vector2(blurX, blurY),
-                new Rectangle(0, 0, blurRT0.Width, blurRT0.Height), Color.White, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
-            spriteBatch.End();
+            // Keep a safe flag so we can restore state if something fails
+            bool rtWasSet = false;
+            try
+            {
+                var matrixPosition = Vector2.Zero;
 
-            // h blur
-            Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT2);
-            Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BBlurEffectH, null);
-            spriteBatch.Draw(blurRT1, Vector2.Zero, Color.White);
-            spriteBatch.End();
+                if (!Game1.GameManager.UseShockEffect)
+                {
+                    Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT0);
+                    rtWasSet = true;
+                    Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
-            Game1.GameManager.SetActiveRenderTarget();
+                    var cameraPosition = new Vector2(Camera.RoundX / Camera.Scale, Camera.RoundY / Camera.Scale);
+                    matrixPosition = new Vector2((int)cameraPosition.X - 1, (int)cameraPosition.Y - 1);
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, Camera.TransformMatrix);
+                    // Build blurMatrix — clamp values and avoid NaN
+                    var translateX = -matrixPosition.X;
+                    var translateY = -matrixPosition.Y;
+                    if (float.IsNaN(translateX) || float.IsNaN(translateY))
+                    {
+                        translateX = 0; translateY = 0;
+                    }
 
-            // calculate offset to make sure that the render target is at the correct position
-            var scale = new Vector2((float)Game1.GameManager.BlurRenderTargetWidth / blurRT1.Width * 2, (float)Game1.GameManager.BlurRenderTargetHeight / blurRT1.Height * 2);
-            spriteBatch.Draw(blurRT2, new Vector2(
-                matrixPosition.X + matrixPosition.X % 2 - (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f) - (int)(Game1.RenderWidth / (Camera.Scale * 2)) % 2,
-                matrixPosition.Y + matrixPosition.Y % 2 - (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f) - (int)(Game1.RenderHeight / (Camera.Scale * 2)) % 2),
-                new Rectangle(0, 0, blurRT2.Width, blurRT2.Height), Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+                    blurMatrix = Matrix.CreateScale(1f) *
+                                 Matrix.CreateTranslation(new Vector3(translateX, translateY, 0f)) *
+                                 Matrix.CreateTranslation(new Vector3(
+                                    (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f),
+                                    (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f), 0f)) *
+                                 Matrix.CreateScale(new Vector3(
+                                    (float)blurRT0.Width / Game1.GameManager.SideBlurRenderTargetWidth,
+                                    (float)blurRT0.Height / Game1.GameManager.SideBlurRenderTargetHeight, 1f));
+                }
 
-            spriteBatch.End();
+                // Begin drawing to blurRT0 (or main RT) — ensure DrawBegin uses blurMatrix; supply null safely if needed
+                DrawBegin(spriteBatch, null);
+
+                // draw object blur stuff
+                CurrentMap.Objects.DrawBlur(spriteBatch);
+
+                // blur tile maps
+                CurrentMap.TileMap.DrawBlurLayer(spriteBatch);
+
+                // Close the batch we opened in DrawBegin
+                spriteBatch.End();
+
+                if (Game1.GameManager.UseShockEffect)
+                    return;
+
+                // safety: ensure blurRT1/2 still valid before using them
+                if (blurRT1 == null || blurRT2 == null || blurRT1.Width <= 0 || blurRT1.Height <= 0 || blurRT2.Width <= 0 || blurRT2.Height <= 0)
+                    return;
+
+                // prepare blur shaders — safe access of widths
+                Resources.BBlurEffectH.Parameters["pixelX"].SetValue(1.0f / blurRT1.Width);
+                Resources.BBlurEffectV.Parameters["pixelY"].SetValue(1.0f / blurRT1.Height);
+
+                // v blur pass
+                Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT1);
+                Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
+                rtWasSet = true;
+
+                var blurX = (-(matrixPosition.X % 2) / 2.0f) + (blurRT1.Width % 2 * 0.5f);
+                var blurY = (-(matrixPosition.Y % 2) / 2.0f) + (blurRT1.Height % 2 * 0.5f);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BBlurEffectV, null);
+                spriteBatch.Draw(blurRT0, new Vector2(blurX, blurY),
+                    new Rectangle(0, 0, blurRT0.Width, blurRT0.Height), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+                spriteBatch.End();
+
+                // h blur pass
+                Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT2);
+                Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BBlurEffectH, null);
+                spriteBatch.Draw(blurRT1, Vector2.Zero, Color.White);
+                spriteBatch.End();
+
+                // Restore the active render target to your main RT
+                Game1.GameManager.SetActiveRenderTarget();
+
+                // Draw the blurred texture into world using camera transform — ensure Camera.TransformMatrix is valid
+                var safeTransform = Camera.TransformMatrix;
+                // optional check for NaN components here, replace with Matrix.Identity if found
+                if (float.IsNaN(safeTransform.M11) || float.IsNaN(safeTransform.M41))
+                    safeTransform = Matrix.Identity;
+
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, safeTransform);
+
+                var scale = new Vector2((float)Game1.GameManager.BlurRenderTargetWidth / blurRT1.Width * 2f,
+                                        (float)Game1.GameManager.BlurRenderTargetHeight / blurRT1.Height * 2f);
+
+                var drawPos = new Vector2(
+                    matrixPosition.X + matrixPosition.X % 2 - (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f) - (int)(Game1.RenderWidth / (Camera.Scale * 2)) % 2,
+                    matrixPosition.Y + matrixPosition.Y % 2 - (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f) - (int)(Game1.RenderHeight / (Camera.Scale * 2)) % 2);
+
+                spriteBatch.Draw(blurRT2, drawPos,
+                    new Rectangle(0, 0, blurRT2.Width, blurRT2.Height), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+                spriteBatch.End();
+            }
+            catch (Exception ex)
+            {
+                // Log and attempt to recover: restore to default render target
+                System.Diagnostics.Debug.WriteLine($"DrawBlur exception: {ex}");
+                try
+                {
+                    // ensure no render target left set
+                    Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
+                }
+                catch { }
+            }
         }
 
         public void DrawLight(SpriteBatch spriteBatch)

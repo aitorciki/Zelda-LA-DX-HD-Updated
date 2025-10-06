@@ -42,7 +42,7 @@ namespace ProjectZ.InGame.Overlay
             {
                 _uiBackgroundBoxes[i] =
                     new UiRectangle(_itemSlots[i], "itemBox" + i, Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
-                Game1.EditorUi.AddElement(_uiBackgroundBoxes[i]);
+                Game1.UiManager.AddElement(_uiBackgroundBoxes[i]);
             }
         }
 

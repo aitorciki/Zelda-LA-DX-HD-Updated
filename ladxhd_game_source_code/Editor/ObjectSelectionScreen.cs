@@ -50,7 +50,7 @@ namespace ProjectZ.Editor
 
         public void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiObjectSelection;
+            Game1.UiManager.CurrentScreen = Values.EditorUiObjectSelection;
 
             var position = InputHandler.MousePosition();
 

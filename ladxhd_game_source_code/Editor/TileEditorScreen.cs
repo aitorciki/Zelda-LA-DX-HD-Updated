@@ -58,47 +58,47 @@ namespace ProjectZ.Editor
             var dist = 5;
             var bigDist = 16;
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
             Resources.EditorFont, "import tilemap", "bt1", Values.EditorUiTileEditor, null, ui => { SaveLoadMap.ImportTilemap(); }));
 
             posY += 11;
             for (var i = 0; i < 3; i++)
             {
                 var layer = i;
-                Game1.EditorUi.AddElement(new UiButton(
+                Game1.UiManager.AddElement(new UiButton(
                     new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight), Resources.EditorFont,
                     "layer " + layer, "bt1", Values.EditorUiTileEditor,
                     ui => { ((UiButton)ui).Marked = _currentLayer == layer; },
                     ui => { ButtonPressedLayer(layer); }));
 
-                Game1.EditorUi.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
+                Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
                         Resources.EditorFont, "", "bt1", Values.EditorUiTileEditor, null, ui => ButtonUpdate(ui, layer))
                 { ButtonIcon = LayerVisibility[i] ? Resources.EditorEyeOpen : Resources.EditorEyeClosed });
 
-                Game1.EditorUi.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist * 2 + buttonHeight, posY, buttonHeight, buttonHeight),
+                Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist * 2 + buttonHeight, posY, buttonHeight, buttonHeight),
                         Resources.EditorFont, "", "bt1", Values.EditorUiTileEditor, null, ui => RemoveTileContent(layer))
                 { ButtonIcon = Resources.EditorIconDelete });
             }
 
-            Game1.EditorUi.AddElement(new UiCheckBox(
+            Game1.UiManager.AddElement(new UiCheckBox(
                 new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "mark selected tiles", "cb", Values.EditorUiTileEditor, false, null,
                 ui => { MarkSelectedTiles = ((UiCheckBox)ui).CurrentState; }));
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY += buttonHeight + bigDist, buttonHalfWidth, buttonHeight), "from:", Values.EditorUiTileEditor));
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonHeight + bigDist, buttonHalfWidth, buttonHeight), "from:", Values.EditorUiTileEditor));
 
-            Game1.EditorUi.AddElement(new UiImage(null,
+            Game1.UiManager.AddElement(new UiImage(null,
                 new Rectangle(10 + buttonHalfWidth, posY, 16 * 2, 16 * 2),
                 new Rectangle(0, 0, 16, 16), "from", Values.EditorUiTileEditor, Color.White, UpdateImageFrom));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "change tiles", "bt1", Values.EditorUiTileEditor, null, ui => { ReplaceTiles(); }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "create blur map", "bt1", Values.EditorUiTileEditor, null, ui => { CreateBlurMap(); }));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
                 Resources.EditorFont,
                 "create blur sides", "bt1", Values.EditorUiTileEditor, null, ui => { CreateBlurMapSides(); }));
         }
@@ -111,7 +111,7 @@ namespace ProjectZ.Editor
 
         public void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiTileEditor;
+            Game1.UiManager.CurrentScreen = Values.EditorUiTileEditor;
 
             if (TileMap.ArrayTileMap == null)
                 return;

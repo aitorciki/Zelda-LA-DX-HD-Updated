@@ -17,7 +17,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
             _mapOverlay = new MapOverlay(_sequenceWidth, _sequenceHeight, 0, true);
             _mapOverlay.Load();
             _mapOverlay.IsSelected = true;
-            _mapOverlay.UpdateRenderTarget();
         }
 
         public override void OnStart()

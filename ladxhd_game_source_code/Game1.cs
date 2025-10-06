@@ -26,113 +26,83 @@ namespace ProjectZ
     {
         public static GraphicsDeviceManager Graphics;
         public static SpriteBatch SpriteBatch;
-        public static UiManager EditorUi = new UiManager();
+        public static UiManager UiManager = new UiManager();
         public static ScreenManager ScreenManager = new ScreenManager();
         public static PageManager UiPageManager = new PageManager();
         public static Language LanguageManager = new Language();
         public static GameManager GameManager = new GameManager();
         public static GbsPlayer GbsPlayer = new GbsPlayer();
         public static Random RandomNumber = new Random();
+        public static EditorManager EditorManager;
+  
+        public static int WindowWidth;
+        public static int WindowHeight;
+        public static int WindowWidthEnd;
+        public static int WindowHeightEnd;
+        public static int RenderWidth;
+        public static int RenderHeight;
+
+        private static int _lastWindowWidth;
+        private static int _lastWindowHeight;
+        private static bool _isFullscreen;
+        private static bool _isResizing;
+        private static bool _userExclusiveSetting;
+        private static bool _wasMinimized;
+
+        private static System.Drawing.Rectangle _lastWindowBounds;
+        private static System.Drawing.Rectangle _lastWindowRestoreBounds;
+
+        public static bool FpsSettingChanged;
+        private readonly SimpleFps _fpsCounter = new SimpleFps();
+
+        public static double FreezeTime;
+        public static float TimeMultiplier;
+        public static float DeltaTime;
+        public static double TotalTime;
+        public static double TotalGameTime;
+        public static double TotalGameTimeLast;
+
+        private static DoubleAverage _avgTotalMs = new DoubleAverage(30);
+        private static DoubleAverage _avgTimeMult = new DoubleAverage(30);
+
         public static RenderTarget2D MainRenderTarget;
+        private static RenderTarget2D _renderTarget1;
+        private static RenderTarget2D _renderTarget2;
+        private static bool _initRenderTargets;
+        public static int ScreenScale;
+        public static int UiScale;
+        public static int UiRtScale;
+        private static float gameScale;
+        public static bool ScaleChanged;
+
+        public static bool WasActive;
+        public static bool UpdateGame;
+        public static bool ForceDialogUpdate;
+        public static bool EditorMode;
+        public static bool LoadFirstSave;
+        public static bool SaveAndExitGame;
+
+        private static bool _finishedLoading;
+
+        public static string DebugText;
+        public static float DebugTimeScale = 1.0f;
+        public static bool DebugStepper;
+        public static int DebugLightMode;
+        public static int DebugBoxMode;
+        public static bool DebugMode;
+        public static bool ShowDebugText;
+        private Vector2 _debugTextSize;
+
+        public static bool FinishedLoading => _finishedLoading;
 
         public static Matrix GetMatrix => Matrix.CreateScale(new Vector3(
             (float)Graphics.PreferredBackBufferWidth / WindowWidth,
             (float)Graphics.PreferredBackBufferHeight / WindowHeight, 0));
 
-        private static float gameScale;
-        private static float gameScaleStart;
-
-        public static float GameScaleChange => gameScale / gameScaleStart;
-
-        public static string DebugText;
-
-        public static float TimeMultiplier;
-        public static float DeltaTime;
-        public static double TotalTime;
-
-        public static double TotalGameTime;
-        public static double TotalGameTimeLast;
-
-        public static float DebugTimeScale = 1.0f;
-
-        public static int WindowWidth;
-        public static int WindowHeight;
-        public static int WindowWidthEnd;
-        public static int WindowHeightEnd;
-        public static int ScreenScale;
-        public static int UiScale;
-        public static int UiRtScale;
-
-        public static int RenderWidth;
-        public static int RenderHeight;
-
-        public static bool ScaleChanged;
-
-        private bool _wasMinimized;
-        private static DoubleAverage _avgTotalMs = new DoubleAverage(30);
-        private static DoubleAverage _avgTimeMult = new DoubleAverage(30);
-        public static int DebugLightMode;
-        public static int DebugBoxMode;
-        public static bool DebugMode;
-        public static bool ShowDebugText;
-
-        public static double FreezeTime;
-
-        public static bool WasActive;
-        public static bool UpdateGame;
-        public static bool ForceDialogUpdate;
-        public static bool FpsSettingChanged;
-        public static bool DebugStepper;
-        public static bool EditorMode;
-
-        // Save game when exiting from in-game.
-        public static bool SaveAndExitGame;
-
 #if WINDOWS
         private static Forms.Form _windowForm;
         private static Forms.FormWindowState _lastWindowState;
 #endif
-
-        private static System.Drawing.Rectangle _lastWindowBounds;
-        private static System.Drawing.Rectangle _lastWindowRestoreBounds;
-        private static int _lastWindowWidth;
-        private static int _lastWindowHeight;
-        private static bool _isFullscreen;
-        private bool _isResizing;
-        static private bool _userExclusiveSetting;
-
-        private static RenderTarget2D _renderTarget1;
-        private static RenderTarget2D _renderTarget2;
-
-        private float _blurValue = 0.2f;
-
-        private readonly SimpleFps _fpsCounter = new SimpleFps();
-        private Vector2 _debugTextSize;
-
-        private string _lastGameScreen = Values.ScreenNameGame;
-        private string _lastEditorScreen = Values.ScreenNameEditor;
-
-        private string _debugLog;
-
-        private int _currentFrameTimeIndex;
-        private double[] _debugFrameTimes =
-        {
-            1000 / 30.0,
-            1000 / 60.0,
-            1000 / 90.0,
-            1000 / 120.0,
-            1000 / 144.0,
-            1000 / 288.0,
-            1
-        };
-
-        private string _consoleLine;
-        private bool _stopConsoleThread;
-
-        private static bool _finishedLoading;
-        private static bool _initRenderTargets;
-        public static bool FinishedLoading => _finishedLoading;
-        public static bool LoadFirstSave;
 
         public Game1(bool editorMode, bool loadFirstSave)
         {
@@ -146,7 +116,6 @@ namespace ProjectZ
             var deltaHeight = _windowForm.Height - _windowForm.ClientSize.Height;
             _windowForm.MinimumSize = new System.Drawing.Size(Values.MinWidth + deltaWidth, Values.MinHeight + deltaHeight);
 #endif
-
             Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
@@ -154,55 +123,37 @@ namespace ProjectZ
             Graphics.PreferredBackBufferWidth = 1500;
             Graphics.PreferredBackBufferHeight = 1000;
 
-#if MACOSX
-            Window.ClientSizeChanged += ClientSizeChanged;
-#endif
-
             Window.AllowUserResizing = true;
             IsMouseVisible = editorMode;
 
             EditorMode = editorMode;
             LoadFirstSave = loadFirstSave;
-
-            var thread = new Thread(ConsoleReaderThread);
-            thread.Start();
         }
 
-        private void ClientSizeChanged(object sender, EventArgs e)
+        protected override void Initialize()
         {
-            OnResize();
-            Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
-            Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+            EditorManager = new EditorManager(this);
+            base.Initialize();
         }
 
-        private void ConsoleReaderThread()
-        {
-            while (true)
-            {
-                if (_stopConsoleThread)
-                    return;
-
-                if (Console.In.Peek() != -1)
-                    _consoleLine = Console.ReadLine();
-
-                Thread.Sleep(20);
-            }
-        }
-        
         protected override void OnExiting(object sender, EventArgs args)
         {
-            _stopConsoleThread = true;
             GbsPlayer.OnExit();
 
             base.OnExiting(sender, args);
         }
 
+        private void OnDeviceReset(object sender, EventArgs e)
+        {
+            // Recreate game render targets
+            GameManager?.UpdateRenderTargets();
+
+            // Recreate main render targets in Game1
+            UpdateRenderTargetSizes(WindowWidth, WindowHeight);
+        }
+
         protected override void LoadContent()
         {
-#if MACOSX
-            // not sure how to copy the files in the correct directory...
-            Content.RootDirectory += "/bin/MacOSX";
-#endif
             // game control stuff
             ControlHandler.Initialize();
 
@@ -253,6 +204,8 @@ namespace ProjectZ
             _windowForm.Resize += OnResize;
             _windowForm.ResizeEnd += OnResizeEnd;
 #endif
+            // Hook device reset
+            GraphicsDevice.DeviceReset += OnDeviceReset;
         }
 
         private void LoadContentThreaded(Object obj)
@@ -273,37 +226,12 @@ namespace ProjectZ
             UiPageManager.Load(Content);
 
             if (EditorMode)
-                SetUpEditorUi();
+                EditorManager.SetUpEditorUi();
 
             _finishedLoading = true;
 
             // Now that everything has been loaded in, make sure the proper language textures are reloaded.
             Resources.RefreshDynamicResources();
-        }
-
-        private void UpdateConsoleInput()
-        {
-            if (_consoleLine == null)
-                return;
-
-            // open file in map editor
-            if (_consoleLine.Contains(".map"))
-            {
-                SaveLoadMap.EditorLoadMap(_consoleLine, Game1.GameManager.MapManager.CurrentMap);
-            }
-            // open file in animation editor
-            else if (_consoleLine.Contains(".ani"))
-            {
-                var animationScreen = (AnimationScreen)ScreenManager.GetScreen(Values.ScreenNameEditorAnimation);
-                animationScreen.EditorLoadAnimation(_consoleLine);
-            }
-            // open file in sprite atlas editor
-            else if (_consoleLine.Contains(".png"))
-            {
-                var spriteAtlasScreen = (SpriteAtlasScreen)ScreenManager.GetScreen(Values.ScreenNameSpriteAtlasEditor);
-                spriteAtlasScreen.LoadSpriteEditor(_consoleLine);
-            }
-            _consoleLine = null;
         }
 
         protected override void Update(GameTime gameTime)
@@ -313,9 +241,6 @@ namespace ProjectZ
 
             // Mute music and sound effects if user disabled on inactive window.
             GameManager.HandleInactiveWindow(IsActive);
-
-            // Check for console input commands.
-            UpdateConsoleInput();
 
             // SetTransparency _fpsCounter counter
             _fpsCounter.Update(gameTime);
@@ -331,13 +256,10 @@ namespace ProjectZ
             if (_finishedLoading && !_initRenderTargets)
             {
                 _initRenderTargets = true;
-
-                // @HACK to update the rendertargets
                 WindowWidth = 0;
                 WindowHeightEnd = 0;
             }
 
-            // check if the window is resized
             if (WindowWidth != Window.ClientBounds.Width ||
                 WindowHeight != Window.ClientBounds.Height)
                 OnResize();
@@ -390,11 +312,11 @@ namespace ProjectZ
                 {
                     // update the ui
                     // need to be at the first place to be able to block input from the screen
-                    EditorUi.Update();
+                    UiManager.Update();
 
-                    EditorUpdate(gameTime);
+                    EditorManager.EditorUpdate(gameTime);
                 }
-                EditorUi.CurrentScreen = "";
+                UiManager.CurrentScreen = "";
 
                 // update the game ui
                 UiPageManager.Update(gameTime);
@@ -421,26 +343,39 @@ namespace ProjectZ
             base.Update(gameTime);
         }
 
+        private void EnsureRenderTargets()
+        {
+            if (MainRenderTarget == null || _renderTarget1 == null || _renderTarget2 == null)
+            {
+                UpdateRenderTargetSizes(Math.Max(1, WindowWidth), Math.Max(1, WindowHeight));
+            }
+        }
+
         protected override void Draw(GameTime gameTime)
         {
+            EnsureRenderTargets();
+
             if (!_finishedLoading)
             {
                 ScreenManager.Draw(SpriteBatch);
                 return;
             }
-
             _fpsCounter.CountDraw();
 
             ScreenManager.DrawRT(SpriteBatch);
 
+            if (MainRenderTarget == null)
+            {
+                GraphicsDevice.Clear(Color.CadetBlue);
+                ScreenManager.Draw(SpriteBatch);
+                return;
+            }
             Graphics.GraphicsDevice.SetRenderTarget(MainRenderTarget);
             GraphicsDevice.Clear(Color.CadetBlue);
 
-            // draw the current screen
             ScreenManager.Draw(SpriteBatch);
 
             BlurImage();
-
             {
                 Graphics.GraphicsDevice.SetRenderTarget(null);
 
@@ -453,13 +388,15 @@ namespace ProjectZ
             }
 
             {
-                Resources.BlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
-                Resources.RoundedCornerBlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
-
+                if (_renderTarget2 != null)
+                {
+                    Resources.BlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
+                    Resources.RoundedCornerBlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
+                }
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
 
                 // blurred ui parts
-                EditorUi.DrawBlur(SpriteBatch);
+                UiManager.DrawBlur(SpriteBatch);
 
                 // blured stuff
                 GameManager.InGameOverlay.InGameHud.DrawBlur(SpriteBatch);
@@ -475,7 +412,7 @@ namespace ProjectZ
                 SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, GetMatrix);
 
                 // draw the ui part
-                EditorUi.Draw(SpriteBatch);
+                UiManager.Draw(SpriteBatch);
 
                 // draw the game ui
                 UiPageManager.Draw(SpriteBatch);
@@ -499,11 +436,17 @@ namespace ProjectZ
 
         private void BlurImage()
         {
+            if (MainRenderTarget == null || _renderTarget1 == null || _renderTarget2 == null)
+                return; // nothing to do safely
+
+            var blurValue = 0.2f;
+
+            // safe: _renderTarget1/_renderTarget2 are non-null and have positive width/height
             Resources.BlurEffectH.Parameters["pixelX"].SetValue(1.0f / _renderTarget1.Width);
             Resources.BlurEffectV.Parameters["pixelY"].SetValue(1.0f / _renderTarget1.Height);
 
-            var mult0 = _blurValue;
-            var mult1 = (1 - _blurValue * 2) / 2;
+            var mult0 = blurValue;
+            var mult1 = (1 - blurValue * 2) / 2;
             Resources.BlurEffectH.Parameters["mult0"].SetValue(mult0);
             Resources.BlurEffectH.Parameters["mult1"].SetValue(mult1);
             Resources.BlurEffectV.Parameters["mult0"].SetValue(mult0);
@@ -531,164 +474,7 @@ namespace ProjectZ
             }
         }
 
-        private void SetUpEditorUi()
-        {
-            var strScreen = $"{Values.EditorUiObjectEditor}:" +
-                            $"{Values.EditorUiObjectSelection}:" +
-                            $"{Values.EditorUiTileEditor}:" +
-                            $"{Values.EditorUiTileSelection}:" +
-                            $"{Values.EditorUiDigTileEditor}:" +
-                            $"{Values.EditorUiMusicTileEditor}:" +
-                            $"{Values.EditorUiTileExtractor}:" +
-                            $"{Values.EditorUiTilesetEditor}:" +
-                            $"{Values.EditorUiAnimation}:" +
-                            $"{Values.EditorUiSpriteAtlas}";
-
-            EditorUi.AddElement(new UiRectangle(new Rectangle(0, 0, WindowWidth, Values.ToolBarHeight),
-                "top", strScreen, Values.ColorBackgroundDark, Color.White,
-                ui => { ui.Rectangle = new Rectangle(0, 0, WindowWidth, Values.ToolBarHeight); }));
-
-            var pos = 0;
-            EditorUi.AddElement(new UiButton(new Rectangle(0, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = ScreenManager.CurrentScreenId == Values.ScreenNameEditor; },
-                element => { ScreenManager.ChangeScreen(Values.ScreenNameEditor); }));
-
-            EditorUi.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Tileset Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = ScreenManager.CurrentScreenId == Values.ScreenNameEditorTileset; },
-                element => { ScreenManager.ChangeScreen(Values.ScreenNameEditorTileset); }));
-
-            EditorUi.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Tileset Extractor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = ScreenManager.CurrentScreenId == Values.ScreenNameEditorTilesetExtractor; },
-                element => { ScreenManager.ChangeScreen(Values.ScreenNameEditorTilesetExtractor); }));
-
-            EditorUi.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Animation Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = ScreenManager.CurrentScreenId == Values.ScreenNameEditorAnimation; },
-                element => { ScreenManager.ChangeScreen(Values.ScreenNameEditorAnimation); }));
-
-            EditorUi.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Sprite Atlas Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = ScreenManager.CurrentScreenId == Values.ScreenNameSpriteAtlasEditor; },
-                element => { ScreenManager.ChangeScreen(Values.ScreenNameSpriteAtlasEditor); }));
-        }
-
-        private void EditorUpdate(GameTime gameTime)
-        {
-            if (InputHandler.KeyPressed(Keys.N))
-                DebugStepper = !DebugStepper;
-            if (ScreenManager.CurrentScreenId != Values.ScreenNameGame)
-                DebugStepper = false;
-
-            // debug step
-            if (DebugStepper && InputHandler.KeyPressed(Keys.M))
-            {
-                TimeMultiplier = TargetElapsedTime.Ticks / 166667f;
-                DeltaTime = (float)TargetElapsedTime.TotalMilliseconds;
-
-                TotalGameTimeLast = TotalTime;
-                TotalTime += TargetElapsedTime.Milliseconds;
-                TotalGameTime += TargetElapsedTime.Milliseconds;
-            }
-
-            // reload all objects
-            if (InputHandler.KeyPressed(Keys.Q))
-                GameManager.MapManager.ReloadMap();
-
-            // slow down or speed up the game
-            if (InputHandler.KeyPressed(Keys.Add))
-                DebugTimeScale += 0.125f;
-            if (InputHandler.KeyPressed(Keys.Subtract) && DebugTimeScale > 0)
-                DebugTimeScale -= 0.125f;
-
-            if (InputHandler.KeyPressed(Values.DebugShadowKey))
-                GameSettings.EnableShadows = !GameSettings.EnableShadows;
-
-            if (ScreenManager.CurrentScreenId != Values.ScreenNameEditor &&
-                ScreenManager.CurrentScreenId != Values.ScreenNameEditorTileset &&
-                ScreenManager.CurrentScreenId != Values.ScreenNameEditorTilesetExtractor &&
-                ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation &&
-                ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor)
-            {
-                if (InputHandler.KeyPressed(Keys.D0))
-                    TriggerFpsSettings();
-
-                if (InputHandler.KeyPressed(Keys.D1))
-                {
-                    _currentFrameTimeIndex--;
-                    if (_currentFrameTimeIndex < 0)
-                        _currentFrameTimeIndex = _debugFrameTimes.Length - 1;
-                    TargetElapsedTime = new TimeSpan((long)Math.Ceiling(_debugFrameTimes[_currentFrameTimeIndex] * 10000));
-                }
-
-                if (InputHandler.KeyPressed(Keys.D2))
-                {
-                    _currentFrameTimeIndex = (_currentFrameTimeIndex + 1) % _debugFrameTimes.Length;
-                    TargetElapsedTime = new TimeSpan((long)Math.Ceiling(_debugFrameTimes[_currentFrameTimeIndex] * 10000));
-                }
-            }
-
-            if (InputHandler.KeyPressed(Keys.Escape) || InputHandler.KeyPressed(Keys.OemPeriod))
-            {
-                // open the editor
-                if (ScreenManager.CurrentScreenId != Values.ScreenNameEditor &&
-                    ScreenManager.CurrentScreenId != Values.ScreenNameEditorTileset &&
-                    ScreenManager.CurrentScreenId != Values.ScreenNameEditorTilesetExtractor &&
-                    ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation &&
-                    ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor)
-                {
-                    UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
-
-                    _lastGameScreen = ScreenManager.CurrentScreenId;
-                    ScreenManager.ChangeScreen(_lastEditorScreen);
-                }
-                // go back to the game
-                else
-                {
-                    _lastEditorScreen = ScreenManager.CurrentScreenId;
-                    ScreenManager.ChangeScreen(_lastGameScreen);
-
-                    // set the player position
-                    var editorScreen = (MapEditorScreen)ScreenManager.GetScreen(Values.ScreenNameEditor);
-
-                    if (_lastEditorScreen == Values.ScreenNameEditor)
-                        MapManager.ObjLink.SetPosition(new Vector2(
-                            editorScreen.MousePixelPosition.X,
-                            editorScreen.MousePixelPosition.Y));
-                }
-            }
-
-            if (InputHandler.KeyPressed(Values.DebugToggleDebugModeKey))
-                DebugMode = !DebugMode;
-
-            if (InputHandler.KeyPressed(Values.DebugBox))
-                DebugBoxMode = (DebugBoxMode + 1) % 6;
-
-            // save/load
-            if (InputHandler.KeyPressed(Values.DebugSaveKey))
-            {
-                MapManager.ObjLink.SaveMap = GameManager.MapManager.CurrentMap.MapName;
-                MapManager.ObjLink.SavePosition = MapManager.ObjLink.EntityPosition.Position;
-                MapManager.ObjLink.SaveDirection = MapManager.ObjLink.Direction;
-
-                SaveGameSaveLoad.SaveGame(GameManager);
-                GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
-            }
-            if (InputHandler.KeyPressed(Values.DebugLoadKey))
-                GameManager.LoadSaveFile(GameManager.SaveSlot);
-
-            // save the debug log to the clipboard
-            if (InputHandler.KeyDown(Keys.H))
-                _debugLog += "\n" + DebugText;
-#if WINDOWS
-            else if (InputHandler.KeyReleased(Keys.H))
-                Forms.Clipboard.SetText(_debugLog);
-#endif
-        }
-
-        private void TriggerFpsSettings()
+        public void TriggerFpsSettings()
         {
             if (!IsFixedTimeStep)
             {
@@ -723,7 +509,6 @@ namespace ProjectZ
 
         public static void ToggleFullscreen()
         {
-#if WINDOWS
             GameSettings.IsFullscreen = !GameSettings.IsFullscreen;
 
             var screenBounds = System.Windows.Forms.Screen.GetBounds(_windowForm);
@@ -792,9 +577,16 @@ namespace ProjectZ
                     }
                 }
             }
-#endif
+            GameManager?.UpdateRenderTargets();
         }
 
+        private void ClientSizeChanged(object sender, EventArgs e)
+        {
+            OnResize();
+            Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+            Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+        }
+        
         public void DebugTextBackground()
         {
             if (!ShowDebugText)
@@ -829,7 +621,6 @@ namespace ProjectZ
         private void OnResizeBegin(object sender, EventArgs e)
         {
             _isResizing = true;
-            gameScaleStart = gameScale;
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -859,13 +650,12 @@ namespace ProjectZ
         private void OnResizeEnd(object sender, EventArgs e)
         {
             _isResizing = false;
-            gameScaleStart = gameScale;
         }
 
         private void OnResize()
         {
-            if (Window.ClientBounds.Width <= 0 &&
-                Window.ClientBounds.Height <= 0)
+            // if minimized window bounds may be zero; ignore those
+            if (Window.ClientBounds.Width <= 0 || Window.ClientBounds.Height <= 0)
                 return;
 
             WindowWidth = Window.ClientBounds.Width;
@@ -913,7 +703,7 @@ namespace ProjectZ
                 UiScale = GameSettings.UiScale == 0 ? ScreenScale : MathHelper.Clamp(GameSettings.UiScale, 1, ScreenScale);
             }
             // NOTE: This was used as a workaround to issues with Exclusive Fullscreen mode. Null render targets caused editor to crash on start up.
-            if (!SkipEditor) EditorUi.SizeChanged();
+            if (!SkipEditor) UiManager.SizeChanged();
 
             // NOTE: I can't remember if UiPageManager actually needs a forced resize here. Might be more workarounds to null render targets in exclusive fullscreen.
             ScreenManager.OnResize(WindowWidth, WindowHeight);
@@ -940,25 +730,42 @@ namespace ProjectZ
 
         private void UpdateRenderTargetSizes(int width, int height)
         {
-            // @TODO: width must be bigger than 0
-            MainRenderTarget?.Dispose();
-            MainRenderTarget = new RenderTarget2D(Graphics.GraphicsDevice, width, height);
+            width = Math.Max(1, width);
+            height = Math.Max(1, height);
+
             Resources.BlurEffect.Parameters["width"].SetValue(width);
             Resources.BlurEffect.Parameters["height"].SetValue(height);
-
             Resources.RoundedCornerBlurEffect.Parameters["textureWidth"].SetValue(width);
             Resources.RoundedCornerBlurEffect.Parameters["textureHeight"].SetValue(height);
 
-            // update the blur rendertargets
             var blurScale = MathHelper.Clamp(MapManager.Camera.Scale / 2, 1, 10);
-            var blurRtWidth = (int)(width / blurScale);
-            var blurRtHeight = (int)(height / blurScale);
+            var blurRtWidth = Math.Max(1, (int)(width / blurScale));
+            var blurRtHeight = Math.Max(1, (int)(height / blurScale));
 
+            RenderTarget2D newMain = null;
+            RenderTarget2D newRt1 = null;
+            RenderTarget2D newRt2 = null;
+
+            try
+            {
+                newMain = new RenderTarget2D(Graphics.GraphicsDevice, width, height);
+                newRt1 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
+                newRt2 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
+            }
+            catch (Exception ex)
+            {
+                newMain?.Dispose();
+                newRt1?.Dispose();
+                newRt2?.Dispose();
+                return;
+            }
+            MainRenderTarget?.Dispose();
             _renderTarget1?.Dispose();
             _renderTarget2?.Dispose();
 
-            _renderTarget1 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
-            _renderTarget2 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
+            MainRenderTarget = newMain;
+            _renderTarget1 = newRt1;
+            _renderTarget2 = newRt2;
         }
     }
 }

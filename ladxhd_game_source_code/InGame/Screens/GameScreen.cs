@@ -18,7 +18,7 @@ namespace ProjectZ.InGame.Screens
 
         public override void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.ScreenNameGame;
+            Game1.UiManager.CurrentScreen = Values.ScreenNameGame;
 
             Game1.GameManager.UpdateGame();
         }

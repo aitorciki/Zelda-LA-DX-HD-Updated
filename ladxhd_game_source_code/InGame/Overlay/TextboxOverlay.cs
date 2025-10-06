@@ -90,12 +90,12 @@ namespace ProjectZ.InGame.Overlay
             _animator = AnimatorSaveLoad.LoadAnimator("dialog_arrow");
 
             _textboxBackground = new UiRectangle(Rectangle.Empty, "textboxblur", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
-            Game1.EditorUi.AddElement(_textboxBackground, true);
+            Game1.UiManager.AddElement(_textboxBackground, true);
 
             for (var i = 0; i < _textboxBackgroundChoice.Length; i++)
             {
                 _textboxBackgroundChoice[i] = new UiRectangle(Rectangle.Empty, "", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
-                Game1.EditorUi.AddElement(_textboxBackgroundChoice[i], true);
+                Game1.UiManager.AddElement(_textboxBackgroundChoice[i], true);
             }
         }
 

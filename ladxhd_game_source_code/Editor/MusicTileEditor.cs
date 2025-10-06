@@ -59,16 +59,16 @@ namespace ProjectZ.Editor
             var buttonHeight = 35;
             var distanceY = buttonHeight + 5;
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Load", "button", Values.EditorUiMusicTileEditor, null, uiElement => LoadFile()));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += distanceY, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += distanceY, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Save", "button", Values.EditorUiMusicTileEditor, null, uiElement => DataMapSerializer.SaveDialog(_dataArray)));
 
-            Game1.EditorUi.AddElement(new UiCheckBox(new Rectangle(5, posY += distanceY, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += distanceY, buttonWidth, buttonHeight),
                 Resources.EditorFont, "Room", "button", Values.EditorUiMusicTileEditor, _roomMode, null, element => _roomMode = ((UiCheckBox)element).CurrentState));
 
-            Game1.EditorUi.AddElement(new UiTextInput(new Rectangle(5, posY += distanceY, buttonWidth, 50),
+            Game1.UiManager.AddElement(new UiTextInput(new Rectangle(5, posY += distanceY, buttonWidth, 50),
                 Resources.EditorFontMonoSpace, 50, "Mode", Values.EditorUiMusicTileEditor,
                 uiElement => ((UiTextInput)uiElement).StrValue = _selection,
                 uiElement => _selection = ((UiTextInput)uiElement).StrValue));
@@ -119,7 +119,7 @@ namespace ProjectZ.Editor
 
         public void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiMusicTileEditor;
+            Game1.UiManager.CurrentScreen = Values.EditorUiMusicTileEditor;
 
             var cursorPosition = GetTiledCursor();
             if (cursorPosition.X >= 0)

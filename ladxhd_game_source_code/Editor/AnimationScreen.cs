@@ -56,136 +56,136 @@ namespace ProjectZ.Editor
 
             var screenId = Values.EditorUiAnimation;
 
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "leftBackground", screenId, Values.ColorBackgroundLight, Color.White,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "leftBackground", screenId, Values.ColorBackgroundLight, Color.White,
                 ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, LeftBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
 
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightBackground", screenId, Values.ColorBackgroundLight, Color.White,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightBackground", screenId, Values.ColorBackgroundLight, Color.White,
                 ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth, Values.ToolBarHeight, RightBarWidth, Game1.WindowHeight - Values.ToolBarHeight - RightBarWidth); }));
             // animation background
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightAnimationBackground", screenId, Color.White * 0.5f, Color.White,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightAnimationBackground", screenId, Color.White * 0.5f, Color.White,
                 ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth, Game1.WindowHeight - RightBarWidth, RightBarWidth, RightBarWidth); }));
 
             // right toolbar
-            Game1.EditorUi.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "load overlay", "bt1", screenId,
+            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "load overlay", "bt1", screenId,
                 ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + 5, Values.ToolBarHeight + buttonDist, buttonWidth, buttonHeight); },
                 ui => { LoadOverlayAnimation(); }));
 
-            Game1.EditorUi.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "play/pause", "bt1", screenId,
+            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "play/pause", "bt1", screenId,
                 ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + 5, Values.ToolBarHeight + buttonDist * 2 + buttonHeight, buttonWidth, buttonHeight); },
                 ui => { _isPlaying = !_isPlaying; }));
 
             posY = Values.ToolBarHeight + buttonDist;
 
             // load button
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight), Resources.EditorFont,
                 "load", "bt1", screenId, null, ui => { LoadAnimation(); }));
 
             // save button
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "save as...", "bt1", screenId, null, ui => { SaveAnimationDialog(); }));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "save...", "bt1", screenId, null, ui => { SaveAnimation(); }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "updated animations", "bt1", screenId, null, ui => { UpdateAnimations(); }));
 
             // load image
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "load image", "bt1", screenId, null, ui => { LoadImage(); }));
             // clear animation
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "clear animator", "bt1", screenId, null, ui => { CreateAnimator(); }));
 
-            Game1.EditorUi.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
                 Resources.EditorFont, "show all selections", "showAllSelections", screenId, false, null,
                 ui => { _showAllSelections = ((UiCheckBox)ui).CurrentState; }));
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
                 Resources.EditorFont, "Animation", "frameHeader", screenId, null));
 
             _animationUiLabel = new UiLabel(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "animation", "flable", screenId, ui => { ui.Label = "[" + (_selectedAnimation + 1) + "/" + _animator.Animations.Count + "]"; });
-            Game1.EditorUi.AddElement(_animationUiLabel);
+            Game1.UiManager.AddElement(_animationUiLabel);
             _animationInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 1, 1, 1, 1, "numberX", screenId,
                 ui => { ((UiNumberInput)ui).MaxValue = _animator.Animations.Count; },
                 ui => { ChangeAnimation((int)((UiNumberInput)ui).Value - 1); });
-            Game1.EditorUi.AddElement(_animationInput);
+            Game1.UiManager.AddElement(_animationInput);
 
             // add animation
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "add", "bt1", screenId, null, ui => { AddAnimation(); }));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "remove", "bt1", screenId, null, ui => { RemoveAnimation(); }));
 
             // animation name
             var animationNameLabel = new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, labelHeight),
                 Resources.EditorFont, "name", "lableX", screenId, null);
-            Game1.EditorUi.AddElement(animationNameLabel);
+            Game1.UiManager.AddElement(animationNameLabel);
             _animationName = new UiTextInput(new Rectangle(buttonDist, posY += labelHeight, buttonWidth, buttonHeight),
                 Resources.EditorFontMonoSpace, 20, "animationName", screenId, null, ui => { _animator.Animations[_selectedAnimation].Id = ((UiTextInput)ui).StrValue; });
-            Game1.EditorUi.AddElement(_animationName);
+            Game1.UiManager.AddElement(_animationName);
 
             // next animation
             var nextAnimationLabel = new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, labelHeight),
                 Resources.EditorFont, "next animation", "lableX", screenId, null);
-            Game1.EditorUi.AddElement(nextAnimationLabel);
+            Game1.UiManager.AddElement(nextAnimationLabel);
             _nextAnimationName = new UiTextInput(new Rectangle(buttonDist, posY += labelHeight, buttonWidth, buttonHeight),
                 Resources.EditorFontMonoSpace, 20, "nextAnimationName", screenId, null,
                 ui => { _animator.Animations[_selectedAnimation].NextAnimation = ((UiTextInput)ui).StrValue; });
-            Game1.EditorUi.AddElement(_nextAnimationName);
+            Game1.UiManager.AddElement(_nextAnimationName);
 
             // collision
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "collision mode", "bt1", screenId, ui => { ((UiButton)ui).Marked = _collisionRectangleMode; },
                 ui => { _collisionRectangleMode = !_collisionRectangleMode; }));
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "Loops", "flable", screenId, null));
             _loopCountInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 1, -1, 999, 1, "loopCount", screenId, null,
                 ui => _animator.Animations[_selectedAnimation].LoopCount = (int)((UiNumberInput)ui).Value);
-            Game1.EditorUi.AddElement(_loopCountInput);
+            Game1.UiManager.AddElement(_loopCountInput);
 
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
                 Resources.EditorFont, "Frame", "frameHeader", screenId, null));
 
             // frame information
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "frame", "flable", screenId,
                 ui => { ui.Label = "frame [" + (_selectedFrame + 1) + "/" + _animator.Animations[_selectedAnimation].Frames.Length + "]"; }));
             _frameInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 1, 1, 1, 1, "numberX", screenId,
                 ui => { ((UiNumberInput)ui).MaxValue = _animator.Animations[_selectedAnimation].Frames.Length; },
                 ui => { ChangeFrame((int)((UiNumberInput)ui).Value - 1); });
-            Game1.EditorUi.AddElement(_frameInput);
+            Game1.UiManager.AddElement(_frameInput);
 
             // add remove frame
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight), Resources.EditorFont,
                 "add", "addFrame", screenId, null, ui => { AddFrame(); }));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight), Resources.EditorFont,
                 "delete", "deleteFrame", screenId, null, ui => { DeleteFrame(); }));
 
-            _cbFrameMirroredV = (UiCheckBox)Game1.EditorUi.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+            _cbFrameMirroredV = (UiCheckBox)Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
                 Resources.EditorFont, "mirrored V", "cbmirrored", screenId, false, null,
                 ui => { _animator.Animations[_selectedAnimation].Frames[_selectedFrame].MirroredV = ((UiCheckBox)ui).CurrentState; }));
-            _cbFrameMirroredH = (UiCheckBox)Game1.EditorUi.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+            _cbFrameMirroredH = (UiCheckBox)Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
                 Resources.EditorFont, "mirrored H", "cbmirrored", screenId, false, null,
                 ui => { _animator.Animations[_selectedAnimation].Frames[_selectedFrame].MirroredH = ((UiCheckBox)ui).CurrentState; }));
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 2, buttonWidth, labelHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 2, buttonWidth, labelHeight),
                 Resources.EditorFont, "fps", "flable", screenId, null));
             _fpsInput = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 1, 1, 1000, 1, "numberX", screenId, null,
                 ui => { _animator.SetFrameFps(_selectedAnimation, _selectedFrame, (int)((UiNumberInput)ui).Value); });
-            Game1.EditorUi.AddElement(_fpsInput);
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(_fpsInput);
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, "to all", "toall", screenId, null,
                 ui => { _animator.SetAnimationFps(_selectedAnimation, (int)_fpsInput.Value); }));
 
             // animation offset
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
                 buttonWidth, labelHeight), Resources.EditorFont, "animation offset", "lableX", screenId, null));
             _niAnOffsetX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, -100, 100, 1, "animationWidth", screenId, null,
@@ -193,12 +193,12 @@ namespace ProjectZ.Editor
             _niAnOffsetY = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, -100, 100, 1, "animationWidth", screenId, null,
                 ui => { _animator.Animations[_selectedAnimation].Offset.Y = (int)((UiNumberInput)ui).Value; });
-            Game1.EditorUi.AddElement(_niAnOffsetX);
-            Game1.EditorUi.AddElement(_niAnOffsetY);
+            Game1.UiManager.AddElement(_niAnOffsetX);
+            Game1.UiManager.AddElement(_niAnOffsetY);
 
             // rectangle
             // labels
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
                 buttonWidth, labelHeight), Resources.EditorFont, "rectangle", "rectangle", screenId, null));
             _numberInputX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, 0, 1000, 1, "numberX", screenId, null,
@@ -214,8 +214,8 @@ namespace ProjectZ.Editor
                     _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Y = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
                 });
-            Game1.EditorUi.AddElement(_numberInputX);
-            Game1.EditorUi.AddElement(_numberInputY);
+            Game1.UiManager.AddElement(_numberInputX);
+            Game1.UiManager.AddElement(_numberInputY);
             _numberInputWidth = new UiNumberInput(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, 0, 1000, 1, "numberWidth", screenId, null, ui =>
                 {
@@ -228,12 +228,12 @@ namespace ProjectZ.Editor
                     _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Height = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
                 });
-            Game1.EditorUi.AddElement(_numberInputWidth);
-            Game1.EditorUi.AddElement(_numberInputHeight);
+            Game1.UiManager.AddElement(_numberInputWidth);
+            Game1.UiManager.AddElement(_numberInputHeight);
 
             // offset
             // labels
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
                 buttonWidth, labelHeight), Resources.EditorFont, "frame offset", "lableX", screenId, null));
             _niOffsetX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, -100, 100, 1, "numberX", screenId, null, ui =>
@@ -247,8 +247,8 @@ namespace ProjectZ.Editor
                     _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.Y = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
                 });
-            Game1.EditorUi.AddElement(_niOffsetX);
-            Game1.EditorUi.AddElement(_niOffsetY);
+            Game1.UiManager.AddElement(_niOffsetX);
+            Game1.UiManager.AddElement(_niOffsetY);
 
             // create empty animation
             CreateAnimator();
@@ -256,7 +256,7 @@ namespace ProjectZ.Editor
 
         public override void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiAnimation;
+            Game1.UiManager.CurrentScreen = Values.EditorUiAnimation;
 
             if (_sprAnimator == null)
                 return;

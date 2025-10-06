@@ -58,16 +58,16 @@ namespace ProjectZ.Editor
             var buttonHeight = 30;
             var posY = Values.ToolBarHeight + buttonDist;
 
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0), "left", Values.EditorUiTilesetEditor, Color.Transparent, Color.Black * 0.5f,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0), "left", Values.EditorUiTilesetEditor, Color.Transparent, Color.Black * 0.5f,
                 ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY, buttonWidth, buttonHeight), Resources.EditorFont,
                 "add map", "bt1", Values.EditorUiTilesetEditor, null, ui => { LoadMaps(); }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "save", "bt1", Values.EditorUiTilesetEditor, null, ui => { SaveChanges(); }));
 
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "remove all", "bt1", Values.EditorUiTilesetEditor, null, ui => { RemoveAll(); }));
 
             _camera.Location = new Point(400, 250);
@@ -75,7 +75,7 @@ namespace ProjectZ.Editor
 
         public override void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiTilesetEditor;
+            Game1.UiManager.CurrentScreen = Values.EditorUiTilesetEditor;
 
             var position = InputHandler.MousePosition();
 

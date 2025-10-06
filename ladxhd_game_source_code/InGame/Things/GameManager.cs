@@ -61,13 +61,21 @@ namespace ProjectZ.InGame.Things
                 if (_activeRenderTarget == null)
                     return Matrix.Identity;
 
-                float scaleX = (float)_activeRenderTarget.Width / (int)(Game1.WindowWidth * _scaleMultiplier);
-                float scaleY = (float)_activeRenderTarget.Height / (int)(Game1.WindowHeight * _scaleMultiplier);
+                var denomX = (int)(Game1.WindowWidth * _scaleMultiplier);
+                var denomY = (int)(Game1.WindowHeight * _scaleMultiplier);
+
+                denomX = Math.Max(1, denomX);
+                denomY = Math.Max(1, denomY);
+
+                float scaleX = (float)_activeRenderTarget.Width / denomX;
+                float scaleY = (float)_activeRenderTarget.Height / denomY;
+
+                if (float.IsNaN(scaleX) || float.IsNaN(scaleY) || float.IsInfinity(scaleX) || float.IsInfinity(scaleY))
+                    return Matrix.Identity;
 
                 return Matrix.CreateScale(scaleX, scaleY, 1f);
             }
         }
-
         public int CurrentRenderWidth;
         public int CurrentRenderHeight;
         public float CurrentRenderScale;
@@ -226,16 +234,16 @@ namespace ProjectZ.InGame.Things
         public void OnLoad()
         {
             InGameOverlay.OnLoad();
-
             _currentDialogPath = null;
             _dialogPathQueue.Clear();
 
-            // this leads to the music not starting after switching from edit mode and reloading objects
-            // not so sure if this is a problem or not
             ResetMusic();
 
             foreach (var gameSystem in GameSystems)
                 gameSystem.Value.OnLoad();
+
+            // Ensure render targets are available now that we're entering gameplay
+            UpdateRenderTargets();
         }
 
         public void UpdateGame()
@@ -586,29 +594,74 @@ namespace ProjectZ.InGame.Things
 
         public void RenderShadows(SpriteBatch spriteBatch)
         {
-            Game1.Graphics.GraphicsDevice.SetRenderTarget(_shadowRenderTarget);
-            Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-            Game1.Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Game1.Graphics.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicClamp;
-            Game1.Graphics.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            Game1.Graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            if (_shadowRenderTarget == null || _shadowRenderTargetBlur == null)
+                return;
 
-            MapManager.CurrentMap.Objects.DrawShadow(spriteBatch);
+            try
+            {
+                Game1.Graphics.GraphicsDevice.SetRenderTarget(_shadowRenderTarget);
+                Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
+                Game1.Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                Game1.Graphics.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicClamp;
+                Game1.Graphics.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                Game1.Graphics.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+
+                // Make sure SpriteBatch is in a valid state for drawing (caller should handle begin/end)
+                MapManager.CurrentMap.Objects.DrawShadow(spriteBatch);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("RenderShadows failed: " + ex);
+                try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+            }
         }
 
         public void ChangeRenderTarget()
         {
+            // If RTs not created, try to create them.
+            if (_activeRenderTarget == null || _inactiveRenderTarget1 == null || _inactiveRenderTarget2 == null)
+            {
+                UpdateRenderTargets();
+                if (_activeRenderTarget == null || _inactiveRenderTarget1 == null || _inactiveRenderTarget2 == null)
+                {
+                    // fallback: leave render target as backbuffer
+                    try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+                    return;
+                }
+            }
+            // Swap round-robin safely
             var tempActiveRt = _activeRenderTarget;
             _activeRenderTarget = _inactiveRenderTarget2;
             _inactiveRenderTarget2 = _inactiveRenderTarget1;
             _inactiveRenderTarget1 = tempActiveRt;
 
+            // Ensure we don't attempt to set a null RT
             SetActiveRenderTarget();
         }
 
         public void SetActiveRenderTarget()
         {
-            Game1.Graphics.GraphicsDevice.SetRenderTarget(_activeRenderTarget);
+            // Ensure RTs are ready
+            if (_activeRenderTarget == null)
+            {
+                UpdateRenderTargets();
+                if (_activeRenderTarget == null)
+                {
+                    // can't set a null RT; fallback to backbuffer (null)
+                    try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+                    return;
+                }
+            }
+
+            try
+            {
+                Game1.Graphics.GraphicsDevice.SetRenderTarget(_activeRenderTarget);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("SetActiveRenderTarget failed: " + ex);
+                try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+            }
         }
 
         public RenderTarget2D GetLastRenderTarget()
@@ -657,51 +710,95 @@ namespace ProjectZ.InGame.Things
             UpdateRenderTargets();
         }
 
-        public void UpdateRenderTargets()
-        {
+         public void UpdateRenderTargets()
+         {
+            // If sizes didn't change or sizes invalid, skip
             if ((CurrentRenderWidth == Game1.RenderWidth &&
                  CurrentRenderHeight == Game1.RenderHeight &&
                  CurrentRenderScale == MapManager.Camera.Scale) ||
-                 Game1.RenderWidth == 0 || Game1.RenderHeight == 0)
+                 Game1.RenderWidth <= 0 || Game1.RenderHeight <= 0)
                 return;
 
-            CurrentRenderWidth = Game1.RenderWidth;
-            CurrentRenderHeight = Game1.RenderHeight;
+            CurrentRenderWidth = Math.Max(1, Game1.RenderWidth);
+            CurrentRenderHeight = Math.Max(1, Game1.RenderHeight);
             CurrentRenderScale = MapManager.Camera.Scale;
 
+            // compute shadow/temp sizes (clamped)
+            var shadowScale = MathHelper.Clamp(MapManager.Camera.Scale / 2, 1, 10);
+            var shadowRtWidth = Math.Max(1, (int)(CurrentRenderWidth / shadowScale));
+            var shadowRtHeight = Math.Max(1, (int)(CurrentRenderHeight / shadowScale));
+
+            var blurRtWidth = Math.Max(1, BlurRenderTargetWidth);
+            var blurRtHeight = Math.Max(1, BlurRenderTargetHeight);
+            var sideBlurRtWidth = Math.Max(1, SideBlurRenderTargetWidth);
+            var sideBlurRtHeight = Math.Max(1, SideBlurRenderTargetHeight);
+
+            // create new RTs first
+            RenderTarget2D newActive = null;
+            RenderTarget2D newInactive1 = null;
+            RenderTarget2D newInactive2 = null;
+            RenderTarget2D newShadow = null;
+            RenderTarget2D newShadowBlur = null;
+            RenderTarget2D newTemp0 = null;
+            RenderTarget2D newTemp1 = null;
+            RenderTarget2D newTemp2 = null;
+
+            try
+            {
+                // Note: use DiscardContents unless you truly need PreserveContents; preserve is more fragile on some platforms.
+                var usage = RenderTargetUsage.PreserveContents; // keep existing, or change to DiscardContents if safe
+                newActive = new RenderTarget2D(Game1.Graphics.GraphicsDevice, CurrentRenderWidth, CurrentRenderHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, usage);
+                newInactive1 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, CurrentRenderWidth, CurrentRenderHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, usage);
+                newInactive2 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, CurrentRenderWidth, CurrentRenderHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, usage);
+
+                newShadow = new RenderTarget2D(Game1.Graphics.GraphicsDevice, shadowRtWidth, shadowRtHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+                newShadowBlur = new RenderTarget2D(Game1.Graphics.GraphicsDevice, shadowRtWidth, shadowRtHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+
+                newTemp0 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, blurRtWidth, blurRtHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+                newTemp1 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, blurRtWidth, blurRtHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+                newTemp2 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, sideBlurRtWidth, sideBlurRtHeight,
+                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("UpdateRenderTargets: failed creating render targets: " + ex);
+                // Clean up any partially-created RTs
+                newActive?.Dispose();
+                newInactive1?.Dispose();
+                newInactive2?.Dispose();
+                newShadow?.Dispose();
+                newShadowBlur?.Dispose();
+                newTemp0?.Dispose();
+                newTemp1?.Dispose();
+                newTemp2?.Dispose();
+                return;
+            }
+
+            // All new RTs created successfully: swap them in and dispose old ones
             _activeRenderTarget?.Dispose();
             _inactiveRenderTarget1?.Dispose();
             _inactiveRenderTarget2?.Dispose();
             _shadowRenderTarget?.Dispose();
             _shadowRenderTargetBlur?.Dispose();
-
-            _activeRenderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, Game1.RenderWidth, Game1.RenderHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _inactiveRenderTarget1 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, Game1.RenderWidth, Game1.RenderHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _inactiveRenderTarget2 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, Game1.RenderWidth, Game1.RenderHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-
-            // shadow render targets
-            var shadowScale = MathHelper.Clamp(MapManager.Camera.Scale / 2, 1, 10);
-            var shadowRtWidth = (int)(Game1.RenderWidth / shadowScale);
-            var shadowRtHeight = (int)(Game1.RenderHeight / shadowScale);
-            _shadowRenderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, shadowRtWidth, shadowRtHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            _shadowRenderTargetBlur = new RenderTarget2D(Game1.Graphics.GraphicsDevice, shadowRtWidth, shadowRtHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-
-            // temp render targets
             TempRT0?.Dispose();
             TempRT1?.Dispose();
             TempRT2?.Dispose();
 
-            TempRT0 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, BlurRenderTargetWidth, BlurRenderTargetHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            TempRT1 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, BlurRenderTargetWidth, BlurRenderTargetHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            TempRT2 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, SideBlurRenderTargetWidth, SideBlurRenderTargetHeight,
-                false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+            _activeRenderTarget = newActive;
+            _inactiveRenderTarget1 = newInactive1;
+            _inactiveRenderTarget2 = newInactive2;
+            _shadowRenderTarget = newShadow;
+            _shadowRenderTargetBlur = newShadowBlur;
+            TempRT0 = newTemp0;
+            TempRT1 = newTemp1;
+            TempRT2 = newTemp2;
         }
 
         public void HealPlayer(int hearts)

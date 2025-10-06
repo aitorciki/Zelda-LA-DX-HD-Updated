@@ -72,31 +72,31 @@ namespace ProjectZ.Editor
 
             var screenId = Values.EditorUiSpriteAtlas;
 
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "leftBar", screenId, Values.ColorBackgroundLight, Color.White,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "leftBar", screenId, Values.ColorBackgroundLight, Color.White,
                 ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, LeftBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
 
-            Game1.EditorUi.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightBar", screenId, Values.ColorBackgroundLight, Color.White,
+            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightBar", screenId, Values.ColorBackgroundLight, Color.White,
                 ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth, Values.ToolBarHeight, RightBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
 
             posY = Values.ToolBarHeight + buttonDist;
 
             // load button
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight), Resources.EditorFont,
                 "load", "bt1", screenId, null, ui => { LoadSprite(); }));
             // save button
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "save as...", "bt1", screenId, null, ui => { SaveSpriteAtlasDialog(); }));
-            Game1.EditorUi.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
+            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
                 "save...", "bt1", screenId, null, ui => { SaveSpriteAtlas(_lastFileName); }));
 
-            Game1.EditorUi.AddElement(_atlasScale = new UiNumberInput(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+            Game1.UiManager.AddElement(_atlasScale = new UiNumberInput(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
                 Resources.EditorFont, 0, 1, 16, 1, "Scaling", screenId, null,
                 ui =>
                 {
                     _spriteAtlas.Scale = (int)((UiNumberInput)ui).Value;
                 }));
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
                 Resources.EditorFont, "Source Rectangle", "sourceHeader", screenId, null));
 
             var minValue = 0;
@@ -129,26 +129,26 @@ namespace ProjectZ.Editor
                     _sourceData[_spriteIndex].SourceRectangle.Height = (int)((UiNumberInput)ui).Value;
                 });
 
-            Game1.EditorUi.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
+            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
                 Resources.EditorFont, "Origin", "originLabel", screenId, null));
 
-            Game1.EditorUi.AddElement(_inputSourceOriginX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(_inputSourceOriginX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, minValue, maxValue, 1, "originX", screenId, null,
                 ui =>
                 {
                     _sourceData[_spriteIndex].Origin.X = (int)((UiNumberInput)ui).Value;
                 }));
-            Game1.EditorUi.AddElement(_inputSourceOriginY = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
+            Game1.UiManager.AddElement(_inputSourceOriginY = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
                 Resources.EditorFont, 0, minValue, maxValue, 1, "originY", screenId, null,
                 ui =>
                 {
                     _sourceData[_spriteIndex].Origin.Y = (int)((UiNumberInput)ui).Value;
                 }));
 
-            Game1.EditorUi.AddElement(_inputSourceX);
-            Game1.EditorUi.AddElement(_inputSourceY);
-            Game1.EditorUi.AddElement(_inputSourceWidth);
-            Game1.EditorUi.AddElement(_inputSourceHeight);
+            Game1.UiManager.AddElement(_inputSourceX);
+            Game1.UiManager.AddElement(_inputSourceY);
+            Game1.UiManager.AddElement(_inputSourceWidth);
+            Game1.UiManager.AddElement(_inputSourceHeight);
 
             var buttonWidthRight = RightBarWidth - buttonDist * 2;
             var buttonWidthHalfRight = (RightBarWidth - buttonDist * 3) / 2;
@@ -162,27 +162,27 @@ namespace ProjectZ.Editor
                     if (_sourceData.Count > _spriteIndex)
                         _sourceData[_spriteIndex].EntryId = ((UiTextInput)element).StrValue;
                 });
-            Game1.EditorUi.AddElement(_inputEntryName);
+            Game1.UiManager.AddElement(_inputEntryName);
 
             posY += 45 + buttonDist;
             var buttonPosY0 = posY;
-            Game1.EditorUi.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "add", "bt1", screenId,
+            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "add", "bt1", screenId,
                 element => element.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + buttonDist, buttonPosY0, buttonWidthHalfRight, buttonHeight),
                 ui => { AddAtlasEntry(); }));
 
             var buttonPosY1 = posY;
-            Game1.EditorUi.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "remove", "bt2", screenId,
+            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "remove", "bt2", screenId,
                 element => element.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + buttonDist * 2 + buttonWidthHalfRight, buttonPosY1, buttonWidthHalfRight, buttonHeight),
                 ui => { RemoveAtlasEntry(); }));
 
             posY += buttonHeight + buttonDist;
             var buttonPosY2 = posY;
-            Game1.EditorUi.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "sort", "bt3", screenId,
+            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "sort", "bt3", screenId,
                 element => element.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + buttonDist, buttonPosY2, buttonWidthRight, buttonHeight),
                 ui => { SortAtlasEntry(); }));
 
             posY += buttonHeight + buttonDist;
-            Game1.EditorUi.AddElement(_spriteAtlasList = new UiEditList<SpriteAtlasSerialization.AtlasEntry>(
+            Game1.UiManager.AddElement(_spriteAtlasList = new UiEditList<SpriteAtlasSerialization.AtlasEntry>(
                 Rectangle.Empty, Resources.EditorFontSmallMonoSpace, _sourceData, "bt4", screenId, element =>
                 {
                     element.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth, posY, RightBarWidth, Game1.WindowHeight - posY);
@@ -203,7 +203,7 @@ namespace ProjectZ.Editor
 
         public override void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiSpriteAtlas;
+            Game1.UiManager.CurrentScreen = Values.EditorUiSpriteAtlas;
 
             if (_sprTexture == null)
                 return;

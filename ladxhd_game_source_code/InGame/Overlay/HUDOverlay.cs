@@ -34,13 +34,13 @@ namespace ProjectZ.InGame.Overlay
         public HudOverlay()
         {
             _heartBackground = new UiRectangle(Rectangle.Empty, "heart", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
-            Game1.EditorUi.AddElement(_heartBackground);
+            Game1.UiManager.AddElement(_heartBackground);
 
             _rubeeBackground = new UiRectangle(Rectangle.Empty, "rubee", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
-            Game1.EditorUi.AddElement(_rubeeBackground);
+            Game1.UiManager.AddElement(_rubeeBackground);
 
             _keyBackground = new UiRectangle(Rectangle.Empty, "rubee", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
-            Game1.EditorUi.AddElement(_keyBackground);
+            Game1.UiManager.AddElement(_keyBackground);
 
             _saveIcon = Resources.GetSprite("save_icon");
         }

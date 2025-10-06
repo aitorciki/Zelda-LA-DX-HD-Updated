@@ -91,17 +91,17 @@ namespace ProjectZ.Editor
                 var halfButtonWidth = buttonWidth / 2 - 2;
                 var buttonHeight = 30;
 
-                Game1.EditorUi.AddElement(new UiLabel(new Rectangle(5, posY, buttonWidth, buttonHeight),
+                Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY, buttonWidth, buttonHeight),
                     Resources.EditorFont, "Mode", "bt1", Values.EditorUiObjectEditor, null));
 
-                Game1.EditorUi.AddElement(new UiButton(
+                Game1.UiManager.AddElement(new UiButton(
                         new Rectangle(5, posY += buttonHeight, halfButtonWidth, buttonHeight), Resources.EditorFont,
                         "Draw", "bt1", Values.EditorUiObjectEditor,
                         ui => { ((UiButton)ui).Marked = _currentMode == Mode.Draw; },
                         ui => { _currentMode = Mode.Draw; })
                 { ButtonIcon = Resources.EditorIconEdit });
 
-                Game1.EditorUi.AddElement(new UiButton(
+                Game1.UiManager.AddElement(new UiButton(
                         new Rectangle(5 + halfButtonWidth + 4, posY, halfButtonWidth, buttonHeight),
                         Resources.EditorFont,
                         "Edit", "bt1", Values.EditorUiObjectEditor,
@@ -109,7 +109,7 @@ namespace ProjectZ.Editor
                         ui => { _currentMode = Mode.Edit; })
                 { ButtonIcon = Resources.EditorIconSelect });
 
-                Game1.EditorUi.AddElement(new UiLabel(
+                Game1.UiManager.AddElement(new UiLabel(
                     new Rectangle(5, posY += buttonHeight + 5, buttonWidth, buttonHeight),
                     Resources.EditorFont, "Grid", "bt1", Values.EditorUiObjectEditor, null));
 
@@ -121,7 +121,7 @@ namespace ProjectZ.Editor
                 {
                     var gridValueLocal = gridValue;
 
-                    Game1.EditorUi.AddElement(new UiButton(
+                    Game1.UiManager.AddElement(new UiButton(
                         new Rectangle(5 + (gridButtonWidth + 3) * i, posY, gridButtonWidth, buttonHeight),
                         Resources.EditorFont,
                         gridValue.ToString(), "bt1", Values.EditorUiObjectEditor,
@@ -139,7 +139,7 @@ namespace ProjectZ.Editor
                 var lableHeight = 20;
 
                 // right background
-                Game1.EditorUi.AddElement(new UiRectangle(Rectangle.Empty, "left", Values.EditorUiObjectEditor,
+                Game1.UiManager.AddElement(new UiRectangle(Rectangle.Empty, "left", Values.EditorUiObjectEditor,
                     Values.ColorBackgroundLight, Color.White,
                     ui =>
                     {
@@ -188,11 +188,11 @@ namespace ProjectZ.Editor
 
                 // add the text fields
                 foreach (var element in _uiParameterTextInput)
-                    Game1.EditorUi.AddElement(element);
+                    Game1.UiManager.AddElement(element);
 
                 // add the labels
                 foreach (var element in _uiParameterHeader)
-                    Game1.EditorUi.AddElement(element);
+                    Game1.UiManager.AddElement(element);
             }
         }
 
@@ -204,7 +204,7 @@ namespace ProjectZ.Editor
 
         public void Update(GameTime gameTime)
         {
-            Game1.EditorUi.CurrentScreen = Values.EditorUiObjectEditor;
+            Game1.UiManager.CurrentScreen = Values.EditorUiObjectEditor;
 
             mousePosition = InputHandler.MousePosition();
 
