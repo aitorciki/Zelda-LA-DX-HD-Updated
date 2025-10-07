@@ -3268,11 +3268,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _)       => ( -7, -17,  0, +2),
-                (2, _)       => (-11, -14, +2, -2),
-                (3, true)    => ( -6, -17,  0, +2),
-                (3, false)   => ( -7, -17,  0, +2),
-                (_, _)       => ( -5, -14, +2, -2),
+                (1, _)       => ( -6, -17, -2, +2),
+                (2, _)       => (-11, -13, +2, -4),
+                (3, true)    => ( -5, -17, -2, +2),
+                (3, false)   => ( -6, -17, -2, +2),
+                (_, _)       => ( -5, -13, +2, -4),
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
