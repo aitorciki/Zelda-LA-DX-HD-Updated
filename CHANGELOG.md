@@ -1,5 +1,20 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.5**
+### **The Controller Buttons Update**
+  * Trendy Game button textures now reflect the current controller and the "Swap Confirm/Cancel" setting.
+  * When trading for the Boomerang, the item button the Goriya asks to trade for now reflects the current controller.
+  * NPC/book dialog windows that reference buttons now reflect the currently selected controller.
+  * Increase the velocity of using Roc's Feather in 2D underwater maps while swimming and play the sound effect.
+  * Play missing sound effect when sworded enemies attack Link and it's blocked with the shield.
+  * Add Totaka's song easter egg at file select screen. Start a new game and enter: Totaka, Totakeke, or MOYSE. Case insensitive.
+  * Add a new easter egg that plays a remix of "The Legend of Zelda" theme by entering the name: Zelda. Case insensitive.
+  * When setting dogs or chickens on fire, remove their components so they can no longer be interacted with.
+  * Fix a rare game breaking issue that could happen when taking damage that caused the entire screen to go black or blue.
+  * Fix entering Level 8 backdoors to properly set the last position when saving to the dungeon entrance.
+  * Fix underwater attack with level 2 sword in 2D maps to be able to shoot sword beam both up and down.
+  * Fix multiple instances of an invalid font glyph scattered throughout the German translation around the (ü) character.
+
 ## **v1.3.4**
 ### **Emergency Crash-Fix Update**
   * Fix crash that happens when attacking Pokey in Yarna Desert.
