@@ -1665,7 +1665,9 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.GameManager.PlaySoundEffect("D360-43-2B", false);
                 }
 
-                if (Game1.GbsPlayer.SoundGenerator.WasStopped)
+                // This used to rely on the following, but not sure why it was used over an already implemented counter:
+                // if (Game1.GbsPlayer.SoundGenerator.WasStopped)
+                if (_instrumentCounter > 8000)
                 {
                     Game1.GameManager.SetMusic(-1, 0);
                     Game1.GameManager.SetMusic(-1, 2);
