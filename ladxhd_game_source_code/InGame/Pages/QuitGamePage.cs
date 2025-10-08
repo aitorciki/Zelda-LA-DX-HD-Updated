@@ -55,7 +55,7 @@ namespace ProjectZ.InGame.Pages
                 Game1.GameManager.SaveManager.DisableHistory();
             }
             if (GameSettings.Autosave)
-                SaveGameSaveLoad.SaveGame(Game1.GameManager);
+                SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
 
             MapManager.CameraOffset = Vector2.Zero;
 

@@ -50,7 +50,7 @@ namespace ProjectZ.InGame.Pages
         public void OnClickYes(InterfaceElement element)
         {
             if (GameSettings.Autosave)
-                SaveGameSaveLoad.SaveGame(Game1.GameManager);
+                SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
 
             Application.Exit();
         }

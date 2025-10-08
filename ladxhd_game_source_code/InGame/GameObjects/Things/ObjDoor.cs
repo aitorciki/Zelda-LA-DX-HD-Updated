@@ -234,8 +234,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // If autosave is enabled, then save the game now.
                 if (GameSettings.Autosave)
                 {
-                    SaveGameSaveLoad.SaveGame(Game1.GameManager);
-                    Game1.GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
+                    SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
                 }
             }
             // If it's a Level 8 backdoor then force front entrance info.

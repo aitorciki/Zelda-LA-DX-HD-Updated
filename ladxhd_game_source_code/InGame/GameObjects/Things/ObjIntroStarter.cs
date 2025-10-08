@@ -27,10 +27,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_init && MapManager.ObjLink.Map != null)
             {
                 _init = true;
+
                 // start the intro
                 MapManager.ObjLink.StartIntro();
+
                 // create a save state
-                SaveGameSaveLoad.SaveGame(Game1.GameManager);
+                SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
             }
 
             if (MapManager.ObjLink.Animation.IsPlaying)

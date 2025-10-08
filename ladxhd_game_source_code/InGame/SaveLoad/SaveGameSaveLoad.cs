@@ -58,7 +58,7 @@ namespace ProjectZ.InGame.SaveLoad
             return true;
         }
 
-        public static void SaveGame(GameManager gameManager)
+        public static void SaveGame(GameManager gameManager, bool showIcon)
         {
             // save the game variables
             gameManager.SaveManager.Save(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + gameManager.SaveSlot), Values.SaveRetries);
@@ -70,6 +70,10 @@ namespace ProjectZ.InGame.SaveLoad
 
             playerSaveState.Save(Path.Combine(Values.PathSaveFolder, SaveFileName + gameManager.SaveSlot), Values.SaveRetries);
             playerSaveState = null;
+
+            // Show the save icon.
+            if (showIcon)
+                Game1.GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
         }
 
         public static void FillSaveState(GameManager gameManager)

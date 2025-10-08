@@ -785,8 +785,7 @@ namespace ProjectZ.InGame.GameObjects
                     // save settings?
                     if (GameSettings.Autosave)
                     {
-                        SaveGameSaveLoad.SaveGame(Game1.GameManager);
-                        Game1.GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
+                        SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
                     }
                 }
 

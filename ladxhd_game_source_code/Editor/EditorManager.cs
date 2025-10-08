@@ -120,8 +120,7 @@ namespace ProjectZ.Editor
                 MapManager.ObjLink.SavePosition = MapManager.ObjLink.EntityPosition.Position;
                 MapManager.ObjLink.SaveDirection = MapManager.ObjLink.Direction;
 
-                SaveGameSaveLoad.SaveGame(Game1.GameManager);
-                Game1.GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
+                SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
             }
             if (InputHandler.KeyPressed(Values.DebugLoadKey))
                 Game1.GameManager.LoadSaveFile(Game1.GameManager.SaveSlot);
