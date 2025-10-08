@@ -196,7 +196,7 @@ namespace ProjectZ.InGame.Pages
                     Margin = new Point(smallButtonMargin, 0),
                     ClickFunction = element =>
                     {
-                        Game1.UiPageManager.ChangePage(typeof(QuitGamePage));
+                        Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
                     }
                 });
             }

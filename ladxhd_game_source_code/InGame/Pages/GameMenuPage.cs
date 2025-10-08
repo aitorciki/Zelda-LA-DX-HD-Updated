@@ -79,16 +79,12 @@ namespace ProjectZ.InGame.Pages
 
         public void OnClickBackToMenu(InterfaceElement element)
         {
-            Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
-            MapManager.CameraOffset = Vector2.Zero;
+            Game1.UiPageManager.ChangePage(typeof(QuitGamePage));
         }
 
         public void OnClickExitGame(InterfaceElement element)
         {
-            // Save the game when exiting from in-game. The quit game page is reused from the game select
-            // screen where a game is not currently active. Is there a better way to do this?
-            Game1.SaveAndExitGame = true;
-            Game1.UiPageManager.ChangePage(typeof(QuitGamePage));
+            Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
         }
     }
 }

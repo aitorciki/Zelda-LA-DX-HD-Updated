@@ -80,7 +80,6 @@ namespace ProjectZ
         public static bool ForceDialogUpdate;
         public static bool EditorMode;
         public static bool LoadFirstSave;
-        public static bool SaveAndExitGame;
 
         private static bool _finishedLoading;
 
