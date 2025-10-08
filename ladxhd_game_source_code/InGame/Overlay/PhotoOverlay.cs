@@ -44,6 +44,11 @@ namespace ProjectZ.InGame.Overlay
 
         public void Reload()
         {
+            _spriteBook = Resources.GetSprite("photo_book");
+            _spriteCursor = Resources.GetSprite("photo_cursor");
+            _spriteNop = Resources.GetSprite("photo_no");
+            _spriteOk = Resources.GetSprite("photo_ok");
+
             _spritePhotos = new DictAtlasEntry[12];
             for (var i = 0; i < 12; i++)
                 _spritePhotos[i] = Resources.GetPhotoSprite("photo_" + (i + 1));
