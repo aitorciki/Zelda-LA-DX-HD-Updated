@@ -1663,6 +1663,9 @@ namespace ProjectZ.InGame.Things
             MapManager.ObjLink.SetNextMapPosition(new Vector2(SavePositionX, SavePositionY));
             transitionSystem.LoadMapFromFile(LoadedMap, true, true, Values.MapFirstTransitionColor, false);
             transitionSystem.AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
+
+            // If this was somehow set to 1 and saved, reset it back to 0.
+            Game1.GameManager.SaveManager.SetString("freezeGame", "0");
         }
 
         public void RespawnPlayer()
