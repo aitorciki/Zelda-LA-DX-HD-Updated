@@ -1558,6 +1558,11 @@ namespace ProjectZ.InGame.Things
 
             SaveManager.Reset();
 
+            // Save file versions:
+            // 1: Seashell Mansion & "Nothing is Missable" enabled.
+            // 2: World teleporter indexes fixed.
+            SaveManager.SetString("save_version", "2");
+
             // set up values
             // debug fill the inventory
             if (RealSaveName == "DebugMode")
@@ -1666,6 +1671,42 @@ namespace ProjectZ.InGame.Things
 
             // If this was somehow set to 1 and saved, reset it back to 0.
             Game1.GameManager.SaveManager.SetString("freezeGame", "0");
+
+            // This should probably be removed after awhile.
+            SaveFileFix_v1();
+        }
+
+        private void SaveFileFix_v1()
+        {
+            // Fixes teleporter IDs on version 1 save files.
+            string saveVersionStr = SaveManager.GetString("save_version", "0");
+            int.TryParse(saveVersionStr, out int saveVersion);
+
+            // This only affects version 1 save files.
+            if (saveVersion == 1)
+            {
+                // Get the unlocked state of the teleporters that have reversed indexes.
+                string teleporter1 = SaveManager.GetString("unlocked_teleporter_1", "none");
+                string teleporter2 = SaveManager.GetString("unlocked_teleporter_2", "none");
+
+                // Only modify if one them is unlocked and the other isn't.
+                if (teleporter1 != teleporter2)
+                {
+                    // Reverse the unlocked teleporters.
+                    if (teleporter1 == "1")
+                    {
+                        SaveManager.SetString("unlocked_teleporter_2", "1");
+                        SaveManager.RemoveString("unlocked_teleporter_1");
+                    }
+                    if (teleporter2 == "1") 
+                    {
+                        SaveManager.SetString("unlocked_teleporter_1", "1");
+                        SaveManager.RemoveString("unlocked_teleporter_2");
+                    }
+                }
+                // Increment the save version.
+                SaveManager.SetString("save_version", "2");
+            }
         }
 
         public void RespawnPlayer()

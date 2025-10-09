@@ -15,7 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         public static Dictionary<int, ObjOverworldTeleporter> TeleporterDictionary = new Dictionary<int, ObjOverworldTeleporter>();
         private readonly Rectangle _field;
         private readonly int _teleporterId;
-        private bool _registred;
+        private bool _registered;
         public CBox collisionBox;
 
         public ObjOverworldTeleporter(Map.Map map, int posX, int posY, int teleporterId) : base(map)
@@ -38,7 +38,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(animator, sprite, new Vector2(8, 8));
-
             var collisionRectangle = new Rectangle(posX, posY, 16, 16);
 
             // Store the collision box in a public field so it can be referenced from other places. Currently used to detect if landing on a teleporter when jumping.
@@ -75,7 +74,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (teleporter.Key < minId && teleporter.Key >= 0)
                     minId = teleporter.Key;
             }
-
             if (minBiggerId != int.MaxValue)
                 TeleporterDictionary[minBiggerId].SetPosition();
             else if (minId != int.MaxValue)
@@ -91,7 +89,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            if (!_registred && _field.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_registered && _field.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 RegisterTeleporter();
                 UnlockTeleporter();
@@ -100,24 +98,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void RegisterTeleporter()
         {
-            _registred = true;
+            _registered = true;
 
-            // register object
             if (!TeleporterDictionary.ContainsKey(_teleporterId))
                 TeleporterDictionary.Add(_teleporterId, this);
-            else
-                Console.WriteLine("Error: teleporter with duplicate id " + _teleporterId);
         }
 
         private void OnCollision(GameObject gameObject)
         {
             // unlock the teleporter
-            if (!_registred)
+            if (!_registered)
             {
                 RegisterTeleporter();
                 UnlockTeleporter();
             }
-
             MapManager.ObjLink.HoleTeleporterId = _teleporterId;
         }
 
