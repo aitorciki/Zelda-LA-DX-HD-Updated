@@ -49,7 +49,7 @@ namespace ProjectZ.InGame.Pages
 
         public void OnClickYes(InterfaceElement element)
         {
-            if (GameSettings.Autosave)
+            if (Game1.SaveAndExitGame && GameSettings.Autosave)
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
 
             Application.Exit();

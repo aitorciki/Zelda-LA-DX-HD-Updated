@@ -79,6 +79,7 @@ namespace ProjectZ
         public static bool UpdateGame;
         public static bool ForceDialogUpdate;
         public static bool EditorMode;
+        public static bool SaveAndExitGame;
         public static bool AutoLoadSave;
         public static int AutoLoadSlot;
 

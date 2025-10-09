@@ -84,6 +84,7 @@ namespace ProjectZ.InGame.Pages
 
         public void OnClickExitGame(InterfaceElement element)
         {
+            Game1.SaveAndExitGame = true;
             Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
         }
     }
