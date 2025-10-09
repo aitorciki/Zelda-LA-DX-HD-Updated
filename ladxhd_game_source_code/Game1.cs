@@ -79,7 +79,8 @@ namespace ProjectZ
         public static bool UpdateGame;
         public static bool ForceDialogUpdate;
         public static bool EditorMode;
-        public static bool LoadFirstSave;
+        public static bool AutoLoadSave;
+        public static int AutoLoadSlot;
 
         private static bool _finishedLoading;
 
@@ -103,7 +104,7 @@ namespace ProjectZ
         private static Forms.FormWindowState _lastWindowState;
 #endif
 
-        public Game1(bool editorMode, bool loadFirstSave)
+        public Game1(bool editorMode, bool loadSave, int loadSlot)
         {
 #if WINDOWS
             _windowForm = (Forms.Form)Forms.Control.FromHandle(Window.Handle);
@@ -126,7 +127,8 @@ namespace ProjectZ
             IsMouseVisible = editorMode;
 
             EditorMode = editorMode;
-            LoadFirstSave = loadFirstSave;
+            AutoLoadSave = loadSave;
+            AutoLoadSlot = loadSlot;
         }
 
         protected override void Initialize()

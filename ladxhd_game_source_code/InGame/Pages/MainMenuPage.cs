@@ -277,12 +277,17 @@ namespace ProjectZ.InGame.Pages
         {
             base.Update(pressedButtons, gameTime);
 
-            if (Game1.FinishedLoading && Game1.LoadFirstSave)
+            if (Game1.FinishedLoading && Game1.AutoLoadSave)
             {
-                Game1.LoadFirstSave = false;
-                LoadSave(0);
-            }
+                // Make sure the slot is within range.
+                int LoadSlot = Game1.AutoLoadSlot is >= 0 and <= 3 ? Game1.AutoLoadSlot : 0;
 
+                // Set the autoload to false.
+                Game1.AutoLoadSave = false;
+
+                // Load the save file slot.
+                LoadSave(LoadSlot);
+            }
             UpdatePlayerAnimation();
 
             // only show the copy/delete buttons for the saveslot that is currently selected

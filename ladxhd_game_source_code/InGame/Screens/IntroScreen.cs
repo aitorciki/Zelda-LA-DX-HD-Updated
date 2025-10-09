@@ -295,15 +295,21 @@ namespace ProjectZ.InGame.Screens
 
         public override void Update(GameTime gameTime)
         {
-            if (Game1.FinishedLoading && Game1.LoadFirstSave)
+            if (Game1.FinishedLoading && Game1.AutoLoadSave)
             {
-                Game1.LoadFirstSave = false;
-                if (SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + "0")))
+                // Make sure the slot is within range.
+                int LoadSlot = Game1.AutoLoadSlot is >= 0 and <= 3 ? Game1.AutoLoadSlot : 0;
+
+                // Set the autoload to false.
+                Game1.AutoLoadSave = false;
+
+                if (SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + LoadSlot.ToString())))
                 {
-                    // change to the game screen
+                    // Change to the game screen.
                     Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);
-                    // load the save
-                    Game1.GameManager.LoadSaveFile(0);
+
+                    // Load the save file slot.
+                    Game1.GameManager.LoadSaveFile(LoadSlot);
                 }
             }
 
