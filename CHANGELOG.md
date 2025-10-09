@@ -1,5 +1,19 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.6**
+  * Add updated Spanish translations by [IPeluchito](https://github.com/IPeluchito).
+  * Better command line support for loading save files: use the command "loadSave #" where # is 0-3 (for slots 1-4).
+  * Rework the shield one more time. Bigger hitbox, direction never fails, no more false hits, and no more false blocks.
+  * Small update to the in-game menu. Some options were shortened. Saving only happens when autosave is enabled.
+  * Save file version has been incremented to version 2 due to world teleporter fix and v1 save files are set to v2.
+  * Fix a game ruining bug where if saving and quitting while the world was "frozen" would permanently freeze it.
+  * Fix world teleporter IDs which fixes the teleport order: Mabe village > Level 8 > Level 4 > Animal Village.
+  * Fix potential softlock on some devices where sound could fail and the instrument sequence would not proceed.
+  * Fix Richard's dialog to restart when denying his quest instead of always acting as if you accepted it.
+  * Fix the hint Ulrira gives you about finding bananas to not get stuck if talking to the monkey before Richard.
+  * Fix any languages that displayed the monkey's dialog incorrectly (some would exceed the bounds of the dialog box).
+  * Fix loading the wrong photobook sprites for certain languages that currently support alternate sprites.
+
 ## **v1.3.5**
 ### **The Controller Buttons Update**
   * Trendy Game button textures now reflect the current controller and the "Swap Confirm/Cancel" setting.
