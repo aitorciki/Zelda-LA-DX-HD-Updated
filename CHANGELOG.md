@@ -1,6 +1,7 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
 ## **v1.3.6**
+### **The Perfect Shield Update**
   * Add updated Spanish translations by [IPeluchito](https://github.com/IPeluchito).
   * Better command line support for loading save files: use the command "loadSave #" where # is 0-3 (for slots 1-4).
   * Rework the shield one more time. Bigger hitbox, direction never fails, no more false hits, and no more false blocks.
@@ -13,6 +14,7 @@
   * Fix the hint Ulrira gives you about finding bananas to not get stuck if talking to the monkey before Richard.
   * Fix any languages that displayed the monkey's dialog incorrectly (some would exceed the bounds of the dialog box).
   * Fix loading the wrong photobook sprites for certain languages that currently support alternate sprites.
+  * Fix the saving icon (disk bottom right) to always appear whenever the game is saved or an autosave takes place.
 
 ## **v1.3.5**
 ### **The Controller Buttons Update**
