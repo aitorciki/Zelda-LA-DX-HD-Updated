@@ -255,7 +255,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _aiComponent.ChangeState("postSpear");
 
                 // spawn spear
-                var spear = new EnemySpear(Map, new Vector3(EntityPosition.X, EntityPosition.Y - 9, 3), AnimationHelper.DirectionOffset[_direction] * 2f);
+                var spear = new EnemySpear(Map, new Vector3(EntityPosition.X, EntityPosition.Y - 9, 3), AnimationHelper.DirectionOffset[_direction] * 2f, _direction);
                 Map.Objects.SpawnObject(spear);
             }
         }

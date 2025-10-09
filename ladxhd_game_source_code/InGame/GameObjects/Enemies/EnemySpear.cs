@@ -1,11 +1,11 @@
+using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -28,7 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Point[] _collisionBoxSize = { new Point(12, 4), new Point(4, 12), new Point(12, 4), new Point(4, 12) };
 
-        public EnemySpear(Map.Map map, Vector3 position, Vector2 velocity) : base(map)
+        public EnemySpear(Map.Map map, Vector3 position, Vector2 velocity, int direction) : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -67,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.ChangeState("idle");
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage });
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });

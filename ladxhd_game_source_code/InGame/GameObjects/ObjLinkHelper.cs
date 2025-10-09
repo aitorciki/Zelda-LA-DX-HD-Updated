@@ -8,9 +8,8 @@ namespace ProjectZ.InGame.GameObjects
 {
     public partial class ObjLink
     {
-        /// <summary>
-        /// Check if the box is colliding with a destroyable wall
-        /// </summary>
+        private int ReverseDirection(int direction) => (direction + 2) % 4;
+
         private bool DestroyableWall(Box box)
         {
             _destroyableWallList.Clear();
@@ -26,15 +25,9 @@ namespace ProjectZ.InGame.GameObjects
                     return true;
                 }
             }
-
             return false;
         }
 
-        /// <summary>
-        /// Get the direction with a tolerance in the current direction
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <returns></returns>
         private int ToDirection(Vector2 direction)
         {
             // Fail safe in case the impossible happens.

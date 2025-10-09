@@ -139,7 +139,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                         var shot = new EnemySpear(Map, new Vector3(
                             EntityPosition.X + _shotOffset[_direction].X,
                             EntityPosition.Y + _shotOffset[_direction].Y, 3),
-                            AnimationHelper.DirectionOffset[_direction] * 2f);
+                            AnimationHelper.DirectionOffset[_direction] * 2f,
+                            _direction);
                         Map.Objects.SpawnObject(shot);
                     }
                 }

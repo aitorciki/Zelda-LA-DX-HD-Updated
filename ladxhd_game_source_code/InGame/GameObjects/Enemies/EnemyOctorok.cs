@@ -130,7 +130,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     var shot = new EnemyOctorokShot(Map,
                         EntityPosition.X + _shotOffset[_direction].X,
                         EntityPosition.Y + _shotOffset[_direction].Y,
-                        AnimationHelper.DirectionOffset[_direction] * 2f);
+                        AnimationHelper.DirectionOffset[_direction] * 2f,
+                        _direction);
                     Map.Objects.SpawnObject(shot);
                 }
             }

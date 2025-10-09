@@ -1326,9 +1326,6 @@ namespace ProjectZ.InGame.GameObjects
 
                 int index = GameSettings.SwapButtons ? 0 : 1;
 
-                System.Diagnostics.Debug.WriteLine(index);
-                System.Diagnostics.Debug.WriteLine(Game1.GameManager.Equipment[index].Name);
-
                 if (Game1.GameManager.Equipment[index] != null &&
                     (Game1.GameManager.Equipment[index].Name == "shovel" ||
                      Game1.GameManager.Equipment[index].Name == "feather" ||
@@ -3269,11 +3266,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _)       => ( -6, -17, -2, +2),
-                (2, _)       => (-11, -13, +2, -4),
-                (3, true)    => ( -5, -17, -2, +2),
-                (3, false)   => ( -6, -17, -2, +2),
-                (_, _)       => ( -5, -13, +2, -4),
+                (1, _)       => ( -9, -18, +4, +2), // Up
+                (2, _)       => (-11, -16, +4, +2), // Right
+                (3, true)    => ( -8, -18, +4, +3), // Down (Mirror Shield)
+                (3, false)   => ( -9, -18, +4, +3), // Down
+                (_, _)       => ( -7, -16, +4, +2), // Left
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
@@ -4378,7 +4375,7 @@ namespace ProjectZ.InGame.GameObjects
                 UpdateAnimation();
         }
 
-        private bool WasBlocked(Box box, RectangleF boxRect, Vector2 boxCenter, Vector2 bodyCenter, Vector2 direction)
+        private bool WasBlocked(Box box, RectangleF boxRect, Vector2 boxCenter, Vector2 bodyCenter, int direction)
         {
             // Get the difference between the centers.
             Vector2 delta = bodyCenter - boxCenter;
@@ -4389,13 +4386,14 @@ namespace ProjectZ.InGame.GameObjects
             // A check to see if the two boxes are colliding.
             bool inside = Math.Abs(delta.X) <= halfW && Math.Abs(delta.Y) <= halfH;
 
-            // Get the opposite direction 
-            bool facingDir = (Direction == ToDirection(-direction));
+            // Get the opposite direction.
+            bool facingDir = Direction == ReverseDirection(direction);
 
-            return !inside && facingDir || box.Intersects(shieldBox);
+            // If everything passes, it's a block.
+            return (!inside || box.Intersects(shieldBox)) && facingDir ;
         }
 
-        public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f)
+        public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
         {
             // Get the box as a floats rectangle.
             RectangleF boxRect = box.Rectangle();
@@ -4404,28 +4402,35 @@ namespace ProjectZ.InGame.GameObjects
             Vector2 boxCenter = new Vector2(boxRect.X + boxRect.Width / 2f, boxRect.Y + boxRect.Height / 2f);;
             Vector2 bodyCenter = BodyRectangle.Center;
             Vector2 boxDir = bodyCenter - boxCenter;
-            Vector2 direction;
+            Vector2 vecDirection;
+            int intDirection;
 
             // Get the intersecting rectangle.
             RectangleF intersection = BodyRectangle.GetIntersection(box.Rectangle());
 
             // If the rectangle isn't empty then use the box to calculate the direction.
             if (intersection.Width <= 0 || intersection.Height <= 0)
-                direction = boxDir;
+                vecDirection = boxDir;
             else
             {
                 Vector2 interCenter = new Vector2(intersection.X + intersection.Width / 2f, intersection.Y + intersection.Height / 2f);
-                direction = bodyCenter - interCenter;
+                vecDirection = bodyCenter - interCenter;
             }
             // Normalize the direction vector.
-            if (direction.LengthSquared() > 0.000001f)
-                direction.Normalize();
+            if (vecDirection.LengthSquared() > 0.000001f)
+                vecDirection.Normalize();
+
+            // If the direction was passed use that. Otherwise calculate it.
+            if (missileDir >= 0)
+                intDirection = missileDir;
+            else
+                intDirection = ToDirection(vecDirection);
 
             // Check if it's a projectile that was successfully blocked.
-            bool blocked = WasBlocked(box, boxRect, boxCenter, bodyCenter, direction);
+            bool blocked = WasBlocked(box, boxRect, boxCenter, bodyCenter, intDirection);
 
             // Try to damage the player.
-            return HitPlayer(direction * pushMultiplier, type, damage, blocked);
+            return HitPlayer(vecDirection * pushMultiplier, type, damage, blocked);
         }
 
         public bool HitPlayer(Vector2 direction, HitType type, int damage, bool blocked, int damageCooldown = CooldownTime)

@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public float PushMultiplier = 1.75f;
         public int Strength;
+        public int Direction = -1;
         public bool IsActive = true;
 
         public DamageFieldComponent(CBox collisionBox, HitType damageType, int damageStrength)
@@ -33,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public bool DamagePlayer()
         {
-            var damagedPlayer = MapManager.ObjLink.HitPlayer(CollisionBox.Box, DamageType, Strength, PushMultiplier);
+            var damagedPlayer = MapManager.ObjLink.HitPlayer(CollisionBox.Box, DamageType, Strength, PushMultiplier, Direction);
             if (damagedPlayer && OnDamagedPlayer != null)
                 OnDamagedPlayer();
 
