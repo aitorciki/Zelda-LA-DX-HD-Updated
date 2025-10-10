@@ -1233,6 +1233,7 @@ namespace ProjectZ.InGame.GameObjects
             var moveValue = Game1.GameManager.SaveManager.GetString("link_move");
             if (!string.IsNullOrEmpty(moveValue))
             {
+                CurrentState = State.Idle;
                 _bootsHolding = false;
                 _bootsRunning = false;
 
