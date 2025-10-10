@@ -136,7 +136,7 @@ namespace ProjectZ.InGame.GameObjects.Base
             if (newComponent is InteractComponent)
             {
                 var interactionComponent = (InteractComponent)newComponent;
-                var box = interactionComponent.BoxInteractabel.Box;
+                var box = interactionComponent.BoxInteractable.Box;
                 Debug.Assert(EntityPosition.X + EntitySize.X <= box.X);
                 Debug.Assert(EntityPosition.Y + EntitySize.Y <= box.Y);
                 Debug.Assert(box.Right <= EntityPosition.X + EntitySize.X + EntitySize.Width);

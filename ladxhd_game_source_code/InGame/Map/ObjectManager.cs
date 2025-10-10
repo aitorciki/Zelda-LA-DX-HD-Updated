@@ -540,7 +540,7 @@ namespace ProjectZ.InGame.Map
                     foreach (var drawTile in db_damageList)
                     {
                         var pushableComponent = drawTile.Components[InteractComponent.Index] as InteractComponent;
-                        DrawRectangle(spriteBatch, pushableComponent.BoxInteractabel.Box.Rectangle(), Color.Aqua);
+                        DrawRectangle(spriteBatch, pushableComponent.BoxInteractable.Box.Rectangle(), Color.Aqua);
                     }
                 }
 
@@ -1041,8 +1041,15 @@ namespace ProjectZ.InGame.Map
                 if (!gameObject.IsActive)
                     continue;
 
+                // Add a workaround if it's Tarin in raccoon form and powder is equipped: don't interact and instead use the powder.
+                if (gameObject.GetType() == typeof(ObjRaccoon))
+                {
+                    int index = GameSettings.SwapButtons ? 1 : 0;
+                    if (Game1.GameManager.Equipment[index] != null && Game1.GameManager.Equipment[index].Name == "powder")
+                        return false;
+                }
                 var component = gameObject.Components[InteractComponent.Index] as InteractComponent;
-                if (component.IsActive && component.BoxInteractabel.Box.Intersects(box) && component.InteractFunction())
+                if (component.IsActive && component.BoxInteractable.Box.Intersects(box) && component.InteractFunction())
                     return true;
             }
 

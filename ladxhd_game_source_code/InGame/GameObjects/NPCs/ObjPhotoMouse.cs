@@ -262,7 +262,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _photoMode = photoMode == "1";
                 _blockedExit = true;
-                _interactComponent.BoxInteractabel = Body.BodyBox;
+                _interactComponent.BoxInteractable = Body.BodyBox;
             }
 
             var photoFlash = Game1.GameManager.SaveManager.GetString("photo_flash");

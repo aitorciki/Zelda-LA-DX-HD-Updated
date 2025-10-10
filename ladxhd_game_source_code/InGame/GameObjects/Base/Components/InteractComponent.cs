@@ -12,11 +12,11 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public delegate bool InteractTemplate();
         public InteractTemplate InteractFunction;
 
-        public CBox BoxInteractabel;
-        
+        public CBox BoxInteractable;
+
         public InteractComponent(CBox box, InteractTemplate interactFunction)
         {
-            BoxInteractabel = box;
+            BoxInteractable = box;
             InteractFunction = interactFunction;
         }
     }

@@ -2521,13 +2521,11 @@ namespace ProjectZ.InGame.GameObjects
             if (!_isLocked)
             {
                 // interact with object
-                if ((CurrentState == State.Idle || 
-                    CurrentState == State.Pushing || 
-                    CurrentState == State.Swimming || 
-                    CurrentState == State.CarryingItem) &&
+                if ((CurrentState == State.Idle || CurrentState == State.Pushing || CurrentState == State.Swimming || CurrentState == State.CarryingItem) &&
                     ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) && InteractWithObject())
+                {
                     InputHandler.ResetInputState();
-
+                }
                 if (_isTrapped && !_trappedDisableItems &&
                     (ControlHandler.ButtonPressed(CButtons.A) ||
                      ControlHandler.ButtonPressed(CButtons.B) ||
