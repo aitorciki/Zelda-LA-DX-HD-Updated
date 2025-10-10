@@ -2525,6 +2525,7 @@ namespace ProjectZ.InGame.GameObjects
                     ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) && InteractWithObject())
                 {
                     InputHandler.ResetInputState();
+                    return;
                 }
                 if (_isTrapped && !_trappedDisableItems &&
                     (ControlHandler.ButtonPressed(CButtons.A) ||
