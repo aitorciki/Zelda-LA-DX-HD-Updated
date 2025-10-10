@@ -1233,6 +1233,9 @@ namespace ProjectZ.InGame.GameObjects
             var moveValue = Game1.GameManager.SaveManager.GetString("link_move");
             if (!string.IsNullOrEmpty(moveValue))
             {
+                _bootsHolding = false;
+                _bootsRunning = false;
+
                 var split = moveValue.Split(',');
                 var directionX = float.Parse(split[0], CultureInfo.InvariantCulture);
                 var directionY = float.Parse(split[1], CultureInfo.InvariantCulture);
