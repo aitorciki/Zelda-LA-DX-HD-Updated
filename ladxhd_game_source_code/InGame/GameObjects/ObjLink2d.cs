@@ -452,6 +452,10 @@ namespace ProjectZ.InGame.GameObjects
                 else if (CurrentState == State.Drowning)
                     Animation.Play(_drownCounter > 300 ? "swim_" + _swimDirection : "dive");
             }
+            // Force a direction from analog stick movement.
+            Vector2 moveVector = ControlHandler.GetMoveVector2();
+            if (moveVector != Vector2.Zero)
+                Direction = AnimationHelper.GetDirection(moveVector);
         }
 
         private void UpdateWalking2D()
