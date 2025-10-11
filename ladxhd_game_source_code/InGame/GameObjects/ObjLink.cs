@@ -2502,7 +2502,6 @@ namespace ProjectZ.InGame.GameObjects
                 EntityPosition.Set(newResetPosition);
             }
             HoleFalling = false;
-            System.Diagnostics.Debug.WriteLine("HOLE END");
         }
 
         private bool InteractWithObject()
