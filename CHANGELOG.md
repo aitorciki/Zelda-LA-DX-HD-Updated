@@ -1,5 +1,16 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.7**
+### **Vanilla Fixes & The Skip Dialog Update**
+  * Allow skipping dialog with Redux option "Enable Dialog Skip". When enabled, press "Start" to skip a dialog box.
+  * When sprinkling magic powder on Tarin in raccoon form, prefer the powder item over interaction if they share "confirm" button.
+  * Support custom lighting of maps through a mod file named "ObjDungeonBlacker.lahdmod" when placed in "Data\Mods" folder.
+  * Followers will no longer prevent Link from trying to go up to the egg before Level 8 is finished.
+  * Fix being able to force through to the egg when followers attempt to prevent Link from approaching it.
+  * Fix Link trying to use the Shield or Pegasus boots if equipped on the "confirm" button and interacting with an object.
+  * Fix spawning inside some doors when falling down a hole and the reset point was inside the door.
+  * Fix a room in Dungeon 8 that should have been a dark room with torches but was fully lit up.
+
 ## **v1.3.6**
 ### **The Perfect Shield Update**
   * Add updated Spanish translations by [IPeluchito](https://github.com/IPeluchito).
