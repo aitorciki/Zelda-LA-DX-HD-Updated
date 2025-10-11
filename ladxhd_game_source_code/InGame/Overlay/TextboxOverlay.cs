@@ -246,13 +246,18 @@ namespace ProjectZ.InGame.Overlay
                     _textScrolling = false;
                     _scrollCounter = 0;
                 }
-
                 return;
             }
+            var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton);
+            var startPressed = ControlHandler.ButtonPressed(CButtons.Start);
 
-            if (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
+            if (startPressed && GameSettings.DialogSkip)
             {
-                // close the dialog box
+                _end = true;
+                _running = false;
+            }
+            if (confirmPressed || startPressed)
+            {
                 if (_end)
                 {
                     OwlMode = false;
@@ -268,7 +273,6 @@ namespace ProjectZ.InGame.Overlay
                 }
                 else
                 {
-                    // start next box
                     if (!_running)
                     {
                         _textMult = 1;
@@ -286,16 +290,13 @@ namespace ProjectZ.InGame.Overlay
                         }
                         // continue scrolling the text up
                         else
-                        {
                             _currentLineAddition = 0;
-                        }
                     }
                     // jump to end
                     else
-                    {
                         _textMult = 4;
-                    }
                 }
+
             }
 
             // scroll text
@@ -312,9 +313,7 @@ namespace ProjectZ.InGame.Overlay
             }
 
             if (updated)
-            {
                 _strDialog = _strFullText.Substring(_currentState, _currentDialogCount);
-            }
 
             if (_running && _currentState + _currentDialogCount >= _strFullText.Length)
             {

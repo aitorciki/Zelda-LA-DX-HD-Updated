@@ -37,6 +37,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
             GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
             GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
+            GameSettings.DialogSkip = saveManager.GetBool("DialogSkip", GameSettings.DialogSkip);
             GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
             GameSettings.PhotosColor = saveManager.GetBool("PhotosColor", GameSettings.PhotosColor);
@@ -82,6 +83,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("MenuBorder", GameSettings.MenuBorder);
             saveManager.SetBool("VarWidthFont", GameSettings.VarWidthFont);
             saveManager.SetBool("NoHelperText", GameSettings.NoHelperText);
+            saveManager.SetBool("DialogSkip", GameSettings.DialogSkip);
             saveManager.SetBool("Uncensored", GameSettings.Uncensored);
             saveManager.SetBool("Unmissables", GameSettings.Unmissables);
             saveManager.SetBool("PhotosColor", GameSettings.PhotosColor);
