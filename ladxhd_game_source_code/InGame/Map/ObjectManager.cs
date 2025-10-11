@@ -1035,6 +1035,7 @@ namespace ProjectZ.InGame.Map
             _interactableObjectList.Clear();
             _gameObjectPool.GetComponentList(_interactableObjectList, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, InteractComponent.Mask);
 
+
             // go through all the interactable objects and check for collision before interacting with them
             foreach (var gameObject in _interactableObjectList)
             {

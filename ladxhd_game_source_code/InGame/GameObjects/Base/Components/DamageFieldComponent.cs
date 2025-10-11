@@ -28,12 +28,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             CollisionBox = collisionBox;
             DamageType = damageType;
             Strength = damageStrength;
-
             OnDamage = DamagePlayer;
         }
 
         public bool DamagePlayer()
         {
+            if (MapManager.ObjLink.HoleFalling == true)
+                return false;
+
             var damagedPlayer = MapManager.ObjLink.HitPlayer(CollisionBox.Box, DamageType, Strength, PushMultiplier, Direction);
             if (damagedPlayer && OnDamagedPlayer != null)
                 OnDamagedPlayer();

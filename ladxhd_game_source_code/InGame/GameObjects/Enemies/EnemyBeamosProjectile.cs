@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -55,33 +56,37 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushType pushType)
         {
             if (pushType == PushType.Impact)
-                DeleteProjectile();
+                DeleteProjectile(true);
 
             return false;
         }
 
         private bool OnDamage()
         {
-            DeleteProjectile();
-
-            return _damageField.DamagePlayer();
+            // Don't show the spark if it hits Link falling down a hole.
+            bool didDamage = _damageField.DamagePlayer();
+            DeleteProjectile(didDamage);
+            return didDamage;
         }
 
         private void OnCollision(Values.BodyCollision collision)
         {
-            DeleteProjectile();
+            DeleteProjectile(true);
         }
 
-        private void DeleteProjectile()
+        private void DeleteProjectile(bool showParticle)
         {
             Map.Objects.DeleteObjects.Add(this);
 
             if (_isFirstProjectile)
             {
-                // spawn particle
-                var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/despawnParticle", "idle", true);
-                animation.EntityPosition.Set(EntityPosition.Position + _body.VelocityTarget * Game1.TimeMultiplier);
-                Map.Objects.SpawnObject(animation);
+                // Spawn particles unless link is falling down a hole.
+                if (showParticle)
+                {
+                    var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/despawnParticle", "idle", true);
+                    animation.EntityPosition.Set(EntityPosition.Position + _body.VelocityTarget * Game1.TimeMultiplier);
+                    Map.Objects.SpawnObject(animation);
+                }
             }
         }
     }

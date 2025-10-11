@@ -10,8 +10,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 {
     internal class ObjDungeonDoor : GameObject
     {
-        private enum DoorStates { Opening, Closing, Open, Closed }
-        private DoorStates _currentState;
+        public enum DoorStates { Opening, Closing, Open, Closed }
+        public DoorStates _currentState;
 
         private readonly BoxCollisionComponent _collisionComponent;
         private readonly Rectangle _sourceRectangle;

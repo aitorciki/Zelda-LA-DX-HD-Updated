@@ -130,8 +130,10 @@ namespace ProjectZ.InGame.GameObjects
         private double _fallEntryCounter;
 
         // hole stuff
+        public bool HoleFalling;
         private Vector2 _holeResetPoint;
         private float _holeResetPointZ;
+        private int _holeResetDirection;
         private Vector3 _alternativeHoleResetPosition; // map change on hole fall
         public string HoleResetRoom;
         public string HoleResetEntryId;
@@ -788,7 +790,6 @@ namespace ProjectZ.InGame.GameObjects
                         SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
                     }
                 }
-
                 _spriteTransparency = percentage;
                 _shadowComponent.Transparency = percentage;
             }
@@ -809,7 +810,6 @@ namespace ProjectZ.InGame.GameObjects
                 if (_stunnedCounter <= 0)
                     CurrentState = State.Idle;
             }
-
             AnimatorWeapons.Update();
 
             // update all the item stuff
@@ -1147,7 +1147,6 @@ namespace ProjectZ.InGame.GameObjects
                 }
                 transparency = time / 100;
             }
-
             position += direction * time * 0.02f + new Vector2(-direction.X, direction.Y) * (float)Math.Sin(time * 0.015) * 0.75f;
             position += new Vector2(
                 -_noteSourceRectangles[_noteSpriteIndex[noteIndex]].Width / 2f,
@@ -1929,6 +1928,7 @@ namespace ProjectZ.InGame.GameObjects
                     if (_holeFallCounter <= 0)
                     {
                         _isFallingIntoHole = false;
+                        _body.IsActive = true;
 
                         if (HoleResetRoom != null)
                         {
@@ -2382,6 +2382,7 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     _holeResetPoint  = newResetPosition;
                     _holeResetPointZ = newResetPositionZ;
+                    _holeResetDirection = AnimationHelper.GetDirection(ControlHandler.GetMoveVector2());
                 }
             }
         }
@@ -2397,6 +2398,7 @@ namespace ProjectZ.InGame.GameObjects
         {
             _holeResetPoint  = newResetPosition;
             _holeResetPointZ = EntityPosition.Z;
+            _holeResetDirection = AnimationHelper.GetDirection(ControlHandler.GetMoveVector2());
 
             var offset = Map != null ? new Point(Map.MapOffsetX, Map.MapOffsetY) : Point.Zero;
             _lastTilePosition = new Point(((int)newResetPosition.X - offset.X * 16) / 160, ((int)newResetPosition.Y - offset.Y * 16) / 128);
@@ -2451,8 +2453,43 @@ namespace ProjectZ.InGame.GameObjects
 
         private void MoveToHoleResetPosition()
         {
-            Vector3 newResetPosition = new Vector3(_holeResetPoint.X, _holeResetPoint.Y, _holeResetPointZ);
+            // Default position offsets to zero.
+            int OffsetX = 0;
+            int OffsetY = 0;
 
+            // A list to search for a door that may cover the respawn point.
+            List<GameObject> _dDoorCheck = new List<GameObject>();
+
+            Map.Objects.GetComponentList(_dDoorCheck,
+                (int)_holeResetPoint.X - 4, 
+                (int)_holeResetPoint.Y - 4, 
+                8, 8, CollisionComponent.Mask);
+
+            // Loop through the list and try to find a door.
+            foreach (var obj in _dDoorCheck)
+            {
+                // If we got something other than a door skip it.
+                if (obj is not ObjDungeonDoor dDoor) continue;
+
+                string dDoorState = dDoor._currentState.ToString();
+
+                // See if a door has closed on the respawn point.
+                if (dDoorState == "Closed")
+                {
+                    // Set the respawn position offset.
+                    (OffsetX, OffsetY) = _holeResetDirection switch
+                    {
+                        0 => (-16, 0),
+                        1 => (0, -16),
+                        2 => (16, 0),
+                        3 => (0, 26),
+                        _ => (0, 0)
+                    };
+                    break;
+                }
+            }
+            // Create the respawn point and move Link to it.
+            Vector3 newResetPosition = new Vector3(_holeResetPoint.X + OffsetX, _holeResetPoint.Y + OffsetY, _holeResetPointZ);
             WasHoleReset = true;
             EntityPosition.Set(newResetPosition);
 
@@ -2464,6 +2501,8 @@ namespace ProjectZ.InGame.GameObjects
                 newResetPosition = new Vector3(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y, _alternativeHoleResetPosition.Z);
                 EntityPosition.Set(newResetPosition);
             }
+            HoleFalling = false;
+            System.Diagnostics.Debug.WriteLine("HOLE END");
         }
 
         private bool InteractWithObject()
@@ -3978,6 +4017,8 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             CurrentState = State.Falling;
+            _body.IsActive = false;
+            HoleFalling = true;
 
             FreeTrappedPlayer();
             ReleaseCarriedObject();
@@ -4036,7 +4077,6 @@ namespace ProjectZ.InGame.GameObjects
         {
             _carriedComponent.IsPickedUp = false;
             _carriedComponent = null;
-
             _carriedGameObject = null;
 
             if (_carriedObjDrawComp != null)
