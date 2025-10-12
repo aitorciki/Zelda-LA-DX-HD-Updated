@@ -332,6 +332,7 @@ namespace ProjectZ.InGame.Screens
                 {
                     Game1.GameManager.SetMusic(12, 0);
 
+                    _strandFadeCount = 0;
                     _cameraState = 0;
                     _cameraCenter = new Vector2(0, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
                     _cameraStart = _cameraCenter;
