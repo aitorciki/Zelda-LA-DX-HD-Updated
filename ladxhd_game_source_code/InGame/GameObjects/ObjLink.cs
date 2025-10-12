@@ -1401,6 +1401,7 @@ namespace ProjectZ.InGame.GameObjects
                 var itemMarin = new GameItemCollected("marin") { Count = 1 };
                 PickUpItem(itemMarin, false, false, true);
                 _objMaria = objMarin;
+                _objFollower = _objMaria;
                 _objMaria.TakeLastWalk();
             }
         }
