@@ -819,8 +819,7 @@ namespace ProjectZ.InGame.Map
             }
         }
 
-        public void GetComponentList(List<GameObject> gameObjectList,
-            int recLeft, int recTop, int recWidth, int recHeight, int componentMask)
+        public void GetComponentList(List<GameObject> gameObjectList, int recLeft, int recTop, int recWidth, int recHeight, int componentMask)
         {
             _gameObjectPool.GetComponentList(gameObjectList, recLeft, recTop, recWidth, recHeight, componentMask);
         }

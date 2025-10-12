@@ -351,19 +351,17 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             var objects = Game1.GameManager.MapManager.CurrentMap.Objects;
 
             // Find objects within the same tile as where Link hit the ground.
-            objects.GetComponentList(_dropList,
-                (int)linkPos.X - 8, (int)linkPos.Y - 8, 16, 16, 
-                CollisionComponent.Mask);
+            _dropList.Clear();
+            objects.GetObjectsOfType(_dropList, typeof(ObjHole), (int)linkPos.X - 4, (int)linkPos.Y - 4, 8, 8);
+            objects.GetObjectsOfType(_dropList, typeof(ObjOverworldTeleporter), (int)linkPos.X - 4, (int)linkPos.Y - 4, 8, 8);
 
             // For now at least, we are only looking when landing on a hole.
             foreach (var hole in _dropList) 
             {
                 if (hole is ObjHole objHole)
-                    _onHole = body.BodyBox.Box.Intersects(objHole.collisionBox.Box);
+                    _onHole = objHole.IsActive && body.BodyBox.Box.Intersects(objHole.collisionBox.Box);
                 else if (hole is ObjOverworldTeleporter objTeleporter)
                     _onHole = body.BodyBox.Box.Intersects(objTeleporter.collisionBox.Box);
-                else
-                    continue;
             }
             // The sound played depends on hitting land or water.
             if (!_onHole)
