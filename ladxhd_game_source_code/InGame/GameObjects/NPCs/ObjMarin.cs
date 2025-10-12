@@ -972,13 +972,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             DrawHelper.DrawNormalized(spriteBatch, _spriteNote, position, Color.White * transparency);
         }
 
-        public void TakeLastWalk()
-        {
-            IsActive = IsVisible = true;
-            IsHidden = false;
-            _currentState = States.FollowPlayer;
-        }
-
         public void SetFacingDirection(ObjMarin marinObj, int direction)
         {
             marinObj._animator.Play("stand_" + direction);

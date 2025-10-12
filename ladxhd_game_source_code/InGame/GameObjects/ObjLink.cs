@@ -1390,19 +1390,14 @@ namespace ProjectZ.InGame.GameObjects
             if (borrowMarin == "0")
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_marin");
-                var objItem = new ObjObjectSpawner(Map, 368, 1216, "maria_state", "7", "maria", null, true);
-                Map.Objects.SpawnObject(objItem);
+                _objFollower = _objMaria = null;
             }
             else if (borrowMarin == "1")
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_marin");
-                var Marin = Map.Objects.GetObjectOfType((int)EntityPosition.X, (int)EntityPosition.Y, 48, 48, typeof(ObjMarin));
-                ObjMarin objMarin = (ObjMarin)(Marin);
                 var itemMarin = new GameItemCollected("marin") { Count = 1 };
                 PickUpItem(itemMarin, false, false, true);
-                _objMaria = objMarin;
-                _objFollower = _objMaria;
-                _objMaria.TakeLastWalk();
+                SpawnMarin();
             }
         }
 
@@ -4096,6 +4091,17 @@ namespace ProjectZ.InGame.GameObjects
             };
         }
 
+        private void SpawnMarin()
+        {
+            Vector2 offset = GetMarinSpawnOffset(Direction, 13f);
+            Vector2 marinSpawnPos = new Vector2(_body.Position.X, _body.Position.Y) + offset;
+            _objMaria = new ObjMarin(Map, (int)EntityPosition.X, (int)EntityPosition.Y);
+            Map.Objects.SpawnObject(_objMaria);
+            _objMaria.SetPosition(marinSpawnPos);
+            _objMaria.SetFacingDirection(_objMaria, Direction);
+            _objFollower = _objMaria;
+        }
+
         private void UpdateFollower(bool mapInit)
         {
             var hasFollower = false;
@@ -4109,13 +4115,7 @@ namespace ProjectZ.InGame.GameObjects
                 // leaving a dungeon and she's currently waiting for Link to come out. So in that case, don't run this code, use the backup path.
                 if (_objFollower == null && !_objMaria._dungeonLeaveSequence)
                 {
-                    Vector2 offset = GetMarinSpawnOffset(Direction, 13f);
-                    Vector2 marinSpawnPos = new Vector2(_body.Position.X, _body.Position.Y) + offset;
-                    _objMaria = new ObjMarin(Map, (int)EntityPosition.X, (int)EntityPosition.Y);
-                    Map.Objects.SpawnObject(_objMaria);
-                    _objMaria.SetFacingDirection(_objMaria, Direction);
-                    _objMaria.SetPosition(marinSpawnPos);
-                    _objFollower = _objMaria;
+                    SpawnMarin();
                 }
                 else
                 {
