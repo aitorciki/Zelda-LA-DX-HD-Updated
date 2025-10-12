@@ -30,6 +30,10 @@ namespace ProjectZ.InGame.Pages
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
+            if (ControlHandler.ButtonPressed(CButtons.Up)  | ControlHandler.ButtonDown(CButtons.Up) || 
+                ControlHandler.ButtonPressed(CButtons.Down) || ControlHandler.ButtonDown(CButtons.Down))
+                return;
+
             base.Update(pressedButtons, gameTime);
 
             if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
