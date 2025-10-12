@@ -177,9 +177,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             _aiComponent.States.Add("holeFall", stateHoleFall);
             _aiComponent.ChangeState("idle");
 
-            // we make the collision box a little bit bigger; this is used for the genie where the heart can technically spawn inside the lamp
-            // with the little extra size the heart will still be collectable
+            // Use the size of the rectangle for the height unless it exceeds 12 pixels.
             var height = Math.Min(_sourceRectangle.Height, 12);
+
+            // Guardian acorn and rupees are two special cases where we want height to
+            // exceed 12 pixels for sword collection purposes.
+            if (_item.Name == "guardianAcorn")
+                height = 16;
+            else if (_item.Name == "ruby")
+                height = 14;
+
             _collectionRectangle = new CRectangle(EntityPosition,
                 new Rectangle(
                     -_sourceRectangle.Width / 2 - 1, -height,
@@ -193,10 +200,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(_collectionRectangle, OnCollision));
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(box, Values.CollisionTypes.Item));
 
-            // item can be collected by hitting it
+            // Collect item with the sword by adding a hit component to the item. Guardian
+            // Acorn and Piece of Power "ShowAnimation" is 1 so we need to add as special cases.
             if (_item.ShowAnimation == 0 || _item.Name == "guardianAcorn" || _item.Name == "pieceOfPower")
+            {
                 AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
-
+            }
             _shadowComponent = new DrawShadowSpriteComponent(
                 Resources.SprShadow, EntityPosition, _shadowSourceRectangle,
                 new Vector2(-_sourceRectangle.Width / 2 - 1, -_sourceRectangle.Width / 4 - 2), 1.0f, 0.0f);
@@ -425,12 +434,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_isFlying && MapManager.ObjLink.EntityPosition.Z < 7)
                 return;
 
-            // do not collect the item while the player is not grounded
-            if (_item.ShowAnimation != 0 &&
-                (!Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded ||
-                 Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded && !MapManager.ObjLink.IsInWater2D()))
+            // Do not collect the item while the player is jumping. Once again we need a special case for 
+            // Guardian Acorn and Piece of Power as they could be collected while jumping in the original game.
+            if (_item.ShowAnimation != 0 && _item.Name != "guardianAcorn" && _item.Name != "pieceOfPower" &&
+                ((!Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded) || (Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded && !MapManager.ObjLink.IsInWater2D())))
+            {
                 return;
-
+            }
             Collected = true;
             _body.IsActive = false;
             _bodyDrawComponent.WaterOutline = false;
