@@ -1,5 +1,9 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.8**
+### **Holes are not Cheat Codes Update**
+  * Fix a bug where falling down a hole could make the player invincible, including overworld portals.
+
 ## **v1.3.7**
 ### **Vanilla Fixes & The Skip Dialog Update**
   * Allow skipping dialog with Redux option "Enable Dialog Skip". When enabled, press "Start" to skip a dialog box.
