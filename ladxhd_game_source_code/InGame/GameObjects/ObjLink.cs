@@ -443,7 +443,7 @@ namespace ProjectZ.InGame.GameObjects
 
             CollisionBoxSize = new Point(8, 8);
 
-            _body = new BodyComponent(EntityPosition, -4, -10, 8, 10, 8)
+            _body = new BodyComponent(EntityPosition, -4, -10, 8, 10, 16)
             {
                 IsPusher = true,
                 IsSlider = true,
@@ -3369,9 +3369,9 @@ namespace ProjectZ.InGame.GameObjects
                 var damageOrigin = BodyRectangle.Center;
                 SwordDamageBox = new Box(
                     collisionRectangle.X + EntityPosition.X + _animationOffsetX,
-                    collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
+                    collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, -8,
                     collisionRectangle.Width,
-                    collisionRectangle.Height, 4);
+                    collisionRectangle.Height, 16);
 
                 var hitType = Game1.GameManager.SwordLevel == 1 ? HitType.Sword1 : HitType.Sword2;
                 var damage = Game1.GameManager.SwordLevel == 1 ? 1 : 2;
@@ -3485,9 +3485,9 @@ namespace ProjectZ.InGame.GameObjects
             }
             SwordDamageBox = new Box(
                 collisionRectangle.X + EntityPosition.X + _animationOffsetX,
-                collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
+                collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, -8,
                 collisionRectangle.Width,
-                collisionRectangle.Height, 4);
+                collisionRectangle.Height, 16);
 
             var hitType = _bootsRunning ? HitType.PegasusBootsSword :
                 (Game1.GameManager.SwordLevel == 1 ? HitType.Sword1 : HitType.Sword2);

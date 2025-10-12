@@ -180,6 +180,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             // we make the collision box a little bit bigger; this is used for the genie where the heart can technically spawn inside the lamp
             // with the little extra size the heart will still be collectable
             var height = Math.Min(_sourceRectangle.Height, 12);
+
+            if (_item.Name == "guardianAcorn")
+                height = 16;
+            else if (_item.Name == "pieceOfPower" || _item.Name == "ruby")
+                height = 14;
+
             _collectionRectangle = new CRectangle(EntityPosition,
                 new Rectangle(
                     -_sourceRectangle.Width / 2 - 1, -height,
@@ -195,8 +201,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // item can be collected by hitting it
             if (_item.ShowAnimation == 0 || _item.Name == "guardianAcorn" || _item.Name == "pieceOfPower")
-                AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
+            {
+                System.Diagnostics.Debug.WriteLine(height);
+                System.Diagnostics.Debug.WriteLine(EntityPosition.Position);
+                System.Diagnostics.Debug.WriteLine(box.Box.Width);
+                System.Diagnostics.Debug.WriteLine(box.Box.Height);
+                System.Diagnostics.Debug.WriteLine(box.Box.Depth);
+                System.Diagnostics.Debug.WriteLine(box.OffsetZ);
 
+                AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
+            }
             _shadowComponent = new DrawShadowSpriteComponent(
                 Resources.SprShadow, EntityPosition, _shadowSourceRectangle,
                 new Vector2(-_sourceRectangle.Width / 2 - 1, -_sourceRectangle.Width / 4 - 2), 1.0f, 0.0f);
@@ -426,7 +440,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             // do not collect the item while the player is not grounded
-            if (_item.ShowAnimation != 0 &&
+            if (_item.ShowAnimation != 0 && _item.Name != "guardianAcorn" && _item.Name != "pieceOfPower" &&
                 (!Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded ||
                  Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded && !MapManager.ObjLink.IsInWater2D()))
                 return;
