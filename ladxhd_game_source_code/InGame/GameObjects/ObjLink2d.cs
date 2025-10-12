@@ -17,14 +17,14 @@ namespace ProjectZ.InGame.GameObjects
         private bool Is2DMode;
 
         // swim stuff
-        private const float MaxSwimSpeed2D = 0.65f; // speed in the original is 0.5f
+        private float MaxSwimSpeed2D = 0.50f;
         private float _swimAnimationMult;
         private int _swimDirection;
         private bool _inWater;
         private bool _wasInWater;
 
         // climb stuff
-        private const float ClimbSpeed = 0.7f;
+        private float ClimbSpeed = 0.7f;
         private bool _isClimbing;
         private bool _wasClimbing;
         private bool _tryClimbing;

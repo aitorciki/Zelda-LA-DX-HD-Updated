@@ -81,8 +81,8 @@ namespace ProjectZ.InGame.GameObjects
         float WalkSpeed = 1.0f;
         float WalkSpeedPoP = 1.25f;
         float BootsRunningSpeed = 2.0f;
-        private const float SwimSpeed = 0.5f;
-        private const float SwimSpeedA = 1.0f;
+        float SwimSpeed = 0.5f;
+        float SwimSpeedA = 1.0f;
 
         private float _currentWalkSpeed;
         private float _waterSoundCounter;
@@ -240,7 +240,7 @@ namespace ProjectZ.InGame.GameObjects
         private float _bootsCounter;
         private float _bootsRunTime = 500f;
         private float _bootsParticleTime = 120f;
-        private float _bootsMaxSpeed = 2f;
+        private float _bootsMaxSpeed = 2.0f;
         private int _bootsLastDirection;
         private bool _bootsRunJump;
 
@@ -288,7 +288,7 @@ namespace ProjectZ.InGame.GameObjects
         private double _hitParticleTime;
 
         private const float SwordChargeTime = 500;
-        private float _swordChargeCounter;
+        private float _swordChargeCounter = 100;
         private bool _swordPoked;
         private bool _stopCharging;
 
@@ -5467,10 +5467,20 @@ namespace ProjectZ.InGame.GameObjects
             float walkSpeedBase = 1.0f;
             float walkSpeedPoPBase = 1.25f;
             float bootsRunningSpeed = 2.0f;
+            float swimSpeed = 0.5f;
+            float swimSpeedA = 1.0f;
+            float bootsMaxSpeed = 2.0f;
+            float climbSpeed = 0.7f;
+            float maxSwimSpeed2D = 0.50f;
 
             WalkSpeed = walkSpeedBase + amount;
             WalkSpeedPoP = walkSpeedPoPBase + amount;
             BootsRunningSpeed = bootsRunningSpeed + amount;
+            SwimSpeed = swimSpeed + amount;
+            SwimSpeedA = swimSpeedA + amount;
+            _bootsMaxSpeed = bootsMaxSpeed + amount;
+            ClimbSpeed = climbSpeed + amount;
+            MaxSwimSpeed2D = maxSwimSpeed2D + amount;
         }
     }
 }
