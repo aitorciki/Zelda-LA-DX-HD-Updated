@@ -320,8 +320,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 if (_lastDirection != dir)
                 {
-                    // look at the player
-                    _animator.Play("stand_" + dir);
+                    var mariaState = Game1.GameManager.SaveManager.GetString("maria_state");
+
+                    // Play idle animation when facing forward except when at the beach.
+                    if (dir == 3 && mariaState != "3")
+                        _animator.Play("idle");
+                    else
+                        _animator.Play("stand_" + dir);
+
                     _lastDirection = dir;
                 }
             }
