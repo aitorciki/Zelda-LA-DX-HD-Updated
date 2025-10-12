@@ -3355,6 +3355,13 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
+        private Box GetSwordDamageBox(RectangleF collisionRectangle) => 
+            new Box(
+                collisionRectangle.X + EntityPosition.X + _animationOffsetX,
+                collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, -8,
+                collisionRectangle.Width,
+                collisionRectangle.Height, 16);
+
         private void UpdateCharging()
         {
             //  Keep the charging state until rail jump has finished.
@@ -3367,11 +3374,7 @@ namespace ProjectZ.InGame.GameObjects
                 // poke objects that walk into the sowrd
                 RectangleF collisionRectangle = AnimatorWeapons.CollisionRectangle;
                 var damageOrigin = BodyRectangle.Center;
-                SwordDamageBox = new Box(
-                    collisionRectangle.X + EntityPosition.X + _animationOffsetX,
-                    collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
-                    collisionRectangle.Width,
-                    collisionRectangle.Height, 4);
+                SwordDamageBox = GetSwordDamageBox(collisionRectangle);
 
                 var hitType = Game1.GameManager.SwordLevel == 1 ? HitType.Sword1 : HitType.Sword2;
                 var damage = Game1.GameManager.SwordLevel == 1 ? 1 : 2;
@@ -3477,17 +3480,14 @@ namespace ProjectZ.InGame.GameObjects
                 var frameState = (float)(AnimatorWeapons.FrameCounter / AnimatorWeapons.CurrentFrame.FrameTime);
                 var collisionRectangleNextFrame = AnimatorWeapons.GetCollisionBox(
                     AnimatorWeapons.CurrentAnimation.Frames[AnimatorWeapons.CurrentFrameIndex + 1]);
+
                 collisionRectangle = new RectangleF(
                     MathHelper.Lerp(collisionRectangle.X, collisionRectangleNextFrame.X, frameState),
                     MathHelper.Lerp(collisionRectangle.Y, collisionRectangleNextFrame.Y, frameState),
                     MathHelper.Lerp(collisionRectangle.Width, collisionRectangleNextFrame.Width, frameState),
                     MathHelper.Lerp(collisionRectangle.Height, collisionRectangleNextFrame.Height, frameState));
             }
-            SwordDamageBox = new Box(
-                collisionRectangle.X + EntityPosition.X + _animationOffsetX,
-                collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
-                collisionRectangle.Width,
-                collisionRectangle.Height, 4);
+            SwordDamageBox = GetSwordDamageBox(collisionRectangle);
 
             var hitType = _bootsRunning ? HitType.PegasusBootsSword :
                 (Game1.GameManager.SwordLevel == 1 ? HitType.Sword1 : HitType.Sword2);
