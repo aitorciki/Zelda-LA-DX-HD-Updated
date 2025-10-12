@@ -79,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             AddComponent(BodyComponent.Index, Body);
             // only the player should collide with the npc
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(Body, Values.CollisionTypes.Enemy | Values.CollisionTypes.PushIgnore));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore));
             if (!string.IsNullOrEmpty(_dialogId))
                 AddComponent(InteractComponent.Index, _interactionComponent = new InteractComponent(Body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
