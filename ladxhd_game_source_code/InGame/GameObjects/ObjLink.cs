@@ -1928,7 +1928,6 @@ namespace ProjectZ.InGame.GameObjects
                     if (_holeFallCounter <= 0)
                     {
                         _isFallingIntoHole = false;
-                        _body.IsActive = true;
 
                         if (HoleResetRoom != null)
                         {
@@ -4016,7 +4015,6 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             CurrentState = State.Falling;
-            _body.IsActive = false;
             HoleFalling = true;
 
             FreeTrappedPlayer();
