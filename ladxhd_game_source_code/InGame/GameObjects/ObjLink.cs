@@ -4957,6 +4957,8 @@ namespace ProjectZ.InGame.GameObjects
             var fallPositionV3 = new Vector3(newPosition.X, newPosition.Y, 128);
             EntityPosition.Set(fallPositionV3);
 
+            HoleFalling = false;
+
             if (_objFollower != null)
             {
                 var itemGhost = Game1.GameManager.GetItem("ghost");
@@ -5282,6 +5284,8 @@ namespace ProjectZ.InGame.GameObjects
                 UpdateAnimation2D();
             else
                 UpdateAnimation();
+
+            HoleFalling = false;
         }
 
         public void SetFollowerMapState(Map.Map map)
