@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.NPCs;
 using ProjectZ.InGame.Map;
 
 namespace ProjectZ.InGame.GameObjects.Things
@@ -30,14 +31,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             var linkPosition = MapManager.ObjLink.NextMapPositionStart.Value;
             if (_rectangle.Contains(new Point((int)linkPosition.X, (int)linkPosition.Y)))
             {
-                MapManager.ObjLink.GetMarin().LeaveDungeonSequence(EntityPosition.Position);
+                ObjMarin marin = MapManager.ObjLink.GetMarin();
+
+                if (marin != null)
+                    marin.LeaveDungeonSequence(EntityPosition.Position);
             }
         }
 
         private void Update()
         {
             if (MapManager.ObjLink.BodyRectangle.Intersects(_rectangle))
-                MapManager.ObjLink.GetMarin().EnterDungeonMessage = true;
+            {
+                ObjMarin marin = MapManager.ObjLink.GetMarin();
+
+                if (marin != null)
+                    marin.EnterDungeonMessage = true;
+            }
         }
     }
 }

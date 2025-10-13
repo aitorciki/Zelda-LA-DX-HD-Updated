@@ -144,11 +144,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void SetActive(bool isActive)
         {
+            IsActive = isActive;
             IsVisible = isActive;
             _isActive = isActive;
             _drawComponent.IsActive = isActive;
             _shadowCompnent.IsActive = isActive;
             _carriableCompnent.IsActive = isActive;
+            if (isActive)
+                ((DrawComponent)Components[DrawComponent.Index]).Layer = Values.LayerPlayer;
         }
 
         private void OnSongPlayed(int songIndex)
@@ -160,9 +163,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void Update()
         {
             // do not follow the player into dungeons
-            if (Map.DungeonMode && _isActive)
+            if (Map.DungeonMode)
                 SetActive(false);
-            if (!Map.DungeonMode && !_isActive)
+            if (!Map.DungeonMode)
                 SetActive(true);
 
             if (_freezePlayer)

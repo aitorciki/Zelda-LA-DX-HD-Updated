@@ -4116,13 +4116,10 @@ namespace ProjectZ.InGame.GameObjects
                 // so this isn't a problem. This code is also what works around the beach issue where she doesn't spawn. But, it doesn't work if
                 // leaving a dungeon and she's currently waiting for Link to come out. So in that case, don't run this code, use the backup path.
                 if (_objFollower == null && !_objMaria._dungeonLeaveSequence)
-                {
                     SpawnMarin();
-                }
                 else
-                {
                     _objFollower = _objMaria;
-                }
+
                 hasFollower = true;
             }
 
@@ -5309,7 +5306,9 @@ namespace ProjectZ.InGame.GameObjects
                 }
                 else
                 {
-                    _objFollower.IsActive = true;
+                    // Marin has her own method of respawning. Doing it this way breaks her dungeon transition.
+                    if (_objFollower != _objMaria)
+                        _objFollower.IsActive = true;
                 }
             }
         }
