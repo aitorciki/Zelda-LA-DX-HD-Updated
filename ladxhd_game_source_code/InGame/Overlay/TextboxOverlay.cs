@@ -248,7 +248,7 @@ namespace ProjectZ.InGame.Overlay
                 }
                 return;
             }
-            var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton);
+            var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) || ControlHandler.ButtonPressed(ControlHandler.CancelButton);
             var startPressed = ControlHandler.ButtonPressed(CButtons.Start);
 
             if (startPressed && GameSettings.DialogSkip)
