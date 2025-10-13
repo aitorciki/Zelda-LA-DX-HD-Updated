@@ -61,8 +61,10 @@ namespace ProjectZ.InGame.Interface
 
             if (ClickFunction != null)
             {
-                Game1.GameManager.PlaySoundEffect("D360-19-13");
-
+                if (InsideLabel?.Text != "Back" && InsideLabel?.Text != "Return to Game")
+                {
+                    Game1.GameManager.PlaySoundEffect("D360-19-13");
+                }
                 ClickFunction(this);
                 return InputEventReturn.Something;
             }

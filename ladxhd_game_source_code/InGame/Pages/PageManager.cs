@@ -210,7 +210,7 @@ namespace ProjectZ.InGame.Pages
             return ChangePage(nextPage, null);
         }
 
-        public void PopPage(Dictionary<string, object> intent = null, TransitionAnimation animationIn = TransitionAnimation.RightToLeft, TransitionAnimation animationOut = TransitionAnimation.RightToLeft)
+        public void PopPage(Dictionary<string, object> intent = null, TransitionAnimation animationIn = TransitionAnimation.RightToLeft, TransitionAnimation animationOut = TransitionAnimation.RightToLeft, bool SkipSound = false)
         {
             if (PageStack.Count <= 0)
                 return;
@@ -243,11 +243,14 @@ namespace ProjectZ.InGame.Pages
 
             // @HACK
             _transitionTime = _transitionInAnimation == TransitionAnimation.Fade ? TransitionFade : TransitionNormal;
+
+            if (!SkipSound)
+                Game1.GameManager.PlaySoundEffect("D360-18-12");
         }
 
         public void PopAllPages(TransitionAnimation animationIn = TransitionAnimation.RightToLeft, TransitionAnimation animationOut = TransitionAnimation.RightToLeft)
         {
-            PopPage(null, animationIn, animationOut);
+            PopPage(null, animationIn, animationOut, true);
 
             // remove everything but the current page
             if (PageStack.Count > 1)

@@ -374,7 +374,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             // Reset the variables for the next jump.
             _inAir = false;
             _onHole = false;
-            _dropList.Clear();
         }
 
         private Values.BodyCollision UpdateVelocityZ(BodyComponent body)

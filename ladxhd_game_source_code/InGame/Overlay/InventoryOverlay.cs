@@ -152,7 +152,6 @@ namespace ProjectZ.InGame.Overlay
 
                     Game1.GameManager.PlaySoundEffect("D360-10-0A");
                 }
-
                 _selectionButtonPressed = true;
             }
             else

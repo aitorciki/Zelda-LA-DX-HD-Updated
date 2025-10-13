@@ -134,6 +134,7 @@ namespace ProjectZ.InGame.Interface
 
                 NumberChanged?.Invoke(Start + CurrentStep);
 
+                Game1.GameManager.PlaySoundEffect("D360-10-0A");
                 return InputEventReturn.Something;
             }
 
@@ -148,6 +149,7 @@ namespace ProjectZ.InGame.Interface
 
                 NumberChanged?.Invoke(Start + CurrentStep);
                 
+                Game1.GameManager.PlaySoundEffect("D360-10-0A");
                 return InputEventReturn.Something;
             }
             

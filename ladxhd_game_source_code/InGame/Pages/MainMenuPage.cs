@@ -306,7 +306,7 @@ namespace ProjectZ.InGame.Pages
                 // change to the game screen
                 Game1.ScreenManager.ChangeScreen(Values.ScreenNameIntro);
                 // close the menu page
-                Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+                Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
             }
         }
 
@@ -365,7 +365,7 @@ namespace ProjectZ.InGame.Pages
                 // load the save
                 Game1.GameManager.LoadSaveFile(saveIndex);
                 // close the menu page
-                Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+                Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
             }
             else
             {
