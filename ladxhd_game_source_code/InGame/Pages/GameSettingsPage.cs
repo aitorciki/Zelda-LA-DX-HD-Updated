@@ -64,10 +64,10 @@ namespace ProjectZ.InGame.Pages
                 "settings_game_items_on_right", GameSettings.ItemsOnRight, newState => { GameSettings.ItemsOnRight = newState; });
             contentLayout.AddElement(toggleItemSlotSide);
 
-            // Button: Screen-Shake
-            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_screenshake", GameSettings.ScreenShake, newState => { GameSettings.ScreenShake = newState; });
-            contentLayout.AddElement(toggleScreenShake);
+            // Button: Classic Movement
+            var toggleOldMovement = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+                "settings_game_classic_movement", GameSettings.OldMovement, newState => { GameSettings.OldMovement = newState; });
+            contentLayout.AddElement(toggleOldMovement);
 
             // Button: Camera Lock
             var toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),

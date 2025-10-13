@@ -2163,7 +2163,9 @@ namespace ProjectZ.InGame.GameObjects
                 // Update the direction the player is walking towards.
                 if (!IsAttackingState(CurrentState) && 
                     !IsChargingState(CurrentState))
-                    Direction = vectorDirection;
+                {
+                    Direction = ToDirection(walkVelocity);
+                }
             }
             // Allow changing direction when attacking while standing still.
             else

@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects
 {
@@ -30,6 +30,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private int ToDirection(Vector2 direction)
         {
+            // If player wants old style movement.
+            if (GameSettings.OldMovement)
+                return ToDirectionClassic(direction);
+
             // Fail safe in case the impossible happens.
             if (direction == Vector2.Zero) { return Direction; }
 
@@ -43,6 +47,23 @@ namespace ProjectZ.InGame.GameObjects
             if (deg >= 45  && deg < 135)  return 3;
             if (deg >= 135 && deg < 225)  return 0;
             return 1;
+        }
+
+        private int ToDirectionClassic(Vector2 direction)
+        {
+            // Get angle in degrees 0-360.
+            float angle = (float)Math.Atan2(direction.Y, direction.X);
+            float deg = MathHelper.ToDegrees(angle);
+            if (deg < 0) { deg += 360f; }
+
+            // 0:Left 1:Up 2:Right 3:Down
+            if (deg == 180) return 0;
+            if (deg == 270) return 1;
+            if (deg == 0)   return 2;
+            if (deg == 90)  return 3;
+
+            // Keep the direction if we haven't hit the mark.
+            return Direction;
         }
     }
 }

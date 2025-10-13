@@ -16,6 +16,7 @@ namespace ProjectZ.InGame.Things
         public static bool    CameraLock     =  true;
         public static bool    EpilepsySafe   =  false;
         public static bool    SmoothCamera   =  true;
+        public static bool    OldMovement    =  false;
         public static bool    IsFullscreen   =  false;
         public static bool    ExFullscreen   =  false;
         public static bool    VerticalSync   =  true;
