@@ -1,5 +1,27 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.3.9**
+### **The "Old is New" Update**
+  * Modify sword hitbox so it hits enemies at any "height" like the original games.
+  * Add "Classic Movement" option which makes the movement feel much closer to the original games.
+  * Implement more sound effects for menus: slider uses "selection sound", back uses "menu back" sound.
+  * Support fairy mod file "ObjDungeonFairy.lahdmod". Enables sword collection/heal amount.
+  * Dialog box text scrolling can be proceeded by using either the confirm or cancel buttons.
+  * Movement speed modifier now affects more movement actions. This is probably still incomplete.
+  * Fix sword to be able to grab items that end up on higher cliffs which was possible in original games.
+  * Fix sword flashing when starting a game and using pegasus boots before swinging the sword.
+  * Fix Marin to have her animated "idle" state when facing forward which has been missing since the beginning.
+  * Fix Marin following Link through overworld teleporters. Not sure when this broke but it's fixed now.
+  * Fix Marin from double spawning when taking a walk at the end of the game and sending her back.
+  * Fix lifting the pot in 2D mode in the second dungeon which is required to proceed. Epic fail.
+  * Fix facing direction when charging the sword in 2D mode. Like the above, this was due to 2D direction hack.
+  * Fix missing title screen if pressing start when the intro fades to white. This has existed since v1.1.0.
+  * Fix the landing sound effect not playing when jumping on cracked floor tiles (dare be invisible holes).
+  * Fix in-game Settings menu from closing when pressing "left" on dpad or analog.
+  * Fix Yes/No menu when choosing Quit/Exit game to not have false up/down selections (don't play a sound).
+  * Fix audio distortion or a "popping" sound at the beginning of the "menu back" sound effect.
+  * Fix projectiles to collide with the "just a kid" NPCs found around Mabe Village.
+
 ## **v1.3.8**
 ### **Holes are not Cheat Codes Update**
   * Fix a bug where falling down a hole could make the player invincible, including overworld portals.

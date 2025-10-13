@@ -5,13 +5,14 @@
 To use this fork, whether to play the game or build upon, it requires the user to provide the assets from the original v1.0.0 release.   
 Some assets have been updated, but I have created tooling to make migration easier.
 
+- See the [manual](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/MANUAL.md) to learn more about the game (WIP).
 - See the [changelog](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/CHANGELOG.md) for a list of changes from v1.0.0.
 - As of v1.1.0, the game is in a really good state and the "feel" is really close to the original game.  
 - As of v1.2.0, the vast majority of bugs have been fixed and features from the [Redux romhack](https://github.com/ShadowOne333/Links-Awakening-Redux) were implemented.
 - As of v1.3.0, I consider the work that I've done to be "feature complete" and everything from this point is gravy.
 - This is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) and here's a link to the [commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/).
 
-## Patching v1.0.0 (or v1.1.4+) to v1.3.8
+## Patching v1.0.0 (or v1.1.4+) to v1.3.9
 
 To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. 
 If you wish to build the game yourself, see **Personal Build / Publishing**.
@@ -32,7 +33,7 @@ This section explains the files and folders found in the base of this respositor
 - **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates.
 - **ladxhd_game_source_code**: Source code for The Legend of Zelda: Link's Awakening DX HD.
 - **ladxhd_migrate_source_code**: Source code for the migration tool which can apply/create assets patches.
-- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.3.8.
+- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.3.9.
 - **LADXHD_Migrater.exe**: This is the migration tool used to apply or create patches to the assets.
 - **Unblock-All-Files.ps1**: This script can be used to unblock all files automatically for Visual Studio.
 
