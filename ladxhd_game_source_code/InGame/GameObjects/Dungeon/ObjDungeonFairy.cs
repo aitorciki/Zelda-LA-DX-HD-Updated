@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -18,9 +19,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly CSprite _sprite;
         private readonly CBox _collectionBox;
         private Vector2 _direction;
-
-        public bool _boomerangCollect;
-        public bool _boomerangHealed;
 
         private float _currentRotation;
         private float _directionChange;
@@ -49,10 +47,19 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _collected;
         private bool _itemMode;
 
+        private bool sword_collect = false;
+        private int hearts_healed = 6;
+
         public ObjDungeonFairy() : base("fairy") { }
 
         public ObjDungeonFairy(Map.Map map, int posX, int posY, int posZ, string carriedItem = null) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjDungeonFairy.lahdmod");
+
+            if (File.Exists(modFile))
+                ParseModFile(modFile);
+
             EntityPosition = new CPosition(posX, posY, posZ);
             EntitySize = new Rectangle(-4, -30, 8, 30);
 
@@ -104,25 +111,34 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
+        private void ParseModFile(string modFile)
+        {
+            foreach (string line in File.ReadAllLines(modFile))
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+                    continue;
+
+                string[] splitLine = line.Split('=');
+                if (splitLine.Length < 2)
+                    continue;
+
+                string varName = splitLine[0].Trim();
+                string varValue = splitLine[1].Trim();
+
+                if (varName == "sword_collect" && bool.TryParse(varValue, out bool boolResult))
+                    sword_collect = boolResult;
+
+                if (varName == "hearts_healed" && int.TryParse(varValue, out int intResult))
+                    hearts_healed = intResult;
+            }
+        }
+
         private void Update()
         {
             if (!_collected)
                 UpdateFlying();
             else
                 UpdateCollected();
-
-            // Bool "_boomerangHealed" prevents fairy from healing more than once.
-            if (_boomerangCollect & !_boomerangHealed)
-            {
-                _boomerangHealed = true;
-                _boomerangCollect = false;
-                CollectFairy();
-            }
-        }
-
-        public void BoomerangCollect()
-        {
-            _boomerangCollect = true;
         }
 
         private void UpdateFlying()
@@ -177,7 +193,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _sprite.SpriteEffect = _direction.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             // collision with the player
-            if (_collectionCooldown < 0 && MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()))
+            if (_collectionCooldown < 0 && (MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()) || (MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box) && sword_collect)))
                 CollectFairy();
         }
 
@@ -185,21 +201,19 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             if (!_itemMode)
             {
-                // heal the player
-                Game1.GameManager.HealPlayer(4 * 6);
+                // Heal the player, default of 6 hearts.
+                Game1.GameManager.HealPlayer(4 * hearts_healed);
                 ItemDrawHelper.EnableHeartAnimationSound();
             }
             else
             {
-                // collect the item the fairy was carrying
+                // Collect the item the fairy was carrying.
                 var cItem = new GameItemCollected(_carriedItem.Name)
                 {
                     Count = _carriedItem.Count
                 };
-
                 MapManager.ObjLink.PickUpItem(cItem, true);
             }
-
             Game1.GameManager.PlaySoundEffect("D370-01-01");
             _collected = true;
         }
