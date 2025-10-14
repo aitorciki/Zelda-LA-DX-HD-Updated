@@ -168,11 +168,13 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("waterRight", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_right", 4, 100, true, 0, Values.LayerBottom }));
             ObjectTemplates.Add("waterDown", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_down", 4, 100, true, 0, Values.LayerBottom }));
 
-            ObjectTemplates.Add("flower", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_0", 4, 120, false, 0, Values.LayerBottom }));
+            ObjectTemplates.Add("flower", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_0", 4, 250, false, 0, Values.LayerBottom }));
             ObjectTemplates.Add("flowerforest", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_1", 4, 250, false, 0, Values.LayerBottom }));
             ObjectTemplates.Add("flowerforest2", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_2", 4, 250, false, 0, Values.LayerBottom }));
             ObjectTemplates.Add("flower2", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_3", 4, 250, false, 0, Values.LayerBottom }));
-            ObjectTemplates.Add("flower3", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_4", 4, 120, false, 0, Values.LayerBottom }));
+            ObjectTemplates.Add("flower3", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_4", 4, 250, false, 0, Values.LayerBottom }));
+            ObjectTemplates.Add("flower4", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_5", 4, 250, false, 0, Values.LayerBottom }));
+            ObjectTemplates.Add("flowerswamp", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "flower_6", 4, 250, false, 0, Values.LayerBottom }));
 
             ObjectTemplates.Add("sand1", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "sand_0", 4, 175, true, 0, Values.LayerBackground }));
             ObjectTemplates.Add("sand2", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "sand_1", 4, 175, true, 0, Values.LayerBackground }));
