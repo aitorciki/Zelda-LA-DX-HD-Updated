@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -125,11 +127,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 string varName = splitLine[0].Trim();
                 string varValue = splitLine[1].Trim();
 
-                if (varName == "sword_collect" && bool.TryParse(varValue, out bool boolResult))
-                    sword_collect = boolResult;
-
-                if (varName == "hearts_healed" && int.TryParse(varValue, out int intResult))
-                    hearts_healed = intResult;
+                FieldInfo field = typeof(ObjDungeonFairy).GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
+                field.SetValue(this, convertedValue);
             }
         }
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -420,6 +422,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public bool CanWalk;
         public bool DisableItems;
+        public float DisableItemCounter;
         public bool UpdatePlayer;
         public bool IsPoking;
         private bool _pokeStart;
@@ -428,10 +431,25 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isFlying;
         private bool _inDungeon;
 
+
         private DictAtlasEntry _stunnedParticleSprite;
+
+        // Mod file values.
+        bool  light_source = false;
+        int   light_red = 255;
+        int   light_grn = 255;
+        int   light_blu = 255;
+        float light_bright = 1.0f;
+        int   light_size = 120;
 
         public ObjLink() : base((Map.Map)null)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjLink.lahdmod");
+
+            if (File.Exists(modFile))
+                ParseModFile(modFile);
+
             EntityPosition = new CPosition(0, 0, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
@@ -552,11 +570,32 @@ namespace ProjectZ.InGame.GameObjects
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, _drawBody);
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
+            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
             EntityPosition.AddPositionListener(typeof(CarriableComponent), UpdatePositionCarriedObject);
 
             // Set the move speed value the user chose.
             AlterMoveSpeed(GameSettings.MoveSpeedAdded);
+        }
+
+        private void ParseModFile(string modFile)
+        {
+            foreach (string line in File.ReadAllLines(modFile))
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+                    continue;
+
+                string[] splitLine = line.Split('=');
+                if (splitLine.Length < 2)
+                    continue;
+
+                string varName = splitLine[0].Trim();
+                string varValue = splitLine[1].Trim();
+
+                FieldInfo field = typeof(ObjLink).GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
+                field.SetValue(this, convertedValue);
+            }
         }
 
         private void Update()
@@ -835,7 +874,12 @@ namespace ProjectZ.InGame.GameObjects
 
             UpdateDrawComponents();
 
-            DisableItems = false;
+            if (DisableItemCounter > 0)
+                DisableItemCounter -= Game1.DeltaTime;
+
+            if (DisableItemCounter <= 0)
+                DisableItems = false;
+
             HoleResetRoom = null;
             CanWalk = true;
             _canJump = true;
@@ -1172,7 +1216,12 @@ namespace ProjectZ.InGame.GameObjects
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 45, (int)EntityPosition.Y - 45, 90, 90), new Color(255, 255, 255) * 0.125f);
+            if (light_source)
+            {
+                var _lightColor = new Color(light_red, light_grn, light_blu);
+                var _lightRectangle = new Rectangle((int)_body.Position.X - light_size / 2, (int)_body.Position.Y - light_size / 2 - 8, light_size, light_size);
+                spriteBatch.Draw(Resources.SprLight, _lightRectangle, _lightColor * light_bright);
+            }
         }
 
         public void DrawTransition(SpriteBatch spriteBatch)
@@ -2588,13 +2637,11 @@ namespace ProjectZ.InGame.GameObjects
 
                         if (Game1.GameManager.Equipment[i] != null &&
                             ControlHandler.ButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))))
-                            HoldItem(Game1.GameManager.Equipment[i],
-                                ControlHandler.LastButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))));
+                            HoldItem(Game1.GameManager.Equipment[i]);
 
                         if (Game1.GameManager.Equipment[i] != null &&
                             ControlHandler.ButtonReleased((CButtons)((int)CButtons.A * Math.Pow(2, i))))
-                            ReleaseItem(Game1.GameManager.Equipment[i],
-                                ControlHandler.LastButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))));
+                            ReleaseItem(Game1.GameManager.Equipment[i]);
                     }
                 }
             }
@@ -2664,85 +2711,53 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseItem(GameItemCollected item)
         {
-            switch (item.Name)
+            Action? useItem = item.Name switch
             {
-                case "sword1":
-                case "sword2":
-                    UseSword();
-                    break;
-                case "feather":
-                    UseFeather();
-                    break;
-                case "toadstool":
-                    UseToadstool();
-                    break;
-                case "powder":
-                    UsePowder();
-                    break;
-                case "bomb":
-                    UseBomb();
-                    break;
-                case "bow":
-                    UseArrow();
-                    break;
-                case "shovel":
-                    UseShovel();
-                    break;
-                case "stonelifter":
-                case "stonelifter2":
-                    UseStoneLifter();
-                    break;
-                case "hookshot":
-                    UseHookshot();
-                    break;
-                case "boomerang":
-                    UseBoomerang();
-                    break;
-                case "magicRod":
-                    UseMagicRod();
-                    break;
-                case "ocarina":
-                    UseOcarina();
-                    break;
-                case "pegasusBoots":
-                    UsePegasusBoots();
-                    break;
-            }
+                "sword1"        => UseSword,
+                "sword2"        => UseSword,
+                "feather"       => UseFeather,
+                "toadstool"     => UseToadstool,
+                "powder"        => UsePowder,
+                "bomb"          => UseBomb,
+                "bow"           => UseArrow,
+                "shovel"        => UseShovel,
+                "stonelifter"   => UseStoneLifter,
+                "stonelifter2"  => UseStoneLifter,
+                "hookshot"      => UseHookshot,
+                "boomerang"     => UseBoomerang,
+                "magicRod"      => UseMagicRod,
+                "ocarina"       => UseOcarina,
+                "pegasusBoots"  => UsePegasusBoots,
+                _               => null
+            };
+            useItem?.Invoke();
         }
 
-        private void HoldItem(GameItemCollected item, bool lastKeyDown)
+        private void HoldItem(GameItemCollected item)
         {
-            switch (item.Name)
+            Action? holdItem = item.Name switch
             {
-                case "sword1":
-                    HoldSword();
-                    break;
-                case "sword2":
-                    HoldSword();
-                    break;
-                case "shield":
-                case "mirrorShield":
-                    HoldShield(lastKeyDown);
-                    break;
-                case "stonelifter":
-                case "stonelifter2":
-                    HoldStoneLifter();
-                    break;
-                case "pegasusBoots":
-                    HoldPegasusBoots();
-                    break;
-            }
+                "sword1"        => HoldSword,
+                "sword2"        => HoldSword,
+                "shield"        => HoldShield,
+                "mirrorShield"  => HoldShield,
+                "stonelifter"   => HoldStoneLifter,
+                "stonelifter2"  => HoldStoneLifter,
+                "pegasusBoots"  => HoldPegasusBoots,
+                _               => null
+            };
+            holdItem?.Invoke();
         }
 
-        private void ReleaseItem(GameItemCollected item, bool lastKeyUp)
+        private void ReleaseItem(GameItemCollected item)
         {
-            switch (item.Name)
+            Action? releaseItem = item.Name switch
             {
-                case "shield":
-                case "mirrorShield":
-                    ReleaseShield(lastKeyUp);
-                    break;
-            }
+                "shield"        => ReleaseShield,
+                "mirrorShield"  => ReleaseShield,
+                _               => null
+            };
+            releaseItem?.Invoke();
         }
 
         private void UseSword()
@@ -3245,7 +3260,7 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
-        private void HoldShield(bool lastKeyDown)
+        private void HoldShield()
         {
             if (CurrentState != State.Idle && 
                 CurrentState != State.Pushing && 
@@ -3266,7 +3281,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.Blocking;
         }
 
-        private void ReleaseShield(bool lastKeyUp)
+        private void ReleaseShield()
         {
             _blockButton = false;
 

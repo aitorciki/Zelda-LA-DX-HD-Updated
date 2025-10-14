@@ -53,15 +53,14 @@ namespace ProjectZ.InGame.Pages
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
             base.Update(pressedButtons, gameTime);
-
-            // close the page
-            if (ControlHandler.ButtonPressed(CButtons.Start) ||
-                ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+            if (ControlHandler.ButtonPressed(CButtons.Start) || ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                 ClosePage();
         }
 
         private void ClosePage()
         {
+            MapManager.ObjLink.DisableItems = true;
+            MapManager.ObjLink.DisableItemCounter = 350;
             Game1.GameManager.InGameOverlay.CloseOverlay();
         }
 
