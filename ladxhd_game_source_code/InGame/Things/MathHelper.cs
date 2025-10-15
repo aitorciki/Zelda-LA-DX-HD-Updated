@@ -27,5 +27,34 @@ namespace ProjectZ.InGame.Things
         {
             return new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
         }
+
+        public static bool HasSameSign(this Vector2 a, Vector2 b)
+        {
+            return SameSign(a.X, b.X) && SameSign(a.Y, b.Y);
+        }
+
+        private static bool SameSign(float x, float y)
+        {
+            // Treat 0 and -0 as equivalent and positive
+            if (x == 0f && y == 0f)
+                return true;
+
+            return Math.Sign(x) == Math.Sign(y);
+        }
+
+        public static bool HasInvertedSigns(this Vector2 a, Vector2 b)
+        {
+            return OppositeSign(a.X, b.X) && OppositeSign(a.Y, b.Y);
+        }
+
+        private static bool OppositeSign(float x, float y)
+        {
+            // Zero check: if both are zero or one is zero, not considered opposite
+            if (x == 0f || y == 0f)
+                return false;
+
+            // True only if one is positive and the other is negative
+            return Math.Sign(x) != Math.Sign(y);
+        }
     }
 }

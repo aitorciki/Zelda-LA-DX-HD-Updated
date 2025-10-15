@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
+using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
@@ -8,6 +9,8 @@ namespace ProjectZ.InGame.GameObjects
 {
     public partial class ObjLink
     {
+        private Vector2 PreviousDirectionInput;
+
         private int ReverseDirection(int direction) => (direction + 2) % 4;
 
         private bool DestroyableWall(Box box)
@@ -28,11 +31,12 @@ namespace ProjectZ.InGame.GameObjects
             return false;
         }
 
-        private int ToDirection(Vector2 direction)
+        private int ToDirection(Vector2 direction, bool modernAnalog = false, bool forceModern = false)
         {
             // If player wants old style movement.
-            if (GameSettings.OldMovement)
-                return ToDirectionClassic(direction);
+            if (GameSettings.OldMovement && !forceModern)
+                if (ControlHandler.LastDirectionDPad || (!modernAnalog && !ControlHandler.LastDirectionDPad))
+                    return ToDirectionClassic(direction);
 
             // Fail safe in case the impossible happens.
             if (direction == Vector2.Zero) { return Direction; }
@@ -51,6 +55,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private int ToDirectionClassic(Vector2 direction)
         {
+            // No input — keep direction.
+            if (direction == Vector2.Zero)
+                return Direction;
+
             // Get angle in degrees 0-360.
             float angle = (float)Math.Atan2(direction.Y, direction.X);
             float deg = MathHelper.ToDegrees(angle);
@@ -62,8 +70,28 @@ namespace ProjectZ.InGame.GameObjects
             if (deg == 0)   return 2;
             if (deg == 90)  return 3;
 
-            // Keep the direction if we haven't hit the mark.
+            // Detect diagonal opposite movement (X and Y flipped signs).
+            if (disable_moonwalk && GameMath.HasInvertedSigns(direction, PreviousDirectionInput))
+            {
+                // Flip to opposite direction.
+                return Opposite(Direction);
+            }
+            // Otherwise, keep current direction.
             return Direction;
+        }
+
+        // Helper to return the opposite of a direction.
+        private int Opposite(int dir)
+        {
+            // 0:Left 1:Up 2:Right 3:Down
+            return dir switch
+            {
+                0 => 2,
+                1 => 3,
+                2 => 0,
+                3 => 1,
+                _ => dir
+            };
         }
     }
 }
