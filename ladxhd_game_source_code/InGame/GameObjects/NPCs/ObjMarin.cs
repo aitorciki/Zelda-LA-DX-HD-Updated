@@ -305,7 +305,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Update()
         {
-            // rotate towards the player
+            // Rotate towards the player.
             if (_currentState == States.Idle)
             {
                 var playerDistance = new Vector2(
@@ -314,20 +314,37 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 var dir = 3;
 
-                // rotate in the direction of the player
+                // Rotate in the direction of the player.
                 if (playerDistance.Length() < 32)
                     dir = AnimationHelper.GetDirection(playerDistance);
 
+                // Catch when the direction changes.
                 if (_lastDirection != dir)
                 {
-                    var mariaState = Game1.GameManager.SaveManager.GetString("maria_state");
+                    var mariaState = Game1.GameManager.SaveManager.GetString("maria_state", "0");
 
                     // Play idle animation when facing forward except when at the beach.
                     if (dir == 3 && mariaState != "3")
+                    {
                         _animator.Play("idle");
+                        _animator.SpeedMultiplier = 1.0f;
+                    }
+                    // Other facing directions play different animations.
                     else
-                        _animator.Play("stand_" + dir);
-
+                    {
+                        // During the intro a slower version of Marin's walking animation is used.
+                        if (mariaState == "0")
+                        {
+                            _animator.Play("walk_" + dir);
+                            _animator.SpeedMultiplier = 0.50f;
+                        }
+                        // Most of the time the stand animation is used.
+                        else
+                        {
+                            _animator.Play("stand_" + dir);
+                            _animator.SpeedMultiplier = 1.0f;
+                        }
+                    }
                     _lastDirection = dir;
                 }
             }
