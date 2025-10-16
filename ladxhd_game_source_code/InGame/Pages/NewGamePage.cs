@@ -204,12 +204,12 @@ namespace ProjectZ.InGame.Pages
             if (name == "totaka" || name == "totakeke" || name == "moyse")
             {
                 Game1.GameManager.SetMusic(59, 2);
-                Game1.UiPageManager.PopPage();
+                Game1.UiPageManager.PopPage(SkipSound:true);
             }
             else if (name == "zelda")
             {
                 Game1.GameManager.SetMusic(95, 2);
-                Game1.UiPageManager.PopPage();
+                Game1.UiPageManager.PopPage(SkipSound: true);
             }
             else
             {
