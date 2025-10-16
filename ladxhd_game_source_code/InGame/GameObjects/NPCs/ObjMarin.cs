@@ -268,8 +268,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 if (MapManager.ObjLink.NextMapPositionStart.HasValue &&
                     MapManager.ObjLink.NextMapPositionEnd.HasValue)
                 {
-                    var direction = MapManager.ObjLink.NextMapPositionEnd.Value -
-                                    MapManager.ObjLink.NextMapPositionStart.Value;
+                    var direction = MapManager.ObjLink.NextMapPositionEnd.Value - MapManager.ObjLink.NextMapPositionStart.Value;
                     if (direction != Vector2.Zero)
                         _walkDirection = AnimationHelper.GetDirection(direction);
                     _animator.Play("walk_" + _walkDirection);
@@ -606,6 +605,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateFollowPlayer()
         {
+            var Link = MapManager.ObjLink;
+
             if (((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).IsTransitioningIn())
             {
                 _body.VelocityTarget = Vector2.Zero;
@@ -643,17 +644,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             // jump
-            if ((MapManager.ObjLink.CurrentState == ObjLink.State.Jumping || 
-                 MapManager.ObjLink.CurrentState == ObjLink.State.AttackJumping || 
-                 MapManager.ObjLink.CurrentState == ObjLink.State.ChargeJumping) &&
-                ((!MapManager.ObjLink.IsRailJumping() && MapManager.ObjLink._body.Velocity.Z < 0) ||
-                 MapManager.ObjLink.GetRailJumpAmount() > 0.45f) && _body.IsGrounded)
+            if (Link.IsJumpingState(Link.CurrentState) && _body.IsGrounded &&
+                (Link.GetRailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
             {
-                Game1.GameManager.PlaySoundEffect("D360-36-24");
                 _body.Velocity.Z = 2.35f;
 
                 if (MapManager.ObjLink.IsRailJumping())
                 {
+                    Game1.GameManager.PlaySoundEffect("D360-08-08");
+
                     _isRailJumping = true;
                     _holeAbsorb = false;
 
@@ -670,6 +669,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                     _walkDirection = MapManager.ObjLink.Direction;
                     _animator.Play("stand_" + _walkDirection);
+                }
+                else 
+                {
+                    Game1.GameManager.PlaySoundEffect("D360-36-24");
                 }
             }
 
