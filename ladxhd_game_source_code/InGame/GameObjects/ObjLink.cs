@@ -240,7 +240,6 @@ namespace ProjectZ.InGame.GameObjects
         private bool _bootsWasRunning;
         private bool _bootsStop;
         private float _bootsCounter;
-        private float _bootsRunTime = 500f;
         private float _bootsParticleTime = 120f;
         private float _bootsMaxSpeed = 2.0f;
         private int _bootsLastDirection;
@@ -289,7 +288,6 @@ namespace ProjectZ.InGame.GameObjects
         private double _hitRepelTime;
         private double _hitParticleTime;
 
-        private const float SwordChargeTime = 500;
         private float _swordChargeCounter = 100;
         private bool _swordPoked;
         private bool _stopCharging;
@@ -437,9 +435,12 @@ namespace ProjectZ.InGame.GameObjects
         private bool _npcCrossSword;
 
         // Mod file values.
+        bool  sword1_beam = false;
+        bool  always_beam = false;
+        float sword_charge_time = 500;
+        float boots_charge_time = 500;
         bool  disable_moonwalk = false;
         bool  modern_analog = false;
-
         bool  light_source = false;
         int   light_red = 255;
         int   light_grn = 255;
@@ -1564,7 +1565,7 @@ namespace ProjectZ.InGame.GameObjects
                         Animation.Play("poke_" + Direction);
                         AnimatorWeapons.Play("poke_" + Direction);
                         CurrentState = State.Attacking;
-                        _swordChargeCounter = SwordChargeTime;
+                        _swordChargeCounter = sword_charge_time;
                     }
 
                     _swordPokeCounter -= Game1.DeltaTime;
@@ -1627,7 +1628,7 @@ namespace ProjectZ.InGame.GameObjects
                 Animation.Play("stand" + Direction);
                 AnimatorWeapons.Play("stand_" + Direction);
                 CurrentState = State.Charging;
-                _swordChargeCounter = SwordChargeTime;
+                _swordChargeCounter = sword_charge_time;
                 _isHoldingSword = false;
             }
 
@@ -2840,7 +2841,7 @@ namespace ProjectZ.InGame.GameObjects
             Animation.Play("attack_" + Direction);
             AnimatorWeapons.Play("attack_" + Direction);
             AttackDirection = Direction;
-            _swordChargeCounter = SwordChargeTime;
+            _swordChargeCounter = sword_charge_time;
             IsPoking = false;
             _pokeStart = false;
             _stopCharging = false;
@@ -3180,7 +3181,7 @@ namespace ProjectZ.InGame.GameObjects
                 (Game1.GameManager.PieceOfPowerIsActive ? MagicRodSpeedPoP : MagicRodSpeed), Direction));
 
             CurrentState = State.MagicRod;
-            _swordChargeCounter = SwordChargeTime;
+            _swordChargeCounter = sword_charge_time;
 
             Game1.GameManager.PlaySoundEffect("D378-13-0D");
             StopRaft();
@@ -3543,7 +3544,7 @@ namespace ProjectZ.InGame.GameObjects
 
             Game1.GameManager.PlaySoundEffect("D378-03-03");
 
-            _swordChargeCounter = SwordChargeTime;
+            _swordChargeCounter = sword_charge_time;
             _isSwordSpinning = true;
         }
 
@@ -3632,11 +3633,11 @@ namespace ProjectZ.InGame.GameObjects
                 beamDirection = AttackDirection;
 
             // Shoot the sword if the player has the Level 2 sword and full health.
-            if (!_shotSword && Game1.GameManager.SwordLevel == 2 && Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 && AnimatorWeapons.CurrentFrameIndex == 2)
+            if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || sword1_beam) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || always_beam) && AnimatorWeapons.CurrentFrameIndex == 2)
             {
                 _shotSword = true;
                 var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y, EntityPosition.Z);
-                var objSwordShot = new ObjSwordShot(Map, spawnPosition, beamDirection);
+                var objSwordShot = new ObjSwordShot(Map, spawnPosition, Game1.GameManager.SwordLevel, beamDirection);
                 Map.Objects.SpawnObject(objSwordShot);
             }
 
@@ -3824,7 +3825,13 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _bootsStop = false;
                 _bootsRunning = false;
-                _bootsCounter = _bootsRunTime - 300;
+
+                // Over/equals 500 = subtract 300. Above zero = halve it. At 0 = use value.
+                _bootsCounter = boots_charge_time >= 500 
+                    ? boots_charge_time - 300 
+                    : boots_charge_time > 0 
+                        ? boots_charge_time / 2 
+                        : boots_charge_time;
             }
             if (_bootsHolding || _bootsRunning)
             {
@@ -3855,7 +3862,7 @@ namespace ProjectZ.InGame.GameObjects
                     }
                 }
                 // start running
-                if (!_bootsRunning && _bootsCounter > _bootsRunTime)
+                if (!_bootsRunning && _bootsCounter > boots_charge_time)
                 {
                     _bootsLastDirection = Direction;
                     _bootsRunning = true;

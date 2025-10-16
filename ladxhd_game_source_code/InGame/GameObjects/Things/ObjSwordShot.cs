@@ -17,21 +17,23 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly Vector3 _spawnPosition;
 
+        private int _damage = 2;
         private float _spawnCounter;
         private const int SpawnTime = 10;
-        // ~ time to move from the left side of a room to the right
+
         private const int DespawnTime = 500;
         private const int FadeInTime = 15;
         private const int FadeOutTime = 25;
 
         private const float MoveSpeed = 4;
 
-        public ObjSwordShot(Map.Map map, Vector3 position, int direction) : base(map)
+        public ObjSwordShot(Map.Map map, Vector3 position, int damage, int direction) : base(map)
         {
             EntityPosition = new CPosition(position);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
             _spawnPosition = new Vector3(position.X, position.Y, position.Z);
+            _damage = damage;
             _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8);
 
             _sprite = new CSprite("swordShot", EntityPosition)
@@ -83,8 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     return;
                 }
             }
-
-            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.SwordShot, 2, false);
+            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.SwordShot, _damage, false);
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Enemy)) != 0)
                 Map.Objects.DeleteObjects.Add(this);
         }
