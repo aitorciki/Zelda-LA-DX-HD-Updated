@@ -67,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
             AddComponent(BodyComponent.Index, Body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore));
+            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
             AddComponent(InteractComponent.Index, new InteractComponent(Body.BodyBox, Interact));
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));

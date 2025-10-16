@@ -433,6 +433,9 @@ namespace ProjectZ.InGame.GameObjects
 
         private DictAtlasEntry _stunnedParticleSprite;
 
+        private bool _npcSwordCross;
+        private bool _npcCrossSword;
+
         // Mod file values.
         bool  disable_moonwalk = false;
         bool  modern_analog = false;
@@ -1580,8 +1583,54 @@ namespace ProjectZ.InGame.GameObjects
                 _canJump = false;
         }
 
+        private bool CheckNPCAvoidance()
+        {
+            // Get the sword hitbox if the sword is being charged.
+            Box SwordBox = Box.Empty;
+
+            if (_isHoldingSword)
+                SwordBox = GetSwordDamageBox(AnimatorWeapons.CollisionRectangle);
+
+            // Get a list of NPCs to check if sword crosses their hitbox.
+            List<GameObject> npcList = new List<GameObject>();
+
+            Map.Objects.GetComponentList(npcList, 
+                (int)SwordBox.X, (int)SwordBox.Y, 
+                (int)SwordBox.Width, (int)SwordBox.Height, 
+                CollisionComponent.Mask);
+
+            // Loop through the NPCs checking for collision.
+            foreach (var npc in npcList)
+            {
+                var collisionObject = npc.Components[CollisionComponent.Index] as CollisionComponent;
+                if ((collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
+                {
+                    var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
+
+                    // If the sword box and body box intersect return true.
+                    if (SwordBox.Intersects(bodyObject.BodyBox.Box))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         private void Update3D()
         {
+            // Check if sword hitbox is within NPC hitbox.
+            _npcSwordCross = CheckNPCAvoidance();
+
+            // When sword is no longer within NPC hitbox and Link is holding sword, restore charging state.
+            if (!_npcSwordCross && _isHoldingSword && _npcCrossSword)
+            {
+                _npcCrossSword = false;
+                Animation.Play("stand" + Direction);
+                AnimatorWeapons.Play("stand_" + Direction);
+                CurrentState = State.Charging;
+                _swordChargeCounter = SwordChargeTime;
+                _isHoldingSword = false;
+            }
+
             _isWalking = false;
             WasHoleReset = false;
 
@@ -1599,7 +1648,6 @@ namespace ProjectZ.InGame.GameObjects
 
                     Game1.GameManager.SaveManager.SetString("played_intro", "1");
                 }
-
                 return;
             }
 
@@ -2771,6 +2819,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseSword()
         {
+            // Workaround when charging sword and walking into an NPC.
+            if (_npcCrossSword) 
+                _npcCrossSword = false;
+
             if (!IsAttackingState(CurrentState) &&
                 !IsBlockingState(CurrentState) &&
                 CurrentState != State.Idle && 
@@ -3415,6 +3467,15 @@ namespace ProjectZ.InGame.GameObjects
                 var pieceOfPower = Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.CloakType == GameManager.CloakRed;
                 var hitCollision = Map.Objects.Hit(this, damageOrigin, SwordDamageBox, hitType | HitType.SwordHold, damage, pieceOfPower, out var direction, true);
 
+                // If the sword is pointed at an NPC.
+                if (_npcSwordCross)
+                {
+                    // Force Link into idle state and put the sword away.
+                    _npcCrossSword = true;
+                    CurrentState = State.Idle;
+                    _isHoldingSword = false;
+                    return;
+                }
                 // start poking?
                 if (hitCollision != Values.HitCollision.None &&
                     hitCollision != Values.HitCollision.NoneBlocking)

@@ -34,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var body = new BodyComponent(EntityPosition, -8, -13, 16, 12, 8);
 
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore));
+            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
             AddComponent(InteractComponent.Index, new InteractComponent(new CBox(EntityPosition, -7, -10, 14, 24, 8), Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
