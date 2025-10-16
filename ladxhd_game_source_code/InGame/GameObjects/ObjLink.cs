@@ -5506,7 +5506,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public bool IsJumping()
         {
-            return CurrentState == State.Jumping || CurrentState == State.AttackJumping || CurrentState == State.ChargeJumping;
+            return IsJumpingState(CurrentState);
         }
 
         public bool IsRailJumping()

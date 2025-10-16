@@ -127,9 +127,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (map != null)
                 _field = map.GetField(posX, posY);
 
-            _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8)
+            _body = new BodyComponent(EntityPosition, -4, -10, 8, 10, 8)
             {
-                //CollisionTypes = Values.CollisionTypes.None
                 MoveCollision = OnCollision,
                 IgnoreHoles = true,
                 Gravity = -0.15f
@@ -616,7 +615,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // make sure that the player does not walk before marin hits the ground
             // he could potentially collect the heart
             if (_fountainMouse)
-                MapManager.ObjLink.FreezePlayer();
+                Link.FreezePlayer();
 
             if (!_fountainSeqInit && _fountainSequence)
             {
@@ -629,7 +628,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _fountainSequence = false;
                 _fountainMouse = false;
 
-                var playerDist = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y + 4);
+                var playerDist = Link.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y + 4);
                 var fallenOnLink = playerDist.Length() < 8;
 
                 Game1.GameManager.SaveManager.SetString("fallen_on_link", (fallenOnLink ? "1" : "0"));
@@ -649,7 +648,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _body.Velocity.Z = 2.35f;
 
-                if (MapManager.ObjLink.IsRailJumping())
+                if (Link.IsRailJumping())
                 {
                     Game1.GameManager.PlaySoundEffect("D360-08-08");
 
@@ -663,11 +662,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                     _railJumpPercentage = 0;
                     _railJumpStartPosition = EntityPosition.Position;
-                    _railJumpTargetPosition = MapManager.ObjLink.RailJumpTarget();
-                    _railJumpSpeed = MapManager.ObjLink.RailJumpSpeed();
-                    _railJumpHeight = MapManager.ObjLink.RailJumpHeight();
+                    _railJumpTargetPosition = Link.RailJumpTarget();
+                    _railJumpSpeed = Link.RailJumpSpeed();
+                    _railJumpHeight = Link.RailJumpHeight();
 
-                    _walkDirection = MapManager.ObjLink.Direction;
+                    _walkDirection = Link.Direction;
                     _animator.Play("stand_" + _walkDirection);
                 }
                 else 
@@ -696,7 +695,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 }
 
-                if (MapManager.ObjLink.IsHoleAbsorb())
+                if (Link.IsHoleAbsorb())
                 {
                     _holeAbsorb = true;
                     _holeAbsorbCounter = 175;
@@ -724,7 +723,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
             }
 
-            if (MapManager.ObjLink.IsRailJumping())
+            if (Link.IsRailJumping())
                 return;
 
             // landed on the ground?
@@ -733,7 +732,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.PlaySoundEffect("D378-07-07");
             }
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = Link.EntityPosition.Position - EntityPosition.Position;
             var playerDistance = Math.Abs(playerDirection.X) + Math.Abs(playerDirection.Y);
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
@@ -751,7 +750,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 EntityPosition.Y + playerDirection.Y * collisionCheckDist, 0, _body.CollisionTypes, false, ref collidingBox);
 
             // disable the collision if we are too far away from the player; this will prevent situations where we are stuck
-            var ignoreCollisions = MapManager.ObjLink.IsRailJumping() || playerDistance > 24;
+            var ignoreCollisions = Link.IsRailJumping() || playerDistance > 24;
             _body.CollisionTypes = ignoreCollisions ? Values.CollisionTypes.None : Values.CollisionTypes.Normal;
 
             if (playerDistance > 16)
@@ -776,9 +775,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_followVelocity.Length() > 0.1f)
                 _walkDirection = AnimationHelper.GetDirection(_followVelocity);
 
-            // play walk/stand animation
-            // jump animation
-            if (MapManager.ObjLink.IsJumping() && _followVelocity.Length() < 0.1f)
+            // Play jumping animation if Link jumped.
+            if (Link.IsJumping() && _followVelocity.Length() < 0.1f)
             {
                 _animator.Play("jump_up_" + _walkDirection);
             }
@@ -789,16 +787,18 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 else
                     _animator.Play("jump_down_" + _walkDirection);
             }
+            // Play walk animation when moving.
             else if (_followVelocity.Length() > 0.1f)
             {
                 _animator.Play("walk_" + _walkDirection);
                 _animator.SpeedMultiplier = walkSpeedMult;
             }
+            // Play stand animation when not moving.
             else
             {
                 _animator.Play("stand_" + _walkDirection);
             }
-
+            // If the dungeon message is set Link entered a dungeon, so show the dialog now.
             _enterDungeonMessage = EnterDungeonMessage;
             EnterDungeonMessage = false;
         }
