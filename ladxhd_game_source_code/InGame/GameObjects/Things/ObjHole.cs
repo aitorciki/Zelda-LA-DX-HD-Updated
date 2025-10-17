@@ -10,6 +10,7 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private readonly DrawSpriteComponent _drawComponent;
         private readonly BoxCollisionComponent _collisionComponent;
+
         public readonly Vector2 Center;
         public readonly int Color;
         public CBox collisionBox;
@@ -33,17 +34,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                 EntityPosition = new CPosition(posX, posY, 0);
                 EntitySize = new Rectangle(0, 0, sourceRectangle.Width, sourceRectangle.Height);
             }
+            float holePosX = posX + offsetX;
+            float holePosY = posY + offsetY;
+            float holeWidth = width;
+            float holeHeight = height;
 
-            // HACK: We want the collision with the hole to be slightly smaller than the actual hole since Link's body will intersect with
-            // the edges as soon as he cross the boundary of the sprite. This limits the distance at which it starts pulling, which matches
-            // the behavior of the original game. The modifications below make hole collision size 14x8 pixels instead of 16x16 pixels.
-            float rectOffsetX = (width == 16 && height == 16) ? posX + offsetX + 1 : posX + offsetX;
-            float rectOffsetY = (width == 16 && height == 16) ? posY + offsetY + 3 : posY + offsetY;
-            float rectWidth   = (width == 16 && height == 16) ? width - 2          : width;
-            float rectHeight  = (width == 16 && height == 16) ? height - 6         : height;
-
-            // Store the collision box in a public field so it can be referenced from other places. Currently used to detect if landing on a hole when jumping.
-            collisionBox = new CBox(rectOffsetX, rectOffsetY, 0, rectWidth, rectHeight, 16);
+            collisionBox = new CBox(holePosX, holePosY, 0, holeWidth, holeHeight, 16);
             _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Hole);
             AddComponent(CollisionComponent.Index, _collisionComponent);
 

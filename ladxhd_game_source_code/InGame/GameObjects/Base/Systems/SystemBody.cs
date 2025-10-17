@@ -455,19 +455,15 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
         private void UpdateHole(BodyComponent body)
         {
-            // check for collisions with holes
+            // If the body is in the air ignore calculations.
             if (body.Position.Z > 0)
             {
                 body.WasHolePulled = false;
                 return;
             }
+            // Set up initial values.
             var bodyBox = body.BodyBox.Box;
-
-            // HACK: A hole is visibly 16x16 pixels. The collision rectangle is actually 14x8 pixels. Holes are wider than
-            // they are taller. This is how it was in the original game, as you could get closer to them on the Y axis than
-            // than the X axis. The hack below makes sure the body falls in the boundaries of the modified hole's collision.
-            var bodyArea = (bodyBox.Width - 2) * (bodyBox.Height - 2);
-
+            var bodyArea = bodyBox.Width * bodyBox.Height;
             var bodyBoxCenter = body.BodyBox.Box.Center;
 
             var holeCollisionCoM = Vector2.Zero;
@@ -476,30 +472,34 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             var noneCollisionCoM = bodyBoxCenter;
             var noneCollisionArea = bodyBox.Width * bodyBox.Height;
 
+            // Find nearby holes.
             _holeList.Clear();
             Game1.GameManager.MapManager.CurrentMap.Objects.GetComponentList(
                 _holeList, (int)bodyBox.X, (int)bodyBox.Y, (int)bodyBox.Width, (int)bodyBox.Height, CollisionComponent.Mask);
 
+            // Loop through the holes that have been found.
             foreach (var hole in _holeList)
             {
+                // If hole is disabled then move on to the next one.
                 if (!hole.IsActive)
                     continue;
 
+                // Compute the body intersection area with the hole.
                 var collisionObject = hole.Components[CollisionComponent.Index] as CollisionComponent;
                 var collidingBox = Box.Empty;
                 if ((collisionObject.CollisionType & Values.CollisionTypes.Hole) == 0 ||
                     !collisionObject.Collision(bodyBox, 0, 0, ref collidingBox))
                     continue;
 
+                // Combine intersections into one “weighted” center of mass.
                 var collidingRec = bodyBox.Rectangle().GetIntersection(collidingBox.Rectangle());
                 var collidingArea = collidingRec.Width * collidingRec.Height;
 
-                // center of mass for the holes
                 holeCollisionCoM =
                     holeCollisionCoM * (holeCollisionArea / (holeCollisionArea + collidingArea)) +
                     collidingRec.Center * (collidingArea / (holeCollisionArea + collidingArea));
 
-                // this makes sure to not cancel out two holes pulling the body into different directions; otherwise the body would be able to walk between them if he is aligned with the
+                // Makes sure that only one intersecting hole is able to pull the player towards it.
                 if (collidingArea == holeCollisionArea && holeCollisionCoM.X == bodyBoxCenter.X && collidingRec.Width * 2 != bodyBox.Width)
                     holeCollisionCoM.X -= 4;
                 if (collidingArea == holeCollisionArea && holeCollisionCoM.Y == bodyBoxCenter.Y && collidingRec.Height * 2 != bodyBox.Height)
@@ -507,49 +507,62 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
                 holeCollisionArea += collidingArea;
             }
-            // calculate the new centers of mass and collision/none collision areas
+            // Compute the "non-hole" side (where body hitbox is still on land).
             noneCollisionCoM += (noneCollisionCoM - holeCollisionCoM) * (holeCollisionArea / noneCollisionArea);
             noneCollisionArea -= holeCollisionArea;
 
-            body.SpeedMultiply = bodyArea > 0 ? Math.Max(1 - (holeCollisionArea / bodyArea), 1) : 1;
+            // Slows down the player body the closer to the hole it is.
+            body.SpeedMultiply = bodyArea > 0 ? Math.Min(1 - (holeCollisionArea / bodyArea), 1) : 1;
 
-            // the direction of the force applied to the body goes from the CoM of the body rectangle that is not colliding
-            // to the CoM of the body rectangle that is colliding
+            // The direction of the hole's pull from safe area towards hole center.
             var holeDirection = holeCollisionCoM - noneCollisionCoM;
             if (holeDirection != Vector2.Zero)
                 holeDirection.Normalize();
 
             body.IsAbsorbed = false;
 
+            // How much of the body is currently colliding with the hole.
             var collisionAreaPercentage = bodyArea > 0 ? holeCollisionArea / bodyArea : 0f;
 
-            // the body is getting absorbed
+            // The more body and hole share collision the faster the absorption rate.
+            if (collisionAreaPercentage > body.AbsorbStop)
+            {
+                var normalized = (collisionAreaPercentage - body.AbsorbStop) / (1f - body.AbsorbStop);
+                var slowdown = MathF.Pow(Math.Clamp(normalized, 0f, 1f), 1.3f);
+                body.SpeedMultiply = 1f - slowdown;
+            }
+            else
+            {
+                body.SpeedMultiply = 1f;
+            }
+
+            // The body has been completely absorbed by the hole.
             if (holeCollisionArea >= bodyArea * body.AbsorbPercentage)
             {
-                // absorption gets set to zero if the body jumped into the hole
-                // fixes a bug where the player can push an object on the other side of a hole while falling into it
+                // Absorption gets set to zero if the body jumped into the hole. Fixes a bug where
+                // the player can push an object on the other side of a hole while falling into it.
                 if (!body.WasHolePulled)
                     body.HoleAbsorption = Vector2.Zero;
 
-                body.Velocity = Vector3.Zero;// *= (float)Math.Pow(0.85f, Game1.TimeMultiplier);
+                body.Velocity = Vector3.Zero;
                 body.HoleAbsorption *= (float)Math.Pow(0.85f, Game1.TimeMultiplier);
                 body.HoleAbsorb?.Invoke();
                 body.IsAbsorbed = true;
             }
-            // body is getting pulled towards the hole
+            // Body is getting pulled towards the hole.
             else if (collisionAreaPercentage > body.AbsorbStop)
             {
-                var holePull = new Vector2(holeDirection.X, holeDirection.Y) * collisionAreaPercentage * 0.45f;
+                var holePull = new Vector2(holeDirection.X, holeDirection.Y) * collisionAreaPercentage * 0.50f;
 
-                // calculate the new direction of the hole pull 
-                var oldPercentage = (float)Math.Pow(0.8f, Game1.TimeMultiplier);
+                // Calculate the new direction of the hole pull.
+                var oldPercentage = (float)Math.Pow(0.6f, Game1.TimeMultiplier);
                 body.HoleAbsorption = body.HoleAbsorption * oldPercentage +
                                       holePull * (1 - oldPercentage);
 
                 body.HoleOnPull?.Invoke(holePull, collisionAreaPercentage);
                 body.WasHolePulled = true;
             }
-            // stop the absorption
+            // Stop the absorption if now out of range.
             else if (body.HoleAbsorption != Vector2.Zero)
             {
                 body.HoleAbsorption = Vector2.Zero;

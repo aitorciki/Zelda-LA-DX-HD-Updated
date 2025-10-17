@@ -476,6 +476,7 @@ namespace ProjectZ.InGame.GameObjects
                 DragAir = 0.9f,
                 Gravity = -0.15f,
                 Gravity2D = 0.1f,
+                AbsorbStop = 0.35f,
                 AbsorbPercentage = 1f,
                 HoleOnPull = OnHolePull,
                 HoleAbsorb = OnHoleAbsorb,
