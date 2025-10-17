@@ -455,79 +455,118 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
         private void UpdateHole(BodyComponent body)
         {
-            // If the body is in the air ignore calculations.
+            // Ignore holes if body is airborne.
             if (body.Position.Z > 0)
             {
                 body.WasHolePulled = false;
                 return;
             }
-            // Set up initial values.
             var bodyBox = body.BodyBox.Box;
             var bodyArea = bodyBox.Width * bodyBox.Height;
-            var bodyBoxCenter = body.BodyBox.Box.Center;
+            if (bodyArea <= 0)
+                return; // safety guard
 
+            var bodyBoxCenter = bodyBox.Center;
             var holeCollisionCoM = Vector2.Zero;
-            var holeCollisionArea = 0.0f;
+            var holeCollisionArea = 0f;
 
             var noneCollisionCoM = bodyBoxCenter;
-            var noneCollisionArea = bodyBox.Width * bodyBox.Height;
+            var noneCollisionArea = bodyArea;
 
-            // Find nearby holes.
+            // Find all holes in range of the player's hitbox.
             _holeList.Clear();
             Game1.GameManager.MapManager.CurrentMap.Objects.GetComponentList(
                 _holeList, (int)bodyBox.X, (int)bodyBox.Y, (int)bodyBox.Width, (int)bodyBox.Height, CollisionComponent.Mask);
 
-            // Loop through the holes that have been found.
             foreach (var hole in _holeList)
             {
-                // If hole is disabled then move on to the next one.
                 if (!hole.IsActive)
                     continue;
 
-                // Compute the body intersection area with the hole.
                 var collisionObject = hole.Components[CollisionComponent.Index] as CollisionComponent;
                 var collidingBox = Box.Empty;
+
                 if ((collisionObject.CollisionType & Values.CollisionTypes.Hole) == 0 ||
                     !collisionObject.Collision(bodyBox, 0, 0, ref collidingBox))
                     continue;
 
-                // Combine intersections into one “weighted” center of mass.
                 var collidingRec = bodyBox.Rectangle().GetIntersection(collidingBox.Rectangle());
-                var collidingArea = collidingRec.Width * collidingRec.Height;
+                if (collidingRec.Width <= 0 || collidingRec.Height <= 0)
+                    continue;
 
-                holeCollisionCoM =
-                    holeCollisionCoM * (holeCollisionArea / (holeCollisionArea + collidingArea)) +
-                    collidingRec.Center * (collidingArea / (holeCollisionArea + collidingArea));
+                // ----------------------------------------------------------
+                // 🎯 Bottom-side bias
+                // The original Link's Awakening games had a bias on the bottom
+                // side of the hole compared to the top, meaning you can stand
+                // closer on the bottom side, than you can the top side. Why?
+                // This is one of those things we'll never know why, it just is.
+                // ----------------------------------------------------------
+                float holeCenterY = collidingBox.Center.Y;
+                float playerCenterY = bodyBoxCenter.Y;
+                float yDiff = playerCenterY - holeCenterY;
 
-                // Makes sure that only one intersecting hole is able to pull the player towards it.
-                if (collidingArea == holeCollisionArea && holeCollisionCoM.X == bodyBoxCenter.X && collidingRec.Width * 2 != bodyBox.Width)
-                    holeCollisionCoM.X -= 4;
-                if (collidingArea == holeCollisionArea && holeCollisionCoM.Y == bodyBoxCenter.Y && collidingRec.Height * 2 != bodyBox.Height)
-                    holeCollisionCoM.Y += 4;
+                if (yDiff > 0)
+                {
+                    // biasStrength controls how lenient the bottom edge is.
+                    //  - Lower = player gets pulled sooner (tighter hole edge)
+                    //  - Higher = player can stand closer before being pulled
+                    const float biasStrength = 2.5f;
+                    float effectiveOffset = Math.Clamp(yDiff, 0f, biasStrength);
 
+                    // Moves the top of the intersection up slightly,
+                    // effectively reducing how much area is counted as “colliding”.
+                    collidingRec.Y -= effectiveOffset;
+                    collidingRec.Height = Math.Max(0, collidingRec.Height - effectiveOffset);
+                }
+
+                // Recompute intersection area.
+                float collidingArea = collidingRec.Width * collidingRec.Height;
+                if (collidingArea <= 0 || float.IsNaN(collidingArea))
+                    continue;
+
+                // Weighted center of mass (CoM) of all colliding regions..
+                float totalArea = holeCollisionArea + collidingArea;
+                if (totalArea > 0f)
+                {
+                    var collidingCenterV = new Vector2(collidingRec.Center.X, collidingRec.Center.Y);
+                    holeCollisionCoM =
+                        (holeCollisionCoM * (holeCollisionArea / totalArea)) +
+                        (collidingCenterV * (collidingArea / totalArea));
+                }
                 holeCollisionArea += collidingArea;
             }
-            // Compute the "non-hole" side (where body hitbox is still on land).
-            noneCollisionCoM += (noneCollisionCoM - holeCollisionCoM) * (holeCollisionArea / noneCollisionArea);
-            noneCollisionArea -= holeCollisionArea;
+            noneCollisionCoM += (noneCollisionCoM - holeCollisionCoM) * (holeCollisionArea / Math.Max(noneCollisionArea, 0.0001f));
+            noneCollisionArea = Math.Max(0, noneCollisionArea - holeCollisionArea);
 
-            // Slows down the player body the closer to the hole it is.
-            body.SpeedMultiply = bodyArea > 0 ? Math.Min(1 - (holeCollisionArea / bodyArea), 1) : 1;
+            // ----------------------------------------------------------
+            // 🐢 Base slowdown factor
+            // The more the player overlaps a hole, the slower they move.
+            // This value is further refined later once absorption begins.
+            // ----------------------------------------------------------
+            body.SpeedMultiply = bodyArea > 0 ? Math.Clamp(1 - (holeCollisionArea / bodyArea), 0f, 1f) : 1f;
 
-            // The direction of the hole's pull from safe area towards hole center.
             var holeDirection = holeCollisionCoM - noneCollisionCoM;
             if (holeDirection != Vector2.Zero)
                 holeDirection.Normalize();
 
             body.IsAbsorbed = false;
 
-            // How much of the body is currently colliding with the hole.
+            // Fraction of the player currently overlapping the hole.
             var collisionAreaPercentage = bodyArea > 0 ? holeCollisionArea / bodyArea : 0f;
 
-            // The more body and hole share collision the faster the absorption rate.
+            // ----------------------------------------------------------
+            // ⚙️ AbsorbStop tuning:
+            //  - Set on the BodyComponent (eg: ObjLink._body.AbsorbStop = 0.35f)
+            //  - Nothing happens until this % of overlap is reached.
+            // ----------------------------------------------------------
             if (collisionAreaPercentage > body.AbsorbStop)
             {
+                // Normalizes overlap amount after the AbsorbStop threshold.
                 var normalized = (collisionAreaPercentage - body.AbsorbStop) / (1f - body.AbsorbStop);
+
+                // slowdown exponent:
+                //  - Lower exponent (e.g. 1.0) = more linear slowdown
+                //  - Higher exponent (>1.3) = smoother start, stronger finish
                 var slowdown = MathF.Pow(Math.Clamp(normalized, 0f, 1f), 1.3f);
                 body.SpeedMultiply = 1f - slowdown;
             }
@@ -536,33 +575,50 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 body.SpeedMultiply = 1f;
             }
 
-            // The body has been completely absorbed by the hole.
+            // ----------------------------------------------------------
+            // 💀 Full absorption threshold:
+            // - Set on the BodyComponent (eg: ObjLink._body.AbsorbPercentage = 1.0f)
+            // - When reached, player is "swallowed" by the hole.
+            // ----------------------------------------------------------
             if (holeCollisionArea >= bodyArea * body.AbsorbPercentage)
             {
-                // Absorption gets set to zero if the body jumped into the hole. Fixes a bug where
-                // the player can push an object on the other side of a hole while falling into it.
                 if (!body.WasHolePulled)
                     body.HoleAbsorption = Vector2.Zero;
 
                 body.Velocity = Vector3.Zero;
+
+                // 0.85f controls how quickly the fall acceleration eases out.
                 body.HoleAbsorption *= (float)Math.Pow(0.85f, Game1.TimeMultiplier);
                 body.HoleAbsorb?.Invoke();
                 body.IsAbsorbed = true;
             }
-            // Body is getting pulled towards the hole.
+            // ----------------------------------------------------------
+            // 🧲 Pulling phase
+            // Happens once overlap > AbsorbStop, but before full absorption.
+            // ----------------------------------------------------------
             else if (collisionAreaPercentage > body.AbsorbStop)
             {
+                // 🔹 Pull strength:
+                // The 0.50f here scales how hard the player is pulled toward the hole.
+                //  - Lower = gentler tug
+                //  - Higher = more forceful yank
                 var holePull = new Vector2(holeDirection.X, holeDirection.Y) * collisionAreaPercentage * 0.50f;
 
-                // Calculate the new direction of the hole pull.
+                // 🔹 Pull smoothing:
+                // Controls how "snappy" or "fluid" the pull acceleration feels.
+                //  - Higher oldPercentage (e.g. 0.8) = smoother/slower reaction
+                //  - Lower oldPercentage (e.g. 0.4) = snappier/faster correction
                 var oldPercentage = (float)Math.Pow(0.6f, Game1.TimeMultiplier);
+
                 body.HoleAbsorption = body.HoleAbsorption * oldPercentage +
                                       holePull * (1 - oldPercentage);
 
                 body.HoleOnPull?.Invoke(holePull, collisionAreaPercentage);
                 body.WasHolePulled = true;
             }
-            // Stop the absorption if now out of range.
+            // ----------------------------------------------------------
+            // 🛑 If no longer overlapping enough, stop pulling.
+            // ----------------------------------------------------------
             else if (body.HoleAbsorption != Vector2.Zero)
             {
                 body.HoleAbsorption = Vector2.Zero;
