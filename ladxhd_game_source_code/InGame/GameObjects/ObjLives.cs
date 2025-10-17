@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Reflection;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects
 {
@@ -117,11 +121,50 @@ namespace ProjectZ.InGame.GameObjects
         // Holds a list of all enemy HP default values.
         private static Dictionary<string, int> _defaultValues;
 
+        public static void Initialize()
+        {
+            // Load in mod file values if present.
+            ParseModFile();
+
+            // Backup the default values or values set by the mod.
+            BackupDefaultHP();
+
+            // If the user set "Extra Enemy HP" then add the value to all lives.
+            if (GameSettings.EnemyBonusHP > 0)
+                AddToEnemyHP(GameSettings.EnemyBonusHP);
+        }
+
+        public static void ParseModFile()
+        {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjLives.lahdmod");
+
+            if (!File.Exists(modFile))
+                return;
+
+            foreach (string line in File.ReadAllLines(modFile))
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+                    continue;
+
+                string[] splitLine = line.Split(new char[]{ '=', '/' });
+                if (splitLine.Length < 2)
+                    continue;
+
+                string varName = splitLine[0].Trim();
+                string varValue = splitLine[1].Trim();
+
+                FieldInfo field = typeof(ObjLives).GetField(varName, BindingFlags.Public | BindingFlags.Static);
+                object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
+                field.SetValue(null, convertedValue);
+            }
+        }
+
         public static void BackupDefaultHP()
         {
             _defaultValues = new Dictionary<string, int>();
 
-            var enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
+            FieldInfo[] enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
             foreach (var enemy in enemyHP)
             {
                 if (enemy.FieldType == typeof(int))
@@ -130,7 +173,7 @@ namespace ProjectZ.InGame.GameObjects
         }
         public static void RestoreDefaultHP()
         {
-            var enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
+            FieldInfo[] enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
             foreach (var enemy in enemyHP)
             {
                 if (enemy.FieldType == typeof(int) && _defaultValues.TryGetValue(enemy.Name, out int value))
@@ -140,7 +183,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public static void AddToEnemyHP(int amount)
         {
-            var enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
+            FieldInfo[] enemyHP = typeof(ObjLives).GetFields(BindingFlags.Public | BindingFlags.Static);
             foreach (var enemy in enemyHP)
             {
                 if (enemy.FieldType == typeof(int))
