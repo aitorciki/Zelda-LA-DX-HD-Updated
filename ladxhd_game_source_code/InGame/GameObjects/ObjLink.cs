@@ -1605,7 +1605,9 @@ namespace ProjectZ.InGame.GameObjects
             foreach (var npc in npcList)
             {
                 var collisionObject = npc.Components[CollisionComponent.Index] as CollisionComponent;
-                if (collisionObject != null && (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
+                var collisionBody = npc.Components[CollisionComponent.Index] as BodyCollisionComponent;
+                if (collisionObject != null && collisionBody != null && collisionBody.IsActive && 
+                    (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
                 {
                     var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
 
