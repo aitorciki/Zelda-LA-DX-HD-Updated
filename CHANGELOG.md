@@ -1,5 +1,23 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.0**
+### **The "Sound is a 'Hole' Lot Better" Update**
+  * Update holes so they act closer to the original game. The pull "size" is now accurate down to the pixel.
+  * During the intro sequence, play Marin's missing animations. This is the only place in the game she has them.
+  * When charging the sword and approaching a NPC, cancel the charge until not facing them (original game behavior).
+  * Add support for Link mod file "ObjLink.lahdmod" file which can configure various settings for Link.
+  * Add support for enemy mod file "ObjLives.lahdmod" file which can configure HP for individual enemies.
+  * Update mod file "ObjDungeonBlacker.lahdmod" to include all maps where the lighting can be modified.
+  * Don't play the "menu back" sound when exiting the name entry page via "special name" entry that plays music.
+  * Add flashing effect to the sword shot like in the original games. This is the same flashing effect as when charging.
+  * Fix various popping and distortion found in various sound effects: 77 sound effects fixed in total.
+  * Fix various terrain differences around Kanalet Castle and Ukuku Prairie. The map almost appeared "unfinished".
+  * Fix the flowers near Goponga Swamp to have their animation. Also add unused flower as an easter egg (somewhere).
+  * Fix the animation speed for all flowers in the game. While some had the proper speed, others were over double.
+  * Fix Marin wall clipping issues when she is a follower by reducing her body box size to match Link's.
+  * Fix Marin cliff jumping sound effect to use the proper sound when she is a follower.
+  * Fix missing collision near the cave to the right of the egg allowing the player to walk into the sky.
+
 ## **v1.3.9**
 ### **The "Old is New" Update**
   * Modify sword hitbox so it hits enemies at any "height" like the original games.
