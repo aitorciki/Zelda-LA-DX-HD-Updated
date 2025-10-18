@@ -1,5 +1,12 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.1**
+### **A Maintenance Update**
+  * Update the new hole code so that the bottom bias does not affect anything other than Link.
+  * Move the new "NPC" type collision to the bottom of the enum list. This fixes a bug with the Photo Mouse.
+  * Fix a bug that caused the NPC avoidance code to trigger even when an NPC wasn't spawned in.
+  * Add support for a bunch more "lighting" lahdmod files so a new "no lighting" modpack can be created.
+
 ## **v1.4.0**
 ### **The "Sound is a 'Hole' Lot Better" Update**
   * Update holes so they act closer to the original game. The pull "size" is now accurate down to the pixel.
