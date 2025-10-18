@@ -13,7 +13,6 @@ namespace ProjectZ.InGame.Things
             PlayerItem = 0x04,
             Player = 0x08,
             Enemy = 0x10,
-            NPC = 0x16,
             Ladder = 0x20,
             LadderTop = 0x40,
             NPCWall = 0x80,
@@ -26,7 +25,8 @@ namespace ProjectZ.InGame.Things
             PushIgnore = 0x4000,
             Destroyable = 0x8000,
             ThrowIgnore = 0x10000,
-            ThrowWeaponIgnore = 0x20000
+            ThrowWeaponIgnore = 0x20000,
+            NPC = 0x40000
         }
 
         [Flags]
