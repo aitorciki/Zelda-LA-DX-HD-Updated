@@ -1,4 +1,7 @@
 using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -12,10 +15,6 @@ namespace ProjectZ.InGame.GameObjects.Things
     internal class ObjLamp : GameObject
     {
         private readonly Animator _animator;
-
-        private readonly Color _lightColor = new Color(255, 200, 200);
-        private readonly Rectangle _lightRectangle;
-
         private readonly int _animationLength;
 
         private readonly string _lampKey;
@@ -24,24 +23,33 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _lampState = 1.0f;
         private float _liveTime;
 
-        private const int PowderTime = 9000;
-
         private bool _lampKeyState = true;
+
+        int powder_time = 9000;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 200;
+        int light_blu = 200;
+        float light_bright = 1.00f;
+        int light_size = 160;
 
         public ObjLamp(Map.Map map, int posX, int posY, string animationName, int rotation, bool hasCollision, bool powderLamp, string lampKey) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjLamp.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             EntityPosition = new CPosition(posX, posY + 8, 0);
 
             Tags = Values.GameObjectTag.Lamp;
 
-            var lightSize = 160;
-            EntitySize = new Rectangle(8 - lightSize / 2, -8 - lightSize / 2, lightSize, lightSize);
-            _lightRectangle = new Rectangle(posX + 8 - lightSize / 2, posY + 8 - lightSize / 2, lightSize, lightSize);
+            EntitySize = new Rectangle(8 - light_size / 2, -8 - light_size / 2, light_size, light_size);
 
             _animator = AnimatorSaveLoad.LoadAnimator(animationName);
             if (_animator == null)
             {
-                Console.WriteLine("Object-ObjLamp: could not find animation name: {0}", animationName);
                 IsDead = true;
                 return;
             }
@@ -137,6 +145,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdatePowderedLamp()
         {
+            // If the user set 0 it means to keep it lit forever.
+            if (powder_time == 0)
+            {
+                _animator.Play("idle");
+                return;
+            }
             _liveTime -= Game1.DeltaTime;
             if (_liveTime < 0)
             {
@@ -154,24 +168,28 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _animator.Play("idle");
             }
 
-            _lampState = AnimationHelper.MoveToTarget(_lampState, _lampKeyState ? 1 : 0, 0.1f * Game1.TimeMultiplier);
+            _lampState = AnimationHelper.MoveToTarget(_lampState, _lampKeyState ? light_bright : 0, 0.1f * Game1.TimeMultiplier);
         }
 
         private void UpdateKeyLamp()
         {
-            _lampState = AnimationHelper.MoveToTarget(_lampState, _lampKeyState ? 1 : 0, 0.075f * Game1.TimeMultiplier);
+            _lampState = AnimationHelper.MoveToTarget(_lampState, _lampKeyState ? light_bright : 0, 0.075f * Game1.TimeMultiplier);
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Resources.SprLight, _lightRectangle, _lightColor * _lampState);
+            if (light_source)
+            {
+                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X + 8 - light_size / 2, (int)EntityPosition.Y + 8 - light_size / 2, light_size, light_size);
+                spriteBatch.Draw(Resources.SprLight, _lightRectangle, new Color(light_red, light_grn, light_blu) * _lampState);
+            }
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
             if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
             {
-                _liveTime = PowderTime;
+                _liveTime = powder_time;
 
                 // play sound effect
                 Game1.GameManager.PlaySoundEffect("D378-18-12");

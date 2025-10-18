@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
@@ -15,8 +18,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly Animator _animator;
         private readonly BodyComponent _body;
-
-        private readonly Color _lightColor = new Color(255, 255, 255);
 
         private Vector2 _lastPosition;
         private string _destructionKey;
@@ -32,10 +33,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         bool _lastEpSafe;
 
+        bool  light_source = false;
+        int   light_red = 255;
+        int   light_grn = 255;
+        int   light_blu = 255;
+        float light_bright = 1.0f;
+        int   light_size = 120;
+
         public EnemySpark() : base("spark") { }
 
         public EnemySpark(Map.Map map, int posX, int posY, int direction, bool clockwise, string destructionKey) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "EnemySpark.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             // maybe create a new tag for enemies that should be ignored by the enemy trigger
             Tags = Values.GameObjectTag.Damage;
 
@@ -162,18 +176,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            // No sense in constantly updating the value.
-            if (_lastEpSafe != GameSettings.EpilepsySafe)
+            if (light_source)
             {
-                if (GameSettings.EpilepsySafe)
-                    _animator.SpeedMultiplier = 0.10f;
-                else
-                    _animator.SpeedMultiplier = 1f;
+                if (_lastEpSafe != GameSettings.EpilepsySafe)
+                {
+                    if (GameSettings.EpilepsySafe)
+                        _animator.SpeedMultiplier = 0.10f;
+                    else
+                        _animator.SpeedMultiplier = 1f;
 
-                _lastEpSafe = GameSettings.EpilepsySafe;
+                    _lastEpSafe = GameSettings.EpilepsySafe;
+                }
+                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size);
+                DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * (0.125f + _lightState * light_bright));
             }
-            DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 32, (int)EntityPosition.Y - 32, 64, 64),
-                _lightColor * (0.125f + _lightState * 0.25f));
         }
     }
 }

@@ -60,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             string modFile = Path.Combine(Values.PathModFolder, "ObjDungeonFairy.lahdmod");
 
             if (File.Exists(modFile))
-                ParseModFile(modFile);
+                ModFile.Parse(modFile, this);
 
             EntityPosition = new CPosition(posX, posY, posZ);
             EntitySize = new Rectangle(-4, -30, 8, 30);
@@ -111,26 +111,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, _sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-        }
-
-        private void ParseModFile(string modFile)
-        {
-            foreach (string line in File.ReadAllLines(modFile))
-            {
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
-                    continue;
-
-                string[] splitLine = line.Split('=');
-                if (splitLine.Length < 2)
-                    continue;
-
-                string varName = splitLine[0].Trim();
-                string varValue = splitLine[1].Trim();
-
-                FieldInfo field = typeof(ObjDungeonFairy).GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
-                field.SetValue(this, convertedValue);
-            }
         }
 
         private void Update()

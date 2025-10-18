@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.IO;
+using System.Globalization;
+using System.Reflection;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -14,17 +18,36 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _dialogPath;
         private readonly bool _isHardCrystal;
 
+        bool light_source = true;
+        int light_size = 80;
+
+        int light_red_1 = 240;
+        int light_grn_1 = 100;
+        int light_blu_1 = 255;
+        float light_bright_1 = 1.00f;
+
+        int light_red_2 = 255;
+        int light_grn_2 = 255;
+        int light_blu_2 = 255;
+        float light_bright_2 = 0.25f;
+
         public ObjCrystal(Map.Map map, int posX, int posY, string spriteId, int color, bool hardCrystal, string dialogPath) : base(map, spriteId)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjCrystal.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             var sprite = Resources.GetSprite(spriteId);
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-40, -8 - 40, 80, 80);
 
             if (color == 0)
-                _lightColor = new Color(240, 100, 255);
+                _lightColor = new Color(light_red_1, light_grn_1, light_blu_1) * light_bright_1;
             else if (color == 1)
-                _lightColor = new Color(255, 255, 255) * 0.25f;
+                _lightColor = new Color(light_red_2, light_grn_2, light_blu_2) * light_bright_2;
 
             _isHardCrystal = hardCrystal;
             _dialogPath = dialogPath;
@@ -55,7 +78,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 40, (int)EntityPosition.Y - 8 - 40, 80, 80), _lightColor);
+            if (light_source)
+            {
+                var _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - 8 - light_size / 2, light_size, light_size);
+                DrawHelper.DrawLight(spriteBatch, _lightRectangle, _lightColor);
+            }
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)

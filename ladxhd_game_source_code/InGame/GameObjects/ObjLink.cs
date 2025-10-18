@@ -454,7 +454,7 @@ namespace ProjectZ.InGame.GameObjects
             string modFile = Path.Combine(Values.PathModFolder, "ObjLink.lahdmod");
 
             if (File.Exists(modFile))
-                ParseModFile(modFile);
+                ModFile.Parse(modFile, this);
 
             EntityPosition = new CPosition(0, 0, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -583,26 +583,6 @@ namespace ProjectZ.InGame.GameObjects
 
             // Set the move speed value the user chose.
             AlterMoveSpeed(GameSettings.MoveSpeedAdded);
-        }
-
-        private void ParseModFile(string modFile)
-        {
-            foreach (string line in File.ReadAllLines(modFile))
-            {
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
-                    continue;
-
-                string[] splitLine = line.Split('=');
-                if (splitLine.Length < 2)
-                    continue;
-
-                string varName = splitLine[0].Trim();
-                string varValue = splitLine[1].Trim();
-
-                FieldInfo field = typeof(ObjLink).GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
-                field.SetValue(this, convertedValue);
-            }
         }
 
         private void Update()

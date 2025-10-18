@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Globalization;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -18,10 +21,17 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly float _rotation;
 
+        bool light_source = true;
+
         public ObjLightSprite() : base("editor light") { }
 
         public ObjLightSprite(Map.Map map, int posX, int posY, string spriteId, int colorR, int colorG, int colorB, int colorA, int layer, int rotation) : base(map)
         {
+            string modFile = Path.Combine(Values.PathModFolder, "ObjLightSprite.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             EntityPosition = new CPosition(posX, posY, 0);
 
             if (!string.IsNullOrEmpty(spriteId))
@@ -46,8 +56,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_sprite.Texture, _position, _sprite.ScaledRectangle, 
-                _lightColor, _rotation, _sprite.ScaledOrigin, _sprite.Scale, SpriteEffects.None, 0);
+            if (light_source)
+                spriteBatch.Draw(_sprite.Texture, _position, _sprite.ScaledRectangle, 
+                    _lightColor, _rotation, _sprite.ScaledOrigin, _sprite.Scale, SpriteEffects.None, 0);
         }
     }
 }

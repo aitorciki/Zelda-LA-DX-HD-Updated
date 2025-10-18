@@ -1,9 +1,12 @@
 using System;
+using System.IO;
+using System.Globalization;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -28,10 +31,27 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _lockTeleporter;
         private bool _isColliding;
 
+        bool enabled = true;
+        float teleport_range = 4.25f;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 175;
+        int light_blu = 175;
+        float light_bright = 1.00f;
+        int light_size = 64;
+
         public ObjDungeonTeleporter() : base("teleporter_middle") { }
 
         public ObjDungeonTeleporter(Map.Map map, int posX, int posY, string teleportMap, string teleporterId) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjDungeonTeleporter.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
+            if (!enabled) return;
+
             _pointRectangle = Resources.SourceRectangle("teleporter_outer");
             var sourceRectangle = Resources.SourceRectangle("teleporter_middle");
 
@@ -76,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             // is the player close enough?
             var distance = TeleportPosition - MapManager.ObjLink.EntityPosition.Position;
-            if (distance.Length() < 4.25f)
+            if (distance.Length() < teleport_range)
                 OnCollision();
 
             _rotateCount -= Game1.DeltaTime;
@@ -138,10 +158,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void PlacePlayer()
         {
-            //MapManager.ObjLink.SaveMap = Map.MapName;
-            //MapManager.ObjLink.SavePosition = TeleportPosition;
-            //MapManager.ObjLink.SaveDirection = 3;
-
             MapManager.ObjLink.NextMapPositionStart = TeleportPosition;
             MapManager.ObjLink.NextMapPositionEnd = TeleportPosition;
             MapManager.ObjLink.TransitionInWalking = false;
@@ -159,7 +175,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 32, (int)EntityPosition.Y - 32, 64, 64), new Color(255, 175, 175) * 1.00f);
+            if (light_source)
+            {
+                var _lightColor = new Color(light_red, light_grn, light_blu);
+                var _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size);
+                DrawHelper.DrawLight(spriteBatch, _lightRectangle, _lightColor * light_bright);
+            }
         }
     }
 }
