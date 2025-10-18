@@ -510,7 +510,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     // biasStrength controls how lenient the bottom edge is.
                     //  - Lower = player gets pulled sooner (tighter hole edge)
                     //  - Higher = player can stand closer before being pulled
-                    const float biasStrength = 2.5f;
+                    float biasStrength = body == MapManager.ObjLink._body ? 2.5f : 0f;
                     float effectiveOffset = Math.Clamp(yDiff, 0f, biasStrength);
 
                     // Moves the top of the intersection up slightly,
@@ -524,7 +524,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 if (collidingArea <= 0 || float.IsNaN(collidingArea))
                     continue;
 
-                // Weighted center of mass (CoM) of all colliding regions..
+                // Weighted center of mass (CoM) of all colliding regions.
                 float totalArea = holeCollisionArea + collidingArea;
                 if (totalArea > 0f)
                 {
