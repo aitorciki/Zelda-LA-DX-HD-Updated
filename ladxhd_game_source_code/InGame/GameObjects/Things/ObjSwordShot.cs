@@ -105,9 +105,22 @@ namespace ProjectZ.InGame.GameObjects.Things
                     spriteBatch.Draw(_sprite.SprTexture, drawPosition, _sprite.SourceRectangle, _sprite.Color * (0.20f + 0.30f * ((i + 1) / (float)trailCount)),
                         _sprite.Rotation, _sprite.Center * _sprite.Scale, new Vector2(_sprite.Scale), SpriteEffects.None, 0);
             }
+            var changeColor = Game1.TotalGameTime % (8 / 0.06) >= 4 / 0.06 &&
+                        ObjectManager.CurrentEffect != Resources.DamageSpriteShader0.Effect;
 
+            if (changeColor)
+            {
+                spriteBatch.End();
+                ObjectManager.SpriteBatchBegin(spriteBatch, Resources.DamageSpriteShader0);
+            }
             // draw the actual sprite
             _sprite.Draw(spriteBatch);
+
+            if (changeColor)
+            {
+                spriteBatch.End();
+                ObjectManager.SpriteBatchBegin(spriteBatch, null);
+            }
         }
 
         private void OnCollision(Values.BodyCollision collision)
