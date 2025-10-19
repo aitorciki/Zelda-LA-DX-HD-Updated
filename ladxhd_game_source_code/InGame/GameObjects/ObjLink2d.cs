@@ -453,7 +453,8 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play(_drownCounter > 300 ? "swim_" + _swimDirection : "dive");
             }
             // Force a direction from analog stick movement.
-            if (!IsChargingState(CurrentState) && CurrentState != State.Grabbing && CurrentState != State.Pulling)
+            if (!IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
+                CurrentState != State.Pulling && CurrentState != State.Hookshot)
             {
                 Vector2 moveVector = ControlHandler.GetMoveVector2(modern_analog);
                 if (moveVector != Vector2.Zero)
