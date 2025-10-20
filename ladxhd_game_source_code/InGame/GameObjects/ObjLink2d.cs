@@ -454,7 +454,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             // Force a direction from analog stick movement.
             if (!IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
-                CurrentState != State.Pulling && CurrentState != State.Hookshot)
+                CurrentState != State.Pulling && CurrentState != State.Hookshot && !_isHoldingSword)
             {
                 Vector2 moveVector = ControlHandler.GetMoveVector2(modern_analog);
                 if (moveVector != Vector2.Zero)
