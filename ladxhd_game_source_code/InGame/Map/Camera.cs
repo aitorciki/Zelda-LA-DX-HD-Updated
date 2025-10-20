@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.Map
                                             Game1.GameManager.GetMatrix;
         public Vector2 Location;
         public Vector2 MoveLocation;
+        private Rectangle fieldRect;
 
         // this is needed so there is no texture bleeding while rendering the game
         public float RoundX => (int)Math.Round(Location.X + ShakeOffsetX * Scale, MidpointRounding.AwayFromZero);
@@ -43,7 +44,6 @@ namespace ProjectZ.InGame.Map
                 (int)RoundX - _viewportWidth / 2,
                 (int)RoundY - _viewportHeight / 2,
                 _viewportWidth, _viewportHeight);
-
             return rectangle;
         }
 
@@ -53,7 +53,6 @@ namespace ProjectZ.InGame.Map
                 (int)(RoundX / Scale) - (int)(_viewportWidth / 2 / Scale),
                 (int)(RoundY / Scale) - (int)(_viewportHeight / 2 / Scale),
                 (int)(_viewportWidth / Scale), (int)(_viewportHeight / Scale));
-
             return rectangle;
         }
 
@@ -63,44 +62,85 @@ namespace ProjectZ.InGame.Map
                 (int)(RoundX / Scale) - Values.MinWidth,
                 (int)(RoundY / Scale) - Values.MinHeight,
                 Values.MinWidth * 2, Values.MinHeight * 2);
-
             return rectangle;
         }
 
         public void Center(Vector2 position, bool moveX, bool moveY)
         {
-            if (!GameSettings.SmoothCamera)
+            if (GameSettings.ClassicCamera)
             {
-                Location = position;
+                // Get the field rectangle and its center
+                fieldRect = MapManager.ObjLink.Map.GetField(
+                    (int)MapManager.ObjLink.EntityPosition.X,
+                    (int)MapManager.ObjLink.EntityPosition.Y
+                );
+
+                var rectCenterX = (fieldRect.X + fieldRect.Width / 2f) * GameSettings.GameScale;
+                var rectCenterY = (fieldRect.Y + fieldRect.Height / 2f) * GameSettings.GameScale;
+                var rectCenter = new Vector2(rectCenterX, rectCenterY);
+
+                // If smooth camera is off, just snap instantly
+                if (!GameSettings.SmoothCamera)
+                {
+                    Location = rectCenter;
+                    MoveLocation = rectCenter;
+                    return;
+                }
+                if (MoveLocation != rectCenter)
+                    MoveLocation = rectCenter;
+
+                // Smoothly move camera toward MoveLocation
+                var direction = MoveLocation - Location;
+                if (direction != Vector2.Zero)
+                {
+                    var distance = direction.Length() / Scale * CameraFollowMultiplier;
+                    var speedMult = CameraFunction(distance / 3.5f);
+
+                    direction.Normalize();
+                    var cameraSpeed = direction * speedMult * Scale * Game1.TimeMultiplier;
+
+                    if (moveX)
+                        Location.X += cameraSpeed.X;
+                    if (moveY)
+                        Location.Y += cameraSpeed.Y;
+
+                    // Snap if close enough
+                    if (distance <= 0.1f * Game1.TimeMultiplier)
+                        Location = MoveLocation;
+                }
                 return;
             }
-
-            var direction = position - MoveLocation;
-
-            if (direction != Vector2.Zero)
+            else
             {
-                var distance = direction.Length() / Scale * CameraFollowMultiplier;
-                var speedMult = CameraFunction(distance / 12.5f);
+                if (!GameSettings.SmoothCamera)
+                {
+                    Location = position;
+                    return;
+                }
+                var direction = position - MoveLocation;
 
-                direction.Normalize();
-                var cameraSpeed = direction * speedMult * Scale * Game1.TimeMultiplier;
+                if (direction != Vector2.Zero)
+                {
+                    var distance = direction.Length() / Scale * CameraFollowMultiplier;
+                    var speedMult = CameraFunction(distance / 12.5f);
 
+                    direction.Normalize();
+                    var cameraSpeed = direction * speedMult * Scale * Game1.TimeMultiplier;
+
+                    if (moveX)
+                        MoveLocation.X += cameraSpeed.X;
+                    if (moveY)
+                        MoveLocation.Y += cameraSpeed.Y;
+                    if (distance <= 0.1f * Game1.TimeMultiplier)
+                        MoveLocation = position;
+                }
+                // this is needed so the player does not wiggle around while the camera is following him
                 if (moveX)
-                    MoveLocation.X += cameraSpeed.X;
+                    _cameraDistance.X = position.X - MoveLocation.X;
                 if (moveY)
-                    MoveLocation.Y += cameraSpeed.Y;
-
-                if (distance <= 0.1f * Game1.TimeMultiplier)
-                    MoveLocation = position;
+                    _cameraDistance.Y = position.Y - MoveLocation.Y;
+                Location = new Vector2((int)Math.Round(position.X), (int)Math.Round(position.Y)) - _cameraDistance;
             }
-
-            // this is needed so the player does not wiggle around while the camera is following him
-            if (moveX)
-                _cameraDistance.X = position.X - MoveLocation.X;
-            if (moveY)
-                _cameraDistance.Y = position.Y - MoveLocation.Y;
-
-            Location = new Vector2((int)Math.Round(position.X), (int)Math.Round(position.Y)) - _cameraDistance;
         }
 
         private float CameraFunction(float x)
@@ -131,6 +171,70 @@ namespace ProjectZ.InGame.Map
         }
 
         public void Draw(SpriteBatch spriteBatch)
+        {
+            // Create a border around the current field.
+            if (GameSettings.ClassicBorder)
+            {
+                int thickness = 4;
+                float scale = GameSettings.GameScale;
+
+                // Screen center
+                var viewport = spriteBatch.GraphicsDevice.Viewport;
+                var screenCenter = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
+
+                // Compute scaled field rect
+                var fieldX = fieldRect.X * scale - thickness;
+                var fieldY = fieldRect.Y * scale - thickness;
+                var fieldW = fieldRect.Width * scale + thickness * 2;
+                var fieldH = fieldRect.Height * scale + thickness * 2;
+
+                // Compute the field center in world space
+                var fieldCenter = new Vector2(
+                    (fieldRect.X + fieldRect.Width / 2f) * scale,
+                    (fieldRect.Y + fieldRect.Height / 2f) * scale
+                );
+
+                // Offset so that the field rect is centered on screen (like your camera)
+                var drawOffset = screenCenter - (fieldCenter - Location);
+                var tex = Resources.SprWhite;
+
+                // Draw borders (using alpha)
+                Color borderColor = Color.Black * GameSettings.ClassicAlpha;
+
+                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor); // Top
+                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor); // Bottom
+                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Left
+                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Right
+
+                // Fill everything outside the border with black.
+                if (GameSettings.ClassicBlackout)
+                {
+                    var screenW = viewport.Width;
+                    var screenH = viewport.Height;
+
+                    // Compute the rectangle’s position on screen
+                    var rectScreenX = drawOffset.X + fieldX - Location.X;
+                    var rectScreenY = drawOffset.Y + fieldY - Location.Y;
+
+                    // Apply alpha
+                    Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
+
+                    // Top black bar
+                    spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
+
+                    // Bottom black bar
+                    spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
+
+                    // Left black bar
+                    spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
+
+                    // Right black bar
+                    spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
+                }
+            }
+        }
+
+        public void DrawB(SpriteBatch spriteBatch)
         {
             if (!Game1.DebugMode)
                 return;

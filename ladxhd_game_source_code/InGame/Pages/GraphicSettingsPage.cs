@@ -67,11 +67,6 @@ namespace ProjectZ.InGame.Pages
                 });
             contentLayout.AddElement(toggleFpsLock);
 
-            // Button: Smooth Camera
-            var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_graphics_smoothcamera", GameSettings.SmoothCamera, newState => { GameSettings.SmoothCamera = newState; });
-            contentLayout.AddElement(smoothCameraToggle);
-
             // Button: Screen-Shake
             var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_graphics_screenshake", GameSettings.ScreenShake, newState => { GameSettings.ScreenShake = newState; });

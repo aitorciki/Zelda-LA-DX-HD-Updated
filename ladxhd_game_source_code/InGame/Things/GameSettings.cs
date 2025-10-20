@@ -3,40 +3,55 @@ namespace ProjectZ.InGame.Things
 {
     class GameSettings
     {
-        public static int     GameScale      =  11;
-        public static int     UiScale        =  4;
-        private static int    _musicVolume   =  100;
-        private static int    _effectVolume  =  100;
-        public static bool    MuteInactive   =  true;
-        public static bool    MutePowerups   =  false;
-        public static bool    EnableShadows  =  true;
-        public static bool    Autosave       =  true;
-        public static bool    HeartBeep      =  true;
-        public static bool    ScreenShake    =  true;
-        public static bool    CameraLock     =  true;
-        public static bool    EpilepsySafe   =  false;
-        public static bool    SmoothCamera   =  true;
-        public static bool    OldMovement    =  false;
-        public static bool    IsFullscreen   =  false;
-        public static bool    ExFullscreen   =  false;
-        public static bool    VerticalSync   =  true;
-        public static bool    ItemsOnRight   =  false;
-        public static bool    SwapButtons    =  false;
-        public static string  Controller     =  "XBox";
-        public static int     MenuBorder     =  0;
-        public static bool    VarWidthFont   =  false;
-        public static bool    NoHelperText   =  false;
-        public static bool    DialogSkip     =  false;
-        public static bool    Uncensored     =  false;
-        public static bool    Unmissables    =  false;
-        public static bool    PhotosColor    =  false;
-        public static bool    NoAnimalDamage =  false;
-        public static int     EnemyBonusHP   =  0;
-        public static int     DmgMultiplier  =  0;
-        public static float   MoveSpeedAdded =  0;
-        public static bool    NoDamageLaunch =  false;
-        public static bool    NoHeartDrops   =  false;
-        public static bool    SwordBlock     =  false;
+        // Game Settings
+        public static string  Controller      =  "XBox";
+        public static bool    SwapButtons     =  false;
+        public static bool    Autosave        =  true;
+        public static bool    ItemsOnRight    =  false;
+        public static bool    OldMovement     =  false;
+
+        // Video Settings
+        public static int     GameScale       =  11;
+        public static int     UiScale         =  4;
+        public static bool    IsFullscreen    =  false;
+        public static bool    ExFullscreen    =  false; // Exclusive Fullscreen - Currently no in-game option.
+        public static bool    EnableShadows   =  true;
+        public static bool    VerticalSync    =  true;
+        public static bool    ScreenShake     =  true;
+        public static bool    EpilepsySafe    =  false;
+
+        // Audio Settings
+        private static int    _musicVolume    =  100;
+        private static int    _effectVolume   =  100;
+        public static bool    MuteInactive    =  true;
+        public static bool    HeartBeep       =  true;
+        public static bool    MutePowerups    =  false;
+
+        // Camera Settings
+        public static bool    CameraLock      =  true;
+        public static bool    SmoothCamera    =  true;
+        public static bool    ClassicCamera   =  true;
+        public static bool    ClassicBorder   =  true;
+        public static bool    ClassicBlackout =  true;
+        public static float   ClassicAlpha    =  1.00f;
+
+        // Redux Settings
+        public static int     MenuBorder      =  0;
+        public static bool    VarWidthFont    =  false;
+        public static bool    NoHelperText    =  false;
+        public static bool    DialogSkip      =  false;
+        public static bool    Uncensored      =  false;
+        public static bool    Unmissables     =  false;
+        public static bool    PhotosColor     =  false;
+        public static bool    NoAnimalDamage  =  false;
+
+        // Modifiers Settings
+        public static int     EnemyBonusHP    =  0;
+        public static int     DmgMultiplier   =  0;
+        public static float   MoveSpeedAdded  =  0;
+        public static bool    NoDamageLaunch  =  false;
+        public static bool    NoHeartDrops    =  false;
+        public static bool    SwordBlock      =  false;
 
         public static int MusicVolume
         {

@@ -27,18 +27,12 @@ namespace ProjectZ.InGame.Pages
             settingsLayout.AddElement(headerLayout);
 
             var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true };
-            var buttonSize = new Point(150, 20);
+            var buttonSize = new Point(150, 16);
 
             // Button: Game Settings
             contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_game", element =>
             {
                 Game1.UiPageManager.ChangePage(typeof(GameSettingsPage));
-            }));
-
-            // Button: Audio Settings
-            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_audio", element =>
-            {
-               Game1.UiPageManager.ChangePage(typeof(AudioSettingsPage));
             }));
 
             // Button: Video Settings
@@ -47,10 +41,22 @@ namespace ProjectZ.InGame.Pages
                 Game1.UiPageManager.ChangePage(typeof(GraphicSettingsPage));
             }));
  
+            // Button: Audio Settings
+            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_audio", element =>
+            {
+               Game1.UiPageManager.ChangePage(typeof(AudioSettingsPage));
+            }));
+
             // Button: Control Settings
             contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_controls", element =>
             {
                 Game1.UiPageManager.ChangePage(typeof(ControlSettingsPage));
+            }));
+
+            // Button: Camera Settings
+            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_camera", element =>
+            {
+                Game1.UiPageManager.ChangePage(typeof(CameraSettingsPage));
             }));
 
             // Button: Redux Settings

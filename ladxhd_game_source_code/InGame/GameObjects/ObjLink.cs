@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -5318,7 +5317,7 @@ namespace ProjectZ.InGame.GameObjects
                     Direction = 1;
                 }
 
-                // prefent the player from falling down while climbing up a ladder
+                // prevent the player from falling down while climbing up a ladder
                 //if ((Direction % 2) != 0)
                 _body.IgnoresZ = true;
                 // fall down

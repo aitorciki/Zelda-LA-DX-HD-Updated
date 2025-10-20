@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
-using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
@@ -68,11 +67,6 @@ namespace ProjectZ.InGame.Pages
             var toggleOldMovement = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_classic_movement", GameSettings.OldMovement, newState => { GameSettings.OldMovement = newState; });
             contentLayout.AddElement(toggleOldMovement);
-
-            // Button: Camera Lock
-            var toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_cameralock", GameSettings.CameraLock, newState => { GameSettings.CameraLock = newState; });
-            contentLayout.AddElement(toggleCameraLock);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
