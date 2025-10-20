@@ -53,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     Values.CollisionTypes.Enemy |
                     Values.CollisionTypes.Player,
                 AvoidTypes = Values.CollisionTypes.Hole |
+                             Values.CollisionTypes.NonWater |
                              Values.CollisionTypes.NPCWall,
                 FieldRectangle = fieldRectangle,
                 Bounciness = 0.25f,

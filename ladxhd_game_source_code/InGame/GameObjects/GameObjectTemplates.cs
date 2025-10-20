@@ -61,6 +61,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("lowerLevelCollider2", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 8, 16), Values.CollisionTypes.Normal, 0 }));
             ObjectTemplates.Add("colliderLevel1", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Normal, 1 }));
             ObjectTemplates.Add("raftCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.RaftExit, 1 }));
+            ObjectTemplates.Add("nonWaterCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.NonWater, 1 }));
 
             ObjectTemplates.Add("c1PushIgnore", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore, new[] { new Rectangle(0, 0, 16, 16) } }));
 
