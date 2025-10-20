@@ -268,7 +268,6 @@ namespace ProjectZ.InGame.GameObjects
 
         // drown stuff
         private Vector2 _drownResetPosition;
-        private float _drownCounter;
         private float _drownResetCounter;
 
         // sword stuff
@@ -1886,30 +1885,27 @@ namespace ProjectZ.InGame.GameObjects
                         _drownResetPosition = bodyCenter;
                 }
             }
-
             // walk
             UpdateWalking();
 
+            // Update drowning.
             if (CurrentState == State.Drowning)
             {
-                if (_drownCounter < 300)
+                if (Animation.CurrentFrameIndex < 2)
                 {
                     _body.Velocity = Vector3.Zero;
-                    // align the player to the pixel grid
                     EntityPosition.Set(new Vector2(
                         MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
                 }
-
-                _drownCounter -= Game1.DeltaTime;
-                if (_drownCounter <= 0)
+                if (Animation.CurrentFrameIndex == 2)
                 {
                     IsVisible = false;
                     CurrentState = State.Drowned;
                     _drownResetCounter = 500;
                 }
             }
-
-            if (CurrentState == State.Drowned)
+            // Update drowned.
+            else if (CurrentState == State.Drowned)
             {
                 _drownResetCounter -= Game1.DeltaTime;
                 if (_drownResetCounter <= 0)
@@ -1925,7 +1921,7 @@ namespace ProjectZ.InGame.GameObjects
                     EntityPosition.Set(_drownResetPosition);
                 }
             }
-
+            // Update swimming.
             if (CurrentState == State.Swimming)
             {
                 if (_diveCounter > -100)
@@ -2136,7 +2132,6 @@ namespace ProjectZ.InGame.GameObjects
                             Game1.GameManager.PlaySoundEffect("D370-03-03");
 
                             CurrentState = State.Drowning;
-                            _drownCounter = 650;
 
                             // blink in lava
                             _hitCount = inLava ? CooldownTime : 0;
@@ -2386,7 +2381,7 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.IsPlaying = false;
             }
             else if (CurrentState == State.Drowning)
-                Animation.Play(_drownCounter > 300 ? "swim_" + animDirection : "dive");
+                Animation.Play("drown");
         }
 
         private void UpdateHeartWarningSound()

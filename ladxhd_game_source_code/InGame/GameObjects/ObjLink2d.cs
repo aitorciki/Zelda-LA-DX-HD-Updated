@@ -223,7 +223,6 @@ namespace ProjectZ.InGame.GameObjects
 
                             CurrentState = State.Drowning;
                             _isClimbing = false;
-                            _drownCounter = 650;
 
                             // blink in lava
                             _hitCount = inLava ? CooldownTime : 0;
@@ -254,46 +253,6 @@ namespace ProjectZ.InGame.GameObjects
                     _waterJump = true;
                 }
             }
-
-            if (CurrentState == State.Drowning)
-            {
-                if (_drownCounter < 300)
-                {
-                    _body.Velocity = Vector3.Zero;
-                    // align the player to the pixel grid
-                    EntityPosition.Set(new Vector2(
-                        MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
-                }
-
-                _drownCounter -= Game1.DeltaTime;
-                if (_drownCounter <= 0)
-                {
-                    IsVisible = false;
-                    CurrentState = State.Drowned;
-                    _drownResetCounter = 500;
-                }
-            }
-            else if (CurrentState == State.Drowned)
-            {
-                _body.Velocity = Vector3.Zero;
-
-                _drownResetCounter -= Game1.DeltaTime;
-                if (_drownResetCounter <= 0)
-                {
-                    CurrentState = State.Idle;
-                    CanWalk = true;
-                    IsVisible = true;
-
-                    _hitCount = CooldownTime;
-                    Game1.GameManager.CurrentHealth -= 2;
-
-                    _body.CurrentFieldState = MapStates.FieldStates.None;
-                    EntityPosition.Set(_drownResetPosition);
-                }
-            }
-
-            _body.IgnoresZ = _inWater || _hookshotPull;
-
             // walk
             UpdateWalking2D();
 
@@ -330,6 +289,42 @@ namespace ProjectZ.InGame.GameObjects
                     _hitVelocity = Vector2.Zero;
                 }
             }
+            // Update drowning.
+            if (CurrentState == State.Drowning)
+            {
+                if (Animation.CurrentFrameIndex < 2)
+                {
+                    _body.Velocity = Vector3.Zero;
+                    EntityPosition.Set(new Vector2(
+                        MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
+                }
+                if (Animation.CurrentFrameIndex == 2)
+                {
+                    IsVisible = false;
+                    CurrentState = State.Drowned;
+                    _drownResetCounter = 500;
+                }
+            }
+            // Update drowned.
+            else if (CurrentState == State.Drowned)
+            {
+                _body.Velocity = Vector3.Zero;
+
+                _drownResetCounter -= Game1.DeltaTime;
+                if (_drownResetCounter <= 0)
+                {
+                    CurrentState = State.Idle;
+                    CanWalk = true;
+                    IsVisible = true;
+
+                    _hitCount = CooldownTime;
+                    Game1.GameManager.CurrentHealth -= 2;
+
+                    _body.CurrentFieldState = MapStates.FieldStates.None;
+                    EntityPosition.Set(_drownResetPosition);
+                }
+            }
+            _body.IgnoresZ = _inWater || _hookshotPull;
 
             _spikeDamage = false;
 
@@ -448,9 +443,8 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("swim_2d_" + _swimDirection);
                     Animation.SpeedMultiplier = _swimAnimationMult;
                 }
-                // TODO: create a different sprite for 2d drowning
                 else if (CurrentState == State.Drowning)
-                    Animation.Play(_drownCounter > 300 ? "swim_" + _swimDirection : "dive");
+                    Animation.Play("drown");
             }
             // Force a direction from analog stick movement.
             if (!IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
