@@ -268,7 +268,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdatePickedUp()
         {
-            Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
+            Game1.GameManager.PlaySoundEffect("D370-19-13", false);
             UpdateAnimation();
         }
 
