@@ -263,12 +263,20 @@ namespace ProjectZ.InGame.GameObjects.Things
                 (int)_body.BodyBox.Box.Y, 
                 4, 4, CollisionComponent.Mask);
 
-            // Loop through the barriers and remove the first one found.
+            // Loop through the barriers found.
             foreach (var obj in _groupOfBarrier)
             {
                 if (obj is not ObjDungeonBarrier barrier) continue;
-                Map.Objects.DeleteObjects.Add(barrier);
-                break;
+
+                Vector2 barPosition = barrier.EntityPosition.Position;
+                Vector2 newPosition = new Vector2(354.5f, 229f);
+
+                // The barrier we want to remove is the one in Level 7 floor 2 when pushing the block up over it.
+                if (_moveDirection == 1 && barPosition == newPosition)
+                {
+                    Map.Objects.DeleteObjects.Add(barrier);
+                    break;
+                }
             }
 
             // can fall into holes after finishing the movement animation
