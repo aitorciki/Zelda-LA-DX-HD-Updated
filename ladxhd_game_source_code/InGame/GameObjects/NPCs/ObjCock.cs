@@ -35,7 +35,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isThrown;
         private bool _slowReturn;
         private bool _freezePlayer;
-        private bool _isActive = true;
+        private bool _resurrected;
 
         private const int FollowDistance = 18;
 
@@ -61,6 +61,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // skeleton was already awakend?
             if (_saveKey != null && Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
             {
+                _resurrected = true;
                 IsDead = true;
                 return;
             }
@@ -146,7 +147,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             IsActive = isActive;
             IsVisible = isActive;
-            _isActive = isActive;
             _drawComponent.IsActive = isActive;
             _shadowCompnent.IsActive = isActive;
             _carriableCompnent.IsActive = isActive;
@@ -163,9 +163,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void Update()
         {
             // do not follow the player into dungeons
-            if (Map.DungeonMode)
+            if (Map.DungeonMode && _resurrected)
                 SetActive(false);
-            if (!Map.DungeonMode)
+            if (!Map.DungeonMode && _resurrected)
                 SetActive(true);
 
             if (_freezePlayer)
@@ -175,7 +175,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 if (_aiComponent.States.Keys.ToList().IndexOf(_aiComponent.CurrentStateId) > 5)
                 {
-                    IsVisible = _isActive;
+                    IsVisible = _resurrected;
                     _map = Map;
                     _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
                 }
@@ -256,6 +256,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _freezePlayer = false;
             _animator.Play("stand_3");
             _aiComponent.ChangeState("following");
+            _resurrected = true;
         }
 
         private void InitWalk()
