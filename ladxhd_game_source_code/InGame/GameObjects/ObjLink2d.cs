@@ -239,7 +239,7 @@ namespace ProjectZ.InGame.GameObjects
                 _lastMoveVelocity.X = _body.VelocityTarget.X;
 
                 // jump out of the water?
-                if (_swimVelocity.Y < -MaxSwimSpeed2D)
+                if (_swimVelocity.Y < -MaxSwimSpeed2D + GameSettings.MoveSpeedAdded)
                 {
                     CurrentState = State.Idle;
                     Jump2D();

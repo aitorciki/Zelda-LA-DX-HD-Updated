@@ -5362,7 +5362,7 @@ namespace ProjectZ.InGame.GameObjects
             string[] noFollowerMaps = 
             { 
                 "pond.map", "dreamShrine01.map", "dreamShrine02.map", "shellhouse.map", "dungeon1.map", "dungeon2.map", 
-                "dungeon3_1.map", "dungeon3_2.map",  "dungeon3_3.map",   "dungeon3_4.map", "dungeon4.map", "dungeon5.map", 
+                "dungeon3_1.map", "dungeon3_2.map",  "dungeon3_3.map", "dungeon3_4.map", "dungeon4.map", "dungeon5.map", 
                 "dungeon6.map", "dungeon7_1.map", "dungeon7_2.map", "dungeon7_3.map", "dungeon7_4.map", "dungeon8.map", 
                 "dungeon_color.map", "egg_entry.map", "egg_lower_floor", "egg_boss_room", "final stairs"
             };
