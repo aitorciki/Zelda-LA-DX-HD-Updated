@@ -59,6 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 var gameObjectBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
                 if (gameObjectBody.IsActive && gameObjectBody.IsGrounded && _collisionBox.Intersects(gameObjectBody.BodyBox.Box))
+                {
                     if (gameObjectBody.LastAdditionalMovementVT == Vector2.Zero ||
                         gameObjectBody.LastAdditionalMovementVT == _vecRollBand && (
                             _vecRollBand.X != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Horizontal) == 0 ||
@@ -66,7 +67,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                         gameObjectBody.LastAdditionalMovementVT != _vecRollBand && (
                             _vecRollBand.X != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Vertical) != 0 ||
                             _vecRollBand.Y != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Horizontal) != 0))
+                    {
                         gameObjectBody.AdditionalMovementVT = _vecRollBand;
+                    }
+                }
             }
         }
 
