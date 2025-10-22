@@ -29,8 +29,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly BodyComponent _body;
         private readonly CBox _damageBox;
 
-        public RectangleF _field = RectangleF.Empty;
-
         private Vector2 _direction;
         private Vector2 _startPositionOffset;
 
@@ -97,10 +95,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            _field = Map.GetField(
-                (int)MapManager.ObjLink.EntityPosition.Position.X,
-                (int)MapManager.ObjLink.EntityPosition.Position.Y);
-
             _soundCounter += Game1.DeltaTime;
             if (_soundCounter > 65)
             {
@@ -128,7 +122,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     ComeBack();
 
                 // Keep hookshot inside the field when ClassicCamera is active.
-                if (GameSettings.ClassicCamera && !_field.Contains(_hookshotPosition.Position))
+                if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(_hookshotPosition.Position))
                 {
                     ComeBack();
                     return;

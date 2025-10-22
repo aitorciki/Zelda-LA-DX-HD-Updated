@@ -95,6 +95,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateIdle()
         {
+            if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
+            {
+                OnCollision(Values.BodyCollision.None);
+                return;
+            }
             var distance = _startPosition - EntityPosition.Position;
             if (Math.Abs(distance.X) > 112 || Math.Abs(distance.Y) > 96)
             {
@@ -103,7 +108,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 ExplodeBomb();
             }
-
             DealDamage();
         }
 

@@ -73,6 +73,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             }
 
+            if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
+            {
+                OnCollision(Values.BodyCollision.None);
+                return;
+            }
+
             var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.MagicRod, 2, false);
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Repelling | Values.HitCollision.Enemy)) != 0)
             {

@@ -429,8 +429,12 @@ namespace ProjectZ.InGame.GameObjects
 
         private DictAtlasEntry _stunnedParticleSprite;
 
+        // Prevents sword from colliding with NPCs.
         private bool _npcSwordCross;
         private bool _npcCrossSword;
+
+        // The current field that Link is on.
+        public RectangleF CurrentField = RectangleF.Empty;
 
         // Mod file values.
         bool  sword1_beam = false;
@@ -585,6 +589,12 @@ namespace ProjectZ.InGame.GameObjects
 
         private void Update()
         {
+            // Set the current field that Link is on.
+            CurrentField = Map.GetField(
+                (int)MapManager.ObjLink.EntityPosition.Position.X,
+                (int)MapManager.ObjLink.EntityPosition.Position.Y);
+
+            // Update falling into a map transition (I think).
             if (CurrentState == State.FallRotateEntry)
             {
                 _fallEntryCounter += Game1.DeltaTime;
@@ -605,7 +615,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
             }
 
-            // first photo sequence
+            // Photo Mouse when rejecting having a picture taken.
             if (CurrentState == State.Pushed)
             {
                 _pushCounter += Game1.DeltaTime;
