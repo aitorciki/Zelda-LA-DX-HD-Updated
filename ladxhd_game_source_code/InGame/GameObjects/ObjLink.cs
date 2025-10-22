@@ -4271,6 +4271,8 @@ namespace ProjectZ.InGame.GameObjects
             MapInit();
 
             CurrentState = State.Idle;
+
+            Game1.InProgress = true;
         }
 
         public void MapInit()

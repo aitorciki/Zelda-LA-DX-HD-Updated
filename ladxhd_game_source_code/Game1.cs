@@ -94,6 +94,9 @@ namespace ProjectZ
         public static bool ShowDebugText;
         private Vector2 _debugTextSize;
 
+        // True when in-game after selecting save file. False at main menu and intro.
+        public static bool InProgress;
+
         public static bool FinishedLoading => _finishedLoading;
 
         public static Matrix GetMatrix => Matrix.CreateScale(new Vector3(

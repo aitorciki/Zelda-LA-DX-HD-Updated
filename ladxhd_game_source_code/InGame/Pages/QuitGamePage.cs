@@ -53,6 +53,8 @@ namespace ProjectZ.InGame.Pages
 
         public void OnClickYes(InterfaceElement element)
         {
+            Game1.InProgress = false;
+
             if (Game1.GameManager.SaveManager.HistoryEnabled)
             {
                 Game1.GameManager.SaveManager.RevertHistory();
