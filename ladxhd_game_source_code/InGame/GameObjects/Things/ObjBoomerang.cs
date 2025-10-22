@@ -25,6 +25,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Vector2 _startPosition;
         private Vector2 _direction;
 
+        public RectangleF _field = RectangleF.Empty;
+
         private bool _comingBack;
 
         private bool _isReady = true;
@@ -85,7 +87,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            // play sound effect
+            _field = Map.GetField(
+                (int)MapManager.ObjLink.EntityPosition.Position.X,
+                (int)MapManager.ObjLink.EntityPosition.Position.Y);
+
+            // Play sound effect.
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
 
             if (!_comingBack)
@@ -95,6 +101,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var distance = (_startPosition - EntityPosition.Position).Length();
                 var speed = 3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
                 _body.VelocityTarget = _direction * speed;
+
+                // Only enforce field boundaries when ClassicCamera mode is active.
+                if (GameSettings.ClassicCamera && !_field.Contains(EntityPosition.Position))
+                {
+                    ComeBack();
+                    return;
+                }
 
                 if (distance >= 80)
                     ComeBack();
@@ -114,13 +127,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                     direction.Normalize();
                 _body.VelocityTarget = direction * speed;
 
-                // MapManager.ObjLink.IsGrounded()
                 if ((Map.Is2dMap || Math.Abs(MapManager.ObjLink.EntityPosition.Z - EntityPosition.Z) <= 6) && distance < 2)
                 {
                     _isReady = true;
                     Map.Objects.DeleteObjects.Add(this);
                 }
             }
+
             CollectItem();
 
             var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.Boomerang, 32, false);

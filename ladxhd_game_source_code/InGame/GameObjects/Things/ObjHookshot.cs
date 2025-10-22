@@ -29,6 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly BodyComponent _body;
         private readonly CBox _damageBox;
 
+        public RectangleF _field = RectangleF.Empty;
+
         private Vector2 _direction;
         private Vector2 _startPositionOffset;
 
@@ -95,6 +97,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            _field = Map.GetField(
+                (int)MapManager.ObjLink.EntityPosition.Position.X,
+                (int)MapManager.ObjLink.EntityPosition.Position.Y);
+
             _soundCounter += Game1.DeltaTime;
             if (_soundCounter > 65)
             {
@@ -117,8 +123,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (!_comingBack)
             {
+                // Make it come back if it goes too far.
                 if (distance > 120)
                     ComeBack();
+
+                // Keep hookshot inside the field when ClassicCamera is active.
+                if (GameSettings.ClassicCamera && !_field.Contains(_hookshotPosition.Position))
+                {
+                    ComeBack();
+                    return;
+                }
             }
             else
             {
@@ -130,7 +144,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (distance < 2)
                     Despawn();
             }
-
             CollectItem();
 
             // do not hit stuff while coming back
