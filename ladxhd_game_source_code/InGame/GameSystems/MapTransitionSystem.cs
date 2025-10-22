@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -61,6 +62,8 @@ namespace ProjectZ.InGame.GameSystems
         private bool _wobbleTransitionOut;
         private bool _wobbleTransitionIn;
 
+        private float _classicBlackoutFix;
+
         public MapTransitionSystem(MapManager gameMapManager)
         {
             _gameMapManager = gameMapManager;
@@ -83,6 +86,9 @@ namespace ProjectZ.InGame.GameSystems
 
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
                 _nextMapName = null;
+
+                if (GameSettings.ClassicCamera)
+                    MapManager.Camera.SnapCamera = true;
             }
 
             if (_transitionEnded)
@@ -138,6 +144,7 @@ namespace ProjectZ.InGame.GameSystems
             else if (CurrentState == TransitionState.TransitionBlank_1)
             {
                 _changeMapCount += Game1.DeltaTime;
+                _classicBlackoutFix = 175;
 
                 MapManager.ObjLink.UpdateMapTransitionIn(0);
 
@@ -157,6 +164,7 @@ namespace ProjectZ.InGame.GameSystems
             else if (CurrentState == TransitionState.TransitionIn)
             {
                 _changeMapCount -= Game1.DeltaTime;
+                _classicBlackoutFix -= Game1.DeltaTime;
 
                 // update the position of the player to walk into the new room
                 var percentage = MathHelper.Clamp(_changeMapCount / ChangeMapTime, 0, 1);
@@ -181,6 +189,9 @@ namespace ProjectZ.InGame.GameSystems
                 // light up the scene
                 if (_changeMapCount <= 0)
                 {
+                    if (GameSettings.ClassicCamera)
+                        MapManager.Camera.SnapCamera = false;
+
                     _transitionEnded = true;
                     Game1.GameManager.SaveManager.SetString("transition_ended", "1");
 
@@ -216,6 +227,23 @@ namespace ProjectZ.InGame.GameSystems
                 return;
 
             _transitionObject.Draw(spriteBatch);
+
+            // HACK: When transitioning in and classic camera is enabled, it's possible to catch a quick glimpse of Link popping out of a door at the
+            // edges of the screen. The proper solution to this would be to somehow delay the opening circle shader by about 200 milliseconds, but at
+            // the moment I'm not quite sure how to do that. So this hack just draws a black screen during those frames to cover it up.
+            if (GameSettings.ClassicCamera)
+            {
+                Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
+
+                if (_classicBlackoutFix > 0)
+                {
+                    var viewport = spriteBatch.GraphicsDevice.Viewport;
+                    var tex = Resources.SprWhite;
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(tex, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.Black);
+                    spriteBatch.End();
+                }
+            }
         }
 
         public void SetColorMode(Color color, float colorTransparency, bool playerOnTop = true)
@@ -249,6 +277,7 @@ namespace ProjectZ.InGame.GameSystems
             MapManager.ObjLink.StartTransitioning();
 
             _introTransition = Game1.GameManager.SaveManager.GetString("played_intro", "0") != "1";
+
             // dont show the player for the intro sequence transition
             if (!_introTransition)
                 Game1.GameManager.DrawPlayerOnTopPercentage = 1.0f;
@@ -454,6 +483,7 @@ namespace ProjectZ.InGame.GameSystems
 
             // center the camera
             var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
+
             if (_centerCamera)
                 MapManager.Camera.ForceUpdate(goalPosition);
             else

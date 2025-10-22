@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.Pages
                 buttonWidth, new Point(1, 2), -1, 11, 1, GameSettings.GameScale + 1,
                 number =>
                 {
-                    GameSettings.GameScale = number;
+                    GameSettings.GameScale = GameSettings.ClassicCamera && number < 1 ? 1 : number;
                     Game1.ScaleChanged = true;
                 })
             { SetString = number => GameScaleSliderAdjustmentString(number) };

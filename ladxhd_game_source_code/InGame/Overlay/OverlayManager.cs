@@ -552,8 +552,10 @@ namespace ProjectZ.InGame.Overlay
             // If either LT or RT were pressed and auto-scaling is not set, scale up or down.
             else
             {
-                var newScale = GameSettings.GameScale + (short)scaleDirection;
-                if (newScale is >= -1 and <= 10)
+                // If classic camera is selected don't let the lowest scale fall below 1.
+                int lower = GameSettings.ClassicCamera ? 1 : -1;
+                int newScale = GameSettings.GameScale + (short)scaleDirection;
+                if (newScale >= lower && newScale <= 10)
                     GameSettings.GameScale = _StoredScale = newScale;
             }
             // Apply current scaling settings.

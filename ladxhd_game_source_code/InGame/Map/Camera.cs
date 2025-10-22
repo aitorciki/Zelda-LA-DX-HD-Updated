@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Things;
@@ -8,12 +9,13 @@ namespace ProjectZ.InGame.Map
     public class Camera
     {
         public Matrix TransformMatrix => Matrix.CreateScale(Scale) *
-                                            Matrix.CreateTranslation(new Vector3(-RoundX, -RoundY, 0)) *
-                                            Matrix.CreateTranslation(new Vector3((int)(_viewportWidth * 0.5f), (int)(_viewportHeight * 0.5f), 0)) *
-                                            Game1.GameManager.GetMatrix;
+                                         Matrix.CreateTranslation(new Vector3(-RoundX, -RoundY, 0)) *
+                                         Matrix.CreateTranslation(new Vector3((int)(_viewportWidth * 0.5f), (int)(_viewportHeight * 0.5f), 0)) *
+                                         Game1.GameManager.GetMatrix;
         public Vector2 Location;
         public Vector2 MoveLocation;
         private Rectangle fieldRect;
+        public bool SnapCamera;
 
         // this is needed so there is no texture bleeding while rendering the game
         public float RoundX => (int)Math.Round(Location.X + ShakeOffsetX * Scale, MidpointRounding.AwayFromZero);
@@ -26,6 +28,8 @@ namespace ProjectZ.InGame.Map
 
         public int X => (int)Math.Round(Location.X + ShakeOffsetX * Scale);
         public int Y => (int)Math.Round(Location.Y + ShakeOffsetY * Scale);
+
+        public int ScaleValue => GameSettings.GameScale != 11 ? GameSettings.GameScale : 4;
 
         private Vector2 _cameraDistance;
 
@@ -65,22 +69,28 @@ namespace ProjectZ.InGame.Map
             return rectangle;
         }
 
+        public Vector2 GetFieldCenter()
+        {
+            // Get the field rectangle and its center
+            fieldRect = MapManager.ObjLink.Map.GetField(
+                (int)MapManager.ObjLink.EntityPosition.X,
+                (int)MapManager.ObjLink.EntityPosition.Y
+            );
+
+            var rectCenterX = (fieldRect.X + fieldRect.Width / 2f) * ScaleValue;
+            var rectCenterY = (fieldRect.Y + fieldRect.Height / 2f) * ScaleValue;
+            return new Vector2(rectCenterX, rectCenterY);
+        }
+
         public void Center(Vector2 position, bool moveX, bool moveY)
         {
             if (GameSettings.ClassicCamera)
             {
                 // Get the field rectangle and its center
-                fieldRect = MapManager.ObjLink.Map.GetField(
-                    (int)MapManager.ObjLink.EntityPosition.X,
-                    (int)MapManager.ObjLink.EntityPosition.Y
-                );
-
-                var rectCenterX = (fieldRect.X + fieldRect.Width / 2f) * GameSettings.GameScale;
-                var rectCenterY = (fieldRect.Y + fieldRect.Height / 2f) * GameSettings.GameScale;
-                var rectCenter = new Vector2(rectCenterX, rectCenterY);
+                var rectCenter = GetFieldCenter();
 
                 // If smooth camera is off, just snap instantly
-                if (!GameSettings.SmoothCamera)
+                if (!GameSettings.SmoothCamera || SnapCamera)
                 {
                     Location = rectCenter;
                     MoveLocation = rectCenter;
@@ -161,6 +171,10 @@ namespace ProjectZ.InGame.Map
 
         public void SoftUpdate(Vector2 position)
         {
+            // When classic camera is enabled this will mess up transitions.
+            if (GameSettings.ClassicCamera && GameSettings.SmoothCamera)
+                return;
+
             MoveLocation = position - _cameraDistance;
             Location = position;
         }
@@ -176,7 +190,7 @@ namespace ProjectZ.InGame.Map
             if (GameSettings.ClassicBorder)
             {
                 int thickness = 4;
-                float scale = GameSettings.GameScale;
+                float scale = ScaleValue;
 
                 // Screen center
                 var viewport = spriteBatch.GraphicsDevice.Viewport;
