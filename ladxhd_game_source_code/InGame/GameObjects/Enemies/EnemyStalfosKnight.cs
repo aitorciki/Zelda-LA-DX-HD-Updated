@@ -120,6 +120,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Pause();
             _sword.Animator.Pause();
+            _sword._damageField.IsActive = false;
             _damageField.IsActive = false;
         }
 

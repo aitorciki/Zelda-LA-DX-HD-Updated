@@ -19,6 +19,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly AnimationComponent _animationComponent;
         private readonly AiDamageState _damageState;
+        private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private Vector2 _velocityTarget;
 
@@ -74,7 +77,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("stunned", stateStunned);
             _aiComponent.States.Add("back", stateBack);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, OnAbsorption, null, 250);
             new AiDeepWaterState(_body);
 
@@ -85,11 +88,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -8, -14, 16, 14, 8);
             var pushableBox = new CBox(EntityPosition, -7, -13, 14, 13, 8);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
@@ -102,6 +105,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
                 _playerInsideField = true;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
         }
 
         private void ToWaiting()
@@ -186,6 +195,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
+
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
 
             _body.DragAir = 0.9f;
 

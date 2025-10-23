@@ -14,6 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
+        private readonly DamageFieldComponent _damageField;
+        private readonly AiDamageState _damageState;
 
         private readonly Vector2 _startPosition;
 
@@ -52,15 +54,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moveUp", stateUp);
             _aiComponent.States.Add("moveDown", stateDown);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { HitMultiplierX = 2.0f, HitMultiplierY = 2.0f, FlameOffset = new Point(0, 3) };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { HitMultiplierX = 2.0f, HitMultiplierY = 2.0f, FlameOffset = new Point(0, 3), OnBurn = OnBurn };
 
             ToMoveUp();
 
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 12, 8);
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 12, 4);
             
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, damageState.OnHit));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, _damageState.OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -115,6 +117,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("down");
             _body.Velocity.X = _body.VelocityTarget.X;
             _body.VelocityTarget.X = 0;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
         }
 
         private void UpdateDown()

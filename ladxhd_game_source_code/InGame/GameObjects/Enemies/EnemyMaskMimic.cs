@@ -61,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateUpdate);
             _aiStunnedState = new AiStunnedState(_aiComponent, _animatorComponent, 3300, 900);
             new AiFallState(_aiComponent, _body, null, null, 300);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiComponent.ChangeState("idle");
 
             var damageBox = new CBox(EntityPosition, -7, -15, 2, 14, 15, 4);
@@ -130,6 +130,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (!moved)
                 _animator.Pause();
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

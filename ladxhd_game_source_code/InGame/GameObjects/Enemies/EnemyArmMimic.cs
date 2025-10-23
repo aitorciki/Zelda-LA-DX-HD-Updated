@@ -53,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             aiComponent.States.Add("idle", stateUpdate);
             new AiFallState(aiComponent, _body, null, null, 300);
-            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
+            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _aiStunnedState = new AiStunnedState(aiComponent, animatorComponent, 3300, 900);
 
             aiComponent.ChangeState("idle");
@@ -116,6 +116,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             if (!moved)
                 _animator.Pause();
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

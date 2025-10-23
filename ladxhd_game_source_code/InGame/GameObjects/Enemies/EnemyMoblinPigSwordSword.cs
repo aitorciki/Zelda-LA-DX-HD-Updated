@@ -11,7 +11,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         public readonly Animator Animator;
         public readonly CSprite Sprite;
-
+        public readonly DamageFieldComponent _damageField;
         private readonly EnemyMoblinPigSword _owner;
         private readonly CBox _collisionBox;
 
@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _collisionBox = new CBox(0, 0, 0, 0, 0, 4);
             UpdateCollisionBox();
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(_collisionBox, HitType.Enemy, 2));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_collisionBox, HitType.Enemy, 2));
             AddComponent(HittableComponent.Index, new HittableComponent(_collisionBox, OnHit));
             AddComponent(PushableComponent.Index, new PushableComponent(_collisionBox, OnPush) { RepelParticle = true });
             AddComponent(BaseAnimationComponent.Index, animationComponent);

@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyPincer : GameObject
     {
+        private readonly AiDamageState _damageState;
         private readonly CSprite _sprite;
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
@@ -20,7 +21,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiStunnedState _stunnedState;
 
-        private readonly AiDamageState _damageState;
         private readonly Rectangle _tailRectangle = new Rectangle(184, 124, 8, 8);
 
         private readonly Vector2 _spawnPosition;
@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("attacking", stateAttacking);
             _aiComponent.States.Add("attackWait", stateAttackWait);
             _aiComponent.States.Add("retract", stateRetract);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false) { HitMultiplierX = 1.5f, HitMultiplierY = 1.5f };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false) { OnBurn = OnBurn, HitMultiplierX = 1.5f, HitMultiplierY = 1.5f };
             _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900);
 
             _aiComponent.ChangeState("waiting");
@@ -104,6 +104,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             return false;
+        }
+
+        private void OnBurn()
+        {
+            _damageField.IsActive = false;
+            _animator.Pause();
         }
 
         private void ToWaiting()

@@ -66,7 +66,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("idle", idleState);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             // start randomly idle or walking facing a random direction
             _direction = Game1.RandomNumber.Next(0, 4);
@@ -99,6 +99,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitWalking()
         {
             ChangeDirection();
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
         }
 
         private void ChangeDirection()
