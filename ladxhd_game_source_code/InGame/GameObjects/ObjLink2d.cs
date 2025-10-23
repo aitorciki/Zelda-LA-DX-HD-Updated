@@ -242,7 +242,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (_swimVelocity.Y < -MaxSwimSpeed2D + GameSettings.MoveSpeedAdded)
                 {
                     CurrentState = State.Idle;
-                    Jump2D();
+                    Jump2D(false);
                 }
                 // just jump up a little out of the water
                 else
@@ -640,7 +640,7 @@ namespace ProjectZ.InGame.GameObjects
             _lastMoveVelocity.X = _swimVelocity.X;
         }
 
-        private void Jump2D()
+        private void Jump2D(bool PlaySound = true)
         {
             // Ascend in the water faster.
             if (CurrentState == State.Swimming)
@@ -664,7 +664,8 @@ namespace ProjectZ.InGame.GameObjects
                 else
                     Direction = 1;
 
-            Game1.GameManager.PlaySoundEffect("D360-13-0D");
+            if (PlaySound)
+                Game1.GameManager.PlaySoundEffect("D360-13-0D");
 
             _jumpStartTime = Game1.TotalGameTime;
 
