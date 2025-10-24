@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.Screens
         private Texture2D _sprRain;
         private Texture2D _sprWaves;
         private Texture2D _sprCloud;
-        public static Texture2D _sprIntro_eng, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
+        public static Texture2D _sprIntro_eng, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ind, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
 
         public static Texture2D _sprIntro
         {
@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.Screens
                     "deu" => _sprIntro_deu,
                     "esp" => _sprIntro_esp,
                     "fre" => _sprIntro_fre,
+                    "ind" => _sprIntro_ind,
                     "ita" => _sprIntro_ita,
                     "por" => _sprIntro_por,
                     "rus" => _sprIntro_rus,
@@ -237,6 +238,7 @@ namespace ProjectZ.InGame.Screens
             _sprIntro_deu = Resources.GetTexture("intro_deu.png");
             _sprIntro_esp = Resources.GetTexture("intro_esp.png");
             _sprIntro_fre = Resources.GetTexture("intro_fre.png");
+            _sprIntro_ind = Resources.GetTexture("intro_ind.png");
             _sprIntro_ita = Resources.GetTexture("intro_ita.png");
             _sprIntro_por = Resources.GetTexture("intro_por.png");
             _sprIntro_rus = Resources.GetTexture("intro_rus.png");
