@@ -2454,6 +2454,13 @@ namespace ProjectZ.InGame.GameObjects
                     ? EntityPosition.Y
                     : (int)(bodyCenter.Y / tileSize + (tileDiff.Y > 0 ? 0 : 1)) * tileSize;
 
+                // Add buffer to push player inward into the field. The direction determines the size of the pixel buffer
+                // due to the fact that Link's body box is not perfectly centered on his sprite and has a downward bias.
+                if (tileDiff.X > 0) newResetPosition.X += 8;  // Came from left → push right
+                if (tileDiff.X < 0) newResetPosition.X -= 8;  // Came from right → push left
+                if (tileDiff.Y > 0) newResetPosition.Y += 16; // Came from top → push down
+                if (tileDiff.Y < 0) newResetPosition.Y -= 2;  // Came from bottom → push up
+
                 // For Z check if jumping. If on ground set Z to current Z but if in air set Z to what it was before jump.
                 newResetPositionZ = (_body.IsGrounded)
                     ? EntityPosition.Z
@@ -2479,14 +2486,36 @@ namespace ProjectZ.InGame.GameObjects
             MapManager.ObjLink.SaveDirection = Direction;
         }
 
-        private void SetHoleResetPosition(Vector2 newResetPosition)
+        private void SetHoleResetPosition(Vector2 position)
         {
-            _holeResetPoint  = newResetPosition;
+            // Sets hole reset position on map initialization.
+            _holeResetPoint  = position;
             _holeResetPointZ = EntityPosition.Z;
             _holeResetDirection = AnimationHelper.GetDirection(ControlHandler.GetMoveVector2());
 
             var offset = Map != null ? new Point(Map.MapOffsetX, Map.MapOffsetY) : Point.Zero;
-            _lastTilePosition = new Point(((int)newResetPosition.X - offset.X * 16) / 160, ((int)newResetPosition.Y - offset.Y * 16) / 128);
+            _lastTilePosition = new Point(((int)position.X - offset.X * 16) / 160, ((int)position.Y - offset.Y * 16) / 128);
+        }
+
+        public void SetHoleResetPosition(Vector2 position, int direction)
+        {
+            // Sets an "alternate" reset point when walking over a "ObjHoleResetPoint".
+            float positionZ = (_body.IsGrounded)
+                ? EntityPosition.Z
+                : (_jumpStartZPos);
+
+            if (direction == 0)
+                _alternativeHoleResetPosition = new Vector3(position.X + MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ);
+            else if (direction == 1)
+                _alternativeHoleResetPosition = new Vector3(position.X + 8, position.Y + _body.Height + 1, positionZ);
+            else if (direction == 2)
+                _alternativeHoleResetPosition = new Vector3(position.X + 16 - MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ);
+            else if (direction == 3)
+                _alternativeHoleResetPosition = new Vector3(position.X + 8, position.Y + 16, positionZ);
+
+            // Also used for the drown reset point. Instead of opening up the can of worms of converting the drown 
+            // reset point to a Vector3 just use the X and Y coordinates from the _alternativeHoleResetPosition.
+            _drownResetPosition = new Vector2(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y);
         }
 
         private void UpdateDrawComponents()
@@ -2538,53 +2567,18 @@ namespace ProjectZ.InGame.GameObjects
 
         private void MoveToHoleResetPosition()
         {
-            // Default position offsets to zero.
-            int OffsetX = 0;
-            int OffsetY = 0;
-
-            // A list to search for a door that may cover the respawn point.
-            List<GameObject> _dDoorCheck = new List<GameObject>();
-
-            Map.Objects.GetComponentList(_dDoorCheck,
-                (int)_holeResetPoint.X - 4, 
-                (int)_holeResetPoint.Y - 4, 
-                8, 8, CollisionComponent.Mask);
-
-            // Loop through the list and try to find a door.
-            foreach (var obj in _dDoorCheck)
-            {
-                // If we got something other than a door skip it.
-                if (obj is not ObjDungeonDoor dDoor) continue;
-
-                string dDoorState = dDoor._currentState.ToString();
-
-                // See if a door has closed on the respawn point.
-                if (dDoorState == "Closed")
-                {
-                    // Set the respawn position offset.
-                    (OffsetX, OffsetY) = _holeResetDirection switch
-                    {
-                        0 => (-16, 0),
-                        1 => (0, -16),
-                        2 => (16, 0),
-                        3 => (0, 26),
-                        _ => (0, 0)
-                    };
-                    break;
-                }
-            }
             // Create the respawn point and move Link to it.
-            Vector3 newResetPosition = new Vector3(_holeResetPoint.X + OffsetX, _holeResetPoint.Y + OffsetY, _holeResetPointZ);
+            Vector3 resetPosition = new Vector3(_holeResetPoint.X, _holeResetPoint.Y, _holeResetPointZ);
             WasHoleReset = true;
-            EntityPosition.Set(newResetPosition);
+            EntityPosition.Set(resetPosition);
 
             // alternative reset point
             var cBox = Box.Empty;
             if (_alternativeHoleResetPosition != Vector3.Zero &&
                 Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, _body.CollisionTypes, 0, 0, ref cBox))
             {
-                newResetPosition = new Vector3(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y, _alternativeHoleResetPosition.Z);
-                EntityPosition.Set(newResetPosition);
+                resetPosition = new Vector3(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y, _alternativeHoleResetPosition.Z);
+                EntityPosition.Set(resetPosition);
             }
             HoleFalling = false;
         }
@@ -4737,22 +4731,6 @@ namespace ProjectZ.InGame.GameObjects
             _objRaft = null;
 
             EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y - 1));
-        }
-
-        public void SetHoleResetPosition(Vector2 position, int direction)
-        {
-            if (direction == 0)
-                _alternativeHoleResetPosition = new Vector3(position.X + MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), EntityPosition.Z);
-            else if (direction == 1)
-                _alternativeHoleResetPosition = new Vector3(position.X + 8, position.Y + _body.Height, EntityPosition.Z);
-            else if (direction == 2)
-                _alternativeHoleResetPosition = new Vector3(position.X + 16 - MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), EntityPosition.Z);
-            else if (direction == 3)
-                _alternativeHoleResetPosition = new Vector3(position.X + 8, position.Y + 16, EntityPosition.Z);
-
-            // Also used for the drown reset point. Instead of opening up the can of worms of converting the drown 
-            // reset point to a Vector3 just use the X and Y coordinates from the _alternativeHoleResetPosition.
-            _drownResetPosition = new Vector2(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y);
         }
 
         public void Knockout(Vector2 direction, string resetDoor)

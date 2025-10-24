@@ -77,8 +77,8 @@ namespace ProjectZ.InGame.Map
                 (int)MapManager.ObjLink.EntityPosition.Y
             );
 
-            var rectCenterX = (fieldRect.X + fieldRect.Width / 2f) * ScaleValue;
-            var rectCenterY = (fieldRect.Y + fieldRect.Height / 2f) * ScaleValue;
+            int rectCenterX = (fieldRect.X + fieldRect.Width / 2) * ScaleValue;
+            int rectCenterY = (fieldRect.Y + fieldRect.Height / 2) * ScaleValue;
             return new Vector2(rectCenterX, rectCenterY);
         }
 
@@ -87,7 +87,7 @@ namespace ProjectZ.InGame.Map
             if (GameSettings.ClassicCamera)
             {
                 // Get the field rectangle and its center
-                var rectCenter = GetFieldCenter();
+                Vector2 rectCenter = GetFieldCenter();
 
                 // If smooth camera is off, just snap instantly
                 if (!GameSettings.SmoothCamera || SnapCamera)

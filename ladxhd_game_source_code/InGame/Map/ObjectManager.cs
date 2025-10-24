@@ -237,12 +237,13 @@ namespace ProjectZ.InGame.Map
 
             // only update the objects that are in a tile that is visible
             var updateFieldSize = new Vector2(Game1.RenderWidth, Game1.RenderHeight);
+
             _gameObjectPool.GetComponentList(_updateGameObject,
                (int)((MapManager.Camera.X - updateFieldSize.X / 2) / MapManager.Camera.Scale),
                (int)((MapManager.Camera.Y - updateFieldSize.Y / 2) / MapManager.Camera.Scale),
                (int)(updateFieldSize.X / MapManager.Camera.Scale),
                (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
-
+                                                                                          
             foreach (var gameObject in _updateGameObject)
             {
                 var updateComponent = gameObject.Components[UpdateComponent.Index] as UpdateComponent;
