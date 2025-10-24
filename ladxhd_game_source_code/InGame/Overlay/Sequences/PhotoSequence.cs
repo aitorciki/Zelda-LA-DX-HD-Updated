@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using ProjectZ.InGame.Controls;
 
 namespace ProjectZ.InGame.Overlay.Sequences
 {
     class PhotoSequence : GameSequence
     {
+        float _counter;
+
         public PhotoSequence()
         {
             _sequenceWidth = 160;
@@ -29,8 +30,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
         {
             base.Update();
 
-            // can close the overlay if the dialog isn't running anymore
-            if (!Game1.GameManager.DialogIsRunning() && ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+            _counter += Game1.DeltaTime;
+            if (_counter > 2500)
                 Game1.GameManager.InGameOverlay.CloseOverlay();
         }
     }

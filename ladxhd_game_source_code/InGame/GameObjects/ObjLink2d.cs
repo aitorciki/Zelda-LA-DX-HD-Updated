@@ -12,6 +12,9 @@ namespace ProjectZ.InGame.GameObjects
     {
         public bool Fall2DEntry;
 
+        // Disables direction input hack.
+        public bool DisableDirHack;
+
         private Vector2 _moveVector2D;
 
         private bool Is2DMode;
@@ -447,7 +450,7 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("drown");
             }
             // Force a direction from analog stick movement.
-            if (!IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
+            if (!DisableDirHack && !IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
                 CurrentState != State.Pulling && CurrentState != State.Hookshot && !_isHoldingSword)
             {
                 Vector2 moveVector = ControlHandler.GetMoveVector2(modern_analog);

@@ -208,6 +208,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.SaveManager.RemoveString(pullMouseString);
             }
 
+            var photoString = "fisherman_photo";
+            var photoValue = Game1.GameManager.SaveManager.GetString(photoString);
+            if (!string.IsNullOrEmpty(photoValue))
+            {
+                if (photoValue == "1")
+                    MapManager.ObjLink.DisableDirHack = true;
+
+                if (photoValue == "0")
+                {
+                    MapManager.ObjLink.DisableDirHack = false;
+                    Game1.GameManager.SaveManager.RemoveString(photoString);
+                }
+            }
+
             var fallString = "fisherman_fall";
             var fallValue = Game1.GameManager.SaveManager.GetString(fallString);
             if (!string.IsNullOrEmpty(fallValue))
