@@ -8,23 +8,38 @@ namespace ProjectZ.InGame.Map
 {
     public class Camera
     {
-        public Matrix TransformMatrix => Matrix.CreateScale(Scale) *
-                                         Matrix.CreateTranslation(new Vector3(-RoundX, -RoundY, 0)) *
-                                         Matrix.CreateTranslation(new Vector3((int)(_viewportWidth * 0.5f), (int)(_viewportHeight * 0.5f), 0)) *
-                                         Game1.GameManager.GetMatrix;
+        public Matrix TransformMatrix
+        {
+            get
+            {
+                float tx = (float)Math.Round(-RoundX);
+                float ty = (float)Math.Round(-RoundY);
+
+                return Matrix.CreateScale(Scale) *
+                       Matrix.CreateTranslation(new Vector3(tx, ty, 0)) *
+                       Matrix.CreateTranslation(new Vector3(
+                           (int)(_viewportWidth * 0.5f),
+                           (int)(_viewportHeight * 0.5f),
+                           0)) *
+                       Game1.GameManager.GetMatrix;
+            }
+        }
         public Vector2 Location;
         public Vector2 MoveLocation;
         private Rectangle fieldRect;
         public bool SnapCamera;
 
-        // this is needed so there is no texture bleeding while rendering the game
-        public float RoundX => (int)Math.Round(Location.X + ShakeOffsetX * Scale, MidpointRounding.AwayFromZero);
-        public float RoundY => (int)Math.Round(Location.Y + ShakeOffsetY * Scale, MidpointRounding.AwayFromZero);
-
         public float Scale = 4;
         public float ShakeOffsetX;
         public float ShakeOffsetY;
         public float CameraFollowMultiplier = 1;
+
+        private float RoundedShakeX => MathF.Round(ShakeOffsetX);
+        private float RoundedShakeY => MathF.Round(ShakeOffsetY);
+
+        // this is needed so there is no texture bleeding while rendering the game
+        public float RoundX => (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
+        public float RoundY => (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
 
         public int X => (int)Math.Round(Location.X + ShakeOffsetX * Scale);
         public int Y => (int)Math.Round(Location.Y + ShakeOffsetY * Scale);

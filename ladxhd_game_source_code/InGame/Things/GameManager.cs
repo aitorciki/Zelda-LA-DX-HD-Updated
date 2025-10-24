@@ -1189,17 +1189,37 @@ namespace ProjectZ.InGame.Things
 
         public void UpdateShake()
         {
-            if (_shakeCountX > 0)
+            bool shakingX = _shakeCountX > 0;
+            bool shakingY = _shakeCountY > 0;
+
+            if (shakingX)
             {
                 _shakeCountX -= Game1.DeltaTime;
-                MapManager.Camera.ShakeOffsetX = (float)Math.Sin(_shakeCountX / 100f * _shakeSpeedX) * _maxOffsetX;
+                MapManager.Camera.ShakeOffsetX =
+                    (float)Math.Sin(_shakeCountX / 100f * _shakeSpeedX) * _maxOffsetX;
+            }
+            else
+            {
+                // Ensure camera offset snaps cleanly back to 0
+                MapManager.Camera.ShakeOffsetX = 0;
+                _shakeCountX = 0;
             }
 
-            if (_shakeCountY > 0)
+            if (shakingY)
             {
                 _shakeCountY -= Game1.DeltaTime;
-                MapManager.Camera.ShakeOffsetY = (float)Math.Sin(_shakeCountY / 100f * _shakeSpeedY) * _maxOffsetY;
+                MapManager.Camera.ShakeOffsetY =
+                    (float)Math.Sin(_shakeCountY / 100f * _shakeSpeedY) * _maxOffsetY;
             }
+            else
+            {
+                // Ensure camera offset snaps cleanly back to 0
+                MapManager.Camera.ShakeOffsetY = 0;
+                _shakeCountY = 0;
+            }
+            // Round offsets to whole pixels for extra safety
+            MapManager.Camera.ShakeOffsetX = (float)Math.Round(MapManager.Camera.ShakeOffsetX);
+            MapManager.Camera.ShakeOffsetY = (float)Math.Round(MapManager.Camera.ShakeOffsetY);
         }
 
         public bool LoadMiniMap(string mapName)
