@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
             _mapOverlay.UpdateRenderTarget();
             _mapOverlay.Update();
 
-            // can close the overlay if the dialog isn't running anymore
+            // Overlay can be closed if dialog box is not visible.
             if (ControlHandler.ButtonPressed(ControlHandler.CancelButton) &&
                !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
                 Game1.GameManager.InGameOverlay.CloseOverlay();
@@ -49,29 +49,31 @@ namespace ProjectZ.InGame.Overlay.Sequences
         {
             spriteBatch.End();
 
-            var width = _sequenceWidth * Game1.UiScale;
-            var height = _sequenceHeight * Game1.UiScale;
+            // Use unscaled logical dimensions — the overlay itself handles UiScale.
+            var width = _sequenceWidth;
+            var height = _sequenceHeight;
 
             _mapOverlay.Draw(spriteBatch, new Rectangle(
-                Game1.WindowWidth / 2 - width / 2,
-                Game1.WindowHeight / 2 - height / 2, width, height), Color.White * transparency, Game1.GetMatrix);
+                Game1.WindowWidth / 2 - (int)(width * Game1.UiScale) / 2,
+                Game1.WindowHeight / 2 - (int)(height * Game1.UiScale) / 2,
+                width, height),
+                Color.White * transparency, Game1.GetMatrix);
 
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
 
-            // draw close text
-            {
-                var selectStr = "";
-                if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys.Length > 0)
-                    selectStr = ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys[0].ToString();
+            // Draw the close + button text.
+            var selectStr = "";
+            if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys.Length > 0)
+                selectStr = ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys[0].ToString();
 
-                if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons.Length > 0)
-                    selectStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]);
+            if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons.Length > 0)
+                selectStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]);
 
-                var inputHelper = selectStr + ": " + Game1.LanguageManager.GetString("map_overlay_close", "error");
+            var inputHelper = selectStr + ": " + Game1.LanguageManager.GetString("map_overlay_close", "error");
 
-                spriteBatch.DrawString(Resources.GameFont, inputHelper,
-                    new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale), Color.White * transparency, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
-            }
+            spriteBatch.DrawString(Resources.GameFont, inputHelper,
+                new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale),
+                Color.White * transparency, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
         }
     }
 }

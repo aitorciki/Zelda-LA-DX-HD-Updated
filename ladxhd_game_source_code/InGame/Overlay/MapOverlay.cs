@@ -146,8 +146,8 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdateRenderTarget()
         {
-            if (_renderTarget == null || _renderTarget.Width != _width * Game1.UiScale || _renderTarget.Height != _height * Game1.UiScale)
-                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width * Game1.UiScale, _height * Game1.UiScale);
+            if (_renderTarget == null || _renderTarget.Width != _width || _renderTarget.Height != _height)
+                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width, _height);
         }
 
         public void Update()
@@ -294,41 +294,42 @@ namespace ProjectZ.InGame.Overlay
 
         public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color, Matrix? matrix = null)
         {
-            /// RT:CRASH BYPASS
-            if (_renderTarget == null) { return; }
+            if (_renderTarget == null)
+                return;
 
-            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiRtScale);
+            // Screen-space scale for rounded corners.
+            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(2f);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_height);
 
+            // Draw the render target with the shader.
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, Resources.RoundedCornerEffect, matrix);
-
-            spriteBatch.Draw(_renderTarget, drawPosition, color);
-
+            spriteBatch.Draw(_renderTarget, drawPosition.Location.ToVector2(), null, color, 0f, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0f);
             spriteBatch.End();
 
+            // Draw overlay icons.
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, matrix);
 
             if (Game1.GameManager.PlayerMapPosition != null)
             {
                 var mapRectangle = new Point(drawPosition.X + _margin, drawPosition.Y + _margin);
-                // draw the player
-                var position = new Vector2(
-                    mapRectangle.X + (8 + Game1.GameManager.PlayerMapPosition.Value.X * 8 + 2) * Game1.UiRtScale,
-                    mapRectangle.Y + (8 + Game1.GameManager.PlayerMapPosition.Value.Y * 8 + 2) * Game1.UiRtScale);
-                _animationPlayer.DrawBasic(spriteBatch, position, color, Game1.UiRtScale);
 
-                // draw the selection
+                // Draw the player icon.
+                var position = new Vector2(
+                    mapRectangle.X + (8 + Game1.GameManager.PlayerMapPosition.Value.X * 8 + 2) * Game1.UiScale,
+                    mapRectangle.Y + (8 + Game1.GameManager.PlayerMapPosition.Value.Y * 8 + 2) * Game1.UiScale);
+                _animationPlayer.DrawBasic(spriteBatch, position, color, Game1.UiScale);
+
+                // Draw the selection icon.
                 if (IsSelected)
                 {
                     position = new Vector2(
-                        mapRectangle.X + (8 + _selectionPosition.X * 8 + 1) * Game1.UiRtScale,
-                        mapRectangle.Y + (8 + _selectionPosition.Y * 8 + 1) * Game1.UiRtScale);
-                    _animationSelection.DrawBasic(spriteBatch, position, color, Game1.UiRtScale);
+                        mapRectangle.X + (8 + _selectionPosition.X * 8 + 1) * Game1.UiScale,
+                        mapRectangle.Y + (8 + _selectionPosition.Y * 8 + 1) * Game1.UiScale);
+                    _animationSelection.DrawBasic(spriteBatch, position, color, Game1.UiScale);
                 }
             }
-
             spriteBatch.End();
         }
 
@@ -337,8 +338,8 @@ namespace ProjectZ.InGame.Overlay
             Game1.Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
             Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
-            // draw the map
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiRtScale));
+            // Draw the map.
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null);
             DrawMap(spriteBatch);
             spriteBatch.End();
         }

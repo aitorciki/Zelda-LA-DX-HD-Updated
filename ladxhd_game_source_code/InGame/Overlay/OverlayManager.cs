@@ -324,18 +324,42 @@ namespace ProjectZ.InGame.Overlay
             }
         }
 
+        private void UpdateOverlayDimensions()
+        {
+            // Update the scale to match the UI scale.
+            _scale = Game1.UiScale;
+
+            // Recalculate the size of the inventory.
+            _recInventory = new Rectangle(0, 0, _inventorySize.X * _scale, _inventorySize.Y * _scale);
+
+            // Recalculate the size of the map stuff.
+            _recMap = new Rectangle(
+                _recInventory.Right - 6 * _scale - _mapSize.X * _scale,
+                _recInventory.Bottom - 6 * _scale - _mapSize.Y * _scale, _mapSize.X * _scale, _mapSize.Y * _scale);
+            _recMapCenter = new Rectangle(
+                _recInventory.Width / 2 - _mapSize.X / 2 * _scale,
+                _recInventory.Height / 2 - _mapSize.Y / 2 * _scale, _mapSize.X * _scale, _mapSize.Y * _scale);
+            _recDungeon = new Rectangle(
+                _recInventory.Right + _margin * _scale,
+                _recInventory.Bottom - _dungeonSize.Y * _scale,
+                _dungeonSize.X * _scale, _dungeonSize.Y * _scale);
+        }
+
         private void DrawInventory(SpriteBatch spriteBatch)
         {
+            // Recalculate the dimensions in case the UI scale has changed.
+            UpdateOverlayDimensions();
+
             spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, null);
 
             var percentage = MathF.Sin(-MathF.PI / 2 + (_changeCount / ChangeTime) * MathF.PI) * 0.5f + 0.5f;
 
-            // draw the inventory
+            // Draw the inventory overlay.
             _inventoryOverlay.Draw(spriteBatch, _recInventory, Color.White * (1 - percentage));
 
             spriteBatch.End();
 
-            // draw the map
+            // Draw the map onto the inventory screen.
             var mapRectangle = new Rectangle(
                 (int)MathHelper.Lerp(_recMap.X, _recMapCenter.X, percentage),
                 (int)MathHelper.Lerp(_recMap.Y, _recMapCenter.Y, percentage), _recMap.Width, _recMap.Height);
@@ -343,7 +367,7 @@ namespace ProjectZ.InGame.Overlay
 
             spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 
-            // draw the dungeon stuff
+            // Draw the dungeon map.
             _dungeonOverlay.Draw(spriteBatch, _recDungeon, Color.White * (1 - percentage));
 
             spriteBatch.End();
@@ -379,21 +403,7 @@ namespace ProjectZ.InGame.Overlay
 
             _dungeonOverlay.UpdateRenderTarget();
 
-            // 144 = size of the map
-            _recInventory = new Rectangle(0, 0, _inventorySize.X * _scale, _inventorySize.Y * _scale);
-
-            _recMap = new Rectangle(
-                _recInventory.Right - 6 * _scale - _mapSize.X * _scale,
-                _recInventory.Bottom - 6 * _scale - _mapSize.Y * _scale, _mapSize.X * _scale, _mapSize.Y * _scale);
-
-            _recMapCenter = new Rectangle(
-                _recInventory.Width / 2 - _mapSize.X / 2 * _scale,
-                _recInventory.Height / 2 - _mapSize.Y / 2 * _scale, _mapSize.X * _scale, _mapSize.Y * _scale);
-
-            _recDungeon = new Rectangle(
-                _recInventory.Right + _margin * _scale,
-                _recInventory.Bottom - _dungeonSize.Y * _scale,
-                _dungeonSize.X * _scale, _dungeonSize.Y * _scale);
+            UpdateOverlayDimensions();
         }
 
         public void OpenPhotoOverlay()

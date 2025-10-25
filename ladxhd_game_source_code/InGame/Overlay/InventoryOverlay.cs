@@ -116,8 +116,12 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdateRenderTarget()
         {
-            if (_renderTarget == null || _renderTarget.Width != _width * Game1.UiScale || _renderTarget.Height != _height * Game1.UiScale)
-                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width * Game1.UiScale, _height * Game1.UiScale);
+            // Keep render target at base logical size (no scaling).
+            if (_renderTarget == null || _renderTarget.Width != _width || _renderTarget.Height != _height)
+            {
+                _renderTarget?.Dispose();
+                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width, _height);
+            }
         }
 
         public void UpdateMenu()
@@ -203,21 +207,29 @@ namespace ProjectZ.InGame.Overlay
 
         public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color)
         {
-            /// RT:CRASH BYPASS
-            if (_renderTarget != null)
-                spriteBatch.Draw(_renderTarget, drawPosition, color);
+            if (_renderTarget == null) return;
+
+            // Draw the RT to the screen scaled by Game1.UiScale (like HUD)
+            var destRect = new Rectangle(
+                drawPosition.X,
+                drawPosition.Y,
+                (int)(_renderTarget.Width * Game1.UiScale),
+                (int)(_renderTarget.Height * Game1.UiScale));
+
+            spriteBatch.Draw(_renderTarget, destRect, color);
         }
 
         public void DrawRT(SpriteBatch spriteBatch)
         {
-            Game1.Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
-            Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
+            var device = Game1.Graphics.GraphicsDevice;
+            device.SetRenderTarget(_renderTarget);
+            device.Clear(Color.Transparent);
 
-            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiRtScale);
+            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(1f);
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
 
-            // draw the background
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiRtScale));
+            // Draw main background.
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, Resources.RoundedCornerEffect);
 
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_background0.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_background0.Height);
@@ -229,143 +241,134 @@ namespace ProjectZ.InGame.Overlay
 
             spriteBatch.End();
 
-            // draw the backgrounds of the items
+            // Draw item backgrounds.
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, Resources.RoundedCornerEffect);
+
+            var offset = new Point(_background1.X, _background1.Y);
+
+            for (var i = 0; i < _itemSlots.Length; i++)
+                DrawBackground(spriteBatch, offset + _itemSlotsPosition, _itemSlots[i]);
+
+            DrawBackground(spriteBatch, offset, _keyRectangle);
+            DrawBackground(spriteBatch, offset, _relictsRectangle);
+            DrawBackground(spriteBatch, offset, _itemsRectangle);
+            DrawBackground(spriteBatch, offset, _tradeStuffRectangle);
+
+            // Draw item selection box.
+            var selectionPosition = new Point(
+                (_itemsRectangle.X + _selectedItemSlot % ItemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X)),
+                (_itemsRectangle.Y + _selectedItemSlot / ItemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y)));
+            DrawBackground(spriteBatch, offset + selectionPosition, new Rectangle(0, 0, _itemRectangleSize.X, _itemRectangleSize.Y));
+
+            // Draw missing items/equipment markers.
+            for (var i = 0; i < Game1.GameManager.Equipment.Length - Values.HandItemSlots; i++)
             {
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiRtScale));
+                var slotRectangle = new Rectangle(
+                    i % ItemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X) + _itemRectangleSize.X / 2 - 2,
+                    i / ItemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y) + _itemRectangleSize.Y - 8, 4, 2);
 
-                var offset = new Point(_background1.X, _background1.Y);
-
-                for (var i = 0; i < _itemSlots.Length; i++)
-                    DrawBackground(spriteBatch, offset + _itemSlotsPosition, _itemSlots[i]);
-
-                DrawBackground(spriteBatch, offset, _keyRectangle);
-                DrawBackground(spriteBatch, offset, _relictsRectangle);
-                DrawBackground(spriteBatch, offset, _itemsRectangle);
-                DrawBackground(spriteBatch, offset, _tradeStuffRectangle);
-
-                // draw the item selection
-                var selectionPosition = new Point(
-                    (_itemsRectangle.X + _selectedItemSlot % ItemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X)),
-                    (_itemsRectangle.Y + _selectedItemSlot / ItemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y)));
-                DrawBackground(spriteBatch, offset + selectionPosition, new Rectangle(0, 0, _itemRectangleSize.X, _itemRectangleSize.Y));
-
-                // draw the collected items
-                for (var i = 0; i < Game1.GameManager.Equipment.Length - Values.HandItemSlots; i++)
-                {
-                    var slotRectangle = new Rectangle(
-                        i % ItemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X) + _itemRectangleSize.X / 2 - 2,
-                        i / ItemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y) + _itemRectangleSize.Y - 8, 4, 2);
-
-                    if (Game1.GameManager.Equipment[Values.HandItemSlots + i] == null)
-                        DrawBackground(spriteBatch, offset + _equipmentPosition, slotRectangle, 1);
-                }
-                // key background dots
-                for (var i = 0; i < 5; i++)
-                {
-                    var slotRectangle = new Rectangle(
-                        _keyPositions[i].X + _keyPositions[i].Width / 2 - 2,
-                        _keyPositions[i].Y + _keyPositions[i].Height - 2, 4, 2);
-
-                    var itemKey = Game1.GameManager.GetItem("dkey" + (i + 1));
-                    if (itemKey == null)
-                        DrawBackground(spriteBatch, offset, slotRectangle, 1);
-                }
-
-                for (var i = 0; i < _relicOffsets.Length; i++)
-                {
-                    var name = "instrument" + i;
-                    var hasItem = Game1.GameManager.GetItem(name) != null;
-
-                    if (!hasItem)
-                    {
-                        var position = new Point(_relictPosition.X + _relicOffsets[i].X + _relicOffsets[i].Width / 2 - 2, _relictPosition.Y + _relicOffsets[i].Bottom - 2);
-                        DrawBackground(spriteBatch, offset + position, new Rectangle(0, 0, 4, 2), 1);
-                    }
-                }
-
-                spriteBatch.End();
+                if (Game1.GameManager.Equipment[Values.HandItemSlots + i] == null)
+                    DrawBackground(spriteBatch, offset + _equipmentPosition, slotRectangle, 1);
             }
 
-            // draw the map
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiRtScale));
-
+            // Key background dots.
+            for (var i = 0; i < 5; i++)
             {
-                var heartOffset = new Point(0, Game1.GameManager.MaxHearts > 7 ? 0 : 4);
-                ItemDrawHelper.DrawHearts(spriteBatch, _heartsPosition + heartOffset, 1, Color.White);
+                var slotRectangle = new Rectangle(
+                    _keyPositions[i].X + _keyPositions[i].Width / 2 - 2,
+                    _keyPositions[i].Y + _keyPositions[i].Height - 2, 4, 2);
 
-                // draw the skirt
-                DrawSkirt(spriteBatch, _skirtPosition);
+                var itemKey = Game1.GameManager.GetItem("dkey" + (i + 1));
+                if (itemKey == null)
+                    DrawBackground(spriteBatch, offset, slotRectangle, 1);
+            }
 
-                DrawHeartContainer(spriteBatch, _heartPiecePosition);
+            // Relic missing dots.
+            for (var i = 0; i < _relicOffsets.Length; i++)
+            {
+                var name = "instrument" + i;
+                var hasItem = Game1.GameManager.GetItem(name) != null;
 
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("flippers"), Point.Zero, _flipperRectangle, 1, Color.White);
-
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("potion"), Point.Zero, _potionRectangle, 1, Color.White);
-
-                ItemDrawHelper.DrawRubee(spriteBatch, _rubeePosition, 1, Color.Black);
-
-                var offsetBottom = new Point(_background1.X, _background1.Y);
-
-                // center the items
+                if (!hasItem)
                 {
-                    var width = 0;
-                    var hasTradeItem = false;
-                    for (var i = 0; i < 15; i++)
-                    {
-                        hasTradeItem = Game1.GameManager.GetItem("trade" + i) != null;
-                        if (hasTradeItem)
-                        {
-                            width += 28;
-                            break;
-                        }
-                    }
-                    var itemShell = Game1.GameManager.GetItem("shell");
-                    var itemLeaf = Game1.GameManager.GetItem("goldLeaf");
-                    if (itemShell != null)
-                        width += 28;
-                    if (itemLeaf != null)
-                        width += 28;
-
-                    var posX = _tradeStuffRectangle.Width / 2 - width / 2;
-                    _tradeRectangle = new Rectangle(6 + posX, 6, 28, 22);
-
-                    if (hasTradeItem)
-                        posX += 28;
-                    _shellRectangle = new Rectangle(6 + posX, 6, 28, 22);
-
-                    if (itemShell != null)
-                        posX += 28;
-                    _leafRectangle = new Rectangle(6 + posX, 6, 28, 22);
-
-                    // draw the current trade item
-                    DrawTradeItem(spriteBatch, offsetBottom, 1);
-                    ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("shell"), offsetBottom, _shellRectangle, 1, Color.White);
-                    ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("goldLeaf"), offsetBottom, _leafRectangle, 1, Color.White);
+                    var position = new Point(_relictPosition.X + _relicOffsets[i].X + _relicOffsets[i].Width / 2 - 2,
+                                             _relictPosition.Y + _relicOffsets[i].Bottom - 2);
+                    DrawBackground(spriteBatch, offset + position, new Rectangle(0, 0, 4, 2), 1);
                 }
-                // draw the collected equipment
-                DrawEquipment(spriteBatch, offsetBottom + _equipmentPosition);
-
-                // Copy the button labels from ControlHandler "Labels" field. We only need the first 6 buttons.
-                for (int y = 0; y < _itemSlots.Length; y++)
-                    _itemSlotString[y] = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, y];
-
-                // draw the item slots
-                for (var i = 0; i < _itemSlots.Length; i++)
-                {
-                    ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[i], offsetBottom + _itemSlotsPosition, _itemSlots[i], 1, Color.White);
-
-                    spriteBatch.DrawString(Resources.GameFont, _itemSlotString[i], new Vector2(
-                        offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4,
-                        offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 5), Color.Black);
-                }
-
-                // draw the collected keys
-                for (var i = 0; i < 5; i++)
-                    ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dkey" + (i + 1)), offsetBottom, _keyPositions[i], 1, Color.White);
-
-                DrawRelicts(spriteBatch, offsetBottom + _relictPosition);
             }
             spriteBatch.End();
+
+            // Draw icons, hearts, etc.
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+
+            var heartOffset = new Point(0, Game1.GameManager.MaxHearts > 7 ? 0 : 4);
+            ItemDrawHelper.DrawHearts(spriteBatch, _heartsPosition + heartOffset, 1, Color.White);
+
+            DrawSkirt(spriteBatch, _skirtPosition);
+            DrawHeartContainer(spriteBatch, _heartPiecePosition);
+            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("flippers"), Point.Zero, _flipperRectangle, 1, Color.White);
+            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("potion"), Point.Zero, _potionRectangle, 1, Color.White);
+            ItemDrawHelper.DrawRubee(spriteBatch, _rubeePosition, 1, Color.Black);
+
+            var offsetBottom = new Point(_background1.X, _background1.Y);
+
+            // Draw trade/special items.
+            {
+                var width = 0;
+                var hasTradeItem = false;
+                for (var i = 0; i < 15; i++)
+                {
+                    hasTradeItem = Game1.GameManager.GetItem("trade" + i) != null;
+                    if (hasTradeItem)
+                    {
+                        width += 28;
+                        break;
+                    }
+                }
+                var itemShell = Game1.GameManager.GetItem("shell");
+                var itemLeaf = Game1.GameManager.GetItem("goldLeaf");
+                if (itemShell != null) width += 28;
+                if (itemLeaf != null) width += 28;
+
+                var posX = _tradeStuffRectangle.Width / 2 - width / 2;
+                _tradeRectangle = new Rectangle(6 + posX, 6, 28, 22);
+
+                if (hasTradeItem) posX += 28;
+                _shellRectangle = new Rectangle(6 + posX, 6, 28, 22);
+
+                if (itemShell != null) posX += 28;
+                _leafRectangle = new Rectangle(6 + posX, 6, 28, 22);
+
+                DrawTradeItem(spriteBatch, offsetBottom, 1);
+                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("shell"), offsetBottom, _shellRectangle, 1, Color.White);
+                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("goldLeaf"), offsetBottom, _leafRectangle, 1, Color.White);
+            }
+
+            DrawEquipment(spriteBatch, offsetBottom + _equipmentPosition);
+
+            // Draw slot labels and items.
+            for (int y = 0; y < _itemSlots.Length; y++)
+                _itemSlotString[y] = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, y];
+
+            for (var i = 0; i < _itemSlots.Length; i++)
+            {
+                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[i],
+                    offsetBottom + _itemSlotsPosition, _itemSlots[i], 1, Color.White);
+
+                spriteBatch.DrawString(Resources.GameFont, _itemSlotString[i],
+                    new Vector2(offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4,
+                                offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 5), Color.Black);
+            }
+
+            for (var i = 0; i < 5; i++)
+                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dkey" + (i + 1)), offsetBottom, _keyPositions[i], 1, Color.White);
+
+            DrawRelicts(spriteBatch, offsetBottom + _relictPosition);
+
+            spriteBatch.End();
+
+            // Reset render targets.
+            device.SetRenderTarget(null);
         }
 
         private void DrawBackground(SpriteBatch spriteBatch, Point offset, Rectangle rectangle, float radius = 3f)
