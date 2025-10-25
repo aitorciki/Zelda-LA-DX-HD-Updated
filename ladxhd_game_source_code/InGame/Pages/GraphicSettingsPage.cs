@@ -67,11 +67,6 @@ namespace ProjectZ.InGame.Pages
                 });
             contentLayout.AddElement(toggleFpsLock);
 
-            // Button: Screen-Shake
-            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_graphics_screenshake", GameSettings.ScreenShake, newState => { GameSettings.ScreenShake = newState; });
-            contentLayout.AddElement(toggleScreenShake);
-
             // Button: Epilepsy Safe
             var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_graphics_epilepsysafe", GameSettings.EpilepsySafe, newState => { GameSettings.EpilepsySafe = newState; });

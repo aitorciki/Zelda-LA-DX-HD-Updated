@@ -35,6 +35,18 @@ namespace ProjectZ.InGame.Pages
                 Game1.UiPageManager.ChangePage(typeof(GameSettingsPage));
             }));
 
+            // Button: Redux Settings
+            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_redux", element =>
+            {
+                Game1.UiPageManager.ChangePage(typeof(ReduxOptionsPage));
+            }));
+
+            // Button: Camera Settings
+            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_camera", element =>
+            {
+                Game1.UiPageManager.ChangePage(typeof(CameraSettingsPage));
+            }));
+
             // Button: Video Settings
             contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_video", element =>
             {
@@ -51,18 +63,6 @@ namespace ProjectZ.InGame.Pages
             contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_controls", element =>
             {
                 Game1.UiPageManager.ChangePage(typeof(ControlSettingsPage));
-            }));
-
-            // Button: Camera Settings
-            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_camera", element =>
-            {
-                Game1.UiPageManager.ChangePage(typeof(CameraSettingsPage));
-            }));
-
-            // Button: Redux Settings
-            contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_redux", element =>
-            {
-                Game1.UiPageManager.ChangePage(typeof(ReduxOptionsPage));
             }));
 
             // Button: Modifier Settings
