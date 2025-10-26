@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -20,6 +21,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly DictAtlasEntry _spriteHeadUp;
         private readonly DictAtlasEntry _spriteHeadDown;
 
+        private readonly CBox _upperBox;
+        private readonly CBox _lowerBox;
+
         private readonly string _strKey;
 
         private int _throwDirection;
@@ -30,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _isUp;
         private bool _wasUp;
         private bool _chessBounces;
+        private bool _reversal;
 
         public ObjDungeonHorseHead() : base("horse_head_up") { }
 
@@ -40,6 +45,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _strKey = strKey;
             _direction = direction;
+
+            _upperBox = new CBox(EntityPosition, -4, -8 + 3, 0, 8, 8, 4, true);
+            _lowerBox = new CBox(EntityPosition, -4, -8 + 3, 0, 8, 8, 4);
 
             _fieldRectangle = map.GetField(posX, posY, 15);
 
@@ -113,6 +121,28 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void Update()
         {
             UpdateSprite();
+
+            if (!_wasThrown || _reversal)
+                return;
+
+            // this is used because the normal collision detection looks strang when throwing directly towards a lower wall
+            var outBox = Box.Empty;
+            if (!Map.Is2dMap &&
+                Map.Objects.Collision(_upperBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox) &&
+                Map.Objects.Collision(_lowerBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox))
+            {
+                switch (_throwDirection)
+                {
+                    case 0: case 2:
+                        _body.Velocity.X = -_body.Velocity.X;
+                        break;
+                    case 1: case 3:
+                        _body.Velocity.Y = -_body.Velocity.Y;
+                        break;
+                }
+                _reversal = true;
+                _throwDirection = AnimationHelper.OffsetDirection(_throwDirection, 2);
+            }
         }
 
         private Vector3 CarryInit()
@@ -144,9 +174,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _direction = Game1.RandomNumber.Next(1, 3);
                 _isUp = false;
             }
-
             _body.Velocity = new Vector3(velocity.X, velocity.Y, 0) * 1.0f;
-
             Release();
         }
 
@@ -165,6 +193,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             if ((direction & Values.BodyCollision.Floor) != 0 && _chessBounces)
             {
+                _reversal = false;
                 _wasThrown = false;
                 _bounceCount++;
 
