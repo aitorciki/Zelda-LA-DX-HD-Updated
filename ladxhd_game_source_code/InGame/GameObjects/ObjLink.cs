@@ -436,6 +436,10 @@ namespace ProjectZ.InGame.GameObjects
         // The current field that Link is on.
         public RectangleF CurrentField = RectangleF.Empty;
 
+        // When true, hit's will not register. Timer sets the value back to false.
+        private bool PreventDamage;
+        private float PreventDamageTimer;
+
         // Mod file values.
         bool  sword1_beam = false;
         bool  always_beam = false;
@@ -594,6 +598,14 @@ namespace ProjectZ.InGame.GameObjects
                 (int)MapManager.ObjLink.EntityPosition.Position.X,
                 (int)MapManager.ObjLink.EntityPosition.Position.Y);
 
+            // Variable that prevents "HitPlayer" method from firing.
+            if (PreventDamage)
+            {
+                // Timer must be active for it to remain true.
+                PreventDamageTimer -= Game1.DeltaTime;
+                if (PreventDamageTimer <= 0) 
+                    PreventDamage = false;
+            }
             // Update falling into a map transition (I think).
             if (CurrentState == State.FallRotateEntry)
             {
@@ -3196,6 +3208,10 @@ namespace ProjectZ.InGame.GameObjects
             Direction = 3;
             Animation.Play("ocarina");
 
+            // Prevent Link from taking hits during this time.
+            PreventDamage = true;
+            PreventDamageTimer = 8000;
+
             // Freeze the game world while the song is played.
             Game1.GameManager.SaveManager.SetString("freezeGame", "1");
         }
@@ -3237,6 +3253,9 @@ namespace ProjectZ.InGame.GameObjects
 
         private void FinishedOcarinaSong()
         {
+            // Set the timer to make damage happen again.
+            PreventDamageTimer = 200;
+
             // Unfreeze the game world when the song is finished.
             Game1.GameManager.SaveManager.SetString("freezeGame", "0");
 
@@ -4510,6 +4529,10 @@ namespace ProjectZ.InGame.GameObjects
 
         public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
         {
+            // Prevent hits when playing the ocarina.
+            if (PreventDamage)
+                return false;
+
             // Get the box as a floats rectangle.
             RectangleF boxRect = box.Rectangle();
 
