@@ -29,14 +29,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Vector2 _currentPosition;
         private Vector2 _positionOffset;
-
         private Vector2 _newPosition;
 
         private float _velocity;
         private float _offsetTime;
         private bool _offset;
-
         private bool _isStandingOnTop;
+
+        private ObjItem _necklace;
 
         public ObjBoat() : base("boat") { }
 
@@ -73,9 +73,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var spawnPosition = new Vector2(EntityPosition.X - 48, EntityPosition.Y - 16);
                 Game1.GameManager.SaveManager.RemoveString(spawnKey);
 
-                var objNecklace = new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, null, null, "trade11", null);
-                objNecklace.SpawnBoatSequence();
-                Map.Objects.SpawnObject(objNecklace);
+                _necklace = new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, null, null, "trade11", null);
+                _necklace.SpawnBoatSequence();
+                Map.Objects.SpawnObject(_necklace);
 
                 var fallAnimation = new ObjAnimator(Map, (int)(spawnPosition.X + 8), (int)(spawnPosition.Y + 5),
                     Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
@@ -94,6 +94,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition.Set(_newPosition);
 
             MoveBodies(moveDirection);
+
+            // If the player traded the hook but didn't grab the necklace/bra before leaving, respawn it on the boat.
+            var fishHook = Game1.GameManager.GetItem("trade10")?.Count;
+            var necklace = Game1.GameManager.GetItem("trade11")?.Count;
+            var mermaid  = Game1.GameManager.GetItem("trade12")?.Count;
+            var magnify  = Game1.GameManager.GetItem("trade13")?.Count;
+            var traded11 = Game1.GameManager.SaveManager.GetString("npc_bridge");
+
+            // Check: necklace already spawned, does not have trade item or future ones, and trade sequence has been completed.
+            if (_necklace == null && fishHook != 1 && necklace != 1  && mermaid != 1 && magnify != 1 && traded11 == "1")
+            {
+                _necklace = new ObjItem(Map, 96, 40, null, null, "trade11", null);
+                Map.Objects.SpawnObject(_necklace);
+            }
         }
 
         // move to target if the player is standing on top of the plaform
