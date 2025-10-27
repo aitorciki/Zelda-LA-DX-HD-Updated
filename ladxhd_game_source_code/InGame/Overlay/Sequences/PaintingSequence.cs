@@ -5,6 +5,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
 {
     class PaintingSequence : GameSequence
     {
+        private float closeTimer = 1000;
+
         public PaintingSequence()
         {
             _sequenceWidth = 160;
@@ -18,8 +20,16 @@ namespace ProjectZ.InGame.Overlay.Sequences
         {
             base.Update();
 
-            if (!Game1.GameManager.DialogIsRunning() && ControlHandler.ButtonPressed(ControlHandler.CancelButton) || ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
+            closeTimer -= Game1.DeltaTime;
+
+            // can close the overlay if the dialog isn't running anymore
+            if (!Game1.GameManager.DialogIsRunning() && closeTimer <= 0 &&
+                (ControlHandler.ButtonPressed(ControlHandler.CancelButton) || 
+                ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)))
+            {
+                closeTimer = 1000;
                 Game1.GameManager.InGameOverlay.CloseOverlay();
+            }
         }
     }
 }
