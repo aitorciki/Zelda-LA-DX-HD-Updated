@@ -52,8 +52,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -4, -7, 7, 7, 8)
             {
                 Gravity = -0.2f,
-                AvoidTypes = Values.CollisionTypes.Hole |
-                             Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = fieldRectangle
             };
 

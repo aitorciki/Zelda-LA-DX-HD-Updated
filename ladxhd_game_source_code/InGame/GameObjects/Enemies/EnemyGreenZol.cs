@@ -51,8 +51,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 AbsorbPercentage = 1,
-                AvoidTypes = Values.CollisionTypes.NPCWall |
-                             Values.CollisionTypes.DeepWater,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.DeepWater,
                 Gravity = -0.15f,
                 Bounciness = 0f,
                 Drag = 0.85f

@@ -37,9 +37,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 IgnoresZ = true,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall
             };
 
             // start with a random direction

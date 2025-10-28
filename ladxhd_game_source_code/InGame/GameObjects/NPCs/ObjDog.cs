@@ -42,8 +42,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Gravity = -0.15f,
                 Drag = 0.75f,
                 DragAir = 0.95f,
-                AvoidTypes = Values.CollisionTypes.Hole |
-                             Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Player,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/dog");

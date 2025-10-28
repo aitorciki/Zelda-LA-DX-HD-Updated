@@ -40,8 +40,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 Gravity2D = 0.175f,
                 IgnoresZ = true,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall,
                 MoveCollision = OnCollision
             };
 

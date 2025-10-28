@@ -44,6 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
                                  Values.CollisionTypes.Enemy,
                 AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),

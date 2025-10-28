@@ -60,7 +60,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 AbsorbPercentage = 1f,
                 Gravity = -0.1f,
                 DragAir = 1.0f,
-                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole | 
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY)
             };
 

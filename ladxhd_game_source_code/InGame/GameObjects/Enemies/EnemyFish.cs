@@ -46,9 +46,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Gravity = -0.075f,
                 DragAir = 1.0f,
                 IgnoreHeight = true,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall
             };
 
             // start swimming randomly left or right
@@ -59,7 +59,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var stateSwim = new AiState(UpdateSwim) { Init = StartSwimming };
             stateSwim.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("jump"), 1500, 3000));
             var stateJump = new AiState(UpdateJump) { Init = StartJump };
-
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("swim", stateSwim);

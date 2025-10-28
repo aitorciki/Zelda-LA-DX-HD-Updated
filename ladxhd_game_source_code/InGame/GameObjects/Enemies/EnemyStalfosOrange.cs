@@ -57,8 +57,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 Gravity = -0.1f,
-                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
-                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall,
+                AvoidTypes =     Values.CollisionTypes.Hole | 
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = fieldRectangle
             };
 

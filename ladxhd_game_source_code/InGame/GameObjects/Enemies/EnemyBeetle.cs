@@ -42,13 +42,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -5, -8, 10, 8, 8)
             {
                 AbsorbPercentage = 0.9f,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Enemy |
-                    Values.CollisionTypes.Player,
-                AvoidTypes =
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Enemy |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Player,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
                 HoleOnPull = OnHolePull,
                 AbsorbStop = 0,
                 FieldRectangle = map.GetField(posX, posY),

@@ -54,6 +54,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 10, 8)
             {
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 IgnoresZ = true,
                 FieldRectangle = fieldRectangle,

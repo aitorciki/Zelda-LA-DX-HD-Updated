@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
             {
                 MoveCollision = MoveCollision,
-                CollisionTypes = Values.CollisionTypes.None,
+                CollisionTypes = Values.CollisionTypes.Field,
                 Gravity = -0.1f,
                 DragAir = 1.0f,
                 Bounciness = 0.75f

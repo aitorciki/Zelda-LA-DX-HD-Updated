@@ -74,10 +74,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 MoveCollision = OnCollision,
                 IgnoreHeight = true,
                 IgnoresZ = true,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall
             };
 
             var damageBox = new CBox(EntityPosition, -8, -8, 0, 16, 16, 4);

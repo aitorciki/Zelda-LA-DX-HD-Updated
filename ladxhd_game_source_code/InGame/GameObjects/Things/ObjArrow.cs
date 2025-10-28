@@ -57,7 +57,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 -_collisionBoxSize[dir].X / 2, -_collisionBoxSize[dir].Y / 2,
                 _collisionBoxSize[dir].X, _collisionBoxSize[dir].Y, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
                 CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore,
                 MoveCollision = OnCollision,
                 VelocityTarget = velocity,

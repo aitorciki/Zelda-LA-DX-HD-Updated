@@ -30,7 +30,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 Velocity = velocity,
                 VelocityTarget = velocityTarget,

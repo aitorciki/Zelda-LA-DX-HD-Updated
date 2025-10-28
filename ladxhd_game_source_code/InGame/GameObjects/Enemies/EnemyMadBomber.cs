@@ -55,6 +55,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
+                CollisionTypes = Values.CollisionTypes.Field,
                 IgnoreHoles = true
             };
 

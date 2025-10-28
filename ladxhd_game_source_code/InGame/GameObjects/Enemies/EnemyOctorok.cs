@@ -52,13 +52,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 AbsorbPercentage = 0.9f,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Enemy |
-                    Values.CollisionTypes.Player,
-                AvoidTypes =
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Enemy |
+                                 Values.CollisionTypes.Player,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
                 Drag = 0.85f,

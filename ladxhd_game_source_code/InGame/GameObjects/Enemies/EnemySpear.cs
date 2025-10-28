@@ -1,9 +1,11 @@
 using System;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -48,7 +50,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 -_collisionBoxSize[dir].X / 2, -_collisionBoxSize[dir].Y / 2,
                 _collisionBoxSize[dir].X, _collisionBoxSize[dir].Y, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 VelocityTarget = velocity,
                 Bounciness = 0.35f,
@@ -56,7 +59,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoreHeight = true,
                 IgnoresZ = true,
             };
-
             var damageCollider = new CBox(EntityPosition, -5, -5, 0, 10, 10, 4, true);
 
             var stateDespawn = new AiState() { Init = InitDespawn };
@@ -84,6 +86,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
+            // With classic camera, simulate field barrier to end shots earlier.
+            if (GameSettings.ClassicCamera)
+            {
+                var curField = MapManager.ObjLink.CurrentField;
+                var barrier = new Rectangle(curField.X - 16, curField.Y - 16, 192, 160);
+
+                if (!curField.Contains(EntityPosition.Position) &&  
+                    barrier.Contains(EntityPosition.Position))
+                {
+                    OnCollision(Values.BodyCollision.None);
+                    return;
+                }
+            }
             // start falling down?
             var distance = _startPosition - EntityPosition.Position;
             if (MathF.Abs(distance.X) > 112 || Math.Abs(distance.Y) > 96)

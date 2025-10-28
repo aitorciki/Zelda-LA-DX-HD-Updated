@@ -27,7 +27,8 @@ namespace ProjectZ.InGame.Things
             ThrowIgnore = 0x10000,
             ThrowWeaponIgnore = 0x20000,
             NPC = 0x40000,
-            NonWater = 0x80000
+            NonWater = 0x80000,
+            Field = 0x100000
         }
 
         [Flags]

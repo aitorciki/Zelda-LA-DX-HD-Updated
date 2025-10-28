@@ -68,7 +68,6 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("oneWayBridge2", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(15, 0, 1, 16), Values.CollisionTypes.Normal, 2 }));
             ObjectTemplates.Add("oneWayBridge0", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(0, 0, 1, 16), Values.CollisionTypes.Normal, 0 }));
 
-
             ObjectTemplates.Add("break_collider_end", null);
             ObjectTemplates.Add("break_sprite_start", null);
 

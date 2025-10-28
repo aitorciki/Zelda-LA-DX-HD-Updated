@@ -45,7 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 posX + rectangle.X, posY + rectangle.Y, 0,
                 rectangle.Width, rectangle.Height, height);
 
-            AddComponent(CollisionComponent.Index, new CollisionComponent(SingeBoxCollision) { CollisionType = type });
+            AddComponent(CollisionComponent.Index, new CollisionComponent(SingleBoxCollision) { CollisionType = type });
         }
 
         private bool MultiBoxCollision(Box box, int dir, int level, ref Box collidingBox)
@@ -60,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             return false;
         }
 
-        private bool SingeBoxCollision(Box box, int dir, int level, ref Box collidingBox)
+        private bool SingleBoxCollision(Box box, int dir, int level, ref Box collidingBox)
         {
             if ((_level != -1 && _level < level) || !_singleCollisionBox.Intersects(box))
                 return false;

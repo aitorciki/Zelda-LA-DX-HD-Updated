@@ -49,6 +49,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
                 FieldRectangle = map.GetField(posX, posY)
             };
             var stateIdle = new AiState(UpdateIdle);

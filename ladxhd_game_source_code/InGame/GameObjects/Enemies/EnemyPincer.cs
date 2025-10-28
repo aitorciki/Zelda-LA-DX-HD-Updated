@@ -51,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -6, -6, 12, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.None,
+                CollisionTypes = Values.CollisionTypes.Field,
                 Drag = 0.75f,
                 IgnoreHoles = true
             };

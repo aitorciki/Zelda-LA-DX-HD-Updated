@@ -99,7 +99,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // Only enforce field boundaries when ClassicCamera mode is active.
                 if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
                 {
-                    ComeBack();
+                    ComeBack(true);
                     return;
                 }
 

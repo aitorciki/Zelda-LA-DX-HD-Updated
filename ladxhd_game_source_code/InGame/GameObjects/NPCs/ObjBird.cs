@@ -46,12 +46,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Drag = 0.15f,
                 DragAir = 1.0f,
                 Gravity = -0.1f,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Player |
-                    Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Player,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
             };
-
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/bird");
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -15));

@@ -61,8 +61,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 HoleOnPull = OnHolePull,
-                CollisionTypes = Values.CollisionTypes.Normal,
-                AvoidTypes = Values.CollisionTypes.Hole,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY, 16),
                 Bounciness = 0.25f,
                 Drag = 0.85f,

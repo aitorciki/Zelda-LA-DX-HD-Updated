@@ -9,6 +9,7 @@ using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
+using static ProjectZ.InGame.Things.Values;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -63,7 +64,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.None,
+                CollisionTypes = Values.CollisionTypes.Field,
+                AvoidTypes     = Values.CollisionTypes.NPCWall,
                 IgnoreHoles = true,
                 IgnoresZ = true,
             };

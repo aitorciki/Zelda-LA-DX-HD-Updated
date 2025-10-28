@@ -39,8 +39,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-16, -16));
 
-            var body = new BodyComponent(EntityPosition, -14, -12, 28, 28, 8) { IgnoresZ = true };
-
+            var body = new BodyComponent(EntityPosition, -14, -12, 28, 28, 8) 
+            {
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                IgnoresZ = true 
+            };
             var collisionBox = new CBox(EntityPosition, -15, -13, 30, 28, 8);
             var hittableBox = new CBox(EntityPosition, -15, -13, 30, 28, 8);
             var damageBox = new CBox(EntityPosition, -16, -14, 32, 30, 8);

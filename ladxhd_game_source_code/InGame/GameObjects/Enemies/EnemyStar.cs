@@ -38,10 +38,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 FieldRectangle = map.GetField(posX, posY),
                 MoveCollision = OnCollision,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall
             };
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
 

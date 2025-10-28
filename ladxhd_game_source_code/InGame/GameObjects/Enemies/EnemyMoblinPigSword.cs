@@ -67,8 +67,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
                                  Values.CollisionTypes.Enemy,
-                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                AvoidTypes =     Values.CollisionTypes.Hole | 
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = _fieldRectangle,
                 Bounciness = 0.25f,
                 AbsorbPercentage = 0.9f,

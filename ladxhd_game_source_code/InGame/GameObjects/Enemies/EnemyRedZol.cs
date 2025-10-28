@@ -48,9 +48,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                // Values.CollisionTypes.Hole can not ignore holes because they need to walk into one in dungeon 4
-                AvoidTypes = Values.CollisionTypes.NPCWall |
-                             Values.CollisionTypes.DeepWater,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.DeepWater,
                 FieldRectangle = map.GetField(posX, posY),
                 Gravity = -0.15f,
                 Bounciness = 0.25f,

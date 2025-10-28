@@ -52,9 +52,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -8, -12, 16, 10, 8)
             {
                 MoveCollision = OnCollision,
-                AvoidTypes = Values.CollisionTypes.NPCWall,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 DragAir = 0.8f,
                 Gravity2DWater = 0f

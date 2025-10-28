@@ -62,7 +62,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Gravity = -0.15f,
                 IgnoresZ = true,
-                CollisionTypes = Values.CollisionTypes.Normal,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
                 MoveCollision = OnCollision
             };
 

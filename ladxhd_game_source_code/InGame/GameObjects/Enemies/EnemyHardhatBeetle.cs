@@ -49,9 +49,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 Drag = 0.875f,
-                AvoidTypes = Values.CollisionTypes.Hole |
-                             Values.CollisionTypes.NPCWall |
-                             Values.CollisionTypes.DeepWater,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.DeepWater,
                 FieldRectangle = fieldRectangle
             };
 

@@ -45,11 +45,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -11, 12, 11, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Enemy |
-                    Values.CollisionTypes.NPCWall,
-                AvoidTypes = Values.CollisionTypes.Hole,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Enemy |
+                                 Values.CollisionTypes.NPCWall,
+                AvoidTypes =     Values.CollisionTypes.Hole,
                 FieldRectangle = map.GetField(posX, posY),
                 Drag = 0.85f,
                 DragAir = 0.85f,

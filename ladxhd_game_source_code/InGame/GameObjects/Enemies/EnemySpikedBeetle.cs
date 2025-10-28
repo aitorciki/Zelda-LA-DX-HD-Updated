@@ -54,10 +54,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Drag = 0.8f,
                 Gravity = -0.1f,
                 Bounciness = 0.5f,
-                CollisionTypes = Values.CollisionTypes.Normal,
-                AvoidTypes = Values.CollisionTypes.Hole |
-                             Values.CollisionTypes.NPCWall |
-                             Values.CollisionTypes.DeepWater,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.DeepWater,
                 FieldRectangle = fieldRectangle
             };
 

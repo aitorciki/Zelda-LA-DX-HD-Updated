@@ -48,7 +48,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Gravity = -0.075f,
                 DragAir = 1.0f,
-                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole | 
+                                 Values.CollisionTypes.NPCWall,
                 FieldRectangle = _fieldRectangle,
                 IsSlider = true,
                 MaxSlideDistance = 4.0f

@@ -40,11 +40,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Bounciness = 0.25f,
                 Drag = 0.85f,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Player
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Player
             };
-
             var sprite = new CSprite(EntityPosition);
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/sea urchin");
             animator.Play("idle");

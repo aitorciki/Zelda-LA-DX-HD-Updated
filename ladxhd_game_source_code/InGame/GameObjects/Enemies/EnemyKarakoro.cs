@@ -87,10 +87,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 HoleAbsorb = () => OnHolePull(Vector2.Zero, 100),
                 IgnoreHoles = true,
                 AbsorbPercentage = 0.9f,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.NPCWall,
-                AvoidTypes = Values.CollisionTypes.Hole,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall,
+                AvoidTypes =     Values.CollisionTypes.Hole,
                 FieldRectangle = map.GetField(posX, posY, 8),
                 Bounciness = 0.55f,
                 Drag = 0.9f,

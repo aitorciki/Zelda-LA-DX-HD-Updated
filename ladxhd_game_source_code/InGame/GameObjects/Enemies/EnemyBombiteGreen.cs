@@ -47,10 +47,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 11, 8)
             {
                 AbsorbPercentage = 0.9f,
-                CollisionTypes = Values.CollisionTypes.Normal,
-                AvoidTypes =
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
                 Bounciness = 0.25f,
                 Drag = 0.85f,
             };

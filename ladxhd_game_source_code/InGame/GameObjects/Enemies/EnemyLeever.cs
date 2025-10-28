@@ -48,13 +48,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Enemy |
-                    Values.CollisionTypes.Player,
-                AvoidTypes =
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.Enemy |
+                                 Values.CollisionTypes.Player,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.NPCWall,
                 Bounciness = 0.25f,
                 Drag = 0.85f,
             };

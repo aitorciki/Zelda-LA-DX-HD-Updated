@@ -434,7 +434,9 @@ namespace ProjectZ.InGame.GameObjects
         private bool _npcCrossSword;
 
         // The current field that Link is on.
-        public RectangleF CurrentField = RectangleF.Empty;
+        public Rectangle CurrentField = Rectangle.Empty;
+        public Rectangle PreviousField = Rectangle.Empty;
+        public ObjFieldBarrier[] FieldBarrier;
 
         // When true, hit's will not register. Timer sets the value back to false.
         private bool PreventDamage;
@@ -589,15 +591,82 @@ namespace ProjectZ.InGame.GameObjects
 
             // Set the move speed value the user chose.
             AlterMoveSpeed(GameSettings.MoveSpeedAdded);
+
+            // If attacking in a jumping state, return to jumping state after attack.
+            AnimatorWeapons.OnAnimationFinished = () =>
+            {
+                if (CurrentState == State.AttackJumping)
+                {
+                    CurrentState = State.Jumping;
+                    Animation.Play("jump_" + Direction);
+                }
+            };
+        }
+
+        private void CreateFieldBarrier()
+        {
+            // Create the field barrier colliders.
+            FieldBarrier = new ObjFieldBarrier[4];
+            FieldBarrier[0] = new ObjFieldBarrier(Map, CurrentField.X - 16, CurrentField.Y - 16, Values.CollisionTypes.Field, new Rectangle(0, 0, 192, 16));
+            FieldBarrier[1] = new ObjFieldBarrier(Map, CurrentField.X - 16, CurrentField.Y + 128, Values.CollisionTypes.Field, new Rectangle(0, 0, 192, 16));
+            FieldBarrier[2] = new ObjFieldBarrier(Map, CurrentField.X - 16, CurrentField.Y, Values.CollisionTypes.Field, new Rectangle(0, 0, 16, 128));
+            FieldBarrier[3] = new ObjFieldBarrier(Map, CurrentField.X + 160, CurrentField.Y, Values.CollisionTypes.Field, new Rectangle(0, 0, 16, 128));
+
+            // Spawn in the field barrier colliders.
+            Map.Objects.SpawnObject(FieldBarrier[0]);
+            Map.Objects.SpawnObject(FieldBarrier[1]);
+            Map.Objects.SpawnObject(FieldBarrier[2]);
+            Map.Objects.SpawnObject(FieldBarrier[3]);
+        }
+
+        private void UpdateFieldBarrier()
+        {
+            // Don't update unless the field has changed.
+            if (CurrentField == PreviousField) return;
+
+            // Spawn in the field barrier rectangles.
+            FieldBarrier[0].SetPosition(CurrentField.X - 16, CurrentField.Y - 16); 
+            FieldBarrier[1].SetPosition(CurrentField.X - 16, CurrentField.Y + 128); 
+            FieldBarrier[2].SetPosition(CurrentField.X - 16, CurrentField.Y);
+            FieldBarrier[3].SetPosition(CurrentField.X + 160, CurrentField.Y);
+        }
+
+        private void DestroyFieldBarrier()
+        {
+            // Nobody likes crashes so verify it's null.
+            if (FieldBarrier == null) return;
+
+            // Destroy the current field barrier and nullify it.
+            foreach (var fBarrier in FieldBarrier)
+                Map.Objects.RemoveObject(fBarrier);
+
+            FieldBarrier = null;
         }
 
         private void Update()
         {
             // Set the current field that Link is on.
-            CurrentField = Map.GetField(
-                (int)MapManager.ObjLink.EntityPosition.Position.X,
-                (int)MapManager.ObjLink.EntityPosition.Position.Y);
+            CurrentField = Map.GetField((int)EntityPosition.Position.X, (int)EntityPosition.Position.Y);
 
+            // We only use the field barrier when "Classic Camera" is active.
+            if (GameSettings.ClassicCamera)
+            {
+                // Check to see if the current field has not yet been set. When a game is started,
+                // the first few frames will return (0,0) for the current field position.
+                if (CurrentField.X != 0 && CurrentField.Y != 0)
+                {
+                    // Create the barrier if null or update if it exists.
+                    if (FieldBarrier == null)
+                        CreateFieldBarrier();
+                    else
+                        UpdateFieldBarrier();
+                }
+            }
+            // Destroy the barrier if "Classic Camera" is not active.
+            else
+            {
+                DestroyFieldBarrier();
+            }
             // Variable that prevents "HitPlayer" method from firing.
             if (PreventDamage)
             {
@@ -617,7 +686,6 @@ namespace ProjectZ.InGame.GameObjects
 
                 UpdateAnimation();
             }
-
             // @HACK
             // this is only needed because the player should not be able to step into the door 1 frame
             // after finishing the transition this would cause the door transition to not start
@@ -900,8 +968,11 @@ namespace ProjectZ.InGame.GameObjects
             // Press the toggle HUD key (InGame/GameObjects/Things/Values.cs) to hide the UI.
             if (InputHandler.KeyPressed(Keys.OemTilde) || InputHandler.KeyPressed(Keys.Delete))
                 UiManager.HideOverlay = !UiManager.HideOverlay;
-        }
 
+            // Capture the current field now so it can be compared on the next frame to see if
+            // the field has changed. We only want to update the FieldBarrier on field changes.
+            PreviousField = CurrentField;
+        }
         #region Draw
 
         private void Draw(SpriteBatch spriteBatch)
@@ -1055,6 +1126,17 @@ namespace ProjectZ.InGame.GameObjects
                 spriteBatch.Draw(Resources.SprWhite,
                     new Vector2(shieldRectangle.X, shieldRectangle.Y), new Rectangle(0, 0,
                         (int)shieldRectangle.Width, (int)shieldRectangle.Height), Color.Green * 0.75f);
+
+                // Draw the field barrier.
+                if (FieldBarrier != null)
+                {
+                    foreach (var barrier in FieldBarrier)
+                    {
+                        spriteBatch.Draw(Resources.SprWhite,
+                            new Vector2(barrier.CollisionBox.X, barrier.CollisionBox.Y), new Rectangle(0, 0, 
+                            (int)barrier.CollisionBox.Width, (int)barrier.CollisionBox.Height), Color.Blue * 0.75f);
+                    }
+                }
             }
         }
 
@@ -1438,7 +1520,7 @@ namespace ProjectZ.InGame.GameObjects
                     (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X), 
                     (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X), 
                     "borrow_rooster");
-                Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(_objRooster);
+                Map.Objects.SpawnObject(_objRooster);
                 _objRooster.BorrowRooster();
             }
             // Take a walk with Marin.
@@ -2284,6 +2366,8 @@ namespace ProjectZ.InGame.GameObjects
             // Standing on the ground, always reset the running jump variable.
             if (_body.IsGrounded && _body.Velocity.Z <= 0)
             {
+                if (CurrentState == State.AttackJumping)
+                    CurrentState = State.Attacking;
                 _bootsRunJump = false;
             }
             else
@@ -3923,7 +4007,9 @@ namespace ProjectZ.InGame.GameObjects
             _jumpStartZPos = _body.Position.Z;
 
             // while attacking the player can still jump but without the animation
-            if (CurrentState == State.Charging || CurrentState == State.ChargeBlocking)
+            if (CurrentState == State.Attacking)
+                CurrentState = State.AttackJumping;
+            else if (CurrentState == State.Charging || CurrentState == State.ChargeBlocking)
                 CurrentState = State.ChargeJumping;
             else
             {
@@ -5467,6 +5553,9 @@ namespace ProjectZ.InGame.GameObjects
             // Restart the music.
             if (!GameSettings.MutePowerups && (Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive))
                 Game1.GameManager.StartPieceOfPowerMusic(1);
+
+            // Destroy the barrier after a transition so it can be recreated.
+            DestroyFieldBarrier();
         }
 
         #endregion
