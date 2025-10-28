@@ -133,12 +133,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             {
                 switch (_throwDirection)
                 {
-                    case 0: case 2:
-                        _body.Velocity.X = -_body.Velocity.X;
-                        break;
-                    case 1: case 3:
-                        _body.Velocity.Y = -_body.Velocity.Y;
-                        break;
+                    case 0: case 2: _body.Velocity.X = -_body.Velocity.X; break;
+                    case 1: case 3: _body.Velocity.Y = -_body.Velocity.Y; break;
                 }
                 _reversal = true;
                 _throwDirection = AnimationHelper.OffsetDirection(_throwDirection, 2);

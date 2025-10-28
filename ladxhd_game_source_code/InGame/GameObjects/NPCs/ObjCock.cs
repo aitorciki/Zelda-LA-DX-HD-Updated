@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -23,6 +24,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
         private readonly CSprite _sprite;
+
+        private readonly CBox _fieldBox;
+
+        private int _throwDirection;
+        private bool _throwHitWall;
 
         private string _saveKey;
 
@@ -55,6 +61,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+
+            _fieldBox = new CBox(EntityPosition, -8, -8, -28, 16, 16, 28);
 
             _saveKey = saveKey;
 
@@ -180,6 +188,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
                 }
             }
+            // If the classic camera mode is enabled, don't let the player throw the chicken outside of the field.
+            if (GameSettings.ClassicCamera && _isThrown && !_throwHitWall)
+            {
+                var outBox = Box.Empty;
+                if (Map.Objects.Collision(_fieldBox.Box, Box.Empty, Values.CollisionTypes.Field, 0, _body.Level, ref outBox))
+                {
+                    switch (_throwDirection)
+                    {
+                        case 0: case 2: _body.Velocity.X = -_body.Velocity.X * 0.50f; break;
+                        case 1: case 3: _body.Velocity.Y = -_body.Velocity.Y * 0.50f; break;
+                    }
+                    _throwHitWall = true;
+                }
+            }
         }
 
         private void ToActiveState()
@@ -262,6 +284,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void InitWalk()
         {
             SetThrowState(false);
+            _throwHitWall = false;
         }
 
         private void UpdateWalking()
@@ -398,8 +421,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void CarryThrow(Vector2 direction)
         {
+            _throwDirection = AnimationHelper.GetDirection(direction);
             _body.Velocity = new Vector3(direction.X, direction.Y, 0);
-
             MapManager.ObjLink.StopFlying();
         }
 
