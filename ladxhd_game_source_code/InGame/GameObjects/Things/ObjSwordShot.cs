@@ -34,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _spawnPosition = new Vector3(position.X, position.Y, position.Z);
             _damage = damage;
-            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8);
+            _damageBox = new CBox(EntityPosition, -3, -3, -16, 6, 6, 32);
 
             _sprite = new CSprite("swordShot", EntityPosition)
             {
@@ -54,7 +54,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IgnoreInsideCollision = false,
                 Level = MapStates.GetLevel(MapManager.ObjLink._body.CurrentFieldState)
             };
-
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
