@@ -34,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _spawnPosition = new Vector3(position.X, position.Y, position.Z);
             _damage = damage;
-            _damageBox = new CBox(EntityPosition, -3, -3, -16, 6, 6, 32);
+            _damageBox = new CBox(EntityPosition, -3, -3, -16, 6, 6, 32, true);
 
             _sprite = new CSprite("swordShot", EntityPosition)
             {
