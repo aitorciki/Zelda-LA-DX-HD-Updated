@@ -64,15 +64,17 @@ namespace ProjectZ.InGame.Pages
             Game1.GameManager.InGameOverlay.CloseOverlay();
         }
 
+        public void OnClickSaveContinue(InterfaceElement element)
+        {
+            MapManager.ObjLink.DisableItems = true;
+            MapManager.ObjLink.DisableItemCounter = 350;
+            SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
+            Game1.GameManager.InGameOverlay.CloseOverlay();
+        }
+
         public void OnClickSettings(InterfaceElement element)
         {
             Game1.UiPageManager.ChangePage(typeof(SettingsPage));
-        }
-
-        public void OnClickSaveContinue(InterfaceElement element)
-        {
-            SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
-            Game1.GameManager.InGameOverlay.CloseOverlay();
         }
 
         public void OnClickBackToMenu(InterfaceElement element)
