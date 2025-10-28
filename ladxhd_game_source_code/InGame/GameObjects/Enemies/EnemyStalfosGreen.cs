@@ -7,7 +7,6 @@ using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {

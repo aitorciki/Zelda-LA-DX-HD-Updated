@@ -1,5 +1,4 @@
-﻿
-namespace ProjectZ.InGame.GameObjects.Base.Components
+﻿namespace ProjectZ.InGame.GameObjects.Base.Components
 {
     public class KeyChangeListenerComponent : Component
     {

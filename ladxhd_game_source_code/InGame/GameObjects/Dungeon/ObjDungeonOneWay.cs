@@ -5,7 +5,6 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Bosses;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
 {

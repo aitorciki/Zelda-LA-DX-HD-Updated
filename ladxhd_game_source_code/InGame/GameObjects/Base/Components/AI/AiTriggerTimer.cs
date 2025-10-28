@@ -1,5 +1,4 @@
-﻿
-namespace ProjectZ.InGame.GameObjects.Base.Components.AI
+﻿namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 {
     class AiTriggerTimer : AiTrigger
     {
