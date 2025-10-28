@@ -229,6 +229,8 @@ namespace ProjectZ.InGame.GameObjects
 
                             // blink in lava
                             _hitCount = inLava ? CooldownTime : 0;
+
+                            _drownedInLava = inLava;
                         }
                     }
                 }
@@ -321,8 +323,12 @@ namespace ProjectZ.InGame.GameObjects
                     IsVisible = true;
 
                     _hitCount = CooldownTime;
-                    Game1.GameManager.CurrentHealth -= 2;
 
+                    if (_drownedInLava)
+                    {
+                        Game1.GameManager.CurrentHealth -= 2;
+                        _drownedInLava = false;
+                    }
                     _body.CurrentFieldState = MapStates.FieldStates.None;
                     EntityPosition.Set(_drownResetPosition);
                 }

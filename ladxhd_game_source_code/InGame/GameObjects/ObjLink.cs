@@ -267,6 +267,7 @@ namespace ProjectZ.InGame.GameObjects
         // drown stuff
         private Vector2 _drownResetPosition;
         private float _drownResetCounter;
+        private bool _drownedInLava;
 
         // sword stuff
         public Box SwordDamageBox;
@@ -2031,8 +2032,12 @@ namespace ProjectZ.InGame.GameObjects
                     IsVisible = true;
 
                     _hitCount = CooldownTime;
-                    Game1.GameManager.CurrentHealth -= 2;
 
+                    if (_drownedInLava)
+                    {
+                        Game1.GameManager.CurrentHealth -= 2;
+                        _drownedInLava = false;
+                    }
                     _body.CurrentFieldState = MapStates.FieldStates.None;
                     EntityPosition.Set(_drownResetPosition);
                 }
@@ -2236,7 +2241,7 @@ namespace ProjectZ.InGame.GameObjects
                         {
                             // only push the player if he walks into the water and does not jump
                             if (!_lastFieldState.HasFlag(fieldState))
-                                _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.5f;
+                                _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.75f;
 
                             // splash effect
                             var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
@@ -2248,6 +2253,7 @@ namespace ProjectZ.InGame.GameObjects
                             Game1.GameManager.PlaySoundEffect("D370-03-03");
 
                             CurrentState = State.Drowning;
+                            _drownedInLava = inLava;
 
                             // blink in lava
                             _hitCount = inLava ? CooldownTime : 0;
