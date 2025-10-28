@@ -176,7 +176,6 @@ namespace ProjectZ.InGame.GameObjects
         {
             get { return _savedPreItemPickup; }
         }
-
         private const int dist0 = 30;
         private const int dist1 = 15;
         private readonly Vector2[] _showInstrumentOffset = {
@@ -3736,7 +3735,7 @@ namespace ProjectZ.InGame.GameObjects
             if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || sword1_beam) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || always_beam) && AnimatorWeapons.CurrentFrameIndex == 2)
             {
                 _shotSword = true;
-                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y, EntityPosition.Z);
+                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y - EntityPosition.Z, 0);
                 var objSwordShot = new ObjSwordShot(Map, spawnPosition, Game1.GameManager.SwordLevel, beamDirection);
                 Map.Objects.SpawnObject(objSwordShot);
             }
@@ -4368,19 +4367,16 @@ namespace ProjectZ.InGame.GameObjects
             _spriteTransparency = 1;
 
             _inDungeon = false;
-
             NextMapFallStart = false;
             NextMapFallRotateStart = false;
 
             Game1.GameManager.SwordLevel = 0;
             Game1.GameManager.ShieldLevel = 0;
             Game1.GameManager.StoneGrabberLevel = 0;
-
             Game1.GameManager.SelectedOcarinaSong = -1;
             Game1.GameManager.OcarinaSongs[0] = 0;
             Game1.GameManager.OcarinaSongs[1] = 0;
             Game1.GameManager.OcarinaSongs[2] = 0;
-
             Game1.GameManager.HasMagnifyingLens = false;
 
             _spawnGhost = false;
@@ -5071,9 +5067,7 @@ namespace ProjectZ.InGame.GameObjects
 
             // shock the player
             Game1.GameManager.UseShockEffect = true;
-
             Game1.GameManager.ShakeScreen(time, 4, 0, 8.5f, 0);
-
             Game1.GameManager.InflictDamage(4);
         }
 
@@ -5371,7 +5365,6 @@ namespace ProjectZ.InGame.GameObjects
             // the playerPosition is used after loading a savestate
             NextMapPositionStart = playerPosition;
             NextMapPositionEnd = playerPosition;
-
             NextMapPositionId = null;
         }
 
@@ -5381,7 +5374,6 @@ namespace ProjectZ.InGame.GameObjects
             // one of them should always be null
             // the nextMapPositionId is used after going though a door
             NextMapPositionId = nextMapPositionId;
-
             NextMapPositionStart = null;
             NextMapPositionEnd = null;
         }

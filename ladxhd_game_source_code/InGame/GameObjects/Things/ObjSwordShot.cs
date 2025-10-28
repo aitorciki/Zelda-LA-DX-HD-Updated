@@ -21,7 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _spawnCounter;
         private const int SpawnTime = 10;
 
-        private const int DespawnTime = 500;
+        private const int DespawnTime = 600;
         private const int FadeInTime = 15;
         private const int FadeOutTime = 25;
 
@@ -34,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _spawnPosition = new Vector3(position.X, position.Y, position.Z);
             _damage = damage;
-            _damageBox = new CBox(EntityPosition, -3, -3, -16, 6, 6, 32, true);
+            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8, true);
 
             _sprite = new CSprite("swordShot", EntityPosition)
             {
@@ -90,7 +90,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 OnCollision(Values.BodyCollision.None);
                 return;
             }
-
             var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.SwordShot, _damage, false);
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Enemy)) != 0)
                 Map.Objects.DeleteObjects.Add(this);
@@ -134,7 +133,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y - (int)EntityPosition.Z,
                 0, 0, Values.LayerTop, "Particles/swordShotDespawn", "run", true);
             Map.Objects.SpawnObject(animation);
-
             Map.Objects.DeleteObjects.Add(this);
         }
     }
