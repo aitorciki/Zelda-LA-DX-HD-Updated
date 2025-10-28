@@ -229,7 +229,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _pushComponent.IsActive = false;
             }
             // Sword spin ignores the jumping logic.
-            if ((damageType & HitType.SwordSpin) != 0)
+            if ((damageType & HitType.SwordSpin) != 0 || (damageType & HitType.BowWow) != 0)
                 return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
             // Sword can't deal damage while flying.
