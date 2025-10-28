@@ -595,10 +595,24 @@ namespace ProjectZ.InGame.GameObjects
             // If attacking in a jumping state, return to jumping state after attack.
             AnimatorWeapons.OnAnimationFinished = () =>
             {
-                if (CurrentState == State.AttackJumping)
+                if (!_body.IsGrounded && CurrentState == State.AttackJumping)
                 {
-                    CurrentState = State.Jumping;
-                    Animation.Play("jump_" + Direction);
+                    if (_isHoldingSword)
+                    {
+                        string shieldString = CarryShield 
+                            ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_" 
+                            : "_";
+
+                        CurrentState = State.ChargeJumping;
+                        AnimatorWeapons.Play("stand_" + Direction);
+                        Animation.Play("cjump" + shieldString + Direction);
+                        _swordPokeCounter = _swordPokeTime;
+                    }
+                    else
+                    {
+                        CurrentState = State.Jumping;
+                        Animation.Play("jump_" + Direction);
+                    }
                 }
             };
         }
@@ -2463,6 +2477,8 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.TeleporterUp ||
                 CurrentState == State.FallRotateEntry)
                 Animation.Play("stand" + shieldString + animDirection);
+            else if (CurrentState == State.ChargeJumping)
+                Animation.Play("cjump" + shieldString + animDirection);
             else if ((CurrentState == State.Idle ||
                 CurrentState == State.Charging ||
                 CurrentState == State.Rafting) && _isWalking)
