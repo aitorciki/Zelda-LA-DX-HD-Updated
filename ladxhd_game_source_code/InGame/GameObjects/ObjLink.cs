@@ -3377,7 +3377,6 @@ namespace ProjectZ.InGame.GameObjects
             if (_ocarinaSong == 1)
             {
                 CurrentState = State.OcarinaTelport;
-
                 MapTransitionStart = EntityPosition.Position;
                 MapTransitionEnd = EntityPosition.Position;
                 TransitionOutWalking = false;
@@ -3391,18 +3390,18 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     // HACK: If the player used the warp above level 8 and entered the dungeon, the save position is set to the warp
                     // rather than the dungeon 8 entrance. So if the last position is the warp, overwrite it with dungeon 8 entrance.
-                    if (MapManager.ObjLink.SavePosition == new Vector2(280,102) && MapManager.ObjLink.SaveMap == "overworld.map")
+                    if (SavePosition == new Vector2(280,102) && SaveMap == "overworld.map")
                     {
-                        MapManager.ObjLink.SavePosition = new Vector2(576,1048);
-                        MapManager.ObjLink.SaveMap = "dungeon8.map";
+                        SavePosition = new Vector2(576,1028);
+                        SaveMap = "dungeon8.map";
                     }
-                    // respawn at the dungeon entry
-                    MapManager.ObjLink.SetNextMapPosition(MapManager.ObjLink.SavePosition);
-                    transitionSystem.AppendMapChange(MapManager.ObjLink.SaveMap, null, false, false, Color.White, true);
+                    // Respawn at the dungeon entrance.
+                    SetNextMapPosition(SavePosition);
+                    transitionSystem.AppendMapChange(SaveMap, null, false, false, Color.White, true);
                 }
                 else
                 {
-                    // append a map change
+                    // Append a map change.
                     transitionSystem.AppendMapChange("overworld.map", "ocarina_entry", false, false, Color.White, true);
                 }
                 transitionSystem.StartTeleportTransition = true;

@@ -241,7 +241,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_backdoorLevel8)
             {
                 MapManager.ObjLink.SaveMap = "dungeon8.map";
-                MapManager.ObjLink.SavePosition = new Vector2(576, 1048);
+                MapManager.ObjLink.SavePosition = new Vector2(576, 1028);
                 MapManager.ObjLink.SaveDirection = 1;
             }
             MapManager.ObjLink.NextMapPositionStart = transitionStart;
