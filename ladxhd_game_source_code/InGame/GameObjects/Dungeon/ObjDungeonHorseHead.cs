@@ -201,8 +201,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 {
                     _chessBounces = false;
                     _body.Bounciness = 0;
-                    velocityDirection =
-                        AnimationHelper.OffsetDirection(velocityDirection, Game1.RandomNumber.Next(0, 2) * 2 - 1);
+                    velocityDirection = AnimationHelper.OffsetDirection(velocityDirection, Game1.RandomNumber.Next(0, 2) * 2 - 1);
 
                     // 50% chance that the horse head will stand up after the throw
                     if (Game1.RandomNumber.Next(0, 4) <= 1 || _wasUp)

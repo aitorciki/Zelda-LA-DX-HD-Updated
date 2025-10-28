@@ -44,9 +44,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 DragAir = 0.95f,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall |
                                  Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                AvoidTypes =     Values.CollisionTypes.Hole,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/dog");
@@ -113,8 +113,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // stop and wait
             _body.VelocityTarget.X = 0;
             _body.VelocityTarget.Y = 0;
-            _body.CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall;
-
             _animator.Play("idle_" + _direction);
         }
 
@@ -190,10 +188,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 playerDirection.Normalize();
 
             _body.VelocityTarget = playerDirection * 3;
-            _body.CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall;
             _body.IsGrounded = false;
             _body.Velocity.Z = 1.45f;
-
             _damageField.IsActive = true;
 
             UpdateAnimation();

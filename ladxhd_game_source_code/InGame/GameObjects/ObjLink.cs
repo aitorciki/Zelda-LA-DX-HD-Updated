@@ -667,7 +667,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 // Check to see if the current field has not yet been set. When a game is started,
                 // the first few frames will return (0,0) for the current field position.
-                if (CurrentField.X != 0 && CurrentField.Y != 0)
+                if (new Vector2(CurrentField.X, CurrentField.Y) != Vector2.Zero)
                 {
                     // Create the barrier if null or update if it exists.
                     if (FieldBarrier == null)

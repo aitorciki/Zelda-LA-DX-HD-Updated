@@ -48,9 +48,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Gravity = -0.1f,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall |
                                  Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                AvoidTypes =     Values.CollisionTypes.Hole,
             };
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/bird");
             _sprite = new CSprite(EntityPosition);
@@ -244,8 +244,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body.IgnoresZ = true;
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
-            _body.CollisionTypes = MapManager.ObjLink._body.CollisionTypes;
-
             _animator.SpeedMultiplier = 2.0f;
             _aiComponent.ChangeState("pickedUp");
 
