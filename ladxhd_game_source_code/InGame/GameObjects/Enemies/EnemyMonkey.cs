@@ -1,13 +1,13 @@
+using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
-using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -17,6 +17,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
+        private readonly AiDamageState _damageState;
 
         private const int FadeTime = 125;
         private float _fleeCounter = 1500;
@@ -66,6 +67,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("flee", stateFlee);
             _aiComponent.ChangeState("idle");
 
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1);
+
             var hitBox = new CBox(posX - 8, posY, 0, 32, 32, 8);
 
             AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
@@ -78,6 +81,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
+            if ((damageType & HitType.BowWow) != 0)
+                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+
             if (!_fleeing && (damageType & HitType.PegasusBootsPush) != 0)
             {
                 _fleeing = true;
