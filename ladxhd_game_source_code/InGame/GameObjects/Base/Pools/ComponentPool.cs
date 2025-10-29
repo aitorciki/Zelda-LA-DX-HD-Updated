@@ -10,7 +10,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
         {
             public List<GameObject> GameObjects = new List<GameObject>();
         }
-
         public Map.Map Map;
 
         public List<GameObject> NoneTiledObjects = new List<GameObject>();

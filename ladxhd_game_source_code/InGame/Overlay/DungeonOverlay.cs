@@ -107,9 +107,9 @@ namespace ProjectZ.InGame.Overlay
             Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
             // draw the background
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiRtScale));
+            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiScale));
 
-            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiRtScale);
+            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_width);
 
@@ -131,7 +131,7 @@ namespace ProjectZ.InGame.Overlay
                 DrawBackground(spriteBatch, Point.Zero, new Rectangle(_smallKeyPosition.X + _smallKeyPosition.Width / 2, _smallKeyPosition.Bottom - 5, 4, 2), 1);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiRtScale));
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiScale));
 
             var offset = new Point(0, 0);
 

@@ -75,13 +75,6 @@ namespace ProjectZ.InGame.Things
         public const string ScreenNameEditorAnimation = "ANIMATION_EDITOR";
         public const string ScreenNameSpriteAtlasEditor = "SPRITE_ATLAS_EDITOR";
 
-        public static Keys DebugToggleDebugText = Keys.F1;
-        public static Keys DebugToggleDebugModeKey = Keys.F2;
-        public static Keys DebugBox = Keys.F3;
-        public static Keys DebugSaveKey = Keys.F5;
-        public static Keys DebugLoadKey = Keys.F6;
-        public static Keys DebugShadowKey = Keys.F9;
-
         public static float ControllerDeadzone = 0.1f;
 
         public const float UiBackgroundRadius = 2.0f;
@@ -105,8 +98,10 @@ namespace ProjectZ.InGame.Things
 
         public static int HandItemSlots = 6;
 
-        public static int MinWidth = 160 * 2 + 60;   // 160
-        public static int MinHeight = 128 * 2;  // 128
+        // The original game field size was 160x128. The minimum resolution for this port is 380x256 due to the
+        // fact the menus were designed around this size. This means the minimum real scale is at least 2x.
+        public static int MinWidth = 380;
+        public static int MinHeight = 256;
 
         public static double MenuHeaderSize = 0.2;
         public static double MenuContentSize = 0.7;

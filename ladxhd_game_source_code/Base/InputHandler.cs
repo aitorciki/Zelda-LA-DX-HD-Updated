@@ -133,7 +133,7 @@ namespace ProjectZ.Base
             _lastGamePadState = _gamePadState;
             _gamePadState = GamePad.GetState(0);
 
-            // if the game was not active the last mousestate is uninteresting
+            // Prevents input when Window is in the background (do we really want this?).
             if (!Game1.WasActive)
                 ResetInputState();
         }

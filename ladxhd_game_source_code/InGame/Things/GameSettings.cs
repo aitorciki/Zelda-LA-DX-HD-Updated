@@ -14,7 +14,7 @@ namespace ProjectZ.InGame.Things
         public static int     GameScale       =  11;
         public static int     UiScale         =  4;
         public static bool    IsFullscreen    =  false;
-        public static bool    ExFullscreen    =  false; // Exclusive Fullscreen - Currently no in-game option.
+        public static bool    ExFullscreen    =  false;
         public static bool    EnableShadows   =  true;
         public static bool    VerticalSync    =  true;
         public static bool    ScreenShake     =  true;

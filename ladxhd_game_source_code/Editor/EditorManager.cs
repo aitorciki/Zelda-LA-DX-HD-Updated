@@ -57,7 +57,7 @@ namespace ProjectZ.Editor
             if (InputHandler.KeyPressed(Keys.Subtract) && Game1.DebugTimeScale > 0)
                 Game1.DebugTimeScale -= 0.125f;
 
-            if (InputHandler.KeyPressed(Values.DebugShadowKey))
+            if (InputHandler.KeyPressed(Game1.DebugShadowKey))
                 GameSettings.EnableShadows = !GameSettings.EnableShadows;
 
             if (Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditor &&
@@ -108,13 +108,13 @@ namespace ProjectZ.Editor
                             editorScreen.MousePixelPosition.Y));
                 }
             }
-            if (InputHandler.KeyPressed(Values.DebugToggleDebugModeKey))
+            if (InputHandler.KeyPressed(Game1.DebugToggleDebugModeKey))
                 Game1.DebugMode = !Game1.DebugMode;
 
-            if (InputHandler.KeyPressed(Values.DebugBox))
+            if (InputHandler.KeyPressed(Game1.DebugBox))
                 Game1.DebugBoxMode = (Game1.DebugBoxMode + 1) % 6;
 
-            if (InputHandler.KeyPressed(Values.DebugSaveKey))
+            if (InputHandler.KeyPressed(Game1.DebugSaveKey))
             {
                 MapManager.ObjLink.SaveMap = Game1.GameManager.MapManager.CurrentMap.MapName;
                 MapManager.ObjLink.SavePosition = MapManager.ObjLink.EntityPosition.Position;
@@ -122,7 +122,7 @@ namespace ProjectZ.Editor
 
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
             }
-            if (InputHandler.KeyPressed(Values.DebugLoadKey))
+            if (InputHandler.KeyPressed(Game1.DebugLoadKey))
                 Game1.GameManager.LoadSaveFile(Game1.GameManager.SaveSlot);
         }
 

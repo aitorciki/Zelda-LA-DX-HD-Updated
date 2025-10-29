@@ -12,6 +12,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceSlider _gameScaleSlider;
         private readonly InterfaceListLayout _bottomBar;
         private readonly InterfaceListLayout _toggleFullscreen;
+        private readonly InterfaceListLayout _toggleExFullscreen;
 
         public GraphicSettingsPage(int width, int height)
         {
@@ -24,8 +25,7 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Game Scale
             _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
-                buttonWidth, new Point(1, 2), -1, 11, 1, GameSettings.GameScale + 1,
-                number =>
+                buttonWidth, new Point(1, 2), -1, 11, 1, GameSettings.GameScale + 1, number =>
                 {
                     GameSettings.GameScale = GameSettings.ClassicCamera && number < 1 ? 1 : number;
                     Game1.ScaleChanged = true;
@@ -35,8 +35,7 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: UI Scale
             _uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
-                buttonWidth, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1,
-                number =>
+                buttonWidth, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1, number =>
                 {
                     GameSettings.UiScale = number;
                     Game1.ScaleChanged = true;
@@ -46,12 +45,17 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Fullscreen
             _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_graphics_fullscreen", GameSettings.IsFullscreen,
-                newState => {
+                "settings_graphics_fullscreen", GameSettings.IsFullscreen, newState => 
+                {
                     Game1.ToggleFullscreen();
                     Game1.ScaleChanged = true;
                 });
             contentLayout.AddElement(_toggleFullscreen);
+
+            // Button: Exclusive Fullscreen
+            _toggleExFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+                "settings_graphics_exfullscreen", GameSettings.ExFullscreen, newState => { GameSettings.ExFullscreen = newState; });
+            contentLayout.AddElement(_toggleExFullscreen);
 
             // Button: Dynamic Shadows
             var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
