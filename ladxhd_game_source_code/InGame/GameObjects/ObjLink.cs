@@ -134,8 +134,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool HoleFalling;
         private Vector2 _holeResetPoint;
         private float _holeResetPointZ;
-        private int _holeResetDirection;
-        private Vector3 _alternativeHoleResetPosition; // map change on hole fall
+        private Vector3 _alternativeHoleResetPosition;
         public string HoleResetRoom;
         public string HoleResetEntryId;
         public int HoleTeleporterId;
@@ -445,6 +444,8 @@ namespace ProjectZ.InGame.GameObjects
         // Mod file values.
         bool  sword1_beam = false;
         bool  always_beam = false;
+        bool  cast2d_beam = false;
+        int   length_beam = 600;
         float sword_charge_time = 500;
         float boots_charge_time = 500;
         bool  disable_moonwalk = false;
@@ -2591,7 +2592,6 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     _holeResetPoint  = newResetPosition;
                     _holeResetPointZ = newResetPositionZ;
-                    _holeResetDirection = AnimationHelper.GetDirection(ControlHandler.GetMoveVector2());
                 }
             }
         }
@@ -2608,7 +2608,6 @@ namespace ProjectZ.InGame.GameObjects
             // Sets hole reset position on map initialization.
             _holeResetPoint  = position;
             _holeResetPointZ = EntityPosition.Z;
-            _holeResetDirection = AnimationHelper.GetDirection(ControlHandler.GetMoveVector2());
 
             var offset = Map != null ? new Point(Map.MapOffsetX, Map.MapOffsetY) : Point.Zero;
             _lastTilePosition = new Point(((int)position.X - offset.X * 16) / 160, ((int)position.Y - offset.Y * 16) / 128);
@@ -3740,8 +3739,12 @@ namespace ProjectZ.InGame.GameObjects
             if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || sword1_beam) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || always_beam) && AnimatorWeapons.CurrentFrameIndex == 2)
             {
                 _shotSword = true;
-                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y - EntityPosition.Z, 0);
-                var objSwordShot = new ObjSwordShot(Map, spawnPosition, Game1.GameManager.SwordLevel, beamDirection);
+                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y, EntityPosition.Z);
+
+                if (cast2d_beam)
+                    spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y - EntityPosition.Z, 0);
+
+                var objSwordShot = new ObjSwordShot(Map, spawnPosition, Game1.GameManager.SwordLevel, beamDirection, length_beam);
                 Map.Objects.SpawnObject(objSwordShot);
             }
 

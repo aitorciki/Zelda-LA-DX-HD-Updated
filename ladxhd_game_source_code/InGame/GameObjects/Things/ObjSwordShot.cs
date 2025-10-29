@@ -19,15 +19,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private int _damage = 2;
         private float _spawnCounter;
+        private int _despawnTime = 600;
+
         private const int SpawnTime = 10;
 
-        private const int DespawnTime = 600;
         private const int FadeInTime = 15;
         private const int FadeOutTime = 25;
 
         private const float MoveSpeed = 4;
 
-        public ObjSwordShot(Map.Map map, Vector3 position, int damage, int direction) : base(map)
+        public ObjSwordShot(Map.Map map, Vector3 position, int damage, int direction, int duration) : base(map)
         {
             EntityPosition = new CPosition(position);
             EntitySize = new Rectangle(-8, -8, 16, 16);
@@ -35,6 +36,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             _spawnPosition = new Vector3(position.X, position.Y, position.Z);
             _damage = damage;
             _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8, true);
+
+            _despawnTime = duration;
 
             _sprite = new CSprite("swordShot", EntityPosition)
             {
@@ -71,14 +74,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             // only start showing the sprite after the spawn time
             if (_spawnCounter > SpawnTime)
             {
-                if (_spawnCounter > DespawnTime)
+                if (_spawnCounter > _despawnTime)
                     // fade out
-                    _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - DespawnTime) / FadeOutTime, 0, 1));
+                    _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - _despawnTime) / FadeOutTime, 0, 1));
                 else
                     // fade in
                     _sprite.Color = Color.White * Math.Clamp((_spawnCounter - SpawnTime) / FadeInTime, 0, 1);
 
-                if (_spawnCounter > DespawnTime + FadeOutTime)
+                if (_spawnCounter > _despawnTime + FadeOutTime)
                 {
                     Map.Objects.DeleteObjects.Add(this);
                     return;
