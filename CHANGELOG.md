@@ -1,5 +1,41 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.2**
+### **"On the Road to Glory" Update**
+  * Note: Classic Camera has not made it into this release as it still needs more work.
+  * Implement Indonesia language + textures. Thanks to [PangranggaCLAMP](https://github.com/PangranggaCLAMP) (creator).
+  * Exclusive Fullscreen mode has finally been fixed! There is a slight delay entering it when booting the game with it enabled.
+  * Huge map overhaul: add all the missing details of "upper levels" instead of "black" nothingness.
+  * Initial window size has been modified to be a 6x integer scale of the original game's resolution (+widescreen).
+  * Add more sword beam options to "ObjLink.lahdmod" file. Needs to be redownloaded from "Discussions" page.
+  * Update several maps so that their fields line up with with the "screens" of the original games.
+  * Make all photo sequences time out instead of waiting for a button press to prevent accidental skips.
+  * For other image events (Christine photo, Face Shrine mural, alligator painting) add a delay before button exits.
+  * Rework the Level 2 sword beam to behave as it did in the original games + extend travel distance.
+  * Modify holes again: more accurate offsets, removed respawn hack, updated alternate respawn points.
+  * Add a new dedicated drowning animation and rework drowning to be frame based instead of timed.
+  * Move some of the settings around on the menus and create a new "Camera" settings menu.
+  * If trading the fisherman for the necklace and leaving the scren before grabbing it, respawn it on next entry.
+  * Add new animations when charging the sword while jumping and fix the transitions of animations between states.
+  * Fix inventory and map overlays to correctly scale when changing the UI scale.
+  * Fix more enemies to not deal damage or bounce when they are either burning or dying. 
+  * Fix being able to pick up the Flying Rooster while he is bones and instantly resurrecting him.
+  * Fix jumping out of the water when the movement speed modifier is 70% or greater when in 2D mode.
+  * Fix jumping out of the water to not play the jumping sound effect which lead to it quickly playing twice.
+  * Fix changing the attack direction while the button is held when in 2D mode.
+  * Fix taking continuous damage when playing the ocarina while simultaneously colliding with an enemy.
+  * Fix the Horse Head puzzle pieces from being able to be thrown through a nearby wall.
+  * Fix Bow-Wow to be able to eat the monkey on the beach and eat the Winged Octoroks without them jumping.
+  * Fix a Level 7 barrier from disappearing when pushing a block near it close to the top-right pillar.
+  * Fix the Level 8 hacks that set the position to the front door so it doesn't force the player to leave the dungeon.
+  * Fix the hookshot from being interrupted when moving left or right when in 2D mode.
+  * Fix missing or misplaced chest icons on dungeon maps. This affects Level 2, 3, 5, and 8.
+  * Fix Water Tektites with new collision type so they can not travel outside of the water and onto land.
+  * Fix the sound effect that is played when picking up chickens to play the correct sound.
+  * Fix drowning in water to not deal damage. Drowning in lava still deals damage however.
+  * Fix the "Save & Continue" button from activating the boots when on the confirm button.
+  * Fix a small error in the Pineapple sprite on the font texture.
+
 ## **v1.4.1**
 ### **A Maintenance Update**
   * Update the new hole code so that the bottom bias does not affect anything other than Link.
