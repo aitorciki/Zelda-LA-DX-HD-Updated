@@ -21,7 +21,7 @@ namespace ProjectZ.InGame.Pages
             cameraOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_camera_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
-
+/*
             // Button: Classic Camera
             var toggleClassicCamera = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_classiccam", GameSettings.ClassicCamera, newState => { GameSettings.ClassicCamera = newState; });
@@ -46,7 +46,7 @@ namespace ProjectZ.InGame.Pages
                 })
             { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
             _contentLayout.AddElement(movementSlider);
-
+*/
             // Button: Camera Lock
             var toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_cameralock", GameSettings.CameraLock, newState => { GameSettings.CameraLock = newState; });
