@@ -112,15 +112,10 @@ namespace ProjectZ.InGame.GameObjects
                 }
             }
 
-            if (!_body.IsGrounded && !_isClimbing && (!_tryClimbing || !_ladderCollision) &&
+            if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
                 (CurrentState == State.Idle || CurrentState == State.Blocking) &&
-                !_bootsRunning)
+                (!_tryClimbing || !_ladderCollision))
             {
-                if (CurrentState == State.Charging)
-                    CurrentState = State.ChargeJumping;
-                else
-                    CurrentState = State.Jumping;
-
                 _waterJump = false;
 
                 // if we get pushed down we change the direction in the push direction
@@ -173,7 +168,9 @@ namespace ProjectZ.InGame.GameObjects
 
             // need to make sure to play the animation when the player walks over a cliff
             if (_body.IsGrounded || _isClimbing)
+            {
                 _playedJumpAnimation = false;
+            }
 
             // is the player in deep water?
             if (_inWater)
@@ -396,7 +393,6 @@ namespace ProjectZ.InGame.GameObjects
                 Animation.Play("jump_" + Direction);
                 _playedJumpAnimation = true;
             }
-
             if (_bootsHolding || _bootsRunning)
             {
                 if (!_bootsRunning)
@@ -417,7 +413,13 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState != State.AttackJumping)
             {
                 if (CurrentState == State.Jumping)
+                {
                     Animation.Play("fall_" + Direction);
+                }
+                else if (CurrentState == State.ChargeJumping)
+                {
+                    Animation.Play("cjump" + shieldString + Direction);
+                }
                 else if (CurrentState == State.Idle)
                 {
                     if (_isWalking || _isClimbing)
@@ -697,6 +699,12 @@ namespace ProjectZ.InGame.GameObjects
             }
             else
                 _playedJumpAnimation = true;
+
+            // Convert charging state to ChargeJumping.
+            if (CurrentState == State.Attacking)
+                CurrentState = State.AttackJumping;
+            if (CurrentState == State.Charging)
+                CurrentState = State.ChargeJumping;
         }
 
         private void OnMoveCollision2D(Values.BodyCollision collision)
@@ -708,13 +716,15 @@ namespace ProjectZ.InGame.GameObjects
             // collision with the ground
             if ((collision & Values.BodyCollision.Bottom) != 0)
             {
-                // we cant use the check because the player can attack while jumping and avoid the jump animation the next time
-                if (CurrentState == State.Jumping ||
-                    CurrentState == State.AttackJumping ||
-                    CurrentState == State.ChargeJumping ||
-                    CurrentState == State.BootKnockback)
+                if (IsJumpingState(CurrentState) || CurrentState == State.BootKnockback)
                 {
-                    CurrentState = State.Idle;
+                    if (CurrentState == State.ChargeJumping)
+                        CurrentState = State.Charging;
+                    else if (CurrentState == State.AttackJumping)
+                        CurrentState = State.Attacking;
+                    else
+                        CurrentState = State.Idle;
+
                     Game1.GameManager.PlaySoundEffect("D378-07-07");
                 }
             }
