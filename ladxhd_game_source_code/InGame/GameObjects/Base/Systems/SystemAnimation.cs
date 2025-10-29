@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Pools;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Base.Systems
 {
@@ -15,12 +16,23 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
         public void Update(bool dialogOpen, Type[] objectTypes = null)
         {
             _objectList.Clear();
-            Pool.GetComponentList(_objectList,
-                (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
-                (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), BaseAnimationComponent.Mask);
 
+            // Only update objects that are within the current field.
+            if (GameSettings.ClassicCamera)
+            {
+                Pool.GetComponentList(_objectList, ObjectManager.UpdateField.X, ObjectManager.UpdateField.Y, 
+                    ObjectManager.UpdateField.Width, ObjectManager.UpdateField.Height, BaseAnimationComponent.Mask);
+                _objectList.RemoveAll(o => o.EntityPosition != null && !ObjectManager.ActualField.Contains(o.EntityPosition.Position));
+            }
+            // Only update the objects that are currently visible.
+            else
+            {
+                Pool.GetComponentList(_objectList,
+                    (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
+                    (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    (int)(Game1.RenderWidth / MapManager.Camera.Scale),
+                    (int)(Game1.RenderHeight / MapManager.Camera.Scale), BaseAnimationComponent.Mask);
+            }
             foreach (var gameObject in _objectList)
             {
                 bool skipObject = (objectTypes == null) switch

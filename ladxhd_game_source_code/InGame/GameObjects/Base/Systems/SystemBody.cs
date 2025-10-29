@@ -27,12 +27,23 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 return;
 
             _objectList.Clear();
-            Pool.GetComponentList(_objectList,
-                (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
-                (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), BodyComponent.Mask);
 
+            // Only update objects that are within the current field.
+            if (GameSettings.ClassicCamera)
+            {
+                Pool.GetComponentList(_objectList, ObjectManager.UpdateField.X, ObjectManager.UpdateField.Y, 
+                    ObjectManager.UpdateField.Width, ObjectManager.UpdateField.Height, BodyComponent.Mask);
+                _objectList.RemoveAll(o => o.EntityPosition != null && !ObjectManager.ActualField.Contains(o.EntityPosition.Position));
+            }
+            // Only update the objects that are currently visible.
+            else
+            {
+                Pool.GetComponentList(_objectList,
+                    (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
+                    (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    (int)(Game1.RenderWidth / MapManager.Camera.Scale),
+                    (int)(Game1.RenderHeight / MapManager.Camera.Scale), BodyComponent.Mask);
+            }
             foreach (var gameObject in _objectList)
             {
                 bool skipObject = (objectTypes == null) switch

@@ -68,6 +68,9 @@ namespace ProjectZ.InGame.Map
         private bool _keyChanged;
         private bool _finishedLoading;
 
+        public static Rectangle UpdateField;
+        public static Rectangle ActualField;
+
         public ObjectManager(Map owner)
         {
             Owner = owner;
@@ -193,11 +196,15 @@ namespace ProjectZ.InGame.Map
                 if (MapManager.ObjLink.CurrentState == ObjLink.State.Ocarina)
                     MapManager.ObjLink.Animation.Update();
             }
-
+            // When classic camera is enabled, only objects within the current field are updated.
+            if (GameSettings.ClassicCamera)
+            {
+                UpdateField = MapManager.ObjLink.Map.GetField((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y);
+                ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
+            }
             // Update everything: animations, listeners, bodies, etc. When "AlwaysAnimate" contains something, only those
             // types found that have been added to the type array will be updated. This is a method used to "freeze" the entire
             // game world when an event takes place. It also freezes Link so care must be taken when applying it.
-
             _systemAnimator.Update(false, AlwaysAnimate);
             UpdateGameObjects();
             _systemAi.Update(AlwaysAnimate);
@@ -226,7 +233,6 @@ namespace ProjectZ.InGame.Map
                         SpawnObjects[index].Init();
                     AddObjectToMap(SpawnObjects[index], false);
                 }
-
                 SpawnObjects.Clear();
             }
         }
@@ -235,15 +241,23 @@ namespace ProjectZ.InGame.Map
         {
             _updateGameObject.Clear();
 
-            // only update the objects that are in a tile that is visible
-            var updateFieldSize = new Vector2(Game1.RenderWidth, Game1.RenderHeight);
-
-            _gameObjectPool.GetComponentList(_updateGameObject,
-               (int)((MapManager.Camera.X - updateFieldSize.X / 2) / MapManager.Camera.Scale),
-               (int)((MapManager.Camera.Y - updateFieldSize.Y / 2) / MapManager.Camera.Scale),
-               (int)(updateFieldSize.X / MapManager.Camera.Scale),
-               (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
-                                                                                          
+            // Only update objects that are within the current field.
+            if (GameSettings.ClassicCamera)
+            {
+                _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, 
+                    UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
+                _updateGameObject.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
+            }
+            // Only update the objects that are currently visible.
+            else
+            {
+                var updateFieldSize = new Vector2(Game1.RenderWidth, Game1.RenderHeight);
+                _gameObjectPool.GetComponentList(_updateGameObject,
+                   (int)((MapManager.Camera.X - updateFieldSize.X / 2) / MapManager.Camera.Scale),
+                   (int)((MapManager.Camera.Y - updateFieldSize.Y / 2) / MapManager.Camera.Scale),
+                   (int)(updateFieldSize.X / MapManager.Camera.Scale),
+                   (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
+            }
             foreach (var gameObject in _updateGameObject)
             {
                 var updateComponent = gameObject.Components[UpdateComponent.Index] as UpdateComponent;
@@ -275,10 +289,21 @@ namespace ProjectZ.InGame.Map
             var player = MapManager.ObjLink;
 
             _collidingObjectList.Clear();
-            _gameObjectPool.GetComponentList(_collidingObjectList,
+
+            // Only update objects that are within the current field.
+            if (GameSettings.ClassicCamera)
+            {
+                _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y, 
+                    UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
+                _collidingObjectList.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
+            }
+            // Only update the objects that are currently visible.
+            else
+            {
+                _gameObjectPool.GetComponentList(_collidingObjectList,
                 (int)player.BodyRectangle.X, (int)player.BodyRectangle.Y,
                 (int)player.BodyRectangle.Width, (int)player.BodyRectangle.Height, ObjectCollisionComponent.Mask);
-
+            }
             foreach (var gameObject in _collidingObjectList)
             {
                 if (!gameObject.IsActive)
@@ -298,10 +323,19 @@ namespace ProjectZ.InGame.Map
 
             // get the objects that could potentially inflict damage
             _damageFieldObjects.Clear();
-            _gameObjectPool.GetComponentList(_damageFieldObjects,
-                (int)playerDamageBox.X, (int)playerDamageBox.Y,
-                (int)playerDamageBox.Width, (int)playerDamageBox.Height, DamageFieldComponent.Mask);
 
+            if (GameSettings.ClassicCamera)
+            {
+                var Link = MapManager.ObjLink;
+                var field = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
+                _gameObjectPool.GetComponentList(_damageFieldObjects, field.X, field.Y, field.Width, field.Height, DamageFieldComponent.Mask);
+            }
+            else
+            {
+                _gameObjectPool.GetComponentList(_damageFieldObjects,
+                    (int)playerDamageBox.X, (int)playerDamageBox.Y,
+                    (int)playerDamageBox.Width, (int)playerDamageBox.Height, DamageFieldComponent.Mask);
+            }
             foreach (var gameObject in _damageFieldObjects)
             {
                 if (!gameObject.IsActive)
@@ -556,22 +590,22 @@ namespace ProjectZ.InGame.Map
                 new Vector2(rectangle.X, rectangle.Y),
                 new Rectangle(0, 0, (int)rectangle.Width, (int)rectangle.Height), color * 0.25f);
 
-            var thickness = 1 / (float)Game1.ScreenScale;
+            var thickness = 1 / (float)Game1.UiScale;
             spriteBatch.Draw(Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y),
-                new Rectangle(0, 0, 1, (int)(rectangle.Height * Game1.ScreenScale)),
+                new Rectangle(0, 0, 1, (int)(rectangle.Height * Game1.UiScale)),
                 color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
             spriteBatch.Draw(Resources.SprWhite,
                 new Vector2(rectangle.X + rectangle.Width - thickness, rectangle.Y),
-                new Rectangle(0, 0, 1, (int)(rectangle.Height * Game1.ScreenScale)),
+                new Rectangle(0, 0, 1, (int)(rectangle.Height * Game1.UiScale)),
                 color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
             spriteBatch.Draw(Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y),
-                new Rectangle(0, 0, (int)(rectangle.Width * Game1.ScreenScale), 1),
+                new Rectangle(0, 0, (int)(rectangle.Width * Game1.UiScale), 1),
                 color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
             spriteBatch.Draw(Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y + rectangle.Height - thickness),
-                new Rectangle(0, 0, (int)(rectangle.Width * Game1.ScreenScale), 1),
+                new Rectangle(0, 0, (int)(rectangle.Width * Game1.UiScale), 1),
                 color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
         }
 

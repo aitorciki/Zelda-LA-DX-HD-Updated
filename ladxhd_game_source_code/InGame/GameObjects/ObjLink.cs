@@ -660,7 +660,7 @@ namespace ProjectZ.InGame.GameObjects
         private void Update()
         {
             // Set the current field that Link is on.
-            CurrentField = Map.GetField((int)EntityPosition.Position.X, (int)EntityPosition.Position.Y);
+            CurrentField = Map.GetField((int)EntityPosition.X, (int)EntityPosition.Y);
 
             // We only use the field barrier when "Classic Camera" is active.
             if (GameSettings.ClassicCamera)
