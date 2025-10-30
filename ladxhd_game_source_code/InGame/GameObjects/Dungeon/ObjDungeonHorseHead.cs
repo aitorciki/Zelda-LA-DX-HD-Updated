@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly CBox _lowerBox;
 
         private readonly string _strKey;
+        private bool _dropFix;
 
         private int _throwDirection;
         private int _bounceCount;
@@ -122,10 +123,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             UpdateSprite();
 
+            // If trying to carry it out of the room it's dropped and propelled away.
+            if (_dropFix)
+            {
+                _dropFix = false;
+                _body.Velocity = new Vector3(0, -1.5f, 0) * 1.0f;
+            }
+
             if (!_wasThrown || _reversal)
                 return;
 
-            // this is used because the normal collision detection looks strang when throwing directly towards a lower wall
+            // Prvents the horse head from being able to be thrown through a wall.
             var outBox = Box.Empty;
             if (!Map.Is2dMap &&
                 Map.Objects.Collision(_upperBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox) &&
@@ -143,18 +151,18 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private Vector3 CarryInit()
         {
-            // the ball was picked up
             _body.IsActive = false;
-
             return new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z);
         }
 
         private bool CarryUpdate(Vector3 newPosition)
         {
-            // if the player tries to move the head out of the field it will fall down
+            // Drop the horse head if trying to leave the room with it. A small velocity is applied on Update.
             if (!_fieldRectangle.Contains(new Vector2(newPosition.X, newPosition.Y)))
+            {
+                _dropFix = true;
                 return false;
-
+            }
             EntityPosition.Set(new Vector3(newPosition.X, newPosition.Y, newPosition.Z + 3));
             return true;
         }
@@ -265,7 +273,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _body.Velocity.Y = direction.Y * 0.25f;
                 return true;
             }
-
             return false;
         }
     }
