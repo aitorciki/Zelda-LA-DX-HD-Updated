@@ -424,6 +424,15 @@ namespace ProjectZ.InGame.GameSystems
             AdditionalBlackScreenDelay = 1000;
         }
 
+        public void ResetTransition()
+        {
+            _transitionObject.WobbleTransition = false;
+            _fullColorMode = false;
+            _wobbleTransitionOut = false;
+            _wobbleTransitionIn = false;
+            AdditionalBlackScreenDelay = 0;
+        }
+
         public void ThreadLoading(string mapFileName)
         {
             try

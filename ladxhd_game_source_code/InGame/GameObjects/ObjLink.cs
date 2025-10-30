@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects
         {
             Idle, Pushing, Grabbing, Pulling, PreCarrying, Carrying, Throwing, CarryingItem, PickingUp, Falling,
             Attacking, Blocking, AttackBlocking, Charging, ChargeBlocking, Jumping, AttackJumping, ChargeJumping, 
-            Ocarina, OcarinaTelport, Rafting, Pushed,
+            Ocarina, OcarinaTeleport, Rafting, Pushed,
             FallRotateEntry,
             Drowning, Drowned, Swimming, AttackSwimming, ChargeSwimming,
             Teleporting, MagicRod, Hookshot, Bombing, Powdering, Digging, BootKnockback,
@@ -1879,6 +1879,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 _instrumentCounter += Game1.DeltaTime;
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.ResetTransition();
                 transitionSystem.SetColorMode(Color.White, MathHelper.Clamp(_instrumentCounter / 500f, 0, 1));
 
                 if (_instrumentCounter > 2500)
@@ -1919,8 +1920,8 @@ namespace ProjectZ.InGame.GameObjects
                     Direction = (Direction + 1) % 4;
                     UpdateAnimation();
                 }
-
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.ResetTransition();
 
                 if (_teleportState == 0 && _teleportCounterFull >= 1250)
                 {
@@ -3332,7 +3333,7 @@ namespace ProjectZ.InGame.GameObjects
                 }
                 UpdateOcarinaAnimation();
             }
-            else if (CurrentState == State.OcarinaTelport)
+            else if (CurrentState == State.OcarinaTeleport)
             {
                 // show the animation while teleporting
                 CurrentState = State.Idle;
@@ -3375,7 +3376,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             if (_ocarinaSong == 1)
             {
-                CurrentState = State.OcarinaTelport;
+                CurrentState = State.OcarinaTeleport;
                 MapTransitionStart = EntityPosition.Position;
                 MapTransitionEnd = EntityPosition.Position;
                 TransitionOutWalking = false;
@@ -3384,6 +3385,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 // load the map
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.ResetTransition();
 
                 if (Map.DungeonMode)
                 {
@@ -4407,7 +4409,7 @@ namespace ProjectZ.InGame.GameObjects
         public void MapInit()
         {
             if (!IsSwimmingState(CurrentState) && 
-                CurrentState != State.OcarinaTelport)
+                CurrentState != State.OcarinaTeleport)
                 CurrentState = State.Idle;
 
             _boomerang.Reset();
@@ -5052,18 +5054,6 @@ namespace ProjectZ.InGame.GameObjects
             _isRotating = false;
         }
 
-        public void StartTeleportation(ObjDungeonTeleporter teleporter)
-        {
-            _teleporter = teleporter;
-
-            CurrentState = State.Teleporting;
-            _drawBody.Layer = Values.LayerTop;
-
-            _teleportState = 0;
-            _teleportCounter = 0;
-            _teleportCounterFull = 0;
-        }
-
         public void ShockPlayer(int time)
         {
             // stop running to not continuously run into the enemy
@@ -5116,6 +5106,18 @@ namespace ProjectZ.InGame.GameObjects
             _body.VelocityTarget = pullVector * 3;
 
             return true;
+        }
+
+        public void StartTeleportation(ObjDungeonTeleporter teleporter)
+        {
+            _teleporter = teleporter;
+
+            CurrentState = State.Teleporting;
+            _drawBody.Layer = Values.LayerTop;
+
+            _teleportState = 0;
+            _teleportCounter = 0;
+            _teleportCounterFull = 0;
         }
 
         public void StartTeleportation(string teleportMap, string teleporterId)
@@ -5419,7 +5421,7 @@ namespace ProjectZ.InGame.GameObjects
                 !IsSwimmingState(CurrentState) &&
                 CurrentState != State.BedTransition && 
                 CurrentState != State.Knockout && 
-                CurrentState != State.OcarinaTelport)
+                CurrentState != State.OcarinaTeleport)
                 CurrentState = State.Idle;
 
             _body.VelocityTarget = Vector2.Zero;
