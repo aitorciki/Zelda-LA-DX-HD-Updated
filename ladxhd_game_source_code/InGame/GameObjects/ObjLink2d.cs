@@ -116,6 +116,11 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState == State.Idle || CurrentState == State.Blocking) &&
                 (!_tryClimbing || !_ladderCollision))
             {
+                if (CurrentState == State.Charging)
+                    CurrentState = State.ChargeJumping;
+                else
+                    CurrentState = State.Jumping;
+
                 _waterJump = false;
 
                 // if we get pushed down we change the direction in the push direction
