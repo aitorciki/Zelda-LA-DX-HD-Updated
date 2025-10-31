@@ -94,13 +94,9 @@ namespace ProjectZ.InGame.GameObjects
                 Map.Objects.RemoveObject(_spriteShadow);
                 _spriteShadow = null;
             }
-            var initState = CurrentState;
-
+            // Detect ladder collision and climbing state.
             var box = Box.Empty;
-
-            // is the player touching a ladder?
             _ladderCollision = Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, Values.CollisionTypes.Ladder, 1, 0, ref box);
-
             if (!_ladderCollision && _isClimbing)
             {
                 _isClimbing = false;
@@ -111,45 +107,7 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Idle;
                 }
             }
-
-            if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
-                (CurrentState == State.Idle || CurrentState == State.Blocking) &&
-                (!_tryClimbing || !_ladderCollision))
-            {
-                if (CurrentState == State.Charging)
-                    CurrentState = State.ChargeJumping;
-                else
-                    CurrentState = State.Jumping;
-
-                _waterJump = false;
-
-                // if we get pushed down we change the direction in the push direction
-                // this does not work for all cases but we only need if for the evil eagle boss where it should work correctly
-                if (_body.LastAdditionalMovementVT.X != 0)
-                    Direction = _body.LastAdditionalMovementVT.X < 0 ? 0 : 2;
-
-                if (_wasClimbing)
-                {
-                    // not ontop of a ladder
-                    if (SystemBody.MoveBody(_body, new Vector2(0, 2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true) == Values.BodyCollision.None)
-                    {
-                        SystemBody.MoveBody(_body, new Vector2(0, -2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true);
-
-                        if (Math.Abs(_moveVector2D.X) >= Math.Abs(_moveVector2D.Y))
-                            Direction = _moveVector2D.X < 0 ? 0 : 2;
-                        else
-                            Direction = 1;
-                    }
-                    // aligned with the top of the ladder
-                    else
-                    {
-                        _body.IsGrounded = true;
-                        _body.Velocity.Y = _body.Gravity2D;
-                        CurrentState = initState;
-                    }
-                }
-            }
-
+            // Climbing a ladder.
             if (_isClimbing &&
                 CurrentState != State.Attacking && 
                 CurrentState != State.Blocking && 
@@ -163,21 +121,23 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState != State.MagicRod &&
                 CurrentState != State.Powdering && 
                 CurrentState != State.Throwing)
+            {
                 CurrentState = State.Idle;
-
+            }
+            // Detect when in water or lava.
             var inLava = (_body.CurrentFieldState & MapStates.FieldStates.Lava) != 0;
             _inWater = (_body.CurrentFieldState & MapStates.FieldStates.DeepWater) != 0 || inLava;
 
             if (_init)
                 _wasInWater = _inWater;
 
-            // need to make sure to play the animation when the player walks over a cliff
+            // Play jump animation whenever Link is in the air.
             if (_body.IsGrounded || _isClimbing)
             {
                 _playedJumpAnimation = false;
             }
 
-            // is the player in deep water?
+            // Check if Link is in deep water.
             if (_inWater)
             {
                 if (!_wasInWater)
@@ -187,7 +147,7 @@ namespace ProjectZ.InGame.GameObjects
                         _swimDirection = 0;
                 }
 
-                // start swimming if the player has flippers
+                // Start swimming if the player has flippers.
                 if (HasFlippers && !inLava)
                 {
                     if (!_wasInWater)
@@ -215,6 +175,7 @@ namespace ProjectZ.InGame.GameObjects
 
                     _isClimbing = false;
                 }
+                // Drowning without flippers or entering lava.
                 else
                 {
                     if (CurrentState != State.Drowning && CurrentState != State.Drowned)
@@ -228,8 +189,6 @@ namespace ProjectZ.InGame.GameObjects
 
                             CurrentState = State.Drowning;
                             _isClimbing = false;
-
-                            // blink in lava
                             _hitCount = inLava ? CooldownTime : 0;
 
                             _drownedInLava = inLava;
@@ -260,19 +219,16 @@ namespace ProjectZ.InGame.GameObjects
                     _waterJump = true;
                 }
             }
-            // walk
+            // Perform all the updates.
             UpdateWalking2D();
-
-            // swimming
             UpdateSwimming2D();
-
-            // update the animation
+            UpdateJump2D();
             UpdateAnimation2D();
 
             if (_isClimbing)
                 _body.Velocity.Y = 0;
 
-            // first frame getting hit
+            // First frame after falling in lava or hit by spikes.
             if (_hitCount == CooldownTime)
             {
                 if (_hitVelocity != Vector2.Zero)
@@ -440,7 +396,7 @@ namespace ProjectZ.InGame.GameObjects
                     else
                         Animation.Play("stand" + shieldString + Direction);
                 }
-                else if (!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping))
+                else if ((!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)) || (_jumpEndTimer > 0 && _isHoldingSword))
                     Animation.Play("stand" + shieldString + Direction);
                 else if (CurrentState == State.Carrying)
                     Animation.Play((_isWalking ? "walkc_" : "standc_") + Direction);
@@ -469,6 +425,53 @@ namespace ProjectZ.InGame.GameObjects
                 Vector2 moveVector = ControlHandler.GetMoveVector2(modern_analog);
                 if (moveVector != Vector2.Zero)
                     Direction = AnimationHelper.GetDirection(moveVector);
+            }
+        }
+
+        private void UpdateJump2D()
+        {
+            // Update the jump hack timer.
+            if (_jumpEndTimer > 0)
+                _jumpEndTimer -= Game1.DeltaTime;
+
+            var initState = CurrentState;
+
+            if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
+                (CurrentState == State.Idle || CurrentState == State.Blocking) &&
+                (!_tryClimbing || !_ladderCollision))
+            {
+                if (CurrentState == State.Charging)
+                    CurrentState = State.ChargeJumping;
+                else
+                    CurrentState = State.Jumping;
+
+                _waterJump = false;
+
+                // if we get pushed down we change the direction in the push direction
+                // this does not work for all cases but we only need if for the evil eagle boss where it should work correctly
+                if (_body.LastAdditionalMovementVT.X != 0)
+                    Direction = _body.LastAdditionalMovementVT.X < 0 ? 0 : 2;
+
+                if (_wasClimbing)
+                {
+                    // not ontop of a ladder
+                    if (SystemBody.MoveBody(_body, new Vector2(0, 2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true) == Values.BodyCollision.None)
+                    {
+                        SystemBody.MoveBody(_body, new Vector2(0, -2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true);
+
+                        if (Math.Abs(_moveVector2D.X) >= Math.Abs(_moveVector2D.Y))
+                            Direction = _moveVector2D.X < 0 ? 0 : 2;
+                        else
+                            Direction = 1;
+                    }
+                    // aligned with the top of the ladder
+                    else
+                    {
+                        _body.IsGrounded = true;
+                        _body.Velocity.Y = _body.Gravity2D;
+                        CurrentState = initState;
+                    }
+                }
             }
         }
 
@@ -731,6 +734,11 @@ namespace ProjectZ.InGame.GameObjects
                         CurrentState = State.Idle;
 
                     Game1.GameManager.PlaySoundEffect("D378-07-07");
+
+                    // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
+                    // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this
+                    // the timer below forces the walking animation to play "stand" while it is active. When the timer ends, walking animation resumes.
+                    _jumpEndTimer = 100;
                 }
             }
             // collision with the ceiling

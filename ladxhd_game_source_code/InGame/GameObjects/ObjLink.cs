@@ -884,7 +884,7 @@ namespace ProjectZ.InGame.GameObjects
                     if (ObjOverworldTeleporter.TeleporterDictionary.TryGetValue(HoleTeleporterId, out var teleporter))
                         teleporter.SetNextTeleporterPosition();
                     else
-                        CurrentState = State.Idle;  // should not happen
+                        CurrentState = State.Idle;
                 }
             }
             else if (CurrentState == State.TeleportFallWait)
@@ -2744,12 +2744,12 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateItem()
         {
             if (CurrentState == State.Blocking)
-                CurrentState = State.Idle;
+                ReturnToIdle();
             else
                 _wasBlocking = false;
 
             if (CurrentState == State.Grabbing || CurrentState == State.Pulling)
-                CurrentState = State.Idle;
+                ReturnToIdle();
 
             _isPulling = false;
             _isHoldingSword = false;
@@ -3244,6 +3244,7 @@ namespace ProjectZ.InGame.GameObjects
             if ((CurrentState != State.Idle &&
                 CurrentState != State.Jumping &&
                 CurrentState != State.Pushing &&
+                CurrentState != State.Rafting &&
                 (CurrentState != State.Swimming || !Map.Is2dMap)) || !_boomerang.IsReady)
                 return;
 
@@ -3376,7 +3377,7 @@ namespace ProjectZ.InGame.GameObjects
 
             if (_ocarinaSong == -1)
             {
-                CurrentState = State.Idle;
+                ReturnToIdle();
                 Game1.GameManager.StartDialogPath("ocarina_bad");
                 return;
             }
@@ -3414,7 +3415,7 @@ namespace ProjectZ.InGame.GameObjects
                 transitionSystem.StartTeleportTransition = true;
                 return;
             }
-            CurrentState = State.Idle;
+            ReturnToIdle();
 
             var recInteraction = new RectangleF(EntityPosition.X - 64, EntityPosition.Y - 64 - 8, 128, 128);
 
@@ -3438,6 +3439,7 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentState != State.Idle && 
                 CurrentState != State.Pushing && 
                 CurrentState != State.Attacking && 
+                CurrentState != State.Rafting && 
                 CurrentState != State.Charging)
                 return;
 
@@ -3633,8 +3635,9 @@ namespace ProjectZ.InGame.GameObjects
                     StartSwordSpin();
                 else
                 {
-                    // If cancelling a charge in the air, resume jumping animation.
-                    if (_body.Velocity.Z > 0)
+                    // If cancelling a charge in the air, resume jumping animation. This
+                    // method of charge cancelling works for both 2D and 3D maps. 
+                    if (!_railJump && !_body.IsGrounded)
                     {
                         CurrentState = State.Jumping;
                         Animation.Play("jump_" + Direction);
@@ -3885,7 +3888,7 @@ namespace ProjectZ.InGame.GameObjects
                         {
                             ShowItem = null;
                             if (CurrentState == State.PickingUp)
-                                CurrentState = State.Idle;
+                                ReturnToIdle();
                         }
                     }
                 }
@@ -4105,7 +4108,8 @@ namespace ProjectZ.InGame.GameObjects
                 // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
                 // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this
                 // the timer below forces the walking animation to play "stand" while it is active. When the timer ends, walking animation resumes.
-                _jumpEndTimer = 100;
+                if (IsChargingState(CurrentState))
+                    _jumpEndTimer = 75;
 
                 // Reset the jump starting Z position to 0.
                 _jumpStartZPos = 0;
@@ -5600,7 +5604,7 @@ namespace ProjectZ.InGame.GameObjects
             if (!GameSettings.MutePowerups && (Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive))
                 Game1.GameManager.StartPieceOfPowerMusic(1);
 
-            // Destroy the barrier after a transition so it can be recreated.
+            // Destroy the field barrier after a transition so it can be recreated.
             DestroyFieldBarrier();
         }
 
