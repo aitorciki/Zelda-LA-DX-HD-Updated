@@ -344,6 +344,7 @@ namespace ProjectZ.InGame.GameObjects
         private const float JumpAcceleration = 2.35f;
         private float _railJumpSpeed;
         public float _jumpStartZPos;
+        private float _jumpEndTimer;
 
         // should probably have been a different state because we do not want to be able to use certain items while railjumping compared to normally jumping
         private bool _railJump;
@@ -2482,7 +2483,8 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.ShowInstrumentPart3 ||
                 CurrentState == State.TeleportFall ||
                 CurrentState == State.TeleporterUp ||
-                CurrentState == State.FallRotateEntry)
+                CurrentState == State.FallRotateEntry ||
+                (_jumpEndTimer > 0 && _isHoldingSword))
                 Animation.Play("stand" + shieldString + animDirection);
             else if (CurrentState == State.ChargeJumping)
                 Animation.Play("cjump" + shieldString + animDirection);
@@ -3626,11 +3628,23 @@ namespace ProjectZ.InGame.GameObjects
             }
             else
             {
-                // start charge attack
+                // Start the sword spin attack.
                 if (_swordChargeCounter <= 0)
                     StartSwordSpin();
                 else
-                    ReturnToIdle();
+                {
+                    // If cancelling a charge in the air, resume jumping animation.
+                    if (_body.Velocity.Z > 0)
+                    {
+                        CurrentState = State.Jumping;
+                        Animation.Play("jump_" + Direction);
+                    }
+                    // Otherwise return to idle state.
+                    else
+                    {
+                        ReturnToIdle();
+                    }
+                }
             }
             // Probably a hacky way of updating the sword position while swimming in 2D mode.
             var moveVector = ControlHandler.GetMoveVector2();
@@ -4055,6 +4069,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateJump()
         {
+            // Update the jump hack timer.
+            if (_jumpEndTimer > 0)
+                _jumpEndTimer -= Game1.DeltaTime;
+
             if (CurrentState != State.Jumping &&
                 CurrentState != State.AttackJumping &&
                 CurrentState != State.ChargeJumping)
@@ -4084,6 +4102,12 @@ namespace ProjectZ.InGame.GameObjects
             // touched the ground
             if (!_railJump && _body.IsGrounded && _body.Velocity.Z <= 0)
             {
+                // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
+                // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this
+                // the timer below forces the walking animation to play "stand" while it is active. When the timer ends, walking animation resumes.
+                _jumpEndTimer = 100;
+
+                // Reset the jump starting Z position to 0.
                 _jumpStartZPos = 0;
 
                 // Keep the charging state if it was held during a jump.
