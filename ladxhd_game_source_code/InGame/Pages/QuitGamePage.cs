@@ -61,8 +61,10 @@ namespace ProjectZ.InGame.Pages
                 Game1.GameManager.SaveManager.DisableHistory();
             }
             if (GameSettings.Autosave)
+            {
+                SettingsSaveLoad.SaveSettings();
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
-
+            }
             MapManager.CameraOffset = Vector2.Zero;
 
             Game1.ScreenManager.ChangeScreen(Values.ScreenNameMenu);

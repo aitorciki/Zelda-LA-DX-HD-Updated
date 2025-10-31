@@ -54,8 +54,10 @@ namespace ProjectZ.InGame.Pages
         public void OnClickYes(InterfaceElement element)
         {
             if (Game1.SaveAndExitGame && GameSettings.Autosave)
+            {
+                SettingsSaveLoad.SaveSettings();
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
-
+            }
             Application.Exit();
         }
     }
