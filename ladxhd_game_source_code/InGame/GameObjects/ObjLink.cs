@@ -3248,11 +3248,15 @@ namespace ProjectZ.InGame.GameObjects
             var spawnPosition = new Vector3(EntityPosition.X + _boomerangOffset[Direction].X, EntityPosition.Y + _boomerangOffset[Direction].Y, EntityPosition.Z);
 
             // can throw into multiple directions
-            var boomerangVector = _lastBaseMoveVelocity;
+            var boomerangVector = ControlHandler.GetMoveVector2();
             if (boomerangVector != Vector2.Zero)
                 boomerangVector.Normalize();
             else
-                boomerangVector = _walkDirection[Direction];
+                boomerangVector = _lastBaseMoveVelocity;
+                if (boomerangVector != Vector2.Zero)
+                    boomerangVector.Normalize();
+                else
+                    boomerangVector = _walkDirection[Direction];
 
             _boomerang.Start(Map, spawnPosition, boomerangVector);
             Map.Objects.SpawnObject(_boomerang);
