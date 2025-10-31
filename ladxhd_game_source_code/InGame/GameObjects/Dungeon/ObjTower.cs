@@ -1,10 +1,10 @@
-using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
-using ProjectZ.InGame.GameObjects.Base.CObjects;
-using ProjectZ.InGame.Things;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
 {
@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _opening;
         private bool _opened;
         private bool _isRotating;
+        private bool _collapsed;
 
         private float _shakeCounter;
         private bool _shakeScreen;
@@ -33,12 +34,20 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _strKey = strKey;
 
+            string hasCollapsed = Game1.GameManager.SaveManager.GetString("d7_collapsed");
+
+            if (hasCollapsed != null) 
+                _collapsed = hasCollapsed == "1";
+
             _animatorTop0 = SaveLoad.AnimatorSaveLoad.LoadAnimator("Objects/d7 tower");
             _animatorTop0.Play("idle");
             _animatorTop0.Pause();
 
             _animatorTop1 = SaveLoad.AnimatorSaveLoad.LoadAnimator("Objects/d7 tower top 1");
-            _animatorTop1.Play("idle");
+            if (!_collapsed)
+                _animatorTop1.Play("idle");
+            else
+                _animatorTop1.Play("collapsed");
             _animatorTop1.Pause();
 
             _animatorTop2 = SaveLoad.AnimatorSaveLoad.LoadAnimator("Objects/d7 tower top 2");
@@ -133,8 +142,16 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void Draw(SpriteBatch spriteBatch)
         {
             _animatorTop0.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
-            _animatorTop1.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
-            _animatorTop2.Draw(spriteBatch, new Vector2(EntityPosition.X + 16, EntityPosition.Y - 96), Color.White);
+            if (!_collapsed)
+            {
+                _animatorTop1.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
+                _animatorTop2.Draw(spriteBatch, new Vector2(EntityPosition.X + 16, EntityPosition.Y - 96), Color.White);
+            }
+            else
+            {
+                _animatorTop1.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y + 40), Color.White);
+                _animatorTop2.Draw(spriteBatch, new Vector2(EntityPosition.X + 16, EntityPosition.Y - 56), Color.White);
+            }
             _animatorBottom.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
         }
     }
