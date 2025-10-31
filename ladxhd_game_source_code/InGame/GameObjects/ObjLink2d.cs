@@ -738,7 +738,7 @@ namespace ProjectZ.InGame.GameObjects
                     // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
                     // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this
                     // the timer below forces the walking animation to play "stand" while it is active. When the timer ends, walking animation resumes.
-                    _jumpEndTimer = 100;
+                    _jumpEndTimer = 75;
                 }
             }
             // collision with the ceiling
