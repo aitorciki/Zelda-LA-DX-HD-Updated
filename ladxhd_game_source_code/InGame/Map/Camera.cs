@@ -26,12 +26,14 @@ namespace ProjectZ.InGame.Map
         public Vector2 Location;
         public Vector2 MoveLocation;
         private Rectangle fieldRect;
-        public bool SnapCamera;
 
         public float Scale = 4;
         public float ShakeOffsetX;
         public float ShakeOffsetY;
         public float CameraFollowMultiplier = 1;
+
+        public static bool  SnapCamera;
+        public static float SnapCameraTimer;
 
         private float RoundedShakeX => MathF.Round(ShakeOffsetX);
         private float RoundedShakeY => MathF.Round(ShakeOffsetY);
@@ -43,7 +45,7 @@ namespace ProjectZ.InGame.Map
         public int X => (int)Math.Round(Location.X + ShakeOffsetX * Scale);
         public int Y => (int)Math.Round(Location.Y + ShakeOffsetY * Scale);
 
-        public int ScaleValue => GameSettings.GameScale != 11 ? GameSettings.GameScale : 4;
+        public int ScaleValue => (int)Scale;
 
         private Vector2 _cameraDistance;
 
@@ -100,11 +102,15 @@ namespace ProjectZ.InGame.Map
         {
             if (GameSettings.ClassicCamera)
             {
+                // If SnapCamera was enabled and a timer started.
+                if (SnapCameraTimer > 0)
+                    SnapCameraTimer -= Game1.DeltaTime;
+
                 // Get the field rectangle and its center
                 Vector2 rectCenter = GetFieldCenter();
 
-                // If smooth camera is off, just snap instantly
-                if (!GameSettings.SmoothCamera || SnapCamera)
+                // Snap when no smoothing, when snapping is enabled, or when the snap timer is set.
+                if (!GameSettings.SmoothCamera || SnapCamera || SnapCameraTimer > 0)
                 {
                     Location = rectCenter;
                     MoveLocation = rectCenter;

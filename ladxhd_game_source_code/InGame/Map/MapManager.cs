@@ -222,6 +222,7 @@ namespace ProjectZ.InGame.Map
 
                 // Draw the blurred texture into world using camera transform — ensure Camera.TransformMatrix is valid
                 var safeTransform = Camera.TransformMatrix;
+
                 // optional check for NaN components here, replace with Matrix.Identity if found
                 if (float.IsNaN(safeTransform.M11) || float.IsNaN(safeTransform.M41))
                     safeTransform = Matrix.Identity;

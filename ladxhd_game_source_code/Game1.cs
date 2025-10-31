@@ -70,8 +70,8 @@ namespace ProjectZ
         private static RenderTarget2D _renderTarget1;
         private static RenderTarget2D _renderTarget2;
         private static bool _initRenderTargets;
+
         public static int UiScale;
-        private static float gameScale;
         public static bool ScaleChanged;
 
         public static bool WasActive;
@@ -603,7 +603,7 @@ namespace ProjectZ
         private void UpdateScale(bool SkipEditor = false)
         {
             // Calculate the game scale that is used for auto scaling.
-            gameScale = MathHelper.Clamp(Math.Min(WindowWidth / (float)Values.MinWidth, WindowHeight / (float)Values.MinHeight), 1, 25);
+            var gameScale = MathHelper.Clamp(Math.Min(WindowWidth / (float)Values.MinWidth, WindowHeight / (float)Values.MinHeight), 1, 25);
 
             // If set to autoscale (11) used the calculated value. Otherwise use the value set by the user.
             MapManager.Camera.Scale = GameSettings.GameScale == 11 

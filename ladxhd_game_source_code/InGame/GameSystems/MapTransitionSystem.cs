@@ -85,9 +85,6 @@ namespace ProjectZ.InGame.GameSystems
 
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
                 _nextMapName = null;
-
-                if (GameSettings.ClassicCamera)
-                    MapManager.Camera.SnapCamera = true;
             }
 
             if (_transitionEnded)
@@ -188,9 +185,6 @@ namespace ProjectZ.InGame.GameSystems
                 // light up the scene
                 if (_changeMapCount <= 0)
                 {
-                    if (GameSettings.ClassicCamera)
-                        MapManager.Camera.SnapCamera = false;
-
                     _transitionEnded = true;
                     Game1.GameManager.SaveManager.SetString("transition_ended", "1");
 
@@ -272,14 +266,15 @@ namespace ProjectZ.InGame.GameSystems
 
         private void StartTransition()
         {
-            // draw the player on top of everything
             MapManager.ObjLink.StartTransitioning();
 
             _introTransition = Game1.GameManager.SaveManager.GetString("played_intro", "0") != "1";
 
-            // dont show the player for the intro sequence transition
             if (!_introTransition)
                 Game1.GameManager.DrawPlayerOnTopPercentage = 1.0f;
+
+            if (GameSettings.ClassicCamera)
+                Camera.SnapCamera = true;
         }
 
         private void EndTransition()
@@ -288,11 +283,11 @@ namespace ProjectZ.InGame.GameSystems
 
             MapManager.ObjLink.EndTransitioning();
 
-            // start the new music
             Game1.GbsPlayer.SetVolumeMultiplier(1);
             Game1.GbsPlayer.Play();
 
             MapManager.Camera.SoftUpdate(Game1.GameManager.MapManager.GetCameraTarget());
+            Camera.SnapCamera = false;
         }
 
         public float TransitionPercentage()

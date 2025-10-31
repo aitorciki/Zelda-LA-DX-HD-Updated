@@ -7,6 +7,7 @@ using ProjectZ.Base;
 using ProjectZ.Base.UI;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Overlay.Sequences;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.Things;
 
@@ -568,6 +569,10 @@ namespace ProjectZ.InGame.Overlay
                 if (newScale >= lower && newScale <= 10)
                     GameSettings.GameScale = _StoredScale = newScale;
             }
+            // When Classic Camera is enabled, we want the camera to "snap" to the next scale.
+            if (GameSettings.ClassicCamera)
+                Camera.SnapCameraTimer = 100f;
+
             // Apply current scaling settings.
             Game1.ScaleChanged = true;
         }
