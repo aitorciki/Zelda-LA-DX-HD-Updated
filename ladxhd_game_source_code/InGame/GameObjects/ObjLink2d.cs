@@ -434,8 +434,24 @@ namespace ProjectZ.InGame.GameObjects
             if (_jumpEndTimer > 0)
                 _jumpEndTimer -= Game1.DeltaTime;
 
-            var initState = CurrentState;
+            // When letting go of the jump button, the jump should end. Instead of an immediate
+            // drop off, the velocity is instead greatly reduced to reduce the pull of gravity.
+            if (!_jump2DHold && _jump2DHeld && _body.Velocity.Y > -1.15f)
+            {
+                _body.Velocity.Y = _isWalking ? -0.35f : -0.5f;
+                _jump2DHeld = false;
+            }
+            else if (!_jump2DHold && _jump2DHeld && _body.Velocity.Y > -0.85f)
+            {
+                _body.Velocity.Y = _isWalking ? -0.10f : -0.25f;
+                _jump2DHeld = false;
+            }
+            // When velocity is zero, the peak of the jump has been reached so do not allow any
+            // more manipulation of the velocity or it will create weirdness in the air.
+            if (_body.Velocity.Y > 0)
+                _jump2DHeld = false;
 
+            var initState = CurrentState;
             if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
                 (CurrentState == State.Idle || CurrentState == State.Blocking) &&
                 (!_tryClimbing || !_ladderCollision))
@@ -688,8 +704,16 @@ namespace ProjectZ.InGame.GameObjects
 
             _jumpStartTime = Game1.TotalGameTime;
 
+            // If climbing, jump velocity is reduced. When standing still, velocity  
+            // is a fair bit stronger. When walking, use the maximum jump velocity.
+            _body.Velocity.Y = _isClimbing 
+                ? -1.5f 
+                : _isWalking 
+                    ? -2.00f 
+                    : -1.85f;
+
+            // Set up the supporting values.
             _body.IsGrounded = false;
-            _body.Velocity.Y = _isClimbing ? -1.5f : -1.9f;
             _moveVector2D = Vector2.Zero;
             _isClimbing = false;
             _waterJump = false;
@@ -707,6 +731,9 @@ namespace ProjectZ.InGame.GameObjects
             }
             else
                 _playedJumpAnimation = true;
+
+            // Track when the button is held and released.
+            _jump2DHeld = true;
 
             // Convert charging state to ChargeJumping.
             if (CurrentState == State.Attacking)
@@ -734,6 +761,9 @@ namespace ProjectZ.InGame.GameObjects
                         CurrentState = State.Idle;
 
                     Game1.GameManager.PlaySoundEffect("D378-07-07");
+
+                    // When hitting the ground reset the "held" state for the next jump.
+                    _jump2DHeld = false;
 
                     // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
                     // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this

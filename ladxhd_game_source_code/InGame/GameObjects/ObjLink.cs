@@ -47,6 +47,7 @@ namespace ProjectZ.InGame.GameObjects
         }
         public State CurrentState;
 
+        // State tracking functions: check multiple state types at once by category.
         public bool IsAttackingState(State state) =>
             state == State.Attacking ||
             state == State.AttackBlocking ||
@@ -70,50 +71,17 @@ namespace ProjectZ.InGame.GameObjects
             state == State.AttackJumping ||
             state == State.ChargeJumping;
 
-        private List<GameObject> _bombList = new List<GameObject>();
-        private List<GameObject> _ocarinaList = new List<GameObject>();
-        private List<GameObject> _destroyableWallList = new List<GameObject>();
-
-        // movement stuff
-        public float PosX => EntityPosition.X;
-        public float PosY => EntityPosition.Y;
-        public float PosZ => EntityPosition.Z;
-
-        float WalkSpeed = 1.0f;
-        float WalkSpeedPoP = 1.25f;
-        float BootsRunningSpeed = 2.0f;
-        float SwimSpeed = 0.5f;
-        float SwimSpeedA = 1.0f;
-
-        private float _currentWalkSpeed;
-        private float _waterSoundCounter;
-
-        private readonly Vector2[] _walkDirection = { new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1) };
-
-        public Vector2 ForwardVector
-        {
-            get => _walkDirection[Direction];
-        }
-
-        private Vector2 _moveVelocity;
-        private Vector2 _lastMoveVelocity;
-        private Vector2 _lastBaseMoveVelocity;
-        public Vector2 LastMoveVector;
-
-        private Point _lastTilePosition;
-
-        public int Direction;
-        public int AttackDirection;
-        private bool _isWalking;
-
-        // player animations
+        // Link Animator
         public readonly Animator Animation;
         private int _animationOffsetX = -7;
         private int _animationOffsetY = -16;
 
+        // Weapon Animator
+        private Animator AnimatorWeapons;
+
+        // Link Sprite
         private CSprite _sprite;
         private float _spriteTransparency;
-
         private bool _isVisible;
         public bool IsVisible
         {
@@ -124,71 +92,57 @@ namespace ProjectZ.InGame.GameObjects
                 _sprite.IsVisible = value;
             }
         }
+        // Link Position
+        public float PosX => EntityPosition.X;
+        public float PosY => EntityPosition.Y;
+        public float PosZ => EntityPosition.Z;
 
-        // weapon animations
-        private Animator AnimatorWeapons;
+        // Link Movement
+        public bool CanWalk;
+        private bool _isWalking;
+        private float WalkSpeed = 1.0f;
+        private float WalkSpeedPoP = 1.25f;
+        private float BootsRunningSpeed = 2.0f;
+        private float SwimSpeed = 0.5f;
+        private float SwimSpeedA = 1.0f;
+        private float _currentWalkSpeed;
+        private float _waterSoundCounter;
 
-        private double _fallEntryCounter;
+        public Vector2 LastMoveVector;
+        private Vector2 _moveVelocity;
+        private Vector2 _lastMoveVelocity;
+        private Vector2 _lastBaseMoveVelocity;
 
-        // hole stuff
-        public bool HoleFalling;
-        private Vector2 _holeResetPoint;
-        private float _holeResetPointZ;
-        private Vector3 _alternativeHoleResetPosition;
-        public string HoleResetRoom;
-        public string HoleResetEntryId;
-        public int HoleTeleporterId;
-        public bool WasHoleReset;
-        private double _holeTeleportCounter;
+        // Link Direction
+        public int Direction;
+        public int AttackDirection;
+        private readonly Vector2[] _walkDirection = { new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1) };
+        public Vector2 ForwardVector { get => _walkDirection[Direction]; }
 
-        // counter to start the level change
-        private float _holeFallCounter;
-        private bool _isFallingIntoHole;
-
-        // body stuff
+        // Link Body
         public BodyComponent _body;
         public RectangleF BodyRectangle => _body.BodyBox.Box.Rectangle();
         public RectangleF PlayerRectangle => new RectangleF(PosX - 4, PosY - 12 - PosZ, 8, 12);
         private BodyDrawComponent _drawBody;
         private BodyDrawShadowComponent _shadowComponent;
         private DrawComponent.DrawTemplate _bodyDrawFunction;
+        public Point CollisionBoxSize;
 
-        // carried object
-        private GameObject _carriedGameObject;
-        private DrawComponent _carriedObjDrawComp;
-        private CarriableComponent _carriedComponent;
-        private Vector3 _carryStartPosition;
+        // Holes
+        private Point _lastTilePosition;
+        private Vector2 _holeResetPoint;
+        private Vector3 _alternativeHoleResetPosition;
+        private float _holeResetPointZ;
+        private float _holeFallCounter;
+        private bool _isFallingIntoHole;
+        private double _holeTeleportCounter;
+        public int HoleTeleporterId;
+        public bool WasHoleReset;
+        public bool HoleFalling;
+        public string HoleResetRoom;
+        public string HoleResetEntryId;
 
-        // show item
-        public GameItem ShowItem;
-        private Vector2 _showItemOffset;
-
-        // used to only collect the item after it was shown
-        private GameItemCollected _collectedShowItem;
-        private string _pickupDialogOverride;
-        private string _additionalPickupDialog;
-        private double _itemShowCounter;
-        private bool _showItem;
-
-        private bool _savedPreItemPickup;
-        public bool SavePreItemPickup
-        {
-            get { return _savedPreItemPickup; }
-        }
-        private const int dist0 = 30;
-        private const int dist1 = 15;
-        private readonly Vector2[] _showInstrumentOffset = {
-            new Vector2(-dist1, -dist0), new Vector2(dist1, -dist0), new Vector2(dist0, dist1), new Vector2(dist0, -dist1),
-            new Vector2(dist1, dist0),new Vector2(-dist1, dist0),new Vector2(-dist0, -dist1),new Vector2(-dist0, dist1) };
-
-        private readonly int[] _instrumentMusicIndex = { 31, 39, 40, 41, 42, 43, 44, 45 };
-
-        // show sword lv2
-        private float _showSwordLv2Counter;
-        private float _showSwordL2ParticleCounter;
-        private bool _shownSwordLv2Dialog;
-
-        // transition stuff
+        // Transitions
         public Vector2? MapTransitionStart;
         public Vector2? MapTransitionEnd;
         public Vector2? NextMapPositionStart;
@@ -200,29 +154,21 @@ namespace ProjectZ.InGame.GameObjects
         public bool NextMapFallRotateStart;
         public bool TransitionOutWalking;
         public bool TransitionInWalking;
+        private double _fallEntryCounter;
         private bool _wasTransitioning;
         private bool _startBedTransition;
 
-        // rail jump
-        private Vector2 _railJumpStartPosition;
-        private Vector2 _railJumpTargetPosition;
+        // Rail Jump (jumping from cliffside)
+        private bool _railJump;
+        private bool _startedJumping;
+        private bool _hasStartedJumping;
         private float _railJumpPositionZ;
         private float _railJumpPercentage;
         private float _railJumpHeight;
+        private Vector2 _railJumpStartPosition;
+        private Vector2 _railJumpTargetPosition;
 
-        // swim stuff
-        private Vector2 _swimVelocity;
-        private float _swimBoostCount;
-        private float _diveCounter;
-
-        // store item picked up by the player
-        public GameItem StoreItem;
-        private int _storeItemWidth;
-        private int _storeItemHeight;
-        private Vector2 _storePickupPosition;
-        private bool _showStealMessage;
-
-        // follower
+        // Followers
         private GameObjectFollower _objFollower;
         private ObjCock _objRooster;
         private ObjMarin _objMaria;
@@ -231,47 +177,18 @@ namespace ProjectZ.InGame.GameObjects
         private ObjGhost _objGhost;
         private bool _spawnGhost;
 
-        // boots
-        private bool _bootsHolding;
-        private bool _bootsRunning;
-        private bool _bootsWasRunning;
-        private bool _bootsStop;
-        private float _bootsCounter;
-        private float _bootsParticleTime = 120f;
-        private float _bootsMaxSpeed = 2.0f;
-        private int _bootsLastDirection;
-        private bool _bootsRunJump;
-
-        // trapped state
+        // Trapped State
         private int _trapInteractionCount;
         private bool _isTrapped;
         private bool _trappedDisableItems;
 
-        // raft
-        private ObjRaft _objRaft;
-        private bool _isRafting;
-
-        // stonelifter pull
-        private const float PullTime = 100;
-        private const float PullMaxTime = 400;
-        private const float PullResetTime = -133;
-        private float _pullCounter;
-        private bool _isPulling;
-        private bool _wasPulling;
-
-        // pick up time
-        private const float PreCarryTime = 200;
-        private float _preCarryCounter;
-
-        // drown stuff
-        private Vector2 _drownResetPosition;
-        private float _drownResetCounter;
-        private bool _drownedInLava;
-
-        // sword stuff
+        // Sword 
+        public bool IsPoking;
         public Box SwordDamageBox;
+        private bool _pickingUpSword;
         private float _swordPokeTime = 100;
         private float _swordPokeCounter;
+        private bool _pokeStart;
 
         private Vector2[] _shootSwordOffset;
         private bool _shotSword;
@@ -294,71 +211,149 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isSwordSpinning;
         public bool CarrySword;
 
-        // used for 2D Link charging and swimming
-        private int _lastSwimDirection;
+        // Sword Level 2
+        private float _showSwordLv2Counter;
+        private float _showSwordL2ParticleCounter;
+        private bool _shownSwordLv2Dialog;
 
-        // items
-        private ObjBoomerang _boomerang = new ObjBoomerang();
-        private Vector2[] _boomerangOffset;
-        private Vector2[] _arrowOffset;
+        // Prevents sword from colliding with NPCs.
+        private bool _npcSwordCross;
+        private bool _npcCrossSword;
+
+        // Items: Show
+        public GameItem ShowItem;
+        private Vector2 _showItemOffset;
+        private GameItemCollected _collectedShowItem;
+
+        // Items: Pickup Delay
+        private const float PreCarryTime = 200;
+        private float _preCarryCounter;
+
+        // Items: Pickup
+        private string _pickupDialogOverride;
+        private string _additionalPickupDialog;
+        private double _itemShowCounter;
+        private bool _showItem;
+        private bool _savedPreItemPickup;
+        public bool SavePreItemPickup
+        {
+            get { return _savedPreItemPickup; }
+        }
+        // Items: Disable
+        public bool DisableItems;
+        public float DisableItemCounter;
+
+        // Items: Store Item
+        public GameItem StoreItem;
+        private int _storeItemWidth;
+        private int _storeItemHeight;
+        private Vector2 _storePickupPosition;
+        private bool _showStealMessage;
+
+        // Magic Powder
+        private Vector2[] _powderOffset;
+
+        // Bombs
+        private List<GameObject> _bombList = new List<GameObject>();
+        private List<GameObject> _destroyableWallList = new List<GameObject>();
+        private Vector2[] _bombOffset;
+
+        // Flippers
         public bool HasFlippers;
+        private int _lastSwimDirection;
+        private Vector2 _swimVelocity;
+        private float _swimBoostCount;
+        private float _diveCounter;
 
-        // arrow
+        // No Flippers: Drowning
+        private MapStates.FieldStates _lastFieldState;
+        private Vector2 _drownResetPosition;
+        private float _drownResetCounter;
+        private bool _drownedInLava;
+
+        // Pegasus Boots
+        private bool _bootsHolding;
+        private bool _bootsRunning;
+        private bool _bootsWasRunning;
+        private bool _bootsStop;
+        private float _bootsCounter;
+        private float _bootsParticleTime = 120f;
+        private float _bootsMaxSpeed = 2.0f;
+        private int _bootsLastDirection;
+        private bool _bootsRunJump;
+
+        // Arrows
+        private Vector2[] _arrowOffset;
         private const float ArrowSpeed = 3;
         private const float ArrowSpeedPoP = 4;
 
-        // shield
+        // Shield
         public bool CarryShield;
         private bool _wasBlocking;
         private bool _blockButton;
         public Box shieldBox;
 
-        // hookshot
+        // Hookshot
         public ObjHookshot Hookshot = new ObjHookshot();
         private Vector2[] _hookshotOffset;
         private bool _hookshotPull;
         private bool _hookshotActive;
         private float _hookshotCounter;
 
-        // magic rod
+        // Boomerang
+        private ObjBoomerang _boomerang = new ObjBoomerang();
+        private Vector2[] _boomerangOffset;
+
+        // Magic Rod
         private Vector2[] _magicRodOffset;
         private const float MagicRodSpeed = 3;
         private const float MagicRodSpeedPoP = 4;
 
-        // shovel
+        // Shovel
         private Vector2[] _shovelOffset;
         private Point _digPosition;
         private bool _hasDug;
         private bool _canDig;
 
-        private Vector2[] _powderOffset;
-        private Vector2[] _bombOffset;
-
-        // ocarina
+        // Ocarina
+        private List<GameObject> _ocarinaList = new List<GameObject>();
         private float _ocarinaCounter;
         private int _ocarinaNoteIndex;
         private int _ocarinaSong;
+        
+        // Power Bracelet
+        private const float PullTime = 100;
+        private const float PullMaxTime = 400;
+        private const float PullResetTime = -133;
+        private float _pullCounter;
+        private bool _isPulling;
+        private bool _wasPulling;
 
-        // jump stuff
+        // Power Bracelet: Carry Object
+        private GameObject _carriedGameObject;
+        private DrawComponent _carriedObjDrawComp;
+        private CarriableComponent _carriedComponent;
+        private Vector3 _carryStartPosition;
+
+        // Roc's Feather: Jumping
         private bool _canJump = true;
         private const float JumpAcceleration = 2.35f;
         private float _railJumpSpeed;
-        public float _jumpStartZPos;
         private float _jumpEndTimer;
+        public float _jumpStartZPos;
 
-        // should probably have been a different state because we do not want to be able to use certain items while railjumping compared to normally jumping
-        private bool _railJump;
-        private bool _startedJumping;
-        private bool _hasStartedJumping;
+        // Roc's Feather: 2D Jumping
+        private bool _jump2DHold;
+        private bool _jump2DHeld;
 
-        // cloak transition
+        // Tunic Color Transition (Color Dungeon Reward)
         private int CloakTransitionTime = 2200;
         private float _cloakTransitionCounter;
         private float _cloakPercentage;
         private int CloakTransitionOutTime = 2500;
         private float _cloakTransitionOutCounter;
 
-        // teleport stuff
+        // Teleporting
         private ObjDungeonTeleporter _teleporter;
         private string _teleportMap;
         private string _teleporterId;
@@ -366,83 +361,78 @@ namespace ProjectZ.InGame.GameObjects
         private float _teleportCounterFull;
         private int _teleportState;
 
-        // instrument stuff
-        // @TODO: replace
-        private Rectangle[] _noteSourceRectangles = { new Rectangle(145, 97, 10, 12), new Rectangle(156, 97, 6, 12) };
+        // Instruments
         private bool[] _noteInit = { false, false };
         private int[] _noteSpriteIndex = { 0, 0 };
-
         private double _instrumentPickupTime;
         private float _instrumentCounter;
         private int _instrumentIndex;
         private int _instrumentCycleTime = 1000;
         private bool _drawInstrumentEffect;
         private bool _pickingUpInstrument;
-        private bool _pickingUpSword;
+        private const int dist0 = 30;
+        private const int dist1 = 15;
+        private readonly Vector2[] _showInstrumentOffset = {
+            new Vector2(-dist1, -dist0), new Vector2(dist1, -dist0), new Vector2(dist0, dist1), new Vector2(dist0, -dist1),
+            new Vector2(dist1, dist0),new Vector2(-dist1, dist0),new Vector2(-dist0, -dist1),new Vector2(-dist0, dist1) };
+        private Rectangle[] _noteSourceRectangles = { new Rectangle(145, 97, 10, 12), new Rectangle(156, 97, 6, 12) };
+        private readonly int[] _instrumentMusicIndex = { 31, 39, 40, 41, 42, 43, 44, 45 };
 
-        // push stuff
+        // Raft
+        private ObjRaft _objRaft;
+        private bool _isRafting;
+
+        // Pushing
         private Vector2 _pushStart;
         private Vector2 _pushEnd;
         private float _pushCounter;
         private int _pushTime;
 
-        // used by the vaccuum
+        // Vacuum Enemy
         private float _rotationCounter;
         private bool _isRotating;
         private bool _wasRotating;
         public int _rotateDirection;
 
-        // stunned state
+        // Stunned 
         private float _stunnedCounter;
         private bool _stunnedParticles;
 
-        // final sequence
+        // Final Sequence
         private int _finalIndex;
         private double _finalSeqCounter;
 
-        // save position
+        // Save Position
         public string SaveMap;
         public Vector2 SavePosition;
         public int SaveDirection;
 
-        // low hearts
+        // Low Heart Alarm
         private float _lowHealthBeepCounter;
         private bool _enableHealthBeep;
 
-        // sprite shadow
+        // Sprite Shadows
         private ObjSpriteShadow _spriteShadow;
 
-        // other stuff
-        public Point CollisionBoxSize;
-        private MapStates.FieldStates _lastFieldState;
+        // Current Field
+        public Rectangle CurrentField = Rectangle.Empty;
+        public Rectangle PreviousField = Rectangle.Empty;
+        public ObjFieldBarrier[] FieldBarrier;
 
-        public bool CanWalk;
-        public bool DisableItems;
-        public float DisableItemCounter;
+        // Prevent Damage Hits (No Collision)
+        private bool PreventDamage;
+        private float PreventDamageTimer;
+
+        // Miscellaneous
+        private DictAtlasEntry _stunnedParticleSprite;
+
         public bool UpdatePlayer;
-        public bool IsPoking;
-        private bool _pokeStart;
         private bool _isLocked;
         private bool _isGrabbed;
         private bool _isFlying;
         private bool _inDungeon;
 
-        private DictAtlasEntry _stunnedParticleSprite;
-
-        // Prevents sword from colliding with NPCs.
-        private bool _npcSwordCross;
-        private bool _npcCrossSword;
-
-        // The current field that Link is on.
-        public Rectangle CurrentField = Rectangle.Empty;
-        public Rectangle PreviousField = Rectangle.Empty;
-        public ObjFieldBarrier[] FieldBarrier;
-
-        // When true, hit's will not register. Timer sets the value back to false.
-        private bool PreventDamage;
-        private float PreventDamageTimer;
-
-        // Mod file values.
+        // Mod File Values (ObjLink.lahdmod)
         bool  sword1_beam = false;
         bool  always_beam = false;
         bool  cast2d_beam = false;
@@ -2897,6 +2887,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 "sword1"        => HoldSword,
                 "sword2"        => HoldSword,
+                "feather"       => HoldFeather,
                 "shield"        => HoldShield,
                 "mirrorShield"  => HoldShield,
                 "stonelifter"   => HoldStoneLifter,
@@ -2913,6 +2904,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 "shield"        => ReleaseShield,
                 "mirrorShield"  => ReleaseShield,
+                "feather"       => ReleaseFeather,
                 _               => null
             };
             releaseItem?.Invoke();
@@ -2970,6 +2962,19 @@ namespace ProjectZ.InGame.GameObjects
                 Jump2D();
             else
                 Jump();
+        }
+
+        private void HoldFeather()
+        {
+            // Set when holding in jump button. This is used to track when the
+            // button was released. Holding button longer = higher jumping.
+            _jump2DHold = true;
+        }
+
+        private void ReleaseFeather()
+        {
+            // Track when the jump button is released.
+            _jump2DHold = false;
         }
 
         private void UseToadstool()
@@ -4528,13 +4533,13 @@ namespace ProjectZ.InGame.GameObjects
             if (Is2DMode)
                 MapInit2D();
 
-            // reset guardian acorn and piece of power except when in a dungeon
+            // Reset Guardian Acorn and Piece of Power when not in a dungeon.
             if (!_inDungeon || Map == null || !Map.DungeonMode)
             {
                 Game1.GameManager.StopGuardianAcorn();
                 Game1.GameManager.StopPieceOfPower();
             }
-
+            // Track if currently in a dungeon.
             if (Map != null && Map.DungeonMode)
                 _inDungeon = true;
             else
