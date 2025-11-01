@@ -165,7 +165,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
                     {
                         ObjItem newItem = (collisionObject.Owner as ObjItem);
-                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying)
+                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying && !newItem._itemName.Contains("instrument"))
                         {
                             _item = newItem;
                             _item.InitCollection();

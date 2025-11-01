@@ -21,7 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         public string SaveKey;
 
         private GameItem _item;
-        private string _itemName;
+        public string _itemName;
         private string _locationBound;
 
         private AiComponent _aiComponent;
