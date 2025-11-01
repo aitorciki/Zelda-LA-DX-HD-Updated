@@ -43,6 +43,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("lowCollider1", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 16, 8) } }));
             ObjectTemplates.Add("lowCollider2", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 16) } }));
             ObjectTemplates.Add("lowCollider3", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 16) } }));
+            ObjectTemplates.Add("lowCollider_special", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 10, 16, 6) } }));
             ObjectTemplates.Add("c13", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 8) } }));
             ObjectTemplates.Add("c6", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 8) } }));
             ObjectTemplates.Add("c7", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 8, 8) } }));
