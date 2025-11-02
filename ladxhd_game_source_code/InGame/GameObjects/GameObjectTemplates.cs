@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("c5", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 8) } }));
             ObjectTemplates.Add("c3", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 8, 16) } }));
             ObjectTemplates.Add("c4", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 0, 8, 16) } }));
+            ObjectTemplates.Add("cSpecial",   new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 6) } }));
             ObjectTemplates.Add("colliderL0", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
             ObjectTemplates.Add("colliderL1", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
             ObjectTemplates.Add("colliderL2", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
