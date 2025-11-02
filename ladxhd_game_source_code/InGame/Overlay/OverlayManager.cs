@@ -24,7 +24,7 @@ namespace ProjectZ.InGame.Overlay
             None, Menu, Inventory, PhotoBook, GameSequence
         }
 
-        enum GameScaleDirection: short
+        enum GameScaleDirection: int
         {
             Decrease = -1, 
             Increase = 1
@@ -81,10 +81,6 @@ namespace ProjectZ.InGame.Overlay
         private bool _fading;
         private bool _updateInventory = true;
         private bool _isChanging;
-
-        private bool _AutoScaleSet;
-        private int _StoredScale = -2;
-
         private bool _mapOpened;
 
         public OverlayManager()
@@ -124,6 +120,8 @@ namespace ProjectZ.InGame.Overlay
             _mapOverlay.Load();
             _dungeonOverlay.Load();
             _photoOverlay.Load();
+
+            _AutoScaleSet = GameSettings.GameScale == 21;
         }
 
         public void RefreshPhotoOverlay()
@@ -525,7 +523,6 @@ namespace ProjectZ.InGame.Overlay
                 // don't open the menu while closing it
                 Game1.UiPageManager.ChangePage(typeof(GameMenuPage), null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
             }
-
             _fading = true;
             _fadeDir = 1;
             _lastMenuState = _currentMenuState;
@@ -534,40 +531,27 @@ namespace ProjectZ.InGame.Overlay
 
         private void UpdateGameScale(GameScaleDirection scaleDirection)
         {
-            // When adjust scaling settings for the first time: the current scaling is auto-scale, a scale has not been stored, and
-            // auto-scaling has not been set with the controller, set a scale that attempts to transition smoothly from the current size.
-            if (!_AutoScaleSet & GameSettings.GameScale == 11 & _StoredScale == -2)
+            // If both LT and RT are pressed together, set the scaling to auto-scaling.
+            if (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
             {
-                if (scaleDirection == GameScaleDirection.Increase)
-                    GameSettings.GameScale = _StoredScale = 6;
-                else
-                    GameSettings.GameScale = _StoredScale = 3;
+                GameSettings.GameScale = 21;
             }
-            // If both LT and RT are pressed together, set the scaling to auto-scaling and store the current scale.
-            else if (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
+            // If either LT or RT were pressed scale up or down.
+            else if (ControlHandler.ButtonDown(CButtons.RT) || ControlHandler.ButtonDown(CButtons.LT))
             {
-                // Don't allow overwriting the current stored scale with concurrent LT+RT presses.
-                if (_AutoScaleSet)
-                    return;
+                // When autoscaling is set, match the scaling value so it can move up and down smoothly.
+                if (GameSettings.GameScale == 21)
+                {
+                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, 21);
+                    gameScale = gameScale / 2;
+                    GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
+                }
+                // Set the new scale using the passed parameter.
+                int newScale = GameSettings.GameScale + (int)scaleDirection;
 
-                _StoredScale = GameSettings.GameScale;
-                _AutoScaleSet = true;
-                GameSettings.GameScale = 11;
-            }
-            // If either LT or RT were pressed and auto-scaling is set, restore the stored scaling value.
-            else if (_AutoScaleSet)
-            {
-                _AutoScaleSet = false;
-                GameSettings.GameScale = _StoredScale;
-            }
-            // If either LT or RT were pressed and auto-scaling is not set, scale up or down.
-            else
-            {
-                // If classic camera is selected don't let the lowest scale fall below 1.
-                int lower = GameSettings.ClassicCamera ? 1 : -1;
-                int newScale = GameSettings.GameScale + (short)scaleDirection;
-                if (newScale >= lower && newScale <= 10)
-                    GameSettings.GameScale = _StoredScale = newScale;
+                // Do not let the scale fall outside the slider range.
+                if (newScale >= -3 && newScale <= 20)
+                    GameSettings.GameScale = newScale;
             }
             // When Classic Camera is enabled, we want the camera to "snap" to the next scale.
             if (GameSettings.ClassicCamera)

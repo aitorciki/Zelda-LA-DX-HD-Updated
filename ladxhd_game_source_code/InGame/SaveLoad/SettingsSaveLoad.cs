@@ -24,9 +24,7 @@ namespace ProjectZ.InGame.SaveLoad
 
             // Video Settings
             GameSettings.GameScale = saveManager.GetInt("GameScale", GameSettings.GameScale);
-            GameSettings.GameScale = MathHelper.Clamp(GameSettings.GameScale, -1, 11);
             GameSettings.UiScale = saveManager.GetInt("UIScale", GameSettings.UiScale);
-            GameSettings.UiScale = MathHelper.Clamp(GameSettings.UiScale, 0, 12);
             GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
             GameSettings.ExFullscreen = saveManager.GetBool("ExFullscreen", GameSettings.ExFullscreen);
             GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);

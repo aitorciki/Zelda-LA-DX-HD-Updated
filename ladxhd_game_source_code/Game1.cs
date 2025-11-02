@@ -601,31 +601,29 @@ namespace ProjectZ
 
         private void UpdateScale()
         {
-            // Classic camera mode uses a static camera and auto scales to the screen.
             if (GameSettings.ClassicCamera)
             {
                 // Force integer scale or the field boundary will be thrown off. The scaling value is calculated
                 // using the original dimensions (GameBoy) so higher scaling values can be achieved.
-                int scaleX = WindowWidth / 160;
-                int scaleY = WindowHeight / 128;
-                int gameScale = Math.Max(1, Math.Min(scaleX, scaleY));
-
+                int gameScale = Math.Max(1, Math.Min(WindowWidth / 160, WindowHeight / 128));
                 MapManager.Camera.Scale = gameScale;
                 GameManager.SetGameScale(gameScale);
             }
-            // The standard camera is slightly more complicating.
             else
             {
                 // Calculate the game scale that is used for auto scaling.
-                float gameScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 25);
+                float gameScale = MathHelper.Clamp(Math.Min(WindowWidth / 160, WindowHeight / 128), 1, 21);
+                float usedScale = gameScale;
 
-                // If set to autoscale (11) used the calculated value; otherwise use the value set by the user. The
-                // camera scale uses a float value and can use a fractional scaling value when drawing the world.
-                MapManager.Camera.Scale = GameSettings.GameScale == 11 
-                    ? MathF.Ceiling(gameScale) 
+                if (GameSettings.GameScale == 21)
+                    usedScale = gameScale / 2;
+
+                // If set to autoscale (21) used the calculated value; otherwise use the value set by the user.
+                MapManager.Camera.Scale = GameSettings.GameScale == 21
+                    ? MathF.Ceiling(usedScale) 
                     : GameSettings.GameScale;
 
-                // The game scale must be at least 1x.
+                // The camera scale uses a float value and can use a fractional scaling value when drawing the world.
                 if (MapManager.Camera.Scale < 1)
                 {
                     MapManager.Camera.Scale = 1 / (2 - MapManager.Camera.Scale);
@@ -635,17 +633,15 @@ namespace ProjectZ
                 // values while manually setting the scale only allows upscaling using integer values.
                 else
                 {
-                    // If set to autoscale (11) use that. Otherwise use the value set by the user.
-                    float newGameScale = GameSettings.GameScale == 11 
-                        ? gameScale 
+                    float newGameScale = GameSettings.GameScale == 21
+                        ? MathF.Ceiling(usedScale)
                         : GameSettings.GameScale;
                     GameManager.SetGameScale(newGameScale);
                 }
             }
-            // Scale of the game field.
-            int interfaceScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 25);
-
             // Scale of the user interface.
+            int interfaceScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 11);
+
             if (GameSettings.UiScale > interfaceScale)
                 UiScale = interfaceScale;
             else
@@ -653,10 +649,7 @@ namespace ProjectZ
                     ? interfaceScale 
                     : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
 
-            // Update the scale of the UI manager.
             UiManager.SizeChanged();
-
-            // I can't remember if UiPageManager actually needs a forced resize here. Might be more workarounds to null render targets in exclusive fullscreen.
             ScreenManager.OnResize(WindowWidth, WindowHeight);
             UiPageManager.OnResize(WindowWidth, WindowHeight);
 

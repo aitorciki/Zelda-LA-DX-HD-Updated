@@ -11,8 +11,8 @@ namespace ProjectZ.InGame.Things
         public static bool    OldMovement     =  false;
 
         // Video Settings
-        public static int     GameScale       =  11;
-        public static int     UiScale         =  4;
+        public static int     GameScale       =  21;
+        public static int     UiScale         =  11;
         public static bool    IsFullscreen    =  false;
         public static bool    ExFullscreen    =  false;
         public static bool    EnableShadows   =  true;
