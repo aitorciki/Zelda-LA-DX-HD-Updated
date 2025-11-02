@@ -23,6 +23,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 Pool.GetComponentList(_objectList, ObjectManager.UpdateField.X, ObjectManager.UpdateField.Y, 
                     ObjectManager.UpdateField.Width, ObjectManager.UpdateField.Height, BaseAnimationComponent.Mask);
                 _objectList.RemoveAll(o => o.EntityPosition != null && !ObjectManager.ActualField.Contains(o.EntityPosition.Position));
+
+                // Make sure that Link's follower is always updated.
+                if (!_objectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                    _objectList.Add(MapManager.ObjLink._objFollower);
             }
             // Only update the objects that are currently visible.
             else
@@ -40,11 +44,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     true  => (!gameObject.IsActive),
                     false => (!gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, objectTypes))
                 };
-                if (skipObject) continue;
-
-                var animationComponent = (gameObject.Components[BaseAnimationComponent.Index]) as BaseAnimationComponent;
-
-                // update the animation
+                if (!gameObject.IsActive || skipObject) { continue; }
+                var animationComponent = gameObject.Components[BaseAnimationComponent.Index] as BaseAnimationComponent;
+                if (animationComponent == null) { continue; }
                 if (!dialogOpen || animationComponent.UpdateWithOpenDialog)
                     animationComponent.UpdateAnimation();
             }

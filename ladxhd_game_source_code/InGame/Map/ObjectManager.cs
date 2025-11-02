@@ -247,6 +247,10 @@ namespace ProjectZ.InGame.Map
                 _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, 
                     UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
                 _updateGameObject.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
+
+                // Make sure that Link's follower is always updated.
+                if (!_updateGameObject.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                    _updateGameObject.Add(MapManager.ObjLink._objFollower);
             }
             // Only update the objects that are currently visible.
             else
@@ -260,7 +264,9 @@ namespace ProjectZ.InGame.Map
             }
             foreach (var gameObject in _updateGameObject)
             {
+                if (!gameObject.IsActive) { continue; }
                 var updateComponent = gameObject.Components[UpdateComponent.Index] as UpdateComponent;
+                if (updateComponent == null) { continue; }
                 if (updateComponent != null && gameObject.IsActive && updateComponent.IsActive)
                     updateComponent.UpdateFunction?.Invoke();
             }
@@ -296,6 +302,10 @@ namespace ProjectZ.InGame.Map
                 _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y, 
                     UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
                 _collidingObjectList.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
+
+                // Make sure that Link's follower is always updated.
+                if (!_collidingObjectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                    _collidingObjectList.Add(MapManager.ObjLink._objFollower);
             }
             // Only update the objects that are currently visible.
             else
@@ -306,10 +316,9 @@ namespace ProjectZ.InGame.Map
             }
             foreach (var gameObject in _collidingObjectList)
             {
-                if (!gameObject.IsActive)
-                    continue;
-
+                if (!gameObject.IsActive) { continue; }
                 var component = gameObject.Components[ObjectCollisionComponent.Index] as ObjectCollisionComponent;
+                if (component == null) { continue; }
                 if (component.TriggerOnCollision && component.CollisionRectangle.Rectangle.Intersects(player.BodyRectangle) ||
                     !component.TriggerOnCollision && component.CollisionRectangle.Rectangle.Contains(player.BodyRectangle))
                     component.OnCollision(player);
@@ -329,6 +338,10 @@ namespace ProjectZ.InGame.Map
                 var Link = MapManager.ObjLink;
                 var field = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
                 _gameObjectPool.GetComponentList(_damageFieldObjects, field.X, field.Y, field.Width, field.Height, DamageFieldComponent.Mask);
+
+                // Make sure that Link's follower is always updated.
+                if (!_damageFieldObjects.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                    _damageFieldObjects.Add(MapManager.ObjLink._objFollower);
             }
             else
             {
@@ -338,10 +351,9 @@ namespace ProjectZ.InGame.Map
             }
             foreach (var gameObject in _damageFieldObjects)
             {
-                if (!gameObject.IsActive)
-                    continue;
-
-                var damageField = (gameObject.Components[DamageFieldComponent.Index] as DamageFieldComponent);
+                if (!gameObject.IsActive) { continue; }
+                var damageField = gameObject.Components[DamageFieldComponent.Index] as DamageFieldComponent;
+                if (damageField == null) { continue; }
                 if (damageField.IsActive && damageField.CollisionBox.Box.Intersects(playerDamageBox))
                     damageField.OnDamage?.Invoke();
             }

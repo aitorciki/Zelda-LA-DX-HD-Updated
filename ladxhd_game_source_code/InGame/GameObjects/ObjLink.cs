@@ -169,7 +169,7 @@ namespace ProjectZ.InGame.GameObjects
         private Vector2 _railJumpTargetPosition;
 
         // Followers
-        private GameObjectFollower _objFollower;
+        public GameObjectFollower _objFollower;
         private ObjCock _objRooster;
         private ObjMarin _objMaria;
 
@@ -917,18 +917,25 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentState == State.Knockout)
                 return;
 
-            // stunned player
+            // Stunned
             if (CurrentState == State.InitStunned && _hitVelocity.Length() < 0.25f)
             {
                 Animation.Play("stunned");
                 CurrentState = State.Stunned;
             }
-            if (CurrentState == State.Stunned && _stunnedCounter > 0)
-            {
-                _stunnedCounter -= Game1.DeltaTime;
 
+            if (CurrentState == State.Stunned)
+            {
+                if (_stunnedCounter > 0)
+                {
+                    _body.DragAir = 0.95f;
+                    _stunnedCounter -= Game1.DeltaTime;
+                }
                 if (_stunnedCounter <= 0)
+                {
+                    _body.DragAir = 0.9f;
                     CurrentState = State.Idle;
+                }
             }
             AnimatorWeapons.Update();
 
@@ -1428,10 +1435,8 @@ namespace ProjectZ.InGame.GameObjects
                     _pushEnd = _pushStart + new Vector2(offsetX, offsetY);
                     _pushTime = int.Parse(split[2]);
                 }
-
                 _pushCounter = 0;
                 CurrentState = State.Pushed;
-
                 Game1.GameManager.SaveManager.RemoveString("link_push");
             }
 
@@ -1464,8 +1469,8 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("link_dive");
             }
 
-            // boomerang trading
-            // can be exchanged for: shovel, feather
+            // Boomerang Trade: Hidden Goriya
+            // Can be exchanged for: Shovel, Feather
             var boomerangValue = Game1.GameManager.SaveManager.GetString("boomerang_trade");
             if (!string.IsNullOrEmpty(boomerangValue))
             {
@@ -1481,7 +1486,6 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     Game1.GameManager.SaveManager.SetString("tradded_item", Game1.GameManager.Equipment[index].Name);
                     Game1.GameManager.Equipment[index] = null;
-
                     Game1.GameManager.StartDialogPath("npc_hidden_boomerang");
                 }
                 else
@@ -1494,10 +1498,10 @@ namespace ProjectZ.InGame.GameObjects
             {
                 Game1.GameManager.SaveManager.RemoveString("boomerang_trade_return");
 
-                // remove the boomerang
+                // Remove the boomerang.
                 Game1.GameManager.RemoveItem("boomerang", 1);
 
-                // return the traded item
+                // Return the traded item.
                 var tradedItem = Game1.GameManager.SaveManager.GetString("tradded_item");
                 var item = new GameItemCollected(tradedItem);
                 MapManager.ObjLink.PickUpItem(item, true);
@@ -1515,7 +1519,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
                 Map.Objects.RemoveObject(_objRooster);
-                _objRooster = null;
+                _objFollower = _objRooster = null;
             }
             else if (borrowRooster == "1")
             {
@@ -1656,7 +1660,6 @@ namespace ProjectZ.InGame.GameObjects
                         CurrentState = State.Attacking;
                         _swordChargeCounter = sword_charge_time;
                     }
-
                     _swordPokeCounter -= Game1.DeltaTime;
                 }
             }
@@ -1697,9 +1700,8 @@ namespace ProjectZ.InGame.GameObjects
                 if (collisionObject != null && collisionBody != null && collisionBody.IsActive && 
                     (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
                 {
-                    var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
-
                     // If the sword box and body box intersect return true.
+                    var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
                     if (bodyObject != null && SwordBox.Intersects(bodyObject.BodyBox.Box))
                         return true;
                 }
@@ -1707,7 +1709,7 @@ namespace ProjectZ.InGame.GameObjects
             return false;
         }
 
-        private void Update3D()
+        private void UpdateNPCAvoidance()
         {
             // Check if sword hitbox is within NPC hitbox.
             _npcSwordCross = CheckNPCAvoidance();
@@ -1722,360 +1724,35 @@ namespace ProjectZ.InGame.GameObjects
                 _swordChargeCounter = sword_charge_time;
                 _isHoldingSword = false;
             }
-
             _isWalking = false;
             WasHoleReset = false;
+        }
 
-            if (CurrentState == State.Intro)
-            {
-                var walkVelocity = ControlHandler.GetMoveVector2();
+        private void Update3D()
+        {
+            UpdateNPCAvoidance();
 
-                if (Animation.CurrentAnimation.Id == "intro_sit" &&
-                    !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen && walkVelocity.Length() > Values.ControllerDeadzone)
-                {
-                    CurrentState = State.Idle;
-                    Direction = 2;
-                    StartRailJump(EntityPosition.Position + new Vector2(12, 4), 1, 1);
-                    Animation.Play("intro_jump");
+            UpdateIntro();
 
-                    Game1.GameManager.SaveManager.SetString("played_intro", "1");
-                }
-                return;
-            }
+            UpdateBedTransition();
 
-            // finished jumping into the bed?
-            if (_startBedTransition && CurrentState == State.Idle)
-            {
-                CurrentState = State.BedTransition;
+            UpdateFlying();
 
-                _startBedTransition = false;
+            UpdateTeleporting();
 
-                Animation.Play("bed");
-            }
+            UpdateSwordSequence();
 
-            if (CurrentState == State.BedTransition)
-                return;
+            UpdateInstrumentSequence();
 
-            if (CurrentState == State.SwordShow0)
-            {
-                if (!Animation.IsPlaying)
-                {
-                    Animation.Play("show2");
-                    _showSwordLv2Counter = 500;
-                    CurrentState = State.SwordShow1;
-
-                    Game1.GameManager.PlaySoundEffect("D360-07-07");
-
-                    var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
-                    animation.EntityPosition.Set(new Vector2(
-                        BodyRectangle.X,
-                        EntityPosition.Y - EntityPosition.Z - 30));
-                    Map.Objects.SpawnObject(animation);
-                }
-                else
-                    return;
-            }
-            else if (CurrentState == State.SwordShow1)
-            {
-                _showSwordLv2Counter -= Game1.DeltaTime;
-                if (_showSwordLv2Counter < 0)
-                    CurrentState = State.Idle;
-            }
-
-            if (_isRafting && (CurrentState == State.Rafting || CurrentState == State.Charging || CurrentState == State.ChargeBlocking))
-            {
-                var moveVelocity = ControlHandler.GetMoveVector2(modern_analog);
-
-                var moveVelocityLength = moveVelocity.Length();
-                if (moveVelocityLength > 1)
-                    moveVelocity.Normalize();
-
-                if (moveVelocityLength > Values.ControllerDeadzone)
-                {
-                    _isWalking = true;
-                    _objRaft.TargetVelocity(moveVelocity * 0.5f);
-
-                    if (CurrentState != State.Charging && CurrentState != State.ChargeBlocking)
-                    {
-                        var vectorDirection = ToDirection(moveVelocity, modern_analog);
-                        Direction = vectorDirection;
-                    }
-                }
-            }
-
-            if (_isFlying && CurrentState == State.Carrying)
-            {
-                // The hit velocity is added to the movement (*2) for the flame trap knockback on the way 
-                // to level 8 as the normal value sent back is not strong enough to knock it back.
-                var moveVelocity = ControlHandler.GetMoveVector2(modern_analog) + _hitVelocity * 2;
-
-                var moveVelocityLength = moveVelocity.Length();
-                if (moveVelocityLength > 1)
-                    moveVelocity.Normalize();
-
-                if (moveVelocityLength > Values.ControllerDeadzone)
-                {
-                    _objRooster.TargetVelocity(moveVelocity, 0.5f, Direction);
-
-                    var vectorDirection = ToDirection(moveVelocity, modern_analog);
-                    Direction = vectorDirection;
-                }
-            }
-
-            // we need to prevent overlays from being opened because they do not stop the music and it would run out of sync
-            if ((ShowItem != null && ShowItem.Name.StartsWith("instrument")) ||
-                CurrentState == State.ShowInstrumentPart0 ||
-                CurrentState == State.ShowInstrumentPart1 ||
-                CurrentState == State.ShowInstrumentPart2 ||
-                CurrentState == State.ShowInstrumentPart3)
-                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
-
-            if (CurrentState == State.ShowInstrumentPart0)
-            {
-                // is the sound effect still playing?
-                if (_instrumentPickupTime + 7500 < Game1.TotalGameTime)
-                {
-                    Game1.GameManager.SetMusic(_instrumentMusicIndex[_instrumentIndex], 2);
-                    Game1.GbsPlayer.Play();
-                    Game1.GbsPlayer.SoundGenerator.SetStopTime(8);
-                    CurrentState = State.ShowInstrumentPart1;
-                }
-            }
-            else if (CurrentState == State.ShowInstrumentPart1)
-            {
-                _instrumentCounter += Game1.DeltaTime;
-
-                if (_instrumentCounter > 3500)
-                {
-                    _drawInstrumentEffect = true;
-                    Game1.GameManager.PlaySoundEffect("D360-43-2B", false);
-                }
-
-                // This used to rely on the following, but not sure why it was used over an already implemented counter:
-                // if (Game1.GbsPlayer.SoundGenerator.WasStopped)
-                if (_instrumentCounter > 8000)
-                {
-                    Game1.GameManager.SetMusic(-1, 0);
-                    Game1.GameManager.SetMusic(-1, 2);
-                    Game1.GameManager.PlaySoundEffect("D378-44-2C");
-
-                    _instrumentCounter = 0;
-                    CurrentState = State.ShowInstrumentPart2;
-                }
-            }
-            else if (CurrentState == State.ShowInstrumentPart2)
-            {
-                // Some update caused music to continue playing after instrument screen goes white so don't let this happen. 
-                Game1.GameManager.StopMusic(true);
-
-                _instrumentCounter += Game1.DeltaTime;
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
-                transitionSystem.ResetTransition();
-                transitionSystem.SetColorMode(Color.White, MathHelper.Clamp(_instrumentCounter / 500f, 0, 1));
-
-                if (_instrumentCounter > 2500)
-                {
-                    Direction = 3;
-                    UpdateAnimation();
-
-                    CurrentState = State.ShowInstrumentPart3;
-                    ShowItem = null;
-                    _drawInstrumentEffect = false;
-
-                    Game1.GameManager.StartDialogPath($"instrument{_instrumentIndex}Collected");
-                }
-            }
-            else if (CurrentState == State.ShowInstrumentPart3)
-            {
-                MapTransitionStart = EntityPosition.Position;
-                MapTransitionEnd = MapTransitionStart;
-                TransitionOutWalking = false;
-
-                EndPickup();
-
-                // append a map change
-                ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                    "overworld.map", $"d{_instrumentIndex + 1}Finished", false, true, Color.White, true);
-            }
-
-            if (CurrentState == State.Teleporting)
-            {
-                if (_teleportCounterFull < 1250 || Direction <= 2)
-                    _teleportCounter += Game1.DeltaTime;
-
-                _teleportCounterFull += Game1.DeltaTime;
-                var rotationSpeed = 150 - (float)Math.Sin((_teleportCounterFull / 2000f) * Math.PI) * 50;
-                if (_teleportCounter > rotationSpeed)
-                {
-                    _teleportCounter -= rotationSpeed;
-                    Direction = (Direction + 1) % 4;
-                    UpdateAnimation();
-                }
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
-                transitionSystem.ResetTransition();
-
-                if (_teleportState == 0 && _teleportCounterFull >= 1250)
-                {
-                    if (_teleporter != null)
-                    {
-                        _teleportState = 1;
-
-                        EntityPosition.Set(_teleporter.TeleportPosition);
-                        _teleporter.Lock();
-
-                        var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
-                        MapManager.Camera.SoftUpdate(goalPosition);
-                    }
-                    else if (Direction == 3 && _teleportCounterFull >= 1450)
-                    {
-                        MapTransitionStart = EntityPosition.Position;
-                        MapTransitionEnd = EntityPosition.Position;
-                        TransitionOutWalking = false;
-
-                        transitionSystem.AppendMapChange(_teleportMap, _teleporterId, false, true, Color.White, true);
-                    }
-
-                    transitionSystem.SetColorMode(Color.White, 1);
-                }
-
-                var fadeOutTime = 250.0f;
-                var fadeoutStart = 1750;
-                var fadeoutEnd = 1750 + fadeOutTime;
-
-                // fading in
-                if (_teleportCounterFull >= 750 && _teleportCounterFull < 1250)
-                {
-                    transitionSystem.SetColorMode(Color.White, (_teleportCounterFull - 750) / 500f);
-                }
-                // fading out
-                else if (_teleportState == 1 && _teleportCounterFull >= fadeoutStart && _teleportCounterFull < fadeoutEnd)
-                {
-                    transitionSystem.SetColorMode(Color.White, 1 - (_teleportCounterFull - fadeoutStart) / fadeOutTime);
-                }
-                // finished?
-                else if (_teleportState == 1 && _teleportCounterFull >= fadeoutEnd)
-                {
-                    _drawBody.Layer = Values.LayerPlayer;
-                    transitionSystem.SetColorMode(Color.White, 0);
-                    CurrentState = State.Idle;
-                }
-            }
-
-            UpdateSwimming();
+            UpdateSwimmingPartOne();
 
             UpdateIgnoresZ();
 
-            // hinox should throw the player farther than normal
-            if (CurrentState == State.Stunned)
-                _body.DragAir = 0.95f;
-            else
-                _body.DragAir = 0.9f;
+            UpdateDrownResetPosition();
 
-            // save the last position the player is grounded to use for the reset position if the player drowns
-            if (!IsJumpingState(CurrentState) && 
-                CurrentState != State.Drowning && 
-                CurrentState != State.Drowned && _body.IsGrounded)
-            {
-                var bodyCenter = new Vector2(EntityPosition.X, EntityPosition.Y - _body.Height / 2f);
-                // center the position
-                // can lead to the position being inside something
-                bodyCenter.X = (int)(bodyCenter.X / 16) * 16 + 8;
-                bodyCenter.Y = (int)(bodyCenter.Y / 16) * 16 + 8 + _body.Height / 2f;
-
-                // found new reset position?
-                if (!Map.GetFieldState(bodyCenter).HasFlag(MapStates.FieldStates.DeepWater))
-                {
-                    var bodyBox = new Box(
-                        bodyCenter.X + _body.OffsetX,
-                        bodyCenter.Y + _body.OffsetY, 0, _body.Width, _body.Height, _body.Depth);
-                    var cBox = Box.Empty;
-
-                    // check it the player is not standing inside something
-                    if (!Map.Objects.Collision(bodyBox, Box.Empty, _body.CollisionTypes | Values.CollisionTypes.DrownExclude, 0, 0, ref cBox))
-                        _drownResetPosition = bodyCenter;
-                }
-            }
-            // walk
             UpdateWalking();
 
-            // Update drowning.
-            if (CurrentState == State.Drowning)
-            {
-                if (Animation.CurrentFrameIndex < 2)
-                {
-                    _body.Velocity = Vector3.Zero;
-                    EntityPosition.Set(new Vector2(
-                        MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
-                }
-                if (Animation.CurrentFrameIndex == 2)
-                {
-                    IsVisible = false;
-                    CurrentState = State.Drowned;
-                    _drownResetCounter = 500;
-                }
-            }
-            // Update drowned.
-            else if (CurrentState == State.Drowned)
-            {
-                _drownResetCounter -= Game1.DeltaTime;
-                if (_drownResetCounter <= 0)
-                {
-                    CurrentState = State.Idle;
-                    CanWalk = true;
-                    IsVisible = true;
-
-                    _hitCount = CooldownTime;
-
-                    if (_drownedInLava)
-                    {
-                        Game1.GameManager.CurrentHealth -= 2;
-                        _drownedInLava = false;
-                    }
-                    _body.CurrentFieldState = MapStates.FieldStates.None;
-                    EntityPosition.Set(_drownResetPosition);
-                }
-            }
-            // Update swimming.
-            if (CurrentState == State.Swimming)
-            {
-                if (_diveCounter > -100)
-                {
-                    _diveCounter -= Game1.DeltaTime;
-
-                    // stop diving
-                    if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
-                        _diveCounter = 0;
-                }
-                // start diving
-                else if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
-                {
-                    StartDiving(1500);
-                }
-
-                if (_swimBoostCount > -300)
-                    _swimBoostCount -= Game1.DeltaTime;
-                else if (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
-                {
-                    _swimBoostCount = 300;
-                    Game1.GameManager.PlaySoundEffect("D360-15-0F");
-                }
-                if (_swimBoostCount > 0)
-                    _moveVelocity *= SwimSpeedA;
-                else
-                    _moveVelocity *= SwimSpeed;
-
-                var distance = _moveVelocity - _swimVelocity;
-                var length = distance.Length();
-                if (distance != Vector2.Zero)
-                    distance.Normalize();
-
-                if (length < 0.045f)
-                    _swimVelocity = _moveVelocity;
-                else
-                    _swimVelocity += distance * (_swimBoostCount > 0 ? 0.06f : 0.045f) * Game1.TimeMultiplier;
-
-                _moveVelocity = _swimVelocity;
-            }
+            UpdateSwimmingPartTwo();
 
             // slows down the walk movement when the player is hit
             var moveMultiplier = MathHelper.Clamp(1f - _hitVelocity.Length(), 0, 1);
@@ -2172,6 +1849,111 @@ namespace ProjectZ.InGame.GameObjects
             UpdateSpriteShadow();
         }
 
+        private void UpdateSwordSequence()
+        {
+            if (CurrentState == State.SwordShow0)
+            {
+                if (!Animation.IsPlaying)
+                {
+                    Animation.Play("show2");
+                    _showSwordLv2Counter = 500;
+                    CurrentState = State.SwordShow1;
+
+                    Game1.GameManager.PlaySoundEffect("D360-07-07");
+
+                    var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
+                    animation.EntityPosition.Set(new Vector2(
+                        BodyRectangle.X,
+                        EntityPosition.Y - EntityPosition.Z - 30));
+                    Map.Objects.SpawnObject(animation);
+                }
+                else
+                    return;
+            }
+            else if (CurrentState == State.SwordShow1)
+            {
+                _showSwordLv2Counter -= Game1.DeltaTime;
+                if (_showSwordLv2Counter < 0)
+                    CurrentState = State.Idle;
+            }
+        }
+
+        private void UpdateInstrumentSequence()
+        {
+            // We need to prevent overlays from being opened because they
+            // do not stop the music and it would run out of sync.
+            if ((ShowItem != null && ShowItem.Name.StartsWith("instrument")) ||
+                CurrentState == State.ShowInstrumentPart0 ||
+                CurrentState == State.ShowInstrumentPart1 ||
+                CurrentState == State.ShowInstrumentPart2 ||
+                CurrentState == State.ShowInstrumentPart3)
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
+            if (CurrentState == State.ShowInstrumentPart0)
+            {
+                // is the sound effect still playing?
+                if (_instrumentPickupTime + 7500 < Game1.TotalGameTime)
+                {
+                    Game1.GameManager.SetMusic(_instrumentMusicIndex[_instrumentIndex], 2);
+                    Game1.GbsPlayer.Play();
+                    Game1.GbsPlayer.SoundGenerator.SetStopTime(8);
+                    CurrentState = State.ShowInstrumentPart1;
+                }
+            }
+            else if (CurrentState == State.ShowInstrumentPart1)
+            {
+                _instrumentCounter += Game1.DeltaTime;
+
+                if (_instrumentCounter > 3500)
+                {
+                    _drawInstrumentEffect = true;
+                    Game1.GameManager.PlaySoundEffect("D360-43-2B", false);
+                }
+                if (_instrumentCounter > 8000)
+                {
+                    Game1.GameManager.SetMusic(-1, 0);
+                    Game1.GameManager.SetMusic(-1, 2);
+                    Game1.GameManager.PlaySoundEffect("D378-44-2C");
+
+                    _instrumentCounter = 0;
+                    CurrentState = State.ShowInstrumentPart2;
+                }
+            }
+            else if (CurrentState == State.ShowInstrumentPart2)
+            {
+                // Some update caused music to continue playing after instrument screen goes white so don't let this happen. 
+                Game1.GameManager.StopMusic(true);
+
+                _instrumentCounter += Game1.DeltaTime;
+                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.ResetTransition();
+                transitionSystem.SetColorMode(Color.White, MathHelper.Clamp(_instrumentCounter / 500f, 0, 1));
+
+                if (_instrumentCounter > 2500)
+                {
+                    Direction = 3;
+                    UpdateAnimation();
+
+                    CurrentState = State.ShowInstrumentPart3;
+                    ShowItem = null;
+                    _drawInstrumentEffect = false;
+
+                    Game1.GameManager.StartDialogPath($"instrument{_instrumentIndex}Collected");
+                }
+            }
+            else if (CurrentState == State.ShowInstrumentPart3)
+            {
+                MapTransitionStart = EntityPosition.Position;
+                MapTransitionEnd = MapTransitionStart;
+                TransitionOutWalking = false;
+
+                EndPickup();
+
+                ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
+                    "overworld.map", $"d{_instrumentIndex + 1}Finished", false, true, Color.White, true);
+            }
+        }
+
         private void UpdateSpriteShadow()
         {
             // If the shadow is spawned.
@@ -2187,7 +1969,7 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
-        private void UpdateSwimming()
+        private void UpdateSwimmingPartOne()
         {
             // we cant use the field state of the body because the raft updates the state while exiting
             var fieldState = SystemBody.GetFieldState(_body);
@@ -2195,14 +1977,12 @@ namespace ProjectZ.InGame.GameObjects
             // start/stop swimming or drowning
             if (!_isRafting && !_isFlying && fieldState.HasFlag(MapStates.FieldStates.DeepWater) && CurrentState != State.Dying)
             {
-                if (!IsJumpingState(CurrentState) && 
-                    CurrentState != State.PickingUp && 
-                    _body.IsGrounded )
+                if (!IsJumpingState(CurrentState) && CurrentState != State.PickingUp && _body.IsGrounded )
                 {
                     ReleaseCarriedObject();
                     var inLava = fieldState.HasFlag(MapStates.FieldStates.Lava);
 
-                    if ((HasFlippers && !inLava) && CurrentState != State.Swimming)
+                    if (HasFlippers && !inLava && CurrentState != State.Swimming)
                     {
                         if (Map.Is2dMap && (CurrentState == State.Attacking || CurrentState == State.AttackSwimming))
                             CurrentState = State.AttackSwimming;
@@ -2261,6 +2041,89 @@ namespace ProjectZ.InGame.GameObjects
             {
                 EntityPosition.Z = 0;
                 _body.IsGrounded = true;
+            }
+        }
+
+        private void UpdateSwimmingPartTwo()
+        {
+            // Update drowning.
+            if (CurrentState == State.Drowning)
+            {
+                if (Animation.CurrentFrameIndex < 2)
+                {
+                    _body.Velocity = Vector3.Zero;
+                    EntityPosition.Set(new Vector2(
+                        MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
+                }
+                if (Animation.CurrentFrameIndex == 2)
+                {
+                    IsVisible = false;
+                    CurrentState = State.Drowned;
+                    _drownResetCounter = 500;
+                }
+            }
+            // Update drowned.
+            else if (CurrentState == State.Drowned)
+            {
+                _drownResetCounter -= Game1.DeltaTime;
+                if (_drownResetCounter <= 0)
+                {
+                    CurrentState = State.Idle;
+                    CanWalk = true;
+                    IsVisible = true;
+
+                    _hitCount = CooldownTime;
+
+                    if (_drownedInLava)
+                    {
+                        Game1.GameManager.CurrentHealth -= 2;
+                        _drownedInLava = false;
+                    }
+                    _body.CurrentFieldState = MapStates.FieldStates.None;
+                    EntityPosition.Set(_drownResetPosition);
+                }
+            }
+            // Update swimming.
+            if (CurrentState == State.Swimming)
+            {
+                if (_diveCounter > -100)
+                {
+                    _diveCounter -= Game1.DeltaTime;
+
+                    // Stop diving.
+                    if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                        _diveCounter = 0;
+                }
+
+                // Start diving.
+                else if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                    StartDiving(1500);
+
+                if (_swimBoostCount > -300)
+                    _swimBoostCount -= Game1.DeltaTime;
+
+                else if (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
+                {
+                    _swimBoostCount = 300;
+                    Game1.GameManager.PlaySoundEffect("D360-15-0F");
+                }
+
+                if (_swimBoostCount > 0)
+                    _moveVelocity *= SwimSpeedA;
+                else
+                    _moveVelocity *= SwimSpeed;
+
+                var distance = _moveVelocity - _swimVelocity;
+                var length = distance.Length();
+                if (distance != Vector2.Zero)
+                    distance.Normalize();
+
+                if (length < 0.045f)
+                    _swimVelocity = _moveVelocity;
+                else
+                    _swimVelocity += distance * (_swimBoostCount > 0 ? 0.06f : 0.045f) * Game1.TimeMultiplier;
+
+                _moveVelocity = _swimVelocity;
             }
         }
 
@@ -2402,7 +2265,7 @@ namespace ProjectZ.InGame.GameObjects
 
                     if (_bootsRunJump)
                     {
-                        // Running jump: determine locked axis and apply smooth slowdown if opposite input
+                        // Running jump: determine locked axis and apply smooth slowdown if opposite input.
                         float lockedAxis = lockX ? _lastMoveVelocity.X : _lastMoveVelocity.Y;
                         float inputAxis  = lockX ? walkVelocity.X : walkVelocity.Y;
 
@@ -2627,6 +2490,34 @@ namespace ProjectZ.InGame.GameObjects
             _drownResetPosition = new Vector2(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y);
         }
 
+        private void UpdateDrownResetPosition()
+        {
+            // save the last position the player is grounded to use for the reset position if the player drowns
+            if (!IsJumpingState(CurrentState) && 
+                CurrentState != State.Drowning && 
+                CurrentState != State.Drowned && _body.IsGrounded)
+            {
+                var bodyCenter = new Vector2(EntityPosition.X, EntityPosition.Y - _body.Height / 2f);
+                // center the position
+                // can lead to the position being inside something
+                bodyCenter.X = (int)(bodyCenter.X / 16) * 16 + 8;
+                bodyCenter.Y = (int)(bodyCenter.Y / 16) * 16 + 8 + _body.Height / 2f;
+
+                // found new reset position?
+                if (!Map.GetFieldState(bodyCenter).HasFlag(MapStates.FieldStates.DeepWater))
+                {
+                    var bodyBox = new Box(
+                        bodyCenter.X + _body.OffsetX,
+                        bodyCenter.Y + _body.OffsetY, 0, _body.Width, _body.Height, _body.Depth);
+                    var cBox = Box.Empty;
+
+                    // check it the player is not standing inside something
+                    if (!Map.Objects.Collision(bodyBox, Box.Empty, _body.CollisionTypes | Values.CollisionTypes.DrownExclude, 0, 0, ref cBox))
+                        _drownResetPosition = bodyCenter;
+                }
+            }
+        }
+
         private void UpdateDrawComponents()
         {
             if (_drawInstrumentEffect)
@@ -2634,7 +2525,7 @@ namespace ProjectZ.InGame.GameObjects
             else
                 _drawBody.Layer = (CurrentState == State.Swimming && _diveCounter > 0) ? Values.LayerBottom : Values.LayerPlayer;
 
-            if (CurrentState == State.Swimming && _diveCounter > 0 ||
+            if ((CurrentState == State.Swimming && _diveCounter > 0) ||
                 CurrentState == State.Drowning ||
                 CurrentState == State.Drowned ||
                 CurrentState == State.BedTransition || _isTrapped)
@@ -2681,7 +2572,7 @@ namespace ProjectZ.InGame.GameObjects
             WasHoleReset = true;
             EntityPosition.Set(resetPosition);
 
-            // alternative reset point
+            // Alternative reset point.
             var cBox = Box.Empty;
             if (_alternativeHoleResetPosition != Vector3.Zero &&
                 Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, _body.CollisionTypes, 0, 0, ref cBox))
@@ -4613,6 +4504,26 @@ namespace ProjectZ.InGame.GameObjects
             MapManager.ObjLink.SaveDirection = 3;
         }
 
+        private void UpdateIntro()
+        {
+            if (CurrentState == State.Intro)
+            {
+                var walkVelocity = ControlHandler.GetMoveVector2();
+
+                if (Animation.CurrentAnimation.Id == "intro_sit" &&
+                    !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen && walkVelocity.Length() > Values.ControllerDeadzone)
+                {
+                    CurrentState = State.Idle;
+                    Direction = 2;
+                    StartRailJump(EntityPosition.Position + new Vector2(12, 4), 1, 1);
+                    Animation.Play("intro_jump");
+
+                    Game1.GameManager.SaveManager.SetString("played_intro", "1");
+                }
+                return;
+            }
+        }
+
         public void SetPosition(Vector2 newPosition)
         {
             _body.VelocityTarget = Vector2.Zero;
@@ -4815,6 +4726,27 @@ namespace ProjectZ.InGame.GameObjects
                 _objRooster.StopFlying();
         }
 
+        private void UpdateFlying()
+        {
+            if (_isFlying && CurrentState == State.Carrying)
+            {
+                // The hit velocity is added to the movement (*2) for the flame trap knockback on the way 
+                // to level 8 as the normal value sent back is not strong enough to knock it back.
+                var moveVelocity = ControlHandler.GetMoveVector2(modern_analog) + _hitVelocity * 2;
+
+                var moveVelocityLength = moveVelocity.Length();
+                if (moveVelocityLength > 1)
+                    moveVelocity.Normalize();
+
+                if (moveVelocityLength > Values.ControllerDeadzone)
+                {
+                    _objRooster.TargetVelocity(moveVelocity, 0.5f, Direction);
+                    var vectorDirection = ToDirection(moveVelocity, modern_analog);
+                    Direction = vectorDirection;
+                }
+            }
+        }
+
         public void SeqLockPlayer()
         {
             UpdatePlayer = false;
@@ -4991,6 +4923,44 @@ namespace ProjectZ.InGame.GameObjects
             _startBedTransition = true;
         }
 
+        private void UpdateBedTransition()
+        {
+            // finished jumping into the bed?
+            if (_startBedTransition && CurrentState == State.Idle)
+            {
+                CurrentState = State.BedTransition;
+
+                _startBedTransition = false;
+
+                Animation.Play("bed");
+            }
+
+            if (CurrentState == State.BedTransition)
+                return;
+
+
+            if (_isRafting && (CurrentState == State.Rafting || CurrentState == State.Charging || CurrentState == State.ChargeBlocking))
+            {
+                var moveVelocity = ControlHandler.GetMoveVector2(modern_analog);
+
+                var moveVelocityLength = moveVelocity.Length();
+                if (moveVelocityLength > 1)
+                    moveVelocity.Normalize();
+
+                if (moveVelocityLength > Values.ControllerDeadzone)
+                {
+                    _isWalking = true;
+                    _objRaft.TargetVelocity(moveVelocity * 0.5f);
+
+                    if (CurrentState != State.Charging && CurrentState != State.ChargeBlocking)
+                    {
+                        var vectorDirection = ToDirection(moveVelocity, modern_analog);
+                        Direction = vectorDirection;
+                    }
+                }
+            }
+        }
+
         public void StartJump()
         {
             if (CurrentState != State.Dying && CurrentState != State.PickingUp)
@@ -5143,6 +5113,72 @@ namespace ProjectZ.InGame.GameObjects
             _body.VelocityTarget = pullVector * 3;
 
             return true;
+        }
+
+        private void UpdateTeleporting()
+        {
+            if (CurrentState == State.Teleporting)
+            {
+                if (_teleportCounterFull < 1250 || Direction <= 2)
+                    _teleportCounter += Game1.DeltaTime;
+
+                _teleportCounterFull += Game1.DeltaTime;
+                var rotationSpeed = 150 - (float)Math.Sin((_teleportCounterFull / 2000f) * Math.PI) * 50;
+                if (_teleportCounter > rotationSpeed)
+                {
+                    _teleportCounter -= rotationSpeed;
+                    Direction = (Direction + 1) % 4;
+                    UpdateAnimation();
+                }
+                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.ResetTransition();
+
+                if (_teleportState == 0 && _teleportCounterFull >= 1250)
+                {
+                    if (_teleporter != null)
+                    {
+                        _teleportState = 1;
+
+                        EntityPosition.Set(_teleporter.TeleportPosition);
+                        _teleporter.Lock();
+
+                        var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
+                        MapManager.Camera.SoftUpdate(goalPosition);
+                    }
+                    else if (Direction == 3 && _teleportCounterFull >= 1450)
+                    {
+                        MapTransitionStart = EntityPosition.Position;
+                        MapTransitionEnd = EntityPosition.Position;
+                        TransitionOutWalking = false;
+
+                        transitionSystem.AppendMapChange(_teleportMap, _teleporterId, false, true, Color.White, true);
+                    }
+
+                    transitionSystem.SetColorMode(Color.White, 1);
+                }
+
+                var fadeOutTime = 250.0f;
+                var fadeoutStart = 1750;
+                var fadeoutEnd = 1750 + fadeOutTime;
+
+                // fading in
+                if (_teleportCounterFull >= 750 && _teleportCounterFull < 1250)
+                {
+                    transitionSystem.SetColorMode(Color.White, (_teleportCounterFull - 750) / 500f);
+                }
+                // fading out
+                else if (_teleportState == 1 && _teleportCounterFull >= fadeoutStart && _teleportCounterFull < fadeoutEnd)
+                {
+                    transitionSystem.SetColorMode(Color.White, 1 - (_teleportCounterFull - fadeoutStart) / fadeOutTime);
+                }
+                // finished?
+                else if (_teleportState == 1 && _teleportCounterFull >= fadeoutEnd)
+                {
+                    _drawBody.Layer = Values.LayerPlayer;
+                    transitionSystem.SetColorMode(Color.White, 0);
+                    CurrentState = State.Idle;
+                }
+            }
         }
 
         public void StartTeleportation(ObjDungeonTeleporter teleporter)
@@ -5570,7 +5606,8 @@ namespace ProjectZ.InGame.GameObjects
             _holeResetPointZ = EntityPosition.Z;
             _drownResetPosition = EntityPosition.Position;
 
-            UpdateSwimming();
+            UpdateSwimmingPartOne();
+
             UpdateIgnoresZ();
 
             if (Is2DMode)
