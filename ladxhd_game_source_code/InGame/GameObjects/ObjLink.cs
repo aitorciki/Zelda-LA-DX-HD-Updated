@@ -301,8 +301,8 @@ namespace ProjectZ.InGame.GameObjects
         private float _hookshotCounter;
 
         // Boomerang
-        private ObjBoomerang _boomerang = new ObjBoomerang();
-        private Vector2[] _boomerangOffset;
+        public ObjBoomerang Boomerang = new ObjBoomerang();
+        public Vector2[] _boomerangOffset;
 
         // Magic Rod
         private Vector2[] _magicRodOffset;
@@ -3141,7 +3141,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState != State.Jumping &&
                 CurrentState != State.Pushing &&
                 CurrentState != State.Rafting &&
-                (CurrentState != State.Swimming || !Map.Is2dMap)) || !_boomerang.IsReady)
+                (CurrentState != State.Swimming || !Map.Is2dMap)) || !Boomerang.IsReady)
                 return;
 
             var spawnPosition = new Vector3(EntityPosition.X + _boomerangOffset[Direction].X, EntityPosition.Y + _boomerangOffset[Direction].Y, EntityPosition.Z);
@@ -3157,8 +3157,8 @@ namespace ProjectZ.InGame.GameObjects
                 else
                     boomerangVector = _walkDirection[Direction];
 
-            _boomerang.Start(Map, spawnPosition, boomerangVector);
-            Map.Objects.SpawnObject(_boomerang);
+            Boomerang.Start(Map, spawnPosition, boomerangVector);
+            Map.Objects.SpawnObject(Boomerang);
 
             if (CurrentState != State.Jumping &&
                 CurrentState != State.ChargeJumping)
@@ -4340,7 +4340,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState != State.OcarinaTeleport)
                 CurrentState = State.Idle;
 
-            _boomerang.Reset();
+            Boomerang.Reset();
             Hookshot.Reset();
 
             _hookshotPull = false;

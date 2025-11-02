@@ -12,7 +12,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
-    internal class ObjBoomerang : GameObject
+    public class ObjBoomerang : GameObject
     {
         private readonly List<GameObject> _itemList = new List<GameObject>();
 
@@ -85,6 +85,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            if (Map == null) return;
+
             // Play sound effect.
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
 
@@ -197,6 +199,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void ComeBack(bool particle = false)
         {
+
             if (particle)
             {
                 var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);

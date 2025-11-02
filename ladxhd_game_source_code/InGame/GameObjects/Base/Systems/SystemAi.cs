@@ -27,6 +27,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 // Make sure that Link's follower is always updated.
                 if (!_objectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _objectList.Add(MapManager.ObjLink._objFollower);
+
+                // Always update the boomerang as well.
+                if (!_objectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                    _objectList.Add(MapManager.ObjLink.Boomerang);
             }
             // Only update the objects that are currently visible.
             else

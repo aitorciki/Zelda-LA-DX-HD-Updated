@@ -251,6 +251,10 @@ namespace ProjectZ.InGame.Map
                 // Make sure that Link's follower is always updated.
                 if (!_updateGameObject.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _updateGameObject.Add(MapManager.ObjLink._objFollower);
+
+                // Always update the boomerang as well.
+                if (!_updateGameObject.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                    _updateGameObject.Add(MapManager.ObjLink.Boomerang);
             }
             // Only update the objects that are currently visible.
             else
@@ -306,6 +310,10 @@ namespace ProjectZ.InGame.Map
                 // Make sure that Link's follower is always updated.
                 if (!_collidingObjectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _collidingObjectList.Add(MapManager.ObjLink._objFollower);
+
+                // Always update the boomerang as well.
+                if (!_collidingObjectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                    _collidingObjectList.Add(MapManager.ObjLink.Boomerang);
             }
             // Only update the objects that are currently visible.
             else
@@ -342,6 +350,10 @@ namespace ProjectZ.InGame.Map
                 // Make sure that Link's follower is always updated.
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _damageFieldObjects.Add(MapManager.ObjLink._objFollower);
+
+                // Always update the boomerang as well.
+                if (!_damageFieldObjects.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                    _damageFieldObjects.Add(MapManager.ObjLink.Boomerang);
             }
             else
             {
