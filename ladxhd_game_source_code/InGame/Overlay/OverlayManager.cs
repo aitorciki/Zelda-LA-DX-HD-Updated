@@ -120,8 +120,6 @@ namespace ProjectZ.InGame.Overlay
             _mapOverlay.Load();
             _dungeonOverlay.Load();
             _photoOverlay.Load();
-
-            _AutoScaleSet = GameSettings.GameScale == 21;
         }
 
         public void RefreshPhotoOverlay()
