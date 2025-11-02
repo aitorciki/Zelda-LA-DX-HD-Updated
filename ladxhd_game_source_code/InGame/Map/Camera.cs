@@ -241,30 +241,27 @@ namespace ProjectZ.InGame.Map
                 spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Right
 
                 // Fill everything outside the border with black.
-                if (GameSettings.ClassicBlackout)
-                {
-                    var screenW = viewport.Width;
-                    var screenH = viewport.Height;
+                var screenW = viewport.Width;
+                var screenH = viewport.Height;
 
-                    // Compute the rectangle’s position on screen
-                    var rectScreenX = drawOffset.X + fieldX - Location.X;
-                    var rectScreenY = drawOffset.Y + fieldY - Location.Y;
+                // Compute the rectangle’s position on screen
+                var rectScreenX = drawOffset.X + fieldX - Location.X;
+                var rectScreenY = drawOffset.Y + fieldY - Location.Y;
 
-                    // Apply alpha
-                    Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
+                // Apply alpha
+                Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
 
-                    // Top black bar
-                    spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
+                // Top black bar
+                spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
 
-                    // Bottom black bar
-                    spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
+                // Bottom black bar
+                spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
 
-                    // Left black bar
-                    spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
+                // Left black bar
+                spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
 
-                    // Right black bar
-                    spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
-                }
+                // Right black bar
+                spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
             }
         }
 

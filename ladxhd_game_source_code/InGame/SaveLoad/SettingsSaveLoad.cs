@@ -46,7 +46,6 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
             GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
             GameSettings.ClassicBorder = saveManager.GetBool("ClassicBorder", GameSettings.ClassicBorder);
-            GameSettings.ClassicBlackout = saveManager.GetBool("ClassicBlackout", GameSettings.ClassicBlackout);
             GameSettings.ClassicAlpha = saveManager.GetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
 
             // Redux Settings
@@ -108,7 +107,6 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
             saveManager.SetBool("ClassicCamera", GameSettings.ClassicCamera);
             saveManager.SetBool("ClassicBorder", GameSettings.ClassicBorder);
-            saveManager.SetBool("ClassicBlackout", GameSettings.ClassicBlackout);
             saveManager.SetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
 
             // Redux Settings

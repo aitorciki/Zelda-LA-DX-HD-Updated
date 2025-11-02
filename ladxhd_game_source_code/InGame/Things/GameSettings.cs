@@ -32,7 +32,6 @@ namespace ProjectZ.InGame.Things
         public static bool    SmoothCamera    =  true;
         public static bool    ClassicCamera   =  false;
         public static bool    ClassicBorder   =  false;
-        public static bool    ClassicBlackout =  false;
         public static float   ClassicAlpha    =  1.00f;
 
         // Redux Settings

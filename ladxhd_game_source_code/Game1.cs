@@ -464,7 +464,6 @@ namespace ProjectZ
             Resources.BlurEffectV.Parameters["mult0"].SetValue(mult0);
             Resources.BlurEffectV.Parameters["mult1"].SetValue(mult1);
 
-            // resize
             Graphics.GraphicsDevice.SetRenderTarget(_renderTarget2);
             SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, null, null);
             SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, _renderTarget2.Width, _renderTarget2.Height), Color.White);
@@ -600,49 +599,68 @@ namespace ProjectZ
             ScaleChanged = true;
         }
 
-        private void UpdateScale(bool SkipEditor = false)
+        private void UpdateScale()
         {
-            // Calculate the game scale that is used for auto scaling.
-            var gameScale = MathHelper.Clamp(Math.Min(WindowWidth / (float)Values.MinWidth, WindowHeight / (float)Values.MinHeight), 1, 25);
-
-            // If set to autoscale (11) used the calculated value. Otherwise use the value set by the user.
-            MapManager.Camera.Scale = GameSettings.GameScale == 11 
-                ? MathF.Ceiling(gameScale) 
-                : GameSettings.GameScale;
-
-            // The game scale must be at least 1x.
-            if (MapManager.Camera.Scale < 1)
+            // Classic camera mode uses a static camera and auto scales to the screen.
+            if (GameSettings.ClassicCamera)
             {
-                MapManager.Camera.Scale = 1 / (2 - MapManager.Camera.Scale);
-                GameManager.SetGameScale(1);
+                // Force integer scale or the field boundary will be thrown off. The scaling value is calculated
+                // using the original dimensions (GameBoy) so higher scaling values can be achieved.
+                int scaleX = WindowWidth / 160;
+                int scaleY = WindowHeight / 128;
+                int gameScale = Math.Max(1, Math.Min(scaleX, scaleY));
+
+                MapManager.Camera.Scale = gameScale;
+                GameManager.SetGameScale(gameScale);
             }
-            // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional 
-            // values while manually setting the scale only allows upscaling using integer values.
+            // The standard camera is slightly more complicating.
             else
             {
-                // If set to autoscale (11) use that. Otherwise use the value set by the user.
-                float newGameScale = GameSettings.GameScale == 11 
-                    ? gameScale 
+                // Calculate the game scale that is used for auto scaling.
+                float gameScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 25);
+
+                // If set to autoscale (11) used the calculated value; otherwise use the value set by the user. The
+                // camera scale uses a float value and can use a fractional scaling value when drawing the world.
+                MapManager.Camera.Scale = GameSettings.GameScale == 11 
+                    ? MathF.Ceiling(gameScale) 
                     : GameSettings.GameScale;
 
-                GameManager.SetGameScale(newGameScale);
+                // The game scale must be at least 1x.
+                if (MapManager.Camera.Scale < 1)
+                {
+                    MapManager.Camera.Scale = 1 / (2 - MapManager.Camera.Scale);
+                    GameManager.SetGameScale(1);
+                }
+                // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional 
+                // values while manually setting the scale only allows upscaling using integer values.
+                else
+                {
+                    // If set to autoscale (11) use that. Otherwise use the value set by the user.
+                    float newGameScale = GameSettings.GameScale == 11 
+                        ? gameScale 
+                        : GameSettings.GameScale;
+                    GameManager.SetGameScale(newGameScale);
+                }
             }
             // Scale of the game field.
-            var screenScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 25);
+            int interfaceScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 25);
 
             // Scale of the user interface.
-            if (GameSettings.UiScale > screenScale)
-                UiScale = screenScale;
+            if (GameSettings.UiScale > interfaceScale)
+                UiScale = interfaceScale;
             else
-                UiScale = GameSettings.UiScale == 0 ? screenScale : MathHelper.Clamp(GameSettings.UiScale, 1, screenScale);
+                UiScale = GameSettings.UiScale == 0 
+                    ? interfaceScale 
+                    : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
 
-            // NOTE: This was used as a workaround to issues with Exclusive Fullscreen mode. Null render targets caused editor to crash on start up.
-            if (!SkipEditor) UiManager.SizeChanged();
+            // Update the scale of the UI manager.
+            UiManager.SizeChanged();
 
-            // NOTE: I can't remember if UiPageManager actually needs a forced resize here. Might be more workarounds to null render targets in exclusive fullscreen.
+            // I can't remember if UiPageManager actually needs a forced resize here. Might be more workarounds to null render targets in exclusive fullscreen.
             ScreenManager.OnResize(WindowWidth, WindowHeight);
             UiPageManager.OnResize(WindowWidth, WindowHeight);
 
+            // This needs to go false or it will run every loop.
             ScaleChanged = false;
         }
 

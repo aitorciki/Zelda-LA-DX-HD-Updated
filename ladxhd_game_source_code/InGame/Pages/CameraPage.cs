@@ -24,18 +24,13 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Classic Camera
             var toggleClassicCamera = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_camera_classiccam", GameSettings.ClassicCamera, newState => { GameSettings.ClassicCamera = newState; });
+                "settings_camera_classiccam", GameSettings.ClassicCamera, newState => { GameSettings.ClassicCamera = newState; Game1.ScaleChanged = true; });
             _contentLayout.AddElement(toggleClassicCamera);
 
             // Button: Camera Border
             var toggleCameraBorder = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_camborder", GameSettings.ClassicBorder, newState => { GameSettings.ClassicBorder = newState; });
             _contentLayout.AddElement(toggleCameraBorder);
-
-            // Button: Camera Blackout
-            var toggleCameraBlackout = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_camera_camblackout", GameSettings.ClassicBlackout, newState => { GameSettings.ClassicBlackout = newState; });
-            _contentLayout.AddElement(toggleCameraBlackout);
 
             // Slider: Blackout Amount
             var movementSlider = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
