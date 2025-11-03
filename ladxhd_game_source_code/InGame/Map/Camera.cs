@@ -92,7 +92,6 @@ namespace ProjectZ.InGame.Map
                 (int)MapManager.ObjLink.EntityPosition.X,
                 (int)MapManager.ObjLink.EntityPosition.Y
             );
-
             int rectCenterX = (fieldRect.X + fieldRect.Width / 2) * ScaleValue;
             int rectCenterY = (fieldRect.Y + fieldRect.Height / 2) * ScaleValue;
             return new Vector2(rectCenterX, rectCenterY);

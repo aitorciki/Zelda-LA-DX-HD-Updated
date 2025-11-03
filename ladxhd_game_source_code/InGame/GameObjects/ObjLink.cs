@@ -911,6 +911,7 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
                     }
+                    Camera.SnapCamera = false;
                 }
                 _spriteTransparency = percentage;
                 _shadowComponent.Transparency = percentage;
@@ -5109,7 +5110,7 @@ namespace ProjectZ.InGame.GameObjects
             var distance = _body.BodyBox.Box.Center - Hookshot.HookshotPosition.Position;
             var pullVector = AnimationHelper.DirectionOffset[Direction];
 
-            // reached the end of the hook or collided with an object before
+            // Reached the end of the hook or collided with an object before.
             if (distance.Length() < (distance + pullVector).Length() ||
                 (_body.LastVelocityCollision != Values.BodyCollision.None && (_body.SlideOffset == Vector2.Zero || _body.BodyBox.Box.Contains(Hookshot.HookshotPosition.Position))) ||
                 CurrentState == State.Dying)
@@ -5166,27 +5167,27 @@ namespace ProjectZ.InGame.GameObjects
                     }
                     transitionSystem.SetColorMode(Color.White, 1);
                 }
-
                 var fadeOutTime = 250.0f;
                 var fadeoutStart = 1750;
                 var fadeoutEnd = 1750 + fadeOutTime;
 
-                // fading in
+                // Teleport fade in.
                 if (_teleportCounterFull >= 750 && _teleportCounterFull < 1250)
                 {
                     transitionSystem.SetColorMode(Color.White, (_teleportCounterFull - 750) / 500f);
                 }
-                // fading out
+                // Teleport fade out.
                 else if (_teleportState == 1 && _teleportCounterFull >= fadeoutStart && _teleportCounterFull < fadeoutEnd)
                 {
                     transitionSystem.SetColorMode(Color.White, 1 - (_teleportCounterFull - fadeoutStart) / fadeOutTime);
                 }
-                // finished?
+                // Teleport has finished.
                 else if (_teleportState == 1 && _teleportCounterFull >= fadeoutEnd)
                 {
                     _drawBody.Layer = Values.LayerPlayer;
                     transitionSystem.SetColorMode(Color.White, 0);
                     CurrentState = State.Idle;
+                    Camera.SnapCamera = false;
                 }
             }
         }
@@ -5201,6 +5202,9 @@ namespace ProjectZ.InGame.GameObjects
             _teleportState = 0;
             _teleportCounter = 0;
             _teleportCounterFull = 0;
+
+            if (GameSettings.ClassicCamera)
+                Camera.SnapCamera = true;
         }
 
         public void StartTeleportation(string teleportMap, string teleporterId)
@@ -5217,6 +5221,9 @@ namespace ProjectZ.InGame.GameObjects
             _teleportCounterFull = 0;
 
             ReleaseCarriedObject();
+
+            if (GameSettings.ClassicCamera)
+                Camera.SnapCamera = true;
         }
 
         public void StartWorldTelportation(Vector2 newPosition)
@@ -5242,9 +5249,11 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _spriteShadow.EntityPosition.Set(fallPositionV2);
 }
-            // only jump to the new position if it is a different teleporter at a different location
-            if (positionDistance.Length() > 64)
+            // Only jump to the new position if it is a different teleporter at a different location.
+            if (!GameSettings.ClassicCamera && positionDistance.Length() > 64)
                 MapManager.Camera.ForceUpdate(Game1.GameManager.MapManager.GetCameraTarget());
+            else
+                Camera.SnapCamera = true;
         }
 
         public void SetWalkingDirection(int direction)

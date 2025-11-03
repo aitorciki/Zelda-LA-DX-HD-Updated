@@ -124,12 +124,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _lockTeleporter = true;
                 return;
             }
-
             var teleporterList = Map.Objects.GetObjectsOfType(typeof(ObjDungeonTeleporter));
 
             foreach (var entity in teleporterList)
             {
-                var teleporter = ((ObjDungeonTeleporter)entity);
+                var teleporter = (ObjDungeonTeleporter)entity;
                 if (teleporter != this && teleporter._teleporterId == _teleporterId)
                 {
                     MapManager.ObjLink.SetPosition(TeleportPosition);

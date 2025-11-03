@@ -158,11 +158,11 @@ namespace ProjectZ.InGame.GameSystems
             {
                 _changeMapCount -= Game1.DeltaTime;
 
-                // update the position of the player to walk into the new room
+                // Update the position of the player to walk into the new room.
                 var percentage = MathHelper.Clamp(_changeMapCount / ChangeMapTime, 0, 1);
                 MapManager.ObjLink.UpdateMapTransitionIn(1 - (float)(Math.Sin(percentage * 1.1) / Math.Sin(1.1)));
 
-                // slowly increase the volume of the music; the music is only playing
+                // Slowly increase the volume of the music; the music is only playing.
                 var newVolume = 1 - percentage;
                 if (Game1.GbsPlayer.GetVolumeMultiplier() < 1)
                     Game1.GbsPlayer.SetVolumeMultiplier(newVolume);
@@ -172,13 +172,12 @@ namespace ProjectZ.InGame.GameSystems
 
                 if (_wobbleTransitionOut)
                 {
-                    // fade out to a white screen
+                    // Fade out to a white screen.
                     var wobblePercentage = 1 - MathHelper.Clamp((_wobbleTransitionTime - _changeMapCount) / ChangeMapTime, 0, 1);
                     _transitionObject.Brightness = wobblePercentage;
                     _transitionObject.WobblePercentage = _changeMapCount / _wobbleTransitionTime;
                 }
-
-                // light up the scene
+                // Light up the scene.
                 if (_changeMapCount <= 0)
                 {
                     _transitionEnded = true;
@@ -221,13 +220,17 @@ namespace ProjectZ.InGame.GameSystems
             // should never be visible. Even when Link should not appear, he pops up for a brief second. This hack covers that up.
             if (GameSettings.ClassicCamera && _transitionObject.Percentage > 0.80f && _transitionObject.WobbleTransition == false)
             {
-                Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
+                // We only want to do this for fully opaque black transitions.
+                if (_transitionObject.TransitionColor == new Color(0,0,0,255))
+                {
+                    Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
 
-                var viewport = spriteBatch.GraphicsDevice.Viewport;
+                    var viewport = spriteBatch.GraphicsDevice.Viewport;
 
-                spriteBatch.Begin();
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * 0.10)), Color.Black);
-                spriteBatch.End();
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * 0.10)), _transitionObject.TransitionColor);
+                    spriteBatch.End();
+                }
             }
         }
 
@@ -363,7 +366,6 @@ namespace ProjectZ.InGame.GameSystems
                 StartKnockoutTransition = false;
                 KnockoutTransition();
             }
-
             // start loading the new map in a thread
             _loadingThread = new Thread(o => ThreadLoading(mapFileName));
             _loadingThread.Start();
