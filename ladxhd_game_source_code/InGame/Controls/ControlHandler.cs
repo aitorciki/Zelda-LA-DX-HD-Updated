@@ -169,7 +169,7 @@ namespace ProjectZ.InGame.Controls
             return new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
         }
 
-        public static Vector2 GetMoveVector2(bool forceModern = false)
+        public static Vector2 GetMoveVector2()
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
             var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
@@ -177,21 +177,7 @@ namespace ProjectZ.InGame.Controls
             if (vec.Length() < Values.ControllerDeadzone)
                 vec = Vector2.Zero;
 
-            if (vec != Vector2.Zero) 
-            {
-                if (GameSettings.OldMovement && !forceModern)
-                {
-                    vec.Normalize();
-                    vec = new Vector2(
-                        (float)Math.Round(vec.X),
-                        (float)Math.Round(vec.Y)
-                    );
-                    if (vec.LengthSquared() == 0)
-                        vec = Vector2.Zero;
-                }
-                LastDirectionDPad = false;
-            }
-            else if (vec == Vector2.Zero)
+            if (vec == Vector2.Zero)
             {
                 if (ButtonDown(CButtons.Left))
                     vec += new Vector2(-1, 0);
@@ -201,8 +187,6 @@ namespace ProjectZ.InGame.Controls
                     vec += new Vector2(0, -1);
                 if (ButtonDown(CButtons.Down))
                     vec += new Vector2(0, 1);
-
-                LastDirectionDPad = true;
             }
             return vec;
         }

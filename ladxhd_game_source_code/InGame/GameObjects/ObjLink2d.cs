@@ -422,7 +422,7 @@ namespace ProjectZ.InGame.GameObjects
             if (!DisableDirHack && !IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
                 CurrentState != State.Pulling && CurrentState != State.Hookshot && !_isHoldingSword)
             {
-                Vector2 moveVector = ControlHandler.GetMoveVector2(modern_analog);
+                Vector2 moveVector = ControlHandler.GetMoveVector2();
                 if (moveVector != Vector2.Zero)
                     Direction = AnimationHelper.GetDirection(moveVector);
             }
@@ -514,7 +514,7 @@ namespace ProjectZ.InGame.GameObjects
 
             var walkVelocity = Vector2.Zero;
             if (!_isLocked && ((CurrentState != State.Attacking && CurrentState != State.AttackBlocking && CurrentState != State.AttackJumping) || !_body.IsGrounded))
-                walkVelocity = ControlHandler.GetMoveVector2(modern_analog);
+                walkVelocity = ControlHandler.GetMoveVector2();
 
             var walkVelLength = walkVelocity.Length();
             var vectorDirection = ToDirection(walkVelocity);
@@ -639,7 +639,7 @@ namespace ProjectZ.InGame.GameObjects
 
             var moveVector = Vector2.Zero;
             if (!_isLocked && CurrentState != State.Attacking && CurrentState != State.AttackSwimming)
-                moveVector = ControlHandler.GetMoveVector2(modern_analog);
+                moveVector = ControlHandler.GetMoveVector2();
 
             var moveVectorLength = moveVector.Length();
             moveVectorLength = Math.Clamp(moveVectorLength, 0, MaxSwimSpeed2D);

@@ -439,14 +439,16 @@ namespace ProjectZ.InGame.GameObjects
         int   length_beam = 600;
         float sword_charge_time = 500;
         float boots_charge_time = 500;
-        bool  disable_moonwalk = false;
-        bool  modern_analog = false;
         bool  light_source = false;
         int   light_red = 255;
         int   light_grn = 255;
         int   light_blu = 255;
         float light_bright = 1.0f;
         int   light_size = 120;
+
+        // Disabled lahdmod variables.
+        bool  disable_moonwalk;
+        bool  modern_analog;
 
         public ObjLink() : base((Map.Map)null)
         {
@@ -2157,13 +2159,13 @@ namespace ProjectZ.InGame.GameObjects
             var walkVelocity = Vector2.Zero;
 
             if (!_isLocked && (!IsAttackingState(CurrentState) || !_body.IsGrounded))
-                walkVelocity = ControlHandler.GetMoveVector2(modern_analog);
+                walkVelocity = ControlHandler.GetMoveVector2();
 
             var walkVelLength = walkVelocity.Length();
             if (walkVelLength > 1)
                 walkVelocity.Normalize();
 
-            var vectorDirection = ToDirection(walkVelocity, modern_analog);
+            var vectorDirection = ToDirection(walkVelocity);
 
             if (_bootsRunning && (walkVelLength < Values.ControllerDeadzone || vectorDirection != (Direction + 2) % 4))
             {
@@ -2223,17 +2225,17 @@ namespace ProjectZ.InGame.GameObjects
                 if (!IsAttackingState(CurrentState) && 
                     !IsChargingState(CurrentState))
                 {
-                    Direction = ToDirection(walkVelocity, modern_analog);
+                    Direction = ToDirection(walkVelocity);
                     PreviousDirectionInput = walkVelocity;
                 }
             }
             // Allow changing direction when attacking while standing still.
             else
             {
-                Vector2 vecMoved = ControlHandler.GetMoveVector2(modern_analog);
+                Vector2 vecMoved = ControlHandler.GetMoveVector2();
                 if ((CurrentState == State.Attacking || CurrentState == State.AttackBlocking) &&
                     !_isHoldingSword && vecMoved != Vector2.Zero && _body.IsGrounded)
-                    Direction = ToDirection(vecMoved, modern_analog);
+                    Direction = ToDirection(vecMoved);
             }
             _lastBaseMoveVelocity = _moveVelocity;
 
@@ -2703,10 +2705,10 @@ namespace ProjectZ.InGame.GameObjects
             // stop attacking
             if (IsAttackingState(CurrentState) && !Animation.IsPlaying)
             {
-                if (disable_moonwalk && _isSwordSpinning)
+                if (_isSwordSpinning)
                 {
-                    Vector2 vecMoved = ControlHandler.GetMoveVector2(modern_analog);
-                    Direction = ToDirection(vecMoved, forceModern:true);
+                    Vector2 vecMoved = ControlHandler.GetMoveVector2();
+                    Direction = ToDirection(vecMoved);
                     PreviousDirectionInput = vecMoved;
                 }
                 _isSwordSpinning = false;
@@ -4741,7 +4743,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 // The hit velocity is added to the movement (*2) for the flame trap knockback on the way 
                 // to level 8 as the normal value sent back is not strong enough to knock it back.
-                var moveVelocity = ControlHandler.GetMoveVector2(modern_analog) + _hitVelocity * 2;
+                var moveVelocity = ControlHandler.GetMoveVector2() + _hitVelocity * 2;
 
                 var moveVelocityLength = moveVelocity.Length();
                 if (moveVelocityLength > 1)
@@ -4750,7 +4752,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (moveVelocityLength > Values.ControllerDeadzone)
                 {
                     _objRooster.TargetVelocity(moveVelocity, 0.5f, Direction);
-                    var vectorDirection = ToDirection(moveVelocity, modern_analog);
+                    var vectorDirection = ToDirection(moveVelocity);
                     Direction = vectorDirection;
                 }
             }
@@ -4950,7 +4952,7 @@ namespace ProjectZ.InGame.GameObjects
 
             if (_isRafting && (CurrentState == State.Rafting || CurrentState == State.Charging || CurrentState == State.ChargeBlocking))
             {
-                var moveVelocity = ControlHandler.GetMoveVector2(modern_analog);
+                var moveVelocity = ControlHandler.GetMoveVector2();
 
                 var moveVelocityLength = moveVelocity.Length();
                 if (moveVelocityLength > 1)
@@ -4963,7 +4965,7 @@ namespace ProjectZ.InGame.GameObjects
 
                     if (CurrentState != State.Charging && CurrentState != State.ChargeBlocking)
                     {
-                        var vectorDirection = ToDirection(moveVelocity, modern_analog);
+                        var vectorDirection = ToDirection(moveVelocity);
                         Direction = vectorDirection;
                     }
                 }

@@ -50,7 +50,7 @@ namespace ProjectZ.InGame.Things
             None,
             Enemy = 1,
             Blocking = 2,
-            NoneBlocking = 4, // weapons like the boomerang will move through the object
+            NoneBlocking = 4,
             Particle = 8,
             Repelling = 16,
             RepellingParticle = 8 + 16,

@@ -39,66 +39,40 @@ namespace ProjectZ.InGame.GameObjects
             return false;
         }
 
-        private int ToDirection(Vector2 direction, bool modernAnalog = false, bool forceModern = false)
+        private int ToDirection(Vector2 direction)
         {
-            // If player wants old style movement.
-            if (GameSettings.OldMovement && !forceModern)
-                if (ControlHandler.LastDirectionDPad || (!modernAnalog && !ControlHandler.LastDirectionDPad))
-                    return ToDirectionClassic(direction);
-
             // Fail safe in case the impossible happens.
             if (direction == Vector2.Zero) { return Direction; }
 
-            // Get angle in degrees 0-360.
-            float angle = (float)Math.Atan2(direction.Y, direction.X);
-            float deg = MathHelper.ToDegrees(angle);
-            if (deg < 0) { deg += 360f; }
+            // If player wants old style movement.
+            if (GameSettings.OldMovement)
+                return ToDirectionClassic(direction);
 
-            // 0:Left 1:Up 2:Right 3:Down
-            if (deg >= 315 || deg < 45)   return 2;
-            if (deg >= 45  && deg < 135)  return 3;
-            if (deg >= 135 && deg < 225)  return 0;
-            return 1;
+            // Bias towards horizontal (0/2) or bias towards the vertical (1/3).
+            float bias = (Direction == 0 || Direction == 2) ? 1.05f : 0.95f;
+
+            // Prefer staying in current axis when movement is ambiguous.
+            if (Math.Abs(direction.X) * bias > Math.Abs(direction.Y))
+                return direction.X > 0 ? 2 : 0;
+            else
+                return direction.Y > 0 ? 3 : 1;
         }
 
         private int ToDirectionClassic(Vector2 direction)
         {
-            // No input — keep direction.
-            if (direction == Vector2.Zero)
-                return Direction;
-
             // Get angle in degrees 0-360.
             float angle = (float)Math.Atan2(direction.Y, direction.X);
             float deg = MathHelper.ToDegrees(angle);
             if (deg < 0) { deg += 360f; }
 
             // 0:Left 1:Up 2:Right 3:Down
-            if (deg == 180) return 0;
-            if (deg == 270) return 1;
-            if (deg == 0)   return 2;
-            if (deg == 90)  return 3;
-
-            // Detect diagonal opposite movement (X and Y flipped signs).
-            if (disable_moonwalk && GameMath.HasInvertedSigns(direction, PreviousDirectionInput))
+            return deg switch
             {
-                // Flip to opposite direction.
-                return Opposite(Direction);
-            }
-            // Otherwise, keep current direction.
-            return Direction;
-        }
-
-        // Helper to return the opposite of a direction.
-        private int Opposite(int dir)
-        {
-            // 0:Left 1:Up 2:Right 3:Down
-            return dir switch
-            {
-                0 => 2,
-                1 => 3,
-                2 => 0,
-                3 => 1,
-                _ => dir
+                180 => 0,
+                270 => 1,
+                0   => 2,
+                90  => 3,
+                _   => Direction
             };
         }
     }
