@@ -4396,6 +4396,9 @@ namespace ProjectZ.InGame.GameObjects
             _diveCounter = 0;
             _swimVelocity = Vector2.Zero;
 
+            PreventDamage = false;
+            PreventDamageTimer = 0;
+
             if (NextMapFallStart)
             {
                 EntityPosition.Z = 64;
