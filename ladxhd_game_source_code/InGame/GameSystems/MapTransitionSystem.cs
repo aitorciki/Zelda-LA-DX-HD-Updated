@@ -424,13 +424,13 @@ namespace ProjectZ.InGame.GameSystems
         {
             try
             {
-                // @HACK: after loading the map the garbage collector will start and increase the frametime
-                // this also leads to the door soundeffect cracking sometimes
-                // if we wait a little bit the cracking gets reduced by a lot
-                //Thread.Sleep(75);
+                // HACK: I don't know if this is relevant anymore, it was used to reduce the "crackling"
+                // during map transitions. I never experienced it, but 75ms is nearly irrlevant so it can't hurt.
+                Thread.Sleep(75);
 
                 // load the map file
                 SaveLoadMap.LoadMap(mapFileName, _gameMapManager.NextMap);
+
                 // create the objects
                 _gameMapManager.NextMap.Objects.LoadObjects();
 

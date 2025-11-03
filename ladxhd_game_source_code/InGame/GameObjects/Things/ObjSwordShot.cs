@@ -75,10 +75,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_spawnCounter > SpawnTime)
             {
                 if (_spawnCounter > _despawnTime)
-                    // fade out
                     _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - _despawnTime) / FadeOutTime, 0, 1));
                 else
-                    // fade in
                     _sprite.Color = Color.White * Math.Clamp((_spawnCounter - SpawnTime) / FadeInTime, 0, 1);
 
                 if (_spawnCounter > _despawnTime + FadeOutTime)
@@ -87,7 +85,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                     return;
                 }
             }
-
             if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
             {
                 OnCollision(Values.BodyCollision.None);
@@ -113,8 +110,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     spriteBatch.Draw(_sprite.SprTexture, drawPosition, _sprite.SourceRectangle, _sprite.Color * (0.20f + 0.30f * ((i + 1) / (float)trailCount)),
                         _sprite.Rotation, _sprite.Center * _sprite.Scale, new Vector2(_sprite.Scale), SpriteEffects.None, 0);
             }
-            var changeColor = Game1.TotalGameTime % (8 / 0.06) >= 4 / 0.06 &&
-                        ObjectManager.CurrentEffect != Resources.DamageSpriteShader0.Effect;
+            var changeColor = Game1.TotalGameTime % (8 / 0.06) >= 4 / 0.06 && ObjectManager.CurrentEffect != Resources.DamageSpriteShader0.Effect;
 
             if (changeColor)
             {

@@ -13,7 +13,6 @@ namespace ProjectZ.InGame.GameObjects
 
         private int ReverseDirection(int direction) => (direction + 2) % 4;
 
-
         public void FreezeGame(bool freeze)
         {
             if (freeze)

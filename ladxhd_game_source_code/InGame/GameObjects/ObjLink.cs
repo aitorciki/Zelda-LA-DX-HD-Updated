@@ -5162,7 +5162,6 @@ namespace ProjectZ.InGame.GameObjects
 
                         transitionSystem.AppendMapChange(_teleportMap, _teleporterId, false, true, Color.White, true);
                     }
-
                     transitionSystem.SetColorMode(Color.White, 1);
                 }
 
@@ -5268,7 +5267,6 @@ namespace ProjectZ.InGame.GameObjects
                 SaveGameSaveLoad.FillSaveState(Game1.GameManager);
                 Game1.GameManager.SaveManager.EnableHistory();
             }
-
             _showItem = false;
             _pickingUpInstrument = false;
             _pickingUpSword = false;

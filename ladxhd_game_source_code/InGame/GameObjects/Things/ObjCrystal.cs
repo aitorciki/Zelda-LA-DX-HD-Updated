@@ -13,7 +13,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjCrystal : GameObject
     {
-        private readonly CBox _hittableBoxSmall;
         private readonly Color _lightColor;
         private readonly string _dialogPath;
         private readonly bool _isHardCrystal;
@@ -33,7 +32,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public ObjCrystal(Map.Map map, int posX, int posY, string spriteId, int color, bool hardCrystal, string dialogPath) : base(map, spriteId)
         {
-            // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathModFolder, "ObjCrystal.lahdmod");
 
             if (File.Exists(modFile))
@@ -42,7 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var sprite = Resources.GetSprite(spriteId);
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            EntitySize = new Rectangle(-40, -8 - 40, 80, 80);
+            EntitySize = new Rectangle(-40, -48, 80, 80);
 
             if (color == 0)
                 _lightColor = new Color(light_red_1, light_grn_1, light_blu_1) * light_bright_1;
@@ -52,14 +50,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             _isHardCrystal = hardCrystal;
             _dialogPath = dialogPath;
 
-            var box = new CBox(posX, posY + 16 - 12, 0, 16, 12, 16);
-            var hittableBox = new CBox(EntityPosition, -7, -15, 0, 14, 13, 8);
-            _hittableBoxSmall = new CBox(EntityPosition, -6, -13, 0, 12, 10, 8, true);
+            var hardBox = new CBox(posX, posY + 4, 0, 16, 12, 16);
+            var softBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
 
-            if (!string.IsNullOrEmpty(_dialogPath))
-                AddComponent(PushableComponent.Index, new PushableComponent(box, OnPush) { InertiaTime = 50 });
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(box, Values.CollisionTypes.Normal));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            if (_isHardCrystal)
+            {
+                AddComponent(PushableComponent.Index, new PushableComponent(hardBox, OnPush) { InertiaTime = 50 });
+                AddComponent(HittableComponent.Index, new HittableComponent(hardBox, OnHit));
+                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(hardBox, Values.CollisionTypes.Normal));
+            }
+            else
+            {
+                AddComponent(HittableComponent.Index, new HittableComponent(softBox, OnHit));
+                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(softBox, Values.CollisionTypes.Normal));
+            }
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(-8, -16), Values.LayerPlayer));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
@@ -89,25 +93,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             if ((_isHardCrystal && damageType != HitType.PegasusBootsSword) || (damageType & HitType.SwordHold) != 0 || damageType == HitType.Hookshot)
                 return Values.HitCollision.None;
-            
-            // this is really stupid
-            // for the sword attacks a smaller hitbox is used
-            if ((damageType & HitType.Sword) != 0 &&
-                gameObject is ObjLink player && !player.IsPoking)
-            {
-                var collidingRec = player.SwordDamageBox.Rectangle().GetIntersection(_hittableBoxSmall.Box.Rectangle());
-                var collidingArea = collidingRec.Width * collidingRec.Height;
 
-                if (collidingArea < 16)
-                    return Values.HitCollision.None;
-            }
+            if ((damageType & HitType.Sword) != 0 && (damageType & HitType.Boomerang) != 0 && (damageType & HitType.Hookshot) != 0 && (damageType & HitType.Bomb) != 0)
+                return Values.HitCollision.None;
 
             Game1.GameManager.PlaySoundEffect("D378-09-09");
 
-            // remove this object from the map
             Map.Objects.DeleteObjects.Add(this);
 
-            // spawn small particle stones
             var mult = damageType == HitType.PegasusBootsSword ? 1.0f : 0.25f;
             var velZ = 0.5f;
             var diff = 200f;
@@ -125,6 +118,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.SpawnObject(stone1);
             Map.Objects.SpawnObject(stone2);
             Map.Objects.SpawnObject(stone3);
+
+            if ((damageType & HitType.Sword) != 0)
+                return Values.HitCollision.NoneBlocking;
 
             return Values.HitCollision.Blocking;
         }
