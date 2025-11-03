@@ -2125,6 +2125,10 @@ namespace ProjectZ.InGame.GameObjects
 
                 _moveVelocity = _swimVelocity;
             }
+            else
+            {
+                _diveCounter = 0;
+            }
         }
 
         private void UpdateIgnoresZ()
@@ -5668,7 +5672,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public bool IsDiving()
         {
-            return _diveCounter > 0;
+            return CurrentState == State.Swimming && _diveCounter > 0;
         }
 
         public bool IsGrounded()
