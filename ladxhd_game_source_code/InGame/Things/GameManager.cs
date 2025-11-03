@@ -51,9 +51,7 @@ namespace ProjectZ.InGame.Things
 
             public SoundEffectInstance Instance;
         }
-        // _activeRenderTarget == null ???
 
-        /// RT:CRASH BYPASS
         public Matrix GetMatrix
         {
             get
@@ -1689,8 +1687,8 @@ namespace ProjectZ.InGame.Things
             transitionSystem.LoadMapFromFile(LoadedMap, true, true, Values.MapFirstTransitionColor, false);
             transitionSystem.AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
 
-            // If this was somehow set to 1 and saved, reset it back to 0.
-            Game1.GameManager.SaveManager.SetString("freezeGame", "0");
+            // If the game was frozen for some reason, unfreeze it.
+            MapManager.ObjLink.FreezeGame(false);
 
             // This should probably be removed after awhile.
             SaveFileFix_v1();

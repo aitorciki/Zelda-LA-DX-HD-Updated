@@ -1343,7 +1343,6 @@ namespace ProjectZ.InGame.GameObjects
                 ItemDrawHelper.DrawItem(spriteBatch, ShowItem, itemPosition, Color.White, 1, true);
             }
         }
-
         #endregion
 
         private void OnKeyChange()
@@ -3225,7 +3224,7 @@ namespace ProjectZ.InGame.GameObjects
             PreventDamageTimer = 8000;
 
             // Freeze the game world while the song is played.
-            Game1.GameManager.SaveManager.SetString("freezeGame", "1");
+            FreezeGame(true);
         }
 
         private void UpdateOcarina()
@@ -3269,7 +3268,7 @@ namespace ProjectZ.InGame.GameObjects
             PreventDamageTimer = 200;
 
             // Unfreeze the game world when the song is finished.
-            Game1.GameManager.SaveManager.SetString("freezeGame", "0");
+            FreezeGame(false);
 
             // continue playing music
             if (_ocarinaSong != 1)
@@ -3283,6 +3282,9 @@ namespace ProjectZ.InGame.GameObjects
             }
             if (_ocarinaSong == 1)
             {
+                // Freeze the game during the transition.
+                FreezeGame(true);
+
                 CurrentState = State.OcarinaTeleport;
                 MapTransitionStart = EntityPosition.Position;
                 MapTransitionEnd = EntityPosition.Position;
@@ -5279,7 +5281,7 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SetMusic(14, 2);
 
                 // Freeze the game. The "sword1Collected:0" event in "scripts.zScript" will unfreeze after a time.
-                Game1.GameManager.SaveManager.SetString("freezeGame", "1");
+                FreezeGame(true);
             }
             else if (item.Name == "sword2")
             {
@@ -5655,6 +5657,9 @@ namespace ProjectZ.InGame.GameObjects
 
             // Destroy the field barrier after a transition so it can be recreated.
             DestroyFieldBarrier();
+
+            // Manbo's song transition can freeze the game so unfreeze it now.
+            FreezeGame(false);
         }
 
         #endregion

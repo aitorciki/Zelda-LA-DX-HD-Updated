@@ -225,7 +225,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // Freeze the game as the owl enters the map.
             if (noFreeze != "1")
-                Game1.GameManager.SaveManager.SetString("freezeGame", "1");
+                Link.FreezeGame(true);
 
             Link.FreezePlayer();
             _wasTriggered = true;
@@ -347,7 +347,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.SetMusic(-1, 2);
 
             // Unfreeze the game as the owl starts leaving.
-            Game1.GameManager.SaveManager.SetString("freezeGame", "0");
+            MapManager.ObjLink.FreezeGame(false);
         }
 
         private void UpdateLeave()

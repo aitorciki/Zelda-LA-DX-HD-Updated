@@ -13,6 +13,15 @@ namespace ProjectZ.InGame.GameObjects
 
         private int ReverseDirection(int direction) => (direction + 2) % 4;
 
+
+        public void FreezeGame(bool freeze)
+        {
+            if (freeze)
+                Game1.GameManager.SaveManager.SetString("freezeGame", "1");
+            else
+                Game1.GameManager.SaveManager.SetString("freezeGame", "0");
+        }
+
         private bool DestroyableWall(Box box)
         {
             _destroyableWallList.Clear();
