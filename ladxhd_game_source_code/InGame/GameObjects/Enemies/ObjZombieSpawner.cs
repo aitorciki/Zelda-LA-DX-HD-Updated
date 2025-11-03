@@ -31,8 +31,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            // check if the player is standing in the field
-            if (_triggerField.Contains(new Point((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y)))
+            CPosition LinkPos = MapManager.ObjLink.EntityPosition;
+            bool inZombieField = _triggerField.Contains(new Point((int)LinkPos.X, (int)LinkPos.Y));
+
+            // Zombie spawner and Link share a field and the game is not currently frozen.
+            if (inZombieField && !Game1.GameManager.FreezeWorldForEvents)
                 _spawnCounter -= Game1.DeltaTime;
 
             if (_spawnCounter <= 0)
