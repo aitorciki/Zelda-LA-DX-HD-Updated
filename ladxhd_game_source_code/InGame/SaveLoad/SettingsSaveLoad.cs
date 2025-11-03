@@ -1,5 +1,4 @@
-﻿﻿using Microsoft.Xna.Framework;
-using ProjectZ.InGame.Controls;
+﻿using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.SaveLoad

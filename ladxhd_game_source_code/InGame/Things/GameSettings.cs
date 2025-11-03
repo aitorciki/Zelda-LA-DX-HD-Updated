@@ -1,5 +1,4 @@
-﻿
-namespace ProjectZ.InGame.Things
+﻿namespace ProjectZ.InGame.Things
 {
     class GameSettings
     {

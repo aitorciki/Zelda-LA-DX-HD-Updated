@@ -2,7 +2,6 @@
 using System.IO;
 using ProjectZ.InGame.SaveLoad;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace ProjectZ.InGame.Things
 {
@@ -29,7 +28,7 @@ namespace ProjectZ.InGame.Things
         public static Color TextboxFontColor = new Color(248, 248, 136);
 
         public static Color MapTransitionColor = new Color(0, 0, 0, 255);
-        public static Color MapFirstTransitionColor = new Color(20, 20, 20, 255);
+        public static Color MapFirstTransitionColor = new Color(0, 0, 0, 255);
 
         public static Color OverlayBackgroundColor = new Color(255, 255, 190) * 0.55f;
         public static Color OverlayBackgroundBlurColor = new Color(255, 255, 255, 255);

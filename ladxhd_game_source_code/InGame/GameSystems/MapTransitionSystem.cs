@@ -61,8 +61,6 @@ namespace ProjectZ.InGame.GameSystems
         private bool _wobbleTransitionOut;
         private bool _wobbleTransitionIn;
 
-        private float _classicBlackoutFix;
-
         public MapTransitionSystem(MapManager gameMapManager)
         {
             _gameMapManager = gameMapManager;
@@ -140,7 +138,6 @@ namespace ProjectZ.InGame.GameSystems
             else if (CurrentState == TransitionState.TransitionBlank_1)
             {
                 _changeMapCount += Game1.DeltaTime;
-                _classicBlackoutFix = 175;
 
                 MapManager.ObjLink.UpdateMapTransitionIn(0);
 
@@ -160,7 +157,6 @@ namespace ProjectZ.InGame.GameSystems
             else if (CurrentState == TransitionState.TransitionIn)
             {
                 _changeMapCount -= Game1.DeltaTime;
-                _classicBlackoutFix -= Game1.DeltaTime;
 
                 // update the position of the player to walk into the new room
                 var percentage = MathHelper.Clamp(_changeMapCount / ChangeMapTime, 0, 1);
@@ -221,21 +217,17 @@ namespace ProjectZ.InGame.GameSystems
 
             _transitionObject.Draw(spriteBatch);
 
-            // HACK: When transitioning in and classic camera is enabled, it's possible to catch a quick glimpse of Link popping out of a door at the
-            // edges of the screen. The proper solution to this would be to somehow delay the opening circle shader by about 200 milliseconds, but at
-            // the moment I'm not quite sure how to do that. So this hack just draws a black screen during those frames to cover it up.
-            if (GameSettings.ClassicCamera)
+            // This goofy hack covers up the top of the screen when Link is transitioning. It is hidden by the circle shader so it
+            // should never be visible. Even when Link should not appear, he pops up for a brief second. This hack covers that up.
+            if (GameSettings.ClassicCamera && _transitionObject.Percentage > 0.80f && _transitionObject.WobbleTransition == false)
             {
                 Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
 
-                if (_classicBlackoutFix > 0)
-                {
-                    var viewport = spriteBatch.GraphicsDevice.Viewport;
-                    var tex = Resources.SprWhite;
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(tex, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.Black);
-                    spriteBatch.End();
-                }
+                var viewport = spriteBatch.GraphicsDevice.Viewport;
+
+                spriteBatch.Begin();
+                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * 0.10)), Color.Black);
+                spriteBatch.End();
             }
         }
 
