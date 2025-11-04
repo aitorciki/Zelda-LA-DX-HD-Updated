@@ -218,6 +218,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     else if (collisionObject.Owner.GetType() == (typeof(ObjDungeonFairy)))
                     {
                         _fairy = collisionObject.Owner as ObjDungeonFairy;
+                        _fairy.RemoveCooldown();
                         ComeBack();
                     }
                 }

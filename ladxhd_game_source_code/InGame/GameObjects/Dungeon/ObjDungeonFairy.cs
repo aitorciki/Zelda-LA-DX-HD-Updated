@@ -172,9 +172,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             EntityPosition.Z = _positionZ + (float)Math.Sin(Game1.TotalGameTime / 200) * 1.5f;
             _sprite.SpriteEffect = _direction.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            // collision with the player
-            if (_collectionCooldown < 0 && (MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()) || (MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box) && sword_collect)))
+            // Collision boxes of Link and fairy collide or if the lahdmod file allows sword collection.
+            if (_collectionCooldown <= 0 && (MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()) || 
+                (MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box) && sword_collect)))
+            {
                 CollectFairy();
+            }
         }
 
         private void CollectFairy()
@@ -214,6 +217,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 if (_itemMode)
                     EntityPosition.Z += Game1.TimeMultiplier * 0.25f;
             }
+        }
+
+        public void RemoveCooldown()
+        {
+            _collectionCooldown = 0;
         }
 
         private void Draw(SpriteBatch spriteBatch)
