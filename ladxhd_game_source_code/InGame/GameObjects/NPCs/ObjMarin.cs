@@ -348,8 +348,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.AnimalSinging)
             {
+                Rectangle currentField = _field;
+
+                // Shrink the field slightly with Classic Camera so the song stops just before the transition since
+                // objects outside of the current field are not updated and the song won't be able to trigger the stop.
+                if (GameSettings.ClassicCamera)
+                    currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
+
                 // start/stop depending on the distance to the player
-                var nearPlayer = _field.Contains(MapManager.ObjLink.EntityPosition.Position);
+                var nearPlayer = currentField.Contains(MapManager.ObjLink.EntityPosition.Position);
+
                 if (!_isSingingWithSound && nearPlayer)
                 {
                     _isSingingWithSound = true;
@@ -363,9 +371,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.Singing)
             {
-                // stop singing if the player is too far away
-                var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
-                if (distance.Length() > 80)
+                Rectangle currentField = _field;
+
+                // Shrink the field slightly with Classic Camera so the song stops just before the transition since
+                // objects outside of the current field are not updated and the song won't be able to trigger the stop.
+                if (GameSettings.ClassicCamera)
+                    currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
+
+                if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
                 {
                     StopSinging();
                     _currentState = States.Idle;
