@@ -552,7 +552,7 @@ namespace ProjectZ.InGame.Overlay
                     GameSettings.GameScale = newScale;
             }
             // When Classic Camera is enabled, we want the camera to "snap" to the next scale.
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
                 Camera.SnapCameraTimer = 100f;
 
             // Apply current scaling settings.

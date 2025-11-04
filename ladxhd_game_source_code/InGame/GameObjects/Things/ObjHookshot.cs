@@ -122,7 +122,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     ComeBack();
 
                 // Keep hookshot inside the field when ClassicCamera is active.
-                if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(_hookshotPosition.Position))
+                if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(_hookshotPosition.Position))
                 {
                     Repell();
                     ComeBack();

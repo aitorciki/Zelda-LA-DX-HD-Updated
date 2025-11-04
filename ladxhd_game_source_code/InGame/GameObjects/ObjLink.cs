@@ -657,7 +657,7 @@ namespace ProjectZ.InGame.GameObjects
             CurrentField = Map.GetField((int)EntityPosition.X, (int)EntityPosition.Y);
 
             // We only use the field barrier when "Classic Camera" is active.
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 // Check to see if the current field has not yet been set. When a game is started,
                 // the first few frames will return (0,0) for the current field position.
@@ -5203,7 +5203,7 @@ namespace ProjectZ.InGame.GameObjects
             _teleportCounter = 0;
             _teleportCounterFull = 0;
 
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
                 Camera.SnapCamera = true;
         }
 
@@ -5222,7 +5222,7 @@ namespace ProjectZ.InGame.GameObjects
 
             ReleaseCarriedObject();
 
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
                 Camera.SnapCamera = true;
         }
 
@@ -5250,7 +5250,7 @@ namespace ProjectZ.InGame.GameObjects
                 _spriteShadow.EntityPosition.Set(fallPositionV2);
 }
             // Only jump to the new position if it is a different teleporter at a different location.
-            if (!GameSettings.ClassicCamera && positionDistance.Length() > 64)
+            if (!Camera.ClassicMode && positionDistance.Length() > 64)
                 MapManager.Camera.ForceUpdate(Game1.GameManager.MapManager.GetCameraTarget());
             else
                 Camera.SnapCamera = true;
@@ -5547,8 +5547,11 @@ namespace ProjectZ.InGame.GameObjects
                 // fall down to the ground
                 //if (Map.Is2dMap && (Direction % 2) == 0)
                 //    newPosition.Y = EntityPosition.Y;
-
                 SetPosition(newPosition);
+
+                // Recalculate scale when classic dungeons is enabled.
+                if (GameSettings.ClassicCamera && GameSettings.ClassicDungeon)
+                    Game1.ScaleChanged = true;
             }
 
             // lock the camera while transitioning

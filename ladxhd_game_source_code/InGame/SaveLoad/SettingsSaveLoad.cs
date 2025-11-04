@@ -39,11 +39,12 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.MutePowerups = saveManager.GetBool("MutePowerups", GameSettings.MutePowerups);
 
             // Camera Settings
-            GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
-            GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
             GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
+            GameSettings.ClassicDungeon = saveManager.GetBool("ClassicDungeon", GameSettings.ClassicDungeon);
             GameSettings.ClassicBorder = saveManager.GetBool("ClassicBorder", GameSettings.ClassicBorder);
             GameSettings.ClassicAlpha = saveManager.GetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
+            GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
+            GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
 
             // Redux Settings
             GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
@@ -100,11 +101,12 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("MutePowerups", GameSettings.MutePowerups);
 
             // Camera Settings
-            saveManager.SetBool("CameraLock", GameSettings.CameraLock);
-            saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
             saveManager.SetBool("ClassicCamera", GameSettings.ClassicCamera);
+            saveManager.SetBool("ClassicDungeon", GameSettings.ClassicDungeon);
             saveManager.SetBool("ClassicBorder", GameSettings.ClassicBorder);
             saveManager.SetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
+            saveManager.SetBool("CameraLock", GameSettings.CameraLock);
+            saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
 
             // Redux Settings
             saveManager.SetInt("MenuBorder", GameSettings.MenuBorder);

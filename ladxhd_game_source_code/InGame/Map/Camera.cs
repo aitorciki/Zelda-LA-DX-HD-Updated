@@ -52,6 +52,8 @@ namespace ProjectZ.InGame.Map
         private int _viewportWidth;
         private int _viewportHeight;
 
+        public static bool ClassicMode => GameSettings.ClassicCamera && (!GameSettings.ClassicDungeon || (MapManager.ObjLink?.Map?.DungeonMode ?? false));
+
         public void SetBounds(int viewportWidth, int viewportHeight)
         {
             _viewportWidth = viewportWidth;
@@ -99,7 +101,7 @@ namespace ProjectZ.InGame.Map
 
         public void Center(Vector2 position, bool moveX, bool moveY)
         {
-            if (GameSettings.ClassicCamera)
+            if (ClassicMode)
             {
                 // If SnapCamera was enabled and a timer started.
                 if (SnapCameraTimer > 0)
@@ -191,7 +193,7 @@ namespace ProjectZ.InGame.Map
         public void SoftUpdate(Vector2 position)
         {
             // When classic camera is enabled this will mess up transitions.
-            if (GameSettings.ClassicCamera && GameSettings.SmoothCamera)
+            if (ClassicMode && GameSettings.SmoothCamera)
                 return;
 
             MoveLocation = position - _cameraDistance;
@@ -206,7 +208,7 @@ namespace ProjectZ.InGame.Map
         public void Draw(SpriteBatch spriteBatch)
         {
             // Create a border around the current field.
-            if (GameSettings.ClassicCamera && GameSettings.ClassicBorder)
+            if (ClassicMode && GameSettings.ClassicBorder)
             {
                 int thickness = 4;
                 float scale = ScaleValue;

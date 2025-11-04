@@ -86,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateIdle()
         {
             // With classic camera, simulate field barrier to end shots earlier.
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 var curField = MapManager.ObjLink.CurrentField;
                 var barrier = new Rectangle(curField.X - 16, curField.Y - 16, 192, 160);

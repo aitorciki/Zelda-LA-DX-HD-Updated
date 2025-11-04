@@ -85,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     return;
                 }
             }
-            if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
+            if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
             {
                 OnCollision(Values.BodyCollision.None);
                 return;

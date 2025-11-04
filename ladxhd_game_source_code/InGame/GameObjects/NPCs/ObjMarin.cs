@@ -352,7 +352,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 // Shrink the field slightly with Classic Camera so the song stops just before the transition since
                 // objects outside of the current field are not updated and the song won't be able to trigger the stop.
-                if (GameSettings.ClassicCamera)
+                if (Camera.ClassicMode)
                     currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
 
                 // start/stop depending on the distance to the player
@@ -375,7 +375,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 // Shrink the field slightly with Classic Camera so the song stops just before the transition since
                 // objects outside of the current field are not updated and the song won't be able to trigger the stop.
-                if (GameSettings.ClassicCamera)
+                if (Camera.ClassicMode)
                     currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
 
                 if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position))

@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.Pages
             _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
                 buttonWidth, new Point(1, 2), -3, 21, 1, GameSettings.GameScale, number =>
                 {
-                    GameSettings.GameScale = GameSettings.ClassicCamera && number < 1 ? 1 : number;
+                    GameSettings.GameScale = number;
                     Game1.ScaleChanged = true;
                 })
             { SetString = number => GameScaleSliderAdjustmentString(number) };

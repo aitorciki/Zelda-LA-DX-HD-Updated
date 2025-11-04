@@ -218,7 +218,7 @@ namespace ProjectZ.InGame.GameSystems
 
             // This goofy hack covers up the top of the screen when Link is transitioning. It is hidden by the circle shader so it
             // should never be visible. Even when Link should not appear, he pops up for a brief second. This hack covers that up.
-            if (GameSettings.ClassicCamera && _transitionObject.Percentage > 0.80f && _transitionObject.WobbleTransition == false)
+            if (Camera.ClassicMode && _transitionObject.Percentage > 0.80f && _transitionObject.WobbleTransition == false)
             {
                 // We only want to do this for fully opaque black transitions.
                 if (_transitionObject.TransitionColor == new Color(0,0,0,255))
@@ -268,7 +268,7 @@ namespace ProjectZ.InGame.GameSystems
             if (!_introTransition)
                 Game1.GameManager.DrawPlayerOnTopPercentage = 1.0f;
 
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode || GameSettings.ClassicCamera && GameSettings.ClassicDungeon)
                 Camera.SnapCamera = true;
         }
 

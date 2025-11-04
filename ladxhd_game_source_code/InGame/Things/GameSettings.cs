@@ -27,11 +27,12 @@
         public static bool    MutePowerups    =  false;
 
         // Camera Settings
-        public static bool    CameraLock      =  true;
-        public static bool    SmoothCamera    =  true;
         public static bool    ClassicCamera   =  false;
+        public static bool    ClassicDungeon  =  false;
         public static bool    ClassicBorder   =  false;
         public static float   ClassicAlpha    =  1.00f;
+        public static bool    CameraLock      =  true;
+        public static bool    SmoothCamera    =  true;
 
         // Redux Settings
         public static int     MenuBorder      =  0;

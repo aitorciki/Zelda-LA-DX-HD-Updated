@@ -197,7 +197,7 @@ namespace ProjectZ.InGame.Map
                     MapManager.ObjLink.Animation.Update();
             }
             // When classic camera is enabled, only objects within the current field are updated.
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 UpdateField = MapManager.ObjLink.Map.GetField((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y);
                 ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
@@ -242,7 +242,7 @@ namespace ProjectZ.InGame.Map
             _updateGameObject.Clear();
 
             // Only update objects that are within the current field.
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, 
                     UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
@@ -301,7 +301,7 @@ namespace ProjectZ.InGame.Map
             _collidingObjectList.Clear();
 
             // Only update objects that are within the current field.
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y, 
                     UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
@@ -341,7 +341,7 @@ namespace ProjectZ.InGame.Map
             // get the objects that could potentially inflict damage
             _damageFieldObjects.Clear();
 
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 var Link = MapManager.ObjLink;
                 var field = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);

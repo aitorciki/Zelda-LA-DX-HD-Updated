@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateIdle()
         {
-            if (GameSettings.ClassicCamera && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
+            if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
             {
                 OnCollision(Values.BodyCollision.None);
                 return;

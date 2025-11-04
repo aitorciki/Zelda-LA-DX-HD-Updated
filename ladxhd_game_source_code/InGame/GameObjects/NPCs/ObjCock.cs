@@ -188,8 +188,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
                 }
             }
+
+/*
             // If the classic camera mode is enabled, don't let the player throw the chicken outside of the field.
-            if (GameSettings.ClassicCamera && _isThrown && !_throwHitWall)
+            if (Camera.ClassicMode && _isThrown && !_throwHitWall)
             {
                 var outBox = Box.Empty;
                 if (Map.Objects.Collision(_fieldBox.Box, Box.Empty, Values.CollisionTypes.Field, 0, _body.Level, ref outBox))
@@ -202,6 +204,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _throwHitWall = true;
                 }
             }
+*/
+
         }
 
         private void ToActiveState()

@@ -10,6 +10,7 @@ namespace ProjectZ.InGame.Pages
     {
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+        private readonly InterfaceListLayout toggleClassicDungeon;
         private readonly InterfaceListLayout toggleCameraBorder;
         private readonly InterfaceListLayout toggleCameraLock;
         private readonly InterfaceSlider sliderBorderOpacity;
@@ -29,6 +30,11 @@ namespace ProjectZ.InGame.Pages
             var toggleClassicCamera = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_classiccam", GameSettings.ClassicCamera, newState => { GameSettings.ClassicCamera = newState; Game1.ScaleChanged = true; UpdateInterfaceColors(); });
             _contentLayout.AddElement(toggleClassicCamera);
+
+            // Button: Dungeons Only
+            toggleClassicDungeon = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+                "settings_camera_classicdungeon", GameSettings.ClassicDungeon, newState => { GameSettings.ClassicDungeon = newState; Game1.ScaleChanged = true; });
+            _contentLayout.AddElement(toggleClassicDungeon);
 
             // Button: Camera Border
             toggleCameraBorder = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
@@ -94,6 +100,7 @@ namespace ProjectZ.InGame.Pages
         public void UpdateInterfaceColors()
         {
             // Toggling classic camera "grays out" some options depending on its state.
+            toggleClassicDungeon.ToggleElementColors(GameSettings.ClassicCamera);
             toggleCameraBorder.ToggleElementColors(GameSettings.ClassicCamera);
             sliderBorderOpacity.ToggleSliderColors(GameSettings.ClassicCamera);
             toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);

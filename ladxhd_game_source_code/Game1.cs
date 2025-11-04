@@ -601,7 +601,7 @@ namespace ProjectZ
 
         private void UpdateScale()
         {
-            if (GameSettings.ClassicCamera)
+            if (Camera.ClassicMode)
             {
                 // Force integer scale or the field boundary will be thrown off. The scaling value is calculated
                 // using the original dimensions (GameBoy) so higher scaling values can be achieved.
