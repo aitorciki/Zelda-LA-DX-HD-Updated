@@ -146,7 +146,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void OnSongPlayed(int songIndex)
         {
-            if (songIndex == 0 && !_isDying)
+            if (songIndex != 1 && !_isDying)
             {
                 ToEye0();
             }
