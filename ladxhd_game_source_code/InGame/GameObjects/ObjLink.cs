@@ -2335,9 +2335,9 @@ namespace ProjectZ.InGame.GameObjects
             Animation.SpeedMultiplier = 1.0f;
 
             // Play animation based on Link's current state and other factors.
-            if (CurrentState == State.Idle && !_isWalking ||
-                CurrentState == State.Charging && !_isWalking ||
-                CurrentState == State.Rafting && !_isWalking ||
+            if ((CurrentState == State.Idle && !_isWalking && _body.IsGrounded) ||
+                (CurrentState == State.Charging && !_isWalking) ||
+                (CurrentState == State.Rafting && !_isWalking) ||
                 CurrentState == State.Teleporting ||
                 CurrentState == State.ShowInstrumentPart3 ||
                 CurrentState == State.TeleportFall ||
@@ -3981,11 +3981,20 @@ namespace ProjectZ.InGame.GameObjects
             if (_jumpEndTimer > 0)
                 _jumpEndTimer -= Game1.DeltaTime;
 
+            // Catch when an attack ends just before a jump which fails to set the jumping state.
+            if ((CurrentState == State.Idle) && !_body.IsGrounded && _body.Velocity.Z > 1.85f)
+            {
+                CurrentState = State.Jumping;
+                Animation.Play("jump_" + Direction);
+            }
+
+            // If not in a jumping state return early.
             if (CurrentState != State.Jumping &&
                 CurrentState != State.AttackJumping &&
                 CurrentState != State.ChargeJumping)
                 return;
 
+            // Handle when rail jumping.
             if (_railJump)
             {
                 _railJumpPercentage += Game1.TimeMultiplier * _railJumpSpeed;
