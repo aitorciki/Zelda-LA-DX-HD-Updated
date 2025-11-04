@@ -11,10 +11,10 @@ namespace ProjectZ.InGame.Interface
         public delegate void BFunction(bool toggleState);
         public BFunction ClickFunction;
 
-        private readonly Color _colorToggledBackground;
-        private readonly Color _colorNotToggledBackground = new Color(188, 188, 188);
-        private readonly Color _colorToggled;
-        private readonly Color _colorNotToggled = new Color(79, 79, 79);
+        public Color _colorToggledBackground;
+        public Color _colorNotToggledBackground = new Color(188, 188, 188);
+        public Color _colorToggled;
+        public Color _colorNotToggled = new Color(79, 79, 79);
 
         private readonly Rectangle _toggleBackgroundRectangle;
         private readonly Rectangle _toggleRectangle;
@@ -52,15 +52,39 @@ namespace ProjectZ.InGame.Interface
             _toggleAnimationState = _toggleState ? 1 : 0;
         }
 
-        public static InterfaceListLayout GetToggleButton(Point size, Point margin, string textKey, bool startState, BFunction clickFunction)
+        public static InterfaceListLayout GetToggleButton(Point size, Point margin, string textKey, bool startState, BFunction clickFunction, Color? customColor = null, Color? customSelectionColor = null)
         {
-            var toggleLayout = new InterfaceListLayout() { Size = size, Margin = margin, HorizontalMode = true, Selectable = true };
+            var toggleLayout = new InterfaceListLayout() 
+            { 
+                Size = size, 
+                Margin = margin, 
+                HorizontalMode = true, 
+                Selectable = true 
+            };
 
             var toggleSize = new Point((int)(size.Y * 1.75f), size.Y - 2);
             var buttonSize = new Point(size.X - toggleSize.X - 4, size.Y);
-
             var toggle = new InterfaceToggle(toggleSize, new Point(2, 0), startState, clickFunction);
-            var button = new InterfaceButton(buttonSize, new Point(2, 0), textKey, buttonElement => toggle.Toggle());
+
+            // Apply custom colors if provided
+            if (customColor.HasValue)
+            {
+                toggle.Color = customColor.Value;
+                toggle.SelectionColor = customSelectionColor ?? customColor.Value;
+            }
+
+            var button = new InterfaceButton(
+                buttonSize, 
+                new Point(2, 0), 
+                textKey, 
+                buttonElement => toggle.Toggle());
+
+            // Pass shared colors to button
+            if (customColor.HasValue)
+            {
+                button.Color = toggle.Color;
+                button.SelectionColor = toggle.SelectionColor;
+            }
 
             toggleLayout.AddElement(button);
             toggleLayout.AddElement(toggle);

@@ -206,7 +206,7 @@ namespace ProjectZ.InGame.Map
         public void Draw(SpriteBatch spriteBatch)
         {
             // Create a border around the current field.
-            if (GameSettings.ClassicBorder)
+            if (GameSettings.ClassicCamera && GameSettings.ClassicBorder)
             {
                 int thickness = 4;
                 float scale = ScaleValue;

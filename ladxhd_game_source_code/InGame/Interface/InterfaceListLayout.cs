@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Interface
 {
@@ -238,6 +239,39 @@ namespace ProjectZ.InGame.Interface
                 }
 
                 element.Position = elementPosition;
+            }
+        }
+
+        public void ToggleElementColors(bool disableSetting)
+        {
+            foreach (var element in this.Elements)
+            {
+                if (element is InterfaceElement buttonElement)
+                {
+                    if (disableSetting)
+                    {
+                        buttonElement.Color = Values.MenuButtonColorSlider;
+                        buttonElement.SelectionColor = Values.MenuButtonColorSelected;
+                    }
+                    else
+                    {
+                        buttonElement.Color = Values.MenuButtonColorDisabled;
+                        buttonElement.SelectionColor = Values.MenuButtonColorSelectedDisabled;
+                    }
+                }
+                if (element is InterfaceToggle toggleElement)
+                {
+                    if (disableSetting)
+                    {
+                        toggleElement._colorToggled = Values.MenuButtonColorSlider;
+                        toggleElement._colorToggledBackground = Values.MenuButtonColorSelected;
+                    }
+                    else
+                    {
+                        toggleElement._colorToggled = new Color(79, 79, 79);
+                        toggleElement._colorToggledBackground = new Color(188, 188, 188);
+                    }
+                }
             }
         }
     }

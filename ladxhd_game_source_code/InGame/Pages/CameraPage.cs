@@ -10,6 +10,9 @@ namespace ProjectZ.InGame.Pages
     {
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+        private readonly InterfaceListLayout toggleCameraBorder;
+        private readonly InterfaceListLayout toggleCameraLock;
+        private readonly InterfaceSlider sliderBorderOpacity;
         public static bool _reloadMenus;
 
         public CameraSettingsPage(int width, int height)
@@ -24,26 +27,26 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Classic Camera
             var toggleClassicCamera = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_camera_classiccam", GameSettings.ClassicCamera, newState => { GameSettings.ClassicCamera = newState; Game1.ScaleChanged = true; });
+                "settings_camera_classiccam", GameSettings.ClassicCamera, newState => { GameSettings.ClassicCamera = newState; Game1.ScaleChanged = true; UpdateInterfaceColors(); });
             _contentLayout.AddElement(toggleClassicCamera);
 
             // Button: Camera Border
-            var toggleCameraBorder = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            toggleCameraBorder = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_camborder", GameSettings.ClassicBorder, newState => { GameSettings.ClassicBorder = newState; });
             _contentLayout.AddElement(toggleCameraBorder);
 
             // Slider: Blackout Amount
-            var movementSlider = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
+            sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
                 buttonWidth, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
                 number =>
                 {
                     GameSettings.ClassicAlpha = (float)(number * 0.01);
                 })
             { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
-            _contentLayout.AddElement(movementSlider);
+            _contentLayout.AddElement(sliderBorderOpacity);
 
             // Button: Camera Lock
-            var toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_cameralock", GameSettings.CameraLock, newState => { GameSettings.CameraLock = newState; });
             _contentLayout.AddElement(toggleCameraLock);
 
@@ -63,6 +66,9 @@ namespace ProjectZ.InGame.Pages
             cameraOptionsList.AddElement(_contentLayout);
             cameraOptionsList.AddElement(_bottomBar);
             PageLayout = cameraOptionsList;
+
+            // Update button colors.
+            UpdateInterfaceColors();
         }
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
@@ -83,6 +89,14 @@ namespace ProjectZ.InGame.Pages
 
             PageLayout.Deselect(false);
             PageLayout.Select(InterfaceElement.Directions.Top, false);
+        }
+
+        public void UpdateInterfaceColors()
+        {
+            // Toggling classic camera "grays out" some options depending on its state.
+            toggleCameraBorder.ToggleElementColors(GameSettings.ClassicCamera);
+            sliderBorderOpacity.ToggleSliderColors(GameSettings.ClassicCamera);
+            toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);
         }
 
         private string AddedMoveSpeedSliderAdjustment(int number)

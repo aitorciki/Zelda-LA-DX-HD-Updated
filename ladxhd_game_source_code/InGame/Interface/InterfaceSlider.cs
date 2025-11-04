@@ -29,7 +29,7 @@ namespace ProjectZ.InGame.Interface
         private static int _scrollStartTime = 350;
         private static int _scrollTime = 75;
 
-        private Color _colorSlider;
+        public Color ColorSlider;
         private Color _colorSliderBackground = new Color(79, 79, 79);
 
         private Rectangle _sliderBackgroundRectangle;
@@ -58,7 +58,7 @@ namespace ProjectZ.InGame.Interface
 
             SelectionColor = Values.MenuButtonColorSelected;
 
-            _colorSlider = Values.MenuButtonColorSlider;
+            ColorSlider = Values.MenuButtonColorSlider;
         }
 
         public InterfaceSlider(SpriteFont font, string key, int width, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
@@ -187,6 +187,20 @@ namespace ProjectZ.InGame.Interface
                 (float)Math.Sin((1 - _animationCounter / _animationTime) * Math.PI / 2));
         }
 
+        public void ToggleSliderColors(bool disableSetting)
+        {
+            if (disableSetting)
+            {
+                ColorSlider = Values.MenuButtonColorSlider;
+                SelectionColor = Values.MenuButtonColorSelected;
+            }
+            else
+            {
+                ColorSlider = Values.MenuButtonColorSliderDisabled;
+                SelectionColor = Values.MenuButtonColorSelectedDisabled;
+            }
+        }
+
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
@@ -217,7 +231,7 @@ namespace ProjectZ.InGame.Interface
                 (int)(drawPosition.X + sliderPosition * scale),
                 (int)(drawPosition.Y + _sliderRectangle.Y * scale + _drawOffset.Y * scale),
                 (int)(_sliderRectangle.Width * scale),
-                (int)(_sliderRectangle.Height * scale)), _colorSlider * transparency);
+                (int)(_sliderRectangle.Height * scale)), ColorSlider * transparency);
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
