@@ -140,7 +140,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             ObjectManager.SpriteBatchBeginAnisotropic(spriteBatch, null);
 
             if (top <= 10 && bottom >= 4)
-                DrawGradient(spriteBatch, left, right, 3, 10);
+                DrawGradient(spriteBatch, left, right, 3, 11);
             if (left < 1)
                 DrawGradient(spriteBatch, left, 2, Math.Max(3, top), Math.Min(bottom, GradientHeight + 3));
             if (right > 16 * 10)
@@ -172,13 +172,19 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void DrawGradient(SpriteBatch spriteBatch, int left, int right, int top, int bottom)
         {
-            spriteBatch.Draw(_oceanGradient.Texture, new Rectangle(
-                left * Values.TileSize, top * Values.TileSize, (right - left) * Values.TileSize, (bottom - top) * Values.TileSize),
-                new Rectangle(
-                    _oceanGradient.ScaledRectangle.X,
-                    _oceanGradient.ScaledRectangle.Y + (int)(_oceanGradient.ScaledRectangle.Height * ((top + 0) / (float)GradientHeight)),
-                    _oceanGradient.ScaledRectangle.Width,
-                    (int)(_oceanGradient.ScaledRectangle.Height * ((bottom - (top + 3)) / (float)GradientHeight))), Color.White);
+            Rectangle rect1 = new Rectangle(
+                left * Values.TileSize, 
+                top * Values.TileSize, 
+                (right - left) * Values.TileSize, 
+                (bottom - top) * Values.TileSize);
+
+            Rectangle rect2 = new Rectangle(
+                _oceanGradient.ScaledRectangle.X,
+                _oceanGradient.ScaledRectangle.Y + (int)(_oceanGradient.ScaledRectangle.Height * ((top + 0) / (float)GradientHeight)),
+                _oceanGradient.ScaledRectangle.Width,
+                (int)(_oceanGradient.ScaledRectangle.Height * ((bottom - (top + 3)) / (float)GradientHeight)));
+
+            spriteBatch.Draw(_oceanGradient.Texture, rect1, rect2, Color.White);
         }
     }
 }
