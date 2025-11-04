@@ -47,8 +47,8 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdateRenderTarget()
         {
-            if (_renderTarget == null || _renderTarget.Width != _width * Game1.UiScale || _renderTarget.Height != _height * Game1.UiScale)
-                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width * Game1.UiScale, _height * Game1.UiScale);
+            if (_renderTarget == null || _renderTarget.Width != _width || _renderTarget.Height != _height)
+                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width, _height);
         }
 
         public void Load()
@@ -92,14 +92,20 @@ namespace ProjectZ.InGame.Overlay
 
         public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color)
         {
+            if (_renderTarget == null)
+                return;
+
             if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
                 return;
 
-            spriteBatch.Draw(_renderTarget, drawPosition, color);
+            spriteBatch.Draw(_renderTarget, drawPosition.Location.ToVector2(), null, color, 0f, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0f);
         }
 
         public void DrawOnRenderTarget(SpriteBatch spriteBatch)
         {
+            if (_renderTarget == null)
+                return;
+
             if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
                 return;
 
@@ -107,7 +113,7 @@ namespace ProjectZ.InGame.Overlay
             Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
             // draw the background
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiScale));
+            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect);
 
             Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
@@ -131,7 +137,7 @@ namespace ProjectZ.InGame.Overlay
                 DrawBackground(spriteBatch, Point.Zero, new Rectangle(_smallKeyPosition.X + _smallKeyPosition.Width / 2, _smallKeyPosition.Bottom - 5, 4, 2), 1);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiScale));
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null);
 
             var offset = new Point(0, 0);
 
