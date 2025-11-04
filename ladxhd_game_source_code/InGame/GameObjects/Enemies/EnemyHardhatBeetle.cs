@@ -58,19 +58,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
 
             var aiComponent = new AiComponent();
-
-            var stateInit = new AiState();
-            stateInit.Trigger.Add(new AiTriggerCountdown(350, null, () => aiComponent.ChangeState("moving")));
             var stateMoving = new AiState(UpdateMoving) { Init = InitMoving };
-
-            aiComponent.States.Add("init", stateInit);
             aiComponent.States.Add("moving", stateMoving);
             _stunnedState = new AiStunnedState(aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
             _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
             new AiFallState(aiComponent, _body, OnHoleAbsorb, null);
 
-            aiComponent.ChangeState("init");
+            aiComponent.ChangeState("moving");
 
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableRectangle = new CBox(EntityPosition, -8, -14, 16, 14, 8);
