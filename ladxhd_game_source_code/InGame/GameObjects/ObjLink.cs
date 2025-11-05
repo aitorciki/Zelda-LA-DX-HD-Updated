@@ -3323,7 +3323,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             ReturnToIdle();
 
-            var recInteraction = new RectangleF(EntityPosition.X - 64, EntityPosition.Y - 64 - 8, 128, 128);
+            var recInteraction = new RectangleF(EntityPosition.X - 72, EntityPosition.Y - 72 - 8, 144, 144);
 
             _ocarinaList.Clear();
             Map.Objects.GetComponentList(_ocarinaList,
