@@ -18,7 +18,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
         {
             base.Update();
 
-            if (!Game1.GameManager.DialogIsRunning() && ControlHandler.ButtonPressed(ControlHandler.CancelButton) || ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
+            if (!Game1.GameManager.DialogIsRunning() && (ControlHandler.ButtonPressed(ControlHandler.CancelButton) || ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)))
                 Game1.GameManager.InGameOverlay.CloseOverlay();
         }
     }
