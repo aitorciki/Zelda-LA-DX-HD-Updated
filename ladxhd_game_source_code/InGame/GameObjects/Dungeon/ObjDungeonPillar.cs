@@ -61,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _aiComponent.ChangeState("idle");
 
             var collisionBox = new CBox(posX + 1, posY + 4, 0, 14, 12, 16);
-            var hitBox = new CBox(posX, posY - 8, 0, 16, 24, 16);
+            var hitBox = new CBox(posX, posY - 10, 0, 16, 26, 16);
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
