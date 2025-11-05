@@ -47,34 +47,58 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            int extraYOffset = 0;
+
             if (!_isTeleporting)
                 return;
 
-            if (_mode == 0 || _mode == 1)
+            // Always freeze for raccoon transition. Level 6 check for classic camera.
+            if (_mode == 0)
+                 MapManager.ObjLink.FreezePlayer();
+            else if (_mode == 1 && !Camera.ClassicMode)
                 MapManager.ObjLink.FreezePlayer();
 
+            // Snap the camera when classic camera is active.
+            if (_mode == 1 && Camera.ClassicMode)
+            {
+                Camera.SnapCameraTimer = 10;
+                _teleportTime -= 250;
+                extraYOffset = 9;
+            }
+            else if (_mode == 1 && !Camera.ClassicMode)
+            {
+                _teleportTime = 300;
+            }
+            // Teleport after the timer expires.
             _teleportCount += Game1.DeltaTime * _direction;
             if (_teleportCount >= _teleportTime)
             {
                 _teleportCount = _teleportTime;
                 _direction = -1;
 
-                // teleport the colliding player to the new position
+                // Teleport the colliding player to the new position.
                 MapManager.ObjLink.SetPosition(new Vector2(
-                    MapManager.ObjLink.PosX + _offsetX * Values.TileSize,
-                    MapManager.ObjLink.PosY + _offsetY * Values.TileSize));
+                    MapManager.ObjLink.PosX + (_offsetX * Values.TileSize),
+                    MapManager.ObjLink.PosY + (_offsetY * Values.TileSize) - extraYOffset));
 
                 var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
                 MapManager.Camera.SoftUpdate(goalPosition);
             }
-
+            // Teleport is finished.
             if (_direction < 0 && _teleportCount <= 0)
             {
                 _isTeleporting = false;
-            }
 
-            var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
-            transitionSystem.SetColorMode(_mode == 0 ? Color.White : Color.Black, MathHelper.Clamp(_teleportCount / _fadeTime, 0, 1), false);
+                // Give Link a slight push to force a screen transition.
+                if (_mode == 1 && Camera.ClassicMode)
+                    MapManager.ObjLink._body.Velocity.Y += -0.35f;
+            }
+            // Smooth out the transition for raccoon teleport or Level 6 when in normal camera mode.
+            if (_mode == 0 || (_mode == 1 && !Camera.ClassicMode))
+            {
+                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.SetColorMode(_mode == 0 ? Color.White : Color.Black, MathHelper.Clamp(_teleportCount / _fadeTime, 0, 1), false);
+            }
         }
 
         private void OnCollision(GameObject gameObject)
