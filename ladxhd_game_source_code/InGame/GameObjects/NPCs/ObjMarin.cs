@@ -107,6 +107,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _pullOffsetY;
 
         private bool _isMoving;
+        private Map.Map _map;
 
         public bool IsVisible { get; internal set; }
 
@@ -123,6 +124,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
+
+            _map = map;
 
             if (map != null)
                 _field = map.GetField(posX, posY);
@@ -507,9 +510,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             _fadeCounter -= Game1.DeltaTime;
-
+            
             if (_fadeCounter <= 0)
-                Map.Objects.DeleteObjects.Add(this);
+                _map.Objects.DeleteObjects.Add(this);
             else
             {
                 var percentage = _fadeCounter / _fadeTime;
