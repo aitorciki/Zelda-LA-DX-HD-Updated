@@ -117,9 +117,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else
             {
+
                 MapManager.ObjLink._objBowWow = this;
             }
-
             // spawn the chain
             Map.Objects.SpawnObject(_chain = new ObjChain(map, _origin));
             _currentDirectionOffset = AnimationHelper.DirectionOffset[_direction];

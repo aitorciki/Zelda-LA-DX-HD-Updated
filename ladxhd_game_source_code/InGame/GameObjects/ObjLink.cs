@@ -4454,7 +4454,10 @@ namespace ProjectZ.InGame.GameObjects
             }
             // Track if currently in a dungeon.
             if (Map != null && Map.DungeonMode)
+            {
                 _inDungeon = true;
+                _objBowWow = null;
+            }
             else
                 _inDungeon = false;
 
