@@ -92,8 +92,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Update()
         {
+            Rectangle currentField = _fieldRectangle;
+
+            // Shrink the field slightly with Classic Camera so the song stops just before the transition since
+            // objects outside of the current field are not updated and the song won't be able to trigger the stop.
+            if (Camera.ClassicMode)
+                currentField = new Rectangle(_fieldRectangle.X + 1, _fieldRectangle.Y + 1, _fieldRectangle.Width - 2, _fieldRectangle.Height - 2);
+
+
             // start/stop playing music
-            if (_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 if (!_musicPlaying)
                 {
