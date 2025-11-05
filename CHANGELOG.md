@@ -1,5 +1,26 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.4**
+### **The "Mandatory Maintenance After a Big Update" Update**
+  * Great Fairy music is now based on the current field like the original game rather than range based.
+  * Update stairway in Dungeon 4 from the underwater key room to exit to the left instead of the right.
+  * Update stairway in Dungeon 5 near Gohma midboss to exit to the left instead of the right.
+  * Update teleport transition in Dungeon 6 while Classic Camera is enabled to be quicker and have a scrolling effect.
+  * Slightly increase the Ocarina listener rectangle for objects that require playing the ocarina.
+  * Vacuum enemies can no longer be killed with sword shots and fix a bug where direction can get stuck if killing while vacuuming.
+  * Fix crash with Marin-Walrus sequence and slightly adjust the parameters so it works with Classic Camera.
+  * Fix crash when returning the ghost to his grave. This is the same crash as with Marin and I have no idea why it started happening.
+  * Fix BowWow from getting stuck in a previous field when Classic Camera is enabled.
+  * Fix several maps that did not spawn BowWow. Also fix it so a "ghost BowWow" does not spawn.
+  * Fix the water under lilypads in Goponga Swamp to be animated.
+  * Fix ball playing children music change to change back when changing fields when Classic Camera is enabled.
+  * Fix push block on the way to the feather in Dungeon 1 to have the correct push directions (was stuck towards door).
+  * Fix Lower Face Shrine mural sequence to not close out the image prematurely allowing the dialog to finish.
+  * Fix misplaced collider on Tal Tal Mountain Range just under the bird key cave near the triple waterfalls.
+  * Fix Dungeon 7 pillars so that they can be hit from behind with the ball.
+  * Fix Dungeon 7 boss Evil Eagle issues: classic camera, freezing player during intro, attack locking, and reduce fly away time.
+  * Fix mountain photo bridge sequence to work with Classic Camera mode.
+
 ## **v1.4.3**
 ### **The "Nostalgic Screen-Effect" Update**
   * Scaling has been reworked to scale based on the resolution of the original game. Game scale now goes to 20x.
