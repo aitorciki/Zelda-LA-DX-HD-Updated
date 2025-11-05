@@ -45,6 +45,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _shownDialog;
         private bool _healMode;
 
+        private Rectangle _field;
+        private bool _musicPlaying;
+
         public ObjFairy() : base("npc_fairy") { }
 
         public ObjFairy(Map.Map map, int posX, int posY, string strDialogPath) : base(map)
@@ -56,6 +59,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _strDialogPath = strDialogPath;
 
             _healMode = string.IsNullOrEmpty(strDialogPath);
+            _field = map.GetField(posX, posY);
 
             _body = new BodyComponent(EntityPosition, -5, -16, 10, 16, 8)
             {
@@ -69,12 +73,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _aiComponent = new AiComponent();
 
-            var stateHidde = new AiState(UpdateHidden) { Init = InitHidden };
+            var stateHidden = new AiState(UpdateHidden) { Init = InitHidden };
             var stateIdle = new AiState(UpdateIdle);
             var stateHealing = new AiState(UpdateHealing) { Init = InitHealing };
             var stateDespawning = new AiState(UpdateDespawning) { Init = InitDespawning };
 
-            _aiComponent.States.Add("hidden", stateHidde);
+            _aiComponent.States.Add("hidden", stateHidden);
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("healing", stateHealing);
             _aiComponent.States.Add("despawning", stateDespawning);
@@ -136,6 +140,31 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 IsVisible = false;
                 _aiComponent.ChangeState("hidden");
+
+                // If a heart is collected and the fairy despawns stop the music.
+                if (_musicPlaying)
+                {
+                    Game1.GameManager.SetMusic(-1, 2);
+                    _musicPlaying = false;
+                }
+            }
+            // Play the music when Link enters the current field the fairy is in.
+            Rectangle currentField = _field;
+            bool _stateIdle = _aiComponent.CurrentStateId == "idle";
+
+            // Adjust the rect slightly when classic camera is enabled.
+            if (Camera.ClassicMode)
+                currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
+
+            if (_stateIdle && !_musicPlaying && currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            {
+                Game1.GameManager.SetMusic(11, 2);
+                _musicPlaying = true;
+            }
+            else if (_musicPlaying && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            {
+                Game1.GameManager.SetMusic(-1, 2);
+                _musicPlaying = false;
             }
         }
 
@@ -147,8 +176,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var healingSteps = (DespawnStart - HealingStart) / HealingStepTime;
             var neededSteps = Game1.GameManager.MaxHearts * 4 - Game1.GameManager.CurrentHealth;
             _healStepAmount = Math.Clamp((int)Math.Ceiling(neededSteps / (float)healingSteps), 1, 8);
-
-            Game1.GameManager.SetMusic(11, 2);
+            
             Game1.GameManager.StartDialogPath("fairy");
         }
 
@@ -190,6 +218,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _despawnCounter = DespawnTime;
             Game1.GameManager.SetMusic(-1, 2);
+            _musicPlaying = false;
         }
 
         private void UpdateDespawning()
