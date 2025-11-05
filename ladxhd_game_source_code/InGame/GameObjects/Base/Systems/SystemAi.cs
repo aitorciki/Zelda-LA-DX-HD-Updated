@@ -35,6 +35,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 // If Link currently has BowWow with him he needs updated.
                 if (!_objectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _objectList.Add(MapManager.ObjLink._objBowWow);
+
+                // Evil Eagle flies off the screen constantly so he needs to be here too.
+                if (!_objectList.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
+                    _objectList.Add(MapManager.ObjLink._evilEagle);
             }
             // Only update the objects that are currently visible.
             else

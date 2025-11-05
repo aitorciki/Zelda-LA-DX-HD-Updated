@@ -13,7 +13,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
-    class BossEvilEagle : GameObject
+    public class BossEvilEagle : GameObject
     {
         private MBossGrimCreeper _grimCreeper;
         private MBossGrimCreeperFly _creeperFly0;
@@ -37,6 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _lives = ObjLives.EvilEagle;
         private int _spawnIndex;
         private int _direction;
+        private bool _disablePlayer;
 
         private const float FlySpeed = 2;
 
@@ -102,7 +103,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateSaddled = new AiState(UpdateSaddled);
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             var stateDamaged = new AiState(UpdateDamaged);
-            stateDamaged.Trigger.Add(new AiTriggerCountdown(500, null, FlyUp));
+            stateDamaged.Trigger.Add(new AiTriggerCountdown(350, null, FlyUp));
             var stateFlyUp = new AiState(UpdateFlyUp) { Init = InitFlyUp };
             var stateAttackEnter = new AiState(UpdateWingAttackEnter) { Init = InitWingAttackEnter };
             var stateFeatherAttack = new AiState(UpdateWingAttack) { Init = InitWingAttack };
@@ -141,12 +142,21 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(GenericUpdate));
 
             InitStartSequence();
             _aiComponent.ChangeState("idle");
 
             // spawn position
             EntityPosition.Set(new Vector2(EntityPosition.X + 180, 24));
+
+            MapManager.ObjLink._evilEagle = this;
+        }
+
+        private void GenericUpdate()
+        {
+            if (_disablePlayer)
+                MapManager.ObjLink.FreezePlayer();
         }
 
         private void InitStartSequence()
@@ -186,12 +196,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (!_playedIntro)
             {
+                // Player status resumed in "UpdateSaddled" method.
+                _disablePlayer = true;
+                MapManager.ObjLink.DisableDirHack = true;
                 MapManager.ObjLink.Animation.Play("stand_0");
                 Game1.GameManager.StartDialogPath("grim_creeper_3");
                 _aiComponent.ChangeState("spawnDelay");
             }
             else
+            {
                 ToAttack();
+            }
         }
 
         private void SpawnHeart()
@@ -353,7 +368,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateDamaged()
         {
             if (!_damageState.IsInDamageState())
+            {
                 _aiComponent.ChangeState("flyup");
+            }
         }
 
         private void FlyUp()
@@ -427,6 +444,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (EntityPosition.X < _startPosition.X - 180)
             {
                 // start attacking
+                _disablePlayer = false;
+                MapManager.ObjLink.DisableDirHack = false;
                 ToAttack();
             }
         }
@@ -455,8 +474,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateSpawning()
         {
-            MapManager.ObjLink.FreezePlayer();
-
             if (_spawnIndex == 0)
             {
                 if (EntityPosition.X < _startPosition.X - 180)
@@ -521,7 +538,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
-            if (_damageState.IsInDamageState() || _aiComponent.CurrentStateId == "flyup")
+            // The "flyup" state does not start fast enough so also check "damaged" state.
+            if (_damageState.IsInDamageState() || _aiComponent.CurrentStateId == "flyup" || _aiComponent.CurrentStateId == "damaged")
                 return Values.HitCollision.None;
 
             if (damageType == HitType.MagicRod || damageType == HitType.Boomerang)
@@ -571,6 +589,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             SpawnHeart();
 
             Map.Objects.DeleteObjects.Add(this);
+            MapManager.ObjLink._evilEagle = null;
         }
     }
 }

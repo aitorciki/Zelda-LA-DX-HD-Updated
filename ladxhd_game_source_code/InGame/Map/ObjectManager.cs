@@ -259,6 +259,10 @@ namespace ProjectZ.InGame.Map
                 // If Link currently has BowWow with him he needs updated.
                 if (!_updateGameObject.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _updateGameObject.Add(MapManager.ObjLink._objBowWow);
+
+                // Evil Eagle flies off the screen constantly so he needs to be here too.
+                if (!_updateGameObject.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
+                    _updateGameObject.Add(MapManager.ObjLink._evilEagle);
             }
             // Only update the objects that are currently visible.
             else
@@ -322,6 +326,10 @@ namespace ProjectZ.InGame.Map
                 // If Link currently has BowWow with him he needs updated.
                 if (!_collidingObjectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _collidingObjectList.Add(MapManager.ObjLink._objBowWow);
+
+                // Evil Eagle flies off the screen constantly so he needs to be here too.
+                if (!_collidingObjectList.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
+                    _collidingObjectList.Add(MapManager.ObjLink._evilEagle);
             }
             // Only update the objects that are currently visible.
             else
@@ -366,6 +374,10 @@ namespace ProjectZ.InGame.Map
                 // If Link currently has BowWow with him he needs updated.
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _damageFieldObjects.Add(MapManager.ObjLink._objBowWow);
+
+                // Evil Eagle flies off the screen constantly so he needs to be here too.
+                if (!_damageFieldObjects.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
+                    _damageFieldObjects.Add(MapManager.ObjLink._evilEagle);
             }
             else
             {
