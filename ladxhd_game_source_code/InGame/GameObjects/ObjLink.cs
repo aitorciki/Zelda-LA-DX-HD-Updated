@@ -172,6 +172,7 @@ namespace ProjectZ.InGame.GameObjects
         public GameObjectFollower _objFollower;
         private ObjCock _objRooster;
         private ObjMarin _objMaria;
+        public ObjBowWow _objBowWow;
 
         private const string _spawnGhostKey = "spawn_ghost";
         private ObjGhost _objGhost;

@@ -42,6 +42,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 // Always update the boomerang as well.
                 if (!_objectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _objectList.Add(MapManager.ObjLink.Boomerang);
+
+                // If Link currently has BowWow with him he needs updated.
+                if (!_objectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                    _objectList.Add(MapManager.ObjLink._objBowWow);
             }
             // Only update the objects that are currently visible.
             else

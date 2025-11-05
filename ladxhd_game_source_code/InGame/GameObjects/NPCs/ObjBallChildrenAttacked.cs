@@ -99,7 +99,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (Camera.ClassicMode)
                 currentField = new Rectangle(_fieldRectangle.X + 1, _fieldRectangle.Y + 1, _fieldRectangle.Width - 2, _fieldRectangle.Height - 2);
 
-
             // start/stop playing music
             if (currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {

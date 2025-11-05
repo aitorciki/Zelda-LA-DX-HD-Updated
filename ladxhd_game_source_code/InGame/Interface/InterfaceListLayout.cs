@@ -16,6 +16,8 @@ namespace ProjectZ.InGame.Interface
         public bool AutoSize;
         public bool PreventSelection;
 
+        public int SelectionIndex => _selectionIndex;
+
         private int _selectionIndex;
         private int _width;
         private int _height;

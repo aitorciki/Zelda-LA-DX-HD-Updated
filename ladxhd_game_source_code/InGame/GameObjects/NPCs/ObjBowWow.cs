@@ -13,7 +13,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
-    class ObjBowWow : GameObject
+    public class ObjBowWow : GameObject
     {
         private readonly List<GameObject> _enemyList = new List<GameObject>();
         private GameObject _enemyTarget;
@@ -114,6 +114,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
                 AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            }
+            else
+            {
+                MapManager.ObjLink._objBowWow = this;
             }
 
             // spawn the chain

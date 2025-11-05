@@ -255,6 +255,10 @@ namespace ProjectZ.InGame.Map
                 // Always update the boomerang as well.
                 if (!_updateGameObject.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _updateGameObject.Add(MapManager.ObjLink.Boomerang);
+
+                // If Link currently has BowWow with him he needs updated.
+                if (!_updateGameObject.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                    _updateGameObject.Add(MapManager.ObjLink._objBowWow);
             }
             // Only update the objects that are currently visible.
             else
@@ -314,6 +318,10 @@ namespace ProjectZ.InGame.Map
                 // Always update the boomerang as well.
                 if (!_collidingObjectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _collidingObjectList.Add(MapManager.ObjLink.Boomerang);
+
+                // If Link currently has BowWow with him he needs updated.
+                if (!_collidingObjectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                    _collidingObjectList.Add(MapManager.ObjLink._objBowWow);
             }
             // Only update the objects that are currently visible.
             else
@@ -354,6 +362,10 @@ namespace ProjectZ.InGame.Map
                 // Always update the boomerang as well.
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _damageFieldObjects.Add(MapManager.ObjLink.Boomerang);
+
+                // If Link currently has BowWow with him he needs updated.
+                if (!_damageFieldObjects.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                    _damageFieldObjects.Add(MapManager.ObjLink._objBowWow);
             }
             else
             {
