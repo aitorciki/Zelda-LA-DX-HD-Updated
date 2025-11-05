@@ -32,8 +32,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _returning;
         private bool _fadingIn;
 
-        // @TODO: 2d maps?
-        // the position when the position dialog was started the last time
         private Vector2 _lastDialogPosition;
 
         public ObjGhost() : base("ghost") { }
@@ -195,9 +193,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             _fadeCounter -= Game1.DeltaTime;
-
+            
+            // Not even setting the map on creation works for this one, so reference the map from ObjLink I guess.
             if (_fadeCounter <= 0)
-                Map.Objects.DeleteObjects.Add(this);
+                MapManager.ObjLink.Map.Objects.DeleteObjects.Add(this);
             else
             {
                 EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, 0, 0.5f * Game1.TimeMultiplier);
