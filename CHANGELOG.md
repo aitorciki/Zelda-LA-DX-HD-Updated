@@ -1,5 +1,43 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.3**
+### **The "Nostalgic Screen-Effect" Update**
+  * Scaling has been reworked to scale based on the resolution of the original game. Game scale now goes to 20x.
+  * Implement a "Classic Camera" that aims to replicate the screen-scrolling based system of the original game.
+  * Add a classic camera option "Dungeon Only" which only applies it when inside of dungeons.
+  * Implemented a "graying out" system for currently invalid options. For example, some options don't work with classic camera (and vice versa).
+  * Movement has been modified to be more like the original game. "Classic Movement" option only restores the ability to "moonwalk" (walk backwards).
+  * Jump height is now variable when holding the button down longer when on 2D maps.
+  * When charging + jumping, a brief "standing" animation is played in between so Link doesn't appear to "slide".
+  * Boomerang can now be thrown in any direction at any point. It now relies on controller direction instead of Link's current direction.
+  * Dungeon 7 tower state is now reflected in the overworld. When all pillars are destroyed, it appears shorter.
+  * Falling down a hole in the bird key cave now leads back to the waterfall below it on the overworld.
+  * Marin's singing is now based on field rectangle instead of distance. This is more accurate to the original game.
+  * Freeze the game while teleporting after playing Manbo's song. Game resumes when teleportation ends.
+  * Instruments can no longer be collected with items like the Boomerang and Hookshot.
+  * When adjusting scale with the controller, it should now save when quitting. Previously it only saved when adjusting from menus.
+  * Zombies no longer spawn when the game is currently frozen such as playing ocarina or when owl is speaking.
+  * Remove Hardhat beetle initialize state which did nothing. This affected classic camera where it would just stand there for a bit.
+  * Fix playing the jumping "flip" animation when cancelling a sword charge while in air.
+  * Fix the "falling" animation while in 2D mode. It should play a flip even when not jumping.
+  * Fix diving and then walking to land causing permanent invincibility until walking into the water again.
+  * Fix another animation quirk when attacking then jumping as the animation finishes which would cause Link to stand in air.
+  * Fix boomerang and hookshot when collecting fairies to not sometimes blast them into outer space.
+  * Fix a black spot on the overworld where there should have been ocean on Tal Tal Mountain Range.
+  * Fix partial tiles popping up in the edges of some caves.
+  * Fix playing ocarina + quitting to cause 8 seconds of invinciblity when game resumes.
+  * Fix the white fade out effect when using a dungeon teleporter after playing Manbo's song.
+  * Fix dungeon minimap to properly scale with UI scaling. I missed this when fixing main map and inventory.
+  * Fix instance in Dungeon 1 and Dungeon 6 where Link should be able to squeeze through but couldn't in this port.
+  * Fix Dungeon 2 and Dungeon 6 minimap chest locations.
+  * Fix missing tiles in Dungeon 5 map. 
+  * Fix Dungeon 5 crystal structure hitboxes so they don't interrupt sword and so they can be smashed from more angles.
+  * Fix Dungeon 5 Gohma miniboss to behave accurately to the original games when playing the ocarina.
+  * Fix Dungeon 6 instrument room door closing behind the player after the instrument has been collected.
+  * Fix falling through certain flying tiles in Dungeon 6 that are covering up holes.
+  * Fix a door in dungeon 7 floor 1 blocked by a barrier to actually stop Link from crossing it when it's up.
+  * Fix Dungeon 7 room with horse heads so that they can not leave the room. Previously they could then they would bug out.
+
 ## **v1.4.2**
 ### **"On the Road to Glory" Update**
   * Note: Classic Camera has not made it into this release as it still needs more work.
