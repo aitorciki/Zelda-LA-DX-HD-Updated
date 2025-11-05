@@ -109,13 +109,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 damageType == HitType.MagicRod ||
                 damageType == HitType.MagicPowder ||
                 damageType == HitType.Bow ||
+                damageType == HitType.SwordShot ||
                 damageType == HitType.Boomerang)
                 return Values.HitCollision.None;
 
-            if (_damageState.CurrentLives <= 0)
-            {
-                EndRotation();
-            }
+            EndRotation();
+
             // dont draw trail particle
             return _damageState.OnHit(gameObject, direction, damageType, damage, false);
         }
