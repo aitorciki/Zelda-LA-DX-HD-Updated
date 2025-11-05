@@ -4456,11 +4456,19 @@ namespace ProjectZ.InGame.GameObjects
             if (Map != null && Map.DungeonMode)
             {
                 _inDungeon = true;
-                _objBowWow = null;
             }
             else
                 _inDungeon = false;
 
+            // If the player has not saved BowWow yet or has turned him in.
+            var hasBowWow = Game1.GameManager.SaveManager.GetString("has_bowWow","0") == "1";
+
+            // The BowWow object is designed to automatically set to "_objBowWow" so it needs to be
+            // terminated when it is not supposed to be in use or we get an invisible BowWow following.
+            if (!hasBowWow || Map.DungeonMode)
+            {
+                _objBowWow = null;
+            }
             Game1.GameManager.UseShockEffect = false;
         }
 
