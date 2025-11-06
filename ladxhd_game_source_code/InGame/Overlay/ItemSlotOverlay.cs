@@ -67,10 +67,12 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdatePositions(Rectangle uiWindow, Point offset, int scale)
         {
+            var hud = Game1.GameManager.InGameOverlay.InGameHud;
+
             ItemSlotPosition = new Point(GameSettings.ItemsOnRight 
-                ? uiWindow.X + uiWindow.Width - (RecItemselection.Width * 2 + DistX * 2 + 16) * scale
-                : uiWindow.X + 16 * scale,
-                uiWindow.Y + uiWindow.Height - (RecItemselection.Height * 3 + DistY * 2 + 16) * scale);
+                ? uiWindow.X + uiWindow.Width - (RecItemselection.Width * 2 + DistX * 2 + 16) * scale + hud.custom_items_offsetx
+                : uiWindow.X + 16 * scale + hud.custom_items_offsetx,
+                uiWindow.Y + uiWindow.Height - (RecItemselection.Height * 3 + DistY * 2 + 16) * scale + hud.custom_items_offsety);
 
             // update the background rectangles
             for (var i = 0; i < _itemSlots.Length; i++)

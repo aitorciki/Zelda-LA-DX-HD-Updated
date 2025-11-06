@@ -2,7 +2,6 @@
 using System.IO;
 using System.Globalization;
 using System.Reflection;
-using ProjectZ.InGame.GameObjects.Base;
 
 namespace ProjectZ.InGame.Things
 {
@@ -22,10 +21,10 @@ namespace ProjectZ.InGame.Things
                 string varName = splitLine[0].Trim();
                 string varValue = splitLine[1].Trim();
 
-                System.Diagnostics.Debug.WriteLine(varName);
-                System.Diagnostics.Debug.WriteLine(varValue);
-
                 FieldInfo field = inputClass.GetType().GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+                if (field == null) { continue; }
+
                 object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
                 field.SetValue(inputClass, convertedValue);
             }
