@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -85,8 +86,17 @@ namespace ProjectZ.InGame.Overlay
         private const int ScrollTime = 125;
         private bool _textScrolling;
 
+        // Mod File Values 
+        int textbox_scale = 0;
+
         public TextboxOverlay()
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "TextboxOverlay.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             _animator = AnimatorSaveLoad.LoadAnimator("dialog_arrow");
 
             _textboxBackground = new UiRectangle(Rectangle.Empty, "textboxblur", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
@@ -250,13 +260,14 @@ namespace ProjectZ.InGame.Overlay
             }
             var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton);
             var cancelPressed = ControlHandler.ButtonPressed(ControlHandler.CancelButton);
-            var startPressed = ControlHandler.ButtonPressed(CButtons.Start);
+            var startPressed = ControlHandler.ButtonPressed(CButtons.Start) && GameSettings.DialogSkip;
 
-            if (startPressed && GameSettings.DialogSkip)
+            if (startPressed)
             {
                 _end = true;
                 _running = false;
             }
+
             if (confirmPressed || cancelPressed || startPressed)
             {
                 if (_end)
@@ -413,7 +424,10 @@ namespace ProjectZ.InGame.Overlay
 
         public void ResolutionChange()
         {
-            _uiScale = Game1.UiScale;
+            if (textbox_scale > 0)
+                _uiScale = textbox_scale;
+            else
+                _uiScale = Game1.UiScale;
             SetUpDialogBox();
         }
 

@@ -8,7 +8,7 @@ namespace ProjectZ.InGame.Things
 {
     public static class ModFile
     {
-        public static void Parse(string modFile, GameObject gameObject)
+        public static void Parse(string modFile, dynamic inputClass)
         {
             foreach (string line in File.ReadAllLines(modFile))
             {
@@ -22,9 +22,12 @@ namespace ProjectZ.InGame.Things
                 string varName = splitLine[0].Trim();
                 string varValue = splitLine[1].Trim();
 
-                FieldInfo field = gameObject.GetType().GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                System.Diagnostics.Debug.WriteLine(varName);
+                System.Diagnostics.Debug.WriteLine(varValue);
+
+                FieldInfo field = inputClass.GetType().GetField(varName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
                 object convertedValue = Convert.ChangeType(varValue, field.FieldType, CultureInfo.InvariantCulture);
-                field.SetValue(gameObject, convertedValue);
+                field.SetValue(inputClass, convertedValue);
             }
         }
     }
