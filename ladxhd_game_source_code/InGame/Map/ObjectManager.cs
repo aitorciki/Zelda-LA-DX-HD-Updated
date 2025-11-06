@@ -248,21 +248,19 @@ namespace ProjectZ.InGame.Map
                     UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
                 _updateGameObject.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
 
-                // Make sure that Link's follower is always updated.
+                // Always update Link's follower, the boomerang, and BowWow (when rescuing him).
                 if (!_updateGameObject.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _updateGameObject.Add(MapManager.ObjLink._objFollower);
-
-                // Always update the boomerang as well.
                 if (!_updateGameObject.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _updateGameObject.Add(MapManager.ObjLink.Boomerang);
-
-                // If Link currently has BowWow with him he needs updated.
                 if (!_updateGameObject.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _updateGameObject.Add(MapManager.ObjLink._objBowWow);
 
-                // Evil Eagle flies off the screen constantly so he needs to be here too.
-                if (!_updateGameObject.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
-                    _updateGameObject.Add(MapManager.ObjLink._evilEagle);
+                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                {
+                    if (!_updateGameObject.Contains(updObject) && updObject != null)
+                        _updateGameObject.Add(updObject);
+                }
             }
             // Only update the objects that are currently visible.
             else
@@ -315,21 +313,19 @@ namespace ProjectZ.InGame.Map
                     UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
                 _collidingObjectList.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
 
-                // Make sure that Link's follower is always updated.
+                // Always update Link's follower, the boomerang, and BowWow (when rescuing him).
                 if (!_collidingObjectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _collidingObjectList.Add(MapManager.ObjLink._objFollower);
-
-                // Always update the boomerang as well.
                 if (!_collidingObjectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _collidingObjectList.Add(MapManager.ObjLink.Boomerang);
-
-                // If Link currently has BowWow with him he needs updated.
                 if (!_collidingObjectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _collidingObjectList.Add(MapManager.ObjLink._objBowWow);
 
-                // Evil Eagle flies off the screen constantly so he needs to be here too.
-                if (!_collidingObjectList.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
-                    _collidingObjectList.Add(MapManager.ObjLink._evilEagle);
+                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                {
+                    if (!_collidingObjectList.Contains(updObject) && updObject != null)
+                        _collidingObjectList.Add(updObject);
+                }
             }
             // Only update the objects that are currently visible.
             else
@@ -363,21 +359,19 @@ namespace ProjectZ.InGame.Map
                 var field = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
                 _gameObjectPool.GetComponentList(_damageFieldObjects, field.X, field.Y, field.Width, field.Height, DamageFieldComponent.Mask);
 
-                // Make sure that Link's follower is always updated.
+                // Always update Link's follower, the boomerang, and BowWow (when rescuing him).
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
                     _damageFieldObjects.Add(MapManager.ObjLink._objFollower);
-
-                // Always update the boomerang as well.
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
                     _damageFieldObjects.Add(MapManager.ObjLink.Boomerang);
-
-                // If Link currently has BowWow with him he needs updated.
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _damageFieldObjects.Add(MapManager.ObjLink._objBowWow);
 
-                // Evil Eagle flies off the screen constantly so he needs to be here too.
-                if (!_damageFieldObjects.Contains(MapManager.ObjLink._evilEagle) && MapManager.ObjLink._evilEagle != null)
-                    _damageFieldObjects.Add(MapManager.ObjLink._evilEagle);
+                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                {
+                    if (!_damageFieldObjects.Contains(updObject) && updObject != null)
+                        _damageFieldObjects.Add(updObject);
+                }
             }
             else
             {
@@ -729,6 +723,7 @@ namespace ProjectZ.InGame.Map
         {
             ObjectList.Clear();
             ObjectListB.Clear();
+            MapManager.ObjLink.UpdateObjects.Clear();
         }
 
         private void ClearPools()

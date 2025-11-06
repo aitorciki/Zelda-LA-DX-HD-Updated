@@ -196,7 +196,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             
             // Not even setting the map on creation works for this one, so reference the map from ObjLink I guess.
             if (_fadeCounter <= 0)
-                MapManager.ObjLink.Map.Objects.DeleteObjects.Add(this);
+            {
+                Map.Map mapRef;
+
+                if (Map == null)
+                    mapRef = MapManager.ObjLink.Map;
+                else
+                    mapRef = Map;
+
+                mapRef.Objects.DeleteObjects.Add(this);
+            }
             else
             {
                 EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, 0, 0.5f * Game1.TimeMultiplier);

@@ -178,8 +178,8 @@ namespace ProjectZ.InGame.GameObjects
         private ObjGhost _objGhost;
         private bool _spawnGhost;
 
-        // Evil Eagle Reference
-        public BossEvilEagle _evilEagle;
+        // Always Animate Objects
+        public List<GameObject> UpdateObjects = new List<GameObject>();
 
         // Trapped State
         private int _trapInteractionCount;

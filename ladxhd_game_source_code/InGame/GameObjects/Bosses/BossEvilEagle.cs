@@ -150,7 +150,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // spawn position
             EntityPosition.Set(new Vector2(EntityPosition.X + 180, 24));
 
-            MapManager.ObjLink._evilEagle = this;
+            MapManager.ObjLink.UpdateObjects.Add(this);
         }
 
         private void GenericUpdate()
@@ -589,7 +589,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             SpawnHeart();
 
             Map.Objects.DeleteObjects.Add(this);
-            MapManager.ObjLink._evilEagle = null;
         }
     }
 }

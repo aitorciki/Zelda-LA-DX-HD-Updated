@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -42,8 +43,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             Sprite = new CSprite(EntityPosition);
             AnimationComponent = new AnimationComponent(Animator, Sprite, new Vector2(offsetX, offsetY));
             if (deleteOnFinish)
-                Animator.OnAnimationFinished = () => Map.Objects.DeleteObjects.Add(this);
+            {
+                Map.Map mapRef;
 
+                if (Map == null)
+                    mapRef = MapManager.ObjLink.Map;
+                else
+                    mapRef = Map;
+
+                Animator.OnAnimationFinished = () => mapRef.Objects.DeleteObjects.Add(this);
+            }
             AddComponent(BaseAnimationComponent.Index, AnimationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, layer));
         }
