@@ -248,7 +248,8 @@ namespace ProjectZ.InGame.Overlay
                 }
                 return;
             }
-            var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) || ControlHandler.ButtonPressed(ControlHandler.CancelButton);
+            var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton);
+            var cancelPressed = ControlHandler.ButtonPressed(ControlHandler.CancelButton);
             var startPressed = ControlHandler.ButtonPressed(CButtons.Start);
 
             if (startPressed && GameSettings.DialogSkip)
@@ -256,20 +257,23 @@ namespace ProjectZ.InGame.Overlay
                 _end = true;
                 _running = false;
             }
-            if (confirmPressed || startPressed)
+            if (confirmPressed || cancelPressed || startPressed)
             {
                 if (_end)
                 {
-                    OwlMode = false;
-                    IsOpen = false;
-                    InputHandler.ResetInputState();
+                    // If we're at the end, close if not choice mode or if confirmed in choice mode
+                    if (!_isChoice || (confirmPressed && _isChoice))
+                    {
+                        OwlMode = false;
+                        IsOpen = false;
+                        InputHandler.ResetInputState();
 
-                    // set the choice variable
-                    if (_isChoice)
-                        Game1.GameManager.SaveManager.SetString(_choiceKey, _currentChoiceSelection.ToString());
+                        if (_isChoice && confirmPressed)
+                            Game1.GameManager.SaveManager.SetString(_choiceKey, _currentChoiceSelection.ToString());
 
-                    // If player was blocking before interaction, block button state can get "stuck" and next shield draw won't play sound effect.
-                    MapManager.ObjLink.ToggleBlockButton(false);
+                        // Fix for stuck block/shield button
+                        MapManager.ObjLink.ToggleBlockButton(false);
+                    }
                 }
                 else
                 {
@@ -278,7 +282,6 @@ namespace ProjectZ.InGame.Overlay
                         _textMult = 1;
                         _running = true;
 
-                        // start text in new textbox
                         if (_boxEnd)
                         {
                             _currentLine = 0;
@@ -288,17 +291,13 @@ namespace ProjectZ.InGame.Overlay
                             _strDialog = "";
                             _textOffsetY = CalculateTextOffsetY(_strFullText);
                         }
-                        // continue scrolling the text up
                         else
                             _currentLineAddition = 0;
                     }
-                    // jump to end
                     else
                         _textMult = 4;
                 }
-
             }
-
             // scroll text
             if (_running)
                 _textScrollCounter += Game1.DeltaTime * _textMult;
@@ -311,7 +310,6 @@ namespace ProjectZ.InGame.Overlay
 
                 NextLetter(false);
             }
-
             if (updated)
                 _strDialog = _strFullText.Substring(_currentState, _currentDialogCount);
 
@@ -365,7 +363,6 @@ namespace ProjectZ.InGame.Overlay
 
                     if (!fastForward)
                         Game1.GameManager.PlaySoundEffect("D360-21-15");
-
                     return;
                 }
             }
