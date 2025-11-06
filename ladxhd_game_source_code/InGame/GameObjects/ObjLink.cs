@@ -2347,7 +2347,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.TeleportFall ||
                 CurrentState == State.TeleporterUp ||
                 CurrentState == State.FallRotateEntry ||
-                (_jumpEndTimer > 0 && _isHoldingSword))
+                (_jumpEndTimer > 0))
                 Animation.Play("stand" + shieldString + animDirection);
             else if (CurrentState == State.ChargeJumping)
                 Animation.Play("cjump" + shieldString + animDirection);
@@ -2850,6 +2850,8 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.AttackJumping;
             else
                 CurrentState = State.Attacking;
+
+            _jumpEndTimer = 0;
         }
 
         private void HoldSword()
@@ -3960,6 +3962,7 @@ namespace ProjectZ.InGame.GameObjects
             _startedJumping = true;
             _body.Velocity.Z = JumpAcceleration;
             _jumpStartZPos = _body.Position.Z;
+            _jumpEndTimer = 0;
 
             // while attacking the player can still jump but without the animation
             if (CurrentState == State.Attacking)
@@ -4023,11 +4026,9 @@ namespace ProjectZ.InGame.GameObjects
             // touched the ground
             if (!_railJump && _body.IsGrounded && _body.Velocity.Z <= 0)
             {
-                // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
-                // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this
-                // the timer below forces the walking animation to play "stand" while it is active. When the timer ends, walking animation resumes.
-                if (IsChargingState(CurrentState))
-                    _jumpEndTimer = 75;
+                // HACK: Jumping then just before landing plays the same frame of animation as the first
+                // frame in walking. This timer forces "stand" animation for a few frames.
+                _jumpEndTimer = 75;
 
                 // Reset the jump starting Z position to 0.
                 _jumpStartZPos = 0;

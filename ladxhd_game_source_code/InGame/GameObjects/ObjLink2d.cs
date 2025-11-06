@@ -383,7 +383,7 @@ namespace ProjectZ.InGame.GameObjects
                 }
                 else if (CurrentState == State.Idle)
                 {
-                    if (_isWalking || _isClimbing)
+                    if ((_isWalking || _isClimbing) && _jumpEndTimer <= 0)
                     {
                         var newAnimation = "walk" + shieldString + Direction;
 
@@ -396,7 +396,7 @@ namespace ProjectZ.InGame.GameObjects
                     else
                         Animation.Play("stand" + shieldString + Direction);
                 }
-                else if ((!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)) || (_jumpEndTimer > 0 && _isHoldingSword))
+                else if ((!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)) || (_jumpEndTimer > 0))
                     Animation.Play("stand" + shieldString + Direction);
                 else if (CurrentState == State.Carrying)
                     Animation.Play((_isWalking ? "walkc_" : "standc_") + Direction);
@@ -765,9 +765,8 @@ namespace ProjectZ.InGame.GameObjects
                     // When hitting the ground reset the "held" state for the next jump.
                     _jump2DHeld = false;
 
-                    // HACK: Jumping plays the same frame of animation as the first frame in walking. When jumping while charging, landing, walking a bit,
-                    // then jumping again, the animation frame never changes which makes Link look like he's "sliding" across the ground. To prevent this
-                    // the timer below forces the walking animation to play "stand" while it is active. When the timer ends, walking animation resumes.
+                    // HACK: Jumping then just before landing plays the same frame of animation as the first
+                    // frame in walking. This timer forces "stand" animation for a few frames.
                     _jumpEndTimer = 75;
                 }
             }
