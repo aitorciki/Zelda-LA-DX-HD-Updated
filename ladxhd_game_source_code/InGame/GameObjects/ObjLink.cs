@@ -3101,7 +3101,7 @@ namespace ProjectZ.InGame.GameObjects
                         if (!carriableComponent.IsHeavy || Game1.GameManager.StoneGrabberLevel > 1)
                         {
                             // start carrying the object
-                            if (_pullCounter >= PullTime && grabbedObject != null)
+                            if ((doInstantPickup || _pullCounter >= PullTime) && grabbedObject != null)
                                 StartPickup(carriableComponent);
 
                             if (_pullCounter > PullMaxTime)

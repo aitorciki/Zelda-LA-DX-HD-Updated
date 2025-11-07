@@ -91,7 +91,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _carriableComponent = (CarriableComponent)_carriedObject.Components[CarriableComponent.Index];
 
-            var stateInit = new AiState();
+            var stateInit = new AiState(UpdateInit);
             stateInit.Trigger.Add(new AiTriggerCountdown(1500, null, () => _aiComponent.ChangeState("hiding")));
             var stateHiding = new AiState(UpdateHiding);
             stateHiding.Trigger.Add(_hiddenTimer = new AiTriggerTimer(500));
@@ -160,6 +160,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void ToHide()
         {
+            if (_carriedObject.IsDead || (_carriableComponent != null && _carriableComponent.IsPickedUp))
+                return;
+
             if (_aiComponent.CurrentStateId != "moving" || (PlayerDirection() >= 0 && _body.LastVelocityCollision == 0))
                 return;
 
@@ -179,6 +182,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 ToRunning();
                 _body.VelocityTarget = Vector2.Zero;
             }
+        }
+
+        private void UpdateInit()
+        {
+            CheckCarrier();
         }
 
         private void UpdateMoving()
