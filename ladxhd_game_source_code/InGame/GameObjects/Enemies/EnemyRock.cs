@@ -4,6 +4,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -51,6 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 10, ShadowHeight = 6 });
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            MapManager.ObjLink.UpdateObjects.Add(this);
         }
 
         private void Update()
@@ -63,7 +65,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // fade out
                 _sprite.Color = Color.White * ((float)_liveTime / 125f);
                 if (_liveTime < 0)
-                    Map.Objects.DeleteObjects.Add(this);
+                {
+                    Map.Map mapRef;
+
+                    if (Map == null)
+                        mapRef = MapManager.ObjLink.Map;
+                    else
+                        mapRef = Map;
+
+                    mapRef.Objects.DeleteObjects.Add(this);
+                }
             }
 
             // bounce in a random direction

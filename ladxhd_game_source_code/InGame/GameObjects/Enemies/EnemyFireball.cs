@@ -56,6 +56,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
+            MapManager.ObjLink.UpdateObjects.Add(this);
         }
 
         public void SetVelocity(Vector2 velocity)
@@ -74,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _liveTime = 125;
 
             if (_liveTime < 0)
-                Map.Objects.DeleteObjects.Add(this);
+                Delete();
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
@@ -102,9 +103,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
             splashAnimator.EntityPosition.Set(EntityPosition.Position - new Vector2(8, 8));
             Map.Objects.SpawnObject(splashAnimator);
+            Game1.GameManager.PlaySoundEffect("D360-03-03");
+            Delete();
+        }
 
-            // TODO: add sound effect
-            Map.Objects.DeleteObjects.Add(this);
+        private void Delete()
+        {
+            Map.Map mapRef;
+
+            if (Map == null)
+                mapRef = MapManager.ObjLink.Map;
+            else
+                mapRef = Map;
+
+            mapRef.Objects.DeleteObjects.Add(this);
         }
     }
 }

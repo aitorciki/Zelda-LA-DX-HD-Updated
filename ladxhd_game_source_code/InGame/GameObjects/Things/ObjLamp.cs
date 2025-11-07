@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -97,14 +98,17 @@ namespace ProjectZ.InGame.GameObjects.Things
                     AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
                 }
             }
-
-            // start with the light off
+            // If it requires powder, start with it unlit.
             if (powderLamp)
                 _lampState = 0;
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, hasCollision ? Values.LayerPlayer : Values.LayerBottom));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
+
+            // The lamps inside the egg must be always animated for classic camera.
+            if (lampKey?.Contains("egg_lamps") == true)
+                MapManager.ObjLink.UpdateObjects.Add(this);
         }
 
         public bool IsOn()

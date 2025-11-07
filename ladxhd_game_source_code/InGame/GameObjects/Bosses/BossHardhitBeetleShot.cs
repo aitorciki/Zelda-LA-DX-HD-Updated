@@ -47,6 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            MapManager.ObjLink.UpdateObjects.Add(this);
         }
 
         private void Update()
@@ -57,7 +58,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _sprite.Color = Color.White * ((float)_liveTime / 125f);
 
             if (_liveTime < 0)
-                Map.Objects.DeleteObjects.Add(this);
+            {
+                Map.Map mapRef;
+
+                if (Map == null)
+                    mapRef = MapManager.ObjLink.Map;
+                else
+                    mapRef = Map;
+
+                mapRef.Objects.DeleteObjects.Add(this);
+            }
         }
         
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)

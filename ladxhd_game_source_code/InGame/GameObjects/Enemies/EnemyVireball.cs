@@ -1,8 +1,9 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -45,6 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
+            MapManager.ObjLink.UpdateObjects.Add(this);
         }
 
         private void Update()
@@ -56,7 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.Color = Color.White * ((float)_liveTime / 100f);
 
             if (_liveTime < 0)
-                Map.Objects.DeleteObjects.Add(this);
+                Delete();
         }
         
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
@@ -81,7 +83,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(splashAnimator);
 
             Game1.GameManager.PlaySoundEffect("D360-03-03");
-            Map.Objects.DeleteObjects.Add(this);
+            Delete();
+        }
+
+        private void Delete()
+        {
+            Map.Map mapRef;
+
+            if (Map == null)
+                mapRef = MapManager.ObjLink.Map;
+            else
+                mapRef = Map;
+
+            mapRef.Objects.DeleteObjects.Add(this);
         }
     }
 }
