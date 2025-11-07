@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -42,6 +41,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _slowReturn;
         private bool _freezePlayer;
         private bool _resurrected;
+        private bool _highJump;
 
         private const int FollowDistance = 18;
 
@@ -104,7 +104,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // buffer state to not be one frame into a jump while showing the textbox
             var statePreFollowing = new AiState();
             statePreFollowing.Trigger.Add(new AiTriggerCountdown(100, null, EndPreFollowing));
-            var stateFollowing = new AiState(UpdateWalking) { Init = InitWalk };
+            var stateFollowing = new AiState(UpdateFollowing) { Init = InitWalk };
             var stateThrown = new AiState(UpdateThrown);
             var statePickedUp = new AiState(UpdatePickedUp);
 
@@ -188,7 +188,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
                 }
             }
-
 /*
             // If the classic camera mode is enabled, don't let the player throw the chicken outside of the field.
             if (Camera.ClassicMode && _isThrown && !_throwHitWall)
@@ -205,7 +204,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
             }
 */
-
         }
 
         private void ToActiveState()
@@ -291,8 +289,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _throwHitWall = false;
         }
 
-        private void UpdateWalking()
+        private void UpdateFollowing()
         {
+            var Link = MapManager.ObjLink;
+
             // On the first tick only, check if the rooster is alive and can be carried.
             if (_updateCarry && !Map.DungeonMode)
             {
@@ -342,6 +342,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.IgnoresZ = false;
             }
 
+            // If Link is jumping then store that jump as a high jump the next time the rooster is grounded.
+            if (Link.IsJumpingState(Link.CurrentState) && _body.IsGrounded &&
+                (Link.GetRailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
+            {
+                _highJump = true;
+            }
+
             // Jump.
             if (_body.IsGrounded)
             {
@@ -350,6 +357,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // While returning from a throw do not jump high.
                 if (_slowReturn)
                     jumpHeight = 1;
+
+                // If a jump has been stored or it Link jumped on the same frame the chicken was grounded.
+                if (_highJump || Link.IsJumpingState(Link.CurrentState) || Link.IsRailJumping())
+                {
+                    jumpHeight = 2.25f;
+                    _highJump = false;
+                }
 
                 _body.Velocity.Z = jumpHeight;
             }
