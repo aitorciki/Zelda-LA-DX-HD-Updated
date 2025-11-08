@@ -2347,7 +2347,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.TeleportFall ||
                 CurrentState == State.TeleporterUp ||
                 CurrentState == State.FallRotateEntry ||
-                (_jumpEndTimer > 0))
+                (_jumpEndTimer > 0 && !HoleFalling))
                 Animation.Play("stand" + shieldString + animDirection);
             else if (CurrentState == State.ChargeJumping)
                 Animation.Play("cjump" + shieldString + animDirection);
