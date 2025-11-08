@@ -65,8 +65,8 @@ namespace LADXHD_Migrater
 
         public static bool InJunkFolder(FileItem fileItem)
         {
-            return (fileItem.DirectoryName.IndexOf("content\\bin", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    fileItem.DirectoryName.IndexOf("content\\obj", StringComparison.OrdinalIgnoreCase) >= 0);
+            return (fileItem.DirectoryName.IndexOf("content\\bin\\", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    fileItem.DirectoryName.IndexOf("content\\obj\\", StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
