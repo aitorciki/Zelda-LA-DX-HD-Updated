@@ -61,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Snap the camera when classic camera is active.
             if (_mode == 1 && Camera.ClassicMode)
             {
-                Camera.SnapCameraTimer = 10;
+                Camera.SnapCameraTimer = 10f;
                 _teleportTime -= 250;
                 extraYOffset = 9;
             }

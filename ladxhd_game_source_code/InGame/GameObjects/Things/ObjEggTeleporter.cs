@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using System;
-using System.Collections.Generic;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -74,8 +74,41 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _targetPath = new int[] { 2, 2, 2, 2, 1, 1, 1 };
         }
 
+        // Assume six rooms: 4 rooms in a square, 1 room above, 1 room below. Let's number those rooms:
+        // above square: 0, square top left: 1, square top right: 2, square bottom left: 3, square bottom right: 4, below square: 5.
+        // This hack teleports the player from room 1 to room 3 just before entering room 3, or rather to the entrance of room 5. This ensures when leaving the egg, the torch room
+        // is always to the south. Classic camera mode bypasses normal behavior and does its own thing. Normally, rooms 1, 2, and 4 are never really entered. The player is almost
+        // always teleported back to room 3. When classic camera is active, room 1 acts as room 3 when walking north. This is to have smooth camera transitions. When classic camera
+        // is disabled, the player is always teleported back to room 3 when entering room 1. So the hack is needed to teleport back to room 3 when traveling south.
+
+        private void LeaveEggTeleportHack()
+        {
+            if (!Camera.ClassicMode) { return; }
+
+            var pos = MapManager.ObjLink.EntityPosition.Position;
+            var dir = AnimationHelper.GetDirection(MapManager.ObjLink.LastMoveVector);
+
+            if ((roomY == 1) && (pos.Y > 240) && (pos.Y < 256) && (dir == 3))
+            {
+                var offset = new Vector2(0, Values.FieldHeight);
+                var newpos = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y) + offset;
+                Camera.SnapCameraTimer = 50f;
+                MapManager.ObjLink.EntityPosition.Set(newpos);
+
+                // If Link has any items out teleport those too.
+                _bodyObjects.Clear();
+                Map.Objects.GetComponentList(_bodyObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, BodyComponent.Mask);
+
+                foreach (var gameObject in _bodyObjects)
+                    if (!(gameObject is ObjLink))
+                        gameObject.EntityPosition.Offset(offset);
+            }
+        }
+
         private void Update()
         {
+            LeaveEggTeleportHack();
+
             if (!_initLight)
                 InitLight();
 
@@ -219,6 +252,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             var posX = MapManager.ObjLink.EntityPosition.X;
             var posY = MapManager.ObjLink.EntityPosition.Y - 4;
+
             roomX = (int)((posX + 80) / Values.FieldWidth);
             roomY = (int)(posY / Values.FieldHeight);
 
@@ -229,7 +263,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 _movedPath[_pathIndex] = dir;
 
-                // check if the player found the correct path
+                // Check if the player found the correct path.
                 _foundPath = true;
                 for (var i = 0; i < _movedPath.Length; i++)
                     if (_movedPath[(_pathIndex + i + 1) % 7] != _targetPath[i])
@@ -241,27 +275,47 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _pathIndex = (_pathIndex + 1) % 7;
             }
 
-            // offset the player to not move outside
+            // Offset the player to not move outside.
             var dist = 16;
-            // found the path?
+
+            // Up: The path to the jump has been found.
             if (_foundPath && posY < roomY * Values.FieldHeight + dist && (roomX == 1 || roomX == 2) && roomY == 2)
+            {
                 OffsetPlayer(roomX == 1 ? 0 : -1, -1);
+            }
+            // Left
             else if (posX < 80 + dist && roomX == 1 && (roomY == 1 || roomY == 2))
+            {
                 OffsetPlayer(1, 0);
+            }
+            // Right
             else if (posX > 80 + Values.FieldWidth * 2 - dist && roomX == 2 && (roomY == 1 || roomY == 2))
+            {
                 OffsetPlayer(-1, 0);
+            }
+            // Down
             else if (posY > (roomY + 1) * Values.FieldHeight - dist && roomX == 2 && (roomY == 2))
+            {
                 OffsetPlayer(-1, 0);
-            // make sure that the room at the bottom is always the exit room
-            else if (!_foundPath && (roomX == 1 || roomX == 2) && roomY == 1 &&
+            }
+            // Up: With normal camera, always teleport the player from the top room to the room just above the exit.
+            else if (!Camera.ClassicMode && !_foundPath && (roomX == 1 || roomX == 2) && roomY == 1 &&
                 !RoomStates[roomX, roomY - 1].Lit && RoomStates[roomX, roomY - 1].Light == RoomStates[roomX, roomY - 1].LightTarget &&
                 !RoomStates[roomX, roomY + 1].Lit && RoomStates[roomX, roomY + 1].Light == RoomStates[roomX, roomY + 1].LightTarget)
+            {
                 OffsetPlayer(roomX == 2 ? -1 : 0, 1);
+            }
+            // Up: With classic camera, always teleport the player back to the top room and rely on the teleport hack to move to the exit.
+            else if (Camera.ClassicMode && !_foundPath && (roomX == 1 || roomX == 2) && roomY == 1 && 
+                posY < roomY * Values.FieldHeight + dist && AnimationHelper.GetDirection(MapManager.ObjLink.LastMoveVector) == 1)
+            {
+                OffsetPlayer(roomX == 2 ? -1 : 0, 1);
+            }
         }
 
         private void OffsetPlayer(int offsetX, int offsetY)
         {
-            // offset the ligth map data with the player
+            // Offset the light map data with the player.
             for (int y = 0; y < RoomStates.GetLength(1); y++)
                 for (int x = 0; x < RoomStates.GetLength(0); x++)
                     tempRoomStates[x, y] = RoomStates[x, y];
@@ -271,17 +325,22 @@ namespace ProjectZ.InGame.GameObjects.Things
                         (x + offsetX + RoomStates.GetLength(0)) % RoomStates.GetLength(0),
                         (y + offsetY + RoomStates.GetLength(1)) % RoomStates.GetLength(1)] = tempRoomStates[x, y];
 
+            // Teleport Link to the previous room.
             var offset = new Vector2(offsetX * Values.FieldWidth, offsetY * Values.FieldHeight);
-            MapManager.ObjLink.EntityPosition.Set(
-                new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y) + offset);
+            var newpos = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y) + offset;
+            MapManager.ObjLink.EntityPosition.Set(newpos);
 
-            var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
-            MapManager.Camera.SoftUpdate(goalPosition);
-
-            // offset bodies
+            // Perform some camera magic.
+            if (Camera.ClassicMode)
+                Camera.SnapCameraTimer = 50f;
+            else
+            {
+                var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
+                MapManager.Camera.SoftUpdate(goalPosition);
+            }
+            // If Link has any items out teleport those too.
             _bodyObjects.Clear();
-            Map.Objects.GetComponentList(_bodyObjects,
-                (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, BodyComponent.Mask);
+            Map.Objects.GetComponentList(_bodyObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, BodyComponent.Mask);
 
             foreach (var gameObject in _bodyObjects)
                 if (!(gameObject is ObjLink))
@@ -290,6 +349,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
+            // Don't need to draw the light when classic camera is active.
+            if (Camera.ClassicMode) { return; }
+
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, Resources.LightFadeShader, MapManager.Camera.TransformMatrix);
 
