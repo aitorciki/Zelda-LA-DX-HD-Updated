@@ -102,6 +102,9 @@ namespace ProjectZ
 
         // True when in-game after selecting save file. False at main menu and intro.
         public static bool InProgress;
+        
+        // Stores classic cam setting for ending.
+        static public bool StoredClassicCam;
 
         public static bool FinishedLoading => _finishedLoading;
 

@@ -5600,7 +5600,7 @@ namespace ProjectZ.InGame.GameObjects
                 "pond.map", "dreamShrine01.map", "dreamShrine02.map", "shellhouse.map", "dungeon1.map", "dungeon2.map", 
                 "dungeon3_1.map", "dungeon3_2.map",  "dungeon3_3.map", "dungeon3_4.map", "dungeon4.map", "dungeon5.map", 
                 "dungeon6.map", "dungeon7_1.map", "dungeon7_2.map", "dungeon7_3.map", "dungeon7_4.map", "dungeon8.map", 
-                "dungeon_color.map", "egg_entry.map", "egg_lower_floor", "egg_boss_room", "final stairs"
+                "dungeon_color.map", "egg_entry.map", "egg_lower_floor.map", "egg_boss_room.map", "final stairs.map"
             };
             // Disable the follower on the maps listed above, or disable them on 2D maps.
             for (int i = 0; i < noFollowerMaps.Length; i++)
@@ -5619,8 +5619,22 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
+        private void CheckFinalStairs(Map.Map map)
+        {
+            if (map.MapName == "final stairs.map")
+            {
+                // Store the classic camera setting. It is restored after the ending is finished.
+                Game1.StoredClassicCam = GameSettings.ClassicCamera;
+                GameSettings.ClassicCamera = false;
+                Game1.ScaleChanged = true;
+            }
+        }
+
         public void UpdateMapTransitionIn(float state)
         {
+            // Disable classic camera during the final stairs.
+            CheckFinalStairs(Map);
+
             // Make sure to not start falling while transitioning into a 2d map with a ladder.
             if (state == 0 && Map.Is2dMap)
                 _body.IgnoresZ = true;

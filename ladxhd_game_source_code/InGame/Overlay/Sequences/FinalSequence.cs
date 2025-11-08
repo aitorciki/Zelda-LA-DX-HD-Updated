@@ -767,8 +767,12 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
         private void ExitToIntro()
         {
+            // Restore classic camera setting to what it was before the stairs sequence.
+            GameSettings.ClassicCamera = Game1.StoredClassicCam;
+            Game1.ScaleChanged = true;
             Game1.ScreenManager.ChangeScreen(Values.ScreenNameIntro);
             Game1.GameManager.InGameOverlay.CloseOverlay();
+            Game1.StoredClassicCam = false;
         }
 
         private bool NextCredits()
