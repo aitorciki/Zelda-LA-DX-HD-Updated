@@ -78,7 +78,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.NPCWall
             };
 
-            var damageBox = new CBox(EntityPosition, -8, -8, 0, 16, 16, 4);
+            var damageBox = new CBox(EntityPosition, -1, -1, 0, 2, 2, 4);
             var hittableBox = new CBox(EntityPosition, -6, -6, 12, 12, 8);
 
             if (!string.IsNullOrEmpty(destructionKey))
