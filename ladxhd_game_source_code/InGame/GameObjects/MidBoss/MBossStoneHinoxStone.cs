@@ -54,7 +54,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(DrawShadowComponent.Index, shadow);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-            MapManager.ObjLink.UpdateObjects.Add(this);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void MoveCollision(Values.BodyCollision collisionType)
@@ -66,14 +66,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             if (_collisionCount > 3 || EntityPosition.Y > _spawnY + Values.FieldHeight - 32)
             {
-                Map.Map mapRef;
-
-                if (Map == null)
-                    mapRef = MapManager.ObjLink.Map;
-                else
-                    mapRef = Map;
-
-                mapRef.Objects.DeleteObjects.Add(this);
+                Map.Objects.DeleteObjects.Add(this);
                 return;
             }
 

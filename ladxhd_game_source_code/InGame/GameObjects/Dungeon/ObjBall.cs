@@ -86,6 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, cSprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void UpdateIdle()

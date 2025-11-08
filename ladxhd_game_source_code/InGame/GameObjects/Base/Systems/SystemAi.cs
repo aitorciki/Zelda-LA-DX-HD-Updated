@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Pools;
 using ProjectZ.InGame.Map;
-using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Base.Systems
 {
@@ -13,7 +12,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
         private readonly List<GameObject> _objectList = new List<GameObject>();
 
-        public void Update(Type[] alwaysAnimateTypes = null)
+        public void Update(Type[] freezePersistTypes = null)
         {
             _objectList.Clear();
 
@@ -32,9 +31,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 if (!_objectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _objectList.Add(MapManager.ObjLink._objBowWow);
 
-                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                foreach (var updObject in ObjectManager.AlwaysAnimateObjectsTemp)
                 {
-                    if (!_objectList.Contains(updObject) && updObject != null)
+                    if (!_objectList.Contains(updObject) && !updObject.IsDead && updObject != null)
                         _objectList.Add(updObject);
                 }
             }
@@ -49,10 +48,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             }
             foreach (var gameObject in _objectList)
             {
-                bool skipObject = (alwaysAnimateTypes == null) switch
+                bool skipObject = (freezePersistTypes == null) switch
                 {
                     true  => (!gameObject.IsActive),
-                    false => (!gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, alwaysAnimateTypes))
+                    false => (!gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, freezePersistTypes))
                 };
                 if (!gameObject.IsActive || skipObject) { continue; }
                 var aiComponent = gameObject.Components[AiComponent.Index] as AiComponent;

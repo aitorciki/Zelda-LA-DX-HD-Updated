@@ -63,7 +63,10 @@ namespace ProjectZ.InGame.Map
         private readonly List<GameObject> db_bodyList = new List<GameObject>();
         private readonly List<GameObject> db_gameObjectList = new List<GameObject>();
 
-        public static Type[] _AlwaysAnimateTypes;
+        public static List<GameObject> AlwaysAnimateObjectsMain = new List<GameObject>();
+        public static List<GameObject> AlwaysAnimateObjectsTemp = new List<GameObject>();
+
+        public static Type[] _FreezePersistTypes;
         public static Type[] _ShieldDeflectTypes;
         private bool _keyChanged;
         private bool _finishedLoading;
@@ -76,7 +79,7 @@ namespace ProjectZ.InGame.Map
             Owner = owner;
 
             // The type of game objects that are not frozen during events.
-            _AlwaysAnimateTypes = new Type[]{ typeof(ObjGhost), typeof(ObjOwl) };
+            _FreezePersistTypes = new Type[]{ typeof(ObjGhost), typeof(ObjOwl) };
 
             // The type of game objects that can be blocked by shield.
             _ShieldDeflectTypes = new Type[]{ typeof(EnemyOctorokShot), typeof(EnemySpear) };;
@@ -180,7 +183,7 @@ namespace ProjectZ.InGame.Map
             // When the game world is frozen, certain types should still be active. It is set to null at first and updated
             // depending on whether or not the "freezeGame" flag is set. When "null" everything in the world is updated.
 
-            Type[] AlwaysAnimate = null;
+            Type[] freezePersistTypes = null;
 
             // Freeze most things except specific types when an event takes place. This variable should not be set directly,
             // but rather set via: Game1.GameManager.SaveManager.SetString("freezeGame", "1"); The listener on ObjLink will
@@ -189,7 +192,7 @@ namespace ProjectZ.InGame.Map
             if (Game1.GameManager.FreezeWorldForEvents)
             {
                 // Copy the group of objects to always animate into the array. Currently only "ObjGhost" and "ObjOwl".
-                AlwaysAnimate = _AlwaysAnimateTypes;
+                freezePersistTypes = _FreezePersistTypes;
 
                 // HACK: Keep link playing the ocarina when everything else is frozen. This may be
                 // useful for other states to keep Link active when the world should be frozen.
@@ -202,18 +205,25 @@ namespace ProjectZ.InGame.Map
                 UpdateField = MapManager.ObjLink.Map.GetField((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y);
                 ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
             }
+            // Add the always animate objects from the list on ObjLink to the temporary list here. The objects are copied to this list so it can
+            // serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
+            AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
+
             // Update everything: animations, listeners, bodies, etc. When "AlwaysAnimate" contains something, only those
             // types found that have been added to the type array will be updated. This is a method used to "freeze" the entire
             // game world when an event takes place. It also freezes Link so care must be taken when applying it.
-            _systemAnimator.Update(false, AlwaysAnimate);
+            _systemAnimator.Update(false, freezePersistTypes);
             UpdateGameObjects();
-            _systemAi.Update(AlwaysAnimate);
+            _systemAi.Update(freezePersistTypes);
             UpdateKeyListeners();
-            _systemBody.Update(0, 1, AlwaysAnimate);
+            _systemBody.Update(0, 1, freezePersistTypes);
             UpdatePlayerCollision();
             UpdateDamageFields();
             UpdateDeleteObjects();
             AddSpawnedObjects();
+
+            // Clear this list after it's done being used.
+            AlwaysAnimateObjectsTemp.Clear();
         }
 
         public void UpdateAnimations()
@@ -256,9 +266,9 @@ namespace ProjectZ.InGame.Map
                 if (!_updateGameObject.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _updateGameObject.Add(MapManager.ObjLink._objBowWow);
 
-                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                foreach (var updObject in AlwaysAnimateObjectsTemp)
                 {
-                    if (!_updateGameObject.Contains(updObject) && updObject != null)
+                    if (!_updateGameObject.Contains(updObject) && !updObject.IsDead && updObject != null)
                         _updateGameObject.Add(updObject);
                 }
             }
@@ -321,9 +331,9 @@ namespace ProjectZ.InGame.Map
                 if (!_collidingObjectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _collidingObjectList.Add(MapManager.ObjLink._objBowWow);
 
-                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                foreach (var updObject in AlwaysAnimateObjectsTemp)
                 {
-                    if (!_collidingObjectList.Contains(updObject) && updObject != null)
+                    if (!_collidingObjectList.Contains(updObject) && !updObject.IsDead && updObject != null)
                         _collidingObjectList.Add(updObject);
                 }
             }
@@ -367,9 +377,9 @@ namespace ProjectZ.InGame.Map
                 if (!_damageFieldObjects.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _damageFieldObjects.Add(MapManager.ObjLink._objBowWow);
 
-                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                foreach (var updObject in AlwaysAnimateObjectsTemp)
                 {
-                    if (!_damageFieldObjects.Contains(updObject) && updObject != null)
+                    if (!_damageFieldObjects.Contains(updObject) && !updObject.IsDead && updObject != null)
                         _damageFieldObjects.Add(updObject);
                 }
             }
@@ -394,8 +404,10 @@ namespace ProjectZ.InGame.Map
             if (DeleteObjects.Count > 0)
             {
                 foreach (var deletable in DeleteObjects)
+                {
                     RemoveObject(deletable);
-
+                    AlwaysAnimateObjectsMain.Remove(deletable);
+                }
                 DeleteObjects.Clear();
             }
         }
@@ -723,7 +735,7 @@ namespace ProjectZ.InGame.Map
         {
             ObjectList.Clear();
             ObjectListB.Clear();
-            MapManager.ObjLink.UpdateObjects.Clear();
+            AlwaysAnimateObjectsMain.Clear();
         }
 
         private void ClearPools()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -21,7 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
         private bool _inAir;
         private bool _onHole;
 
-        public void Update(int threadIndex, int threadCount, Type[] objectTypes = null)
+        public void Update(int threadIndex, int threadCount, Type[] freezePersistTypes = null)
         {
             if (Game1.TimeMultiplier <= 0)
                 return;
@@ -43,9 +44,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 if (!_objectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
                     _objectList.Add(MapManager.ObjLink._objBowWow);
 
-                foreach (var updObject in MapManager.ObjLink.UpdateObjects)
+                foreach (var updObject in ObjectManager.AlwaysAnimateObjectsTemp)
                 {
-                    if (!_objectList.Contains(updObject) && updObject != null)
+                    if (!_objectList.Contains(updObject) && !updObject.IsDead && updObject != null)
                         _objectList.Add(updObject);
                 }
             }
@@ -60,10 +61,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             }
             foreach (var gameObject in _objectList)
             {
-                bool skipObject = (objectTypes == null) switch
+                bool skipObject = (freezePersistTypes == null) switch
                 {
                     true  => (!gameObject.IsActive),
-                    false => (!gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, objectTypes))
+                    false => (!gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, freezePersistTypes))
                 };
                 if (!gameObject.IsActive || skipObject) { continue; }
                 var component = gameObject.Components[BodyComponent.Index] as BodyComponent;
@@ -180,6 +181,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
             if (body.Position.Z <= 0 && body.SplashEffect && lastFieldState != MapStates.FieldStates.Init && (body.CurrentFieldState & MapStates.FieldStates.DeepWater) != 0)
             {
+                if (body.Owner.Map == null) { Debug.WriteLine("Notice: Body.Map was null. Investigate..."); return; }
+
                 if (body.Owner.Map.Is2dMap && (lastFieldState & MapStates.FieldStates.DeepWater) == 0)
                 {
                     body.Velocity.Y *= 0.25f;

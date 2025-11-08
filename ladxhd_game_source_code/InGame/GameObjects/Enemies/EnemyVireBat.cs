@@ -71,7 +71,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-            MapManager.ObjLink.UpdateObjects.Add(this);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void InitAttack()
@@ -94,16 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.Color = Color.White * ((float)_liveTime / 100f);
 
             if (_liveTime < 0)
-            {
-                Map.Map mapRef;
-
-                if (Map == null)
-                    mapRef = MapManager.ObjLink.Map;
-                else
-                    mapRef = Map;
-
-                mapRef.Objects.DeleteObjects.Add(this);
-            }
+                Map.Objects.DeleteObjects.Add(this);
         }
 
         private void InitWait()

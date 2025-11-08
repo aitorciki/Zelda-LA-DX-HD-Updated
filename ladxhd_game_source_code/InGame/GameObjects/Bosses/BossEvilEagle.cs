@@ -149,8 +149,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // spawn position
             EntityPosition.Set(new Vector2(EntityPosition.X + 180, 24));
-
-            MapManager.ObjLink.UpdateObjects.Add(this);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void GenericUpdate()

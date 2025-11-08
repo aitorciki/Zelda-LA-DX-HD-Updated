@@ -98,6 +98,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("attacking");
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void KeyChanged()

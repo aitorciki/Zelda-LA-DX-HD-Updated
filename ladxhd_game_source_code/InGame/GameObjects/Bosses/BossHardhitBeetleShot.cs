@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            MapManager.ObjLink.UpdateObjects.Add(this);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void Update()
@@ -59,14 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (_liveTime < 0)
             {
-                Map.Map mapRef;
-
-                if (Map == null)
-                    mapRef = MapManager.ObjLink.Map;
-                else
-                    mapRef = Map;
-
-                mapRef.Objects.DeleteObjects.Add(this);
+                Map.Objects.DeleteObjects.Add(this);
             }
         }
         

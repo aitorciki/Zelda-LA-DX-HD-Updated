@@ -60,6 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void Update()

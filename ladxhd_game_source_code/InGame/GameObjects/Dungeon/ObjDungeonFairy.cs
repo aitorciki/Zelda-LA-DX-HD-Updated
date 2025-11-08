@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -111,6 +109,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, _sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void Update()
