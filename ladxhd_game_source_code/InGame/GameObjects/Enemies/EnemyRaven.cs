@@ -22,10 +22,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
         private readonly DamageFieldComponent _damageField;
-
+        private CSprite _sprite;
         private readonly Box _activationBox;
 
-        private float _flapcounter;
+        private float _flapCounter;
+        private float _fadeOutTime = 750;
         private double _dirRadius;
         private int _dirIndex;
         private int _lives = ObjLives.Raven;
@@ -43,8 +44,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/raven");
 
-            var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-7, -16));
+            _sprite = new CSprite(EntityPosition);
+            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-7, -16));
 
             _body = new BodyComponent(EntityPosition, -6, -14, 12, 14, 8)
             {
@@ -62,7 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("start", stateStart);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false);
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
 
             _aiComponent.ChangeState("waiting");
 
@@ -75,10 +76,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerTop));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerTop));
+            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
         private void UpdateWaiting()
@@ -96,12 +98,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateFlyingSound()
         {
-            _flapcounter += Game1.DeltaTime;
+            _flapCounter += Game1.DeltaTime;
 
-            if (_lives > 0 && _flapcounter > 430)
+            if (_lives > 0 && _flapCounter > 430)
             {
                 Game1.GameManager.PlaySoundEffect("D378-45-2D");
-                _flapcounter = 0;
+                _flapCounter = 0;
             }
         }
 
@@ -127,8 +129,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             var directionRadius = Math.Atan2(direction.Y, direction.X);
+            var distance = direction.Length();
 
-            if (direction.Length() < 80)
+            if (distance < 80)
             {
                 var followSpeed = 0.02f;
                 if (directionRadius < _dirRadius - followSpeed || _followTimer.State)
@@ -143,7 +146,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _dirIndex = velocity.X < 0 ? 0 : 1;
             _animator.Play("fly_" + _dirIndex);
 
-            UpdateFlyingSound();
+            if (distance < 85)
+                UpdateFlyingSound();
+
+            if (distance > 100)
+                FadeOutDelete();
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -152,6 +159,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity = new Vector3(direction * 1.75f, _body.Velocity.Z);
 
             return true;
+        }
+
+        private void FadeOutDelete()
+        {
+            _fadeOutTime -= Game1.DeltaTime;
+
+            if (_fadeOutTime < 0)
+                Map.Objects.DeleteObjects.Add(this);
+            else
+                _sprite.Color = Color.White * MathHelper.Clamp(_fadeOutTime / 100, 0, 1);
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
