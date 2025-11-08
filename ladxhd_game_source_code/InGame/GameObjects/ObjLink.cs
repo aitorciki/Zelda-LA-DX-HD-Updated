@@ -2015,11 +2015,25 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         if (CurrentState != State.Drowning && CurrentState != State.Drowned)
                         {
-                            // only push the player if he walks into the water and does not jump
+                            // Only push Link if he walks into the water.
                             if (!_lastFieldState.HasFlag(fieldState))
-                                _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.75f;
+                            {
+                                // Use the controller move vector to determine the offset.
+                                Vector2 move = ControlHandler.GetMoveVector2();
+                                if (move != Vector2.Zero)
+                                {
+                                    move.Normalize();
+                                    Vector2 offset = move * 5.5f;
 
-                            // splash effect
+                                    // The Y axis needs a lesser nudge when going down and a huge nudge going up.
+                                    if (offset.Y < -5f) { offset = new Vector2(offset.X, -2f); };
+                                    if (offset.Y > 5f)  { offset = new Vector2(offset.X, 9f); };
+
+                                    // Move Link to the offset position.
+                                    EntityPosition.Set(EntityPosition.Position + offset);
+                                }
+                            }
+                            // Spawn in the splash effect.
                             var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
                             splashAnimator.EntityPosition.Set(new Vector2(
                                 _body.Position.X + _body.OffsetX + _body.Width / 2f,
@@ -2031,7 +2045,7 @@ namespace ProjectZ.InGame.GameObjects
                             CurrentState = State.Drowning;
                             _drownedInLava = inLava;
 
-                            // blink in lava
+                            // Deal damage when in lava.
                             _hitCount = inLava ? CooldownTime : 0;
                         }
                     }
