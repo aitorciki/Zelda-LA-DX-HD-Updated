@@ -1,5 +1,20 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.5**
+### ** The "Even More Maintenance" Update**
+  * More Classic Camera fixes: Keep more objects "alive" offscreen, fix navigating the egg, disable during the ending.
+  * Add "lahdmod" support for the textbox and the HUD. These can be used to customize the size and positions.
+  * Start to skip dialog boxes won't skip options. Options can only be selected with the confirm button.
+  * Implement the Flying Roosters jump that he does when Link jumps or jumps off walls.
+  * Objects that have instant pickup such as Flying Rooster, Spiny Beetle, Genie Lamp, Balls, etc. are now actually instantly.
+  * Fix jumping > landing > walking appearing as if Link is sliding across the ground briefly.
+  * Fix enemy "Spark" damagebox to match original game.
+  * Fix enemy "Stalfos" to be able to be damaged while it is jumping.
+  * Fix Dungeon 5 dive entrance to boss key to only a single tile.
+  * Fix a missing tile on Dungeon 5 map.
+  * Fix two missing stairs objects on Dungeon 7 maps.
+  * Fix Dungeon 7 room where horse heads can be tossed outside the room.
+
 ## **v1.4.4**
 ### **The "Mandatory Maintenance After a Big Update" Update**
   * Great Fairy music is now based on the current field like the original game rather than range based.
