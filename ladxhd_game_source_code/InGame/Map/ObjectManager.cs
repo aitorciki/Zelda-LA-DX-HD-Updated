@@ -251,28 +251,14 @@ namespace ProjectZ.InGame.Map
         {
             _updateGameObject.Clear();
 
-            // Only update objects that are within the current field.
+            // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
                 _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, 
                     UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
                 _updateGameObject.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
-
-                // Always update Link's follower, the boomerang, and BowWow (when rescuing him).
-                if (!_updateGameObject.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
-                    _updateGameObject.Add(MapManager.ObjLink._objFollower);
-                if (!_updateGameObject.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
-                    _updateGameObject.Add(MapManager.ObjLink.Boomerang);
-                if (!_updateGameObject.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
-                    _updateGameObject.Add(MapManager.ObjLink._objBowWow);
-
-                foreach (var updObject in AlwaysAnimateObjectsTemp)
-                {
-                    if (!_updateGameObject.Contains(updObject) && !updObject.IsDead && updObject != null)
-                        _updateGameObject.Add(updObject);
-                }
             }
-            // Only update the objects that are currently visible.
+            // Normal Camera: Update objects that are within the viewport.
             else
             {
                 var updateFieldSize = new Vector2(Game1.RenderWidth, Game1.RenderHeight);
@@ -282,6 +268,21 @@ namespace ProjectZ.InGame.Map
                    (int)(updateFieldSize.X / MapManager.Camera.Scale),
                    (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
             }
+            // Always update Link's follower, the boomerang, and BowWow (when rescued).
+            if (!_updateGameObject.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                _updateGameObject.Add(MapManager.ObjLink._objFollower);
+            if (!_updateGameObject.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                _updateGameObject.Add(MapManager.ObjLink.Boomerang);
+            if (!_updateGameObject.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                _updateGameObject.Add(MapManager.ObjLink._objBowWow);
+
+            // Always update certain objects that are flagged as "always animate".
+            foreach (var updObject in AlwaysAnimateObjectsTemp)
+            {
+                if (!_updateGameObject.Contains(updObject) && !updObject.IsDead && updObject != null)
+                    _updateGameObject.Add(updObject);
+            }
+            // Update all game object update components in the list.
             foreach (var gameObject in _updateGameObject)
             {
                 if (!gameObject.IsActive) { continue; }
@@ -316,34 +317,35 @@ namespace ProjectZ.InGame.Map
 
             _collidingObjectList.Clear();
 
-            // Only update objects that are within the current field.
+            // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
                 _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y, 
                     UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
                 _collidingObjectList.RemoveAll(o => o.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
-
-                // Always update Link's follower, the boomerang, and BowWow (when rescuing him).
-                if (!_collidingObjectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
-                    _collidingObjectList.Add(MapManager.ObjLink._objFollower);
-                if (!_collidingObjectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
-                    _collidingObjectList.Add(MapManager.ObjLink.Boomerang);
-                if (!_collidingObjectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
-                    _collidingObjectList.Add(MapManager.ObjLink._objBowWow);
-
-                foreach (var updObject in AlwaysAnimateObjectsTemp)
-                {
-                    if (!_collidingObjectList.Contains(updObject) && !updObject.IsDead && updObject != null)
-                        _collidingObjectList.Add(updObject);
-                }
             }
-            // Only update the objects that are currently visible.
+            // Normal Camera: Update objects that are within the viewport.
             else
             {
                 _gameObjectPool.GetComponentList(_collidingObjectList,
                 (int)player.BodyRectangle.X, (int)player.BodyRectangle.Y,
                 (int)player.BodyRectangle.Width, (int)player.BodyRectangle.Height, ObjectCollisionComponent.Mask);
             }
+            // Always update Link's follower, the boomerang, and BowWow (when rescued).
+            if (!_collidingObjectList.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                _collidingObjectList.Add(MapManager.ObjLink._objFollower);
+            if (!_collidingObjectList.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                _collidingObjectList.Add(MapManager.ObjLink.Boomerang);
+            if (!_collidingObjectList.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                _collidingObjectList.Add(MapManager.ObjLink._objBowWow);
+
+            // Always update certain objects that are flagged as "always animate".
+            foreach (var updObject in AlwaysAnimateObjectsTemp)
+            {
+                if (!_collidingObjectList.Contains(updObject) && !updObject.IsDead && updObject != null)
+                    _collidingObjectList.Add(updObject);
+            }
+            // Update all game object collision components in the list.
             foreach (var gameObject in _collidingObjectList)
             {
                 if (!gameObject.IsActive) { continue; }
@@ -363,32 +365,35 @@ namespace ProjectZ.InGame.Map
             // get the objects that could potentially inflict damage
             _damageFieldObjects.Clear();
 
+            // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
                 var Link = MapManager.ObjLink;
                 var field = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
                 _gameObjectPool.GetComponentList(_damageFieldObjects, field.X, field.Y, field.Width, field.Height, DamageFieldComponent.Mask);
-
-                // Always update Link's follower, the boomerang, and BowWow (when rescuing him).
-                if (!_damageFieldObjects.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
-                    _damageFieldObjects.Add(MapManager.ObjLink._objFollower);
-                if (!_damageFieldObjects.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
-                    _damageFieldObjects.Add(MapManager.ObjLink.Boomerang);
-                if (!_damageFieldObjects.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
-                    _damageFieldObjects.Add(MapManager.ObjLink._objBowWow);
-
-                foreach (var updObject in AlwaysAnimateObjectsTemp)
-                {
-                    if (!_damageFieldObjects.Contains(updObject) && !updObject.IsDead && updObject != null)
-                        _damageFieldObjects.Add(updObject);
-                }
             }
+            // Normal Camera: Update objects that are within the viewport.
             else
             {
                 _gameObjectPool.GetComponentList(_damageFieldObjects,
                     (int)playerDamageBox.X, (int)playerDamageBox.Y,
                     (int)playerDamageBox.Width, (int)playerDamageBox.Height, DamageFieldComponent.Mask);
             }
+            // Always update Link's follower, the boomerang, and BowWow (when rescued).
+            if (!_damageFieldObjects.Contains(MapManager.ObjLink._objFollower) && MapManager.ObjLink._objFollower != null)
+                _damageFieldObjects.Add(MapManager.ObjLink._objFollower);
+            if (!_damageFieldObjects.Contains(MapManager.ObjLink.Boomerang) && MapManager.ObjLink.Boomerang != null)
+                _damageFieldObjects.Add(MapManager.ObjLink.Boomerang);
+            if (!_damageFieldObjects.Contains(MapManager.ObjLink._objBowWow) && MapManager.ObjLink._objBowWow != null)
+                _damageFieldObjects.Add(MapManager.ObjLink._objBowWow);
+
+            // Always update certain objects that are flagged as "always animate".
+            foreach (var updObject in AlwaysAnimateObjectsTemp)
+            {
+                if (!_damageFieldObjects.Contains(updObject) && !updObject.IsDead && updObject != null)
+                    _damageFieldObjects.Add(updObject);
+            }
+            // Update all game object damage field components in the list.
             foreach (var gameObject in _damageFieldObjects)
             {
                 if (!gameObject.IsActive) { continue; }
@@ -403,10 +408,13 @@ namespace ProjectZ.InGame.Map
         {
             if (DeleteObjects.Count > 0)
             {
-                foreach (var deletable in DeleteObjects)
+                foreach (var gameObject in DeleteObjects)
                 {
-                    RemoveObject(deletable);
-                    AlwaysAnimateObjectsMain.Remove(deletable);
+                    // Remove the object from the always animate list.
+                    AlwaysAnimateObjectsMain.Remove(gameObject);
+
+                    // Remove the object from the game.
+                    RemoveObject(gameObject);
                 }
                 DeleteObjects.Clear();
             }
@@ -777,16 +785,16 @@ namespace ProjectZ.InGame.Map
 
             _poolSpawnedObjects.Remove(gameObject);
 
-            // remove the object from the drawable pool
+            // Remove the object from the draw pool.
             if ((gameObject.ComponentsMask & DrawComponent.Mask) == DrawComponent.Mask)
             {
                 _drawPool.RemoveEntity(gameObject);
                 _drawPoolB.RemoveEntity(gameObject);
             }
-            // remove the object from the pool
+            // Remove the object from the pool.
             _gameObjectPool.RemoveEntity(gameObject);
 
-            // remove key listeners
+            // Remove key listeners.
             if ((gameObject.ComponentsMask & KeyChangeListenerComponent.Mask) == KeyChangeListenerComponent.Mask)
             {
                 var listener = (gameObject.Components[KeyChangeListenerComponent.Index] as KeyChangeListenerComponent).KeyChangeFunction;
