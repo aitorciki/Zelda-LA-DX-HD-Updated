@@ -32,16 +32,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiTriggerTimer _hiddenTimer;
         private readonly DamageFieldComponent _damageField;
 
-        private int _lives = ObjLives.SpinyBeetle;
-
         private Rectangle _fieldRectangle;
 
-        // 0: grass
-        // 1: stone
-        // 2: skull
+        // 0: Grass ; 1: Stone ; 2: skull
         private readonly int _type;
-
+        private bool _objectPickedUp;
         private bool _bushDestroyed;
+        private int _lives = ObjLives.SpinyBeetle;
 
         public EnemySpinyBeetle() : base("spiny beetle") { }
 
@@ -85,11 +82,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // deactivate physics
             var body = (BodyComponent)_carriedObject.Components[BodyComponent.Index];
             if (body != null)
-            {
                 body.IsActive = false;
-            }
 
+            // For some reason the "PickedUp" value doesn't go true when picking up the object so store a custom value.
             _carriableComponent = (CarriableComponent)_carriedObject.Components[CarriableComponent.Index];
+            _carriableComponent.Pull = (Vector2 e) => { return CarriableObjectPickedUp(); };
+            _objectPickedUp = false;
 
             var stateInit = new AiState(UpdateInit);
             stateInit.Trigger.Add(new AiTriggerCountdown(1500, null, () => _aiComponent.ChangeState("hiding")));
@@ -107,7 +105,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("running", stateRunning);
             new AiFallState(_aiComponent, _body);
             _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives);
-
             _aiComponent.ChangeState("moving");
 
             var damageCollider = new CBox(EntityPosition, -7, -4, 0, 14, 10, 4);
@@ -131,6 +128,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("init");
         }
 
+        private bool CarriableObjectPickedUp()
+        {
+            _objectPickedUp = true;
+            return true;
+        }
+
         private void UpdateObjPosition(CPosition newPosition)
         {
             if (_aiComponent.CurrentStateId != "hiding" && _aiComponent.CurrentStateId != "moving")
@@ -147,20 +150,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY))
             {
-                // horizontally
+                // Horizontal / Vertical
                 if (Math.Abs(distance.Y) < 8 && distance.Length() < 64)
                     return Math.Sign(distance.X) < 0 ? 0 : 2;
-                // down
                 if (Math.Abs(distance.X) < 8 && distance.Y > 0 && distance.Y < 32)
                     return 3;
             }
-
             return -1;
         }
 
         private void ToHide()
         {
-            if (_carriedObject.IsDead || (_carriableComponent != null && _carriableComponent.IsPickedUp))
+            if (_carriedObject.IsDead || (_carriableComponent != null && _objectPickedUp))
                 return;
 
             if (_aiComponent.CurrentStateId != "moving" || (PlayerDirection() >= 0 && _body.LastVelocityCollision == 0))
@@ -176,8 +177,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void CheckCarrier()
         {
-            // object was destroyed or picked up?
-            if (_carriedObject.IsDead || (_carriableComponent != null && _carriableComponent.IsPickedUp))
+            // Object was destroyed or picked up?
+            if (_carriedObject.IsDead || (_carriableComponent != null && _objectPickedUp))
             {
                 ToRunning();
                 _body.VelocityTarget = Vector2.Zero;
@@ -236,7 +237,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (type == PushableComponent.PushType.Impact)
                 _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, _body.Velocity.Z);
-
             return true;
         }
 
@@ -252,26 +252,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (damageType == HitType.Bomb || damageType == HitType.Bow || damageType == HitType.Hookshot)
                     return Values.HitCollision.Blocking;
             }
-
-            // gets repelled by the stone/skull
-            if (_type > 0 && _aiComponent.CurrentStateId != "running")
+            // Attacks get repelled by stone/skull.
+            if (_type > 0 && !_objectPickedUp)
             {
                 _body.Velocity = new Vector3(direction.X * 0.25f, direction.Y * 0.25f, _body.Velocity.Z);
                 return Values.HitCollision.RepellingParticle;
             }
-
+            // Object has been removed and beetle is vulnerable.
             _sprite.IsVisible = true;
-
             return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
 
         private void OnCollision(Values.BodyCollision direction)
         {
-            // collided with a wall?
+            // Collided with a wall?
             if ((direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
-            {
                 ToHide();
-            }
         }
 
         private void OnHoleAbsorb()
