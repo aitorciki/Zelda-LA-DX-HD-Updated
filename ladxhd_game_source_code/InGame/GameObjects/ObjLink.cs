@@ -329,6 +329,7 @@ namespace ProjectZ.InGame.GameObjects
         private float _pullCounter;
         private bool _isPulling;
         private bool _wasPulling;
+        private bool _instantLift;
 
         // Power Bracelet: Carry Object
         private GameObject _carriedGameObject;
@@ -3069,10 +3070,15 @@ namespace ProjectZ.InGame.GameObjects
                 }
             }
 
-            if (_wasPulling)
+            if (_wasPulling || _instantLift)
+            {
                 _pullCounter += Game1.DeltaTime;
+            }
             else
+            {
                 _pullCounter = 0;
+                _instantLift = false;
+            }
 
             if (CurrentState == State.Grabbing)
             {
@@ -3081,7 +3087,7 @@ namespace ProjectZ.InGame.GameObjects
                 // have added the field "OnSpinyBeetle" to know when these objects are riding on their backs.
                 Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle), typeof(EnemyKarakoro), typeof(ObjDungeonHorseHead), typeof(ObjBall), typeof(ObjBird) };
 
-                bool doInstantPickup = ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes) || 
+                _instantLift = ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes) || 
                     grabbedObject is ObjBush bush && bush.OnSpinyBeetle ||
                     grabbedObject is ObjStone stone && stone.OnSpinyBeetle;
 
@@ -3097,11 +3103,11 @@ namespace ProjectZ.InGame.GameObjects
                         _pullCounter = PullResetTime;
                 }
                 // Check if the player is pulling away from the object or it's an instant pickup object.
-                if (moveVec.Length() > 0.5 || doInstantPickup)
+                if (moveVec.Length() > 0.5 || _instantLift)
                 {
                     // Player is pulling in the correct direction or it's an instant pickup object.
                     var moveDir = AnimationHelper.GetDirection(moveVec);
-                    if ((moveDir + 2) % 4 == Direction || doInstantPickup)
+                    if ((moveDir + 2) % 4 == Direction || _instantLift)
                     {
                         // Do not show the pull animation while resetting.
                         if (_pullCounter >= 0)
@@ -3112,11 +3118,16 @@ namespace ProjectZ.InGame.GameObjects
                         if (!carriableComponent.IsHeavy || Game1.GameManager.StoneGrabberLevel > 1)
                         {
                             // start carrying the object
-                            if ((doInstantPickup || _pullCounter >= PullTime) && grabbedObject != null)
+                            if (_pullCounter >= PullTime && grabbedObject != null)
+                            {
                                 StartPickup(carriableComponent);
-
+                                _instantLift = false;
+                            }
                             if (_pullCounter > PullMaxTime)
+                            {
                                 _pullCounter = PullResetTime;
+                                _instantLift = false;
+                            }
                         }
                     }
                 }
