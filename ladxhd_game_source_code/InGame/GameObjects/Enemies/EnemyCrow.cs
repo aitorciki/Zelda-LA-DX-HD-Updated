@@ -173,8 +173,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("flying");
                 _damageState.IsActive = true;
                 _dirRadius = Math.Atan2(MapManager.ObjLink.PosY - EntityPosition.Y, MapManager.ObjLink.PosX - EntityPosition.X);
+                UpdateFlyingSound();
             }
-            UpdateFlyingSound();
         }
 
         private void UpdateFlying()
