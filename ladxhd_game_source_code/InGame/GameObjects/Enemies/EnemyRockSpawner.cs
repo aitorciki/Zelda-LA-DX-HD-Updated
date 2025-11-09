@@ -25,7 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            if (_field.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_field.Contains(MapManager.ObjLink.EntityPosition.Position) && !Game1.GameManager.FreezeWorldForEvents)
             {
                 _spawnCounter -= Game1.DeltaTime;
 
