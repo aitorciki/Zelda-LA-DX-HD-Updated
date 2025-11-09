@@ -4462,7 +4462,7 @@ namespace ProjectZ.InGame.GameObjects
                 MapInit2D();
 
             // Reset Guardian Acorn and Piece of Power when not in a dungeon.
-            if (!_inDungeon || Map == null || !Map.DungeonMode)
+            if (Map != null && !Map.DungeonMode && !Map.DungeonMapless)
             {
                 Game1.GameManager.StopGuardianAcorn();
                 Game1.GameManager.StopPieceOfPower();

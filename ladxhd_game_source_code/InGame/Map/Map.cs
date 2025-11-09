@@ -49,6 +49,7 @@ namespace ProjectZ.InGame.Map
 
         public bool Is2dMap;
         public bool DungeonMode;
+        public bool DungeonMapless;
         public bool UseLight;
         public bool UseShadows;
         public bool IsOverworld;
@@ -81,6 +82,7 @@ namespace ProjectZ.InGame.Map
             Is2dMap = false;
             IsOverworld = false;
             DungeonMode = false;
+            DungeonMapless = false;
             LocationName = null;
             UseLight = false;
             MapMusic = new[] { -1, -1, -1 };

@@ -1239,8 +1239,6 @@ namespace ProjectZ.InGame.Things
 
         public void SetDungeon(string dungeonName, int dungeonLevel)
         {
-            // TODO_Opt preload all the minimaps
-
             var level = 0;
             while (true)
             {
@@ -1251,10 +1249,17 @@ namespace ProjectZ.InGame.Things
 
                 level++;
             }
-
             MapManager.NextMap.DungeonMode = true;
             MapManager.NextMap.LocationName = dungeonName;
             MapManager.NextMap.LocationFullName = dungeonName + "_" + dungeonLevel;
+        }
+
+        public void SetDungeonMapless(string dungeonName)
+        {
+            MapManager.NextMap.DungeonMode = false;
+            MapManager.NextMap.DungeonMapless = true;
+            MapManager.NextMap.LocationName = dungeonName;
+            MapManager.NextMap.LocationFullName = dungeonName;
         }
 
         public void DungeonUpdatePlayerPosition(Point position)

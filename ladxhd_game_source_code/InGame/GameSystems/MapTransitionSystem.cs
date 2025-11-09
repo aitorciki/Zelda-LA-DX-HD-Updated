@@ -268,7 +268,7 @@ namespace ProjectZ.InGame.GameSystems
             if (!_introTransition)
                 Game1.GameManager.DrawPlayerOnTopPercentage = 1.0f;
 
-            if (Camera.ClassicMode || GameSettings.ClassicCamera && GameSettings.ClassicDungeon)
+            if (Camera.ClassicMode || (GameSettings.ClassicCamera && GameSettings.ClassicDungeon))
                 Camera.SnapCamera = true;
         }
 
