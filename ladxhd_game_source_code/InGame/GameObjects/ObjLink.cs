@@ -3339,19 +3339,29 @@ namespace ProjectZ.InGame.GameObjects
             }
             ReturnToIdle();
 
-            var recInteraction = new RectangleF(EntityPosition.X - 72, EntityPosition.Y - 72 - 8, 144, 144);
+            // Update Ocarina Listeners.
+            var recDetection = new RectangleF(EntityPosition.X - 100, EntityPosition.Y - 100, 200, 200);
 
+            // Get objects around Link to see if they have ocarina listeners.
             _ocarinaList.Clear();
-            Map.Objects.GetComponentList(_ocarinaList,
-                (int)recInteraction.X, (int)recInteraction.Y, (int)recInteraction.Width, (int)recInteraction.Height, OcarinaListenerComponent.Mask);
+            Map.Objects.GetComponentList(_ocarinaList, (int)recDetection.X, (int)recDetection.Y, (int)recDetection.Width, (int)recDetection.Height, OcarinaListenerComponent.Mask);
 
-            // Notify ocarina listener components around the player.
+            // Loop through all objects found.
             foreach (var objOcarinaListener in _ocarinaList)
             {
-                if (recInteraction.Contains(objOcarinaListener.EntityPosition.Position))
+                var ocarinaComponent = (OcarinaListenerComponent)objOcarinaListener.Components[OcarinaListenerComponent.Index];
+
+                // Compute the world-space rectangle for this listener’s interaction zone.
+                var recInteraction = new RectangleF(
+                    objOcarinaListener.EntityPosition.X + ocarinaComponent.InteractRect.X,
+                    objOcarinaListener.EntityPosition.Y + ocarinaComponent.InteractRect.Y,
+                    ocarinaComponent.InteractRect.Width,
+                    ocarinaComponent.InteractRect.Height);
+
+                // Check if player is inside the interaction rectangle.
+                if (recInteraction.Contains(EntityPosition.Position))
                 {
-                    var ocarinaComponent = (OcarinaListenerComponent)objOcarinaListener.Components[OcarinaListenerComponent.Index];
-                    ocarinaComponent.OcarinaPlayedFunction(Game1.GameManager.SelectedOcarinaSong);
+                    ocarinaComponent.OcarinaPlayedFunction?.Invoke(Game1.GameManager.SelectedOcarinaSong);
                 }
             }
         }

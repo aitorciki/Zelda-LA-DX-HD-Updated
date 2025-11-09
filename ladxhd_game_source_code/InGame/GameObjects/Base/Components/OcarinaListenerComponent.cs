@@ -1,4 +1,6 @@
-﻿namespace ProjectZ.InGame.GameObjects.Base.Components
+﻿using Microsoft.Xna.Framework;
+
+namespace ProjectZ.InGame.GameObjects.Base.Components
 {
     public class OcarinaListenerComponent : Component
     {
@@ -7,6 +9,8 @@
 
         public delegate void OcarinaPlayedTemplate(int ocarinaSong);
         public OcarinaPlayedTemplate OcarinaPlayedFunction;
+
+        public Rectangle InteractRect = new Rectangle(-64, -56, 128, 128);
 
         protected OcarinaListenerComponent() { }
 

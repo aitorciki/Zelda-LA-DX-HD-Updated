@@ -39,11 +39,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IsDead = true;
                 return;
             }
-
             _doorSprite = Resources.GetSprite("egg_entry");
 
-            // -48 -16 16 48
-            // -48 -16 16 48
             _relicOffsets[7] = new Vector2(-16, -40);
             _relicOffsets[0] = new Vector2(16, -40);
             _relicOffsets[6] = new Vector2(-40, -15);
@@ -54,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _relicOffsets[3] = new Vector2(16, 48);
 
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -16, 16, 16, 8), Values.CollisionTypes.Normal));
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed) { InteractRect = new Rectangle(-48, -48 - 8, 96, 96) } );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
         }
@@ -75,7 +72,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (item != null)
                     _playerInstrumentCount++;
             }
-
             _songEnd = _playerInstrumentCount <= 2 ? 36000 : 41000;
 
             // freeze the animation until the song gets played
