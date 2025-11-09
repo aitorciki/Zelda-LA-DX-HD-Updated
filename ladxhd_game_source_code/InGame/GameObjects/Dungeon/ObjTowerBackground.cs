@@ -60,9 +60,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             // draw the clouds
             var leftCloud = (int)Math.Floor((cameraRectangle.X / MapManager.Camera.Scale) / _clouds.SourceRectangle.Width) - 1;
             var rightCloud = (int)Math.Ceiling((cameraRectangle.Right / MapManager.Camera.Scale) / _clouds.SourceRectangle.Width);
+
             for (var i = leftCloud; i < rightCloud; i++)
-                //if (i != 0)
-                    DrawHelper.DrawNormalized(spriteBatch, _clouds, new Vector2(_spawnPosition.X + _clouds.SourceRectangle.Width * i + _cloudOffset % _clouds.SourceRectangle.Width, _spawnPosition.Y + 48), Color.White);
+            {
+                float x = _spawnPosition.X + i * (_clouds.SourceRectangle.Width - 1);
+                DrawHelper.DrawNormalized(spriteBatch, _clouds, new Vector2(x + _cloudOffset % _clouds.SourceRectangle.Width, _spawnPosition.Y + 48), Color.White);
+            }
 
         }
     }
