@@ -53,19 +53,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoreHoles = true,
                 IgnoresZ = true
             };
-
+            var stateIdle = new AiState(UpdateIdle);
+            stateIdle.Trigger.Add(new AiTriggerCountdown(1000, null, StartWaiting));
             var stateWaiting = new AiState(UpdateWaiting);
             var stateStart = new AiState(UpdateStart);
             var stateFlying = new AiState(UpdateFlying);
             stateFlying.Trigger.Add(_followTimer = new AiTriggerTimer(1000));
 
             _aiComponent = new AiComponent();
+            _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("start", stateStart);
             _aiComponent.States.Add("flying", stateFlying);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
 
-            _aiComponent.ChangeState("waiting");
+            _aiComponent.ChangeState("idle");
 
             // the player can jump over the enemy...
             var damageCollider = new CBox(EntityPosition, -6, -14, 0, 12, 14, 8, true);
@@ -81,6 +83,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
             ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+        }
+
+        private void UpdateIdle()
+        {
+            _dirIndex = MapManager.ObjLink.PosX < EntityPosition.X ? 0 : 1;
+            _animator.Play("idle_" + _dirIndex);
+        }
+
+        private void StartWaiting()
+        {
+            _aiComponent.ChangeState("waiting");
         }
 
         private void UpdateWaiting()
@@ -121,8 +134,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 EntityPosition.Z = 15;
                 _aiComponent.ChangeState("flying");
                 _dirRadius = Math.Atan2(MapManager.ObjLink.PosY - EntityPosition.Y, MapManager.ObjLink.PosX - EntityPosition.X);
-                UpdateFlyingSound();
             }
+            UpdateFlyingSound();
         }
 
         private void UpdateFlying()

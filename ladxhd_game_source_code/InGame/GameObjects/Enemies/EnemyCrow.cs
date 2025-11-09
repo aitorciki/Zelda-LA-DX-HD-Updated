@@ -72,6 +72,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoresZ = true
             };
 
+
+            var stateIdle = new AiState(UpdateIdle);
+            stateIdle.Trigger.Add(new AiTriggerCountdown(1000, null, StartWaiting));
             var stateWaiting = new AiState(UpdateWaiting);
             stateWaiting.Trigger.Add(new AiTriggerRandomTime(UpdateLookDirection, 250, 750));
             var stateStart = new AiState(UpdateStart) { Init = InitStart };
@@ -108,31 +111,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ObjectManager.AlwaysAnimateObjectsMain.Add(this);
         }
 
-        private void OnDeath(bool pieceofpower)
+        private void InitStart()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-            if (playerDirection != Vector2.Zero)
-                playerDirection.Normalize();
-            playerDirection *= 2.25f;
-
-            // spawn the golden leaf jumping towards the player
-            var objLeaf = new ObjItem(Map, 0, 0, null, _leafSaveKey, "goldLeaf", null, true);
-            objLeaf.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
-            objLeaf.SetVelocity(new Vector3(playerDirection.X, playerDirection.Y, 1.5f));
-            objLeaf.Collectable = false;
-            Map.Objects.SpawnObject(objLeaf);
-
-            _damageState.BaseOnDeath(pieceofpower);
+            _hitComponent.HittableBox = _hittableBoxFly;
         }
 
-        private void UpdateLookDirection()
+        private void UpdateIdle()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-            if (playerDirection.Length() > 96)
-                return;
-
-            _dirIndex = MapManager.ObjLink.PosX < EntityPosition.X - _dirIndex * 4 ? -1 : 1;
+            _dirIndex = MapManager.ObjLink.PosX < EntityPosition.X ? 0 : 1;
             _animator.Play("idle_" + _dirIndex);
+        }
+
+        private void StartWaiting()
+        {
+            _aiComponent.ChangeState("waiting");
         }
 
         private void UpdateWaiting()
@@ -140,11 +132,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // activate the crow
             if (!_goldLeaf && MapManager.ObjLink._body.BodyBox.Box.Intersects(_activationBox))
                 _aiComponent.ChangeState("start");
-        }
-
-        private void InitStart()
-        {
-            _hitComponent.HittableBox = _hittableBoxFly;
         }
 
         private void UpdateFlyingSound()
@@ -173,8 +160,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("flying");
                 _damageState.IsActive = true;
                 _dirRadius = Math.Atan2(MapManager.ObjLink.PosY - EntityPosition.Y, MapManager.ObjLink.PosX - EntityPosition.X);
-                UpdateFlyingSound();
             }
+            UpdateFlyingSound();
         }
 
         private void UpdateFlying()
@@ -248,6 +235,33 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _pushComponent.IsActive = false;
             }
             return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+        }
+
+        private void OnDeath(bool pieceofpower)
+        {
+            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            if (playerDirection != Vector2.Zero)
+                playerDirection.Normalize();
+            playerDirection *= 2.25f;
+
+            // spawn the golden leaf jumping towards the player
+            var objLeaf = new ObjItem(Map, 0, 0, null, _leafSaveKey, "goldLeaf", null, true);
+            objLeaf.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
+            objLeaf.SetVelocity(new Vector3(playerDirection.X, playerDirection.Y, 1.5f));
+            objLeaf.Collectable = false;
+            Map.Objects.SpawnObject(objLeaf);
+
+            _damageState.BaseOnDeath(pieceofpower);
+        }
+
+        private void UpdateLookDirection()
+        {
+            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            if (playerDirection.Length() > 96)
+                return;
+
+            _dirIndex = MapManager.ObjLink.PosX < EntityPosition.X - _dirIndex * 4 ? -1 : 1;
+            _animator.Play("idle_" + _dirIndex);
         }
     }
 }
