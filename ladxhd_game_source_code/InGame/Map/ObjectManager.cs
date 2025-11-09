@@ -207,7 +207,8 @@ namespace ProjectZ.InGame.Map
             }
             // Add the always animate objects from the list on ObjLink to the temporary list here. The objects are copied to this list so it can
             // serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
-            AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
+            if (AlwaysAnimateObjectsMain?.Count > 0)
+                AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
 
             // Update everything: animations, listeners, bodies, etc. When "AlwaysAnimate" contains something, only those
             // types found that have been added to the type array will be updated. This is a method used to "freeze" the entire
