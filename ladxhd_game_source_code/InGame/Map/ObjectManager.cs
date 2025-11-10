@@ -160,6 +160,9 @@ namespace ProjectZ.InGame.Map
 
         public void Update(bool frozen)
         {
+            // Link is referenced a lot so let's make the code easier to read.
+            var Link = MapManager.ObjLink;
+
             // Freeze the world when a dialog is open.
             if (frozen)
             {
@@ -168,18 +171,6 @@ namespace ProjectZ.InGame.Map
                 AddSpawnedObjects();
                 return;
             }
-            // NOTE: I'm honestly not sure what the point of any of this is. It is titled in a way that makes you think that
-            // when true, the world freezes except for Link. But this is NOT the case, I have tried to use it for different
-            // events but it never worked like I thought. I keep it here because it probably is important for something.
-
-            if (Game1.GameManager.FreezeWorldAroundPlayer)
-            {
-                Game1.GameManager.FreezeWorldAroundPlayer = false;
-                var updateComponent = (UpdateComponent)MapManager.ObjLink.Components[UpdateComponent.Index];
-                updateComponent?.UpdateFunction();
-                return;
-            }
-
             // When the game world is frozen, certain types should still be active. It is set to null at first and updated
             // depending on whether or not the "freezeGame" flag is set. When "null" everything in the world is updated.
 
@@ -196,13 +187,13 @@ namespace ProjectZ.InGame.Map
 
                 // HACK: Keep link playing the ocarina when everything else is frozen. This may be
                 // useful for other states to keep Link active when the world should be frozen.
-                if (MapManager.ObjLink.CurrentState == ObjLink.State.Ocarina)
-                    MapManager.ObjLink.Animation.Update();
+                if (Link.CurrentState == ObjLink.State.Ocarina)
+                    Link.Animation.Update();
             }
             // When classic camera is enabled, only objects within the current field are updated.
             if (Camera.ClassicMode)
             {
-                UpdateField = MapManager.ObjLink.Map.GetField((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y);
+                UpdateField = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
                 ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
             }
             // Add the always animate objects from the list on ObjLink to the temporary list here. The objects are copied to this list so it can

@@ -125,7 +125,6 @@ namespace ProjectZ.InGame.Things
 
         public float DrawPlayerOnTopPercentage;
 
-        public bool FreezeWorldAroundPlayer;
         public bool FreezeWorldForEvents;
 
         // save game data
