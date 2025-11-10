@@ -1,5 +1,24 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.6**
+### **The "Stayin' Alive" Update**
+  * The "always animate" code has been optimized and updated to be far more reliable and is also applied to the "normal" camera.
+  * Added several more objects to the always animate list: projectiles, boos, falling rocks, butterflies, crows, ravens, and more.
+  * Reworked the code for picking up objects. Instant pickups work with a button tap, full animation works, and fixes issues with Spiny Beetles.
+  * Reworked the code for Ocarina listening and fixed an issue with playing the ocarina a tile down from the Egg with Classic Camera.
+  * Enemy Crows and Ravens now despawn after they fly so far away from Link's current position instead of persisting forever.
+  * Enemy Ravens now have a 1 second start delay after the map load to prevent some weird transition bugs.
+  * When Link "drowns" in either water without flippers or within lava tiles, he is pushed further into the water/lava.
+  * Fix animation issues with Link when landing + performing 1 of these actions on the same frame: magic powder, boomerang, or poking.
+  * Fix enemy Spiny Beetle from repelling the sword while vulnerable. It could still be attacked so this bug was strange.
+  * Fix enemy falling rock spawners to not reach over into the egg stairs when using the normal camera.
+  * Fix several cave map terrains where cliffs pop through the surrounding darkness.
+  * Fix Kanalet castle from acting as a "dungeon" object and showing a blank map.
+  * Fix shadow tiles overwriting ground tiles in Dungeons 1, 2, and 6.
+  * Fix issues with rounding errors for the cloud textures in Dungeon 7 boss map. 
+  * Fix misplaced eyegore statue in Dungeon 4. This statue is located just above the flippers chest.
+  * Fix Classic Camera + Dungeon Only options to work when inside the egg and the now "not dungeon" castle.
+
 ## **v1.4.5**
 ### ** The "Even More Maintenance" Update**
   * More Classic Camera fixes: Keep more objects "alive" offscreen, fix navigating the egg, disable during the ending.
