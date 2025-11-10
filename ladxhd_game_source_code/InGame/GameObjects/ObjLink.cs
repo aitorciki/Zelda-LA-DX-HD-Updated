@@ -329,7 +329,8 @@ namespace ProjectZ.InGame.GameObjects
         private float _pullCounter;
         private bool _isPulling;
         private bool _wasPulling;
-        private bool _instantLift;
+        private GameObject _instantPickupObject;
+        private bool _instantPickup;
 
         // Power Bracelet: Carry Object
         private GameObject _carriedGameObject;
@@ -2699,6 +2700,9 @@ namespace ProjectZ.InGame.GameObjects
                             ReleaseItem(Game1.GameManager.Equipment[i]);
                     }
                 }
+                // If an "instant pickup" object was grabbed, force power bracelent pick up until the loop ends.
+                if (_instantPickup) { HoldStoneLifter(); }
+
             }
 
             UpdatePegasusBoots();
@@ -3044,22 +3048,31 @@ namespace ProjectZ.InGame.GameObjects
 
         private void HoldStoneLifter()
         {
+            // State must be idle or pushing to continue.
             if (CurrentState != State.Idle && CurrentState != State.Pushing)
                 return;
 
+            // Stores the grabbed object.
             GameObject grabbedObject = null;
 
-            if (_carriedComponent == null)
+            // Try to grab an object in range and not yet carrying an object.
+            if (_carriedComponent == null && _instantPickupObject == null)
             {
+                // Tiny rectangle that finds objects in front of Link that can be grabbed.
                 var recInteraction = new RectangleF(
                     EntityPosition.X + _walkDirection[Direction].X * (_body.Width / 2) - 1,
                     EntityPosition.Y - _body.Height / 2 + _walkDirection[Direction].Y * (_body.Height / 2) - 1, 2, 2);
 
-                // find an object to carry
+                // Find's any possible objects within the rectangle.
                 grabbedObject = Map.Objects.GetCarryableObjects(recInteraction);
+
+                // A grabble object has been found.
                 if (grabbedObject != null)
                 {
+                    // Get the carry component of the grabbable object.
                     var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
+
+                    // If the component is active then grab the object.
                     if (carriableComponent.IsActive)
                     {
                         CurrentState = State.Grabbing;
@@ -3069,65 +3082,86 @@ namespace ProjectZ.InGame.GameObjects
                     }
                 }
             }
-
-            if (_wasPulling || _instantLift)
-            {
+            // If the previous run of this method started a pull increment the counter or otherwise reset it.
+            if (_wasPulling)
                 _pullCounter += Game1.DeltaTime;
-            }
             else
-            {
                 _pullCounter = 0;
-                _instantLift = false;
+
+            // If an instant pickup object was grabbed, restore it from the previous loop.
+            if (_instantPickupObject != null)
+            {
+                grabbedObject = _instantPickupObject;
             }
 
-            if (CurrentState == State.Grabbing)
+            // An object was found above and the state was set to grabbing.
+            if (CurrentState == State.Grabbing || _instantPickup)
             {
-                // Some objects can be picked up instantly without needing to press a direction. Because the objects
-                // on top of "Spiny Beetle" can not be referenced by their type, there is a special check for them. I
-                // have added the field "OnSpinyBeetle" to know when these objects are riding on their backs.
-                Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle), typeof(EnemyKarakoro), typeof(ObjDungeonHorseHead), typeof(ObjBall), typeof(ObjBird) };
+                // If not in the middle of an "instant pickup" loop, try to see if the current object is an instant pickup type.
+                if (!_instantPickup)
+                {
+                    // Object is an "instant pickup" type.
+                    Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle), typeof(EnemyKarakoro), typeof(ObjDungeonHorseHead), typeof(ObjBall), typeof(ObjBird) };
+                    bool isSpinyBeetle = grabbedObject is ObjBush bush && bush.OnSpinyBeetle || grabbedObject is ObjStone stone && stone.OnSpinyBeetle;
 
-                _instantLift = ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes) || 
-                    grabbedObject is ObjBush bush && bush.OnSpinyBeetle ||
-                    grabbedObject is ObjStone stone && stone.OnSpinyBeetle;
-
-                // Get object as carriable.
+                    // If it's an instant pickup type, remember it and store the object type.
+                    if (isSpinyBeetle || ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes))
+                    {
+                        _instantPickupObject = grabbedObject;
+                        _instantPickup = true;
+                    }
+                }
+                // Gets the carriable component from the object found above.
                 var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
 
-                // is the player pulling in the opposite direction?
+                // Get the direction of the analog stick.
                 var moveVec = ControlHandler.GetMoveVector2();
+
+                // Get if the object is being pulled and it's not null.
                 if (carriableComponent?.Pull != null)
                 {
-                    // do not continuously play the pull animation
-                    if (!carriableComponent.Pull(_pullCounter > 0 ? moveVec : Vector2.Zero) && _pullCounter < 0)
+                    // If being pulled get the vector. If not then reset it.
+                    Vector2 pullVector = _pullCounter > 0 
+                        ? moveVec 
+                        : Vector2.Zero;
+
+                    // If the pull has failed and the pull counter is below zero, reset the pull counter.
+                    // PullResetTime is (-133). During this time the animation is not played.
+                    if (!carriableComponent.Pull(pullVector) && _pullCounter < 0)
                         _pullCounter = PullResetTime;
                 }
-                // Check if the player is pulling away from the object or it's an instant pickup object.
-                if (moveVec.Length() > 0.5 || _instantLift)
+                // The pull vector must be over half the range of the analog stick.
+                if (moveVec.Length() > 0.5 || _instantPickup)
                 {
-                    // Player is pulling in the correct direction or it's an instant pickup object.
+                    // Get the direction of the pull vector.
                     var moveDir = AnimationHelper.GetDirection(moveVec);
-                    if ((moveDir + 2) % 4 == Direction || _instantLift)
+
+                    // The player must be pulling in the opposite direction.
+                    if (moveDir + 2 % 4 == Direction || _instantPickup)
                     {
                         // Do not show the pull animation while resetting.
                         if (_pullCounter >= 0)
                             CurrentState = State.Pulling;
 
+                        // Used to determine if pulling was done on the next frame. This sets
+                        // "_wasPulling" which counts up on the pull timer.
                         _isPulling = true;
 
+                        // It's not a heavy object or the Power Bracelet is greater than level 1.
                         if (!carriableComponent.IsHeavy || Game1.GameManager.StoneGrabberLevel > 1)
                         {
-                            // start carrying the object
+                            // The pull counter exceeds the PullTime (100) and the object is not null.
                             if (_pullCounter >= PullTime && grabbedObject != null)
                             {
+                                // Pick up the object and reset instant pickup variables.
                                 StartPickup(carriableComponent);
-                                _instantLift = false;
+                                _instantPickupObject = null;
+                                _instantPickup = false;
                             }
+                            // Reset the pull counter if it exceeds the maximum (400). This is to reset the
+                            // animation if pulling on something for long periods (like lever in level 7).
                             if (_pullCounter > PullMaxTime)
-                            {
                                 _pullCounter = PullResetTime;
-                                _instantLift = false;
-                            }
                         }
                     }
                 }
