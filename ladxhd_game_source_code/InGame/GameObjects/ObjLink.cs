@@ -3093,7 +3093,6 @@ namespace ProjectZ.InGame.GameObjects
             {
                 grabbedObject = _instantPickupObject;
             }
-
             // An object was found above and the state was set to grabbing.
             if (CurrentState == State.Grabbing || _instantPickup)
             {
@@ -3137,7 +3136,7 @@ namespace ProjectZ.InGame.GameObjects
                     var moveDir = AnimationHelper.GetDirection(moveVec);
 
                     // The player must be pulling in the opposite direction.
-                    if (moveDir + 2 % 4 == Direction || _instantPickup)
+                    if ((moveDir + 2) % 4 == Direction || _instantPickup)
                     {
                         // Do not show the pull animation while resetting.
                         if (_pullCounter >= 0)
