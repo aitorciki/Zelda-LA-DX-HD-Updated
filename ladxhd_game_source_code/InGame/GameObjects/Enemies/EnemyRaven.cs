@@ -72,7 +72,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // the player can jump over the enemy...
             var damageCollider = new CBox(EntityPosition, -6, -14, 0, 12, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
             AddComponent(BodyComponent.Index, _body);
@@ -94,6 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void StartWaiting()
         {
             _aiComponent.ChangeState("waiting");
+            _damageField.IsActive = true;
         }
 
         private void UpdateWaiting()
