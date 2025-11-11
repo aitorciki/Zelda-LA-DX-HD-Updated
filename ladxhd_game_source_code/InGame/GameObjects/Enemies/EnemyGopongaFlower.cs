@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -69,6 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+            AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer) { WaterOutline = false });
         }
 
@@ -88,6 +89,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SetFrame(0);
             _animator.SetTime(Game1.TotalGameTime % _animationLength);
             _animator.Update();
+        }
+
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            return true;
         }
 
         private void OnBurn()
