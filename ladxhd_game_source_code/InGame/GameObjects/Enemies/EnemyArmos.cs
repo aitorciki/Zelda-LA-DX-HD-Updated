@@ -36,7 +36,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 17);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/armos");
             _animationPrefix = darkArmos ? "_dark" : "";

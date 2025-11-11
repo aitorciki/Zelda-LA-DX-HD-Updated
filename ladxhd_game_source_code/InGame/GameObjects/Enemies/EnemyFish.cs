@@ -32,7 +32,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 11, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 11, 0);
             EntitySize = new Rectangle(-8, -11 - 16, 16, 32);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/fish");
             _animator.Play("swim");

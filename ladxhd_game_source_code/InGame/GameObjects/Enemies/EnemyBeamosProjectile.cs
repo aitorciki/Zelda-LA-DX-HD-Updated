@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-3, -3, 6, 6);
+            CanReset = false;
 
             _isFirstProjectile = isFirstProjectile;
 

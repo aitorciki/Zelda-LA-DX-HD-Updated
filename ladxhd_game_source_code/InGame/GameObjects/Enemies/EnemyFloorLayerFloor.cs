@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
+            CanReset = false;
 
             // remove the underlying objects
             Map.Objects.GetObjectsOfType(_underlyingObjects, typeof(ObjHole), posX, posY, 16, 16);

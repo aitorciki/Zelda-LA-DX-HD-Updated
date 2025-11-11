@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y - 5, 0);
             EntitySize = new Rectangle(-5, 0, 10, 10);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/podoboo");
             _animator.Play("particle");

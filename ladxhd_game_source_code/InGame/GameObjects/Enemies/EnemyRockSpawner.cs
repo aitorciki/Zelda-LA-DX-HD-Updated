@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, width, height);
+            CanReset = false;
 
             _field = new Rectangle(posX, posY, width, height);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));

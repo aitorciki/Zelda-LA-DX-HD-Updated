@@ -37,7 +37,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
+            CanReset = true;
 
             _turnSpeed = 0.02f;
             _flyState = (float)Math.PI / 2 * Game1.RandomNumber.Next(0, 4);

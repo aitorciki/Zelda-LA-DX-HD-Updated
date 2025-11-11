@@ -51,6 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -24, 16, 32);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/flyingTile");
             _animator.Play("idle_" + mode);

@@ -47,7 +47,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, spawnAnimation ? 0 : _flyHeight);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, spawnAnimation ? 0 : _flyHeight);
             EntitySize = new Rectangle(-8, -32, 16, 32);
+            CanReset = true;
 
             _mainGhini = mainGhini;
             IsVisible = mainGhini;

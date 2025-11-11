@@ -39,7 +39,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
+            CanReset = true;
 
             _spawnPosition = new Vector2(EntityPosition.X, EntityPosition.Y);
 

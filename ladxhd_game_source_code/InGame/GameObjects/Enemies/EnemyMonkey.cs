@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 33, 17);
             EntitySize = new Rectangle(-16, -38, 32, 38);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/monkey");
 

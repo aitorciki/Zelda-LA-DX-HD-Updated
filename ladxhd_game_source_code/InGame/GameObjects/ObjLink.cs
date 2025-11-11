@@ -421,6 +421,7 @@ namespace ProjectZ.InGame.GameObjects
         public Rectangle CurrentField = Rectangle.Empty;
         public Rectangle PreviousField = Rectangle.Empty;
         public ObjFieldBarrier[] FieldBarrier;
+        public bool FieldChange;
 
         // Prevent Damage Hits (No Collision)
         private bool PreventDamage;
@@ -664,6 +665,9 @@ namespace ProjectZ.InGame.GameObjects
             // We only use the field barrier when "Classic Camera" is active.
             if (Camera.ClassicMode)
             {
+                // Detect when the field has changed.
+                FieldChange = CurrentField != PreviousField;
+
                 // Check to see if the current field has not yet been set. When a game is started,
                 // the first few frames will return (0,0) for the current field position.
                 if (new Vector2(CurrentField.X, CurrentField.Y) != Vector2.Zero)

@@ -29,7 +29,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX, posY, 0);
+            ResetPosition  = new CPosition(posX, posY, 0);
             _startPosition = new Vector2(posX, posY);
+            CanReset = true;
+            OnReset += Reset;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/bladetrap");
             animator.Play("idle");
@@ -81,6 +84,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
         {
             return Values.HitCollision.RepellingParticle;
+        }
+
+        private void Reset()
+        {
+            _movePosition = 0;
+            _aiComponent.ChangeState("idle");
         }
 
         private void UpdateIdle()

@@ -28,6 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-8, -48, 16, 48);
             IsVisible = false;
+            CanReset = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/vire bat");
             animator.Play("idle");

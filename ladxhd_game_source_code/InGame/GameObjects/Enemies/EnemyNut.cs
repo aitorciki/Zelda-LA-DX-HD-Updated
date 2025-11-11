@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-6, -48, 12, 48);
+            CanReset = false;
 
             _sprite = new CSprite(Resources.SprEnemies, EntityPosition, new Rectangle(306, 2, 12, 12), new Vector2(-6, -12));
 

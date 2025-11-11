@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-5, -5, 10, 10);
+            CanReset = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/vireball");
             animator.Play("idle");

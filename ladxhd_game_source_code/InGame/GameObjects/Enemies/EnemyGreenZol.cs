@@ -38,7 +38,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 13, posZ);
+            ResetPosition  = new CPosition(posX + 8, posY + 13, posZ);
             EntitySize = new Rectangle(-8, -24, 16, 24);
+            CanReset = true;
+            OnReset = Reset;
 
             _fallMode = fallMode;
 
@@ -116,6 +119,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.IsVisible = IsVisible = false;
             }
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _pushable = false;
+            _body.IsActive = false;
+            _damageState.IsActive = false;
+            _damageField.IsActive = false;
+            _sprite.IsVisible = false;
+            _aiComponent.ChangeState("init");
         }
 
         /// <summary>

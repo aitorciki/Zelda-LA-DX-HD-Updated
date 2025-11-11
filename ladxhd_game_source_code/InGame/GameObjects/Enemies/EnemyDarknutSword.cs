@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(owner.EntityPosition.X, owner.EntityPosition.Y - 1, owner.EntityPosition.Z);
             EntitySize = new Rectangle(-22, -8 - 24, 44, 48);
+            CanReset = false;
 
             Animator = AnimatorSaveLoad.LoadAnimator("Enemies/darknut sword");
 

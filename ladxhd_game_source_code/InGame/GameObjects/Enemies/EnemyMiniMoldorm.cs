@@ -42,7 +42,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 8 + SpriteOffsetY, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 8 + SpriteOffsetY, 0);
             EntitySize = new Rectangle(-20, -20 - SpriteOffsetY, 40, 40);
+            CanReset = true;
+
             _tailOnePosition = EntityPosition.Position;
             _tailTwoPosition = EntityPosition.Position;
 

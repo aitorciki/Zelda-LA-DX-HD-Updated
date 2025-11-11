@@ -43,7 +43,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _isBoneThrower = isBoneThrower;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/stalfos orange");
             _animator.Play("walk");

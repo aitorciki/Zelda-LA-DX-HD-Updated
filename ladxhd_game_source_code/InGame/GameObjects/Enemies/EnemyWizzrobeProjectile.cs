@@ -16,6 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-6, -6, 12, 12);
+            CanReset = false;
 
             _sprite = new CSprite("wizzrobe shot", EntityPosition, Vector2.Zero);
             _sprite.Center = new Vector2(6, 6);

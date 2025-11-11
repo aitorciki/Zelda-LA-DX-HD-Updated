@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-8, 0, 16, 16);
+            CanReset = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/flame fountain fireball");
             animator.Play(velocity.X < 0 ? "left" : "right");

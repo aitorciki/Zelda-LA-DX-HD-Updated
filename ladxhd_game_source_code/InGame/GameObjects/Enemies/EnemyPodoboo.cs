@@ -27,6 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-32, -8 - 32, 64, 64);
+            CanReset = false;
 
             _startPosition = EntityPosition.Position;
 

@@ -33,7 +33,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         public EnemyWizzrobe(Map.Map map, int posX, int posY) : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = true;
+            OnReset = Reset;
 
             Tags = Values.GameObjectTag.Enemy;
 
@@ -93,6 +96,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitSpawn()
         {
             _animator.Play("head");
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("hidden");
         }
 
         private void BlinkTick(double timer)

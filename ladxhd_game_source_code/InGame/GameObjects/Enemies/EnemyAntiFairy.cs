@@ -42,7 +42,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
+            CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/anti-fairy");
             _animator.Play("idle");
@@ -85,6 +88,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
+        }
+
+        private void Reset()
+        {
+            _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)

@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX, posY, 2);
             EntitySize = new Rectangle(-5, -12, 10, 12);
+            CanReset = false;
 
             // abort spawn in a wall
             var box = Box.Empty;

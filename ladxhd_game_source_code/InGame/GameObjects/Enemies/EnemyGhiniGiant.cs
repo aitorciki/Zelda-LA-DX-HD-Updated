@@ -45,7 +45,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16 + 7, spawnAnimation ? 0 : _flyHeight);
+            ResetPosition  = new CPosition(posX + 8, posY + 16 + 7, spawnAnimation ? 0 : _flyHeight);
             EntitySize = new Rectangle(-16, -(30 + _flyHeight), 32, 30 + _flyHeight);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/ghiniGiant");
             _animator.Play("fly_1");

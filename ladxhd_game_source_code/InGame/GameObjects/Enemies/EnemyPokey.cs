@@ -35,7 +35,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-10, -48, 20, 48);
+            CanReset = true;
 
             _spriteHead = Resources.GetSprite("pokey");
             _spriteBody = Resources.GetSprite("pokey body");

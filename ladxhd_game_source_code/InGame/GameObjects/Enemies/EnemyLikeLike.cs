@@ -34,8 +34,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntityPosition.AddPositionListener(typeof(EnemyLikeLike), UpdatePosition);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/likelike");
             _animator.Play("idle");

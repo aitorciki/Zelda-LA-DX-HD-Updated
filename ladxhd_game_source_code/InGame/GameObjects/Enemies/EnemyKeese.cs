@@ -37,7 +37,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _dir = Game1.RandomNumber.Next(0, 2) * 2 - 1;
 
             EntityPosition = new CPosition(posX + 8, posY + 24, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 24, 0);
             EntitySize = new Rectangle(-8, -24, 16, 24);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/keese");
             _animator.Play("idle");

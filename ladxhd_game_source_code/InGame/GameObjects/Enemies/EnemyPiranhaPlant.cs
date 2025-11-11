@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/piranha plant");
 

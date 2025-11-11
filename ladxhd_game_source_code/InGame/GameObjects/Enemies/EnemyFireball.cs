@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-5, -5, 10, 10);
+            CanReset = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/fireball");
             animator.Play("idle");

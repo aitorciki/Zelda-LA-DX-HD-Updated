@@ -35,7 +35,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/hardhat beetle");
             _animator.Play("walk");
@@ -83,6 +86,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitMoving()
         {
             _animator.Play("walk");
+        }
+
+        private void Reset()
+        {
+            _isFollowing = false;
+            _wasFollowing = false;
         }
 
         private void UpdateMoving()

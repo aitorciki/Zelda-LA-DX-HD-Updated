@@ -25,7 +25,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/giant bubble");
             _animator.Play("idle");

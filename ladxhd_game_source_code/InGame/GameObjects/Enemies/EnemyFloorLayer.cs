@@ -41,6 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             EntityPosition = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = false;
 
             _minMoveCount = count;
             _fullKey = fullKey;

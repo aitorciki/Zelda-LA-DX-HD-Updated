@@ -35,7 +35,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Trap;
 
             EntityPosition = new CPosition(posX + 8, posY + 14, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -14, 16, 16);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/beamos");
             _animator.Play("idle");

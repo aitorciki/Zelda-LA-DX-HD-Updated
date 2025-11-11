@@ -17,6 +17,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-7, -7, 14, 14);
+            CanReset = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/pairodd projectile");
             animator.Play("idle");

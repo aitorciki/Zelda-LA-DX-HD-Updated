@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, Game1.RandomNumber.Next(8, 24));
             EntitySize = new Rectangle(-8, -40, 16, 48);
+            CanReset = false;
 
             _spawnPosition = EntityPosition.Position;
 

@@ -41,7 +41,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 12, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 12, 0);
             EntitySize = new Rectangle(-8, -15, 16, 16);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/octorok");
 

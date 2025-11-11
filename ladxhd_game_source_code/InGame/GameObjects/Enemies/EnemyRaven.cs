@@ -38,7 +38,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 12, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 12, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
+            CanReset = true;
 
             _activationBox = new Box(posX + 8 - 20, posY - 32, 0, 40, 90, 16);
 

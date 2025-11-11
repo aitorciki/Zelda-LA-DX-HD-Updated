@@ -31,7 +31,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY - 2 + 8, 0);
+            ResetPosition  = new CPosition(posX + 8, posY - 2 + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
+            CanReset = true;
 
             _fieldPosition = map.GetField(posX, posY);
 

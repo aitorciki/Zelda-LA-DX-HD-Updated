@@ -27,9 +27,9 @@ namespace ProjectZ.InGame.GameObjects.Base
 
         // entity component system stuff
         public CPosition EntityPosition;
+        public CPosition ResetPosition;
         public Component[] Components = new Component[32];   // TODO_End: replace with actual component count
                                                              // should have probably used an enum...
-
         public Rectangle EntitySize = new Rectangle(-16, -16, 48, 48);
         public Point EntityPoolPosition;
 
@@ -37,6 +37,11 @@ namespace ProjectZ.InGame.GameObjects.Base
 
         public virtual bool IsActive { get; set; } = true;
         public bool IsDead;
+
+        // Classic Camera: Reset enemy positions.
+        public delegate void OnResetDelegate();
+        public OnResetDelegate OnReset;
+        public bool CanReset = false;
 
         public GameObject() { }
 
@@ -67,6 +72,19 @@ namespace ProjectZ.InGame.GameObjects.Base
             if (SprEditorImage != null)
                 spriteBatch.Draw(SprEditorImage, position, EditorIconSource, EditorColor,
                     0, Vector2.Zero, new Vector2(EditorIconScale), SpriteEffects.None, 0);
+        }
+
+        public virtual void Reset()
+        {
+            if (CanReset) { OnReset?.Invoke(); }
+        }
+
+        public void ResetToSpawn()
+        {
+            if (ResetPosition == null || EntityPosition == null)
+                return;
+
+            EntityPosition.Set(ResetPosition);
         }
 
         public void AddComponent(int index, Component newComponent)

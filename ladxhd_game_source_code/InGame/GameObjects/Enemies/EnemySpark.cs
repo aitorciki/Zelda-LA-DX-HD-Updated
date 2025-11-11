@@ -29,6 +29,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _gettingDestroyed;
         private bool _init;
 
+        private int _resetDir;
+        private bool _resetClockwise;
+
         bool _lastEpSafe;
 
         bool  light_source = false;
@@ -52,12 +55,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
+            CanReset = true;
+            OnReset = Reset;
 
             _lastPosition = EntityPosition.Position;
 
             _moveDir = direction;
+            _resetDir = direction;
+
             _goingClockwise = clockwise;
+            _resetClockwise = clockwise;
+
             _destructionKey = destructionKey;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spark");
@@ -98,6 +108,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _init = true;
             base.Init();
+        }
+
+        private void Reset()
+        {
+            _lastPosition = ResetPosition.Position;
+            _moveDir = _resetDir;
+            _goingClockwise = _resetClockwise;
+            _directionChangeTime = 0;
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)

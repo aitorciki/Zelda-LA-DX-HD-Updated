@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/goponga flower giant");
             _animator.OnAnimationFinished = AnimationFinished;

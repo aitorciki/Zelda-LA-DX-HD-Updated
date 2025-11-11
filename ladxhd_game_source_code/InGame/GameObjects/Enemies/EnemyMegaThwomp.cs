@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, -1, 32, 32);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/mega thwomp");
             _animator.Play("idle");

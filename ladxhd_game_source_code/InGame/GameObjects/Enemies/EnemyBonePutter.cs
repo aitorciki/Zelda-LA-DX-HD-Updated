@@ -38,7 +38,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 16);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 16);
             EntitySize = new Rectangle(-8, -32, 16, 32);
+            CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/bone putter");
 

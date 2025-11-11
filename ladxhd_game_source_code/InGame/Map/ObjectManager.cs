@@ -193,8 +193,16 @@ namespace ProjectZ.InGame.Map
             // When classic camera is enabled, only objects within the current field are updated.
             if (Camera.ClassicMode)
             {
+                // The "UpdateField" is the real size of the field. The "Actual" field has an additional tile in each direction.
                 UpdateField = Link.Map.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
                 ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
+
+                // If a field change has happened, then reset the enemies on the previous field.
+                if (Link.FieldChange)
+                {
+                    ResetSpawnPositions();
+                    Link.FieldChange = false;
+                }
             }
             // Add the always animate objects from the list on ObjLink to the temporary list here. The objects are copied to this list so it can
             // serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
@@ -236,6 +244,26 @@ namespace ProjectZ.InGame.Map
                     AddObjectToMap(SpawnObjects[index], false);
                 }
                 SpawnObjects.Clear();
+            }
+        }
+
+        private void ResetSpawnPositions()
+        {
+            var Link = MapManager.ObjLink;
+            _updateGameObject.Clear();
+
+            _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X, Link.PreviousField.Y, 
+                Link.PreviousField.Width, Link.PreviousField.Height, BodyComponent.Mask);
+            _updateGameObject.RemoveAll(o => o?.EntityPosition != null && !Link.PreviousField.Contains(o.EntityPosition.Position));
+
+            foreach (var gameObject in _updateGameObject)
+            {
+                // Reset the enemy position and invoke their "OnReset" method if available.
+                if (gameObject != null && gameObject.CanReset)
+                {
+                    gameObject.ResetToSpawn();
+                    gameObject.OnReset?.Invoke();
+                }
             }
         }
 

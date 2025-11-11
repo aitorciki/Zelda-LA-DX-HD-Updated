@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -64, 16, 114);
+            CanReset = false;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/thwimp");
             _animator.Play("idle");

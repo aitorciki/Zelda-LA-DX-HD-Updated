@@ -34,7 +34,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = true;
+            OnReset = Reset;
 
             _body = new BodyComponent(EntityPosition, -8, -14, 16, 14, 8)
             {
@@ -76,6 +79,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _dealsDamage = false;
             RemoveComponent(CollisionComponent.Index);
+        }
+
+        private void Reset()
+        {
+            _lastPosition = ResetPosition.Position;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

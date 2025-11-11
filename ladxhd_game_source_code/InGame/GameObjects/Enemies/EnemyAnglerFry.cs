@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = false;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/angler fry");
             animator.Play("move_" + dir);
