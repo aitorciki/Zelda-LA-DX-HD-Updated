@@ -2384,6 +2384,7 @@ namespace ProjectZ.InGame.GameObjects
                 Animation.Play("stand" + shieldString + animDirection);
             // The "jump-land" hack plays the "stand" animation briefly.
             else if (_jumpEndTimer > 0 && 
+                !IsAttackingState(CurrentState) &&
                 CurrentState != State.Powdering &&
                 CurrentState != State.Digging &&
                 CurrentState != State.Bombing &&
