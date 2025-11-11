@@ -386,18 +386,30 @@ namespace ProjectZ.InGame.GameObjects
                     if ((_isWalking || _isClimbing) && _jumpEndTimer <= 0)
                     {
                         var newAnimation = "walk" + shieldString + Direction;
-
                         if (Animation.CurrentAnimation.Id != newAnimation)
                             Animation.Play(newAnimation);
                         else if (_isClimbing)
-                            // continue/pause the animation
                             Animation.IsPlaying = _isWalking;
                     }
                     else
+                    {
                         Animation.Play("stand" + shieldString + Direction);
+                    }
                 }
-                else if ((!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)) || (_jumpEndTimer > 0))
+                else if ((_jumpEndTimer > 0 && 
+                    !IsAttackingState(CurrentState) &&
+                    CurrentState != State.ShowToadstool &&
+                    CurrentState != State.Powdering &&
+                    CurrentState != State.Digging &&
+                    CurrentState != State.Bombing &&
+                    CurrentState != State.Hookshot &&
+                    CurrentState != State.Ocarina &&
+                    CurrentState != State.MagicRod) ||
+                    (!_isWalking && (CurrentState == State.Charging || 
+                    CurrentState == State.ChargeJumping)))
+                {
                     Animation.Play("stand" + shieldString + Direction);
+                }
                 else if (CurrentState == State.Carrying)
                     Animation.Play((_isWalking ? "walkc_" : "standc_") + Direction);
                 else if (_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping))

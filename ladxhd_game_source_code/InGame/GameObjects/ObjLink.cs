@@ -700,6 +700,9 @@ namespace ProjectZ.InGame.GameObjects
 
         private void Update()
         {
+            // May as well just keep this here since I'm constantly using it.
+            // System.Diagnostics.Debug.WriteLine(CurrentState);
+
             // Update the current field and make a field barrier if Classic Camera is enabled.
             UpdateCurrentField();
 
@@ -2388,6 +2391,7 @@ namespace ProjectZ.InGame.GameObjects
             // The "jump-land" hack plays the "stand" animation briefly.
             else if (_jumpEndTimer > 0 && 
                 !IsAttackingState(CurrentState) &&
+                CurrentState != State.ShowToadstool &&
                 CurrentState != State.Powdering &&
                 CurrentState != State.Digging &&
                 CurrentState != State.Bombing &&
