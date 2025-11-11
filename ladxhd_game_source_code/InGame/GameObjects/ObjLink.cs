@@ -2357,8 +2357,16 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.ShowInstrumentPart3 ||
                 CurrentState == State.TeleportFall ||
                 CurrentState == State.TeleporterUp ||
-                CurrentState == State.FallRotateEntry ||
-                (_jumpEndTimer > 0 && CurrentState != State.Powdering && !HoleFalling && !IsPoking))
+                CurrentState == State.FallRotateEntry)
+                Animation.Play("stand" + shieldString + animDirection);
+            // The "jump-land" hack plays the "stand" animation briefly.
+            else if (_jumpEndTimer > 0 && 
+                CurrentState != State.Powdering &&
+                CurrentState != State.Digging &&
+                CurrentState != State.Bombing &&
+                CurrentState != State.Hookshot &&
+                CurrentState != State.MagicRod &&
+                !HoleFalling && !IsPoking)
                 Animation.Play("stand" + shieldString + animDirection);
             else if (CurrentState == State.ChargeJumping)
                 Animation.Play("cjump" + shieldString + animDirection);
