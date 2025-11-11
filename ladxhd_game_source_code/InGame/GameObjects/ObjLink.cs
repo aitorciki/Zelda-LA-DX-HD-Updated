@@ -417,11 +417,15 @@ namespace ProjectZ.InGame.GameObjects
         // Sprite Shadows
         private ObjSpriteShadow _spriteShadow;
 
-        // Current Field
+        // Field Properties
         public Rectangle CurrentField = Rectangle.Empty;
         public Rectangle PreviousField = Rectangle.Empty;
         public ObjFieldBarrier[] FieldBarrier;
         public bool FieldChange;
+
+        // Prevents Enemy Position Reset
+        public bool PreventReset;
+        public float PreventResetTimer;
 
         // Prevent Damage Hits (No Collision)
         private bool PreventDamage;
@@ -657,7 +661,7 @@ namespace ProjectZ.InGame.GameObjects
             FieldBarrier = null;
         }
 
-        private void Update()
+        private void UpdateCurrentField()
         {
             // Set the current field that Link is on.
             CurrentField = Map.GetField((int)EntityPosition.X, (int)EntityPosition.Y);
@@ -678,12 +682,27 @@ namespace ProjectZ.InGame.GameObjects
                     else
                         UpdateFieldBarrier();
                 }
+                // Prevent resetting enemies shortly after map transitions.
+                if (PreventResetTimer > 0)
+                {
+                    PreventResetTimer -= Game1.DeltaTime;
+                    if (PreventResetTimer < 0) 
+                        PreventReset = false;
+                }
             }
             // Destroy the barrier if "Classic Camera" is not active.
             else
             {
                 DestroyFieldBarrier();
+                PreventReset = false;
             }
+        }
+
+        private void Update()
+        {
+            // Update the current field and make a field barrier if Classic Camera is enabled.
+            UpdateCurrentField();
+
             // Variable that prevents "HitPlayer" method from firing.
             if (PreventDamage)
             {
@@ -5787,6 +5806,13 @@ namespace ProjectZ.InGame.GameObjects
 
             // Manbo's song transition can freeze the game so unfreeze it now.
             FreezeGame(false);
+
+            // When classic camera is enabled don't reset monsters immediately after transition.
+            if (Camera.ClassicMode)
+            {
+                PreventReset = true;
+                PreventResetTimer = 200f;
+            }
         }
 
         #endregion

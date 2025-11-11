@@ -41,6 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = ToWalking;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spiked beetle");
             _animator.Play("walk");

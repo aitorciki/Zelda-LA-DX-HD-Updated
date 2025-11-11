@@ -76,6 +76,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
         }
 
+        private void Reset()
+        {
+            _movePosition = 0;
+            UpdatePosition();
+            _aiComponent.ChangeState("idle");
+        }
+
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             return true;
@@ -84,12 +91,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
         {
             return Values.HitCollision.RepellingParticle;
-        }
-
-        private void Reset()
-        {
-            _movePosition = 0;
-            _aiComponent.ChangeState("idle");
         }
 
         private void UpdateIdle()

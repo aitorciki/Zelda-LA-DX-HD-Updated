@@ -38,6 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             Tags = Values.GameObjectTag.Enemy;
 
@@ -91,6 +92,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ToIdle();
             // do not shoot directly after spawning
             _shootCountdown.Stop();
+        }
+
+        private void Reset()
+        {
+            ToIdle();
+            _sprite.IsVisible = true;
         }
 
         private void ToSpawning()

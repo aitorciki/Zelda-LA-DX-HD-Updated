@@ -125,6 +125,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _pushable = false;
             _body.IsActive = false;
+            _body.Velocity.Z = 0;
+            _body.VelocityTarget = Vector2.Zero;
             _damageState.IsActive = false;
             _damageField.IsActive = false;
             _sprite.IsVisible = false;

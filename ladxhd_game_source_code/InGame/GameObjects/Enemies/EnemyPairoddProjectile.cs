@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -11,19 +11,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyPairoddProjectile : GameObject
     {
+        private DamageFieldComponent _damageField;
+        private CSprite _sprite;
+
         public EnemyPairoddProjectile(Map.Map map, Vector2 position, float speed) : base(map)
         {
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-7, -7, 14, 14);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/pairodd projectile");
             animator.Play("idle");
 
-            var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(animator, sprite, Vector2.Zero);
+            _sprite = new CSprite(EntityPosition);
+            var animationComponent = new AnimationComponent(animator, _sprite, Vector2.Zero);
 
             var body = new BodyComponent(EntityPosition, -2, -2, 4, 4, 8)
             {
@@ -42,10 +46,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageCollider = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4);
 
             AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { OnDamagedPlayer = DamagedPlayer });
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { OnDamagedPlayer = DamagedPlayer });
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
+            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+        }
+
+        private void Reset()
+        {
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         private void DamagedPlayer()

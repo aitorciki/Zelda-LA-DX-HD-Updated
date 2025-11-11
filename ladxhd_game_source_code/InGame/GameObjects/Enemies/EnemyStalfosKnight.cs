@@ -53,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = InitIdle;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/stalfos knight");
             _animator.Play("walk_1");

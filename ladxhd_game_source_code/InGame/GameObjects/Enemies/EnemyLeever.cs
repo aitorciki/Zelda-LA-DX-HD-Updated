@@ -37,6 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-50, -50 - 8, 100, 100);
             CanReset = true;
+            OnReset = Reset;
 
             _fieldPosition = map.GetField(posX, posY);
 
@@ -96,6 +97,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             Deactivate();
+        }
+
+        private void Reset()
+        {
+            Deactivate();
+            _bodyDrawComponent.IsActive = false;
+            _sprite.IsVisible = false;
+            _aiComponent.ChangeState("init");
         }
 
         private void OnBurn()

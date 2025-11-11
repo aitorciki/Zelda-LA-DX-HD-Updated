@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = true;
+            OnReset = Reset;
 
             _turnSpeed = 0.02f;
             _flyState = (float)Math.PI / 2 * Game1.RandomNumber.Next(0, 4);
@@ -100,6 +101,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            EntityPosition.Z = 0;
+            _body.Velocity = Vector3.Zero;
+            _body.VelocityTarget = Vector2.Zero;
+            _animator.SpeedMultiplier = 0;
+            _aiComponent.ChangeState("start");
         }
 
         private void OnCollision(Values.BodyCollision collision)

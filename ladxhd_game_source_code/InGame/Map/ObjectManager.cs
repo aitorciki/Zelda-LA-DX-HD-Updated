@@ -26,6 +26,9 @@ namespace ProjectZ.InGame.Map
         private List<GameObject> SpawnObjects = new List<GameObject>();
         public List<GameObject> DeleteObjects = new List<GameObject>();
 
+        public static List<GameObject> AlwaysAnimateObjectsMain = new List<GameObject>();
+        public static List<GameObject> AlwaysAnimateObjectsTemp = new List<GameObject>();
+
         public Texture2D ShadowTexture;
         public static Effect CurrentEffect;
 
@@ -63,11 +66,9 @@ namespace ProjectZ.InGame.Map
         private readonly List<GameObject> db_bodyList = new List<GameObject>();
         private readonly List<GameObject> db_gameObjectList = new List<GameObject>();
 
-        public static List<GameObject> AlwaysAnimateObjectsMain = new List<GameObject>();
-        public static List<GameObject> AlwaysAnimateObjectsTemp = new List<GameObject>();
-
         public static Type[] _FreezePersistTypes;
         public static Type[] _ShieldDeflectTypes;
+
         private bool _keyChanged;
         private bool _finishedLoading;
 
@@ -200,15 +201,24 @@ namespace ProjectZ.InGame.Map
                 // If a field change has happened, then reset the enemies on the previous field.
                 if (Link.FieldChange)
                 {
-                    ResetSpawnPositions();
+                    // Do not reset enemies during a transition which causes a double reset.
+                    if (!Link.PreventReset)
+                        ResetSpawnPositions();
+
+                    // But always update the FieldChange.
                     Link.FieldChange = false;
                 }
             }
             // Add the always animate objects from the list on ObjLink to the temporary list here. The objects are copied to this list so it can
             // serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
             if (AlwaysAnimateObjectsMain?.Count > 0)
-                AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
-
+            {
+                lock (AlwaysAnimateObjectsMain)
+                {
+                    AlwaysAnimateObjectsTemp.Clear();
+                    AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
+                }
+            }
             // Update everything: animations, listeners, bodies, etc. When "AlwaysAnimate" contains something, only those
             // types found that have been added to the type array will be updated. This is a method used to "freeze" the entire
             // game world when an event takes place. It also freezes Link so care must be taken when applying it.
@@ -221,9 +231,6 @@ namespace ProjectZ.InGame.Map
             UpdateDamageFields();
             UpdateDeleteObjects();
             AddSpawnedObjects();
-
-            // Clear this list after it's done being used.
-            AlwaysAnimateObjectsTemp.Clear();
         }
 
         public void UpdateAnimations()
@@ -249,11 +256,12 @@ namespace ProjectZ.InGame.Map
 
         private void ResetSpawnPositions()
         {
+            // When changing fields with Classic Camera enemy positions are reset on the previous field.
             var Link = MapManager.ObjLink;
             _updateGameObject.Clear();
 
             _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X, Link.PreviousField.Y, 
-                Link.PreviousField.Width, Link.PreviousField.Height, BodyComponent.Mask);
+                Link.PreviousField.Width, Link.PreviousField.Height, DrawComponent.Mask);
             _updateGameObject.RemoveAll(o => o?.EntityPosition != null && !Link.PreviousField.Contains(o.EntityPosition.Position));
 
             foreach (var gameObject in _updateGameObject)
