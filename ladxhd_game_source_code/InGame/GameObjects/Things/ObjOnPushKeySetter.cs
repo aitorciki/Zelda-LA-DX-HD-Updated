@@ -33,8 +33,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
+            if (type == PushableComponent.PushType.Impact)
+                return false;
+
             Game1.GameManager.SaveManager.SetString(_strKey, "1");
             return true;
         }
     }
 }
+
