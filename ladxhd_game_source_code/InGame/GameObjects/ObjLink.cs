@@ -2369,6 +2369,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState != State.Digging &&
                 CurrentState != State.Bombing &&
                 CurrentState != State.Hookshot &&
+                CurrentState != State.Ocarina &&
                 CurrentState != State.MagicRod &&
                 !HoleFalling && !IsPoking)
                 Animation.Play("stand" + shieldString + animDirection);
