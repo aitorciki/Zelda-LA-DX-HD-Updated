@@ -435,6 +435,8 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isFlying;
         private bool _inDungeon;
 
+        public bool FreezeWorldForEvents;
+
         // Mod File Values (ObjLink.lahdmod)
         bool  sword1_beam = false;
         bool  always_beam = false;
@@ -1352,9 +1354,9 @@ namespace ProjectZ.InGame.GameObjects
             var strFreeze = "freezeGame";
             var FreezeGame = Game1.GameManager.SaveManager.GetString(strFreeze, "0");
             if (FreezeGame == "1")
-                Game1.GameManager.FreezeWorldForEvents = true;
+                FreezeWorldForEvents = true;
             else if (FreezeGame == "0")
-                Game1.GameManager.FreezeWorldForEvents = false;
+                FreezeWorldForEvents = false;
 
             var strCloak = "cloak_transition";
             var cloakTransition = Game1.GameManager.SaveManager.GetString(strCloak);

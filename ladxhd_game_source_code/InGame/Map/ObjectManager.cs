@@ -180,7 +180,7 @@ namespace ProjectZ.InGame.Map
             // but rather set via: Game1.GameManager.SaveManager.SetString("freezeGame", "1"); The listener on ObjLink will
             // detect this and set the "FreezeWorldForEvents" boolean accordingly. To unfreeze, just set it back to "0". 
 
-            if (Game1.GameManager.FreezeWorldForEvents)
+            if (Link.FreezeWorldForEvents)
             {
                 // Copy the group of objects to always animate into the array. Currently only "ObjGhost" and "ObjOwl".
                 freezePersistTypes = _FreezePersistTypes;

@@ -34,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             bool inZombieField = _triggerField.Contains(MapManager.ObjLink.EntityPosition.Position);
 
             // Zombie spawner and Link share a field and the game is not currently frozen.
-            if (inZombieField && !Game1.GameManager.FreezeWorldForEvents)
+            if (inZombieField && !MapManager.ObjLink.FreezeWorldForEvents)
                 _spawnCounter -= Game1.DeltaTime;
 
             if (_spawnCounter <= 0)
