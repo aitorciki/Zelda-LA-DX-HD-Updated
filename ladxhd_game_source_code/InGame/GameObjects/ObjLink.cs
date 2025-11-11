@@ -1721,15 +1721,18 @@ namespace ProjectZ.InGame.GameObjects
             // Loop through the NPCs checking for collision.
             foreach (var npc in npcList)
             {
-                var collisionObject = npc.Components[CollisionComponent.Index] as CollisionComponent;
-                var collisionBody = npc.Components[CollisionComponent.Index] as BodyCollisionComponent;
-                if (collisionObject != null && collisionBody != null && collisionBody.IsActive && 
-                    (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
+                if (npc.IsActive)
                 {
-                    // If the sword box and body box intersect return true.
-                    var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
-                    if (bodyObject != null && SwordBox.Intersects(bodyObject.BodyBox.Box))
-                        return true;
+                    var collisionObject = npc.Components[CollisionComponent.Index] as CollisionComponent;
+                    var collisionBody = npc.Components[CollisionComponent.Index] as BodyCollisionComponent;
+                    if (collisionObject != null && collisionBody != null && collisionBody.IsActive && 
+                        (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
+                    {
+                        // If the sword box and body box intersect return true.
+                        var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
+                        if (bodyObject != null && SwordBox.Intersects(bodyObject.BodyBox.Box))
+                            return true;
+                    }
                 }
             }
             return false;
