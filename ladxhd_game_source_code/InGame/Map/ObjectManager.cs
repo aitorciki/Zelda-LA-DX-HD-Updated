@@ -209,16 +209,12 @@ namespace ProjectZ.InGame.Map
                     Link.FieldChange = false;
                 }
             }
-            // Add the always animate objects from the list on ObjLink to the temporary list here. The objects are copied to this list so it can
-            // serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
+            // Add the always animate objects from the main list to the temporary list here. The objects are copied to this 
+            // list so it can serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
             if (AlwaysAnimateObjectsMain?.Count > 0)
-            {
                 lock (AlwaysAnimateObjectsMain)
-                {
-                    AlwaysAnimateObjectsTemp.Clear();
                     AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
-                }
-            }
+
             // Update everything: animations, listeners, bodies, etc. When "AlwaysAnimate" contains something, only those
             // types found that have been added to the type array will be updated. This is a method used to "freeze" the entire
             // game world when an event takes place. It also freezes Link so care must be taken when applying it.
@@ -231,6 +227,10 @@ namespace ProjectZ.InGame.Map
             UpdateDamageFields();
             UpdateDeleteObjects();
             AddSpawnedObjects();
+
+            // For some reason the list must be cleared here or "ghost" objects will remain that can still
+            // deal damage. They also causes crashes stating that "Map is null" an issue I'll never grasp...
+            AlwaysAnimateObjectsTemp.Clear();
         }
 
         public void UpdateAnimations()
@@ -260,8 +260,8 @@ namespace ProjectZ.InGame.Map
             var Link = MapManager.ObjLink;
             _updateGameObject.Clear();
 
-            _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X, Link.PreviousField.Y, 
-                Link.PreviousField.Width, Link.PreviousField.Height, DrawComponent.Mask);
+            _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X - 16, Link.PreviousField.Y - 16, 
+                Link.PreviousField.Width + 32, Link.PreviousField.Height + 32, DrawComponent.Mask);
             _updateGameObject.RemoveAll(o => o?.EntityPosition != null && !Link.PreviousField.Contains(o.EntityPosition.Position));
 
             foreach (var gameObject in _updateGameObject)
@@ -431,6 +431,7 @@ namespace ProjectZ.InGame.Map
                 {
                     // Remove the object from the always animate list.
                     AlwaysAnimateObjectsMain.Remove(gameObject);
+              //      AlwaysAnimateObjectsTemp.Remove(gameObject);
 
                     // Remove the object from the game.
                     RemoveObject(gameObject);
@@ -763,6 +764,7 @@ namespace ProjectZ.InGame.Map
             ObjectList.Clear();
             ObjectListB.Clear();
             AlwaysAnimateObjectsMain.Clear();
+        //    AlwaysAnimateObjectsTemp.Clear();
         }
 
         private void ClearPools()
