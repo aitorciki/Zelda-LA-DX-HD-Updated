@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
@@ -9,18 +10,22 @@ namespace ProjectZ.InGame.Pages
 {
     class ReduxOptionsPage : InterfacePage
     {
-        private readonly ContentManager _content;
+        private readonly InterfaceListLayout _reduxOptionsList;
         private readonly InterfaceListLayout _contentLayout;
+        private readonly ContentManager _content;
         public static bool _reloadMenus;
+        private bool _showTooltip;
 
         public ReduxOptionsPage(int width, int height, ContentManager content)
         {
+            EnableTooltips = true;
+
             _content = content;
             var buttonWidth = 320;
 
             // Redux Settings Layout
-            var reduxOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-            reduxOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_redux_header",
+            _reduxOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _reduxOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_redux_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
@@ -72,18 +77,29 @@ namespace ProjectZ.InGame.Pages
             // Bottom Bar / Back Button:
             var bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
-            reduxOptionsList.AddElement(_contentLayout);
-            reduxOptionsList.AddElement(bottomBar);
-            PageLayout = reduxOptionsList;
+            _reduxOptionsList.AddElement(_contentLayout);
+            _reduxOptionsList.AddElement(bottomBar);
+            PageLayout = _reduxOptionsList;
         }
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
             base.Update(pressedButtons, gameTime);
 
-            // close the page
+            // The back button was pressed.
             if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                 Game1.UiPageManager.PopPage();
+
+            // The tooltip button was pressed.
+            if (ControlHandler.ButtonPressed(CButtons.Y))
+            {
+                _showTooltip = !_showTooltip;
+                if (_showTooltip)
+                    Game1.GameManager.PlaySoundEffect("D360-21-15");
+            }
+            // Hide the tooltip when pressing anything.
+            else if (ControlHandler.AnyButtonPressed())
+                _showTooltip = false;
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
@@ -124,6 +140,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.VarWidthFont = newState;
             Game1.GameManager.InGameOverlay.TextboxOverlay.ResolutionChange();
             Game1.UiPageManager.Reload(_content);
+            PageTooltip.UpdateFont();
         }
 
         public void PressButtonToggleHelpers(bool newState)
@@ -161,6 +178,45 @@ namespace ProjectZ.InGame.Pages
         public void PressButtonNoAnimalDamage(bool newState) 
         {
             GameSettings.NoAnimalDamage = newState;
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        {
+            // Always draw the menu even when not showing tooltips.
+            base.Draw(spriteBatch, position, height, alpha);
+
+            // If the user pressed the top most face button, show the tooltip window.
+            if (_showTooltip)
+            {
+                string tooltipText = GetOptionToolip();
+                PageTooltip.Draw(spriteBatch, tooltipText);
+            }
+        }
+
+        private string GetOptionToolip()
+        {
+            // Detect back button press by checking the index of the main InterfaceListLayout.
+            if (_reduxOptionsList.SelectionIndex == 2)
+                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+
+            // Detect the chosen button by checking the content InterfaceListLayout.
+            int index = _contentLayout.SelectionIndex;
+            string tooltip = "Select an option to view its tooltip.";
+
+            // Use the selected index to determine which tooltip to show.
+            switch (index) 
+            {
+                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_menubricks", "error"); break; }
+                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_vwfont", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_nohelptext", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dialogskip", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_uncensor", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_unmissables", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_photoscolor", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_noanimaldmg", "error"); break; }
+            }
+            // Display the tooltip in the tooltip window.
+            return tooltip;
         }
     }
 }

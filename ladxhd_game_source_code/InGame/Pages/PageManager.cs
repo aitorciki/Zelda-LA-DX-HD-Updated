@@ -42,6 +42,7 @@ namespace ProjectZ.InGame.Pages
         private const int TransitionNormal = 200;
 
         private bool _isTransitioning;
+        private bool _showTooltipButton;
 
         public void Load(ContentManager content)
         {
@@ -107,8 +108,12 @@ namespace ProjectZ.InGame.Pages
                         if (PageStack.Count > 0)
                             PageStack.RemoveAt(0);
                     }
-
                     _currentPage = 0;
+
+                    if (PageStack.Count > 0)
+                        _showTooltipButton = InsideElement[PageStack[0]].EnableTooltips;
+                    else
+                        _showTooltipButton = false;
                 }
             }
 
@@ -174,7 +179,6 @@ namespace ProjectZ.InGame.Pages
             {
                 _transitionCount = _transitionTime - _transitionCount;
             }
-
             _isTransitioning = true;
             _transitionDirection = -1;
 
@@ -229,7 +233,6 @@ namespace ProjectZ.InGame.Pages
                 PageStack.RemoveAt(0);
                 _transitionCount = _transitionTime - _transitionCount;
             }
-
             _transitionDirection = 1;
 
             _currentPage = 0;
@@ -263,6 +266,12 @@ namespace ProjectZ.InGame.Pages
             }
         }
 
+        public bool PageHasTooltips()
+        {
+            // Used by "MenuScreen.cs" to draw tooltip button hint.
+            return _showTooltipButton;
+        }
+
         public void ClearStack()
         {
             PageStack.Clear();
@@ -276,5 +285,6 @@ namespace ProjectZ.InGame.Pages
                 page.OnResize(newWidth, newHeight);
             }
         }
+
     }
 }

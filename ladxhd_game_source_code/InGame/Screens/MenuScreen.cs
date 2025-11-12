@@ -91,26 +91,27 @@ namespace ProjectZ.InGame.Screens
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            // Draw the black background rectangle
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
-
-            // draw the black background
             spriteBatch.Draw(Resources.SprWhite, _menuRectangle, Color.Black);
 
-            // input helper
+            // Back Button Text
             {
                 var backStr = "";
                 if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys.Length > 0)
                     backStr = ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys[0].ToString();
                 if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons.Length > 0)
                     backStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]);
+
                 var strType = Game1.LanguageManager.GetString("main_menu_back", "error");
                 var backHelp = backStr + " " + strType;
-
                 var backTextSize = Resources.GameFont.MeasureString(backHelp);
-                spriteBatch.DrawString(Resources.GameFont, backHelp,
-                    new Vector2(_menuRectangle.X + 2 * _scale, _menuRectangle.Bottom - backTextSize.Y * _scale), Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                var backPos = new Vector2(_menuRectangle.X + 2 * _scale, _menuRectangle.Bottom - backTextSize.Y * _scale);
+
+                spriteBatch.DrawString(Resources.GameFont, backHelp, backPos, Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
             }
 
+            // Select Button Text
             {
                 var selectStr = "";
                 if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.ConfirmButton].Keys.Length > 0)
@@ -119,13 +120,29 @@ namespace ProjectZ.InGame.Screens
                     selectStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.ConfirmButton].Buttons[0]);
 
                 var strType = Game1.LanguageManager.GetString("main_menu_select", "error");
-                var inputHelper = selectStr + " " + strType;
+                var inputHelp = selectStr + " " + strType;
+                var selectTextSize = Resources.GameFont.MeasureString(inputHelp);
+                var selectPos =  new Vector2(_menuRectangle.Right - (selectTextSize.X + 2) * _scale, _menuRectangle.Bottom - selectTextSize.Y * _scale);
 
-                var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
-                spriteBatch.DrawString(Resources.GameFont, inputHelper,
-                    new Vector2(_menuRectangle.Right - (selectTextSize.X + 2) * _scale, _menuRectangle.Bottom - selectTextSize.Y * _scale), Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(Resources.GameFont, inputHelp, selectPos, Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
             }
 
+            // Tooltip Button Text
+            if (Game1.UiPageManager.PageHasTooltips())
+            {
+                var tooltipStr = "";
+                if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Y].Keys.Length > 0)
+                    tooltipStr = ControlHandler.ButtonDictionary[CButtons.Y].Keys[0].ToString();
+                if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Y].Buttons.Length > 0)
+                    tooltipStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.Y].Buttons[0]);
+
+                var tooltipType = Game1.LanguageManager.GetString("main_menu_tooltip", "error");
+                var tooltipHelp = tooltipStr + " " + tooltipType;
+                var tooltipTextSize = Resources.GameFont.MeasureString(tooltipHelp);
+                var tooltipPos = new Vector2(_menuRectangle.X + (_menuRectangle.Width - tooltipTextSize.X * _scale) / 2f, _menuRectangle.Bottom - tooltipTextSize.Y * _scale);
+
+                spriteBatch.DrawString(Resources.GameFont, tooltipHelp, tooltipPos, Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+            }
             spriteBatch.End();
         }
 

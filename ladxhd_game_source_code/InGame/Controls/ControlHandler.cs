@@ -368,5 +368,22 @@ namespace ProjectZ.InGame.Controls
 
             return pressedButtons;
         }
+
+        public static bool AnyButtonPressed()
+        {
+            // Detect any digital button press.
+            foreach (var bEntry in ButtonDictionary)
+            {
+                for (var i = 0; i < bEntry.Value.Buttons.Length; i++)
+                    if (InputHandler.GamePadPressed(bEntry.Value.Buttons[i]))
+                        return true;
+            }
+            // Detect any movement from the analog.
+            if (GetMoveVector2() != Vector2.Zero)
+                return true;
+
+            // Otherwise nothing was pressed.
+            return false;
+        }
     }
 }

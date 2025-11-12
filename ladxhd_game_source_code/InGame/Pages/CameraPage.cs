@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
@@ -8,6 +9,7 @@ namespace ProjectZ.InGame.Pages
 {
     class CameraSettingsPage : InterfacePage
     {
+        private readonly InterfaceListLayout _cameraOptionsList;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
         private readonly InterfaceListLayout toggleClassicDungeon;
@@ -15,14 +17,17 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout toggleCameraLock;
         private readonly InterfaceSlider sliderBorderOpacity;
         public static bool _reloadMenus;
+        private bool _showTooltip;
 
         public CameraSettingsPage(int width, int height)
         {
+            EnableTooltips = true;
+
             var buttonWidth = 320;
 
             // Camera Settings Layout
-            var cameraOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-            cameraOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_camera_header",
+            _cameraOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _cameraOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_camera_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
@@ -69,9 +74,9 @@ namespace ProjectZ.InGame.Pages
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
-            cameraOptionsList.AddElement(_contentLayout);
-            cameraOptionsList.AddElement(_bottomBar);
-            PageLayout = cameraOptionsList;
+            _cameraOptionsList.AddElement(_contentLayout);
+            _cameraOptionsList.AddElement(_bottomBar);
+            PageLayout = _cameraOptionsList;
 
             // Update button colors.
             UpdateInterfaceColors();
@@ -81,9 +86,20 @@ namespace ProjectZ.InGame.Pages
         {
             base.Update(pressedButtons, gameTime);
 
-            // close the page
+            // The back button was pressed.
             if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                 Game1.UiPageManager.PopPage();
+
+            // The tooltip button was pressed.
+            if (ControlHandler.ButtonPressed(CButtons.Y))
+            {
+                _showTooltip = !_showTooltip;
+                if (_showTooltip)
+                    Game1.GameManager.PlaySoundEffect("D360-21-15");
+            }
+            // Hide the tooltip when pressing anything.
+            else if (ControlHandler.AnyButtonPressed())
+                _showTooltip = false;
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
@@ -109,6 +125,44 @@ namespace ProjectZ.InGame.Pages
         private string AddedMoveSpeedSliderAdjustment(int number)
         {
             return ": " + number + "%";
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        {
+            // Always draw the menu even when not showing tooltips.
+            base.Draw(spriteBatch, position, height, alpha);
+
+            // If the user pressed the top most face button, show the tooltip window.
+            if (_showTooltip)
+            {
+                string tooltipText = GetOptionToolip();
+                PageTooltip.Draw(spriteBatch, tooltipText);
+            }
+        }
+
+        private string GetOptionToolip()
+        {
+            // Detect back button press by checking the index of the main InterfaceListLayout.
+            if (_cameraOptionsList.SelectionIndex == 2)
+                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+
+            // Detect the chosen button by checking the content InterfaceListLayout.
+            int index = _contentLayout.SelectionIndex;
+            string tooltip = "Select an option to view its tooltip.";
+
+            // Use the selected index to determine which tooltip to show.
+            switch (index) 
+            {
+                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_classiccam", "error"); break; }
+                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_classicdungeon", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_camborder", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_blackpercent", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_cameralock", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_smoothcamera", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_screenshake", "error"); break; }
+            }
+            // Display the tooltip in the tooltip window.
+            return tooltip;
         }
     }
 }

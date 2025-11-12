@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
@@ -9,24 +10,29 @@ namespace ProjectZ.InGame.Pages
 {
     class GameSettingsPage : InterfacePage
     {
+        private readonly InterfaceListLayout _gameSettingsList;
+        private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
         private readonly InterfaceButton _controllerType;
         private readonly InterfaceSlider _subLangSlider;
         private float _controlCooldown = 0f;
+        private bool _showTooltip;
 
         public GameSettingsPage(int width, int height)
         {
+            EnableTooltips = true;
+
             // Game Settings Layout
-            var gameSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _gameSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             var buttonWidth = 320;
 
-            gameSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_game_header",
+            _gameSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_game_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
 
-            var contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Button: Language
-            contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 14), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
+            _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 14), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
 
             // Slider: Sub-Language
             _subLangSlider = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
@@ -36,11 +42,11 @@ namespace ProjectZ.InGame.Pages
                     Game1.LanguageManager.CurrentSubLanguageIndex = number;
                 })
             { SetString = number => LangSliderAdjustment(number) };
-            contentLayout.AddElement(_subLangSlider);
+            _contentLayout.AddElement(_subLangSlider);
 
             // Button: Controller Type
             // There wasn't a way to just display what we want on the button so a little bit of hackery was needed.
-            contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, 14), new Point(0, 2), "", PressButtonSetController)) ;
+            _contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, 14), new Point(0, 2), "", PressButtonSetController)) ;
             _controllerType.InsideLabel.OverrideText = Game1.LanguageManager.GetString("settings_game_controller", "error") + ": " + GameSettings.Controller;
 
             // Button: Swap Confirm & Cancel
@@ -51,29 +57,29 @@ namespace ProjectZ.InGame.Pages
                     GameSettings.SwapButtons = newState;
                     ControlHandler.SetConfirmCancelButtons();
                 });
-            contentLayout.AddElement(toggleSwapButtons);
+            _contentLayout.AddElement(toggleSwapButtons);
 
             // Button: AutoSave
             var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
-            contentLayout.AddElement(toggleAutosave);
+            _contentLayout.AddElement(toggleAutosave);
 
             // Button: Items on Right
             var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_items_on_right", GameSettings.ItemsOnRight, newState => { GameSettings.ItemsOnRight = newState; });
-            contentLayout.AddElement(toggleItemSlotSide);
+            _contentLayout.AddElement(toggleItemSlotSide);
 
             // Button: Classic Movement
             var toggleOldMovement = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_classic_movement", GameSettings.OldMovement, newState => { GameSettings.OldMovement = newState; });
-            contentLayout.AddElement(toggleOldMovement);
+            _contentLayout.AddElement(toggleOldMovement);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
-            gameSettingsList.AddElement(contentLayout);
-            gameSettingsList.AddElement(_bottomBar);
-            PageLayout = gameSettingsList;
+            _gameSettingsList.AddElement(_contentLayout);
+            _gameSettingsList.AddElement(_bottomBar);
+            PageLayout = _gameSettingsList;
         }
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
@@ -83,9 +89,20 @@ namespace ProjectZ.InGame.Pages
             if (_controlCooldown > 0f)
                 _controlCooldown -= Game1.DeltaTime;
 
-            // close the page
+            // The back button was pressed.
             if (_controlCooldown <= 0f && ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                 Game1.UiPageManager.PopPage();
+
+            // The tooltip button was pressed.
+            if (ControlHandler.ButtonPressed(CButtons.Y))
+            {
+                _showTooltip = !_showTooltip;
+                if (_showTooltip)
+                    Game1.GameManager.PlaySoundEffect("D360-21-15");
+            }
+            // Hide the tooltip when pressing anything.
+            else if (ControlHandler.AnyButtonPressed())
+                _showTooltip = false;
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
@@ -135,6 +152,44 @@ namespace ProjectZ.InGame.Pages
 
             // Update the buttons on the controller page.
             ControlSettingsPage.UpdateLabels();
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        {
+            // Always draw the menu even when not showing tooltips.
+            base.Draw(spriteBatch, position, height, alpha);
+
+            // If the user pressed the top most face button, show the tooltip window.
+            if (_showTooltip)
+            {
+                string tooltipText = GetOptionToolip();
+                PageTooltip.Draw(spriteBatch, tooltipText);
+            }
+        }
+
+        private string GetOptionToolip()
+        {
+            // Detect back button press by checking the index of the main InterfaceListLayout.
+            if (_gameSettingsList.SelectionIndex == 2)
+                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+
+            // Detect the chosen button by checking the content InterfaceListLayout.
+            int index = _contentLayout.SelectionIndex;
+            string tooltip = "Select an option to view its tooltip.";
+
+            // Use the selected index to determine which tooltip to show.
+            switch (index) 
+            {
+                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_language", "error"); break; }
+                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_controller", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_swapconfirm", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicmove", "error"); break; }
+            }
+            // Display the tooltip in the tooltip window.
+            return tooltip;
         }
     }
 }

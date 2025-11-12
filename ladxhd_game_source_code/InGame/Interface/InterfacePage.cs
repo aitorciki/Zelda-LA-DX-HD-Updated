@@ -9,6 +9,8 @@ namespace ProjectZ.InGame.Interface
     {
         public InterfaceElement PageLayout;
 
+        public bool EnableTooltips = false;
+
         public virtual void OnLoad(Dictionary<string, object> intent) { }
 
         public virtual void OnPop(Dictionary<string, object> intent) { }
