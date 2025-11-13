@@ -399,6 +399,7 @@ namespace ProjectZ.InGame.GameObjects
                 else if ((_jumpEndTimer > 0 && 
                     !IsAttackingState(CurrentState) &&
                     CurrentState != State.ShowToadstool &&
+                    CurrentState != State.PickingUp &&
                     CurrentState != State.Powdering &&
                     CurrentState != State.Digging &&
                     CurrentState != State.Bombing &&
