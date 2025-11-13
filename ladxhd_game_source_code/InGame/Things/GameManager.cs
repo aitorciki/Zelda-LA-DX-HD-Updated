@@ -114,6 +114,7 @@ namespace ProjectZ.InGame.Things
         public bool ThiefState = false;
 
         public string RealSaveName = "Link";
+
         public string SaveName {
             get { return ThiefState ? Game1.LanguageManager.GetString("savename_thief", "error") : RealSaveName; }
             set { RealSaveName = value; } 
@@ -124,6 +125,7 @@ namespace ProjectZ.InGame.Things
         public float CurrentSessionPlaytime = 0.0f; // current session playtime in minutes
 
         public float DrawPlayerOnTopPercentage;
+        public bool FreezeWorldAroundPlayer;
 
         // save game data
         public string LoadedMap;

@@ -870,6 +870,10 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Idle;
                 }
             }
+            else if (CurrentState == State.PickingUp && !_pickingUpInstrument && !_pickingUpSword)
+            {
+                Game1.GameManager.FreezeWorldAroundPlayer = true;
+            }
             else if (CurrentState == State.TeleporterUpWait)
             {
                 _holeTeleportCounter += Game1.DeltaTime;

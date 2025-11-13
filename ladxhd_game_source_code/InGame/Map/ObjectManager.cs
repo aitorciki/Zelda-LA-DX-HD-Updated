@@ -172,6 +172,17 @@ namespace ProjectZ.InGame.Map
                 AddSpawnedObjects();
                 return;
             }
+            // NOTE: I'm honestly not sure what the point of any of this is. It is titled in a way that makes you think that
+            // when true, the world freezes except for Link. But this is NOT the case, I have tried to use it for different
+            // events but it never worked like I thought. I keep it here because it probably is important for something.
+
+            if (Game1.GameManager.FreezeWorldAroundPlayer)
+            {
+                Game1.GameManager.FreezeWorldAroundPlayer = false;
+                var updateComponent = (UpdateComponent)MapManager.ObjLink.Components[UpdateComponent.Index];
+                updateComponent?.UpdateFunction();
+                return;
+            }
             // When the game world is frozen, certain types should still be active. It is set to null at first and updated
             // depending on whether or not the "freezeGame" flag is set. When "null" everything in the world is updated.
 
