@@ -14,6 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _dialogPath;
         private readonly bool _isHardCrystal;
 
+        private readonly string _spriteId;
+
         bool light_source = true;
         int light_size = 80;
 
@@ -39,28 +41,25 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-40, -48, 80, 80);
 
-            if (color == 0)
-                _lightColor = new Color(light_red_1, light_grn_1, light_blu_1) * light_bright_1;
-            else if (color == 1)
-                _lightColor = new Color(light_red_2, light_grn_2, light_blu_2) * light_bright_2;
+            _spriteId = spriteId;
 
             _isHardCrystal = hardCrystal;
             _dialogPath = dialogPath;
+
+            _lightColor = color == 0
+                ? new Color(light_red_1, light_grn_1, light_blu_1) * light_bright_1
+                : new Color(light_red_2, light_grn_2, light_blu_2) * light_bright_2;
 
             var hardBox = new CBox(posX, posY + 4, 0, 16, 12, 16);
             var softBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
 
             if (_isHardCrystal)
-            {
                 AddComponent(PushableComponent.Index, new PushableComponent(hardBox, OnPush) { InertiaTime = 50 });
-                AddComponent(HittableComponent.Index, new HittableComponent(hardBox, OnHit));
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(hardBox, Values.CollisionTypes.Normal));
-            }
-            else
-            {
-                AddComponent(HittableComponent.Index, new HittableComponent(softBox, OnHit));
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(softBox, Values.CollisionTypes.Normal));
-            }
+        
+            AddComponent(HittableComponent.Index, new HittableComponent(_isHardCrystal ? hardBox : softBox, OnHit));
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_isHardCrystal ? hardBox : softBox, Values.CollisionTypes.Normal));
+
+            // Draw components
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(-8, -16), Values.LayerPlayer));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
@@ -95,8 +94,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             Game1.GameManager.PlaySoundEffect("D378-09-09");
-
             Map.Objects.DeleteObjects.Add(this);
+
+            if (!_isHardCrystal)
+                Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, _spriteId, _dialogPath));
 
             var mult = damageType == HitType.PegasusBootsSword ? 1.0f : 0.25f;
             var velZ = 0.5f;

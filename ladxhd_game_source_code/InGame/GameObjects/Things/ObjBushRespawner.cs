@@ -55,7 +55,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (_respawnStart)
                 {
                     _respawnTimer += Game1.DeltaTime;
-                    if (_respawnTimer >= 350)
+                    if (_respawnTimer >= 250)
                     {
                         SpawnObject();
                         _respawnTimer = 0;
