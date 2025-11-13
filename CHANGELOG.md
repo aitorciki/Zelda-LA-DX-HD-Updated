@@ -1,5 +1,23 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.7**
+### **The "Feature Complete" Update**
+  * Implement system to reset enemy positions when changing fields when Classic Camera is enabled.
+  * Options menus finally have tooltips implemented. Press the top face button on the controller to view them.
+  * Pressing LT/RT to change the scale can now be held down to rapidly shift through scaling values.
+  * Dark rooms in dungeons 2, 6, and 8 have been made slightly darker to encourage powder usage.
+  * Fix scale changes during Classic Camera. The controller buttons are supposed to be blocked when it's active.
+  * Fix regression of some of the "always animate" objects to not hang around after death.
+  * Fix "ghost" Ravens from somehow activating between map transitions (related to above fix).
+  * Fix sword charging NPC avoidance to not detect NPCs that are currently not active on the game field.
+  * Fix even more animation quirks when jumping > landing > performing action for both 2D and 3D Link.
+  * Fix the shield from interacting with and bouncing against gravestones that spawn Ghini enemies. 
+  * Fix missing collision field in the top left corner of Kanalet Castle upstairs map.
+  * Fix Stalfos enemies getting stuck in a nearby field when damage launching them into it.
+  * Fix transitional weirdness when Classic Camera is enabled on the "bridge" map (the one with the fisherman under the bridge).
+  * Fix missing pushable component on Goponga Flowers which made it so the shield does not "bump" off of them.
+  * Fix Spark hitbox so it's somewhat closer to the original game (differences mean it is not perfect).
+
 ## **v1.4.6**
 ### **The "Stayin' Alive" Update**
   * The "always animate" code has been optimized and updated to be far more reliable and is also applied to the "normal" camera.
