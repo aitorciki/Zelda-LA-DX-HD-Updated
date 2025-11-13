@@ -92,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
-            _aiComponent.ChangeState("idle");
+            _aiComponent.ChangeState("moving");
             _damageState.CurrentLives = ObjLives.LikeLike;
         }
 
