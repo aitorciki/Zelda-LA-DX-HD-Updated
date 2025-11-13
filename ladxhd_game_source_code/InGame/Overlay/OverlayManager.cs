@@ -530,6 +530,10 @@ namespace ProjectZ.InGame.Overlay
 
         private void UpdateGameScale(GameScaleDirection scaleDirection)
         {
+            // Do not adjust the scale when classic camera is active.
+            if (Camera.ClassicMode)
+                return;
+
             // If both LT and RT are pressed together, set the scaling to auto-scaling.
             if (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
             {
@@ -553,8 +557,8 @@ namespace ProjectZ.InGame.Overlay
                     GameSettings.GameScale = newScale;
             }
             // When Classic Camera is enabled, we want the camera to "snap" to the next scale.
-            if (Camera.ClassicMode)
-                Camera.SnapCameraTimer = 100f;
+            //  if (Camera.ClassicMode)
+            //      Camera.SnapCameraTimer = 100f;
 
             // Apply current scaling settings.
             Game1.ScaleChanged = true;
