@@ -83,6 +83,9 @@ namespace ProjectZ.InGame.Overlay
         private bool _isChanging;
         private bool _mapOpened;
 
+        private bool _scaleButtonDown;
+        private float _scaleButtonTimer;
+
         public OverlayManager()
         {
             _blurRectangle = (UiRectangle)Game1.UiManager.AddElement(
@@ -135,28 +138,59 @@ namespace ProjectZ.InGame.Overlay
             TextboxOverlay.Init();
         }
 
+
         public void Update()
         {
-            // toggle game menu
-            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Menu) &&
-                ControlHandler.ButtonPressed(CButtons.Select))
+            // Toggle Game Options Menu Overlay
+            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Menu) && ControlHandler.ButtonPressed(CButtons.Select))
                 ToggleState(MenuState.Menu);
 
-            // toggle inventory/map
-            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory) &&
-                ControlHandler.ButtonPressed(CButtons.Start) && !DisableInventoryToggle && !_hideHud && !TextboxOverlay.IsOpen)
+            // Toggle the Inventory / Map Overlay
+            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory) && ControlHandler.ButtonPressed(CButtons.Start) && !DisableInventoryToggle && !_hideHud && !TextboxOverlay.IsOpen)
                 ToggleState(MenuState.Inventory);
 
-            // toggle map scale
-            if (_currentMenuState == MenuState.None && ControlHandler.ButtonPressed(CButtons.LT))
-                UpdateGameScale(GameScaleDirection.Decrease);
-            if (_currentMenuState == MenuState.None && ControlHandler.ButtonPressed(CButtons.RT))
-                UpdateGameScale(GameScaleDirection.Increase);
-
+            // Don't perform scaling unless no menu is currently opened.
             if (_currentMenuState == MenuState.None)
             {
-                // update the textbox
+                // Update the Textbox Overlay.
                 TextboxOverlay.Update();
+
+                // Increase the timer if one of the scaling buttons are held.
+                if (_scaleButtonDown)
+                    _scaleButtonTimer += Game1.DeltaTime;
+
+                // Increase/Decrease game scale. Start the timer so that there is a 500ms repeat delay.
+                if (ControlHandler.ButtonPressed(CButtons.LT))
+                {
+                    UpdateGameScale(GameScaleDirection.Decrease);
+                    _scaleButtonDown = true;
+                    _scaleButtonTimer = -425f;
+                }
+                if (ControlHandler.ButtonPressed(CButtons.RT))
+                {
+                    UpdateGameScale(GameScaleDirection.Increase);
+                    _scaleButtonDown = true;
+                    _scaleButtonTimer = -425f;
+                }
+
+                // Increase/Decrease game scale repeatedly while button is held every 75ms.
+                if (ControlHandler.ButtonDown(CButtons.LT) && _scaleButtonDown && _scaleButtonTimer > 75)
+                {
+                    UpdateGameScale(GameScaleDirection.Decrease);
+                    _scaleButtonTimer = 0;
+                }
+                if (ControlHandler.ButtonDown(CButtons.RT) && _scaleButtonDown && _scaleButtonTimer > 75)
+                {
+                    UpdateGameScale(GameScaleDirection.Increase);
+                    _scaleButtonTimer = 0;
+                }
+
+                // When either button is released, reset the repeat variables.
+                if (ControlHandler.ButtonReleased(CButtons.LT) || ControlHandler.ButtonReleased(CButtons.RT))
+                {
+                    _scaleButtonDown = false;
+                    _scaleButtonTimer = 0;
+                }
             }
             else if (_currentMenuState == MenuState.Menu)
             {
@@ -209,7 +243,6 @@ namespace ProjectZ.InGame.Overlay
                 TextboxOverlay.Update();
                 _gameSequences[_currentSequenceName].Update();
             }
-
             UpdateFade();
 
             InGameHud.Update(_hudPercentage, (1 - _hudPercentage) * HudTransparency);
