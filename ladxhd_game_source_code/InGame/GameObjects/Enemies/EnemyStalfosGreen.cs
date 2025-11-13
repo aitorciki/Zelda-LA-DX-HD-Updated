@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -40, 16, 40);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/stalfos green");
             _animator.Play("walk");
@@ -93,6 +94,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("walking");
+            _damageState.CurrentLives = ObjLives.StalfosGreen;
         }
 
         public void SetAirPosition(int posZ)

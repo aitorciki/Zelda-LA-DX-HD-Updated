@@ -33,6 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/pols voice");
             _animator.Play("jump");
@@ -80,6 +81,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("waiting");
+            _damageState.CurrentLives = ObjLives.PolsVoice;
         }
 
         private void OnSongPlayed(int songIndex)

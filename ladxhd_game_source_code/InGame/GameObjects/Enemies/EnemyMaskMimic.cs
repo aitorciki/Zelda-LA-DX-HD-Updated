@@ -37,6 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/mask mimic");
             _animator.Play("walk");
@@ -81,6 +82,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, _animatorComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
+            _aiDamageState.CurrentLives = ObjLives.MaskMimic;
+            _body.VelocityTarget = Vector2.Zero;
         }
 
         private void Update()

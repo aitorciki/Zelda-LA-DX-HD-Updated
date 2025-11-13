@@ -1,10 +1,9 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
-using static ProjectZ.InGame.GameObjects.Base.Components.PushableComponent;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -12,10 +11,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly DamageFieldComponent _damageField;
         private readonly BodyComponent _body;
+        private readonly CSprite _sprite;
+        private EnemyBeamos _host;
 
         private bool _isFirstProjectile;
 
-        public EnemyBeamosProjectile(Map.Map map, Vector2 position, Vector2 velocityTarget, bool isFirstProjectile) : base(map)
+        public EnemyBeamosProjectile(Map.Map map, EnemyBeamos host, Vector2 position, Vector2 velocityTarget, bool isFirstProjectile) : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -23,9 +24,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntitySize = new Rectangle(-3, -3, 6, 6);
             CanReset = false;
 
+            _host = host;
             _isFirstProjectile = isFirstProjectile;
-
-            var sprite = new CSprite("beamos projectile", EntityPosition, new Vector2(-2, -2));
+            _sprite = new CSprite("beamos projectile", EntityPosition, new Vector2(-2, -2));
 
             _body = new BodyComponent(EntityPosition, -1, -1, 2, 2, 8)
             {
@@ -50,12 +51,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
             AddComponent(DamageFieldComponent.Index, _damageField);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
+            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
         }
 
-        private bool OnPush(Vector2 direction, PushType pushType)
+        private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
         {
-            if (pushType == PushType.Impact)
+            if (pushType == PushableComponent.PushType.Impact)
                 DeleteProjectile(true);
 
             return false;
@@ -74,8 +75,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             DeleteProjectile(true);
         }
 
-        private void DeleteProjectile(bool showParticle)
+        public void Neutralize()
         {
+            _damageField.IsActive = false;
+            _sprite.IsVisible = false;
+        }
+
+        public void DeleteProjectile(bool showParticle)
+        {
+            _host._projectiles.Remove(this);
             Map.Objects.DeleteObjects.Add(this);
 
             if (_isFirstProjectile)

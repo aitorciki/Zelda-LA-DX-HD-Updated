@@ -98,6 +98,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _aiComponent.ChangeState("idle");
+            _damageState.CurrentLives = ObjLives.MoblinPig;
         }
 
         private void InitIdle()

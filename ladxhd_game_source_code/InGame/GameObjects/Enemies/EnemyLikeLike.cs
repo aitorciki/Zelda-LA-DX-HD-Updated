@@ -38,6 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition.AddPositionListener(typeof(EnemyLikeLike), UpdatePosition);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/likelike");
             _animator.Play("idle");
@@ -87,6 +88,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
+            _damageState.CurrentLives = ObjLives.LikeLike;
         }
 
         private void UpdatePosition(CPosition newPosition)

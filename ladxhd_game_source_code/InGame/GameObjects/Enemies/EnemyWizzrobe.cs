@@ -93,14 +93,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
         }
 
+        private void Reset()
+        {
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            _pushComponent.IsActive = false;
+            _aiComponent.ChangeState("hidden");
+            _damageState.CurrentLives = ObjLives.Wizzrobe;
+        }
+
         private void InitSpawn()
         {
             _animator.Play("head");
-        }
-
-        private void Reset()
-        {
-            _aiComponent.ChangeState("hidden");
         }
 
         private void BlinkTick(double timer)

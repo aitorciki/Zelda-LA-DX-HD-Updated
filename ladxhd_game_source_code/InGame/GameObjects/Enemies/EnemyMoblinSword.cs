@@ -116,6 +116,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _aiComponent.ChangeState("idle");
+            _damageState.CurrentLives = ObjLives.MoblinSword;
         }
 
         public override void Init()

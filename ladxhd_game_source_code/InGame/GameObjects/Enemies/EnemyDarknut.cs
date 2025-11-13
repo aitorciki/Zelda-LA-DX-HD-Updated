@@ -58,6 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/darknut");
             _animator.Play("walk_1");
@@ -116,6 +117,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             _sword = new EnemyDarknutSword(Map, this);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
+            _damageState.CurrentLives = ObjLives.Darknut;
         }
 
         public override void Init()

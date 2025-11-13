@@ -16,6 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
+        private readonly CSprite _sprite;
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
         private readonly HittableComponent _hitComponent;
@@ -31,12 +32,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/zombie");
 
-            var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            _sprite = new CSprite(EntityPosition);
+            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
@@ -59,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("spawn", stateSpawn);
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("despawn", stateDespawn);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
             _aiComponent.ChangeState("spawn");
 
@@ -73,10 +75,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
+            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         private void InitSpawn()

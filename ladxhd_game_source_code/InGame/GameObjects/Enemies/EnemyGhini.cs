@@ -9,6 +9,7 @@ using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
+using SharpDX.Direct3D9;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -50,6 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, spawnAnimation ? 0 : _flyHeight);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = true;
+            OnReset = Reset;
 
             _mainGhini = mainGhini;
             IsVisible = mainGhini;
@@ -96,6 +98,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            if (_mainGhini)
+            {
+                _aiComponent.ChangeState("flying");
+                _damageState.CurrentLives = ObjLives.Ghini;
+            }
+            // ToDo: Spawned Ghinis might need "ObjOnPushKeySetter" to be reset somehow...
+            else
+            {
+
+            }
         }
 
         private void UpdateSpawning()

@@ -98,6 +98,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             ToIdle();
             _sprite.IsVisible = true;
+            _damageState.CurrentLives = ObjLives.Pairodd;
         }
 
         private void ToSpawning()

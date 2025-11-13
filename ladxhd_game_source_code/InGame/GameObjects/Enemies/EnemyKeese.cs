@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 24, 0);
             EntitySize = new Rectangle(-8, -24, 16, 24);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/keese");
             _animator.Play("idle");
@@ -86,6 +87,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("cooldown");
+            _animator.Play("idle");
+            _body.VelocityTarget = Vector2.Zero;
         }
 
         private void OnBurn()

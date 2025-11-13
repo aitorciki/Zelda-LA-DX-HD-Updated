@@ -41,7 +41,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             EntityPosition = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _minMoveCount = count;
             _fullKey = fullKey;
@@ -82,6 +83,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
 
             _aiComponent.ChangeState("idle");
+        }
+
+        private void Reset()
+        {
+            Reactivate();
         }
 
         private void InitIdle()

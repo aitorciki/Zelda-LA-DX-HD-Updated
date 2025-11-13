@@ -38,6 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-10, -48, 20, 48);
             CanReset = true;
+            OnReset = Reset;
 
             _spriteHead = Resources.GetSprite("pokey");
             _spriteBody = Resources.GetSprite("pokey body");
@@ -78,6 +79,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 10, ShadowHeight = 5 });
+        }
+
+        private void Reset()
+        {
+            _state = 0;
+            _sprite.SetSprite(_spriteBody);
+            _damageState.CurrentLives = ObjLives.Pokey;
         }
 
         private void InitWalking()

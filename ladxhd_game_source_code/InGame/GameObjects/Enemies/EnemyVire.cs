@@ -1,13 +1,13 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -45,6 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-12, -64, 24, 64);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/vire");
             _animator.Play("idle");
@@ -118,6 +119,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
             ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+        }
+
+        private void Reset()
+        {
+            EntityPosition.Z = 0;
+            _animator.Play("idle");
+            _aiComponent.ChangeState("idle");
+            _body.Velocity = Vector3.Zero;
+            _body.VelocityTarget = Vector2.Zero;
+            _damageState.CurrentLives = ObjLives.Vire;
         }
 
         private void UpdateIdle()

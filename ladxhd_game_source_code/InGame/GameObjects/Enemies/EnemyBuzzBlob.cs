@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-10, -16, 20, 20);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/buzzblob");
 
@@ -85,6 +86,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("walking");
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _isCukeman = false;
+            _animator.Play("walk");
+            _aiComponent.ChangeState("walking");
+            _damageState.CurrentLives = ObjLives.BuzzBlob;
         }
 
         private void OnDeath(bool pieceOfPower)

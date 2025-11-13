@@ -14,8 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly CSprite _sprite;
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
-        private readonly Animator _animator;
         private readonly DamageFieldComponent _damgeField;
+        private Animator _animator;
 
         private readonly string _key;
         private readonly int _index;
@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _changeTime = 500;
         private float _changeCounter;
         private float _walkSpeed = 0.5f;
+        private int _startingCardIndex = 0;
         private int _cardIndex;
         private int _dir;
 
@@ -39,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             OnReset = Reset;
 
             _index = index;
+            _startingCardIndex = 0;
 
             if (string.IsNullOrEmpty(key))
             {
@@ -101,16 +103,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
         }
 
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
+            _changeCounter = _startingCardIndex * _changeTime;
+            _cardIndex = _startingCardIndex;
+            ResetPuzzle();
+        }
+
         private void ToIdle()
         {
             _damgeField.IsActive = true;
             _aiComponent.ChangeState("idle");
             _body.VelocityTarget = Vector2.Zero;
-        }
-
-        private void Reset()
-        {
-            _aiComponent.ChangeState("idle");
         }
 
         private void ToWalking()
@@ -203,6 +208,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sprite.SpriteShader = null;
             _aiComponent.ChangeState("waiting");
             Game1.GameManager.SaveManager.SetInt(_key + _index, _cardIndex);
+        }
+
+        private void ResetPuzzle()
+        {
+            for (var i = 0; i < 3; i++)
+                Game1.GameManager.SaveManager.RemoveInt(_key + i);
+
+            Game1.GameManager.SaveManager.RemoveString(_key);
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)

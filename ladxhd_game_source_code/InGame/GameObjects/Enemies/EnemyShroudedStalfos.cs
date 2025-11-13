@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyShroudedStalfos : GameObject
     {
         private readonly Animator _animator;
+        private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly DamageFieldComponent _damageField;
@@ -70,7 +71,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("idle", idleState);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            var damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
 
             // start randomly idle or walking facing a random direction
             _direction = Game1.RandomNumber.Next(0, 4);
@@ -81,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var pushableBox = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittabelBox, damageState.OnHit));
+            AddComponent(HittableComponent.Index, new HittableComponent(hittabelBox, _damageState.OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
@@ -94,6 +95,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _direction = Game1.RandomNumber.Next(0, 4);
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 2) == 0 ? "walking" : "idle");
+            _damageState.CurrentLives = ObjLives.ShroudedStalfos;
         }
 
         private void InitIdle()

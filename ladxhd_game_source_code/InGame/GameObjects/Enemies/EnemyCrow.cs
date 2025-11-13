@@ -44,7 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 12, 0);
             ResetPosition  = new CPosition(posX + 8, posY + 12, 0);
-            CanReset = true;
+            CanReset = false;
 
             _goldLeaf = goldLeaf;
 

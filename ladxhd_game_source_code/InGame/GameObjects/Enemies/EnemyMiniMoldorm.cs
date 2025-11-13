@@ -45,6 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 8 + SpriteOffsetY, 0);
             EntitySize = new Rectangle(-20, -20 - SpriteOffsetY, 40, 40);
             CanReset = true;
+            OnReset = Reset;
 
             _tailOnePosition = EntityPosition.Position;
             _tailTwoPosition = EntityPosition.Position;
@@ -92,6 +93,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             _bodyDrawComp = new BodyDrawComponent(_bodyComp, _sprite, Values.LayerPlayer);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+        }
+
+        private void Reset()
+        {
+            _damageState.CurrentLives = ObjLives.MiniMoldorm;
         }
 
         private void UpdateHeadSprite(Vector2 direction)

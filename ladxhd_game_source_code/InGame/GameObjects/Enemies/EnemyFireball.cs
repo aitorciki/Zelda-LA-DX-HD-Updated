@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly CSprite _sprite;
         private readonly BodyComponent _body;
+        private readonly DamageFieldComponent _damageField;
         private readonly Rectangle _fieldRectangle;
         private double _liveTime = 2250;
 
@@ -22,7 +23,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-5, -5, 10, 10);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/fireball");
             animator.Play("idle");
@@ -50,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             if (hittable)
             {
-                AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+                AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
                 AddComponent(PushableComponent.Index, new PushableComponent(damageBox, OnPush));
                 AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             }
@@ -58,6 +60,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
             ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+        }
+
+        private void Reset()
+        {
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         public void SetVelocity(Vector2 velocity)

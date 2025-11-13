@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -15,18 +16,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
-        private readonly AiTriggerSwitch _shootCooldown;
+        private readonly AiTriggerSwitch _shotCooldown;
         private readonly CSprite _sprite;
-
         private readonly Rectangle _fieldRectangle;
         
-        private Vector2 _shootDirection;
-        private Vector2 _shootOrigin;
+        public List<EnemyBeamosProjectile> _projectiles = new List<EnemyBeamosProjectile>();
 
-        private float _shootCounter;
+        private Vector2 _shotDirection;
+        private Vector2 _shotOrigin;
+
+        private float _shotCounter;
         private float _beamosRotation;
+        private bool _reset;
 
-        private int _shootsFired;
+        private int _shotsFired;
 
         public EnemyBeamos() : base("beamos") { }
 
@@ -38,6 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -14, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/beamos");
             _animator.Play("idle");
@@ -50,15 +54,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _fieldRectangle = Map.GetField(posX, posY);
 
             var stateIdle = new AiState(UpdateIdle);
-            stateIdle.Trigger.Add(_shootCooldown = new AiTriggerSwitch(1000));
-            var statePreShoot = new AiState();
-            statePreShoot.Trigger.Add(new AiTriggerCountdown(16000 / 60, TickPreShoot, PreShootEnd));
-            var stateShoot = new AiState(UpdateShoot);
+            stateIdle.Trigger.Add(_shotCooldown = new AiTriggerSwitch(1000));
+            var statePreShot = new AiState();
+            statePreShot.Trigger.Add(new AiTriggerCountdown(16000 / 60, TickPreShot, PreShotEnd));
+            var stateShot = new AiState(UpdateShot);
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
-            _aiComponent.States.Add("preShoot", statePreShoot);
-            _aiComponent.States.Add("shoot", stateShoot);
+            _aiComponent.States.Add("preShoot", statePreShot);
+            _aiComponent.States.Add("shoot", stateShot);
             _aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -5, -12, 0, 10, 14, 8);
@@ -73,6 +77,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
         }
 
+        private void Reset()
+        {
+            _reset = true;
+            _aiComponent.ChangeState("idle");
+            _animator.Play("idle");
+            _shotCooldown.Reset();
+            _sprite.SpriteShader = null;
+
+            var projectilesCopy = new List<EnemyBeamosProjectile>(_projectiles);
+            foreach (var projectile in projectilesCopy)
+            {
+                projectile.Neutralize();
+                projectile.DeleteProjectile(false);
+            }
+            _projectiles.Clear();
+        }
+
         private Vector2 GetOrigin()
         {
             return new Vector2(EntityPosition.X, EntityPosition.Y - 8) +
@@ -81,18 +102,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
-            if (!_shootCooldown.State)
+            if (!_shotCooldown.State)
                 return;
 
             // get the direction of the beamos from the current animation frame (8 frames for a full rotation)
             var animationFrame = _animator.CurrentFrameIndex;
             _beamosRotation = animationFrame * (MathF.PI * 2) / 8f;
-            _shootOrigin = new Vector2(EntityPosition.X, EntityPosition.Y - 8) +
+            _shotOrigin = new Vector2(EntityPosition.X, EntityPosition.Y - 8) +
                            new Vector2(-MathF.Cos(_beamosRotation), -MathF.Sin(_beamosRotation)) * 4;
 
             var playerPosition = MapManager.ObjLink.EntityPosition.Position;
             var targetPosition = new Vector2(playerPosition.X, playerPosition.Y - 6);
-            var playerDirection = targetPosition - _shootOrigin;
+            var playerDirection = targetPosition - _shotOrigin;
 
             // if we normalize a zero vector we crash
             // it is really unlikely (probably impossible) but we need to be careful
@@ -114,10 +135,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // we do not divide by 8 because we offset the shoot origin and do not get 8 perfect angles
                 if (rotationDistance < MathF.PI / 7.5f)
                 {
-                    _shootDirection = playerDirection;
+                    _shotDirection = playerDirection;
 
-                    if (!CheckForCollision(_shootOrigin, targetPosition))
-                        ToPreShoot();
+                    if (!CheckForCollision(_shotOrigin, targetPosition))
+                        ToPreShot();
                 }
             }
         }
@@ -161,55 +182,62 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
         }
 
-        private void TickPreShoot(double count)
+        private void TickPreShot(double count)
         {
             _sprite.SpriteShader = count % (8000 / 60f) >= (4000 / 60f) ? Resources.DamageSpriteShader0 : null;
         }
 
-        private void PreShootEnd()
+        private void PreShotEnd()
         {
             Game1.GameManager.PlaySoundEffect("D378-08-08");
             _aiComponent.ChangeState("shoot");
         }
 
-        private void ToPreShoot()
+        private void ToPreShot()
         {
-            _shootCounter = 0;
-            _shootsFired = 0;
+            _shotCounter = 0;
+            _shotsFired = 0;
 
             _animator.Pause();
             _aiComponent.ChangeState("preShoot");
         }
 
-        private void UpdateShoot()
+        private void UpdateShot()
         {
             // 16 projectiles
             // ~4 pixels/frame
             // 60 projectiles/second
-            _shootCounter += Game1.DeltaTime;
+            _shotCounter += Game1.DeltaTime;
 
             // spawn projectiles
             // this is a little complicated because the game can run at different framerates
             var projectileInterval = 1 / 60f * 1000;
-            while (_shootCounter > projectileInterval * _shootsFired)
+
+            while (_shotCounter > projectileInterval * _shotsFired)
             {
-                _shootOrigin = GetOrigin();
+                if (_reset)
+                {
+                    _reset = false;
+                    break;
+                }
+                _shotOrigin = GetOrigin();
                 // we calculate the position of the first projectile
-                var spawnPosition = _shootOrigin + _shootDirection * (4 + _shootCounter / 1000f * 60 * 4);
+                var spawnPosition = _shotOrigin + _shotDirection * (4 + _shotCounter / 1000f * 60 * 4);
                 // now we go back in the opposite direction to find the exact position of the current projectile
-                spawnPosition -= _shootDirection * _shootsFired * 4;
+                spawnPosition -= _shotDirection * _shotsFired * 4;
 
                 // spawn the projectile
-                var newProjectile = new EnemyBeamosProjectile(Map, spawnPosition, _shootDirection * 4, _shootsFired == 0);
+                var newProjectile = new EnemyBeamosProjectile(Map, this, spawnPosition, _shotDirection * 4, _shotsFired == 0);
                 Map.Objects.SpawnObject(newProjectile);
+                _projectiles.Add(newProjectile);
 
-                _shootsFired++;
+                _shotsFired++;
 
-                if (_shootsFired >= 16)
+                if (_shotsFired >= 16)
                 {
                     _animator.Continue();
                     _aiComponent.ChangeState("idle");
-                    _shootCooldown.Reset();
+                    _shotCooldown.Reset();
                 }
             }
         }

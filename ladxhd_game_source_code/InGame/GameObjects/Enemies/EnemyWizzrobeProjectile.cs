@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
 
@@ -11,12 +11,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyWizzrobeProjectile : GameObject
     {
         private readonly CSprite _sprite;
+        private readonly DamageFieldComponent _damageField;
+
 
         public EnemyWizzrobeProjectile(Map.Map map, Vector2 position, int direction, float speed) : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-6, -6, 12, 12);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _sprite = new CSprite("wizzrobe shot", EntityPosition, Vector2.Zero);
             _sprite.Center = new Vector2(6, 6);
@@ -36,9 +39,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             
             AddComponent(BodyComponent.Index, body);
             AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
+        }
+
+        private void Reset()
+        {
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         private void Update()
@@ -65,7 +75,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // spawn despawn effect
             var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/swordPoke", "run", true);
             Map.Objects.SpawnObject(animation);
-
             Map.Objects.DeleteObjects.Add(this);
         }
     }

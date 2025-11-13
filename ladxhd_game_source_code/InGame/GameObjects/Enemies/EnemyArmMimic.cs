@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -14,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly Animator _animator;
+        private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly AiTriggerTimer _repelTimer;
         private readonly AiStunnedState _aiStunnedState;
@@ -36,6 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/arm mimic");
 
@@ -54,15 +56,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
             var stateUpdate = new AiState(Update);
 
-            var aiComponent = new AiComponent();
-            aiComponent.Trigger.Add(_repelTimer = new AiTriggerTimer(500));
+            _aiComponent = new AiComponent();
+            _aiComponent.Trigger.Add(_repelTimer = new AiTriggerTimer(500));
 
-            aiComponent.States.Add("idle", stateUpdate);
-            new AiFallState(aiComponent, _body, null, null, 300);
-            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives) { OnBurn = OnBurn };
-            _aiStunnedState = new AiStunnedState(aiComponent, animatorComponent, 3300, 900);
+            _aiComponent.States.Add("idle", stateUpdate);
+            new AiFallState(_aiComponent, _body, null, null, 300);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _aiStunnedState = new AiStunnedState(_aiComponent, animatorComponent, 3300, 900);
 
-            aiComponent.ChangeState("idle");
+            _aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -8, -16, 2, 16, 16, 8);
             var damageBox = new CBox(EntityPosition, -6, -12, 2, 12, 12, 4);
@@ -70,12 +72,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 12));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(AiComponent.Index, aiComponent);
+            AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
+            _damageState.CurrentLives = ObjLives.ArmMimic;
+            _body.VelocityTarget = Vector2.Zero;
         }
 
         private void Update()

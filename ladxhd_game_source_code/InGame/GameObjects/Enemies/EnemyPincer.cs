@@ -42,6 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
             CanReset = true;
+            OnReset = Reset;
 
             _spawnPosition = new Vector2(EntityPosition.X, EntityPosition.Y);
 
@@ -87,6 +88,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+        }
+
+        private void Reset()
+        {
+            _attackCounter = 0;
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            _aiComponent.ChangeState("waiting");
+            _damageState.CurrentLives = ObjLives.Pincer;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

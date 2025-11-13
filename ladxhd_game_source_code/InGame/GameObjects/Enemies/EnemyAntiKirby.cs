@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition.AddPositionListener(typeof(EnemyLikeLike), UpdatePosition);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/anti kirby");
             _animator.Play("idle_0");
@@ -107,6 +108,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
 
             new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _animator.Play("idle_0");
+            _aiComponent.ChangeState("idle");
+            _damageState.CurrentLives = ObjLives.AntiKirby;
         }
 
         private void InitSuck()
