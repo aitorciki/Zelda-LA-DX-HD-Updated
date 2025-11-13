@@ -418,8 +418,9 @@ namespace ProjectZ.InGame.GameObjects
         private ObjSpriteShadow _spriteShadow;
 
         // Field Properties
-        public Rectangle CurrentField = Rectangle.Empty;
+        public Rectangle CurrentField  = Rectangle.Empty;
         public Rectangle PreviousField = Rectangle.Empty;
+        public Rectangle ContrastField = Rectangle.Empty;
         public ObjFieldBarrier[] FieldBarrier;
         public bool FieldChange;
 
@@ -640,7 +641,7 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateFieldBarrier()
         {
             // Don't update unless the field has changed.
-            if (CurrentField == PreviousField) return;
+            if (CurrentField == ContrastField) return;
 
             // Spawn in the field barrier rectangles.
             FieldBarrier[0].SetPosition(CurrentField.X - 16, CurrentField.Y - 16); 
@@ -669,8 +670,13 @@ namespace ProjectZ.InGame.GameObjects
             // We only use the field barrier when "Classic Camera" is active.
             if (Camera.ClassicMode)
             {
-                // Detect when the field has changed.
-                FieldChange = CurrentField != PreviousField;
+                // Detect when the field has changed. This is disabled in ObjectManager as soon
+                // as the enemy reset loop runs and resets their positions on the previous field.
+                FieldChange = CurrentField != ContrastField;
+
+                // Store the previous field that was just left.
+                if (FieldChange)
+                    PreviousField = ContrastField;
 
                 // Check to see if the current field has not yet been set. When a game is started,
                 // the first few frames will return (0,0) for the current field position.
@@ -1018,7 +1024,7 @@ namespace ProjectZ.InGame.GameObjects
 
             // Capture the current field now so it can be compared on the next frame to see if
             // the field has changed. We only want to update the FieldBarrier on field changes.
-            PreviousField = CurrentField;
+            ContrastField = CurrentField;
         }
         #region Draw
 
