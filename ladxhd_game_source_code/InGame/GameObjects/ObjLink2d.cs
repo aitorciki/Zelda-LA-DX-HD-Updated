@@ -54,6 +54,9 @@ namespace ProjectZ.InGame.GameObjects
             }
             else if (Fall2DEntry)
             {
+                _jumpEndTimer = 0;
+                _jump2DHold = false;
+                _jump2DHeld = false;
                 Fall2DEntry = false;
                 CurrentState = State.Jumping;
                 _body.Velocity.Y = 1.5f;
