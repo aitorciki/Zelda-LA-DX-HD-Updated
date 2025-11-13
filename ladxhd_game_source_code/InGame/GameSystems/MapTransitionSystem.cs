@@ -61,6 +61,9 @@ namespace ProjectZ.InGame.GameSystems
         private bool _wobbleTransitionOut;
         private bool _wobbleTransitionIn;
 
+        private string _mapNameHackIn;
+        private string _mapNameHackOut;
+
         public MapTransitionSystem(MapManager gameMapManager)
         {
             _gameMapManager = gameMapManager;
@@ -82,6 +85,8 @@ namespace ProjectZ.InGame.GameSystems
                     MapManager.ObjLink.SetNextMapPosition(_nextMapPosition);
 
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
+                _mapNameHackIn = MapManager.ObjLink.Map.MapName;
+                _mapNameHackOut = _nextMapName;
                 _nextMapName = null;
             }
 
@@ -231,6 +236,17 @@ namespace ProjectZ.InGame.GameSystems
                     spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * 0.10)), _transitionObject.TransitionColor);
                     spriteBatch.End();
                 }
+            }
+            // A hack for the 2D "bridge" map with the fisherman. Link pops up on the right of the screen briefly when transitioning in and out so hide him.
+            if (Camera.ClassicMode && (_mapNameHackIn == "bridge.map" || _mapNameHackOut == "bridge.map") && _transitionObject.Percentage > 0.40f && _transitionObject.WobbleTransition == false)
+            {
+                Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
+
+                var viewport = spriteBatch.GraphicsDevice.Viewport;
+
+                spriteBatch.Begin();
+                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, (int)(viewport.Width * 0.25), viewport.Height), _transitionObject.TransitionColor);
+                spriteBatch.End();
             }
         }
 
