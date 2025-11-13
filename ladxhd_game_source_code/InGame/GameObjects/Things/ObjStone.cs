@@ -14,21 +14,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly BodyComponent _body;
         private readonly BoxCollisionComponent _collisionComponent;
         private readonly CarriableComponent _carriableComponent;
-
+        private readonly Point _spawnPosition;
         private readonly CBox _upperBox;
         private readonly CBox _lowerBox;
         private readonly CBox _damageBox;
 
-        private readonly Point _spawnPosition;
-
         private readonly string _spawnItem;
         private readonly string _pickupKey;
         private readonly string _dialogPath;
-
         private readonly bool _potMessage;
 
         private int _offsetY = 3;
-
         private bool _thrown;
         private bool _isAlive = true;
         private bool _damagePlayer;
@@ -155,11 +151,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_thrown)
                 return;
 
-            // this is used because the normal collision detection looks strang when throwing directly towards a lower wall
+            // When classic camera is enabled rocks, pots, etc. should smash against the edge of the field.
+            var collisionType = Camera.ClassicMode
+                ? Values.CollisionTypes.Normal | Values.CollisionTypes.Field
+                : Values.CollisionTypes.Normal;
+
+            // This is used because the normal collision detection looks strang when throwing directly towards a lower wall.
             var outBox = Box.Empty;
             if (!Map.Is2dMap &&
-                Map.Objects.Collision(_upperBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox) &&
-                Map.Objects.Collision(_lowerBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox))
+                Map.Objects.Collision(_upperBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox) &&
+                Map.Objects.Collision(_lowerBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox))
                 OnCollision();
 
             if (_damagePlayer)

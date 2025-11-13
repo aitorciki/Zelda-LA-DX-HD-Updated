@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -13,8 +14,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly BodyComponent _body;
         private readonly BoxCollisionComponent _collisionComponent;
         private readonly CBox _hittableBox;
-
+        private readonly CBox _upperBox;
+        private readonly CBox _lowerBox;
         private readonly CSprite _sprite;
+        private readonly CPosition _respawnPosition;
 
         private readonly string _spawnItem;
         private readonly string _spriteId;
@@ -23,15 +26,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly bool _setGrassField;
         private readonly int _drawLayer;
         private readonly string _pickupKey;
-
         private readonly object[] _spawnObjectParameter;
         private readonly string _spawnObjectId;
-
         private readonly int _fieldPosX;
         private readonly int _fieldPosY;
 
         public bool RespawnGras = true;
         public bool OnSpinyBeetle = false;
+        public bool _isThrown;
 
         public ObjBush(Map.Map map, int posX, int posY, string spawnItem, string spriteId,
             bool hasCollider, bool drawShadow, bool setGrassField, int drawLayer, string pickupKey) : base(map, spriteId)
@@ -41,6 +43,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
+            _respawnPosition = new CPosition(posX + 8, posY + 8, 0);
             _spawnItem = spawnItem;
             _spriteId = spriteId;
             _hasCollider = hasCollider;
@@ -73,6 +76,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 }
             }
 
+            _upperBox = new CBox(EntityPosition, -4, -5, 0, 8, 8, 4, true);
+            _lowerBox = new CBox(EntityPosition, -4, -5, 0, 8, 8, 4);
             _hittableBox = new CBox(EntityPosition, -6, -6, 0, 14, 14, 8, true);
 
             if (hasCollider)
@@ -83,21 +88,18 @@ namespace ProjectZ.InGame.GameObjects.Things
                     DragAir = 1.0f,
                     Gravity = -0.125f
                 };
-                AddComponent(BodyComponent.Index, _body);
-
                 var collisionBox = new CBox(EntityPosition, -8, -7, 0, 16, 14, 16, true);
-                AddComponent(CollisionComponent.Index, _collisionComponent =
-                    new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
-                AddComponent(CarriableComponent.Index, new CarriableComponent(
-                    new CRectangle(EntityPosition, new Rectangle(-8, -7, 16, 15)), CarryInit, CarryUpdate, CarryThrow));
+                AddComponent(BodyComponent.Index, _body);
+                AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
+                AddComponent(CarriableComponent.Index, new CarriableComponent( new CRectangle(EntityPosition, new Rectangle(-8, -7, 16, 15)), CarryInit, CarryUpdate, CarryThrow));
+                AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             }
 
             if (setGrassField)
                 Map.SetFieldState(_fieldPosX, _fieldPosY, MapStates.FieldStates.Grass);
 
-            AddComponent(HittableComponent.Index, new HittableComponent(_hittableBox, OnHit));
-
             _sprite = new CSprite(spriteId, EntityPosition, Vector2.Zero);
+            AddComponent(HittableComponent.Index, new HittableComponent(_hittableBox, OnHit));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, drawLayer));
 
             if (drawShadow)
@@ -113,6 +115,24 @@ namespace ProjectZ.InGame.GameObjects.Things
                     new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
                 }
             }
+        }
+
+        private void Update()
+        {
+            if (!_isThrown)
+                return;
+
+            // When classic camera is enabled rocks, pots, etc. should smash against the edge of the field.
+            var collisionType = Camera.ClassicMode
+                ? Values.CollisionTypes.Normal | Values.CollisionTypes.Field
+                : Values.CollisionTypes.Normal;
+
+            // This is used because the normal collision detection looks strang when throwing directly towards a lower wall.
+            var outBox = Box.Empty;
+            if (!Map.Is2dMap &&
+                Map.Objects.Collision(_upperBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox) &&
+                Map.Objects.Collision(_lowerBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox))
+                DestroyBush(Vector2.Zero);
         }
 
         private Vector3 CarryInit()
@@ -138,6 +158,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void CarryThrow(Vector2 velocity)
         {
+            _isThrown = true;
             _body.IsGrounded = false;
             _body.IsActive = true;
             _body.Velocity = new Vector3(velocity.X, velocity.Y, 0) * 1.0f;
@@ -231,7 +252,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D378-05-05");
 
             if (RespawnGras)
-                Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8,
+                Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8,
                     _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
 
             // delete this object
