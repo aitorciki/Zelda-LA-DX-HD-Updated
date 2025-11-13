@@ -117,7 +117,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else
             {
-                ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+                Map.Objects.RegisterAlwaysAnimateObject(this);
             }
             // spawn the chain
             Map.Objects.SpawnObject(_chain = new ObjChain(map, _origin));

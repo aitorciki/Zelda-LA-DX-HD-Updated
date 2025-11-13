@@ -56,7 +56,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerTop));
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public void Update()

@@ -83,7 +83,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, _shadowBody = new ShadowBodyDrawComponent(EntityPosition));
 
             new ObjSpriteShadow("sprshadows", this, Values.LayerPlayer, map);
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void InitDespawn()

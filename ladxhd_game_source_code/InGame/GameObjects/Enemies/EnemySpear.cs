@@ -77,7 +77,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer) { Gras = false });
             AddComponent(DrawShadowComponent.Index, _shadowBody = new ShadowBodyDrawComponent(EntityPosition));
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public override void Init()

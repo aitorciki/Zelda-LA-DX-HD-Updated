@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Update()

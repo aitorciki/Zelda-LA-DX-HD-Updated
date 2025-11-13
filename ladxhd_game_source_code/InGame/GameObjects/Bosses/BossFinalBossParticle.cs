@@ -37,7 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Update()

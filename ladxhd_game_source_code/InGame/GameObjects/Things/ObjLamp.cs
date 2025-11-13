@@ -108,7 +108,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // The lamps inside the egg must be always animated for classic camera.
             if (lampKey?.Contains("egg_lamps") == true)
-                ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+                Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public bool IsOn()

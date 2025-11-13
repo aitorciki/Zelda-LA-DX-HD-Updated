@@ -18,35 +18,41 @@ namespace ProjectZ.InGame.Map
 {
     public class ObjectManager
     {
-        // TODO_End check if everything is cleaned while loading a new map
+        // The map the object manager is currently managing.
         public Map Owner;
 
+        // The main lists of game objects. 
         public List<GameObjectItem> ObjectList = new List<GameObjectItem>();
         public List<GameObjectItem> ObjectListB = new List<GameObjectItem>();
         private List<GameObject> SpawnObjects = new List<GameObject>();
         public List<GameObject> DeleteObjects = new List<GameObject>();
 
-        public static List<GameObject> AlwaysAnimateObjectsMain = new List<GameObject>();
-        public static List<GameObject> AlwaysAnimateObjectsTemp = new List<GameObject>();
+        // The "always animate" lists of game objects.
+        public List<GameObject> AlwaysAnimateObjectsMain { get; } = new();
+        public List<GameObject> AlwaysAnimateObjectsTemp { get; } = new();
 
+        private readonly object _alwaysAnimateLock = new object();
+
+        // Shadow and effects texture.
         public Texture2D ShadowTexture;
         public static Effect CurrentEffect;
 
+        // Component pools.
         private List<GameObject> _poolSpawnedObjects = new List<GameObject>();
-
         private ComponentPool _gameObjectPool;
         private ComponentDrawPool _drawPool;
         private ComponentDrawPool _drawPoolB;
 
-        private SystemBody _systemBody = new SystemBody();
-        private SystemAi _systemAi = new SystemAi();
-        private SystemAnimation _systemAnimator = new SystemAnimation();
+        // Component update loops.
+        private SystemBody _systemBody;
+        private SystemAi _systemAi;
+        private SystemAnimation _systemAnimator;
 
+        // Listener component array.
         private List<KeyChangeListenerComponent.KeyChangeTemplate> _keyChangeListeners =
             new List<KeyChangeListenerComponent.KeyChangeTemplate>();
 
-        // lists are used to not generate new ones every time
-        // one list object would probably be enough?
+        // Temporary lists. Probably don't need all these, one list could do it all?
         private readonly List<GameObject> _updateGameObject = new List<GameObject>();
         private readonly List<GameObject> _damageFieldObjects = new List<GameObject>();
         private readonly List<GameObject> _drawShadowObjects = new List<GameObject>();
@@ -54,7 +60,6 @@ namespace ProjectZ.InGame.Map
         private readonly List<GameObject> _objectTypeList = new List<GameObject>();
         private readonly List<GameObject> _objectTagAllList = new List<GameObject>();
         private readonly List<GameObject> _collisionObjectList = new List<GameObject>();
-
         private readonly List<GameObject> _collidingObjectList = new List<GameObject>();
         private readonly List<GameObject> _lightObjectList = new List<GameObject>();
         private readonly List<GameObject> _carriableObjectList = new List<GameObject>();
@@ -62,6 +67,7 @@ namespace ProjectZ.InGame.Map
         private readonly List<GameObject> _pushableObjectList = new List<GameObject>();
         private readonly List<GameObject> _interactableObjectList = new List<GameObject>();
 
+        // Debug lists. Only relevant for debugging.
         private readonly List<GameObject> db_damageList = new List<GameObject>();
         private readonly List<GameObject> db_bodyList = new List<GameObject>();
         private readonly List<GameObject> db_gameObjectList = new List<GameObject>();
@@ -78,6 +84,12 @@ namespace ProjectZ.InGame.Map
         public ObjectManager(Map owner)
         {
             Owner = owner;
+
+            // These are only component update loops so not sure why they specifically
+            // have dedicated classes while other component update loops do not.
+            _systemBody = new SystemBody(this);
+            _systemAi = new SystemAi(this);
+            _systemAnimator = new SystemAnimation(this);
 
             // The type of game objects that are not frozen during events.
             _FreezePersistTypes = new Type[]{ typeof(ObjGhost), typeof(ObjOwl) };
@@ -222,10 +234,27 @@ namespace ProjectZ.InGame.Map
             }
             // Add the always animate objects from the main list to the temporary list here. The objects are copied to this 
             // list so it can serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
-            if (AlwaysAnimateObjectsMain?.Count > 0)
-                lock (AlwaysAnimateObjectsMain)
-                    AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
-
+            if (AlwaysAnimateObjectsMain != null && AlwaysAnimateObjectsMain.Count != 0)
+            {
+                lock (_alwaysAnimateLock)
+                {
+                    try
+                    {
+                        AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Game1.GameManager.PlaySoundEffect("D370-35-23");
+                        System.Diagnostics.Debug.WriteLine($"AddRange failed: {ex.Message} (Count={AlwaysAnimateObjectsMain.Count})");
+                        AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain.ToArray());
+                    }
+                    catch (Exception ex)
+                    {
+                        Game1.GameManager.PlaySoundEffect("D378-55-37");
+                        System.Diagnostics.Debug.WriteLine($"Unexpected exception in AddRange: {ex}");
+                    }
+                }
+            }
             // Update everything: animations, listeners, bodies, etc. When "AlwaysAnimate" contains something, only those
             // types found that have been added to the type array will be updated. This is a method used to "freeze" the entire
             // game world when an event takes place. It also freezes Link so care must be taken when applying it.
@@ -242,6 +271,12 @@ namespace ProjectZ.InGame.Map
             // For some reason the list must be cleared here or "ghost" objects will remain that can still
             // deal damage. They also causes crashes stating that "Map is null" an issue I'll never grasp...
             AlwaysAnimateObjectsTemp.Clear();
+        }
+
+        public void RegisterAlwaysAnimateObject(GameObject obj)
+        {
+            lock (_alwaysAnimateLock)
+                AlwaysAnimateObjectsMain.Add(obj);
         }
 
         public void UpdateAnimations()
@@ -436,19 +471,20 @@ namespace ProjectZ.InGame.Map
 
         private void UpdateDeleteObjects()
         {
-            if (DeleteObjects.Count > 0)
-            {
-                foreach (var gameObject in DeleteObjects)
-                {
-                    // Remove the object from the always animate list.
-                    AlwaysAnimateObjectsMain.Remove(gameObject);
-              //      AlwaysAnimateObjectsTemp.Remove(gameObject);
+            // Exit early if no delete objects.
+            if (DeleteObjects.Count == 0)
+                return;
 
-                    // Remove the object from the game.
-                    RemoveObject(gameObject);
-                }
-                DeleteObjects.Clear();
-            }
+            // Remove the object from the always animate list.
+            lock (_alwaysAnimateLock)
+                foreach (var gameObject in DeleteObjects)
+                    AlwaysAnimateObjectsMain.Remove(gameObject);
+
+            // Remove the object from the game.
+            foreach (var gameObject in DeleteObjects)
+                RemoveObject(gameObject);
+
+            DeleteObjects.Clear();
         }
 
         public static void SpriteBatchBegin(SpriteBatch spriteBatch, SpriteShader spriteShader)

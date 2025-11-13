@@ -60,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void InitForward()

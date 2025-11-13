@@ -118,7 +118,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(_batRight);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Reset()

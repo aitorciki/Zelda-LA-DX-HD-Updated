@@ -14,13 +14,17 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
     class SystemBody
     {
         public ComponentPool Pool;
-
         private readonly List<GameObject> _objectList = new List<GameObject>();
         private readonly List<GameObject> _holeList = new List<GameObject>();
         private readonly List<GameObject> _dropList = new List<GameObject>();
-
+        private readonly ObjectManager _objectManager;
         private bool _inAir;
         private bool _onHole;
+
+        public SystemBody(ObjectManager objectManager)
+        {
+            _objectManager = objectManager;
+        }
 
         public void Update(int threadIndex, int threadCount, Type[] freezePersistTypes = null)
         {
@@ -55,7 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     _objectList.Add(gameObject);
             }
             // Always include certain objects that are flagged as "always animate".
-            foreach (var gameObject in ObjectManager.AlwaysAnimateObjectsTemp)
+            foreach (var gameObject in _objectManager.AlwaysAnimateObjectsTemp)
             {
                 if (gameObject != null && !gameObject.IsDead && !_objectList.Contains(gameObject))
                     _objectList.Add(gameObject);

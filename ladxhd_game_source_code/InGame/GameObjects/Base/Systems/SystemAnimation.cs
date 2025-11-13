@@ -9,8 +9,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
     class SystemAnimation
     {
         public ComponentPool Pool;
-
         private readonly List<GameObject> _objectList = new List<GameObject>();
+        private readonly ObjectManager _objectManager;
+
+        public SystemAnimation(ObjectManager objectManager)
+        {
+            _objectManager = objectManager;
+        }
 
         public void Update(bool dialogOpen, Type[] freezePersistTypes = null)
         {
@@ -43,7 +48,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     _objectList.Add(gameObject);
             }
             // Always include certain objects that are flagged as "always animate".
-            foreach (var gameObject in ObjectManager.AlwaysAnimateObjectsTemp)
+            foreach (var gameObject in _objectManager.AlwaysAnimateObjectsTemp)
             {
                 if (gameObject != null && !gameObject.IsDead && !_objectList.Contains(gameObject))
                     _objectList.Add(gameObject);

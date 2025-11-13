@@ -54,7 +54,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(DrawShadowComponent.Index, shadow);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void MoveCollision(Values.BodyCollision collisionType)

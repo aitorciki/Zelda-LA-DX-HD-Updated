@@ -62,7 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition));
-            ObjectManager.AlwaysAnimateObjectsMain.Add(this);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void ToMoving()
