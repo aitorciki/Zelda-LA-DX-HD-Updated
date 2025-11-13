@@ -251,6 +251,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_damageState.CurrentLives <= 0)
             {
+                EntityPosition.Z = 0;
                 _damageField.IsActive = false;
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
