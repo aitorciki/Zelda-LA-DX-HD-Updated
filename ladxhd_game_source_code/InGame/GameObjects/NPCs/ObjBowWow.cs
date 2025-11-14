@@ -87,6 +87,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
+            var stateIAttack = new AiState(UpdateIAttack);
+            stateIAttack.Trigger.Add(new AiTriggerCountdown(400, null, ToAttack));
             var stateIdle = new AiState(UpdateIdle);
             stateIdle.Trigger.Add(new AiTriggerRandomTime(EndIdle, 500, 1500));
             var stateWalking = new AiState(UpdateWalking) { Init = InitWalking };
@@ -96,18 +98,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var stateTreasure = new AiState(UpdateTreasure);
 
             _aiComponent = new AiComponent();
+            _aiComponent.States.Add("iattack", stateIAttack);
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("treasure", stateTreasure);
-            _aiComponent.ChangeState("walking");
+
+            if (Game1.RandomNumber.Next(0, 100) < 50)
+                _aiComponent.ChangeState("iattack");
+            else
+                _aiComponent.ChangeState("walking");
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 5 });
-            // add key change listener
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
 
             if (!_followMode)
@@ -119,7 +125,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 Map.Objects.RegisterAlwaysAnimateObject(this);
             }
-            // spawn the chain
             Map.Objects.SpawnObject(_chain = new ObjChain(map, _origin));
             _currentDirectionOffset = AnimationHelper.DirectionOffset[_direction];
 
@@ -171,6 +176,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // stop and wait
             _body.VelocityTarget.X = 0;
             _body.VelocityTarget.Y = 0;
+        }
+
+        private void UpdateIAttack()
+        {
+
         }
 
         private void UpdateIdle()
