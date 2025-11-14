@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _floatCount;
         private int _lives = ObjLives.RiverZora;
+        private bool _playSplash = true;
 
         public EnemyRiverZora() : base("river zora") { }
 
@@ -34,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY - 2 + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _fieldPosition = map.GetField(posX, posY);
 
@@ -75,6 +77,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
         }
 
+        private void Reset()
+        {
+            _playSplash = false;
+            ToWait();
+            _playSplash = true;
+        }
+
         private void ToWait()
         {
             _aiComponent.ChangeState("waiting");
@@ -87,11 +96,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState.IsActive = false;
 
             // splash effect
-            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
-            splashAnimator.EntityPosition.Set(new Vector2(
-                _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 3));
-            Map.Objects.SpawnObject(splashAnimator);
+            if (_playSplash)
+            {
+                var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
+                splashAnimator.EntityPosition.Set(new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                    _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 3));
+                Map.Objects.SpawnObject(splashAnimator);
+            }
         }
 
         private void UpdatePositioning()
