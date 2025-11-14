@@ -331,6 +331,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _wasPulling;
         private GameObject _instantPickupObject;
         private bool _instantPickup;
+        private bool _swimRoosterPickup;
 
         // Power Bracelet: Carry Object
         private GameObject _carriedGameObject;
@@ -707,7 +708,7 @@ namespace ProjectZ.InGame.GameObjects
         private void Update()
         {
             // May as well just keep this here since I'm constantly using it.
-            // System.Diagnostics.Debug.WriteLine(CurrentState);
+            // System.Diagnostics.Debug.WriteLine(CurrentState + " " + _swimRoosterPickup);
 
             // Update the current field and make a field barrier if Classic Camera is enabled.
             UpdateCurrentField();
@@ -2013,6 +2014,13 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateSwimmingPartOne()
         {
+            // Used only to lift the Flying Rooster out of the water.
+            if (_swimRoosterPickup)
+            {
+                // Keep "_swimPickup" true until "Pulling" state is finished then set to false.
+                _swimRoosterPickup = CurrentState == State.Pulling;
+                return;
+            }
             // we cant use the field state of the body because the raft updates the state while exiting
             var fieldState = SystemBody.GetFieldState(_body);
 
@@ -3097,8 +3105,8 @@ namespace ProjectZ.InGame.GameObjects
 
         private void HoldStoneLifter()
         {
-            // State must be idle or pushing to continue.
-            if (CurrentState != State.Idle && CurrentState != State.Pushing)
+            // Part One: Grabbing the object. State must be idle, pushing, or swimming (for Flying Rooster) to continue.
+            if (CurrentState != State.Idle && CurrentState != State.Pushing && CurrentState != State.Swimming)
                 return;
 
             // Stores the grabbed object.
@@ -3124,6 +3132,13 @@ namespace ProjectZ.InGame.GameObjects
                     // If the component is active then grab the object.
                     if (carriableComponent.IsActive)
                     {
+                        // Allow picking up the rooster in the water. Otherwise don't try to lift.
+                        if (CurrentState == State.Swimming)
+                        {
+                            if (grabbedObject is not ObjCock) return;
+                            _swimRoosterPickup = true;
+                        }
+                        // Grabbing state is used to determine part two.
                         CurrentState = State.Grabbing;
 
                         if (!carriableComponent.IsHeavy || Game1.GameManager.StoneGrabberLevel > 1)
@@ -3142,7 +3157,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 grabbedObject = _instantPickupObject;
             }
-            // An object was found above and the state was set to grabbing.
+            // Part Two: An object was found above and the state was set to grabbing.
             if (CurrentState == State.Grabbing || _instantPickup)
             {
                 // If not in the middle of an "instant pickup" loop, try to see if the current object is an instant pickup type.
