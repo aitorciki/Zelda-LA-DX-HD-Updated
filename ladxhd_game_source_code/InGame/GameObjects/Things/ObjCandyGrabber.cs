@@ -204,6 +204,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleBackY()
             {
+                Game1.GameManager.PlaySoundEffect("D378-32-20", false);
                 _grabState -= MoveSpeedGrab * Game1.TimeMultiplier;
                 if (_grabState < 0)
                 {
