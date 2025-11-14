@@ -68,11 +68,10 @@ namespace ProjectZ.Base
 
             _alphabet = new List<InputCharacter>();
 
-            // TODO_End: Important! Replace this method to support different keyboard layouts
             /* Alphabet. */
-            _alphabet.Add(new InputCharacter("A", "a", Keys.A));
+            _alphabet.Add(new InputCharacter("A", "a", "ª", Keys.A));
             _alphabet.Add(new InputCharacter("B", "b", Keys.B));
-            _alphabet.Add(new InputCharacter("C", "c", Keys.C));
+            _alphabet.Add(new InputCharacter("C", "c", "¢", Keys.C));
             _alphabet.Add(new InputCharacter("D", "d", Keys.D));
             _alphabet.Add(new InputCharacter("E", "e", "€", Keys.E));
             _alphabet.Add(new InputCharacter("F", "f", Keys.F));
@@ -81,16 +80,16 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("I", "i", Keys.I));
             _alphabet.Add(new InputCharacter("J", "j", Keys.J));
             _alphabet.Add(new InputCharacter("K", "k", Keys.K));
-            _alphabet.Add(new InputCharacter("L", "l", Keys.L));
-            _alphabet.Add(new InputCharacter("M", "m", "µ", Keys.M));
+            _alphabet.Add(new InputCharacter("L", "l", "£", Keys.L));
+            _alphabet.Add(new InputCharacter("M", "m", Keys.M));
             _alphabet.Add(new InputCharacter("N", "n", Keys.N));
             _alphabet.Add(new InputCharacter("O", "o", Keys.O));
-            _alphabet.Add(new InputCharacter("P", "p", Keys.P));
-            _alphabet.Add(new InputCharacter("Q", "q", "@", Keys.Q));
-            _alphabet.Add(new InputCharacter("R", "r", Keys.R));
+            _alphabet.Add(new InputCharacter("P", "p", "¶", Keys.P));
+            _alphabet.Add(new InputCharacter("Q", "q", Keys.Q));
+            _alphabet.Add(new InputCharacter("R", "r", "®", Keys.R));
             _alphabet.Add(new InputCharacter("S", "s", Keys.S));
             _alphabet.Add(new InputCharacter("T", "t", Keys.T));
-            _alphabet.Add(new InputCharacter("U", "u", Keys.U));
+            _alphabet.Add(new InputCharacter("U", "u", "µ", Keys.U));
             _alphabet.Add(new InputCharacter("V", "v", Keys.V));
             _alphabet.Add(new InputCharacter("W", "w", Keys.W));
             _alphabet.Add(new InputCharacter("X", "x", Keys.X));
@@ -98,26 +97,36 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("Z", "z", Keys.Z));
 
             /* Decimal numbers. */
-            _alphabet.Add(new InputCharacter("!", "1", Keys.D1, Keys.NumPad1));
-            _alphabet.Add(new InputCharacter("\"", "2", "²", Keys.D2, Keys.NumPad2));
-            _alphabet.Add(new InputCharacter("§", "3", "³", Keys.D3, Keys.NumPad3));
+            _alphabet.Add(new InputCharacter("~", "`", Keys.OemTilde));
+            _alphabet.Add(new InputCharacter("!", "1", "¹", Keys.D1, Keys.NumPad1));
+            _alphabet.Add(new InputCharacter("@", "2", "²", Keys.D2, Keys.NumPad2));
+            _alphabet.Add(new InputCharacter("#", "3", "³", Keys.D3, Keys.NumPad3));
             _alphabet.Add(new InputCharacter("$", "4", Keys.D4, Keys.NumPad4));
             _alphabet.Add(new InputCharacter("%", "5", Keys.D5, Keys.NumPad5));
-            _alphabet.Add(new InputCharacter("&", "6", "|", Keys.D6, Keys.NumPad6));
-            _alphabet.Add(new InputCharacter("/", "7", "{", Keys.D7, Keys.NumPad7));
-            _alphabet.Add(new InputCharacter("(", "8", "[", Keys.D8, Keys.NumPad8));
-            _alphabet.Add(new InputCharacter(")", "9", "]", Keys.D9, Keys.NumPad9));
-            _alphabet.Add(new InputCharacter("=", "0", "}", Keys.D0, Keys.NumPad0));
+            _alphabet.Add(new InputCharacter("^", "6", Keys.D6, Keys.NumPad6));
+            _alphabet.Add(new InputCharacter("&", "7", Keys.D7, Keys.NumPad7));
+            _alphabet.Add(new InputCharacter("*", "8", Keys.D8, Keys.NumPad8));
+            _alphabet.Add(new InputCharacter("(", "9", Keys.D9, Keys.NumPad9));
+            _alphabet.Add(new InputCharacter(")", "0", "º", Keys.D0, Keys.NumPad0));
 
-            /* Special characters. */
-            _alphabet.Add(new InputCharacter(" ", " ", Keys.Space));
-            _alphabet.Add(new InputCharacter(";", ",", Keys.OemComma));
-            _alphabet.Add(new InputCharacter("*", "+", "~", Keys.OemPlus));
-            _alphabet.Add(new InputCharacter("'", "#", Keys.OemQuestion));
-            _alphabet.Add(new InputCharacter(":", ".", Keys.OemPeriod));
-            _alphabet.Add(new InputCharacter("_", "-", Keys.OemMinus));
-            _alphabet.Add(new InputCharacter("?", "", Keys.OemOpenBrackets));
-            _alphabet.Add(new InputCharacter(">", "<", "|", Keys.OemBackslash));
+            /* Numpad Specific. */
+            _alphabet.Add(new InputCharacter("/", "/", Keys.Divide));
+            _alphabet.Add(new InputCharacter("*", "*", Keys.Multiply));
+            _alphabet.Add(new InputCharacter("-", "-", Keys.Subtract));
+            _alphabet.Add(new InputCharacter("+", "+", Keys.Add));
+            _alphabet.Add(new InputCharacter(".", ".", Keys.Decimal));
+
+            /* Punctuation. */
+            _alphabet.Add(new InputCharacter("_", "-", "°", Keys.OemMinus));
+            _alphabet.Add(new InputCharacter("+", "=", "±", Keys.OemPlus));
+            _alphabet.Add(new InputCharacter("{", "[", Keys.OemOpenBrackets));
+            _alphabet.Add(new InputCharacter("}", "]", Keys.OemCloseBrackets));
+            _alphabet.Add(new InputCharacter("|", "\\", "¦", Keys.OemPipe));
+            _alphabet.Add(new InputCharacter(":", ";", Keys.OemSemicolon));
+            _alphabet.Add(new InputCharacter("\"", "'", "¸", Keys.OemQuotes));
+            _alphabet.Add(new InputCharacter("<", ",", "«", Keys.OemComma));
+            _alphabet.Add(new InputCharacter(">", ".", "»", Keys.OemPeriod));
+            _alphabet.Add(new InputCharacter("?", "/", "¿", Keys.OemQuestion));
         }
 
         #endregion
