@@ -148,7 +148,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var playerDistance = _body.BodyBox.Box.Center - MapManager.ObjLink.BodyRectangle.Center;
 
-            if (playerDistance.Length() < 46)
+            if (playerDistance.Length() < 32)
                 _aiComponent.ChangeState("preDespawn");
         }
 

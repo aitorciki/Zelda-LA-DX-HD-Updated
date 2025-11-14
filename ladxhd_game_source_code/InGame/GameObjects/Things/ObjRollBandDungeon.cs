@@ -6,6 +6,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
@@ -57,6 +58,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             foreach (var gameObject in _collidingObjects)
             {
+                // Pairodds should not be pushed by conveyor belts.
+                if (gameObject is EnemyPairodd) { continue; }
+
                 var gameObjectBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
                 if (gameObjectBody.IsActive && gameObjectBody.IsGrounded && _collisionBox.Intersects(gameObjectBody.BodyBox.Box))
                 {
