@@ -79,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // stand in a random direction
             _direction = Game1.RandomNumber.Next(0, 4);
-            _animator.Play("stand_" + _direction);
+            _animator.Play("idle");
 
             var damageBox = new CBox(EntityPosition, -8, -12, 0, 16, 12, 4);
             var hittableBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
@@ -100,6 +100,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _aiComponent.ChangeState("idle");
+            _animator.Play("idle");
             _damageState.CurrentLives = ObjLives.Moblin;
         }
 

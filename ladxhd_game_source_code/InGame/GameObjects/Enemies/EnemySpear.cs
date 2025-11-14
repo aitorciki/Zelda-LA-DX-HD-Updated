@@ -35,7 +35,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position);
             EntitySize = new Rectangle(-8, -8, 16, 16);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _startPosition = EntityPosition.Position;
 
@@ -75,9 +76,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer) { Gras = false });
+            AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer) { Grass = false });
             AddComponent(DrawShadowComponent.Index, _shadowBody = new ShadowBodyDrawComponent(EntityPosition));
             Map.Objects.RegisterAlwaysAnimateObject(this);
+        }
+
+        private void Reset()
+        {
+            _damageField.IsActive = false;
+            _drawComponent.IsVisible = false;
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         public override void Init()
@@ -110,7 +118,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _body.IgnoresZ = false;
             _damageField.IsActive = false;
-            _bodyDrawComponent.Gras = true;
+            _bodyDrawComponent.Grass = true;
 
             _animator.Play("rotate");
             _animator.SetFrame((dir + 1) % 4);

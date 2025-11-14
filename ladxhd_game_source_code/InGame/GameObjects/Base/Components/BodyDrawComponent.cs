@@ -12,7 +12,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public bool WaterOutline = true;
         public bool DeepWaterOutline = false;
-        public bool Gras = true;
+        public bool Grass = true;
 
         private readonly BodyComponent _body;
 
@@ -68,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             }
 
             // draw grass if the body is standing on grass
-            if (_body.IsActive && Gras && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.Position.Z < 4)
+            if (_body.IsActive && Grass && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.Position.Z < 4)
             {
                 var flip = (_body.Position.X + _body.Position.Y) % 8 > 4;
 
