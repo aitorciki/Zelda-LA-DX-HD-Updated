@@ -22,6 +22,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly AiTriggerSwitch _changeDirectionSwitch;
 
         private Animator _animator;
@@ -115,16 +117,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 5 });
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
 
-            if (!_followMode)
-            {
-                AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-                AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            }
-            else
-            {
-                Map.Objects.RegisterAlwaysAnimateObject(this);
-            }
             Map.Objects.SpawnObject(_chain = new ObjChain(map, _origin));
             _currentDirectionOffset = AnimationHelper.DirectionOffset[_direction];
 
@@ -167,6 +162,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _followMode = follow;
             _body.CollisionTypes = follow ? Values.CollisionTypes.None : (Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall);
+            _hitComponent.IsActive = !follow;
+            _pushComponent.IsActive = !follow;
+
+            if (follow)
+                Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void ToIdle()
