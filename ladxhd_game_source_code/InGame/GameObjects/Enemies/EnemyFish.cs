@@ -139,7 +139,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity.Y += direction.Y;
                 _body.DragAir = 0.95f;
             }
-
             return true;
         }
 

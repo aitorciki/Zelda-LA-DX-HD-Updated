@@ -180,7 +180,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateIAttack()
         {
-
+            UpdatePosition();
         }
 
         private void UpdateIdle()
@@ -288,6 +288,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                     if (_enemyTarget is EnemyGopongaFlower || _enemyTarget is EnemyGopongaFlowerGiant)
                         break;
+                }
+            }
+            else
+            {
+                if (_aiComponent.CurrentStateId == "iattack")
+                {
+                    _animator.Play("walk_" + _direction);
+                    _aiComponent.ChangeState("walking");
+                    return;
                 }
             }
 
