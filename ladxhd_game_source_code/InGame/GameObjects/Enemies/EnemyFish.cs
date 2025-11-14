@@ -143,6 +143,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
+        public void MakeVulerable()
+        {
+            _damageState.IsActive = true;
+        }
+
         private void OnCollision(Values.BodyCollision direction)
         {
             if (_aiComponent.CurrentStateId == "damage" || _damageState.IsInDamageState())

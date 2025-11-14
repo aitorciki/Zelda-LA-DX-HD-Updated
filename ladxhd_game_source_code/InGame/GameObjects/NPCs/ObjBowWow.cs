@@ -293,6 +293,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (_enemyTarget != null && _enemyTarget.IsActive)
             {
+                if (_enemyTarget is EnemyFish)
+                {
+                    EnemyFish fish = _enemyTarget as EnemyFish;
+                    fish.MakeVulerable();
+                }
                 // set the attack direction
                 var damageState = (HittableComponent)_enemyTarget.Components[HittableComponent.Index];
                 var direction = damageState.HittableBox.Box.Center - new Vector2(EntityPosition.X, EntityPosition.Y - 8);
@@ -303,14 +308,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // update the animation
                 _direction = AnimationHelper.GetDirection(_body.VelocityTarget);
                 _animator.Play("walk_" + _direction);
-
                 _aiComponent.ChangeState("attack");
-
                 return;
             }
-
             _enemyTarget = null;
-
             ToIdle();
         }
 
