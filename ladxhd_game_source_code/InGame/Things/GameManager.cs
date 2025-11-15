@@ -133,6 +133,7 @@ namespace ProjectZ.InGame.Things
         public int SavePositionY;
         public int SaveDirection;
         public int SaveSlot;
+        public string SaveFileVersion = "3";
 
         private float _shakeCountX;
         private float _shakeCountY;
@@ -1583,7 +1584,8 @@ namespace ProjectZ.InGame.Things
             // Save file versions:
             // 1: Seashell Mansion & "Nothing is Missable" enabled.
             // 2: World teleporter indexes fixed.
-            SaveManager.SetString("save_version", "2");
+            // 3: Dungeon 3 has a new map.
+            SaveManager.SetString("save_version", SaveFileVersion);
 
             // set up values
             // debug fill the inventory
@@ -1661,28 +1663,46 @@ namespace ProjectZ.InGame.Things
 
             MapManager.ObjLink.InitGame();
 
+            // Load the values from "saveGame#". 
             SaveGameSaveLoad.LoadSaveFile(this, slot);
 
-            ItemDrawHelper.Init();
+            // Fixes changes to save files that are now invalid.
+            SaveFileFix_v1();
+            SaveFileFix_v2();
 
+            // Item and equipment preparations.
+            ItemDrawHelper.Init();
             UpdateEquipment();
 
-            // create empty map
+            // Create a new empty map file to load objects into and put Link on it.
             MapManager.CurrentMap = Map.Map.CreateEmptyMap();
             MapManager.CurrentMap.Objects.SpawnObject(MapManager.ObjLink);
 
+            // These are set from the "SaveGameSaveLoad.LoadSaveFile()" call from above.
             MapManager.ObjLink.Map = MapManager.CurrentMap;
+            MapManager.ObjLink.SaveMap = LoadedMap;
+            MapManager.ObjLink.SavePosition.X = SavePositionX;
+            MapManager.ObjLink.SavePosition.Y = SavePositionY;
+            MapManager.ObjLink.SaveDirection = SaveDirection;
+            MapManager.ObjLink.Direction = SaveDirection;
+            MapManager.ObjLink.DirectionEntry = SaveDirection;
             MapManager.ObjLink.SetWalkingDirection(SaveDirection);
 
+            // Set up the camera.
             MapManager.CameraOffset = Vector2.Zero;
             MapManager.Camera.ForceUpdate(MapManager.GetCameraTargetLink());
 
+            // Set up the map transition stuff.
             MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
             MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position;
-            MapManager.ObjLink.DirectionEntry = SaveDirection;
-            MapManager.ObjLink.EntityPosition.Z = 0;
             MapManager.ObjLink.TransitionOutWalking = false;
             MapManager.ObjLink.TransitionInWalking = false;
+
+            // Default Z-Position to zero.
+            MapManager.ObjLink.EntityPosition.Z = 0;
+
+            // This value is an override for the low health beep. When true it does not force the beep to play
+            // but if it's false, it does force it to not play. This is used for the ending sequence.
             MapManager.ObjLink.ToggleLowHealthBeep(true);
 
             // load the map
@@ -1691,11 +1711,8 @@ namespace ProjectZ.InGame.Things
             transitionSystem.LoadMapFromFile(LoadedMap, true, true, Values.MapFirstTransitionColor, false);
             transitionSystem.AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
 
-            // If the game was frozen for some reason, unfreeze it.
+            // If the game was saved while frozen for some reason, unfreeze it.
             MapManager.ObjLink.FreezeGame(false);
-
-            // This should probably be removed after awhile.
-            SaveFileFix_v1();
         }
 
         private void SaveFileFix_v1()
@@ -1727,7 +1744,34 @@ namespace ProjectZ.InGame.Things
                     }
                 }
                 // Increment the save version.
-                SaveManager.SetString("save_version", "2");
+                SaveManager.SetString("save_version", SaveFileVersion);
+            }
+        }
+
+        private void SaveFileFix_v2()
+        {
+            // Fixes Dungeon 3 map name on versions 1 and 2 save files.
+            string saveVersionStr = SaveManager.GetString("save_version", "0");
+            int.TryParse(saveVersionStr, out int saveVersion);
+
+            // Check the save file name. Just to be safe, also make sure the dungeon name is correct.
+            if (saveVersion > 3 || LoadedMap == "dungeon3_1.map")
+            {
+                // In v1.4.8 Dungeon 3 map file has changed so we need to convert to new name and coordinates.
+                if (LoadedMap == "dungeon3_1.map")
+                {
+                    // Fix the GameManager values.
+                    LoadedMap = "dungeon3.map";
+                    SavePositionX = 256;
+                    SavePositionY = 1032;
+
+                    // May as well fix the save file values as well.
+                    SaveManager.SetString("currentMap", LoadedMap);
+                    SaveManager.SetInt("posX", SavePositionX);
+                    SaveManager.SetInt("posY", SavePositionY);
+                }
+                // Increment the save version.
+                SaveManager.SetString("save_version", SaveFileVersion);
             }
         }
 

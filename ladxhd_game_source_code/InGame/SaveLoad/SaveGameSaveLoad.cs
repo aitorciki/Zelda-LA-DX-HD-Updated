@@ -296,13 +296,7 @@ namespace ProjectZ.InGame.SaveLoad
                     values[index] = values[index] << 1;
                 }
             }
-
-            MapManager.ObjLink.SaveMap = saveManager.GetString("currentMap");
-            MapManager.ObjLink.SavePosition.X = saveManager.GetInt("posX");
-            MapManager.ObjLink.SavePosition.Y = saveManager.GetInt("posY");
-            MapManager.ObjLink.SaveDirection = saveManager.GetInt("dir");
-            MapManager.ObjLink.Direction = saveManager.GetInt("dir");
-
+            // Get the current map and position of Link.
             gameManager.LoadedMap = saveManager.GetString("currentMap");
             gameManager.SavePositionX = saveManager.GetInt("posX");
             gameManager.SavePositionY = saveManager.GetInt("posY");
