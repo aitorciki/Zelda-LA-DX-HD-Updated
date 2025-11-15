@@ -29,6 +29,8 @@ namespace LADXHD_Migrater
         private static string[] photograph = new[] { "photos_deu.png", "photos_esp.png", "photos_fre.png",  "photos_ind.png", "photos_ita.png", "photos_por.png", "photos_rus.png", "photos_redux.png", 
                                                      "photos_redux_deu.png", "photos_redux_esp.png", "photos_redux_fre.png", "photos_redux_ind.png", "photos_redux_ita.png", "photos_redux_por.png", "photos_redux_rus.png" };
         private static string[] uiImages   = new[] { "ui_deu.png", "ui_esp.png", "ui_fre.png", "ui_ind.png", "ui_ita.png", "ui_por.png", "ui_rus.png" };
+        private static string[] dungeon3M  = new[] { "dungeon3.map" };
+        private static string[] dungeon3D  = new[] { "dungeon3.map.data" };
 
         // THE "KEY" IS THE MASTER FILE THAT CREATES OTHER FILES FROM IT. THE "VALUE" IS THE STRING ARRAY THAT HOLDS THOSE FILES
 
@@ -44,7 +46,9 @@ namespace LADXHD_Migrater
             { "minimap.png",        miniMapImg },
             { "objects.png",        objectsImg },
             { "photos.png",         photograph },
-            { "ui.png",               uiImages }
+            { "ui.png",               uiImages },
+            { "dungeon3_1.map",      dungeon3M },
+            { "dungeon3_1.map.data", dungeon3D }
         };
 
         // CREATE A REVERSE MAP OF THE DICTIONARY SO IT CAN EASILY BE SEARCHED IN EITHER DIRECTION
