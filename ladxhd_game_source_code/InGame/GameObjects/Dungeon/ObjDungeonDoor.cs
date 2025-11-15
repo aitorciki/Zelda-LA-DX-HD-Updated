@@ -104,20 +104,32 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
+            // Don't trigger if shield is out or the door has already been opened.
             if (type == PushableComponent.PushType.Impact || _currentState != DoorStates.Closed)
                 return false;
 
-            // remove one key
-            if (!Game1.GameManager.RemoveItem(_pushItem, 1))
+            // If it's the nightmare door, check for the key but don't consume it.
+            if (_pushItem == "nightmarekey")
             {
-                // start a dialog if the player does not have the required item
+                // If it's been collected, it will show up as "0" and not "null".
+                if (Game1.GameManager.GetItem(_pushItem)?.Count == null)
+                {
+                    // Start the dialog if the player doesn't have the nightmare key.
+                    Game1.GameManager.StartDialogPath("door_" + _pushItem);
+                    return false;
+                }
+            }
+            // If it's a small key then try to remove one.
+            else if (!Game1.GameManager.RemoveItem(_pushItem, 1))
+            {
+                // Start a dialog if the player does not have a small key.
                 Game1.GameManager.StartDialogPath("door_" + _pushItem);
                 return false;
             }
-
-            // only play the sound effect when the player uses a key to open the door
+            // Only play the sound effect when the player uses a key to open the door.
             Game1.GameManager.PlaySoundEffect("D378-04-04", false);
 
+            // Save the status of this door being opened if door has a dictionary entry.
             if (!string.IsNullOrEmpty(_strPushKey))
                 Game1.GameManager.SaveManager.SetString(_strPushKey, "1");
 
