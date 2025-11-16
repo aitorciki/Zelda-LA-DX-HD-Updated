@@ -29,10 +29,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private const int GrabTime = 300;
         private int _lives = ObjLives.Hinox;
 
-        private float _runParticleCount;
-
         private Vector3 _grabStartPosition;
         private int _grabDirection;
+        private float _runParticleCount;
+        private bool _playerInRoom;
 
         public MBossHinox() : base("hinox") { }
 
@@ -46,7 +46,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             EntityPosition = new CPosition(posX + 16, posY + 32, 0);
+            ResetPosition = new CPosition(posX + 16, posY + 32, 0);
             EntitySize = new Rectangle(-16, -32, 32, 32);
+            CanReset = true;
+            OnReset = Reset;
 
             _saveKey = saveKey;
 
@@ -65,8 +68,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _aiComponent = new AiComponent();
 
-            var stateIdle = new AiState(UpdateIdle);
-            var stateWait = new AiState(UpdateWait) { Init = InitWait };
+            var stateIdle = new AiState();
+            var stateWait = new AiState() { Init = InitWait };
             stateWait.Trigger.Add(new AiTriggerRandomTime(WalkOrRun, 1000, 1500));
             var stateWalk = new AiState { Init = InitWalking };
             stateWalk.Trigger.Add(new AiTriggerRandomTime(EndWalking, 750, 1250));
@@ -115,19 +118,44 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
         }
 
-        private void UpdateIdle()
+        private void Reset()
         {
-            // player entered the room?
-            if (_body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
-            {
-                // start boss music
-                Game1.GameManager.SetMusic(79, 2);
+            // Restore idle state and heal the boss.
+            _aiComponent.ChangeState("idle");
+            _aiDamageState.CurrentLives = ObjLives.Hinox;
+        }
 
-                _aiComponent.ChangeState("walk");
+        private void Update()
+        {
+            // Get the current field the boss is in.
+            Rectangle currentField = GameMath.RectFToRect(_body.FieldRectangle);
+
+            // Adjust the rect slightly when classic camera is enabled.
+            if (Camera.ClassicMode)
+                currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
+
+            // Start music when player enters room. Room boolean is used to not reset aiComponent state every loop iteration.
+            if (!_playerInRoom && currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            {
+                // Do not play music if it's already playing.
+                if (Game1.GameManager.GetCurrentMusic() != 79)
+                    Game1.GameManager.SetMusic(79, 2);
+                _playerInRoom = true;
+
+                // Use the current reset state to know whether or not to start it's walk AI state.
+                if (CanReset)
+                    _aiComponent.ChangeState("walk");
+            }
+            // Stop the music when the player leaves the room.
+            else if (_playerInRoom && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            {
+                Game1.GameManager.SetMusic(-1, 2);
+                _playerInRoom = false;
             }
         }
 
@@ -190,17 +218,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _animator.Pause();
             _body.VelocityTarget = Vector2.Zero;
-        }
-
-        private void UpdateWait()
-        {
-            // player left the room?
-            if (!_body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
-            {
-                // stop boss music
-                Game1.GameManager.SetMusic(-1, 2);
-                _aiComponent.ChangeState("idle");
-            }
         }
 
         private void WalkOrRun()
@@ -362,9 +379,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
-            // stop walking and stop the animation when dead
+            // Stop walking and stop the animation when dead.
             if (_aiDamageState.CurrentLives <= 0)
             {
+                // Prevent from resetting once the boss is dying.
+                CanReset = false;
+
                 _damageField.IsActive = false;
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;

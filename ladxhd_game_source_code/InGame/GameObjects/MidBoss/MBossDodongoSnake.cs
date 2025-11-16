@@ -49,9 +49,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _bodyDistance;
         private bool _wallCollision = true;
         private bool _stopDraggin = true;
-        private bool _playerInRoom;
         private bool _playedExplosion;
 
+        private int _bossCount;
         private int _lives = ObjLives.DodongoSnake;
 
         // @TODO: it looks like the body gets left behind when we move out of the screen
@@ -62,7 +62,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-22, -8 - 22, 44, 44);
+            CanReset = true;
+            OnReset = Reset;
 
             _bodyPosition = EntityPosition.Position;
             _lastHeadPosition = EntityPosition.Position;
@@ -85,7 +88,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     return;
                 }
             }
-
             _spriteHead = Resources.GetSprite("snake " + strColor);
             _spriteBody0 = Resources.GetSprite("snake body " + strColor);
             _spriteBody1 = Resources.GetSprite("snake body");
@@ -133,6 +135,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             ChangeDirection();
             _aiComponent.ChangeState("moving");
+        }
+
+        private void Reset()
+        {
+            _bodyOffset.X = 0;
+            _bodyOffset.Y = 0;
+            _bodyPosition = ResetPosition.Position;
+            _lastHeadPosition = ResetPosition.Position;
+            _lives = ObjLives.DodongoSnake;
+            ChangeDirection();
+        }
+
+        private int GetDodongoSnakeCount()
+        {
+            // Gets the number of remaining Dodongo Snakes. Used to properly start/stop the music.
+            List<GameObject> dodongoSnakes = new List<GameObject>();
+            Map.Objects.GetObjectsOfType(dodongoSnakes, typeof(MBossDodongoSnake),
+                (int)_body.FieldRectangle.X, (int)_body.FieldRectangle.Y, (int)_body.FieldRectangle.Width, (int)_body.FieldRectangle.Height);
+            return dodongoSnakes.Count;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
@@ -193,6 +214,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 // enemy is dead?
                 if (_lives <= 0)
                 {
+                    // Prevent from resetting once the boss is dying.
+                    CanReset = false;
                     OnDeath();
                     return;
                 }
@@ -207,44 +230,32 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
         }
 
-        private void OnDeath()
-        {
-            if (!string.IsNullOrEmpty(_saveKey))
-                Game1.GameManager.SaveManager.SetString(_saveKey, "1");
-
-            // stop the boss music
-            Game1.GameManager.SetMusic(-1, 2);
-            Game1.GameManager.PlaySoundEffect("D378-26-1A");
-
-            // spawn fairy
-            Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y + 8, 0));
-
-            // shake the screen
-            Game1.GameManager.ShakeScreen(225, 4, 1, 5, 2.5f);
-
-            // spawn explosion effect
-            Map.Objects.SpawnObject(new ObjAnimator(Map,
-                (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y - 8, Values.LayerPlayer, "Particles/explosionBomb", "run2", true));
-
-            Map.Objects.DeleteObjects.Add(this);
-        }
-
         private void UpdateMoving()
         {
-            // start/stop music when the player enters/leaves the room
-            if (_body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
+            // Find how many bosses still remain.
+            _bossCount = GetDodongoSnakeCount();
+
+            // Get the current field the boss is in.
+            Rectangle currentField = GameMath.RectFToRect(_body.FieldRectangle);
+
+            // Adjust the rect slightly when classic camera is enabled.
+            if (Camera.ClassicMode)
+                currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
+
+            // Check if player is in the field rect.
+            if (currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
-                _playerInRoom = true;
+                // Start the music if it hasn't already started playing.
                 if (Game1.GameManager.GetCurrentMusic() != 79)
                     Game1.GameManager.SetMusic(79, 2);
             }
-            else if (_playerInRoom)
+            // Check if the player left the room.
+            else if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
-                _playerInRoom = false;
+                // Restore normal dungeon music.
                 Game1.GameManager.SetMusic(-1, 2);
             }
-
+            // Try to eat any bombs found within range.
             EatBombs();
 
             var offset = 0.5f;
@@ -340,6 +351,30 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     }
                 }
             }
+        }
+        private void OnDeath()
+        {
+            if (!string.IsNullOrEmpty(_saveKey))
+                Game1.GameManager.SaveManager.SetString(_saveKey, "1");
+
+            // When it's the last snake remaining, stop the music on death.
+            if (_bossCount <= 1)
+                Game1.GameManager.SetMusic(-1, 2);
+
+            // Play explosion sound effect & spawn fairy.
+            Game1.GameManager.PlaySoundEffect("D378-26-1A");
+            Game1.GameManager.PlaySoundEffect("D360-27-1B");
+            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y + 8, 0));
+
+            // Shake the screen.
+            Game1.GameManager.ShakeScreen(225, 4, 1, 5, 2.5f);
+
+            // Spawn the explosion effect.
+            Map.Objects.SpawnObject(new ObjAnimator(Map,
+                (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y - 8, Values.LayerPlayer, "Particles/explosionBomb", "run2", true));
+
+            // Remove from the map.
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         private void Draw(SpriteBatch spriteBatch)
