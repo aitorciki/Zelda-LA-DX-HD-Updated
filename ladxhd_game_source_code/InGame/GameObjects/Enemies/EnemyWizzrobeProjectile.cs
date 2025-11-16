@@ -42,6 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Reset()

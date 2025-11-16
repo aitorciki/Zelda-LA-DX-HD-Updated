@@ -104,6 +104,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite) { Transparency = 0 });
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public void StartSequenceMode()
