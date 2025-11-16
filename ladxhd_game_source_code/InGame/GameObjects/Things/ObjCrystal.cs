@@ -13,7 +13,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Color _lightColor;
         private readonly string _dialogPath;
         private readonly bool _isHardCrystal;
-
+        private readonly int _colorIndex;
         private readonly string _spriteId;
 
         bool light_source = true;
@@ -42,7 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(-40, -48, 80, 80);
 
             _spriteId = spriteId;
-
+            _colorIndex = color;
             _isHardCrystal = hardCrystal;
             _dialogPath = dialogPath;
 
@@ -96,8 +96,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D378-09-09");
             Map.Objects.DeleteObjects.Add(this);
 
-            if (!_isHardCrystal)
-                Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, _spriteId, _dialogPath));
+            Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, 
+                _spriteId, _dialogPath, _isHardCrystal, _colorIndex));
 
             var mult = damageType == HitType.PegasusBootsSword ? 1.0f : 0.25f;
             var velZ = 0.5f;
