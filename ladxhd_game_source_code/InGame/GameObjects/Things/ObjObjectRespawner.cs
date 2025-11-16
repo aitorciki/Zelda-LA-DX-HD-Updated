@@ -23,7 +23,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _spawnCounter;
         private bool _isActive = true;
 
-        public ObjObjectRespawner() : base("editor object respawner") { }
+        public ObjObjectRespawner() : base("editor object respawner")
+        {
+            EditorColor = Color.Red * 0.65f;
+        }
 
         public ObjObjectRespawner(Map.Map map, int posX, int posY, string strDisableKey, string strSpawnObjectId, string strSpawnParameter) : base(map)
         {
