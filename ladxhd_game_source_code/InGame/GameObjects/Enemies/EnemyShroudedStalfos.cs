@@ -54,6 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall |
                                  Values.CollisionTypes.Enemy,
                 AvoidTypes =     Values.CollisionTypes.Hole | 
                                  Values.CollisionTypes.NPCWall,
