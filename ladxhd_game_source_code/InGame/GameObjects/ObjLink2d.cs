@@ -452,16 +452,29 @@ namespace ProjectZ.InGame.GameObjects
 
             // When letting go of the jump button, the jump should end. Instead of an immediate
             // drop off, the velocity is instead greatly reduced to reduce the pull of gravity.
-            if (!_jump2DHold && _jump2DHeld && _body.Velocity.Y > -1.15f)
+            if (!_jump2DHold && _jump2DHeld)
             {
-                _body.Velocity.Y = _isWalking ? -0.35f : -0.5f;
-                _jump2DHeld = false;
+                // "Threshold" is current Z velocity while "setY" is replacement velocity.
+                float threshold = -1.00f;
+                float setY = -0.50f;
+
+                // Check velocity threshold over three iterations.
+                for (int i = 0; i < 3; i++)
+                {
+                    // If currently velocity is greater than current threshold.
+                    if (_body.Velocity.Y > threshold)
+                    {
+                        // Reduce the velocity.
+                        _body.Velocity.Y = setY;
+                        _jump2DHeld = false;
+                        break;
+                    }
+                    // Adjust the values for the next iteration.
+                    threshold -= 0.15f;
+                    setY += 0.15f;
+                }
             }
-            else if (!_jump2DHold && _jump2DHeld && _body.Velocity.Y > -0.85f)
-            {
-                _body.Velocity.Y = _isWalking ? -0.10f : -0.25f;
-                _jump2DHeld = false;
-            }
+
             // When velocity is zero, the peak of the jump has been reached so do not allow any
             // more manipulation of the velocity or it will create weirdness in the air.
             if (_body.Velocity.Y > 0)
@@ -725,8 +738,8 @@ namespace ProjectZ.InGame.GameObjects
             _body.Velocity.Y = _isClimbing 
                 ? -1.5f 
                 : _isWalking 
-                    ? -2.00f 
-                    : -1.85f;
+                    ? -2.10f 
+                    : -1.95f;
 
             // Set up the supporting values.
             _body.IsGrounded = false;

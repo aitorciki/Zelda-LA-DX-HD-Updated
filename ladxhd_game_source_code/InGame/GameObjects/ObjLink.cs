@@ -2944,7 +2944,7 @@ namespace ProjectZ.InGame.GameObjects
         {
             // Set when holding in jump button. This is used to track when the
             // button was released. Holding button longer = higher jumping.
-            _jump2DHold = true;
+            _jump2DHold = Map.Is2dMap;
         }
 
         private void ReleaseFeather()
