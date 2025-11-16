@@ -15,6 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly Animator _animator;
         private readonly AiComponent _ai;
+        private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
         private readonly AnimationComponent _animatorComponent;
         private readonly BodyDrawComponent _bodyDrawComponent;
@@ -26,6 +27,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dir;
         private int _timerOffset;
         private int _lives = ObjLives.Gel;
+
+        // Used to respawn Red Zol if both Gels are alive.
+        private Vector2 ZolRespawnPos;
+        private EnemyGel OtherGel;
+        private bool IsMainGel;
 
         public bool IsVisible { get; private set; }
 
@@ -40,6 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-4, -12, 7, 17);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/gel");
             _animator.Play("0");
@@ -86,13 +93,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _ai.States.Add("grabbingRelease", stateGrabbingRelease);
             new AiFallState(_ai, _body, null, null, 100);
             new AiDeepWaterState(_body);
-            var damageState = new AiDamageState(this, _body, _ai, _sprite, _lives);
+            _damageState = new AiDamageState(this, _body, _ai, _sprite, _lives);
 
             _ai.Trigger.Add(_grabCooldown = new AiTriggerSwitch(2000));
 
             _ai.ChangeState("idle");
 
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, damageState.OnHit));
+            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new CRectangle(EntityPosition, new Rectangle(-4, -7, 7, 12)), OnPlayerCollision));
             AddComponent(AiComponent.Index, _ai);
             AddComponent(BodyComponent.Index, _body);
@@ -101,6 +108,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             new ObjSpriteShadow("sprshadows", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            // It needs to be active or Gels attached to unsplit Zols will trigger this.
+            if (IsActive)
+            {
+                // Make sure both Gels are alive and check the index to prevent double respawn.
+                if (OtherGel != null && !IsDead && !OtherGel.IsDead && IsMainGel)
+                {
+                    // Spawn the Red Zol if both Gels are alive. 
+                    var newZol = new EnemyRedZol(Map, (int)ZolRespawnPos.X, (int)ZolRespawnPos.Y);
+                    Map.Objects.SpawnObject(newZol);
+                }
+                // Always remove the Gel.
+                IsActive = false;
+                _sprite.IsVisible = false;
+                _damageState.IsActive = false;
+                Map.Objects.DeleteObjects.Add(this);
+            }
         }
 
         public void InitSpawn()
@@ -221,6 +248,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _ai.CurrentStateId != "grabbingRelease" &&
                 _ai.CurrentStateId != "burning")
                 _ai.ChangeState("grabbing");
+        }
+
+        public void SetOtherGel(EnemyGel otherGel, bool isMainGel, Vector2 zolPos)
+        {
+            // Store some properties of the other Gel that split off of the Zol. 
+            OtherGel = otherGel;
+            IsMainGel = isMainGel;
+            ZolRespawnPos = zolPos;
+        }
+
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        {
+            // Track that this Gel is now dead.
+            IsDead = true;
+
+            // And then just return normal damage state.
+            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
         }
     }
 }

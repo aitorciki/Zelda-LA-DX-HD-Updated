@@ -95,12 +95,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
-            // spawn two gels inactive (needed for the enemy trigger)
+            // Spawn gels but inactive which is required for "Enemy Triggers" inside dungeons. Enemy Triggers are 
+            // used for things such as spawning chest or opening doors when all enemies in the field are defeated.
             _gel0 = new EnemyGel(Map, posX, posY) { IsActive = false };
             Map.Objects.SpawnObject(_gel0);
 
             _gel1 = new EnemyGel(Map, posX, posY) { IsActive = false };
             Map.Objects.SpawnObject(_gel1);
+
+            // Setting the position here prevents needing to subtract offsets later.
+            Vector2 ZolRespawnPos = new Vector2(posX, posY);
+
+            // The gels need to be able to track the main gel and if the other is still alive.
+            _gel0.SetOtherGel(_gel1, false, ZolRespawnPos);
+            _gel1.SetOtherGel(_gel0, true, ZolRespawnPos);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
@@ -203,7 +211,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Map.Objects.DeleteObjects.Add(_gel1);
                 return;
             }
-
             // positions are set so that the gels are inside of the body to not collide with stuff
             _gel0.EntityPosition.Set(new Vector2(EntityPosition.X - 1.9f - Game1.RandomNumber.Next(0, 2), EntityPosition.Y - Game1.RandomNumber.Next(0, 2)));
             _gel0.IsActive = true;
