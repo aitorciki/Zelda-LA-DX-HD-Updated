@@ -19,6 +19,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly CBox _lowerBox;
         private readonly CBox _damageBox;
 
+        private readonly int _baseX;
+        private readonly int _baseY;
+        private readonly string _spriteId;
+
         private readonly string _spawnItem;
         private readonly string _pickupKey;
         private readonly string _dialogPath;
@@ -41,6 +45,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 -sprite.SourceRectangle.Width / 2, _offsetY - sprite.SourceRectangle.Height * 2, sprite.SourceRectangle.Width, sprite.SourceRectangle.Height * 2 + 4);
 
             _spawnPosition = new Point(posX, posY + 2);
+
+            _baseX = posX;
+            _baseY = posY;
+            _spriteId = spriteId;
 
             _spawnItem = spawnItem;
             _pickupKey = pickupKey;
@@ -269,7 +277,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                     SpawnParticles(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z + 12));
             }
 
-            // remove the stone object from the map
+            // Remove the stone and create a respawner.
+            Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
             Map.Objects.DeleteObjects.Add(this);
 
             _isAlive = false;
@@ -281,7 +290,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_isAlive)
                 return;
 
-            // remove the stone object from the map
+            // Remove the stone and create a respawner.
+            Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
             Map.Objects.DeleteObjects.Add(this);
 
             // play sound effect
