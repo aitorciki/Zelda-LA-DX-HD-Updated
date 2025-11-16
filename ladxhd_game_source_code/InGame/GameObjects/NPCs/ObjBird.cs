@@ -145,9 +145,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             var playerDir = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-            if (playerDir.Length() > 120)
+            if (playerDir.Length() > 120 || MapManager.ObjLink.FieldChange)
             {
                 _attackMode = false;
+                _hitCounter = 0;
 
                 // change back into the normal mode
                 if (_aiComponent.CurrentStateId != "idle" &&
@@ -165,6 +166,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 var objBird = new ObjBird(Map, (int)EntityPosition.X, (int)EntityPosition.Y);
                 objBird.InitAttackMode();
                 Map.Objects.SpawnObject(objBird);
+                Map.Objects.RegisterAlwaysAnimateObject(objBird);
             }
         }
 
