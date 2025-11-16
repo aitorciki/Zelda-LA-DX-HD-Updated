@@ -184,9 +184,11 @@ namespace ProjectZ.InGame.Map
                 AddSpawnedObjects();
                 return;
             }
-            // NOTE: I'm honestly not sure what the point of any of this is. It is titled in a way that makes you think that
-            // when true, the world freezes except for Link. But this is NOT the case, I have tried to use it for different
-            // events but it never worked like I thought. I keep it here because it probably is important for something.
+            // While I'm not entirely sure what all the functions of this code are, I do know it is used when pulling items
+            // out of chests. Without it, when opening a chest the item will "stick" to Link's head and not enter the inventory.
+            // My guess based on what it looks like, as long as "FreezeWorldAroundPlayer" is true, which can remain true if set
+            // during an update loop, it will not run the rest of the code beyond this point while still updating Link's main
+            // "Update" loop. Not sure why disabling this breaks picking up an item out of a chest, but I'm sure it does.
 
             if (Game1.GameManager.FreezeWorldAroundPlayer)
             {
