@@ -5357,6 +5357,8 @@ namespace ProjectZ.InGame.GameObjects
             _teleportCounter = 0;
             _teleportCounterFull = 0;
 
+            ReleaseCarriedObject();
+
             if (Camera.ClassicMode)
                 Camera.SnapCamera = true;
         }
