@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Vector2 ZolRespawnPos;
         private EnemyGel OtherGel;
         private bool IsMainGel;
+        private bool WasSpawned;
 
         public bool IsVisible { get; private set; }
 
@@ -112,8 +113,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
-            // It needs to be active or Gels attached to unsplit Zols will trigger this.
-            if (IsActive)
+            // It needs to be active or Gels attached to unsplit Zols will trigger this. This
+            // also only applies to Gels that were spawned from splitting a Red Zol.
+            if (IsActive && WasSpawned)
             {
                 // Make sure both Gels are alive and check the index to prevent double respawn.
                 if (OtherGel != null && !IsDead && !OtherGel.IsDead && IsMainGel)
@@ -252,6 +254,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public void SetOtherGel(EnemyGel otherGel, bool isMainGel, Vector2 zolPos)
         {
+            // If this ran, it's a Gel spawned from a Red Zol.
+            WasSpawned = true;
+
             // Store some properties of the other Gel that split off of the Zol. 
             OtherGel = otherGel;
             IsMainGel = isMainGel;
