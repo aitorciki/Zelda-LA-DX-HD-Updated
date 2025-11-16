@@ -97,6 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             ToIdle();
+            _shootCountdown.Stop();
             _sprite.IsVisible = true;
             _damageState.CurrentLives = ObjLives.Pairodd;
         }
