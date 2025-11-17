@@ -5726,33 +5726,20 @@ namespace ProjectZ.InGame.GameObjects
 
         public void SetFollowerMapState(Map.Map map)
         {
-            string[] noFollowerMaps = 
-            { 
-                "pond.map", "dreamShrine01.map", "dreamShrine02.map", "shellhouse.map", "dungeon1.map", "dungeon2.map", 
-                "dungeon3_1.map", "dungeon3_2.map",  "dungeon3_3.map", "dungeon3_4.map", "dungeon4.map", "dungeon5.map", 
-                "dungeon6.map", "dungeon7_1.map", "dungeon7_2.map", "dungeon7_3.map", "dungeon7_4.map", "dungeon8.map", 
-                "dungeon_color.map", "egg_entry.map", "egg_lower_floor.map", "egg_boss_room.map", "final stairs.map"
-            };
-            // Disable the follower on the maps listed above, or disable them on 2D maps.
-            for (int i = 0; i < noFollowerMaps.Length; i++)
-            {
-                if (noFollowerMaps[i] == map.MapName || map.Is2dMap)
-                {
-                    _objFollower.IsActive = false;
-                    break;
-                }
-                else
-                {
-                    // Marin has her own method of respawning. Doing it this way breaks her dungeon transition.
-                    if (_objFollower != _objMaria)
-                        _objFollower.IsActive = true;
-                }
-            }
+            // Disable followers on maps that contain the "NoFollowers" map object.
+            if (map.NoFollowers || map.Is2dMap)
+                _objFollower.IsActive = false;
+
+            // Marin has her own method of respawning. Not doing it this way breaks her dungeon transition.
+            else
+                if (_objFollower != _objMaria)
+                    _objFollower.IsActive = true;
         }
 
         private void CheckFinalStairs(Map.Map map)
         {
-            if (map.MapName == "final stairs.map")
+            // Kind of a hacky solution: "ObjFinalBackground" object sets "IsFinalMap" via "Game1.GameManager.SetFinalMap();".
+            if (map.IsFinalMap)
             {
                 // Store the classic camera setting. It is restored after the ending is finished.
                 Game1.StoredClassicCam = GameSettings.ClassicCamera;

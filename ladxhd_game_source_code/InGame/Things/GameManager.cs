@@ -1262,6 +1262,16 @@ namespace ProjectZ.InGame.Things
             MapManager.NextMap.LocationFullName = dungeonName;
         }
 
+        public void SetNoFollowersMap()
+        {
+            MapManager.NextMap.NoFollowers = true;
+        }
+
+        public void SetFinalMap()
+        {
+            MapManager.NextMap.IsFinalMap = true;
+        }
+
         public void DungeonUpdatePlayerPosition(Point position)
         {
             // updated map discovery state

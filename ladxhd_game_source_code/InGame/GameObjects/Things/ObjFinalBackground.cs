@@ -241,6 +241,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBackground, new CPosition(posX, posY - 512, 0)));
+
+            Game1.GameManager.SetFinalMap();
         }
 
         private void OnKeyChange()

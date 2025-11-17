@@ -53,6 +53,8 @@ namespace ProjectZ.InGame.Map
         public bool UseLight;
         public bool UseShadows;
         public bool IsOverworld;
+        public bool NoFollowers;
+        public bool IsFinalMap;
 
         private List<GameObject> _digList = new List<GameObject>();
 
@@ -83,6 +85,8 @@ namespace ProjectZ.InGame.Map
             IsOverworld = false;
             DungeonMode = false;
             DungeonMapless = false;
+            NoFollowers = false;
+            IsFinalMap = false;
             LocationName = null;
             UseLight = false;
             MapMusic = new[] { -1, -1, -1 };

@@ -350,6 +350,8 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("dungeon", new GameObjectTemplate(typeof(ObjDungeon), new object[] { null, true, 0 }));
             ObjectTemplates.Add("dungeonMapless", new GameObjectTemplate(typeof(ObjDungeonMapless), new object[] { null, true }));
 
+            ObjectTemplates.Add("no follower", new GameObjectTemplate(typeof(ObjNoFollower), new object[] { }));
+
             ObjectTemplates.Add("upperLevel", new GameObjectTemplate(typeof(ObjUpperLevel), new object[] { 1 }));
             ObjectTemplates.Add("upperLevel2", new GameObjectTemplate(typeof(ObjUpperLevel), new object[] { 2 }));
 
