@@ -232,8 +232,15 @@ namespace ProjectZ.InGame.GameSystems
 
                     var viewport = spriteBatch.GraphicsDevice.Viewport;
 
+                    // When the black border is enabled, 10% is more than enough.
+                    var screenPercent = 0.10f;
+
+                    // If using the SGB border, we need a bit more...
+                    if (GameSettings.ClassicBorders == 2)
+                        screenPercent = 0.25f;
+
                     spriteBatch.Begin();
-                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * 0.10)), _transitionObject.TransitionColor);
+                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * screenPercent)), _transitionObject.TransitionColor);
                     spriteBatch.End();
                 }
             }
@@ -244,8 +251,15 @@ namespace ProjectZ.InGame.GameSystems
 
                 var viewport = spriteBatch.GraphicsDevice.Viewport;
 
+                    // When the black border is enabled, 25% is more than enough.
+                    var screenPercent = 0.25f;
+
+                    // If using the SGB border, we need a bit more...
+                    if (GameSettings.ClassicBorders == 2)
+                        screenPercent = 0.35f;
+
                 spriteBatch.Begin();
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, (int)(viewport.Width * 0.25), viewport.Height), _transitionObject.TransitionColor);
+                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, (int)(viewport.Width * screenPercent), viewport.Height), _transitionObject.TransitionColor);
                 spriteBatch.End();
             }
         }

@@ -236,13 +236,14 @@ namespace ProjectZ.InGame.Map
                     var drawOffset = screenCenter - (fieldCenter - Location);
                     var tex = Resources.SprWhite;
 
-                    // Draw borders (using alpha)
+                    // Draw border lines (using alpha)
                     Color borderColor = Color.Black * GameSettings.ClassicAlpha;
 
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor); // Top
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor); // Bottom
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Left
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Right
+                    // Draw Order: Top / Bottom / Left / Right
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor);
 
                     // Fill everything outside the border with black.
                     var screenW = viewport.Width;
@@ -252,38 +253,30 @@ namespace ProjectZ.InGame.Map
                     var rectScreenX = drawOffset.X + fieldX - Location.X;
                     var rectScreenY = drawOffset.Y + fieldY - Location.Y;
 
-                    // Apply alpha
+                    // Draw border fill (using alpha)
                     Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
 
-                    // Top black bar
+                    // Draw Order: Top / Bottom / Left / Right
                     spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
-
-                    // Bottom black bar
                     spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
-
-                    // Left black bar
                     spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
-
-                    // Right black bar
                     spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
 
                     // If set to the Super Game Boy border.
                     if (GameSettings.ClassicBorders == 2)
                     {
-                        // Border’s original pixel size
+                        // Border’s original pixel size.
                         const int borderW = 256;
                         const int borderH = 224;
 
-                        // Scaled size
+                        // Scale by the camera scale (which should be integer scale with Classic Camera enabled).
                         int scaledW = (int)(borderW * MapManager.Camera.Scale);
                         int scaledH = (int)(borderH * MapManager.Camera.Scale);
 
-                        // Center it
+                        // Center the SGB border on the screen.
                         Vector2 pos = new Vector2((viewport.Width  - scaledW) / 2f, (viewport.Height - scaledH) / 2f);
 
-                        // Draw centered with point sampling.
-                        spriteBatch.End();
-                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+                        // Draw the border using nearest neighbor (point filtering) for sharp pixels).
                         spriteBatch.Draw(Resources.sgbBorder, pos, null, Color.White, 0f, Vector2.Zero, MapManager.Camera.Scale, SpriteEffects.None, 0f);
                     }
                 }
