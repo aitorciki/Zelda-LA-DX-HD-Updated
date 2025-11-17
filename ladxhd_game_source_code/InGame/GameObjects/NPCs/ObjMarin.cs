@@ -62,7 +62,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isRailJumping;
         private float _holeAbsorbCounter;
         private bool _holeAbsorb;
-
+        private bool _wasInDeepWater;
         private bool _fountainSequence;
         private bool _fountainMouse;
         private bool _fountainSeqInit;
@@ -621,7 +621,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateFollowPlayer()
         {
             var Link = MapManager.ObjLink;
-
+            var fieldState = SystemBody.GetFieldState(_body);
+            var inDeepWater = fieldState.HasFlag(MapStates.FieldStates.DeepWater);
+            
             if (((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).IsTransitioningIn())
             {
                 _body.VelocityTarget = Vector2.Zero;
@@ -738,16 +740,35 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 return;
             }
-
+            // If rail jumping then exit early.
             if (Link.IsRailJumping())
                 return;
 
-            // landed on the ground?
-            if (_body.IsGrounded && !_body.WasGrounded)
+            // Check if landing on ground and if in deep water.
+            bool landedGround = _body.IsGrounded && !_body.WasGrounded;
+            bool enteredWater = inDeepWater && !_wasInDeepWater && _body.IsGrounded;
+
+            // Decide if we should play a splash.
+            if ((landedGround && inDeepWater) || enteredWater)
+            {
+                // Play a splash effect and sound.
+                var splashAnimator = new ObjAnimator(
+                    Map, 0, 0, 0, 3, Values.LayerPlayer,
+                    "Particles/splash", "idle", true);
+
+                splashAnimator.EntityPosition.Set(new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                    _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 6));
+
+                Map.Objects.SpawnObject(splashAnimator);
+
+                Game1.GameManager.PlaySoundEffect("D360-14-0E");
+            }
+            // Landed on solid ground.
+            else if (landedGround)
             {
                 Game1.GameManager.PlaySoundEffect("D378-07-07");
             }
-
             var playerDirection = Link.EntityPosition.Position - EntityPosition.Position;
             var playerDistance = Math.Abs(playerDirection.X) + Math.Abs(playerDirection.Y);
             if (playerDirection != Vector2.Zero)
@@ -803,20 +824,37 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 else
                     _animator.Play("jump_down_" + _walkDirection);
             }
-            // Play walk animation when moving.
+            // Play walk or swim animation when moving.
             else if (_followVelocity.Length() > 0.1f)
             {
-                _animator.Play("walk_" + _walkDirection);
+                if (inDeepWater)
+                    _animator.Play("swim_" + _walkDirection);
+                else
+                    _animator.Play("walk_" + _walkDirection);
+
                 _animator.SpeedMultiplier = walkSpeedMult;
             }
-            // Play stand animation when not moving.
+            // Play stand or swim animation when not moving.
             else
             {
-                _animator.Play("stand_" + _walkDirection);
+                // Marin's swim velocity is not monitored so use Link's to make things easier.
+                if (inDeepWater)
+                {
+                    _animator.Play("swim_" + _walkDirection);
+
+                    // The velocity is used to determine if the animation cycles frames or sits on frame 1.
+                    if (Link.GetSwimVelocity().Length() < 0.1)
+                        _animator.IsPlaying = false;
+                }
+                else
+                    _animator.Play("stand_" + _walkDirection);
             }
             // If the dungeon message is set Link entered a dungeon, so show the dialog now.
             _enterDungeonMessage = EnterDungeonMessage;
             EnterDungeonMessage = false;
+
+            // Store the previous field state for the next frame.
+            _wasInDeepWater = inDeepWater;
         }
 
         private void StartSinging()
