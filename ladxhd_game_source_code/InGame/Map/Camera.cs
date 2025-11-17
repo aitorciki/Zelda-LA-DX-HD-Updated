@@ -208,75 +208,86 @@ namespace ProjectZ.InGame.Map
         public void Draw(SpriteBatch spriteBatch)
         {
             // Create a border around the current field.
-            if (ClassicMode && GameSettings.ClassicBorder)
+            if (ClassicMode)
             {
-                int thickness = 4;
-                float scale = ScaleValue;
+                // Draw the black border even if using SGB border.
+                if (GameSettings.ClassicBorders > 0)
+                {
+                    int thickness = 4;
+                    float scale = ScaleValue;
 
-                // Screen center
-                var viewport = spriteBatch.GraphicsDevice.Viewport;
-                var screenCenter = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
+                    // Screen center
+                    var viewport = spriteBatch.GraphicsDevice.Viewport;
+                    var screenCenter = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
 
-                // Compute scaled field rect
-                var fieldX = fieldRect.X * scale - thickness;
-                var fieldY = fieldRect.Y * scale - thickness;
-                var fieldW = fieldRect.Width * scale + thickness * 2;
-                var fieldH = fieldRect.Height * scale + thickness * 2;
+                    // Compute scaled field rect
+                    var fieldX = fieldRect.X * scale - thickness;
+                    var fieldY = fieldRect.Y * scale - thickness;
+                    var fieldW = fieldRect.Width * scale + thickness * 2;
+                    var fieldH = fieldRect.Height * scale + thickness * 2;
 
-                // Compute the field center in world space
-                var fieldCenter = new Vector2(
-                    (fieldRect.X + fieldRect.Width / 2f) * scale,
-                    (fieldRect.Y + fieldRect.Height / 2f) * scale
-                );
+                    // Compute the field center in world space
+                    var fieldCenter = new Vector2(
+                        (fieldRect.X + fieldRect.Width / 2f) * scale,
+                        (fieldRect.Y + fieldRect.Height / 2f) * scale
+                    );
 
-                // Offset so that the field rect is centered on screen (like your camera)
-                var drawOffset = screenCenter - (fieldCenter - Location);
-                var tex = Resources.SprWhite;
+                    // Offset so that the field rect is centered on screen (like your camera)
+                    var drawOffset = screenCenter - (fieldCenter - Location);
+                    var tex = Resources.SprWhite;
 
-                // Draw borders (using alpha)
-                Color borderColor = Color.Black * GameSettings.ClassicAlpha;
+                    // Draw borders (using alpha)
+                    Color borderColor = Color.Black * GameSettings.ClassicAlpha;
 
-                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor); // Top
-                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor); // Bottom
-                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Left
-                spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Right
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor); // Top
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor); // Bottom
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Left
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor); // Right
 
-                // Fill everything outside the border with black.
-                var screenW = viewport.Width;
-                var screenH = viewport.Height;
+                    // Fill everything outside the border with black.
+                    var screenW = viewport.Width;
+                    var screenH = viewport.Height;
 
-                // Compute the rectangle’s position on screen
-                var rectScreenX = drawOffset.X + fieldX - Location.X;
-                var rectScreenY = drawOffset.Y + fieldY - Location.Y;
+                    // Compute the rectangle’s position on screen
+                    var rectScreenX = drawOffset.X + fieldX - Location.X;
+                    var rectScreenY = drawOffset.Y + fieldY - Location.Y;
 
-                // Apply alpha
-                Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
+                    // Apply alpha
+                    Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
 
-                // Top black bar
-                spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
+                    // Top black bar
+                    spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
 
-                // Bottom black bar
-                spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
+                    // Bottom black bar
+                    spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
 
-                // Left black bar
-                spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
+                    // Left black bar
+                    spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
 
-                // Right black bar
-                spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
+                    // Right black bar
+                    spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
+
+                    // If set to the Super Game Boy border.
+                    if (GameSettings.ClassicBorders == 2)
+                    {
+                        // Border’s original pixel size
+                        const int borderW = 256;
+                        const int borderH = 224;
+
+                        // Scaled size
+                        int scaledW = (int)(borderW * MapManager.Camera.Scale);
+                        int scaledH = (int)(borderH * MapManager.Camera.Scale);
+
+                        // Center it
+                        Vector2 pos = new Vector2((viewport.Width  - scaledW) / 2f, (viewport.Height - scaledH) / 2f);
+
+                        // Draw centered with point sampling.
+                        spriteBatch.End();
+                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+                        spriteBatch.Draw(Resources.sgbBorder, pos, null, Color.White, 0f, Vector2.Zero, MapManager.Camera.Scale, SpriteEffects.None, 0f);
+                    }
+                }
             }
-        }
-
-        public void DrawB(SpriteBatch spriteBatch)
-        {
-            if (!Game1.DebugMode)
-                return;
-
-            var size = 10;
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                Game1.WindowWidthEnd / 2 - (int)(size * Scale),
-                Game1.WindowHeightEnd / 2 - (int)(size * Scale),
-                (int)(size * Scale * 2),
-                (int)(size * Scale * 2)), Color.Pink * 0.25f);
         }
     }
 }

@@ -41,7 +41,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Camera Settings
             GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
             GameSettings.ClassicDungeon = saveManager.GetBool("ClassicDungeon", GameSettings.ClassicDungeon);
-            GameSettings.ClassicBorder = saveManager.GetBool("ClassicBorder", GameSettings.ClassicBorder);
+            GameSettings.ClassicBorders = saveManager.GetInt("ClassicBorders", GameSettings.ClassicBorders);
             GameSettings.ClassicAlpha = saveManager.GetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
             GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
             GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
@@ -103,7 +103,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Camera Settings
             saveManager.SetBool("ClassicCamera", GameSettings.ClassicCamera);
             saveManager.SetBool("ClassicDungeon", GameSettings.ClassicDungeon);
-            saveManager.SetBool("ClassicBorder", GameSettings.ClassicBorder);
+            saveManager.SetInt("ClassicBorders", GameSettings.ClassicBorders);
             saveManager.SetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
             saveManager.SetBool("CameraLock", GameSettings.CameraLock);
             saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);

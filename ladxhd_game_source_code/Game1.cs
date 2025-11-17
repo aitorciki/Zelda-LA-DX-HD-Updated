@@ -606,9 +606,15 @@ namespace ProjectZ
         {
             if (Camera.ClassicMode)
             {
-                // Force integer scale or the field boundary will be thrown off. The scaling value is calculated
-                // using the original dimensions (GameBoy) so higher scaling values can be achieved.
+                // Force integer scale or the field rect will be thrown off. The scaling value is calculated using the original dimensions of the
+                // Game Boy version of Link's Awakening, minus the 16 pixels HUD ( 160x144 >> 160x128 ) so higher scaling values can be achieved.
                 int gameScale = Math.Max(1, Math.Min(WindowWidth / 160, WindowHeight / 128));
+
+                // Super Game Boy border is enabled. Calculate from the base resolution of the border instead.
+                if (GameSettings.ClassicBorders == 2)
+                    gameScale = Math.Max(1, Math.Min(WindowWidth / 256, WindowHeight / 224));
+
+                // Send the game scale to the proper places it needs to go.
                 MapManager.Camera.Scale = gameScale;
                 GameManager.SetGameScale(gameScale);
             }

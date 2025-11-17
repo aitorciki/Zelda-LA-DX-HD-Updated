@@ -83,6 +83,7 @@ namespace ProjectZ.InGame.Things
         public static Texture2D SprLightRoomV;
         public static Texture2D NoiseTexture;
         public static Texture2D SprIconOptions, SprIconErase, SprIconCopy, EditorIconEdit, EditorIconSelect;
+        public static Texture2D sgbBorder;
 
         public static List<Texture> TextureList = new();
         public static List<Texture> ReloadQueue = new();
@@ -361,7 +362,7 @@ namespace ProjectZ.InGame.Things
             SprItemPorRedux = GetTexture("items_redux_por.png");
             SprItemRusRedux = GetTexture("items_redux_rus.png");
 
-            // load fonts
+            // Load various SpriteFonts. 
             EditorFont = content.Load<SpriteFont>("Fonts/editor font");
             EditorFontHeight = (int)EditorFont.MeasureString("H").Y;
             EditorFontMonoSpace = content.Load<SpriteFont>("Fonts/editor mono font");
@@ -384,21 +385,25 @@ namespace ProjectZ.InGame.Things
             EditorIconEdit = content.Load<Texture2D>("Editor/edit");
             EditorIconSelect = content.Load<Texture2D>("Editor/select");
 
+            // Lighting and shadow textures
             SprLight = content.Load<Texture2D>("Light/light");
             SprLightRoomH = content.Load<Texture2D>("Light/ligth room");
             SprLightRoomV = content.Load<Texture2D>("Light/ligth room vertical");
-
             SprShadow = content.Load<Texture2D>("Light/shadow");
             LoadContentTextureWithAtlas(content, "Light/doorLight");
 
+            // These are loaded in but appear to be unused
             SprIconOptions = content.Load<Texture2D>("Menu/gearIcon");
             SprIconErase = content.Load<Texture2D>("Menu/trashIcon");
             SprIconCopy = content.Load<Texture2D>("Menu/copyIcon");
 
-            // need to have pre multiplied alpha
+            // Super Game Boy Border
+            sgbBorder = content.Load<Texture2D>("Menu/sgb_border");
+
+            // Fog texture
             SprFog = content.Load<Texture2D>("Objects/fog");
 
-            // load shader
+            // Load shader effects
             RoundedCornerEffect = content.Load<Effect>("Shader/RoundedCorner");
             BlurEffectH = content.Load<Effect>("Shader/BlurH");
             BlurEffectV = content.Load<Effect>("Shader/BlurV");

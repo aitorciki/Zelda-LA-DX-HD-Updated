@@ -12,10 +12,10 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _cameraOptionsList;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
-        private readonly InterfaceListLayout toggleClassicDungeon;
-        private readonly InterfaceListLayout toggleCameraBorder;
-        private readonly InterfaceListLayout toggleCameraLock;
-        private readonly InterfaceSlider sliderBorderOpacity;
+        private readonly InterfaceListLayout _toggleClassicDungeon;
+        private readonly InterfaceListLayout _toggleCameraLock;
+        private readonly InterfaceSlider _sliderCameraBorder;
+        private readonly InterfaceSlider _sliderBorderOpacity;
         public static bool _reloadMenus;
         private bool _showTooltip;
 
@@ -37,29 +37,30 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(toggleClassicCamera);
 
             // Button: Dungeons Only
-            toggleClassicDungeon = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            _toggleClassicDungeon = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_classicdungeon", GameSettings.ClassicDungeon, newState => { GameSettings.ClassicDungeon = newState; Game1.ScaleChanged = true; });
-            _contentLayout.AddElement(toggleClassicDungeon);
+            _contentLayout.AddElement(_toggleClassicDungeon);
 
-            // Button: Camera Border
-            toggleCameraBorder = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_camera_camborder", GameSettings.ClassicBorder, newState => { GameSettings.ClassicBorder = newState; });
-            _contentLayout.AddElement(toggleCameraBorder);
+            // Slider: Camera Border
+            _sliderCameraBorder = new InterfaceSlider(Resources.GameFont, "settings_camera_camborder",
+                buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; }) 
+                { SetString = number => ClassicBorderAdjustment(number) };
+            _contentLayout.AddElement(_sliderCameraBorder);
 
             // Slider: Blackout Amount
-            sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
+            _sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
                 buttonWidth, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
                 number =>
                 {
                     GameSettings.ClassicAlpha = (float)(number * 0.01);
                 })
             { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
-            _contentLayout.AddElement(sliderBorderOpacity);
+            _contentLayout.AddElement(_sliderBorderOpacity);
 
             // Button: Camera Lock
-            toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            _toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_cameralock", GameSettings.CameraLock, newState => { GameSettings.CameraLock = newState; });
-            _contentLayout.AddElement(toggleCameraLock);
+            _contentLayout.AddElement(_toggleCameraLock);
 
             // Button: Smooth Camera
             var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
@@ -116,15 +117,25 @@ namespace ProjectZ.InGame.Pages
         public void UpdateInterfaceColors()
         {
             // Toggling classic camera "grays out" some options depending on its state.
-            toggleClassicDungeon.ToggleElementColors(GameSettings.ClassicCamera);
-            toggleCameraBorder.ToggleElementColors(GameSettings.ClassicCamera);
-            sliderBorderOpacity.ToggleSliderColors(GameSettings.ClassicCamera);
-            toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);
+            _toggleClassicDungeon.ToggleElementColors(GameSettings.ClassicCamera);
+            _sliderCameraBorder.ToggleSliderColors(GameSettings.ClassicCamera);
+            _sliderBorderOpacity.ToggleSliderColors(GameSettings.ClassicCamera);
+            _toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);
         }
 
         private string AddedMoveSpeedSliderAdjustment(int number)
         {
             return ": " + number + "%";
+        }
+
+        private string ClassicBorderAdjustment(int number)
+        {
+            return ": " + number switch
+            {
+                0 => Game1.LanguageManager.GetString("tooltip_camera_camborderA", "error"),
+                1 => Game1.LanguageManager.GetString("tooltip_camera_camborderB", "error"),
+                2 => Game1.LanguageManager.GetString("tooltip_camera_camborderC", "error")
+            };
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)

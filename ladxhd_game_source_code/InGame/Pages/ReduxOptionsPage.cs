@@ -125,13 +125,12 @@ namespace ProjectZ.InGame.Pages
             // Swap out the menu border with it's replacement.
             Resources.RefreshMenuBorderTexture(_content, number);
 
-            string label = number switch
+            return ": " + number switch
             {
-                0 => ": " + Game1.LanguageManager.GetString("settings_redux_menubricksA", "error"),
-                1 => ": " + Game1.LanguageManager.GetString("settings_redux_menubricksB", "error"),
-                2 => ": " + Game1.LanguageManager.GetString("settings_redux_menubricksC", "error")
+                0 => Game1.LanguageManager.GetString("settings_redux_menubricksA", "error"),
+                1 => Game1.LanguageManager.GetString("settings_redux_menubricksB", "error"),
+                2 => Game1.LanguageManager.GetString("settings_redux_menubricksC", "error")
             };
-            return label;
         }
 
         public void PressButtonDialogFontChange(bool newState)
