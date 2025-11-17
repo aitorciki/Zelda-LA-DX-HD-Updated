@@ -126,6 +126,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 18, ShadowHeight = 6 });
 
             new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public void Spawn(Vector3 position)
