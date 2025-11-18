@@ -73,7 +73,7 @@
   * Fix Classic Camera + Dungeon Only options to work when inside the egg and the now "not dungeon" castle.
 
 ## **v1.4.5**
-### ** The "Even More Maintenance" Update**
+### **The "Even More Maintenance" Update**
   * More Classic Camera fixes: Keep more objects "alive" offscreen, fix navigating the egg, disable during the ending.
   * Add "lahdmod" support for the textbox and the HUD. These can be used to customize the size and positions.
   * Start to skip dialog boxes won't skip options. Options can only be selected with the confirm button.
