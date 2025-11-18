@@ -276,6 +276,10 @@ namespace ProjectZ.InGame.Map
                         // Center the SGB border on the screen.
                         Vector2 pos = new Vector2((viewport.Width  - scaledW) / 2f, (viewport.Height - scaledH) / 2f);
 
+                        // Draw centered with point sampling.
+                        spriteBatch.End();
+                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+
                         // Draw the border using nearest neighbor (point filtering) for sharp pixels).
                         spriteBatch.Draw(Resources.sgbBorder, pos, null, Color.White, 0f, Vector2.Zero, MapManager.Camera.Scale, SpriteEffects.None, 0f);
                     }
