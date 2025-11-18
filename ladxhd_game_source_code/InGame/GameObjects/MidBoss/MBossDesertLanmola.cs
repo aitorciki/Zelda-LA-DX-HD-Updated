@@ -48,10 +48,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _position = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = true;
+            OnReset = Reset;
 
             _triggerKey = triggerKey;
             _saveKey = saveKey;
-            _field = map.GetField(posX, posY, -16);
+            _field = map.GetField(posX, posY);
             _fieldSmall = map.GetField(posX, posY, 16);
 
             if (!string.IsNullOrEmpty(_saveKey) &&
@@ -108,19 +110,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
         }
 
+        private void Reset()
+        {
+            _lives = ObjLives.DesertLanmola;
+        }
+
         private void OnKeyChange()
         {
+            // The Lanmola is trigger when stepping over a leaveButton found
+            // inside the two entrances to the quicksand area.
             var triggerState = Game1.GameManager.SaveManager.GetString(_triggerKey);
             Game1.GameManager.SaveManager.SetString(_triggerKey, "0");
 
-            // was triggered?
+            // The Lanmola leaveButton was triggered.
             if (_playerLeft && triggerState == "1" && !_defeated)
             {
                 _playerLeft = false;
 
-                // start boss music
+                // Start the boss music and the dialog path.
                 Game1.GameManager.SetMusic(79, 2);
-
                 Game1.GameManager.StartDialogPath("desertLanmola");
 
                 if (_aiComponent.CurrentStateId == "idle")
@@ -130,8 +138,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void Update()
         {
-            // player left?
-            if (!_playerLeft && !_field.Contains(MapManager.ObjLink.BodyRectangle))
+            // Get the current field the boss is in.
+            Rectangle currentField = GameMath.RectFToRect(_field);
+
+            // Adjust the rect slightly when classic camera is enabled.
+            if (Camera.ClassicMode)
+                currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
+
+            // The player left the field.
+            if (!_playerLeft && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 _playerLeft = true;
                 Game1.GameManager.SetMusic(-1, 2);
