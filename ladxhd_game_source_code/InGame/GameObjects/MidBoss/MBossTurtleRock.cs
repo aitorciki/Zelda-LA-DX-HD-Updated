@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private readonly Animator _animator;
         private readonly AnimationComponent _animationComponent;
+        private readonly BoxCollisionComponent _collisionComponent;
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly CSprite _sprite;
@@ -168,7 +169,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, 0, 16, 14, 8), Values.CollisionTypes.Enemy));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, -8, 0, 16, 14, 8), Values.CollisionTypes.Enemy));
         }
 
         private void Reset()
@@ -203,7 +204,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _headParts[4] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[4].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[4].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
             _headParts[5] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[5].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[5].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
 
-            // set the part position
+            // Invert component states.
+            _collisionComponent.IsActive = true;
+            _damageField.IsActive = false;
+
+            // Reset the part positions.
             for (var i = 0; i < _partPosition.Length; i++)
                 _partPosition[i] = new Vector3(ResetPosition.X + _headPartOffset[i].X, ResetPosition.Y + _headPartOffset[i].Y, 0);
 
@@ -510,8 +515,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 Game1.GameManager.SetMusic(56, 2);
 
-                ((BoxCollisionComponent)Components[CollisionComponent.Index]).IsActive = false;
-                ((DamageFieldComponent)Components[DamageFieldComponent.Index]).IsActive = true;
+                _collisionComponent.IsActive = false;
+                _damageField.IsActive = true;
                 _aiComponent.ChangeState("wobble");
             }
         }
