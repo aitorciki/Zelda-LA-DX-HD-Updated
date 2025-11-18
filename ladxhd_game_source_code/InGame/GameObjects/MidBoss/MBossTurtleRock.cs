@@ -64,14 +64,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 IsDead = true;
                 return;
             }
-
             Tags = Values.GameObjectTag.Enemy;
 
             _startPosition = new Vector2(posX + 24, posY + 16);
             _centerPosition = new Vector2(_startPosition.X, _startPosition.Y + 32);
 
             EntityPosition = new CPosition(_startPosition.X, _startPosition.Y, 0);
+            ResetPosition  = new CPosition(_startPosition.X, _startPosition.Y, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
+            CanReset = true;
+            OnReset = Reset;
 
             _body = new BodyComponent(EntityPosition, -8, 0, 16, 16, 8)
             {
@@ -161,12 +163,54 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed) { InteractRect = new Rectangle(-65,-80, 130,160) });
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, 0, 16, 14, 8), Values.CollisionTypes.Enemy));
+        }
+
+        private void Reset()
+        {
+            // If the boss is dying, don't let it respawn even on field transition.
+            if (_isDead)
+            {
+                Map.Objects.RegisterAlwaysAnimateObject(this);
+                return;
+            }
+            // To restore this thing back to it's default state, a LOT needs to be reset.
+            _partPosition = new Vector3[6];
+            _partVelocity = new Vector3[6];
+            _partBreakOrder = new[] { 0, 5, 3, 4, 1, 2 };
+            _partCounter = -500;
+            _partBreakIndex = 0;
+
+            var headWidth = (_stoneHead.SourceRectangle.Width - 16) / 2;
+            var headHeight = _stoneHead.SourceRectangle.Height / 2;
+
+            _headPartOffset[0] = new Vector2(0, 0);
+            _headPartOffset[1] = new Vector2(headWidth, 0);
+            _headPartOffset[2] = new Vector2(headWidth + 8, 0);
+            _headPartOffset[3] = new Vector2(headWidth + 16, 0);
+            _headPartOffset[4] = new Vector2(0, headHeight);
+            _headPartOffset[5] = new Vector2(_stoneHead.SourceRectangle.Width / 2, headHeight);
+
+            _headParts[0] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[0].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[0].Y, headWidth, headHeight);
+            _headParts[1] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[1].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[1].Y, 8, headHeight);
+            _headParts[2] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[2].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[2].Y, 8, headHeight);
+            _headParts[3] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[3].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[3].Y, headWidth, headHeight);
+            _headParts[4] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[4].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[4].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
+            _headParts[5] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[5].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[5].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
+
+            // set the part position
+            for (var i = 0; i < _partPosition.Length; i++)
+                _partPosition[i] = new Vector3(ResetPosition.X + _headPartOffset[i].X, ResetPosition.Y + _headPartOffset[i].Y, 0);
+
+            _animator.Play("stone");
+            _aiComponent.ChangeState("stone");
+            _aiDamageState.CurrentLives = ObjLives.TurtleRock;
+            Game1.GameManager.SetMusic(-1, 2);
         }
 
         public override void Init()
