@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -8,8 +10,6 @@ using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
-using System.Collections.Generic;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
@@ -181,6 +181,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 return;
             }
             // To restore this thing back to it's default state, a LOT needs to be reset.
+            _body.Velocity = Vector3.Zero;
+            _body.VelocityTarget = Vector2.Zero;
+
+            _attackable = false;
             _partPosition = new Vector3[6];
             _partVelocity = new Vector3[6];
             _partBreakOrder = new[] { 0, 5, 3, 4, 1, 2 };
