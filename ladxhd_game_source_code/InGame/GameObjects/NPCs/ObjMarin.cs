@@ -661,7 +661,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             // jump
-            if (Link.IsJumpingState(Link.CurrentState) && _body.IsGrounded &&
+            if (Link.IsJumpingState(Link.CurrentState) && _body.IsGrounded && !inDeepWater &&
                 (Link.GetRailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
             {
                 _body.Velocity.Z = 2.35f;
@@ -813,7 +813,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _walkDirection = AnimationHelper.GetDirection(_followVelocity);
 
             // Play jumping animation if Link jumped.
-            if (Link.IsJumping() && _followVelocity.Length() < 0.1f)
+            if (Link.IsJumping() && !inDeepWater && _followVelocity.Length() < 0.1f)
             {
                 _animator.Play("jump_up_" + _walkDirection);
             }
