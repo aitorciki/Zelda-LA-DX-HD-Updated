@@ -1,5 +1,40 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.8**
+### **The "Reaching the Final Stretch" Update**
+  * The "Always Animate" system has been overhauled to be safer and more reliable and more objects have been added to it.
+  * Classic Camera: Turn "Classic Border" into a slider from a toggle and add "Super Game Boy" border option.
+  * Classic Camera: Field transitions are now more accurate. Objects that reset on field transition now happen during the transition.
+  * Classic Camera: Several objects are now respawned on field transition: grass, bushes, crystals, rocks, pots, etc.
+  * Classic Camera: Throwing most destructible objects now shatter against the edge of the field.
+  * Add a block reset in dungeon 2 nightmare key room with the Pols Voice, Keese, and Stalfos.
+  * Dungeon 3 map has been rebuilt to be a single map instead of 4 smaller maps which had an incorrect minimap. 
+  * Nightmare key is no longer consumed on usage. This is not retroactive and only works on future dungeon clears.
+  * Marin can now swim in deep water. This is only possible after Level 8 and "Nothing is Missable" is enabled as Marin will join as a follower.
+  * The flying rooster can now be picked up while swimming like the original game.
+  * Created redrawn icons for the built-in map editor. It appears they were upscaled which made them look blurry.
+  * Adjusted the formula for how 2D jump height is calculated based on how long the button is held for more variation in height.
+  * Bow Wow can eat underwater fish and has a 50% chance to eat something immediately after a map loads in.
+  * Created a "no followers" object that is placed on maps to disable followers rather than a hardcoded map list in the game code.
+  * Fix disabling Bow Wow push and hit components immediately after rescuing him from the moblin cave.
+  * Fix the bed transition when entering the dream in the Dream Shrine. Link would jump on the bed and just stand there.
+  * Fix a soft lock in Seashell Mansion where the player could jump over the door and into the abyss.
+  * Fix Trendy Game crane to start playing its "activation" sound immediately after picking up an item.
+  * Fix playing "item get" sound when unlocking the photo album after the very first photo event.
+  * Fix enemy Pairodd activation range to be closer to original game. Also conveyor belts should not affect them.
+  * Fix Pairodd to not shoot a projectile immediately after resetting the room they are in when classic camera is active.
+  * Fix some incorrect positions of enemies on different maps and fix them activating too soon.
+  * Fix dungeon teleporters to drop an item when teleportation to begins. This affected all dungeons except (old) dungeon 3 and dungeon 7.
+  * Fix dungeon 2 room with a Spark and dungeon barriers where the Spark wouldn't take the correct path.
+  * Fix dungeon 6 door condition by room near entrance with 3 Wizzrobes. It is now possible to exit through that door later on.
+  * Fix miniboss music continuing to play when leaving the room and it wasn't defeated. Affects Dodongo Snakes (dungeon 3/6/8) and Hinox (dungeon 7).
+  * Fix similar but slightly different miniboss scenarios: Lanmola (from the desert) and Turtle Rock (entrance to dungeon 8).
+  * Fix various stones/blocks in different maps that should either be or not be pushable compared to original game.
+  * Fix cucco attack swarm to stop on field transition, not freeze on the screen edge (both classic camera), and reset the attack counter when done.
+  * Fix a potential "hitch" in the air when falling jumping/falling into 2D maps from a hole above (such as dungeon 1 Moldorm pit).
+  * Fix keyboard keys when in editor mode to actually map to a real keyboard.
+  * Many other small fixes and tweaks spread out everywhere. This version had too many changes to keep track of everything.
+  
 ## **v1.4.7**
 ### **The "Feature Complete" Update**
   * Implement system to reset enemy positions when changing fields when Classic Camera is enabled.
