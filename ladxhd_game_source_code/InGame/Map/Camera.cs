@@ -242,8 +242,9 @@ namespace ProjectZ.InGame.Map
                     // Draw Order: Top / Bottom / Left / Right
                     spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor);
                     spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y), thickness, (int)fieldH), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
+
 
                     // Fill everything outside the border with black.
                     var screenW = viewport.Width;
@@ -259,8 +260,8 @@ namespace ProjectZ.InGame.Map
                     // Draw Order: Top / Bottom / Left / Right
                     spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
                     spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
-                    spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY, (int)rectScreenX, (int)fieldH), blackoutColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH), blackoutColor);
+                    spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY - 1, (int)rectScreenX, (int)fieldH + 2), blackoutColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY - 1, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH + 2), blackoutColor);
 
                     // If set to the Super Game Boy border.
                     if (GameSettings.ClassicBorders == 2)
