@@ -68,11 +68,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 if (state == "1")
                     IsDead = true;
                 // bowwow is following the player
-                if (state == "2" || state == "3")
+                if (state == "2" || state == "3" || state == "5")
                     _followMode = true;
+                // bowwow is home
+                if (state == "4")
+                    _followMode = false;
             }
 
-            if (string.IsNullOrEmpty(mode) && state != "2" && state != "3")
+            if (string.IsNullOrEmpty(mode) && state != "2" && state != "3" && state != "5")
                 IsDead = true;
 
             if (IsDead)
@@ -154,7 +157,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void KeyChanged()
         {
             var state = Game1.GameManager.SaveManager.GetString("bowWow");
-            if (state != null && state == "2")
+            if (state != null && (state == "2" || state == "3" || state == "5"))
                 SetFollowMode(true);
         }
 
