@@ -9,7 +9,6 @@ using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using SharpDX.Direct3D9;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {

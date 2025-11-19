@@ -3,6 +3,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -218,6 +219,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 spawnedObject = Map.Objects.SpawnObject(objSpawnedObject);
                 if (spawnedObject && objSpawnedObject is ObjItem spawnedItem)
                     spawnedItem.SetVelocity(new Vector3(direction.X * 0.5f, direction.Y * 0.5f, 0.75f));
+
+                // If the spawned object is a hole there needs to be a way to track it was created
+                // from a bush so it can be set to inactive when resetting the current field.
+                if (objSpawnedObject is ObjHole spawnedHole)
+                    spawnedHole.BushSpawn();
             }
 
             if (!spawnedObject)
