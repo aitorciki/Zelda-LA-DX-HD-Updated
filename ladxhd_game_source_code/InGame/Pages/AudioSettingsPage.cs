@@ -42,6 +42,11 @@ namespace ProjectZ.InGame.Pages
                 })
             { SetString = number => " " + number + "%" });
 
+            // Button: Classic Music Tile Cues
+            var toggleAudioClassic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+                "settings_audio_classic_music", GameSettings.ClassicMusic, newState => { GameSettings.ClassicMusic = newState; });
+            _contentLayout.AddElement(toggleAudioClassic);
+
             // Button: Mute Inactive Window
             var toggleAudioMute = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
                 "settings_audio_mute_inactive", GameSettings.MuteInactive, newState => { GameSettings.MuteInactive = newState; });
@@ -124,9 +129,10 @@ namespace ProjectZ.InGame.Pages
             {
                 case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_music_volume", "error"); break; }
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_effect_volume", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_mute_inactive", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_heartbeep", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_mute_powerups", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_classic_music", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_mute_inactive", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_heartbeep", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_audio_mute_powerups", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

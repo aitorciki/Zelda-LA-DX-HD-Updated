@@ -13,6 +13,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private string[,] _musicData;
         private string _lastTrack;
 
+        private bool _currentEnabled;
+
         // @TODO: fade in/out
         public ObjMusicTile() : base("editor music") { }
 
@@ -20,7 +22,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
-            _musicData = DataMapSerializer.LoadData(Path.Combine(Values.PathContentFolder, "musicOverworld.data"));
+            // Store current option to detect change later.
+            _currentEnabled = GameSettings.ClassicMusic;
+
+            // Load the music tilemap data.
+            UpdateMusicData();
         }
 
         private void Update()
@@ -43,6 +49,25 @@ namespace ProjectZ.InGame.GameObjects.Things
                     }
                 }
             }
+            // Detect if the user changed the classic music cues option and reload music tilemap data.
+            if (_currentEnabled != GameSettings.ClassicMusic)
+                UpdateMusicData();
+        }
+
+        private void UpdateMusicData()
+        {
+            // Default to modern music tilemap data.
+            string musicTileData = "musicOverworld.data";
+
+            // Load classic music tilemap data.
+            if (GameSettings.ClassicMusic)
+                musicTileData = "musicOverworldClassic.data";
+
+            // Reload the data into the game.
+            _musicData = DataMapSerializer.LoadData(Path.Combine(Values.PathContentFolder, musicTileData));
+
+            // Update the currently enabled boolean to detect a future change.
+            _currentEnabled = GameSettings.ClassicMusic;
         }
     }
 }

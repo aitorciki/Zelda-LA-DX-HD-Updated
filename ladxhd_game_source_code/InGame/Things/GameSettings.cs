@@ -22,6 +22,7 @@
         // Audio Settings
         private static int    _musicVolume    =  100;
         private static int    _effectVolume   =  100;
+        public static bool    ClassicMusic    =  false;
         public static bool    MuteInactive    =  true;
         public static bool    HeartBeep       =  true;
         public static bool    MutePowerups    =  false;

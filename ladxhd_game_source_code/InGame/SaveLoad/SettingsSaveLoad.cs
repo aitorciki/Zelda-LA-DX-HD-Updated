@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Audio Settings
             GameSettings.MusicVolume = saveManager.GetInt("MusicVolume", GameSettings.MusicVolume);
             GameSettings.EffectVolume = saveManager.GetInt("EffectVolume", GameSettings.EffectVolume);
+            GameSettings.ClassicMusic = saveManager.GetBool("ClassicMusic", GameSettings.ClassicMusic);
             GameSettings.MuteInactive = saveManager.GetBool("MuteInactive", GameSettings.MuteInactive);
             GameSettings.HeartBeep = saveManager.GetBool("HeartBeep", GameSettings.HeartBeep);
             GameSettings.MutePowerups = saveManager.GetBool("MutePowerups", GameSettings.MutePowerups);
@@ -96,6 +97,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Audio Settings
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);
             saveManager.SetInt("EffectVolume", GameSettings.EffectVolume);
+            saveManager.SetBool("ClassicMusic", GameSettings.ClassicMusic);
             saveManager.SetBool("MuteInactive", GameSettings.MuteInactive);
             saveManager.SetBool("HeartBeep", GameSettings.HeartBeep);
             saveManager.SetBool("MutePowerups", GameSettings.MutePowerups);
