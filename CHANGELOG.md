@@ -7,6 +7,7 @@
   * Classic Camera: Field transitions are now more accurate. Objects that reset on field transition now happen during the transition.
   * Classic Camera: Several objects are now respawned on field transition: grass, bushes, crystals, rocks, pots, etc.
   * Classic Camera: Throwing most destructible objects now shatter against the edge of the field.
+  * Bow Wow can now be taken as a follower after Level 8 has been completed and "Nothing is Missable" is enabled.
   * Add a block reset in dungeon 2 nightmare key room with the Pols Voice, Keese, and Stalfos.
   * Dungeon 3 map has been rebuilt to be a single map instead of 4 smaller maps which had an incorrect minimap. 
   * Nightmare key is no longer consumed on usage. This is not retroactive and only works on future dungeon clears.
