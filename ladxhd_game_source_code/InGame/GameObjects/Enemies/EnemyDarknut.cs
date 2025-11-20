@@ -30,7 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private const float MoveSpeed = 0.5f;
         private const float AttackSpeed = 0.55f;
-        private const int AttackRange = 80;
+        private const int AttackRange = 60;
 
         private int _direction;
         private int _lives = ObjLives.Darknut;

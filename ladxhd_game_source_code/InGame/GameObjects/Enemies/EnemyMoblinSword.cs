@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private const float MoveSpeed = 0.5f;
         private const float AttackMoveSpeed = 0.55f;
-        private const int AttackRange = 80;
+        private const int AttackRange = 60;
 
         private int _direction;
         private int _lives = ObjLives.MoblinSword;
@@ -199,13 +199,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var playerDirection = (MapManager.ObjLink.EntityPosition.Position + AnimationHelper.DirectionOffset[_direction] * 3) - EntityPosition.Position;
 
-            if (!_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) ||
-                playerDirection.Length() > AttackRange)
+            if (!_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) || playerDirection.Length() > AttackRange)
             {
                 _aiComponent.ChangeState("idle");
                 return;
             }
-
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 
@@ -220,7 +218,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateDirection(Vector2 direction)
         {
             _direction = AnimationHelper.GetDirection(direction);
-
             _animator.Play("walk_" + _direction);
             _sword.Animator.Play("walk_" + _direction);
         }
@@ -246,7 +243,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Play("walk_" + _direction);
             _sword.Animator.Play("walk_" + _direction);
-
             _animator.SpeedMultiplier = 3f;
             _sword.Animator.SpeedMultiplier = 3f;
         }
