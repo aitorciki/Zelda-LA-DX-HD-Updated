@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Vector2[] _directions = { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
         private readonly int[] _maxPosition = new int[4];
 
+        private const int MovementStep = 2;
+
         private Vector2 _startPosition;
         private float _movePosition;
         private int _moveDir;
@@ -67,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("cooldown", stateCooldown);
             _aiComponent.ChangeState("idle");
 
-            var bodyBox = new CBox(EntityPosition, 2, 2, 0, 12, 12, 4);
+            var bodyBox = new CBox(EntityPosition, 0, 0, 0, 16, 16, 4);
             AddComponent(PushableComponent.Index, new PushableComponent(bodyBox, OnPush) { RepelMultiplier = 1.5f });
             AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(bodyBox, HitType.Enemy, 4));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -93,53 +95,90 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return Values.HitCollision.RepellingParticle;
         }
 
+        private int PredictMaxMove(int dirIndex)
+        {
+            int step = 1;
+            int max = _maxPosition[dirIndex];
+            Vector2 direction = _directions[dirIndex];
+
+            // Sweep forward until max distance
+            for (int dist = 0; dist <= max; dist += step)
+            {
+                float x = _startPosition.X + direction.X * dist;
+                float y = _startPosition.Y + direction.Y * dist;
+
+                // Check collision at this position
+                Box block = Box.Empty;
+                Box box = new Box(x, y, 0, 16, 16, 4);
+                if (Map.Objects.Collision(box, Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref block))
+                    return dist;
+            }
+            return max;
+        }
+
         private void UpdateIdle()
         {
-            // trigger trap
-            for (var i = 0; i < _directions.Length; i++)
+            // Loop through the directions the trap can move.
+            for (int i = 0; i < _directions.Length; i++)
+            {
+                // Check if a direction intercepts Link.
                 if (_collisionRectangles[i].Intersects(MapManager.ObjLink.BodyRectangle))
                 {
+                    // Predict the amount of pixels it can move.
+                    int predicted = PredictMaxMove(i);
+
+                    // The predicted value must exceed it's movement step.
+                    if (predicted < MovementStep)
+                        return;
+
+                    // Set the maximum position it can move.
+                    _maxPosition[i] = predicted;
+
+                    // Play the movement sound effect and start moving.
                     Game1.GameManager.PlaySoundEffect("D378-10-0A");
                     _aiComponent.ChangeState("snap");
                     _moveDir = i;
                 }
+            }
         }
 
         private void UpdateSnap()
         {
-            _movePosition += 2 * Game1.TimeMultiplier;
-            Box blockRectangle = Box.Empty;
-
-            // Collided with an object such as a block.
-            if (Map.Objects.Collision(new Box(EntityPosition.X, EntityPosition.Y, 0, 16, 16, 16), 
-                Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref blockRectangle))
-                _maxPosition[_moveDir] = (int)_movePosition;
+            // Move the trap towards Link's position.
+            _movePosition += MovementStep * Game1.TimeMultiplier;
 
             // Reached the end of its destination.
             if (_movePosition >= _maxPosition[_moveDir])
             {
+                // Play the collision sound effect and snap the trap into place.
                 _movePosition = _maxPosition[_moveDir];
                 _aiComponent.ChangeState("wait");
                 Game1.GameManager.PlaySoundEffect("D360-07-07");
             }
+            // Update the trap's position until it reaches it's max movement value.
             UpdatePosition();
         }
 
         private void UpdateMoveBack()
         {
+            // Move the trap back into it's original position.
             if (_movePosition > 0)
                 _movePosition -= 0.5f * Game1.TimeMultiplier;
+
+            // When it reaches it's destination, snap it into place.
             else
             {
                 _movePosition = 0;
                 _aiComponent.ChangeState("cooldown");
+            
             }
-
+            // Update the trap's position until it reaches it's original position.
             UpdatePosition();
         }
 
         private void UpdatePosition()
         {
+            // Update the position of the trap.
             EntityPosition.Set(_startPosition + _directions[_moveDir] * _movePosition);
         }
     }
