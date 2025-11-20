@@ -110,22 +110,18 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             // If it's the nightmare door, check for the key but don't consume it.
             if (_pushItem == "nightmarekey")
-            {
-                // If it's been collected, it will show up as "0" and not "null".
                 if (Game1.GameManager.GetItem(_pushItem)?.Count == null)
                 {
-                    // Start the dialog if the player doesn't have the nightmare key.
-                    Game1.GameManager.StartDialogPath("door_" + _pushItem);
+                    // Don't show the dialog if disable helper text is enabled.
+                    if (!GameSettings.NoHelperText)
+                        Game1.GameManager.StartDialogPath("door_" + _pushItem);
                     return false;
                 }
-            }
+
             // If it's a small key then try to remove one.
             else if (!Game1.GameManager.RemoveItem(_pushItem, 1))
-            {
-                // Start a dialog if the player does not have a small key.
-                Game1.GameManager.StartDialogPath("door_" + _pushItem);
                 return false;
-            }
+
             // Only play the sound effect when the player uses a key to open the door.
             Game1.GameManager.PlaySoundEffect("D378-04-04", false);
 
