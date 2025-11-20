@@ -76,17 +76,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             };
 
             var cSprite = new CSprite(spriteId, EntityPosition, new Vector2(-sprite.SourceRectangle.Width / 2, -sprite.SourceRectangle.Height + _offsetY));
+            var carryRect = new CRectangle(EntityPosition, new Rectangle(-sprite.SourceRectangle.Width / 2, -13 + _offsetY, sprite.SourceRectangle.Width, 13));
 
             if (!string.IsNullOrEmpty(_dialogPath))
                 AddComponent(PushableComponent.Index, new PushableComponent(collisionBox, OnPush) { InertiaTime = 50 });
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(
-                new CRectangle(EntityPosition, new Rectangle(
-                    -sprite.SourceRectangle.Width / 2, -13 + _offsetY, sprite.SourceRectangle.Width, 13)), CarryInit, CarryUpdate, CarryThrow)
-            {
-                IsHeavy = _isHeavy
-            });
+            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(carryRect, CarryInit, CarryUpdate, CarryThrow) {IsHeavy = _isHeavy});
             AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(cSprite, Values.LayerPlayer));
@@ -273,14 +269,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 // spawn small particle stones
                 SpawnParticles(EntityPosition.ToVector3());
+
                 if (_isHeavy)
                     SpawnParticles(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z + 12));
             }
+            // If not on a spiny beetle, create a respawner on the object.
+            if (!OnSpinyBeetle)
+                Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
 
-            // Remove the stone and create a respawner.
-            Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
+            // Delete the stone.
             Map.Objects.DeleteObjects.Add(this);
-
             _isAlive = false;
         }
 

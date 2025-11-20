@@ -1,9 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -106,7 +107,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("running", stateRunning);
             new AiFallState(_aiComponent, _body);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives);
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnDeath = OnDeath };
             _aiComponent.ChangeState("moving");
 
             var damageCollider = new CBox(EntityPosition, -7, -4, 0, 14, 10, 4);
@@ -262,7 +263,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             // Object has been removed and beetle is vulnerable.
             _sprite.IsVisible = true;
+
             return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+        }
+
+        private void OnDeath(bool pieceOfPower)
+        {
+            Map.Objects.SpawnObject(new EnemySpinyBeetleRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 7, _type));
+
+            _aiDamageState.BaseOnDeath(pieceOfPower);
         }
 
         private void OnCollision(Values.BodyCollision direction)
