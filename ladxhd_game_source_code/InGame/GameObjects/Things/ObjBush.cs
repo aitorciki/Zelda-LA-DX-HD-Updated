@@ -3,7 +3,6 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
-using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -258,8 +257,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D378-05-05");
 
             if (RespawnGras)
-                Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8,
-                    _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
+                Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
 
             // delete this object
             Map.Objects.DeleteObjects.Add(this);

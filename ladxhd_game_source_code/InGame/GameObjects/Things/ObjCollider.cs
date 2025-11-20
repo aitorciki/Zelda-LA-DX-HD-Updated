@@ -51,12 +51,13 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool MultiBoxCollision(Box box, int dir, int level, ref Box collidingBox)
         {
             foreach (var singleBox in CollisionBoxes)
+            {
                 if (singleBox.Intersects(box))
                 {
                     collidingBox = singleBox;
                     return true;
                 }
-
+            }
             return false;
         }
 
@@ -72,6 +73,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         public override void DrawEditor(SpriteBatch spriteBatch, Vector2 drawPosition)
         {
             if (CollisionBoxes != null)
+            {
                 for (var i = 0; i < CollisionBoxes.Length; i++)
                 {
                     spriteBatch.Draw(Resources.SprWhite,
@@ -81,6 +83,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                             (int)CollisionBoxes[i].Width,
                             (int)CollisionBoxes[i].Height), _editorColor);
                 }
+            }
             else
             {
                 spriteBatch.Draw(Resources.SprWhite,

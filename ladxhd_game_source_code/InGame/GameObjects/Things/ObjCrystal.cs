@@ -94,6 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             Game1.GameManager.PlaySoundEffect("D378-09-09");
+
             Map.Objects.DeleteObjects.Add(this);
 
             Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, 

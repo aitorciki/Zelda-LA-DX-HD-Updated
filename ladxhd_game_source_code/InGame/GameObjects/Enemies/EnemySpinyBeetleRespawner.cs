@@ -9,7 +9,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class EnemySpinyBeetleRespawner : GameObject
     {
-        private readonly int _type;       // 0=grass, 1=stone, 2=skull
+        // 0 = Grass, 1 = Stone, 2 = Skull
+        private readonly int _type;
         private readonly int _posX;
         private readonly int _posY;
 

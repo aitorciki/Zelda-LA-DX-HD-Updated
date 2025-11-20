@@ -106,7 +106,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // deal damage to the player
             _damagePlayer = true;
-
             return true;
         }
 
@@ -122,7 +121,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 OnCollision();
                 return true;
             }
-
             return false;
         }
 
@@ -170,7 +168,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_damagePlayer)
                 return;
 
-            // TODO: find the right hittype with the correct amount of damage or create a extra one?
+            // Find the right hittype with the correct amount of damage or create a extra one?
             var hitCollision = Map.Objects.Hit(this, _damageBox.Box.Center, _damageBox.Box, HitType.ThrownObject, 2, false);
 
             // hit something?
@@ -204,6 +202,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // the stone was picked up
             _collisionComponent.IsActive = false;
             _body.IsActive = false;
+
             // we ignore move collisions and use the update methode to get nicer looking collisions
             if (!Map.Is2dMap)
                 _body.CollisionTypes = Values.CollisionTypes.None;
