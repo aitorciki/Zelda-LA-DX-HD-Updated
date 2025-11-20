@@ -15,6 +15,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly ObjMonkeyWorker[] _workers = new ObjMonkeyWorker[7];
 
+        private ObjCollider _collider;
+
         private float _counter;
         private const float Segment1Time = 5000;
         private const float Segment2Time = Segment3Time + 1000;
@@ -23,6 +25,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _isRunning;
         private bool _spawnedMonkeys;
+        private bool _removeCollider;
+        private bool _stickCollected;
 
         public ObjBridge() : base("bridge") { }
 
@@ -38,16 +42,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
 
+            value = Game1.GameManager.SaveManager.GetString("ow_trade4", "0");
+            _stickCollected = (value == "1");
+
+            if (!_stickCollected)
+                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+
+            // Spawn the stick if it has not been collected.
             if (finished)
             {
-                // make sure that the stick is there if it was not already collected
                 SpawnStick();
                 _counter = FinishedTime;
                 return;
             }
-
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
 
             // create the workers
             for (var i = 0; i < _workers.Length; i++)
@@ -62,8 +70,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void KeyChanged()
         {
+            // Spawn the monkeys after the bananas were given.
             var value = Game1.GameManager.SaveManager.GetString("monkeyBusiness");
-
             if (!_spawnedMonkeys && value == "2")
             {
                 _isRunning = true;
@@ -72,14 +80,33 @@ namespace ProjectZ.InGame.GameObjects.Things
                 for (var i = 0; i < _workers.Length; i++)
                     Map.Objects.SpawnObject(_workers[i]);
             }
+            // When the stick is collected, remove the collider.
+            value = Game1.GameManager.SaveManager.GetString("ow_trade4");
+            if (value == "1" && !_removeCollider)
+            {
+                _removeCollider = true;
+                RemoveCollider();
+            }
         }
 
         private void SpawnStick()
         {
-            // spawn the stick
+            // Spawn the stick and spawn a collider so the player can't jump over it.
             var objStick = new ObjItem(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 32, "", "ow_trade4", "trade4", null);
+           _collider = new ObjCollider(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 48, Color.Red, Values.CollisionTypes.Normal, new Rectangle(0, 0, 16, 16));
+
+            // If the stick has not been collected, spawn them into the map.
             if (!objStick.IsDead)
+            {
                 Map.Objects.SpawnObject(objStick);
+                Map.Objects.SpawnObject(_collider);
+            }
+        }
+
+        private void RemoveCollider()
+        {
+            if (_collider != null)
+                Map.Objects.DeleteObjects.Add(_collider);
         }
 
         private void Update()
