@@ -230,6 +230,9 @@ namespace ProjectZ.InGame.Map
                     if (!Link.PreventReset)
                         ResetSpawnPositions();
 
+                    // Reset any dug holes on the current field.
+                    _ = MapManager.ObjLink.Map.ResetCurrentFieldHoleMap();
+
                     // But always update the FieldChange.
                     Link.FieldChange = false;
                 }

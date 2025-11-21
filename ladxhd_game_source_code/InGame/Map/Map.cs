@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.Editor;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
-using System;
-using System.Collections.Generic;
 
 namespace ProjectZ.InGame.Map
 {
@@ -324,8 +325,8 @@ namespace ProjectZ.InGame.Map
             string strSaveKey = null;
 
             var digTileIndex = 0;
-
             var itemString = DigMap[position.X, position.Y];
+
             if (int.TryParse(itemString, out int result))
             {
                 var random = Game1.RandomNumber.Next(0, 100);
@@ -367,10 +368,36 @@ namespace ProjectZ.InGame.Map
                     Objects.SpawnObject(objItem);
                 }
             }
-
             Game1.GameManager.StartDialogPath("dig_dialog");
-
             HoleMap.ArrayTileMap[position.X, position.Y, 0] = digTileIndex;
+        }
+
+        public async Task ResetCurrentFieldHoleMap()
+        {
+            // Delay the hole reset so it mostly goes unnoticed. 
+            await Task.Delay(250);
+            ResetHoleTimer();
+        }
+
+        private void ResetHoleTimer()
+        {
+            // Make sure the hole map is not null.
+            if (HoleMap == null || HoleMap.ArrayTileMap == null) { return; }
+
+            // Get the maximum sizes of the array.
+            int sizeX = HoleMap.ArrayTileMap.GetLength(0);
+            int sizeY = HoleMap.ArrayTileMap.GetLength(1);
+            int sizeZ = HoleMap.ArrayTileMap.GetLength(2);
+
+            // Create a new array from the size of the current array.
+            var newArray = new int[sizeX, sizeY, sizeZ];
+
+            for (int x = 0; x < sizeX; x++)
+                for (int y = 0; y < sizeY; y++)
+                    newArray[x, y, 0] = -1;
+
+            // Replace the hole map with the temporary array.
+            HoleMap.ArrayTileMap = newArray;
         }
     }
 }
