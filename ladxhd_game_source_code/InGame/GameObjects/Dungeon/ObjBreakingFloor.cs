@@ -39,20 +39,26 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _objHole = new ObjHole(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 16, 14, Rectangle.Empty, 0, 1, 0);
             _objHole.IsActive = false;
             Map.Objects.SpawnObject(_objHole);
+            Activate();
         }
 
         private void Update()
         {
             if (!_isActive)
             {
-                // respawn the floor after some time
-                _respawnCounter -= Game1.DeltaTime;
-                if (_respawnCounter <= 0)
+                // Force the floor to respawn after a field change.
+                if (Camera.ClassicMode && MapManager.ObjLink.FieldChange)
                     Activate();
 
+                // Respawn the floor after 15 seconds.
+                if (!Camera.ClassicMode)
+                {
+                    _respawnCounter -= Game1.DeltaTime;
+                    if (_respawnCounter <= 0)
+                        Activate();
+                }
                 return;
             }
-
             // is the player standing on the floor tile?
             if (MapManager.ObjLink._body.BodyBox.Box.Intersects(_collisionBox))
             {
@@ -84,24 +90,18 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void Activate()
         {
-            _breakCounter = 0;
-
             _isActive = true;
-            _drawComponent.IsActive = true;
-
-            // activate the hole
+            _breakCounter = 0;
             _objHole.IsActive = false;
+            _drawComponent.IsActive = true;
         }
 
         private void Deactivate()
         {
-            _respawnCounter = RespawnTime;
-
             _isActive = false;
-            _drawComponent.IsActive = false;
-
-            // activate the hole
+            _respawnCounter = RespawnTime;
             _objHole.IsActive = true;
+            _drawComponent.IsActive = false;
         }
     }
 }
