@@ -134,6 +134,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateSuck()
         {
+            if (MapManager.ObjLink.CurrentState == ObjLink.State.Dying)
+                return;
+
             Game1.GameManager.PlaySoundEffect("D378-59-3B", false, 0.75f, 0, false, 100);
 
             if (EntityPosition.Z < 12)
