@@ -63,6 +63,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
+            if (MapManager.ObjLink.CurrentState == ObjLink.State.Ocarina)
+                return;
+
             // blink
             _sprite.SpriteShader = (Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime) ? Resources.DamageSpriteShader0 : null;
            
