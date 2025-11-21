@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
@@ -29,6 +29,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dir;
         private int _lives = ObjLives.CheepCheep;
         private readonly bool _canJump;
+        private bool _stomped;
 
         public EnemyCheepCheep() : base("cheep cheep") { }
 
@@ -91,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ToMoving();
 
             var hittableBox = new CBox(EntityPosition, -8, -14, 0, 16, 12, 8);
-            _damageBox = new CBox(EntityPosition, -6, -14, 0, 12, 12, 4);
+            _damageBox = new CBox(EntityPosition, -5, -8, 0, 10, 8, 4);
             _headJumpBox = new CBox(EntityPosition, -6, -16, 0, 12, 6, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
@@ -99,6 +100,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
         }
 
@@ -155,26 +157,30 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(splashAnimator);
         }
 
-        private void UpdateJump(double time)
+        private void Update()
         {
-            var newPosition = _jumpStart - new Vector2(0, 64) * MathF.Sin((float)(time / JumpTime) * MathF.PI);
-            EntityPosition.Set(newPosition);
-
             // player jumped on the fish?
-            if ((MapManager.ObjLink._body.Velocity.Y > 0 && !MapManager.ObjLink._body.IsGrounded || time > JumpTime / 2) &&
-                _headJumpBox.Box.Bottom >= MapManager.ObjLink._body.BodyBox.Box.Bottom &&
+            if (!_stomped && _headJumpBox.Box.Bottom >= MapManager.ObjLink._body.BodyBox.Box.Bottom && 
                 _headJumpBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
             {
                 Game1.GameManager.PlaySoundEffect("D370-14-0E");
 
-                MapManager.ObjLink._body.Velocity.Y -= 1f;
+                MapManager.ObjLink._body.Velocity.Y -= 2f;
                 _aiComponent.ChangeState("dead");
                 _animator.Play("dead_" + _dir);
                 _body.VelocityTarget = Vector2.Zero;
                 _body.IgnoresZ = false;
                 _body.Gravity2DWater = 0.05f;
                 _body.CollisionTypes = Values.CollisionTypes.None;
+                _damageField.IsActive = false;
+                _stomped = true;
             }
+        }
+
+        private void UpdateJump(double time)
+        {
+            var newPosition = _jumpStart - new Vector2(0, 64) * MathF.Sin((float)(time / JumpTime) * MathF.PI);
+            EntityPosition.Set(newPosition);
         }
 
         private void OnBurn()
