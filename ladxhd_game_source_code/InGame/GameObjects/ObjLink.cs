@@ -2409,6 +2409,7 @@ namespace ProjectZ.InGame.GameObjects
             // The "jump-land" hack plays the "stand" animation briefly.
             else if (_jumpEndTimer > 0 && 
                 !IsAttackingState(CurrentState) &&
+                CurrentState != State.Dying &&
                 CurrentState != State.ShowToadstool &&
                 CurrentState != State.PickingUp &&
                 CurrentState != State.Powdering &&
