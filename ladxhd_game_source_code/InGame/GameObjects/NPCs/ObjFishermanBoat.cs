@@ -213,11 +213,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (!string.IsNullOrEmpty(photoValue))
             {
                 if (photoValue == "1")
-                    MapManager.ObjLink.DisableDirHack = true;
+                    MapManager.ObjLink.DisableDirHack2D = true;
 
                 if (photoValue == "0")
                 {
-                    MapManager.ObjLink.DisableDirHack = false;
+                    MapManager.ObjLink.DisableDirHack2D = false;
                     Game1.GameManager.SaveManager.RemoveString(photoString);
                 }
             }

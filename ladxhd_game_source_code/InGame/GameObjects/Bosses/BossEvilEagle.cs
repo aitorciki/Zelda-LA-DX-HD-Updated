@@ -197,7 +197,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 // Player status resumed in "UpdateSaddled" method.
                 _disablePlayer = true;
-                MapManager.ObjLink.DisableDirHack = true;
+                MapManager.ObjLink.DisableDirHack2D = true;
                 MapManager.ObjLink.Animation.Play("stand_0");
                 Game1.GameManager.StartDialogPath("grim_creeper_3");
                 _aiComponent.ChangeState("spawnDelay");
@@ -444,7 +444,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 // start attacking
                 _disablePlayer = false;
-                MapManager.ObjLink.DisableDirHack = false;
+                MapManager.ObjLink.DisableDirHack2D = false;
                 ToAttack();
             }
         }

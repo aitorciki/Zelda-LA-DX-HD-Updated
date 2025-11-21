@@ -108,6 +108,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_fillBar)
             {
                 MapManager.ObjLink.FreezePlayer();
+                MapManager.ObjLink.DisableDirHack2D = true;
 
                 _soundCounter -= Game1.DeltaTime;
                 if (_soundCounter < 0)
@@ -136,6 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     bool PlaySound = _shellCount == 5 || 
                                      _shellCount == 10 || 
                                      _shellCount >= 20;
+
                     if (GameSettings.Unmissables && _SaveFileVersion >= 1)
                          PlaySound = _shellCount >= 5 && _PresentCount == 0 || 
                                      _shellCount >= 10 && _PresentCount < 2 || 
@@ -159,7 +161,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             // wait a little bit while showing the particles
-            if (_particle)
+            else if (_particle)
             {
                 MapManager.ObjLink.FreezePlayer();
 
@@ -171,6 +173,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                     bool SpawnShell = _shellCount == 5 || 
                                       _shellCount == 10;
+
                     if (GameSettings.Unmissables && _SaveFileVersion >= 1)
                          SpawnShell = _shellCount >= 5 && _PresentCount == 0 || 
                                       _shellCount >= 10 && _PresentCount < 2;
@@ -194,6 +197,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                         Game1.GameManager.StartDialogPath("shell_mansion_nothing");
                     }
                 }
+            }
+            else
+            {
+                MapManager.ObjLink.DisableDirHack2D = false;
             }
 
             if (_spawnPresent)
