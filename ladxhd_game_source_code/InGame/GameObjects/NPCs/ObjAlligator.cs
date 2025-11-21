@@ -26,7 +26,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _canMultiplier = 0.25f;
         private bool _isCanActive;
         private bool _isEating;
-
+        private bool _freezePlayer;
         private bool _startEating;
 
         public ObjAlligator() : base("alligator") { }
@@ -71,6 +71,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Update()
         {
+            if (_freezePlayer)
+                MapManager.ObjLink.FreezePlayer();
+
             if (_startEating)
             {
                 _startEating = false;
@@ -79,8 +82,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (_isCanActive)
             {
-                MapManager.ObjLink.UpdatePlayer = false;
-
                 _canVelocity.Y += _canGravity * Game1.TimeMultiplier * _canMultiplier;
                 _canPosition += _canVelocity * Game1.DeltaTime;
                 _canVelocity.Y += _canGravity * Game1.TimeMultiplier * _canMultiplier;
@@ -95,11 +96,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (_isEating)
             {
-                MapManager.ObjLink.UpdatePlayer = false;
-
                 _eatCountdown -= Game1.DeltaTime;
                 if (_eatCountdown <= 0)
                 {
+                    _freezePlayer = false;
                     _isEating = false;
                     _animator.Play("idle");
                     Game1.GameManager.StartDialogPath("alligator_after_eat");
@@ -121,17 +121,24 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void KeyChanged()
         {
+            // Trigger a freeze (set in script.zScript) so Link can't move during the eating sequence.
+            var freeze = Game1.GameManager.SaveManager.GetString("alligator_freeze");
+            if (freeze != null && freeze == "1")
+            {
+                _freezePlayer = true;
+                Game1.GameManager.SaveManager.RemoveString("alligator_freeze");
+            }
+            // Trigger the eating sequence (set in script.zScript).
             var value = Game1.GameManager.SaveManager.GetString("alligator_eat");
             if (value != null && value == "eat")
             {
                 _startEating = true;
                 Game1.GameManager.SaveManager.SetString("alligator_eat", "nop");
             }
-
+            // Trigger removing the banana bunch (set in script.zScript) when the trade is complete.
             var traded = Game1.GameManager.SaveManager.GetString("trade2");
             if (traded == "1" && _gameObjectBanana != null)
             {
-                // remove the banana
                 Map.Objects.DeleteObjects.Add(_gameObjectBanana);
                 _gameObjectBanana = null;
             }
@@ -145,10 +152,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            // draw the alligator
+            // Draw the alligator.
             _bodyDrawComponent.Draw(spriteBatch);
 
-            // draw the can
+            // Draw the canned food.
             if (_isCanActive)
                 DrawHelper.DrawNormalized(spriteBatch, _canSprite, _canPosition, Color.White);
         }
