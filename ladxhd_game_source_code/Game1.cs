@@ -73,6 +73,7 @@ namespace ProjectZ
 
         public static int UiScale;
         public static bool ScaleChanged;
+        public static int MaxGameScale = 20;
 
         public static bool WasActive;
         public static bool UpdateGame;
@@ -620,15 +621,18 @@ namespace ProjectZ
             }
             else
             {
+                // Get the maximum scale and add 1 for auto-scale.
+                int maxScale = MaxGameScale + 1;
+
                 // Calculate the game scale that is used for auto scaling.
-                float gameScale = MathHelper.Clamp(Math.Min(WindowWidth / 160, WindowHeight / 128), 1, 21);
+                float gameScale = MathHelper.Clamp(Math.Min(WindowWidth / 160, WindowHeight / 128), 1, maxScale);
                 float usedScale = gameScale;
 
-                if (GameSettings.GameScale == 21)
+                if (GameSettings.GameScale == maxScale)
                     usedScale = gameScale / 2;
 
-                // If set to autoscale (21) used the calculated value; otherwise use the value set by the user.
-                MapManager.Camera.Scale = GameSettings.GameScale == 21
+                // If set to autoscale (Game1.MaxGameScale + 1) used the calculated value; otherwise use the value set by the user.
+                MapManager.Camera.Scale = GameSettings.GameScale == maxScale
                     ? MathF.Ceiling(usedScale) 
                     : GameSettings.GameScale;
 
@@ -642,7 +646,7 @@ namespace ProjectZ
                 // values while manually setting the scale only allows upscaling using integer values.
                 else
                 {
-                    float newGameScale = GameSettings.GameScale == 21
+                    float newGameScale = GameSettings.GameScale == maxScale
                         ? MathF.Ceiling(usedScale)
                         : GameSettings.GameScale;
                     GameManager.SetGameScale(newGameScale);

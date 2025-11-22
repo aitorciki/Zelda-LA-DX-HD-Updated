@@ -563,6 +563,9 @@ namespace ProjectZ.InGame.Overlay
 
         private void UpdateGameScale(GameScaleDirection scaleDirection)
         {
+            // Get the maximum scale and add 1 for auto-scale.
+            int maxScale = Game1.MaxGameScale + 1;
+
             // Do not adjust the scale when classic camera is active.
             if (Camera.ClassicMode)
                 return;
@@ -570,15 +573,15 @@ namespace ProjectZ.InGame.Overlay
             // If both LT and RT are pressed together, set the scaling to auto-scaling.
             if (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
             {
-                GameSettings.GameScale = 21;
+                GameSettings.GameScale = maxScale;
             }
             // If either LT or RT were pressed scale up or down.
             else if (ControlHandler.ButtonDown(CButtons.RT) || ControlHandler.ButtonDown(CButtons.LT))
             {
                 // When autoscaling is set, match the scaling value so it can move up and down smoothly.
-                if (GameSettings.GameScale == 21)
+                if (GameSettings.GameScale == maxScale)
                 {
-                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, 21);
+                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, maxScale);
                     gameScale = gameScale / 2;
                     GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
                 }
@@ -586,7 +589,7 @@ namespace ProjectZ.InGame.Overlay
                 int newScale = GameSettings.GameScale + (int)scaleDirection;
 
                 // Do not let the scale fall outside the slider range.
-                if (newScale >= -3 && newScale <= 20)
+                if (newScale >= -3 && newScale < maxScale)
                     GameSettings.GameScale = newScale;
             }
             // When Classic Camera is enabled, we want the camera to "snap" to the next scale.

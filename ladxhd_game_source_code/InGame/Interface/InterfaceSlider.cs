@@ -110,50 +110,54 @@ namespace ProjectZ.InGame.Interface
             _animationStepStart = _stepWidth * CurrentStep;
             _animationStepPosition = _stepWidth * CurrentStep;
         }
-
         public override InputEventReturn PressedButton(CButtons pressedButton)
         {
             _lastStep = CurrentStep;
 
+            // Add a slight delay before repeating the last press when held.
             if (_scrollCounter < 0)
                 _scrollCounter += _scrollTime;
 
-            if (ControlHandler.ButtonDown(CButtons.Left) || ControlHandler.ButtonDown(CButtons.Right))
+            // Detect a button press and repeat the last action when held.
+            if (ControlHandler.ButtonDown(CButtons.Left) || ControlHandler.ButtonDown(CButtons.Right) ||
+                ControlHandler.ButtonDown(CButtons.LB) || ControlHandler.ButtonDown(CButtons.RB) ||
+                ControlHandler.ButtonDown(CButtons.LT) || ControlHandler.ButtonDown(CButtons.RT))
+            {
                 _scrollCounter -= Game1.DeltaTime;
+            }
             else
                 _scrollCounter = _scrollStartTime;
 
-            if (ControlHandler.ButtonPressed(CButtons.Left) ||
-                ControlHandler.ButtonDown(CButtons.Left) && _scrollCounter < 0)
-            {
-                CurrentStep = MathHelper.Clamp(CurrentStep - StepSize, 0, _steps - 1);
+            // Get the button that was pressed.
+            bool Pressed(CButtons b) => ControlHandler.ButtonPressed(b) || (ControlHandler.ButtonDown(b) && _scrollCounter < 0);
 
-                // start the animation
-                _animationCounter = _animationTime;
-                _animationStepStart = _stepWidth * _lastStep;
+            // The pressed button determines the direction and step multiplier.
+            (int direction, int multiplier) =
+                Pressed(CButtons.Left)  ? (-1, 1) :
+                Pressed(CButtons.Right) ? ( 1, 1) :
+                Pressed(CButtons.LB)    ? (-1, 5) :
+                Pressed(CButtons.RB)    ? ( 1, 5) :
+                Pressed(CButtons.LT)    ? (-1, 10) :
+                Pressed(CButtons.RT)    ? ( 1, 10) :
+                (0, 0);
 
-                NumberChanged?.Invoke(Start + CurrentStep);
+            // If no button has been pressed then return.
+            if (direction == 0)
+                return InputEventReturn.Nothing;
 
-                Game1.GameManager.PlaySoundEffect("D360-10-0A");
-                return InputEventReturn.Something;
-            }
+            // Move the slider position based on the direction and step calculated.
+            CurrentStep = MathHelper.Clamp(CurrentStep + direction * StepSize * multiplier, 0, _steps - 1);
 
-            if (ControlHandler.ButtonPressed(CButtons.Right) ||
-                ControlHandler.ButtonDown(CButtons.Right) && _scrollCounter < 0)
-            {
-                CurrentStep = MathHelper.Clamp(CurrentStep + StepSize, 0, _steps - 1);
+            // Start the slider animation.
+            _animationCounter = _animationTime;
+            _animationStepStart = _stepWidth * _lastStep;
 
-                // start the animation
-                _animationCounter = _animationTime;
-                _animationStepStart = _stepWidth * _lastStep;
+            // Run the associated function for when the value has changed.
+            NumberChanged?.Invoke(Start + CurrentStep);
 
-                NumberChanged?.Invoke(Start + CurrentStep);
-                
-                Game1.GameManager.PlaySoundEffect("D360-10-0A");
-                return InputEventReturn.Something;
-            }
-            
-            return InputEventReturn.Nothing;
+            // Play the "click" sound effect.
+            Game1.GameManager.PlaySoundEffect("D360-10-0A");
+            return InputEventReturn.Something;
         }
 
         public void SetText(string strText)

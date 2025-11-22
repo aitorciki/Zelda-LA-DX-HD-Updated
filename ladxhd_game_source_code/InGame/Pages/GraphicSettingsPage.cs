@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Game Scale
             _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
-                buttonWidth, new Point(1, 2), -3, 21, 1, GameSettings.GameScale, number =>
+                buttonWidth, new Point(1, 2), -3, Game1.MaxGameScale + 1, 1, GameSettings.GameScale, number =>
                 {
                     GameSettings.GameScale = number;
                     Game1.ScaleChanged = true;
@@ -115,16 +115,20 @@ namespace ProjectZ.InGame.Pages
 
         private string GameScaleSliderAdjustmentString(int number)
         {
+            // Get the maximum scale and add 1 for auto-scale.
+            int maxScale = Game1.MaxGameScale + 1;
+
             // Translate values below 1x and when autoscale is set.
-            return number switch
-            {
-                 0 => " 50%",
-                -1 => " 33%",
-                -2 => " 25%",
-                -3 => " 20%",
-                21 => " Auto-Detect",
-                _ => " " + number + "x"
-            };
+            return number == maxScale
+                ? " Auto-Detect"
+                : number switch
+                {
+                     0 => " 50%",
+                    -1 => " 33%",
+                    -2 => " 25%",
+                    -3 => " 20%",
+                    _  => " " + number + "x"
+                };
         }
 
         private string UIScaleSliderAdjustmentString(int number)
