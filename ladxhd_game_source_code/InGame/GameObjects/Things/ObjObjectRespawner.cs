@@ -102,7 +102,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void SpawnObject()
         {
+            // Create the spawned object.
             _spawnedObject = ObjectManager.GetGameObject(Map, _strSpawnObjectId, _objParameter);
+
+            // If the spawned type is "ObjStone" then track that it was created from a spawner on the object.
+            if (_spawnedObject is ObjStone spawnStone)
+                spawnStone.FromObjSpawner = true;
+
+            // Spawn the object into the map.
             Map.Objects.SpawnObject(_spawnedObject);
         }
     }

@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isHeavy;
 
         public bool OnSpinyBeetle = false;
+        public bool FromObjSpawner = false;
 
         public ObjStone(Map.Map map, int posX, int posY, string spriteId, string spawnItem, string pickupKey, string dialogPath, bool isHeavy, bool potMessage) : base(map, spriteId)
         {
@@ -274,7 +275,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             // If not on a spiny beetle, create a respawner on the object.
             if (!OnSpinyBeetle)
-                Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
+                Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage, FromObjSpawner));
 
             // Delete the stone.
             Map.Objects.DeleteObjects.Add(this);
@@ -288,7 +289,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             // Remove the stone and create a respawner.
-            Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
+            Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage, FromObjSpawner));
             Map.Objects.DeleteObjects.Add(this);
 
             // play sound effect

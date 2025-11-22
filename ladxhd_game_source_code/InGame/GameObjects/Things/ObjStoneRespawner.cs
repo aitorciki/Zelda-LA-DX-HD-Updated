@@ -18,8 +18,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _lastFieldTime;
         private bool _respawnStart;
         private float _respawnTimer;
+        private bool _respawnedStone;
 
-        public ObjStoneRespawner(Map.Map map, int posX, int posY, string spriteId, string spawnItem, string pickupKey, string dialogPath, bool isHeavy, bool potMessage) : base(map)
+        public ObjStoneRespawner(Map.Map map, int posX, int posY, string spriteId, string spawnItem, string pickupKey, string dialogPath, bool isHeavy, bool potMessage, bool fromSpawner) : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -30,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _dialogPath = dialogPath;
             _isHeavy = isHeavy;
             _potMessage = potMessage;
+            _respawnedStone = fromSpawner;
 
             _lastFieldTime = Map.GetUpdateState(EntityPosition.Position);
 
@@ -39,6 +41,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            if (_respawnedStone)
+                DeleteThis();
+
             if (Camera.ClassicMode)
             {
                 if (MapManager.ObjLink.FieldChange)
@@ -64,8 +69,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
+        private void DeleteThis()
+        {
+            Map.Objects.DeleteObjects.Add(this);
+        }
+
         private void SpawnStone()
         {
+            // Remove the respawner object.
             Map.Objects.DeleteObjects.Add(this);
 
             // Respawn original stone type
