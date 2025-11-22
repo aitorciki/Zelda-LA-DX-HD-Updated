@@ -2988,9 +2988,12 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseToadstool()
         {
-            CurrentState = State.ShowToadstool;
-            Animation.Play("show2");
-            Game1.GameManager.StartDialogPath("toadstool_hole");
+            if (CurrentState != State.PickingUp)
+            {
+                CurrentState = State.ShowToadstool;
+                Animation.Play("show2");
+                Game1.GameManager.StartDialogPath("toadstool_hole");
+            }
         }
 
         private void UsePowder()
