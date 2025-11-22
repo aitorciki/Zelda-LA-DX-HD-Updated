@@ -178,6 +178,10 @@ namespace ProjectZ.InGame.GameObjects
         private ObjGhost _objGhost;
         private bool _spawnGhost;
 
+        // Egg Follower Turnaround
+        bool  _eggPreventStart;
+        float _eggPreventTimer;
+
         // Trapped State
         private int _trapInteractionCount;
         private bool _isTrapped;
@@ -708,7 +712,7 @@ namespace ProjectZ.InGame.GameObjects
         private void Update()
         {
             // May as well just keep this here since I'm constantly using it.
-            // System.Diagnostics.Debug.WriteLine(CurrentState + " " + _swimRoosterPickup);
+            //System.Diagnostics.Debug.WriteLine(CurrentState);
 
             // Update the current field and make a field barrier if Classic Camera is enabled.
             UpdateCurrentField();
@@ -1586,6 +1590,33 @@ namespace ProjectZ.InGame.GameObjects
                 var itemMarin = new GameItemCollected("marin") { Count = 1 };
                 PickUpItem(itemMarin, false, false, true);
                 SpawnMarin();
+            }
+            // Prevent entry to Egg with a follower during second chance.
+            var egg_turn_around = Game1.GameManager.SaveManager.GetString("egg_turn_around");
+
+            // Stop walking, reset timer, remove strings from SaveManager.
+            if (egg_turn_around == "0")
+            {
+                _eggPreventStart = false;
+                _eggPreventTimer = 0;
+                Game1.GameManager.SaveManager.RemoveString("link_move");
+                Game1.GameManager.SaveManager.RemoveString("egg_turn_around");
+            }
+            // Drop any objects (like rooster), walk in reverse, start timer to disable.
+            else if (egg_turn_around == "1")
+            {
+                ReleaseCarriedObject();
+                Game1.GameManager.SaveManager.SetString("link_move", "0,1");
+                MapManager.ObjLink.SeqLockPlayer();
+                _eggPreventStart = true;
+            }
+            // Progress the timer to stop the follower turnaround sequence.
+            if (_eggPreventStart)
+            {
+                _eggPreventTimer += Game1.DeltaTime;
+                if (_eggPreventTimer > 2000)
+                    Game1.GameManager.SaveManager.SetString("egg_turn_around", "0");
+                System.Diagnostics.Debug.WriteLine(_eggPreventTimer);
             }
         }
 
