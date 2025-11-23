@@ -49,6 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 7, 0);
             EntitySize = new Rectangle(-6, -2, 12, 10);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spiny beetle");
             _animator.Play("idle");
@@ -127,6 +128,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ToHide();
 
             _aiComponent.ChangeState("init");
+        }
+
+        private void Reset()
+        {
+            Map.Objects.DeleteObjects.Add(this);
+            Map.Objects.DeleteObjects.Add(_carriedObject);
+            Map.Objects.SpawnObject(new EnemySpinyBeetle(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 7, _type));
         }
 
         private bool CarriableObjectPickedUp()
