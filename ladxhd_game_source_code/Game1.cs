@@ -73,7 +73,7 @@ namespace ProjectZ
 
         public static int UiScale;
         public static bool ScaleChanged;
-        public static int MaxGameScale = 20;
+        public static int MaxGameScale;
 
         public static bool WasActive;
         public static bool UpdateGame;
@@ -118,8 +118,24 @@ namespace ProjectZ
             private static Forms.FormWindowState _lastWindowState;
         #endif
 
+        // lahdmod values
+        private int  max_game_scale = 20;
+        private bool editor_mode = false;
+
         public Game1(bool editorMode, bool loadSave, int loadSlot)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "Game1.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
+            // Use max game scale set by lahdmod file or default value set above.
+            MaxGameScale = max_game_scale;
+
+            // Enable editor via lahdmod file or through the command line option.
+            EditorMode = editorMode || editor_mode;
+
             #if WINDOWS
                 // Get the form handle and set the icon of the window.
                 _windowForm = (Forms.Form)Forms.Control.FromHandle(Window.Handle);
@@ -143,8 +159,7 @@ namespace ProjectZ
             Window.AllowUserResizing = true;
 
             // Store any command line parameters if available.
-            IsMouseVisible = editorMode;
-            EditorMode = editorMode;
+            IsMouseVisible = EditorMode;
             AutoLoadSave = loadSave;
             AutoLoadSlot = loadSlot;
 

@@ -57,7 +57,9 @@ namespace ProjectZ.InGame.Overlay
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathModFolder, "HUDOverlay.lahdmod");
-            if (File.Exists(modFile)) { ModFile.Parse(modFile, this); }
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
 
             _heartBackground = new UiRectangle(Rectangle.Empty, "heart", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
             Game1.UiManager.AddElement(_heartBackground);

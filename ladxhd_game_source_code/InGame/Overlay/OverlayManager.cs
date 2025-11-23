@@ -83,8 +83,10 @@ namespace ProjectZ.InGame.Overlay
         private bool _isChanging;
         private bool _mapOpened;
 
+        private int _scaleButtonCount;
         private bool _scaleButtonDown;
         private float _scaleButtonTimer;
+        private float _scaleButtonPeriod;
 
         public OverlayManager()
         {
@@ -165,31 +167,48 @@ namespace ProjectZ.InGame.Overlay
                     UpdateGameScale(GameScaleDirection.Decrease);
                     _scaleButtonDown = true;
                     _scaleButtonTimer = -425f;
+                    _scaleButtonPeriod = 75;
                 }
                 if (ControlHandler.ButtonPressed(CButtons.RT))
                 {
                     UpdateGameScale(GameScaleDirection.Increase);
                     _scaleButtonDown = true;
                     _scaleButtonTimer = -425f;
+                    _scaleButtonPeriod = 75;
                 }
 
                 // Increase/Decrease game scale repeatedly while button is held every 75ms.
-                if (ControlHandler.ButtonDown(CButtons.LT) && _scaleButtonDown && _scaleButtonTimer > 75)
+                if (ControlHandler.ButtonDown(CButtons.LT) && _scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod)
                 {
                     UpdateGameScale(GameScaleDirection.Decrease);
                     _scaleButtonTimer = 0;
+                    _scaleButtonCount++;
                 }
-                if (ControlHandler.ButtonDown(CButtons.RT) && _scaleButtonDown && _scaleButtonTimer > 75)
+                if (ControlHandler.ButtonDown(CButtons.RT) && _scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod)
                 {
                     UpdateGameScale(GameScaleDirection.Increase);
                     _scaleButtonTimer = 0;
+                    _scaleButtonCount++;
                 }
-
+                // The longer the button is held down, the faster the "zoom" will get. The left value in the switch represents
+                // how many scaling iterations have passed, the right value represents how many milliseconds between iterations.
+                _scaleButtonPeriod = _scaleButtonCount switch
+                {
+                    <  5  => 75,
+                    <  8  => 60,
+                    <  12 => 55,
+                    <  15 => 40,
+                    <  18 => 25,
+                    <  21 => 10,
+                    >= 24 =>  5,
+                    _ => _scaleButtonPeriod
+                };
                 // When either button is released, reset the repeat variables.
                 if (ControlHandler.ButtonReleased(CButtons.LT) || ControlHandler.ButtonReleased(CButtons.RT))
                 {
                     _scaleButtonDown = false;
                     _scaleButtonTimer = 0;
+                    _scaleButtonCount = 0;
                 }
             }
             else if (_currentMenuState == MenuState.Menu)
@@ -592,10 +611,6 @@ namespace ProjectZ.InGame.Overlay
                 if (newScale >= -3 && newScale < maxScale)
                     GameSettings.GameScale = newScale;
             }
-            // When Classic Camera is enabled, we want the camera to "snap" to the next scale.
-            //  if (Camera.ClassicMode)
-            //      Camera.SnapCameraTimer = 100f;
-
             // Apply current scaling settings.
             Game1.ScaleChanged = true;
         }
