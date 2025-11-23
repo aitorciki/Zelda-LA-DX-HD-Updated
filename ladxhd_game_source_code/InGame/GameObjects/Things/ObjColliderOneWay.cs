@@ -21,7 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = collisionRectangle;
 
-            _collisionBox = new Box(posX + collisionRectangle.X, posY + collisionRectangle.Y, 0, collisionRectangle.Width, collisionRectangle.Height, 8);
+            _collisionBox = new Box(posX + collisionRectangle.X, posY + collisionRectangle.Y, 0, collisionRectangle.Width, collisionRectangle.Height, 4);
             _direction = direction;
 
             AddComponent(CollisionComponent.Index, new CollisionComponent(CollisionCheck) { CollisionType = type });
