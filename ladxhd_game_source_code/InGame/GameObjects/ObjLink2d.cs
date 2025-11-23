@@ -359,6 +359,8 @@ namespace ProjectZ.InGame.GameObjects
             }
             if (_bootsHolding || _bootsRunning)
             {
+                _swordChargeCounter = sword_charge_time;
+
                 if (!_bootsRunning)
                     Animation.Play("walk" + shieldString + Direction);
                 else

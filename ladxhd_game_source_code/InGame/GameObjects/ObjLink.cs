@@ -2405,6 +2405,8 @@ namespace ProjectZ.InGame.GameObjects
             // Pegasus boots running animation.
             if (_bootsHolding || _bootsRunning)
             {
+                _swordChargeCounter = sword_charge_time;
+
                 // Running in place charging, or run with the shield in front of the player.
                 if (!_bootsRunning)
                     Animation.Play("walk" + shieldString + animDirection);
