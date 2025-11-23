@@ -140,7 +140,6 @@ namespace ProjectZ.InGame.Overlay
             TextboxOverlay.Init();
         }
 
-
         public void Update()
         {
             // Toggle Game Options Menu Overlay

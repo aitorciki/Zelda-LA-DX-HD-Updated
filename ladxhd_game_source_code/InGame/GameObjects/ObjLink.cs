@@ -3167,6 +3167,12 @@ namespace ProjectZ.InGame.GameObjects
                     // Get the carry component of the grabbable object.
                     var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
 
+                    // Don't grab the rooster if it's too high in the air.
+                    if (grabbedObject is ObjCock cock)
+                    {
+                        if (cock.EntityPosition.Z > 8)
+                            return;
+                    }
                     // If the component is active then grab the object.
                     if (carriableComponent.IsActive)
                     {
@@ -4916,7 +4922,7 @@ namespace ProjectZ.InGame.GameObjects
             _objRooster = objCock;
         }
 
-        public void StopFlying()
+        public void StopFlying(Vector2 velocity)
         {
             _isFlying = false;
 
@@ -4928,6 +4934,8 @@ namespace ProjectZ.InGame.GameObjects
 
             if (_objRooster != null)
                 _objRooster.StopFlying();
+
+            _body.Velocity = new Vector3(velocity.X * 4, velocity.Y * 4, 0);
         }
 
         private void UpdateFlying()
@@ -5698,7 +5706,7 @@ namespace ProjectZ.InGame.GameObjects
 
             // release the cock if link is flying
             if (MapManager.ObjLink.IsFlying())
-                MapManager.ObjLink.StopFlying();
+                MapManager.ObjLink.StopFlying(Vector2.Zero);
 
             // make sure the player walks
             if (MapTransitionStart.HasValue && 

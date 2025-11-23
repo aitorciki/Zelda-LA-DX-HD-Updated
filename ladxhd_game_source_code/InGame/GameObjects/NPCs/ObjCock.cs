@@ -415,8 +415,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void CarryThrow(Vector2 direction)
         {
+            var lastVelocity = _body.VelocityTarget;
             _body.Velocity = new Vector3(direction.X, direction.Y, 0);
-            MapManager.ObjLink.StopFlying();
+            MapManager.ObjLink.StopFlying(lastVelocity);
         }
 
         public void StopFlying()
