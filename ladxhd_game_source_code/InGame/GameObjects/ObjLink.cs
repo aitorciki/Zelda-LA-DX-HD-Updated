@@ -711,9 +711,6 @@ namespace ProjectZ.InGame.GameObjects
 
         private void Update()
         {
-            // May as well just keep this here since I'm constantly using it.
-            //System.Diagnostics.Debug.WriteLine(CurrentState);
-
             // Update the current field and make a field barrier if Classic Camera is enabled.
             UpdateCurrentField();
 
@@ -1616,7 +1613,6 @@ namespace ProjectZ.InGame.GameObjects
                 _eggPreventTimer += Game1.DeltaTime;
                 if (_eggPreventTimer > 2000)
                     Game1.GameManager.SaveManager.SetString("egg_turn_around", "0");
-                System.Diagnostics.Debug.WriteLine(_eggPreventTimer);
             }
         }
 
