@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 7, 0);
             ResetPosition  = new CPosition(posX + 8, posY + 7, 0);
-            EntitySize = new Rectangle(-8, -7, 16, 16);
+            EntitySize = new Rectangle(-6, -2, 12, 10);
             CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spiny beetle");
@@ -58,7 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _fieldRectangle = map.GetField(posX, posY);
 
-            _body = new BodyComponent(EntityPosition, -7, -2, 14, 10, 8)
+            _body = new BodyComponent(EntityPosition, -6, -2, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
                 HoleAbsorb = OnHoleAbsorb,
@@ -108,8 +108,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnDeath = OnDeath };
             _aiComponent.ChangeState("moving");
 
-            var damageCollider = new CBox(EntityPosition, -7, -4, 0, 14, 10, 4);
-            var hittableRectangle = new CBox(EntityPosition, -6, -4, 12, 10, 8);
+            var damageCollider = new CBox(EntityPosition, -5, -2, 0, 10, 10, 4);
+            var hittableRectangle = new CBox(EntityPosition, -5, -2, 10, 10, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
