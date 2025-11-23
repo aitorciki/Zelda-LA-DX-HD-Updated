@@ -133,6 +133,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Map.Objects.Collision(_upperBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox) &&
                 Map.Objects.Collision(_lowerBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox))
                 DestroyBush(Vector2.Zero);
+
+            // Try to find an object to hit. The bush will try to hit itself so this is worked around in the "OnHit" method.
+            var hitCollision = Map.Objects.Hit(this, _hittableBox.Box.Center, _hittableBox.Box, HitType.ThrownObject, 2, false);
         }
 
         private Vector3 CarryInit()
@@ -171,6 +174,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
+            // Prevent the bush from colliding with itself. Because it "can hit" and also "be hit"
+            // the collision box is in conflict with itself and self denotates when thrown.
+            if (damageType == HitType.ThrownObject && gameObject.GetType() == typeof(ObjBush))
+                return Values.HitCollision.None;
+
+            // Damage types that don't destroy the bush. If it does not have a collider it is grass.
             if (IsDead ||
                 (damageType & HitType.SwordHold) != 0 ||
                 damageType == HitType.Bow ||
@@ -182,8 +191,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 damageType == HitType.ThrownObject && !_hasCollider)
                 return Values.HitCollision.None;
 
-            // this is really stupid
-            // for the sword attacks a smaller hitbox is used
+            // A smaller hitbox is used for sword attacks on bushes.
             if (_hasCollider &&
                 (damageType & HitType.Sword) != 0 &&
                 gameObject is ObjLink player && !player.IsPoking)
@@ -194,11 +202,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (collidingArea < 16)
                     return Values.HitCollision.None;
             }
-
+            // Try to spawn an item and destroy the bush.
             SpawnItem(direction);
-
             DestroyBush(direction);
-
             return Values.HitCollision.NoneBlocking;
         }
 
