@@ -168,6 +168,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (damageType == HitType.Bow || damageType == HitType.MagicRod)
                 return _damageState.OnHit(gameObject, direction, damageType, 1, pieceOfPower);
+
             if (damageType == HitType.ThrownObject || damageType == HitType.Bomb)
                 return _damageState.OnHit(gameObject, direction, damageType, 4, pieceOfPower);
 
@@ -176,12 +177,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 direction *= 0.25f;
                 StartStun();
                 _damageField.IsActive = false;
-            }
 
+                var hitState = _damageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
+
+                Game1.GameManager.PlaySoundEffect("D360-03-03");
+
+                return hitState;
+            }
             _damageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
 
-            // play sound effect
-            Game1.GameManager.PlaySoundEffect("D360-03-03");
+            if (pieceOfPower)
+                Game1.GameManager.PlaySoundEffect("D370-17-11");
+            else
+                Game1.GameManager.PlaySoundEffect("D360-09-09");
 
             return Values.HitCollision.Repelling;
         }
