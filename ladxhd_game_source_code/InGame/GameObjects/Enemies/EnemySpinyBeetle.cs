@@ -132,8 +132,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            // Delete carried object only if still on beetle's back.
+            if (!_objectPickedUp)
+               Map.Objects.DeleteObjects.Add(_carriedObject);
+
+            // Always delete the beetle and spawn a new one.
             Map.Objects.DeleteObjects.Add(this);
-            Map.Objects.DeleteObjects.Add(_carriedObject);
             Map.Objects.SpawnObject(new EnemySpinyBeetle(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 7, _type));
         }
 
