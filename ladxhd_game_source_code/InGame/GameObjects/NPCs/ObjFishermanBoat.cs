@@ -15,12 +15,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _pulledMouse;
         private bool _falling;
 
-        public BodyComponent Body;
-        public readonly Animator Animator;
+        public BodyComponent _body;
+        public readonly Animator _animator;
         private readonly CSprite _sprite;
         private readonly BodyDrawComponent _drawComponent;
         private readonly BodyDrawShadowComponent _shadowComponent;
-        private readonly BodyCollisionComponent _collisionComponent;
         private readonly InteractComponent _interactionComponent;
 
         private readonly Vector2 _spawnPosition;
@@ -40,40 +39,35 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 IsDead = true;
                 return;
             }
-
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height);
 
             _spawnPosition = EntityPosition.Position;
-
             _spawnCondition = spawnCondition;
             _dialogId = dialogId;
-            Animator = AnimatorSaveLoad.LoadAnimator("NPCs/" + animationId);
+            _animator = AnimatorSaveLoad.LoadAnimator("NPCs/" + animationId);
 
-            if (Animator == null)
+            if (_animator == null)
             {
                 IsDead = true;
                 return;
             }
-
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(Animator, _sprite, Vector2.Zero);
+            var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
 
-            Body = new BodyComponent(EntityPosition,
+            _body = new BodyComponent(EntityPosition,
                 bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height, bodyRectangle.Height)
             {
                 Gravity = -0.15f,
             };
 
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-            AddComponent(BodyComponent.Index, Body);
-            // only the player should collide with the npc
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(Body, Values.CollisionTypes.Enemy | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, _interactionComponent = new InteractComponent(Body.BodyBox, Interact));
+            AddComponent(BodyComponent.Index, _body);
+            AddComponent(InteractComponent.Index, _interactionComponent = new InteractComponent(_body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(Body, _sprite, Values.LayerPlayer) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(Body, _sprite));
+            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
+            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
 
             if (Game1.GameManager.SaveManager.GetString("photoMouseActive") == "1" &&
                 Game1.GameManager.SaveManager.GetString("photo_sequence_bridge") == null)
@@ -86,7 +80,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void SetActive(bool isActive)
         {
-            _collisionComponent.IsActive = isActive;
             _interactionComponent.IsActive = isActive;
             _drawComponent.IsActive = isActive;
             _shadowComponent.IsActive = isActive;
@@ -109,16 +102,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // look at the player
                 if (_currentAnimation == null)
                 {
-                    var animationIndex = Animator.GetAnimationIndex("stand_" + dir);
+                    var animationIndex = _animator.GetAnimationIndex("stand_" + dir);
                     if (animationIndex >= 0)
-                        Animator.Play(animationIndex);
+                        _animator.Play(animationIndex);
                     else
-                        Animator.Play("stand_" + (playerDistance.Y < 0 ? "1" : "3"));
+                        _animator.Play("stand_" + (playerDistance.Y < 0 ? "1" : "3"));
                 }
             }
 
             // finished playing
-            if (_currentAnimation != null && !Animator.IsPlaying)
+            if (_currentAnimation != null && !_animator.IsPlaying)
             {
                 _currentAnimation = null;
                 Game1.GameManager.SaveManager.SetString(_dialogId + "Finished", "1");
@@ -189,7 +182,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 {
                     SetVisibility(true);
                     _currentAnimation = animationValues;
-                    Animator.Play(_currentAnimation);
+                    _animator.Play(_currentAnimation);
                 }
                 else
                 {
@@ -227,7 +220,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (!string.IsNullOrEmpty(fallValue))
             {
                 _falling = true;
-                Body.Velocity = new Vector3(-1.75f, -0.75f, 0);
+                _body.Velocity = new Vector3(-1.75f, -0.75f, 0);
                 if (_photoMouse != null)
                 {
                     _photoMouse.Body.IgnoresZ = false;
@@ -241,14 +234,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (!string.IsNullOrEmpty(resetValue))
             {
                 _pullMouse = false;
-                // reset the position and remove the photo mouse
-                // must be ontop of the boat
                 EntityPosition.Set(new Vector2(_spawnPosition.X, _spawnPosition.Y - 2));
                 if (_photoMouse != null)
                     Map.Objects.DeleteObjects.Add(_photoMouse);
                 Game1.GameManager.SaveManager.RemoveString(resetString);
             }
-
         }
     }
 }

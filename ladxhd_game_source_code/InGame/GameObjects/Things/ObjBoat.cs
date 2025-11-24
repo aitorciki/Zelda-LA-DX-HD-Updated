@@ -180,14 +180,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                     offsetRadiant = offsetRadiant + MathF.PI;
 
                 if (!Game1.GameManager.DialogIsRunning())
-                    _objFisherman.Animator.Play(MathF.Sin(offsetRadiant) > 0 ? "idle" : "down");
+                    _objFisherman._animator.Play(MathF.Sin(offsetRadiant) > 0 ? "idle" : "down");
 
                 // 1sec up/down
                 _positionOffset.Y = MathHelper.Clamp(MathF.Cos(offsetRadiant) * 1.1f, -1, 1);
             }
             else if (!Game1.GameManager.DialogIsRunning())
             {
-                _objFisherman.Animator.Play(_isStandingOnTop ? "down" : "idle");
+                _objFisherman._animator.Play(_isStandingOnTop ? "down" : "idle");
             }
 
             _newPosition = _currentPosition + _positionOffset;
