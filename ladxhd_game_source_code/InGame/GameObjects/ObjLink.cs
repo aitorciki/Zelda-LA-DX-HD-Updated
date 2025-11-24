@@ -305,6 +305,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _hookshotPull;
         private bool _hookshotActive;
         private float _hookshotCounter;
+        private float _hookshotCooldown;
 
         // Boomerang
         public ObjBoomerang Boomerang = new ObjBoomerang();
@@ -3286,37 +3287,85 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseHookshot()
         {
+            // If the cooldown is active then force exit.
+            if (_hookshotCooldown > 0)
+                return;
+
+            // Only run if idle or using hookshot for the forced return.
             if (CurrentState != State.Idle && 
                 CurrentState != State.Rafting && 
                 CurrentState != State.Pushing && 
-                CurrentState != State.Hookshot && 
+                CurrentState != State.Hookshot &&
                 (!Map.Is2dMap || CurrentState != State.Swimming))
                 return;
 
+            // If hookshot is in progress force a comeback.
             if (_hookshotActive)
             {
                 Hookshot.ForceComeback();
                 return;
             }
+            // Fire the shot, make active, and reset activation counter.
             _hookshotActive = true;
             _hookshotCounter = 0;
 
+            // Get the current direction to fire the hookshot.
             var hookshotDirection = CurrentState == State.Swimming ? _swimDirection : Direction;
 
+            // Spawn in the hookshot object and track it via "Hookshot" variable.
             var spawnPosition = new Vector3(
                 EntityPosition.X + _hookshotOffset[hookshotDirection].X,
                 EntityPosition.Y + _hookshotOffset[hookshotDirection].Y, EntityPosition.Z);
             Hookshot.Start(Map, spawnPosition, AnimationHelper.DirectionOffset[hookshotDirection]);
             Map.Objects.SpawnObject(Hookshot);
 
+            // Set the current state and reset values.
             CurrentState = State.Hookshot;
             _body.VelocityTarget = Vector2.Zero;
             _body.HoleAbsorption = Vector2.Zero;
             _body.IgnoreHoles = true;
             StopRaft();
 
-            // play animation
+            // Play Link's animation ("powder" is used for several items).
             Animation.Play("powder_" + hookshotDirection);
+        }
+
+        private void UpdateHookshot()
+        {
+            // If cooldown is active reduce it.
+            if (_hookshotCooldown > 0)
+                _hookshotCooldown -= Game1.DeltaTime;
+
+            // Increase the reactivation counter.
+            _hookshotCounter += Game1.DeltaTime;
+
+            // After a period, force the hookshot to be inactive.
+            if (_hookshotCounter > 1350)
+            {
+                _hookshotCounter = 0;
+
+                // This is a workaround to the hookshot sometimes getting "stuck"
+                // after usage caused by various interruptions to it finishing.
+                if (_hookshotActive)
+                {
+                    _hookshotActive = false;
+                    return;
+                }
+            }
+            // Hookshot is in progress.
+            if (CurrentState == State.Hookshot)
+            {
+                // If currently moving continue moving.
+                if (Hookshot.IsMoving)
+                    return;
+
+                // If it's returned, reset values and add brief cooldown.
+                _hookshotActive = false;
+                _hookshotCounter = 0;
+                _hookshotCooldown = 75;
+                _body.IgnoreHoles = false;
+                ReturnToIdle();
+            }
         }
 
         private void UseBoomerang()
@@ -3993,31 +4042,6 @@ namespace ProjectZ.InGame.GameObjects
             _savedPreItemPickup = false;
             SaveGameSaveLoad.ClearSaveState();
             Game1.GameManager.SaveManager.DisableHistory();
-        }
-
-        private void UpdateHookshot()
-        {
-            _hookshotCounter += Game1.DeltaTime;
-
-            if (_hookshotCounter > 1350)
-            {
-                _hookshotCounter = 0;
-                if (_hookshotActive)
-                {
-                    _hookshotActive = false;
-                    return;
-                }
-            }
-            if (CurrentState == State.Hookshot)
-            {
-                if (Hookshot.IsMoving)
-                    return;
-
-                _hookshotActive = false;
-                _hookshotCounter = 0;
-                _body.IgnoreHoles = false;
-                ReturnToIdle();
-            }
         }
 
         private void UpdateDigging()
