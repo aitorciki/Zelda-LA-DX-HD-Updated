@@ -20,13 +20,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
 
+        private ObjBomb _objBomb;
+
         private Vector2 _startPosition;
 
         private float _flyHeight = 14;
         private int _lives = ObjLives.Bomber;
 
         private bool fairySpawn;
-        private ObjBomb _objBomb;
 
         public EnemyBomber() : base("bomber") { }
 

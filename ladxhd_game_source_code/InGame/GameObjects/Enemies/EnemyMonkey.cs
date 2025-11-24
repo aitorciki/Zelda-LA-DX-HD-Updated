@@ -19,6 +19,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly AiDamageState _damageState;
 
+        private ObjBomb _objBomb;
+
         private const int FadeTime = 125;
         private float _fleeCounter = 1500;
         private int _throwState;
@@ -34,7 +36,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(posX + 8, posY + 33, 17);
             EntitySize = new Rectangle(-16, -38, 32, 38);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/monkey");
 
@@ -78,6 +81,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+        }
+
+        private void Reset()
+        {
+            if (_objBomb != null)
+                Map.Objects.DeleteObjects.Add(_objBomb);
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
@@ -130,13 +139,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             else
             {
                 // spawn a bomb
-                var bomb = new ObjBomb(Map, 0, 0, false, true);
-                bomb.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 20));
-                bomb.Body.Velocity = throwDirection;
-                bomb.Body.Gravity = -0.1f;
-                bomb.Body.DragAir = 1.0f;
-                bomb.Body.Bounciness = 0.25f;
-                Map.Objects.SpawnObject(bomb);
+                _objBomb = new ObjBomb(Map, 0, 0, false, true);
+                _objBomb.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 20));
+                _objBomb.Body.Velocity = throwDirection;
+                _objBomb.Body.Gravity = -0.1f;
+                _objBomb.Body.DragAir = 1.0f;
+                _objBomb.Body.Bounciness = 0.25f;
+                Map.Objects.SpawnObject(_objBomb);
 
                 _bombCountdown = Game1.RandomNumber.Next(10, 16);
             }

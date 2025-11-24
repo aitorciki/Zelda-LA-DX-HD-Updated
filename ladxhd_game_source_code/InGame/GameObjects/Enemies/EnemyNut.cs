@@ -26,7 +26,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-6, -48, 12, 48);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _sprite = new CSprite(Resources.SprEnemies, EntityPosition, new Rectangle(306, 2, 12, 12), new Vector2(-6, -12));
 
@@ -51,6 +52,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, shadow);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
