@@ -16,6 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         public float ShakeOffset = 2;
         public bool SilentStateChange = true;
 
+        public bool Active = false;
+
         public AiStunnedState(AiComponent aiComponent, AnimationComponent animationComponent, int stunTime, int shakeTime)
         {
             _aiComponent = aiComponent;
@@ -33,6 +35,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
         public void StartStun()
         {
+            Active = true;
+
             // make sure to not save the stunned state to not create an endless stunned loop
             if (_aiComponent.CurrentStateId != "stunned" &&
                 _aiComponent.CurrentStateId != "shake")
@@ -62,6 +66,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
         private void ShakeEnd()
         {
+            Active = false;
+
             _animationComponent.SpriteOffset.X = _spriteOffsetX;
 
             // change back to the state before the entity got stunned
