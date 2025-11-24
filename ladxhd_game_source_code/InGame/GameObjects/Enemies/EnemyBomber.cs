@@ -1,9 +1,10 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -23,6 +24,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _flyHeight = 14;
         private int _lives = ObjLives.Bomber;
+
+        private bool fairySpawn;
 
         public EnemyBomber() : base("bomber") { }
 
@@ -148,7 +151,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 return Values.HitCollision.None;
             }
-
+            if ((damageType & HitType.Boomerang) != 0 && !fairySpawn)
+            {
+                fairySpawn = true;
+                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 4, 0));
+            }
             return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
         }
     }
