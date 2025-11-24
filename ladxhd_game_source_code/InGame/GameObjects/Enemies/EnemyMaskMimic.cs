@@ -45,8 +45,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             _animatorComponent = new AnimationComponent(_animator, sprite, Vector2.Zero);
 
-            _fieldRectangle = map.GetField(posX, posY);
-
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
                 Gravity = -0.075f,
@@ -55,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.Field,
                 AvoidTypes =     Values.CollisionTypes.Hole | 
                                  Values.CollisionTypes.NPCWall,
-                FieldRectangle = _fieldRectangle,
+                FieldRectangle = map.GetField(posX, posY),
                 IsSlider = true,
                 MaxSlideDistance = 4.0f
             };
@@ -93,36 +91,40 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            _damageField.IsActive = true;
-
+            // Tracks if they moved for playing animation.
             var moved = false;
-            if (_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+
+            // Stunning can disable damage field so reactivate it.
+            if (!_aiStunnedState.Active)
+                _damageField.IsActive = true;
+
+            // Move when Link is in the same field as the Mask Mimic.
+            if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 if (_wasColliding)
                 {
-                    var direction = -MapManager.ObjLink.LastMoveVector;
+                    var moveVelocity = -MapManager.ObjLink.LastMoveVector;
                     var diff = (MapManager.ObjLink.EntityPosition.Position - _lastPosition) / Game1.TimeMultiplier;
 
-                    // this will stop the enemy if the player is walking into an obstacle
-                    direction = new Vector2(
-                        Math.Min(Math.Abs(direction.X), Math.Abs(diff.X)) * Math.Sign(direction.X),
-                        Math.Min(Math.Abs(direction.Y), Math.Abs(diff.Y)) * Math.Sign(direction.Y));
+                    // Stops the enemy if the player runs into an obstacle.
+                    moveVelocity = new Vector2(
+                        Math.Min(Math.Abs(moveVelocity.X), Math.Abs(diff.X)) * Math.Sign(moveVelocity.X),
+                        Math.Min(Math.Abs(moveVelocity.Y), Math.Abs(diff.Y)) * Math.Sign(moveVelocity.Y));
 
-                    _body.VelocityTarget = direction * 0.75f;
+                    _body.VelocityTarget = moveVelocity * 0.75f;
 
-                    if (direction.Length() > 0.01f)
+                    if (moveVelocity.Length() > 0.01f)
                     {
                         moved = true;
 
-                        ObjLink Link = MapManager.ObjLink;
-                        if (!Link.IsChargingState(Link.CurrentState))
+                        if (!MapManager.ObjLink.IsChargingState(MapManager.ObjLink.CurrentState))
                         {
                             // deadzone to not have a fixed point where the direction gets changed
-                            if (Math.Abs(direction.X) * ((_direction % 2 == 0) ? 1.1f : 1f) >
-                                Math.Abs(direction.Y) * ((_direction % 2 != 0) ? 1.1f : 1f))
-                                _direction = direction.X < 0 ? 0 : 2;
+                            if (Math.Abs(moveVelocity.X) * ((_direction % 2 == 0) ? 1.1f : 1f) >
+                                Math.Abs(moveVelocity.Y) * ((_direction % 2 != 0) ? 1.1f : 1f))
+                                _direction = moveVelocity.X < 0 ? 0 : 2;
                             else
-                                _direction = direction.Y < 0 ? 1 : 3;
+                                _direction = moveVelocity.Y < 0 ? 1 : 3;
                         }
                         var playAnimation = "walk_" + _direction;
 

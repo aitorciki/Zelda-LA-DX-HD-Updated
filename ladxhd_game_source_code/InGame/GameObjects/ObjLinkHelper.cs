@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
-using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
@@ -39,7 +38,7 @@ namespace ProjectZ.InGame.GameObjects
             return false;
         }
 
-        private int ToDirection(Vector2 direction)
+        public int ToDirection(Vector2 direction)
         {
             // Fail safe in case the impossible happens.
             if (direction == Vector2.Zero) { return Direction; }
@@ -58,7 +57,7 @@ namespace ProjectZ.InGame.GameObjects
                 return direction.Y > 0 ? 3 : 1;
         }
 
-        private int ToDirectionClassic(Vector2 direction)
+        public int ToDirectionClassic(Vector2 direction)
         {
             // Get angle in degrees 0-360.
             float angle = (float)Math.Atan2(direction.Y, direction.X);

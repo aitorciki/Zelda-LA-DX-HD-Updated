@@ -46,6 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
             {
+                FieldRectangle = map.GetField(posX, posY),
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Enemy |
                                  Values.CollisionTypes.Field,
@@ -89,31 +90,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
+            // Tracks if they moved for playing animation.
             var moved = false;
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
 
-             _damageField.IsActive = true;
+            // Stunning can disable damage field so reactivate it.
+            if (!_aiStunnedState.Active)
+                _damageField.IsActive = true;
 
-            // move when near the player
-            if (playerDistance.Length() < 80)
+            // Move when Link is in the same field as the Arm Mimic.
+            if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 if (_wasColliding)
                 {
-                    var direction = -MapManager.ObjLink.LastMoveVector;
+                    var moveVelocity = -MapManager.ObjLink.LastMoveVector;
                     var diff = (MapManager.ObjLink.EntityPosition.Position - _lastPosition) / Game1.TimeMultiplier;
 
-                    // this will stop the enemy if the player is walking into an obstacle
-                    direction = new Vector2(
-                        Math.Min(Math.Abs(direction.X), Math.Abs(diff.X)) * Math.Sign(direction.X),
-                        Math.Min(Math.Abs(direction.Y), Math.Abs(diff.Y)) * Math.Sign(direction.Y));
+                    // Stops the enemy if the player runs into an obstacle.
+                    moveVelocity = new Vector2(
+                        Math.Min(Math.Abs(moveVelocity.X), Math.Abs(diff.X)) * Math.Sign(moveVelocity.X),
+                        Math.Min(Math.Abs(moveVelocity.Y), Math.Abs(diff.Y)) * Math.Sign(moveVelocity.Y));
 
-                    _body.VelocityTarget = direction * 0.75f;
+                    _body.VelocityTarget = moveVelocity;
 
-                    if (direction.Length() > 0.01f)
+                    if (moveVelocity.Length() > 0.01f)
                     {
                         moved = true;
 
-                        _direction = AnimationHelper.GetDirection(direction);
+                        // Use the direction from ObjLink instead of AnimationHelper since it
+                        // has "bias" built into the four directions (fixes diagonal movement).
+                        _direction = MapManager.ObjLink.ToDirection(moveVelocity);
 
                         if (_animator.CurrentAnimation.Id != "walk_" + _direction)
                             _animator.Play("walk_" + _direction);
