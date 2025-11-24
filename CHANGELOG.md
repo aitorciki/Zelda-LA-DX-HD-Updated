@@ -1,5 +1,50 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.4.9**
+### **The "Beginning of the End" Update**
+  * Add a new Audio option "Classic Music Cues" which slightly alters the overworld music cues to match the original game.
+  * Add a new Game option "Select Last Save" which automatically selects the last accessed save when first loading the main menu.
+  * Maximum game scale can now be adjusted via "Game1.lahdhmod" file. This can also enable "editor mode" more easily.
+  * Stones created by object respawners are no longer respawned on a field change when Classic Camera is active. This prevents potential duplicates.
+  * Cracked floors reset on field change with Classic Camera. They reset after 15 seconds with the modern camera but not with Classic Camera.
+  * Holes created after chopping down a bush are now despawned on a field change when Classic Camera is enabled.
+  * Digging holes with the shovel are now also reset after a field change when Classic Camera is enabled.
+  * Tarin now spawns next to the honeycomb tree after Level 3 is completed rather than after collecting the stick.
+  * Enemy Spiny Beetle is now respawned on a field change when Classic Camera is enabled since they do in the original game.
+  * Enemy Blade Traps now use a predictive movement system rather than collision detection. This prevents movement when there shouldn't be any.
+  * Reduce the detection range of sword bearing enemies from 80 down to 60 which more closely matches the original game.
+  * The option "Disable Helper Messages" also blocks the dialog text for the nightmare door when missing the nightmare key.
+  * Nerf the signpost maze by allowing the current sign in the sequence to be read multiple times instead of failing.
+  * Bushes now deal damage when throwing them at enemies. However, they can not destroy other bushes like rocks do.
+  * Flying with the rooster and then throwing it transfers some of that velocity to Link like the original game.
+  * Bridge colliders (one-way colliders) no longer stop Link + rooster from flying from the water and onto the bridge.
+  * Remove collision from the fisherman on the boat near the bridge since he didn't have any in the original game.
+  * Fix the jump hack from preventing the dying animation from playing if the player dies while landing on the ground.
+  * Fix alligator trade sequence (canned food for bananas) where Link could move and get stuck just as the can is tossed into the air.
+  * Fix item sticking to Link's head if activating the toadstool immediately after picking up an item (like Piece of Power or Guardian Acorn).
+  * Fix Marin's forward and rear facing jump animations. The animations existed but played the wrong frames.
+  * Fix the stick being skippable by jumping over it. A collider is now spawned behind it so the player can't jump past it.
+  * Fix resetting the sword charge counter when dashing with Pegasus Boots. If sword was charged and interrupted, dashing would make it flash.
+  * Fix potential softlock in Animal Village with heart piece if jumping down without bombs. A skull was added to the exit that has a bomb in it.
+  * Fix seashell mansion where Link should be frozen but could change his direction as the meter is counting up.
+  * Fix missing Buzz Blobs near Animal Village and missing Mushroom Bomber near the river passageway close to Animal Village.
+  * Fix a single tile outside of the cave to not play Animal Village music when new option "Classic Music Cues" is disabled.
+  * Fix enemy Spiny Beetle to be able to fall down holes by fixing it's size dimensions. Also fix it's reset with Classic Camera.
+  * Fix enemy Pols Voice attack sound effects. Stun items were making the metallic "ting" sound and sword had all the wrong sound effects.
+  * Fix enemy Arm Mimic movement animations fighting between two directions when walking diagonally.
+  * Fix enemy Bomber bombs to despawn when changing fields in Classic Camera. Also always spawn a fairy when killed with Boomerang.
+  * Fix enemy Cheep-Cheep stomp conditions and remove its damage field component after it has been stomped.
+  * Fix enemy Flame Trap flames to persist through playing the ocarina. This exploit allowed the player to skip the mirror shield requirement.
+  * Fix enemy Anti-Kirby vacuum sound effect to be silenced if the player dies while it happening. This prevents an endless loop of the sound.
+  * Fix enemy Pairodd teleport activation range to be closer to the original game. This seems to almost perfectly duplicate behaviors.
+  * Fix dungeon 3 blocks to reset positions when walking over certain leave buttons.
+  * Fix dungeon 5 blocks to reset positions when walking over certain leave buttons. Also fix door to shut after leaving passageway.
+  * Fix dungeon 7 keyhole to show the "missing key" message when the player does not have the bird key.
+  * Fix the Egg follower turnaround to handle the situation of holding the rooster while activating it which stuck Link in the air.
+  * Fix collision of the wall behind the bird key in the cave that it is found that allowed the player to walk out of bounds. 
+  * Fix collision of Kanalet Castle eastern wall. This is a v1.0.0 bug so the collision was never implemented to begin with.
+  * Fix partially "visible tiles" in the Magnifying Glass cave that should not have been visible.
+
 ## **v1.4.8**
 ### **The "Reaching the Final Stretch" Update**
   * The "Always Animate" system has been overhauled to be safer and more reliable and more objects have been added to it.
