@@ -165,7 +165,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Game1.GameManager.PlaySoundEffect("D370-14-0E");
 
-                MapManager.ObjLink._body.Velocity.Y -= 2f;
+                MapManager.ObjLink._body.Velocity.Y = -1f;
                 _aiComponent.ChangeState("dead");
                 _animator.Play("dead_" + _dir);
                 _body.VelocityTarget = Vector2.Zero;
