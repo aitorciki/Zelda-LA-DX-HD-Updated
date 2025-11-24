@@ -16,6 +16,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _colorIndex;
         private readonly string _spriteId;
 
+        private CBox _hardBox;
+        private CBox _softBox;
+        private CBox _dashBox;
+
         bool light_source = true;
         int light_size = 80;
 
@@ -50,16 +54,15 @@ namespace ProjectZ.InGame.GameObjects.Things
                 ? new Color(light_red_1, light_grn_1, light_blu_1) * light_bright_1
                 : new Color(light_red_2, light_grn_2, light_blu_2) * light_bright_2;
 
-            var hardBox = new CBox(posX, posY + 4, 0, 16, 12, 16);
-            var softBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
+            _hardBox = new CBox(posX, posY + 4, 0, 16, 12, 16);
+            _softBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
+            _dashBox = new CBox(posX - 2, posY , 8, 20, 18, 8);
 
             if (_isHardCrystal)
-                AddComponent(PushableComponent.Index, new PushableComponent(hardBox, OnPush) { InertiaTime = 50 });
-        
-            AddComponent(HittableComponent.Index, new HittableComponent(_isHardCrystal ? hardBox : softBox, OnHit));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_isHardCrystal ? hardBox : softBox, Values.CollisionTypes.Normal));
+                AddComponent(PushableComponent.Index, new PushableComponent(_hardBox, OnPush) { InertiaTime = 50 });
 
-            // Draw components
+            AddComponent(HittableComponent.Index, new HittableComponent(_isHardCrystal ? _hardBox : _softBox, OnHit));
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_isHardCrystal ? _hardBox : _softBox, Values.CollisionTypes.Normal));
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(-8, -16), Values.LayerPlayer));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
@@ -87,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
         {
-            if ((_isHardCrystal && damageType != HitType.PegasusBootsSword) || (damageType & HitType.SwordHold) != 0 || damageType == HitType.Hookshot)
+            if ((_isHardCrystal && damageType != HitType.PegasusBootsSword && damageType != HitType.CrystalSmash) || (damageType & HitType.SwordHold) != 0 || damageType == HitType.Hookshot)
                 return Values.HitCollision.None;
 
             if ((damageType & HitType.Sword) != 0 && (damageType & HitType.Boomerang) != 0 && (damageType & HitType.Hookshot) != 0 && (damageType & HitType.Bomb) != 0)
@@ -96,22 +99,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D378-09-09");
 
             Map.Objects.DeleteObjects.Add(this);
+            Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, _spriteId, _dialogPath, _isHardCrystal, _colorIndex));
 
-            Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, 
-                _spriteId, _dialogPath, _isHardCrystal, _colorIndex));
+            var mult = damageType == HitType.PegasusBootsSword || damageType == HitType.CrystalSmash ? 1.0f : 0.25f;
 
-            var mult = damageType == HitType.PegasusBootsSword ? 1.0f : 0.25f;
             var velZ = 0.5f;
             var diff = 200f;
-            var vector0 = new Vector3(-1, -1, 0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
-            var vector1 = new Vector3(-1, 0, 0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
-            var vector2 = new Vector3(1, -1, 0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
-            var vector3 = new Vector3(1, 0, 0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
+
+            var vector0 = new Vector3(-1, -1,  0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
+            var vector1 = new Vector3(-1,  0,  0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
+            var vector2 = new Vector3( 1, -1,  0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
+            var vector3 = new Vector3( 1,  0,  0) * Game1.RandomNumber.Next(50, 75) / diff + new Vector3(direction * mult, velZ);
 
             var stone0 = new ObjSmallStone(Map, (int)EntityPosition.X + 2, (int)EntityPosition.Y - 10, Game1.RandomNumber.Next(4, 8), vector0);
-            var stone1 = new ObjSmallStone(Map, (int)EntityPosition.X + 2, (int)EntityPosition.Y - 6, Game1.RandomNumber.Next(4, 8), vector1);
+            var stone1 = new ObjSmallStone(Map, (int)EntityPosition.X + 2, (int)EntityPosition.Y - 6,  Game1.RandomNumber.Next(4, 8), vector1);
             var stone2 = new ObjSmallStone(Map, (int)EntityPosition.X + 6, (int)EntityPosition.Y - 10, Game1.RandomNumber.Next(4, 8), vector2);
-            var stone3 = new ObjSmallStone(Map, (int)EntityPosition.X + 6, (int)EntityPosition.Y - 6, Game1.RandomNumber.Next(4, 8), vector3);
+            var stone3 = new ObjSmallStone(Map, (int)EntityPosition.X + 6, (int)EntityPosition.Y - 6,  Game1.RandomNumber.Next(4, 8), vector3);
 
             Map.Objects.SpawnObject(stone0);
             Map.Objects.SpawnObject(stone1);

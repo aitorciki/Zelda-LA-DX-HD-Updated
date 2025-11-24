@@ -286,6 +286,7 @@ namespace ProjectZ.InGame.GameObjects
         private float _bootsMaxSpeed = 2.0f;
         private int _bootsLastDirection;
         private bool _bootsRunJump;
+        private Box _crystalSmashBox;
 
         // Arrows
         private Vector2[] _arrowOffset;
@@ -296,7 +297,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool CarryShield;
         private bool _wasBlocking;
         private bool _blockButton;
-        public Box shieldBox;
+        public Box _shieldBox;
 
         // Hookshot
         public ObjHookshot Hookshot = new ObjHookshot();
@@ -1177,10 +1178,16 @@ namespace ProjectZ.InGame.GameObjects
                         (int)swordRectangle.Width, (int)swordRectangle.Height), Color.Blue * 0.75f);
 
                 // Draw shield rectangle.
-                var shieldRectangle = shieldBox.Rectangle();
+                var shieldRectangle = _shieldBox.Rectangle();
                 spriteBatch.Draw(Resources.SprWhite,
                     new Vector2(shieldRectangle.X, shieldRectangle.Y), new Rectangle(0, 0,
                         (int)shieldRectangle.Width, (int)shieldRectangle.Height), Color.Green * 0.75f);
+
+                // Draw dash smash rectangle.
+                var dashRectangle = _crystalSmashBox.Rectangle();
+                spriteBatch.Draw(Resources.SprWhite,
+                    new Vector2(dashRectangle.X, dashRectangle.Y), new Rectangle(0, 0,
+                        (int)dashRectangle.Width, (int)dashRectangle.Height), Color.Red * 0.75f);
 
                 // Draw the field barrier.
                 if (FieldBarrier != null)
@@ -1618,7 +1625,13 @@ namespace ProjectZ.InGame.GameObjects
 
         private void OnMoveCollision(Values.BodyCollision collision)
         {
-            // knockback
+            // Detect hitting crystals made by the smash box created when dashing with Pegasus Boots.
+            var dashSmashHit = Map.Objects.Hit(this, _crystalSmashBox.Center, _crystalSmashBox, HitType.CrystalSmash, 0, false);
+
+            if (dashSmashHit == Values.HitCollision.Blocking)
+                return;
+
+            // Detect colliding with a solid object and perform knockback.
             if (CurrentState == State.Idle && _bootsWasRunning)
             {
                 var knockBack = false;
@@ -3598,8 +3611,8 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // Get the shield rectangle.
-            shieldBox = GetShieldRectangle();
-            var pushedRectangle = Map.Objects.PushObject(shieldBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
+            _shieldBox = GetShieldRectangle();
+            var pushedRectangle = Map.Objects.PushObject(_shieldBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
 
             // Push the object and get repelled from the pushed object.
             if (pushedRectangle != null)
@@ -4019,6 +4032,28 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.Idle;
         }
 
+        private Box GetCrystalSmashBox()
+        {
+            // The crystal smash box is used to smash crystals. Use
+            // the current direction to determine the box offsets.
+            var key = Direction;
+            var offsets = key switch
+            {
+                1 => ( -7,  -16, +14,  +5),
+                2 => ( +5,  -12,  +5, +14),
+                3 => ( -7,   +1, +14,  +5),
+                _ => ( -10, -12,  +5, +14)
+            };
+            // Assign the results of the switch.
+            var (xOff, yOff, wOff, hOff) = offsets;
+
+            // Return the box used to smash crystals with.
+            return new Box(
+                EntityPosition.X + xOff,
+                EntityPosition.Y + yOff, 4,
+                wOff, hOff, 4);
+        }
+
         private void UpdatePegasusBoots()
         {
             _bootsWasRunning = _bootsRunning;
@@ -4048,10 +4083,10 @@ namespace ProjectZ.InGame.GameObjects
                 var lastCounter = _bootsCounter;
                 _bootsCounter += Game1.DeltaTime;
 
-                // spawn particles
+                // Spawn particles: dust or water particles.
                 if (_bootsCounter % _bootsParticleTime < lastCounter % _bootsParticleTime)
                 {
-                    // water splash effect while running water?
+                    // Water splash particles.
                     if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water))
                     {
                         Game1.GameManager.PlaySoundEffect("D360-14-0E");
@@ -4062,6 +4097,7 @@ namespace ProjectZ.InGame.GameObjects
                             _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 3));
                         Map.Objects.SpawnObject(splashAnimator);
                     }
+                    // Ground dust particles.
                     else
                     {
                         Game1.GameManager.PlaySoundEffect("D378-07-07");
@@ -4071,7 +4107,7 @@ namespace ProjectZ.InGame.GameObjects
                         Map.Objects.SpawnObject(animator);
                     }
                 }
-                // start running
+                // Start running when the counter exceeds the charge time.
                 if (!_bootsRunning && _bootsCounter > boots_charge_time)
                 {
                     _bootsLastDirection = Direction;
@@ -4079,9 +4115,13 @@ namespace ProjectZ.InGame.GameObjects
                     _bootsWasRunning = true;
                     _bootsStop = false;
                 }
+                // Spawn the smash box while running.
+                if (_bootsRunning)
+                    _crystalSmashBox = GetCrystalSmashBox();
             }
             else
             {
+                _crystalSmashBox = Box.Empty;
                 _bootsCounter = 0;
             }
         }
@@ -4786,7 +4826,7 @@ namespace ProjectZ.InGame.GameObjects
             bool facingDir = Direction == ReverseDirection(direction);
 
             // If everything passes, it's a block.
-            return (!inside || box.Intersects(shieldBox)) && facingDir ;
+            return (!inside || box.Intersects(_shieldBox)) && facingDir ;
         }
 
         public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
