@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -56,6 +57,69 @@ namespace ProjectZ.InGame.Interface
                 if (element.Visible && !element.Hidden)
                     element.Draw(spriteBatch, element.Position.ToVector2() * scale + drawPosition, scale, transparency);
             }
+        }
+
+        public void SimulatePadPresses(string direction, int count, bool playSound)
+        {
+            if (count <= 0)
+                return;
+
+            CButtons button;
+
+            switch (direction.ToLower())
+            {
+                case "up":    button = CButtons.Up; break;
+                case "down":  button = CButtons.Down; break;
+                case "left":  button = CButtons.Left; break;
+                case "right": button = CButtons.Right; break;
+                default:      button = CButtons.Down; break;
+            }
+            for (int i = 0; i < count; i++)
+                SimulateSinglePadPress(button, playSound);
+        }
+
+        private void SimulateSinglePadPress(CButtons button, bool playSound)
+        {
+            var eValue = Elements[_selectionIndex].PressedButton(button);
+
+            if (eValue != InputEventReturn.Nothing)
+                return;
+
+            int direction = 0;
+
+            if (HorizontalMode)
+            {
+                if (button == CButtons.Left)  direction = -1;
+                if (button == CButtons.Right) direction = 1;
+            }
+            else
+            {
+                if (button == CButtons.Up)   direction = -1;
+                if (button == CButtons.Down) direction = 1;
+            }
+
+            if (direction == 0)
+                return;
+
+            Elements[_selectionIndex].Deselect(true);
+            do
+            {
+                _selectionIndex += direction;
+
+                if (_selectionIndex < 0)
+                    _selectionIndex = Elements.Count - 1;
+                else if (_selectionIndex >= Elements.Count)
+                    _selectionIndex = 0;
+            } 
+            while (!Elements[_selectionIndex].Selectable || !Elements[_selectionIndex].Visible);
+
+            if (direction < 0)
+                Elements[_selectionIndex].Select(HorizontalMode ? Directions.Right : Directions.Down, true);
+            else
+                Elements[_selectionIndex].Select(HorizontalMode ? Directions.Left : Directions.Top, true);
+
+            if (playSound)
+                Game1.GameManager.PlaySoundEffect("D360-10-0A");
         }
 
         public override InputEventReturn PressedButton(CButtons pressedButton)

@@ -17,6 +17,8 @@ namespace ProjectZ.InGame.SaveLoad
             Game1.LanguageManager.CurrentSubLanguageIndex = saveManager.GetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
             GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
+            GameSettings.StoreSavePos = saveManager.GetBool("StoreSavePos", GameSettings.StoreSavePos);
+            GameSettings.LastSavePos = saveManager.GetInt("LastSavePos", GameSettings.LastSavePos);
             GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             GameSettings.OldMovement = saveManager.GetBool("OldMovement", GameSettings.OldMovement);
@@ -80,6 +82,8 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
             saveManager.SetString("Controller", GameSettings.Controller);
             saveManager.SetBool("SwapButtons", GameSettings.SwapButtons);
+            saveManager.SetBool("StoreSavePos", GameSettings.StoreSavePos);
+            saveManager.SetInt("LastSavePos", GameSettings.LastSavePos);
             saveManager.SetBool("Autosave", GameSettings.Autosave);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             saveManager.SetBool("OldMovement", GameSettings.OldMovement);

@@ -64,7 +64,6 @@ namespace ProjectZ.InGame.Interface
                 _hidden = value;
             }
         }
-
         public float SelectionState;
 
         private float _selectionCounter;
@@ -84,6 +83,7 @@ namespace ProjectZ.InGame.Interface
         public virtual void Deselect(bool animate)
         {
             Selected = false;
+
             // do not start the animation from the start if the element was selected in the same frame
             if (_selectionCounter != _selectAnimationTime && animate)
             {

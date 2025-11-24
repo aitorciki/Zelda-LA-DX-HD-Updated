@@ -44,6 +44,7 @@ namespace ProjectZ.InGame.Pages
         private InterfaceListLayout _saveFileList;
 
         private int _selectedSaveIndex;
+        private bool _selectStoredSave;
 
         public MainMenuPage(int width, int height)
         {
@@ -227,7 +228,6 @@ namespace ProjectZ.InGame.Pages
                 _saveFileList.Elements[_selectedSaveIndex].Deselect(false);
                 _saveFileList.Elements[_selectedSaveIndex].Select(InterfaceElement.Directions.Left, false);
             }
-
             for (var i = 0; i < _deleteCopyLayouts.Length; i++)
                 _deleteCopyLayouts[i].Visible = i == 0 && SaveStateManager.SaveStates[i] != null;
 
@@ -275,8 +275,16 @@ namespace ProjectZ.InGame.Pages
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
-            base.Update(pressedButtons, gameTime);
 
+            // If the player wants to automatically select the last save file accessed.
+            if (GameSettings.StoreSavePos && !_selectStoredSave)
+            {
+                _saveFileList.SimulatePadPresses("down", GameSettings.LastSavePos, false);
+            }
+            // To prevent bad selection on settings page pop, always disable after menu loads.
+            _selectStoredSave = true;
+
+            // If the player used the command line to automatically load a save slot.
             if (Game1.FinishedLoading && Game1.AutoLoadSave)
             {
                 // Make sure the slot is within range.
@@ -288,9 +296,13 @@ namespace ProjectZ.InGame.Pages
                 // Load the save file slot.
                 LoadSave(LoadSlot);
             }
+
+            base.Update(pressedButtons, gameTime);
+
+            // Update the Link animation on the menu.
             UpdatePlayerAnimation();
 
-            // only show the copy/delete buttons for the saveslot that is currently selected
+            // Only show the copy/delete buttons for the saveslot that is currently selected.
             var selectedSaveIndex = -1;
             for (var i = 0; i < _deleteCopyLayouts.Length; i++)
             {
@@ -299,13 +311,14 @@ namespace ProjectZ.InGame.Pages
                     selectedSaveIndex = i;
             }
 
+            // Exit back to the video/title screen if pressing the cancel button.
             if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             {
                 _selectedSaveIndex = selectedSaveIndex;
+                _selectStoredSave = false;
 
-                // change to the game screen
+                // Close the menu page and change to the intro screen.
                 Game1.ScreenManager.ChangeScreen(Values.ScreenNameIntro);
-                // close the menu page
                 Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
             }
         }
@@ -373,6 +386,9 @@ namespace ProjectZ.InGame.Pages
                 _newGameIntent["SelectedSaveSlot"] = saveIndex;
                 Game1.UiPageManager.ChangePage(typeof(NewGamePage), _newGameIntent);
             }
+            // Store the last game save that was selected.
+            GameSettings.LastSavePos = saveIndex;
+            _selectStoredSave = false;
         }
 
         private void ReloadSaves()

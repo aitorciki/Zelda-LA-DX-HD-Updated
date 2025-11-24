@@ -59,6 +59,11 @@ namespace ProjectZ.InGame.Pages
                 });
             _contentLayout.AddElement(toggleSwapButtons);
 
+            // Button: Save Position
+            var toggleSavePosition = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+                "settings_game_saveposition", GameSettings.StoreSavePos, newState => { GameSettings.StoreSavePos = newState; });
+            _contentLayout.AddElement(toggleSavePosition);
+
             // Button: AutoSave
             var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
@@ -184,9 +189,10 @@ namespace ProjectZ.InGame.Pages
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error"); break; }
                 case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_controller", "error"); break; }
                 case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_swapconfirm", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicmove", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicmove", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

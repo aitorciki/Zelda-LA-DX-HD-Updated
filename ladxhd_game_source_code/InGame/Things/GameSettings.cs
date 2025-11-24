@@ -5,6 +5,8 @@
         // Game Settings
         public static string  Controller      =  "XBox";
         public static bool    SwapButtons     =  false;
+        public static bool    StoreSavePos    =  false;
+        public static int     LastSavePos     =  0;
         public static bool    Autosave        =  true;
         public static bool    ItemsOnRight    =  false;
         public static bool    OldMovement     =  false;
