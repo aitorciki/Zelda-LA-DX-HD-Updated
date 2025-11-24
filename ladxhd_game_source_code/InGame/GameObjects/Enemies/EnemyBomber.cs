@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = ObjLives.Bomber;
 
         private bool fairySpawn;
+        private ObjBomb _objBomb;
 
         public EnemyBomber() : base("bomber") { }
 
@@ -37,6 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, _flyHeight);
             EntitySize = new Rectangle(-12, -32, 24, 32);
             CanReset = true;
+            OnReset = Reset;
 
             _startPosition = EntityPosition.Position;
 
@@ -81,6 +83,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
+        private void Reset()
+        {
+            if (_objBomb != null)
+                Map.Objects.DeleteObjects.Add(_objBomb);
+        }
+
         private void OnBurn()
         {
             _animator.Pause();
@@ -117,14 +125,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 }
 
                 // spawn a bomb
-                var bomb = new ObjBomb(Map, 0, 0, false, true);
-                bomb.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 20));
-                bomb.Body.Velocity = new Vector3(throwDirection, 0);
-                bomb.Body.CollisionTypes = Values.CollisionTypes.None;
-                bomb.Body.Gravity = -0.1f;
-                bomb.Body.DragAir = 1.0f;
-                bomb.Body.Bounciness = 0.5f;
-                Map.Objects.SpawnObject(bomb);
+                _objBomb = new ObjBomb(Map, 0, 0, false, true);
+                _objBomb.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 20));
+                _objBomb.Body.Velocity = new Vector3(throwDirection, 0);
+                _objBomb.Body.CollisionTypes = Values.CollisionTypes.None;
+                _objBomb.Body.Gravity = -0.1f;
+                _objBomb.Body.DragAir = 1.0f;
+                _objBomb.Body.Bounciness = 0.5f;
+                Map.Objects.SpawnObject(_objBomb);
             }
         }
 
