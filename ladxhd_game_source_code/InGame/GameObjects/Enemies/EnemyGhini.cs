@@ -175,12 +175,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_mainGhini)
                 KillOtherGhinies();
 
-            if (Game1.RandomNumber.Next(0, 100) < 75)
-            {
-                _damageState.SpawnItems = false;
-                // spawns a fairy
+            // A 10% chance to spawn a fairy.
+            if (Game1.RandomNumber.Next(0, 10) == 1)
                 Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, (int)EntityPosition.Z));
-            }
+
             _damageState.BaseOnDeath(pieceOfPower);
         }
 
