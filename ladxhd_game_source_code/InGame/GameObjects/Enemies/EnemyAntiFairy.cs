@@ -15,6 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly AiDamageState _aiDamageState;
+        private readonly DamageFieldComponent _damageField;
         private readonly Animator _animator;
 
         private int _lives = ObjLives.AntiFairy;
@@ -74,7 +75,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoreZeroDamage = true,
                 FlameOffset = new Point(0, 2),
-                OnDeath = OnDeath
+                OnDeath = OnDeath,
+                OnBurn = OnBurn
             };
 
             var hittableBox = new CBox(EntityPosition, -8, -8, 0, 16, 16, 8);
@@ -82,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, aiComponent);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
@@ -93,6 +95,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
