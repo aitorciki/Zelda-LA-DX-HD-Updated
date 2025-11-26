@@ -16,6 +16,18 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects
 {
+    public class GameObjectTemplate
+    {
+        public Type ObjectType;
+        public object[] Parameter;
+
+        public GameObjectTemplate(Type objectType, object[] parameter)
+        {
+            ObjectType = objectType;
+            Parameter = parameter;
+        }
+    }
+
     class GameObjectTemplates
     {
         public static Dictionary<string, GameObjectTemplate> ObjectTemplates = new Dictionary<string, GameObjectTemplate>();
@@ -113,8 +125,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("mountainStone", new GameObjectTemplate(typeof(ObjSprite), new object[] { "stone_mountain_0", new Vector2(8, 13), Values.LayerPlayer, "stone_mountain_0", new Rectangle(-8, -11, 16, 12), Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot }));
             ObjectTemplates.Add("dungeon7_keyhole", new GameObjectTemplate(typeof(ObjSprite), new object[] { "dungeon7_keyhole", new Vector2(8, 14), Values.LayerPlayer, "dungeon7_keyhole", new Rectangle(-8, -12, 16, 14), Values.CollisionTypes.Normal }));
 
-            ObjectTemplates.Add("overworldDonut", new GameObjectTemplate(typeof(ObjSprite), new object[] {
-                "overworldDonut", new Vector2(8, 0), Values.LayerPlayer, "overworldDonut", new Rectangle(-8, 0, 16, 16), Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot }));
+            ObjectTemplates.Add("overworldDonut", new GameObjectTemplate(typeof(ObjSprite), new object[] { "overworldDonut", new Vector2(8, 0), Values.LayerPlayer, "overworldDonut", new Rectangle(-8, 0, 16, 16), Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot }));
 
             ObjectTemplates.Add("cave_table", new GameObjectTemplate(typeof(ObjSprite), new object[] { "cave_table", new Vector2(0, 1), Values.LayerPlayer, null, new Rectangle(0, -1, 32, 16), Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore }));
             ObjectTemplates.Add("cave_bed", new GameObjectTemplate(typeof(ObjSprite), new object[] { "cave_bed", new Vector2(0, 0), Values.LayerPlayer, null, new Rectangle(0, 0, 16, 32), Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore }));
@@ -159,13 +170,14 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("wave3", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "wave_3", 8, 125, true, 0, Values.LayerBottom }));
             ObjectTemplates.Add("wave4", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "wave_4", 8, 125, true, 0, Values.LayerBottom }));
             ObjectTemplates.Add("wave5", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "wave_5", 8, 125, true, 0, Values.LayerBottom }));
-            ObjectTemplates.Add("water2", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_4", 8, 150, true, 0, Values.LayerBottom })); // cant set to layer background because of the waterfall
+            ObjectTemplates.Add("water2", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_4", 8, 150, true, 0, Values.LayerBottom }));          // Cant set to layer background because of the waterfall.
             ObjectTemplates.Add("water3", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_5", 8, 150, true, 0, Values.LayerBottom }));
+
             // used in dungeon 4 and the boss needs to be on top but not on the same layer as the player; so we need to put the water on the background or add a new layer
             ObjectTemplates.Add("water4", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_6", 8, 150, true, 0, Values.LayerBackground }));
             ObjectTemplates.Add("water5", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_7", 8, 150, true, 0, Values.LayerBackground }));
-            ObjectTemplates.Add("waterFall", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_8", 4, 100, true, 0, Values.LayerBottom })); // TOOD: does the raft waterfall move faster?
-            ObjectTemplates.Add("waterLeft", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_left", 4, 100, true, 0, Values.LayerBottom })); // in the game they take 5-6 frames
+            ObjectTemplates.Add("waterFall", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_8", 4, 100, true, 0, Values.LayerBottom }));       // TOOD: does the raft waterfall move faster?
+            ObjectTemplates.Add("waterLeft", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_left", 4, 100, true, 0, Values.LayerBottom }));    // In the game they take 5-6 frames.
             ObjectTemplates.Add("waterUp", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_up", 4, 100, true, 0, Values.LayerBottom }));
             ObjectTemplates.Add("waterRight", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_right", 4, 100, true, 0, Values.LayerBottom }));
             ObjectTemplates.Add("waterDown", new GameObjectTemplate(typeof(ObjAnimatedTile), new object[] { "water_down", 4, 100, true, 0, Values.LayerBottom }));
@@ -351,6 +363,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("dungeonMapless", new GameObjectTemplate(typeof(ObjDungeonMapless), new object[] { null, true }));
 
             ObjectTemplates.Add("no follower", new GameObjectTemplate(typeof(ObjNoFollower), new object[] { }));
+            ObjectTemplates.Add("field center", new GameObjectTemplate(typeof(ObjMapFieldCenter), new object[] { }));
 
             ObjectTemplates.Add("upperLevel", new GameObjectTemplate(typeof(ObjUpperLevel), new object[] { 1 }));
             ObjectTemplates.Add("upperLevel2", new GameObjectTemplate(typeof(ObjUpperLevel), new object[] { 2 }));
