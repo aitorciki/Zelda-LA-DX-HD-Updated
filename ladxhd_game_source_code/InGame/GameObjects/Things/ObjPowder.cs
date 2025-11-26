@@ -18,12 +18,13 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private float _gravity = -0.05f;
         private bool _damage;
+        private Box _hitBox;
 
         public ObjPowder(Map.Map map, float posX, float posY, float posZ, bool playerPowder) : base(map)
         {
             EntityPosition = new CPosition(posX, posY, posZ);
             EntitySize = new Rectangle(-8, -16, 16, 16);
-
+             
             _points[0] = new Vector3(posX, posY, posZ + 7);
             _points[1] = new Vector3(posX - 1, posY, posZ + 6);
             _points[2] = new Vector3(posX + 1, posY, posZ + 6);
@@ -35,6 +36,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             _live[0] = 1;
             _live[1] = 1;
             _live[2] = 1;
+
+            _hitBox = new Box(EntityPosition.X - 5, EntityPosition.Y - 8, 0, 10, 10, 8);
 
             // play sound effect
             if (playerPowder)
@@ -53,16 +56,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             for (var i = 0; i < _points.Length; i++)
             {
-                if (_points[i].Z <= 3 && !_damage)
+                // If it hasn't dealt damage yet, deal damage.
+                if (!_damage)
                 {
-                    // deals damage
                     _damage = true;
-                    Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y),
-                        new Box(EntityPosition.X - 3, EntityPosition.Y - 8, 0, 6, 10, 8),
-                        HitType.MagicPowder, 2, false, false);
+                    Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y), _hitBox, HitType.MagicPowder, 2, false, false);
                 }
-
-                // finished falling
                 if (_points[i].Z <= 0)
                 {
                     _points[i].Z = 0;
@@ -73,18 +72,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                     _points[i] += _velocity[i] * Game1.TimeMultiplier;
                     _velocity[i].Z += _gravity * Game1.TimeMultiplier;
                 }
-
                 if (_live[i] > 0)
                     finishedFalling = false;
                 else
                     _live[i] = 0;
             }
-
-            // remove object from the map
             if (finishedFalling)
-            {
                 Map.Objects.DeleteObjects.Add(this);
-            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -99,12 +93,13 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
-            // draw shadow
+            // Debug: Draw the damage box.
+            // var drawRect = _hitBox.Rectangle();
+            // spriteBatch.Draw(Resources.SprWhite, new Vector2(drawRect.X, drawRect.Y), new Rectangle(0, 0, (int)drawRect.Width, (int)drawRect.Height), Color.Red * 1.00f);
+
+            // Draw shadows under the particles.
             for (var i = 0; i < _points.Length; i++)
-            {
-                DrawHelper.DrawLight(spriteBatch, new Rectangle(
-                        (int)_points[i].X - 12, (int)(_points[i].Y - _points[i].Z) - 2 - 12, 24, 24), new Color(255, 220, 220) * 0.125f * _live[i]);
-            }
+                DrawHelper.DrawLight(spriteBatch, new Rectangle((int)_points[i].X - 12, (int)(_points[i].Y - _points[i].Z) - 2 - 12, 24, 24), new Color(255, 220, 220) * 0.125f * _live[i]);
         }
     }
 }
