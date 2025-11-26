@@ -174,7 +174,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             CurrentLives -= damage;
 
-            // burn on powder impact
+            // Burn on powder impact.
             if ((damageType == HitType.MagicPowder || damageType == HitType.MagicRod) && _hasBurnState)
             {
                 if (_aiComponent.CurrentStateId != "burning")
@@ -187,7 +187,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                         _body.Velocity.X = direction.X * HitMultiplierX * speedMultiply;
                         _body.Velocity.Y = direction.Y * HitMultiplierY * speedMultiply;
                     }
-
+                    // Burning with Magic Powder is a combination of two sound effects.
+                    Game1.GameManager.PlaySoundEffect("D360-03-03");
                     Game1.GameManager.PlaySoundEffect("D378-18-12");
 
                     return Values.HitCollision.Enemy;
