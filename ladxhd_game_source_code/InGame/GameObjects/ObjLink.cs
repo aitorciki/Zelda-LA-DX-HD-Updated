@@ -4418,11 +4418,6 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentState == State.Dying)
                 return;
 
-            // If carrying the rooster.
-            if (_isFlying && CurrentState == State.Carrying)
-            {
-                ReleaseCarriedObject();
-            }
             // has potion?
             var potion = Game1.GameManager.GetItem("potion");
             if (potion != null && potion.Count >= 1)
@@ -4432,11 +4427,16 @@ namespace ProjectZ.InGame.GameObjects
                 ItemDrawHelper.EnableHeartAnimationSound();
                 return;
             }
-            Game1.GameManager.StopMusic(true);
-            Game1.GameManager.PlaySoundEffect("D370-08-08");
-
+            // If carrying the rooster.
+            if (_isFlying && CurrentState == State.Carrying)
+            {
+                ReleaseCarriedObject();
+            }
             CurrentState = State.Dying;
             Animation.Play("dying");
+
+            Game1.GameManager.StopMusic(true);
+            Game1.GameManager.PlaySoundEffect("D370-08-08");
 
             // set the correct start frame depending on the direction the player is facing
             int[] dirToFrame = { 0, 2, 1, 3 };
