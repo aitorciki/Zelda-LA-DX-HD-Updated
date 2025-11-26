@@ -212,7 +212,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_aiComponent.CurrentStateId != "walk")
                 return;
 
-            var objShot = new BossHardhitBeetleShot(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 16), 1);
+            var objShot = new BossHardhitBeetleShot(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 16), 1, _body.FieldRectangle);
             Map.Objects.SpawnObject(objShot);
         }
 
