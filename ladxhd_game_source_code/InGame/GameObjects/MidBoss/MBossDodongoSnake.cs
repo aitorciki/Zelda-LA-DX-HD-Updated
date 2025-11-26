@@ -51,6 +51,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _stopDraggin = true;
         private bool _playedExplosion;
 
+        private bool _encountered;
         private int _bossCount;
         private int _lives = ObjLives.DodongoSnake;
 
@@ -245,13 +246,19 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // Check if player is in the field rect.
             if (currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
+                // Track when the encounter has started so the music isn't altered unintentionally
+                _encountered = true;
+
                 // Start the music if it hasn't already started playing.
                 if (Game1.GameManager.GetCurrentMusic() != 79)
                     Game1.GameManager.SetMusic(79, 2);
             }
             // Check if the player left the room.
-            else if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            else if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position) && _encountered)
             {
+                // Disable the encounter.
+                _encountered = false;
+
                 // Restore normal dungeon music.
                 Game1.GameManager.SetMusic(-1, 2);
             }
