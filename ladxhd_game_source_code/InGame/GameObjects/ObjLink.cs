@@ -2256,9 +2256,13 @@ namespace ProjectZ.InGame.GameObjects
                 !IsSwimmingState(CurrentState) && 
                 CurrentState != State.CarryingItem && 
                 CurrentState != State.Pushing && 
+                CurrentState != State.Powdering && 
+                CurrentState != State.Bombing && 
+                CurrentState != State.MagicRod && 
+                CurrentState != State.Throwing && 
                 (CurrentState != State.Carrying || _isFlying) && 
-                (CurrentState != State.MagicRod || _body.IsGrounded) && 
-                (!IsJumpingState(CurrentState) || _railJump) || !CanWalk || _isRafting) return;
+                (!IsJumpingState(CurrentState) || _railJump) || !CanWalk || _isRafting) 
+                return;
 
             var walkVelocity = Vector2.Zero;
 
