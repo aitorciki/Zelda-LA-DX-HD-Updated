@@ -285,18 +285,26 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _bodyDrawComponent.Draw(spriteBatch);
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             return Values.HitCollision.RepellingParticle;
         }
 
-        public Values.HitCollision OnHitTail(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHitTail(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiComponent.CurrentStateId == "damage" || _aiComponent.CurrentStateId == "dying")
                 return Values.HitCollision.None;
 
             // can only be damaged with the sword
-            if ((damageType & HitType.Sword) == 0)
+            if ((hitType & HitType.Sword) == 0)
                 return Values.HitCollision.None;
 
             _lives -= damage;

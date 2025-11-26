@@ -139,12 +139,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Boomerang || damageType == HitType.Hookshot)
+            if (hitType == HitType.Boomerang || hitType == HitType.Hookshot)
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _animator.Play("stunned");
@@ -153,7 +157,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             // Allows knockback effect from piece of power or red tunic.
             if (pieceOfPower)
-                return _damageState.OnHit(gameObject, direction, damageType, 0, pieceOfPower);
+                return _damageState.OnHit(gameObject, direction, hitType, 0, pieceOfPower);
 
             _damageState.SetDamageState(false);
             _body.Velocity.X = direction.X * 3.0f;

@@ -333,14 +333,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             spriteBatch.Draw(Resources.SprLight, new Rectangle((int)EntityPosition.X - 22 - 32, (int)EntityPosition.Y - 18 - 16, 64, 64), _lightColor);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_currentLives <= 0)
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bow)
+            if (hitType == HitType.Bow)
                 damage = 1;
-            if (damageType == HitType.Bomb)
+            else if (hitType == HitType.Bomb)
                 damage = 4;
 
             if (_damageCountdown.CurrentTime <= 0)

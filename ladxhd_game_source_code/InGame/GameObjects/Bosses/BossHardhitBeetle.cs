@@ -253,14 +253,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Map.Objects.DeleteObjects.Add(this);
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_hitCooldown.CurrentTime > 0 || _isDead || _aiComponent.CurrentStateId == "idle")
                 return Values.HitCollision.None;
 
             _hitCooldown.OnInit();
 
-            if (damageType == HitType.Boomerang)
+            if (hitType == HitType.Boomerang)
                 damage = 2;
 
             if (_colorIndex == 0)
@@ -274,7 +278,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _pushComponent.IsActive = false;
                 _hitComponent.IsActive = false;
                 _body.VelocityTarget = Vector2.Zero;
-                _aiDamageState.OnHit(gameObject, direction, damageType, damage, false);
+                _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
             }
             else
             {

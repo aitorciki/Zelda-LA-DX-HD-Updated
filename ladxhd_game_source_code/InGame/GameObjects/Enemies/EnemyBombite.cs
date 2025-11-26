@@ -150,13 +150,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (!_damageCooldown.State || gameObject == this)
                 return Values.HitCollision.None;
             _damageCooldown.Reset();
 
-            if (damageType == HitType.Bomb && !(gameObject is EnemyBombite))
+            if (hitType == HitType.Bomb && !(gameObject is EnemyBombite))
             {
                 if (_damageState.CurrentLives <= 0)
                 {
@@ -166,13 +170,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 }
                 // spawn a bomb
                 _damageState.SpawnItem = "bomb_1";
-                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
             }
 
             // hookshot/boomerang freeze
             _body.FieldRectangle = RectangleF.Empty;
 
-            if (damageType != HitType.MagicPowder)
+            if (hitType != HitType.MagicPowder)
                 _body.VelocityTarget = direction * 3;
             else
                 _body.VelocityTarget = Vector2.Zero;

@@ -67,10 +67,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // gets destroyed by a bomb
-            if (damageType == HitType.Bomb)
+            if (hitType == HitType.Bomb)
             {
                 Map.Objects.DeleteObjects.Add(this);
 

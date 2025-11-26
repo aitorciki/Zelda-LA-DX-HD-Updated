@@ -336,8 +336,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
@@ -349,15 +353,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             // ball was thrown at the boss
-            if ((damageType & HitType.ThrownObject) != 0)
+            if ((hitType & HitType.ThrownObject) != 0)
             {
-                _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
                 _body.VelocityTarget = Vector2.Zero;
             }
             // only knock the boss back
             else if (_aiComponent.CurrentStateId != "pickup")
             {
-                _damageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
+                _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
             }
 
             // remove damage box on death

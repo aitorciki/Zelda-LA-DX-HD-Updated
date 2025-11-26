@@ -161,30 +161,34 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("jump");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bow || damageType == HitType.MagicRod)
-                return _damageState.OnHit(gameObject, direction, damageType, 1, pieceOfPower);
+            if (hitType == HitType.Bow || hitType == HitType.MagicRod)
+                return _damageState.OnHit(gameObject, direction, hitType, 1, pieceOfPower);
 
-            if (damageType == HitType.ThrownObject || damageType == HitType.Bomb)
-                return _damageState.OnHit(gameObject, direction, damageType, 4, pieceOfPower);
+            if (hitType == HitType.ThrownObject || hitType == HitType.Bomb)
+                return _damageState.OnHit(gameObject, direction, hitType, 4, pieceOfPower);
 
-            if (damageType == HitType.MagicPowder || damageType == HitType.Hookshot || damageType == HitType.Boomerang)
+            if (hitType == HitType.MagicPowder || hitType == HitType.Hookshot || hitType == HitType.Boomerang)
             {
                 direction *= 0.25f;
                 StartStun();
                 _damageField.IsActive = false;
 
-                var hitState = _damageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
+                var hitState = _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
 
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
 
                 return hitState;
             }
-            _damageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
+            _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
 
             if (pieceOfPower)
                 Game1.GameManager.PlaySoundEffect("D370-17-11");

@@ -101,10 +101,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 EndThunder();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // spawn the bat?
-            if (_aiComponent.CurrentStateId == "idle" && damageType == HitType.MagicPowder)
+            if (_aiComponent.CurrentStateId == "idle" && hitType == HitType.MagicPowder)
             {
                 _aiComponent.ChangeState("spawning");
 

@@ -35,10 +35,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // gets destroyed by a bomb
-            if (damageType == HitType.Bomb)
+            if (hitType == HitType.Bomb)
             {
                 Game1.GameManager.PlaySoundEffect("D360-02-02");
 

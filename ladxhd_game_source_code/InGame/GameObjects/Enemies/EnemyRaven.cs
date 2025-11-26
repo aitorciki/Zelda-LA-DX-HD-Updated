@@ -187,16 +187,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.Color = Color.White * MathHelper.Clamp(_fadeOutTime / 100, 0, 1);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.MagicPowder)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bow || damageType == HitType.MagicRod)
+            if (hitType == HitType.MagicPowder)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Bow || hitType == HitType.MagicRod)
                 damage /= 2;
 
             // start attacking?
-            if (_aiComponent.CurrentStateId == "waiting" && (damageType == HitType.Bomb || damageType == HitType.ThrownObject))
+            if (_aiComponent.CurrentStateId == "waiting" && (hitType == HitType.Bomb || hitType == HitType.ThrownObject))
             {
                 _aiComponent.ChangeState("start");
 
@@ -208,7 +212,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

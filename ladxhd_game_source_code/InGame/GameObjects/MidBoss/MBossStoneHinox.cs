@@ -285,8 +285,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiComponent.CurrentStateId == "idle")
                 return Values.HitCollision.None;
 
@@ -297,10 +301,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _wasHit = true;
             }
 
-            if (damageType == HitType.Bomb || damageType == HitType.Boomerang || damageType == HitType.Bow || damageType == HitType.MagicRod)
+            if (hitType == HitType.Bomb || hitType == HitType.Boomerang || hitType == HitType.Bow || hitType == HitType.MagicRod)
                 damage = 4;
 
-            var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, false);
+            var hitCollision = _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
 
             if (_aiDamageState.CurrentLives <= 0)
             {

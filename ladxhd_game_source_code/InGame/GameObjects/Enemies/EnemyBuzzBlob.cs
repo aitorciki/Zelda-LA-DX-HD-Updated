@@ -162,12 +162,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if ((damageType & HitType.Hookshot) != 0)
+            if ((hitType & HitType.Hookshot) != 0)
             {
                 _animator.Pause();
                 _stunnedState.StartStun();
@@ -179,7 +183,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 return Values.HitCollision.Enemy;
             }
-            else if (damageType == HitType.MagicPowder)
+            else if (hitType == HitType.MagicPowder)
             {
                 _isCukeman = true;
                 _animator.Play("cukeman");
@@ -192,17 +196,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 return Values.HitCollision.Enemy;
             }
-            else if (!_stunnedState.IsStunned() && ((damageType & HitType.Sword) != 0 || damageType == HitType.PegasusBootsSword))
+            else if (!_stunnedState.IsStunned() && ((hitType & HitType.Sword) != 0 || hitType == HitType.PegasusBootsSword))
             {
                 StartShock();
 
                 return Values.HitCollision.Enemy;
             }
 
-            if ((damageType & HitType.Sword) == 0 && damageType != HitType.PegasusBootsSword && damageType != HitType.SwordShot)
+            if ((hitType & HitType.Sword) == 0 && hitType != HitType.PegasusBootsSword && hitType != HitType.SwordShot)
                 damage *= 2;
 
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
 
         private void StartShock()

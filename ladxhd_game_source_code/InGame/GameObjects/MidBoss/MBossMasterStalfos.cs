@@ -625,19 +625,23 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiDamageState.CurrentLives <= 0 || _aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
 
             // Do small damage with the sword beam.
-            if ((damageType & HitType.SwordShot) != 0)
+            if ((hitType & HitType.SwordShot) != 0)
             {
                 damage = GameMath.GetRandomInt(0,1);
                 _instantFall = true;
                 _aiComponent.ChangeState("damaged");
                 _aiDamageState.MoveBody = false;
-                _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
                 _aiDamageState.SetDamageState(true);
                 return Values.HitCollision.Blocking;
             }
@@ -648,7 +652,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _aiComponent.CurrentStateId != "attack" && _aiComponent.CurrentStateId != "wobble" && _aiComponent.CurrentStateId != "standUp")
             {
                 _aiComponent.ChangeState("preDamaged");
-                _aiDamageState.OnHit(gameObject, direction, damageType, 0, pieceOfPower);
+                _aiDamageState.OnHit(gameObject, direction, hitType, 0, pieceOfPower);
                 return Values.HitCollision.Repelling;
             }
 
@@ -659,9 +663,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             // Can be damaged on the floor with bombs.
-            if ((_aiComponent.CurrentStateId == "damaged" || _aiComponent.CurrentStateId == "wobble") && damageType == HitType.Bomb)
+            if ((_aiComponent.CurrentStateId == "damaged" || _aiComponent.CurrentStateId == "wobble") && hitType == HitType.Bomb)
             {
-                _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
             }
 
             return Values.HitCollision.RepellingParticle;

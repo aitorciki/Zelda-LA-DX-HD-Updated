@@ -539,26 +539,30 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState() ||
                 _aiComponent.CurrentStateId == "damage" || _aiComponent.CurrentStateId == "dying")
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bomb || damageType == HitType.Bow || damageType == HitType.MagicRod)
+            if (hitType == HitType.Bomb || hitType == HitType.Bow || hitType == HitType.MagicRod)
                 return Values.HitCollision.Enemy;
 
             var hitDir = AnimationHelper.GetDirection(direction);
             if ((hitDir == 2 && _direction == -1) || (hitDir == 0 && _direction == 1))
                 return Values.HitCollision.RepellingParticle;
 
-            if (damageType == HitType.Hookshot)
+            if (hitType == HitType.Hookshot)
                 damage = 1;
 
             // different drag than needed for the jumps
             _body.DragAir = 0.75f;
 
-            _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             if (_damageState.CurrentLives <= 0)
             {

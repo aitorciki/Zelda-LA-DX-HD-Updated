@@ -172,28 +172,32 @@ namespace ProjectZ.InGame.GameObjects.Things
             DestroyBush(new Vector2(_body.Velocity.X, _body.Velocity.Y));
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             // Prevent the bush from colliding with itself. Because it "can hit" and also "be hit"
             // the collision box is in conflict with itself and self denotates when thrown.
-            if (damageType == HitType.ThrownObject && gameObject.GetType() == typeof(ObjBush))
+            if (hitType == HitType.ThrownObject && gameObject.GetType() == typeof(ObjBush))
                 return Values.HitCollision.None;
 
             // Damage types that don't destroy the bush. If it does not have a collider it is grass.
             if (IsDead ||
-                (damageType & HitType.SwordHold) != 0 ||
-                damageType == HitType.Bow ||
-                damageType == HitType.Hookshot ||
-                damageType == HitType.SwordShot ||
-                damageType == HitType.PegasusBootsPush ||
-                damageType == HitType.MagicRod && !_hasCollider ||
-                damageType == HitType.Boomerang && !_hasCollider ||
-                damageType == HitType.ThrownObject && !_hasCollider)
+                (hitType & HitType.SwordHold) != 0 ||
+                hitType == HitType.Bow ||
+                hitType == HitType.Hookshot ||
+                hitType == HitType.SwordShot ||
+                hitType == HitType.PegasusBootsPush ||
+                hitType == HitType.MagicRod && !_hasCollider ||
+                hitType == HitType.Boomerang && !_hasCollider ||
+                hitType == HitType.ThrownObject && !_hasCollider)
                 return Values.HitCollision.None;
 
             // A smaller hitbox is used for sword attacks on bushes.
             if (_hasCollider &&
-                (damageType & HitType.Sword) != 0 &&
+                (hitType & HitType.Sword) != 0 &&
                 gameObject is ObjLink player && !player.IsPoking)
             {
                 var collidingRec = player.SwordDamageBox.Rectangle().GetIntersection(_hittableBox.Box.Rectangle());

@@ -182,13 +182,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 3f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (_hasPlayerTrapped && (damageType & HitType.Sword) != 0)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            if (_hasPlayerTrapped && (damageType == HitType.Boomerang || damageType == HitType.Bow ||
-                                      damageType == HitType.Hookshot || damageType == HitType.MagicRod))
+            if (_hasPlayerTrapped && (hitType & HitType.Sword) != 0)
+                return Values.HitCollision.None;
+
+            if (_hasPlayerTrapped && (hitType == HitType.Boomerang || hitType == HitType.Bow ||
+                                      hitType == HitType.Hookshot || hitType == HitType.MagicRod))
             {
                 _hasPlayerTrapped = false;
                 MapManager.ObjLink.FreeTrappedPlayer();
@@ -199,7 +203,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

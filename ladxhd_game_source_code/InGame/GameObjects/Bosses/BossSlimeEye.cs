@@ -237,8 +237,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _animator.Play(strAnimation);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.DamageTrigger.CurrentTime > 0)
                 return Values.HitCollision.None;
 
@@ -247,7 +251,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _damageState.SetDamageState();
 
             // break apart
-            if (_damageCounter > 4200 && damageType == HitType.PegasusBootsSword)
+            if (_damageCounter > 4200 && hitType == HitType.PegasusBootsSword)
             {
                 var slimeHalfLeft = new BossSlimeEyeHalf(Map, new Vector2(EntityPosition.X - 18, EntityPosition.Y), "left", _saveKey);
                 var slimeHalfRight = new BossSlimeEyeHalf(Map, new Vector2(EntityPosition.X + 18, EntityPosition.Y), "right", _saveKey);

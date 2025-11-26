@@ -104,20 +104,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerBottom));
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.Hookshot ||
-                damageType == HitType.MagicRod ||
-                damageType == HitType.MagicPowder ||
-                damageType == HitType.Bow ||
-                damageType == HitType.SwordShot ||
-                damageType == HitType.Boomerang)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Hookshot ||
+                hitType == HitType.MagicRod ||
+                hitType == HitType.MagicPowder ||
+                hitType == HitType.Bow ||
+                hitType == HitType.SwordShot ||
+                hitType == HitType.Boomerang)
                 return Values.HitCollision.None;
 
             EndRotation();
 
             // dont draw trail particle
-            return _damageState.OnHit(gameObject, direction, damageType, damage, false);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, false);
         }
 
         private void UpdateLeaveRoom()

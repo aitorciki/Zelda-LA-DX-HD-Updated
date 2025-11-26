@@ -150,22 +150,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = new Vector2((float)Math.Cos(randomDir), (float)Math.Sin(randomDir)) * 0.5f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             // can only be attacked with the sword while holding it
-            if ((damageType & HitType.Sword) != 0 && (damageType & HitType.SwordHold) == 0 && (damageType & HitType.SwordSpin) == 0)
+            if ((hitType & HitType.Sword) != 0 && (hitType & HitType.SwordHold) == 0 && (hitType & HitType.SwordSpin) == 0)
             {
                 _body.Velocity.X = direction.X * 5;
                 _body.Velocity.Y = direction.Y * 5;
 
                 return Values.HitCollision.None;
             }
-            if ((damageType & HitType.Boomerang) != 0 && !fairySpawn)
+            if ((hitType & HitType.Boomerang) != 0 && !fairySpawn)
             {
                 fairySpawn = true;
                 Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 4, 0));
             }
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

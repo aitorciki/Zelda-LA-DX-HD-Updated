@@ -111,8 +111,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState.BaseOnDeath(pieceofpower);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
@@ -120,7 +124,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _wasHit = true;
 
             // stun state
-            if (damageType == HitType.Hookshot)
+            if (hitType == HitType.Hookshot)
             {
                 _damageState.SetDamageState(false);
 
@@ -130,12 +134,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return Values.HitCollision.Enemy;
             }
 
-            if (damageType == HitType.Bow || damageType == HitType.MagicRod)
+            if (hitType == HitType.Bow || hitType == HitType.MagicRod)
                 damage = 1;
-            if (damageType == HitType.MagicPowder || damageType == HitType.Boomerang)
+            if (hitType == HitType.MagicPowder || hitType == HitType.Boomerang)
                 damage = 0;
 
-            var hitReturn = _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            var hitReturn = _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             // make sure to not disapear while moving out of the hole with piece of power active
             if (_damageState.CurrentLives <= 0)

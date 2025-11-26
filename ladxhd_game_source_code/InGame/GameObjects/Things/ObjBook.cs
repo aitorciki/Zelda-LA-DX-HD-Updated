@@ -81,12 +81,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             if (_hasFallen)
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.PegasusBootsPush)
+            if (hitType == HitType.PegasusBootsPush)
                 StartFalling();
 
             return Values.HitCollision.None;

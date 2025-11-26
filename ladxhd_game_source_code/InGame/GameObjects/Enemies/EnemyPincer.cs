@@ -215,9 +215,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play(_dirIndex.ToString());
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.MagicPowder)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.MagicPowder)
             {
                 _stunnedState.StartStun();
                 return Values.HitCollision.Enemy;
@@ -233,7 +237,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_aiComponent.CurrentStateId == "attacking")
                 _aiComponent.ChangeState("attackWait");
 
-            _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             // make sure to not fly away like for other enemies
             if (pieceOfPower)

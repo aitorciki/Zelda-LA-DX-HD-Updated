@@ -535,13 +535,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             // The "flyup" state does not start fast enough so also check "damaged" state.
             if (_damageState.IsInDamageState() || _aiComponent.CurrentStateId == "flyup" || _aiComponent.CurrentStateId == "damaged")
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.MagicRod || damageType == HitType.Boomerang)
+            if (hitType == HitType.MagicRod || hitType == HitType.Boomerang)
                 damage = 4;
 
             _damageComponent.IsActive = false;

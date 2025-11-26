@@ -85,8 +85,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _traded = (_name == "bowWow3" && Game1.GameManager.SaveManager.GetString("trade1") == "1") ? "r_" : "";
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             _body.Velocity.X += direction.X;
             _body.Velocity.Y += direction.Y;
 

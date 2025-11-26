@@ -151,15 +151,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("preAttack");
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (type == HitType.Bow)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Bow)
                 damage = 1;
 
             if (_aiComponent.CurrentStateId == "idle")
                 _aiComponent.ChangeState("flying");
 
-            var hitReturn = _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            var hitReturn = _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
 
             if (_damageState.CurrentLives <= 0)
                 SpawnBats();

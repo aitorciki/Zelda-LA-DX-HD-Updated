@@ -88,12 +88,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if ((_isHardCrystal && damageType != HitType.PegasusBootsSword && damageType != HitType.CrystalSmash) || (damageType & HitType.SwordHold) != 0 || damageType == HitType.Hookshot)
+            if ((_isHardCrystal && hitType != HitType.PegasusBootsSword && hitType != HitType.CrystalSmash) || (hitType & HitType.SwordHold) != 0 || hitType == HitType.Hookshot)
                 return Values.HitCollision.None;
 
-            if ((damageType & HitType.Sword) != 0 && (damageType & HitType.Boomerang) != 0 && (damageType & HitType.Hookshot) != 0 && (damageType & HitType.Bomb) != 0)
+            if ((hitType & HitType.Sword) != 0 && (hitType & HitType.Boomerang) != 0 && (hitType & HitType.Hookshot) != 0 && (hitType & HitType.Bomb) != 0)
                 return Values.HitCollision.None;
 
             Game1.GameManager.PlaySoundEffect("D378-09-09");
@@ -101,7 +101,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.DeleteObjects.Add(this);
             Map.Objects.SpawnObject(new CrystalRespawner(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, _spriteId, _dialogPath, _isHardCrystal, _colorIndex));
 
-            var mult = damageType == HitType.PegasusBootsSword || damageType == HitType.CrystalSmash ? 1.0f : 0.25f;
+            var mult = hitType == HitType.PegasusBootsSword || hitType == HitType.CrystalSmash ? 1.0f : 0.25f;
 
             var velZ = 0.5f;
             var diff = 200f;
@@ -121,7 +121,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.SpawnObject(stone2);
             Map.Objects.SpawnObject(stone3);
 
-            if ((damageType & HitType.Sword) != 0)
+            if ((hitType & HitType.Sword) != 0)
                 return Values.HitCollision.NoneBlocking;
 
             return Values.HitCollision.Blocking;

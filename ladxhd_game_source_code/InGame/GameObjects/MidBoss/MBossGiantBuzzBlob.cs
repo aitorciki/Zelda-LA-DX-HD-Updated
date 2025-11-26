@@ -329,8 +329,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiDamageState.CurrentLives <= 0)
             {
                 _damageField.IsActive = false;
@@ -340,15 +344,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (_aiDamageState.CurrentLives <= 0 || _aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.MagicPowder)
+            if (hitType == HitType.MagicPowder)
                 damage = 1;
-            if (damageType == HitType.Boomerang)
+            if (hitType == HitType.Boomerang)
                 damage = 2;
 
             if (_attackable)
             {
                 _wasHit = true;
-                var hit = _aiDamageState.OnHit(gameObject, direction, damageType, damage, false);
+                var hit = _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
                 if (_aiDamageState.CurrentLives <= 0)
                     _aiComponent.ChangeState("death");
 
@@ -359,20 +363,20 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity.Y = direction.Y;
 
             // show initial message telling the player that the sword is useless
-            if (!_swordMessage && (damageType & HitType.Sword) != 0)
+            if (!_swordMessage && (hitType & HitType.Sword) != 0)
             {
                 _swordMessage = true;
                 Game1.GameManager.StartDialogPath("giant_buzz_blob_sword");
             }
 
-            if (damageType == HitType.MagicPowder && _aiComponent.CurrentStateId == "walk")
+            if (hitType == HitType.MagicPowder && _aiComponent.CurrentStateId == "walk")
             {
                 // do not show the sword message after the player has already figured out that there can be something done with the powder
                 _swordMessage = true;
                 _toSlime = true;
                 _body.VelocityTarget = Vector2.Zero;
 
-                var hit = _aiDamageState.OnHit(gameObject, direction, damageType, damage, false);
+                var hit = _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
                 if (_aiDamageState.CurrentLives <= 0)
                     _aiComponent.ChangeState("death");
 
@@ -386,7 +390,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
                 return Values.HitCollision.Repelling | Values.HitCollision.Repelling0;
             }
-
             return Values.HitCollision.Enemy;
         }
     }

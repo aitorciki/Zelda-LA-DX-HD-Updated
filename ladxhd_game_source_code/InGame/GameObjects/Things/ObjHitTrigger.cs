@@ -66,12 +66,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             return gameObject.GetType() == typeof(ObjStone) && ((ObjStone)gameObject).IsHeavy();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             if (_wasActivated || (IsFaceShrineDoor(_strKey) && !IsObjectStatue(gameObject)))
                 return Values.HitCollision.None;
 
-            if (damageType == _hitType)
+            if (hitType == _hitType)
             {
                 if (_activationCounter > 0)
                     _wasActivated = true;

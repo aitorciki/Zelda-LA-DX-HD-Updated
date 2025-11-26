@@ -152,14 +152,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (!_repelTimer.State)
                 return Values.HitCollision.None;
             _repelTimer.Reset();
 
             // stun state
-            if (damageType == HitType.Hookshot || damageType == HitType.Boomerang)
+            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang)
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _damageField.IsActive = false;
@@ -173,7 +177,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // damaged not from the front; piece of power or while using pegasus boots
-            if (damageType != HitType.PegasusBootsSword && damageType != HitType.SwordShot && (damageType & HitType.SwordSpin) == 0 && !pieceOfPower)
+            if (hitType != HitType.PegasusBootsSword && hitType != HitType.SwordShot && (hitType & HitType.SwordSpin) == 0 && !pieceOfPower)
                 damage = 0;
 
             if (_damageState.CurrentLives <= 0)
@@ -183,7 +187,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _pushComponent.IsActive = false;
             }
 
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

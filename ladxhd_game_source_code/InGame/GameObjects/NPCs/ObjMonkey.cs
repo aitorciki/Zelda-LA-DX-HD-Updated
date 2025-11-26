@@ -373,9 +373,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             spriteBatch.Draw(Resources.SprItem, new Vector2(EntityPosition.X - 8, EntityPosition.Y - 30), sourceRectangle, Color.White);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (!_hitCooldown.State || damageType != HitType.BowWow)
+            if (!_hitCooldown.State || hitType != HitType.BowWow)
                 return Values.HitCollision.None;
 
             Game1.GameManager.PlaySoundEffect("D360-03-03");

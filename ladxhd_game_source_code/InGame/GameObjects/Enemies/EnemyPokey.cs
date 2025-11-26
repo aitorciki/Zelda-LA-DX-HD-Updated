@@ -153,23 +153,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bomb || damageType == HitType.Bow)
+            if (hitType == HitType.Bomb || hitType == HitType.Bow)
                 damage /= 2;
 
-            if ((damageType & HitType.Sword2) != 0 ||
-                (damageType & HitType.SwordSpin) != 0  ||
-                damageType == HitType.Hookshot ||
-                damageType == HitType.MagicPowder ||
-                damageType == HitType.MagicRod ||
+            if ((hitType & HitType.Sword2) != 0 ||
+                (hitType & HitType.SwordSpin) != 0  ||
+                hitType == HitType.Hookshot ||
+                hitType == HitType.MagicPowder ||
+                hitType == HitType.MagicRod ||
                 pieceOfPower)
                 damage *= 2;
 
-            var hitType = _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            var hitTypeRep = _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             if (_damageState.CurrentLives > 0)
             {
@@ -192,7 +192,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_state == 2)
                 _sprite.SetSprite(_spriteHead);
 
-            return hitType;
+            return hitTypeRep;
         }
     }
 }

@@ -206,18 +206,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("walking");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.CurrentLives <= 0)
             {
                 _damageField.IsActive = false;
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
-            if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
+            if (hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
                 _body.VelocityTarget = Vector2.Zero;
 
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

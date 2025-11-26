@@ -296,7 +296,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             if (_aiDamageState.CurrentLives <= 0 || _aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
@@ -313,9 +313,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return Values.HitCollision.RepellingParticle;
 
             // In the original game, he could be damaged by the bow, a sword spin, or when dashing with pegasus boots.
-            if ((damageType & HitType.SwordSpin) != 0 || (damageType & HitType.Bow) != 0 || (damageType & HitType.PegasusBootsSword) != 0 )
+            if ((hitType & HitType.SwordSpin) != 0 || (hitType & HitType.Bow) != 0 || (hitType & HitType.PegasusBootsSword) != 0 )
             {
-                var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                var hitCollision = _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
                 if (_aiDamageState.CurrentLives <= 0)
                 {

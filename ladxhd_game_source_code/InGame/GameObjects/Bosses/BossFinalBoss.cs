@@ -1640,10 +1640,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Giant Zol
-            if (_giantZolForm && (damageType & HitType.MagicPowder) != 0)
+            if (_giantZolForm && (hitType & HitType.MagicPowder) != 0)
             {
                 _body.Velocity.X = direction.X;
                 _body.Velocity.Y = direction.Y;
@@ -1656,7 +1656,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 return Values.HitCollision.Enemy;
             }
 
-            if ((damageType & (HitType.Sword | HitType.SwordHold)) != 0 &&
+            if ((hitType & (HitType.Sword | HitType.SwordHold)) != 0 &&
                 (_aiComponent.CurrentStateId == "slimeJump" || _aiComponent.CurrentStateId == "slimeWait"))
             {
                 _aiComponent.ChangeState("slimeHideExplode");
@@ -1670,7 +1670,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             // Shadow of Ganon
-            if (_ganonForm && !_aiDamageState.IsInDamageState() && (((damageType & HitType.PegasusBootsSword) != 0) || (damageType & HitType.SwordSpin) != 0))
+            if (_ganonForm && !_aiDamageState.IsInDamageState() && (((hitType & HitType.PegasusBootsSword) != 0) || (hitType & HitType.SwordSpin) != 0))
             {
                 _ganonLives -= damage;
                 if (_ganonLives <= 0)
@@ -1681,7 +1681,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
                 return Values.HitCollision.Repelling;
             }
-            if (_ganonForm && (damageType & HitType.Sword) != 0)
+            if (_ganonForm && (hitType & HitType.Sword) != 0)
             {
                 return Values.HitCollision.Repelling;
             }
@@ -1689,7 +1689,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // Lanmola
             if (_aiComponent.CurrentStateId == "face" && !_aiDamageState.IsInDamageState())
             {
-                if ((damageType & (HitType.Hookshot | HitType.MagicRod | HitType.Bomb | HitType.Boomerang | HitType.Bow | HitType.SwordSpin)) != 0)
+                if ((hitType & (HitType.Hookshot | HitType.MagicRod | HitType.Bomb | HitType.Boomerang | HitType.Bow | HitType.SwordSpin)) != 0)
                 {
                     _aiDamageState.SetDamageState();
                     _aiComponent.ChangeState("faceExplode");
@@ -1715,12 +1715,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 // bow hit from below with an open eye
                 if (!_aiDamageState.IsInDamageState() && 
                     ((_dethIEyeState == 0 && _animatorEye.CurrentFrameIndex < 1) || (_dethIEyeState == 1 && _animatorEye.CurrentFrameIndex >= 1)) && 
-                    ((damageType & HitType.Bow) != 0 || (damageType & HitType.Boomerang) != 0 || (damageType & HitType.Bomb) != 0) &&
+                    ((hitType & HitType.Bow) != 0 || (hitType & HitType.Boomerang) != 0 || (hitType & HitType.Bomb) != 0) &&
                     MathF.Abs(direction.Y) > MathF.Abs(direction.X) && direction.Y < 0)
                 {
                     _aiDamageState.SetDamageState();
 
-                    if ((damageType & HitType.Boomerang) != 0)
+                    if ((hitType & HitType.Boomerang) != 0)
                         _dethILives -= damage * 8;
                     else
                         _dethILives--;
@@ -1747,9 +1747,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return Values.HitCollision.None;
         }
 
-        public Values.HitCollision HitTail(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision HitTail(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (!_aiDamageState.IsInDamageState() && _aiComponent.CurrentStateId == "moldorm" && ((damageType & HitType.Sword) != 0))
+            if (!_aiDamageState.IsInDamageState() && _aiComponent.CurrentStateId == "moldorm" && ((hitType & HitType.Sword) != 0))
             {
                 _moldormLives -= damage;
                 if (_moldormLives <= 0)

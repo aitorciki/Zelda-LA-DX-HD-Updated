@@ -144,15 +144,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 3f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.Bomb)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Bomb)
                 damage = 3;
-            if (damageType == HitType.Boomerang)
+            if (hitType == HitType.Boomerang)
                 damage = 2;
-            if (damageType == HitType.Bow)
+            if (hitType == HitType.Bow)
                 damage = 1;
-            if (damageType == HitType.Hookshot)
+            if (hitType == HitType.Hookshot)
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _body.Velocity.X += direction.X * 0.75f;
@@ -168,7 +172,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

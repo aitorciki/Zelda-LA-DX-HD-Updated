@@ -259,12 +259,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             _body.Velocity.X = direction.X * 5f;
             _body.Velocity.Y = direction.Y * 5f;

@@ -89,12 +89,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Map.Objects.DeleteObjects.Add(_objBomb);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if ((damageType & HitType.BowWow) != 0)
-                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            if ((hitType & HitType.BowWow) != 0)
+                return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
-            if (!_fleeing && (damageType & HitType.PegasusBootsPush) != 0)
+            if (!_fleeing && (hitType & HitType.PegasusBootsPush) != 0)
             {
                 _fleeing = true;
                 _body.IgnoresZ = false;

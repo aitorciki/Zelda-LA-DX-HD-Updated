@@ -1,14 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Dungeon;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -211,12 +211,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animatorComponent.UpdateSprite();
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (type == HitType.Bow)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Bow)
                 damage = 3;
 
-            if (_aiComponent.CurrentStateId == "flying" && (type == HitType.MagicPowder || type == HitType.Boomerang))
+            if (_aiComponent.CurrentStateId == "flying" && (hitType == HitType.MagicPowder || hitType == HitType.Boomerang))
             {
                 SpawnFairy();
                 return Values.HitCollision.Enemy;
@@ -225,7 +229,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_aiComponent.CurrentStateId == "flying")
                 _aiComponent.ChangeState("jumping");
 
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
         }
 
         private void OnHolePull(Vector2 direction, float percentage)

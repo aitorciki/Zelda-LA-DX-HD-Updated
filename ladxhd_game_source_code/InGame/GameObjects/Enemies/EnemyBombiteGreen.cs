@@ -158,12 +158,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bomb && !(gameObject is EnemyBombite))
+            if (hitType == HitType.Bomb && !(gameObject is EnemyBombite))
             {
                 if (_damageState.CurrentLives <= 0)
                 {
@@ -173,11 +177,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 }
                 // spawn a bomb
                 _damageState.SpawnItem = "bomb_1";
-                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
             }
 
             // stun state
-            if (damageType == HitType.Hookshot || damageType == HitType.Boomerang)
+            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang)
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _body.Velocity.X += direction.X * 4.0f;
@@ -189,7 +193,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return Values.HitCollision.Enemy;
             }
 
-            if (damageType != HitType.MagicPowder)
+            if (hitType != HitType.MagicPowder)
             {
                 if (pieceOfPower)
                     Game1.GameManager.PlaySoundEffect("D370-17-11");
@@ -197,7 +201,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
 
                 if (pieceOfPower)
-                    _damageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
+                    _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
                 else
                 {
                     _body.Velocity.X += direction.X * 5.0f;

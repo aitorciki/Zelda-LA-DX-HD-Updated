@@ -92,11 +92,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             return false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (!_isActive || (damageType & (HitType.Sword | HitType.PegasusBootsSword)) != 0)
+            if (!_isActive || (hitType & (HitType.Sword | HitType.PegasusBootsSword)) != 0)
                 return Values.HitCollision.None;
-            if (damageType != HitType.MagicRod)
+            if (hitType != HitType.MagicRod)
                 return Values.HitCollision.Repelling;
 
             Game1.GameManager.PlaySoundEffect("D378-19-13");

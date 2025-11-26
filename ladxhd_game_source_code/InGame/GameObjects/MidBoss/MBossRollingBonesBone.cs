@@ -73,12 +73,16 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _isDying = true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (!MapManager.ObjLink._body.IsGrounded)
                 return Values.HitCollision.None;
 
-            if ((damageType & HitType.Sword) == 0)
+            if ((hitType & HitType.Sword) == 0)
                 return Values.HitCollision.None;
 
             return Values.HitCollision.RepellingParticle;

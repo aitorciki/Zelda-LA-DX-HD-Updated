@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             MapManager.ObjLink.InflictSpikeDamage2D();
 
-            return MapManager.ObjLink.HitPlayer(new Vector2(0, -1), _damageField.DamageType, _damageField.Strength, true);
+            return MapManager.ObjLink.HitPlayer(new Vector2(0, -1), _damageField.HitType, _damageField.Strength, true);
         }
     }
 }

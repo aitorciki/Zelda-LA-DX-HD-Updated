@@ -113,13 +113,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("attacking");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.Bow)
-                return _aiDamageState.OnHit(gameObject, direction, damageType, 1, pieceOfPower);
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
 
-            if (_aiComponent.CurrentStateId == "fleeing" || damageType == HitType.MagicRod)
-                return _aiDamageState.OnHit(gameObject, direction, damageType, 4, pieceOfPower);
+            if (hitType == HitType.Bow)
+                return _aiDamageState.OnHit(gameObject, direction, hitType, 1, pieceOfPower);
+
+            if (_aiComponent.CurrentStateId == "fleeing" || hitType == HitType.MagicRod)
+                return _aiDamageState.OnHit(gameObject, direction, hitType, 4, pieceOfPower);
 
             // was hit in the attack state -> change int cooldown mode
             if (_aiComponent.CurrentStateId == "attacking")

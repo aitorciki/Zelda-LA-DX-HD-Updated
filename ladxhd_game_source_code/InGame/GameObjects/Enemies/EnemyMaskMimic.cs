@@ -161,15 +161,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.MagicPowder)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.Bow)
+            if (hitType == HitType.MagicPowder)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Bow)
                 damage = 1;
 
-            if (damageType == HitType.Hookshot || damageType == HitType.Boomerang)
+            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang)
             {
                 _aiStunnedState.StartStun();
                 _damageField.IsActive = false;
@@ -185,11 +189,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // can be hit if the damage source is coming from the back
             var dir = AnimationHelper.GetDirection(direction);
             if (dir == _direction ||
-                damageType == HitType.Bomb ||
-                damageType == HitType.Bow ||
-                damageType == HitType.MagicRod)
+                hitType == HitType.Bomb ||
+                hitType == HitType.Bow ||
+                hitType == HitType.MagicRod)
             {
-                return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                return _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
             }
 
             return Values.HitCollision.RepellingParticle | Values.HitCollision.Repelling1;

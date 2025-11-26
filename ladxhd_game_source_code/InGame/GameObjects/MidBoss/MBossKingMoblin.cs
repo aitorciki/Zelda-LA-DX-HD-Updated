@@ -353,8 +353,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiComponent.CurrentStateId == "damage")
                 return Values.HitCollision.Enemy;
             if (_aiComponent.CurrentStateId != "bounce")
@@ -362,7 +366,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             Game1.GameManager.PlaySoundEffect("D370-07-07");
 
-            _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             if (_damageState.CurrentLives <= 0)
             {

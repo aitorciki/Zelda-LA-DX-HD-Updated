@@ -187,9 +187,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
+            if (hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
             {
                 _liveTime = powder_time;
 
@@ -203,7 +203,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.Blocking;
             }
 
-            if ((damageType & HitType.Sword) != 0)
+            if ((hitType & HitType.Sword) != 0)
                 return Values.HitCollision.None;
 
             return Values.HitCollision.NoneBlocking;

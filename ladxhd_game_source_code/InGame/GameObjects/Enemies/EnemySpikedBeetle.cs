@@ -195,8 +195,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _playerInsideField = false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
@@ -210,9 +214,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.DragAir = 0.9f;
 
             if (_aiComponent.CurrentStateId == "back")
-                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+                return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
-            if (damageType == HitType.ThrownObject)
+            if (hitType == HitType.ThrownObject)
             {
                 _body.Velocity = new Vector3(direction.X * 0.5f, direction.Y * 0.5f, 1.0f);
                 ToBack();

@@ -118,9 +118,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _directionChangeTime = 0;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.Boomerang)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.Boomerang)
             {
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
                 Destroy();

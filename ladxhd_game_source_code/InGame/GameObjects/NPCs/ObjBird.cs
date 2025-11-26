@@ -281,17 +281,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             UpdateAnimation();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (GameSettings.NoAnimalDamage)
                 return Values.HitCollision.None;
 
-            if (damageType == HitType.MagicPowder || damageType == HitType.MagicRod)
+            if (hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
             {
                 if (_aiComponent.CurrentStateId != "burning")
                 {
                     _aiComponent.ChangeState("burning");
-                    var speedMultiply = (damageType == HitType.MagicPowder ? 0.125f : 0.5f);
+                    var speedMultiply = (hitType == HitType.MagicPowder ? 0.125f : 0.5f);
 
                     Game1.GameManager.PlaySoundEffect("D378-18-12");
 

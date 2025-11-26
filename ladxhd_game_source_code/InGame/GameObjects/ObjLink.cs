@@ -1628,7 +1628,7 @@ namespace ProjectZ.InGame.GameObjects
         private void OnMoveCollision(Values.BodyCollision collision)
         {
             // Detect hitting crystals made by the smash box created when dashing with Pegasus Boots.
-            var dashSmashHit = Map.Objects.Hit(this, _crystalSmashBox.Center, _crystalSmashBox, HitType.CrystalSmash, 0, false);
+            var dashSmashHit = Map.Objects.Hit(this, _crystalSmashBox.Center, _crystalSmashBox, HitType.CrystalSmash, 0, false, false);
 
             if (dashSmashHit == Values.HitCollision.Blocking)
                 return;

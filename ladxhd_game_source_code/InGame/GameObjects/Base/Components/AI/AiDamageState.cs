@@ -127,7 +127,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 _aiComponent.CurrentStateId == "pieceOfPower";
         }
 
-        public Values.HitCollision HitKnockBack(GameObject gameObject, Vector2 direction, HitType damageType, bool pieceOfPower, bool blink = true)
+        public Values.HitCollision HitKnockBack(GameObject gameObject, Vector2 direction, HitType hitType, bool pieceOfPower, bool blink = true)
         {
             if (!IsActive || IsInDamageState())
                 return Values.HitCollision.None;
@@ -153,15 +153,20 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             return Values.HitCollision.Enemy;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (!IsActive || IsInDamageState() || damageType == HitType.PegasusBootsPush)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            // directly delete the gameObject if the attack comes from a bowwow
-            if (damageType == HitType.BowWow)
+            // Don't register a hit if object is not active, is not in damage state, or is not pegasus boots types.
+            if (!IsActive || IsInDamageState() || hitType == HitType.PegasusBootsPush || hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            // Directly delete the GameObject if the attack comes from Bow Wow.
+            if (hitType == HitType.BowWow)
             {
-                // Bow-Wow has a custom sound for attacking so disable the normal sound and play this one.
+                // Bow Wow has a custom sound for attacking so disable the normal sound and play this one.
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
                 PlayDeathSound = false;
                 DeathAnimation = false;
@@ -175,12 +180,12 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             CurrentLives -= damage;
 
             // Burn on powder impact.
-            if ((damageType == HitType.MagicPowder || damageType == HitType.MagicRod) && _hasBurnState)
+            if ((hitType == HitType.MagicPowder || hitType == HitType.MagicRod) && _hasBurnState)
             {
                 if (_aiComponent.CurrentStateId != "burning")
                 {
                     _aiComponent.ChangeState("burning");
-                    var speedMultiply = (damageType == HitType.MagicPowder ? 0.125f : 0.5f);
+                    var speedMultiply = (hitType == HitType.MagicPowder ? 0.125f : 0.5f);
 
                     if (MoveBody)
                     {
@@ -194,7 +199,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     return Values.HitCollision.Enemy;
                 }
             }
-
             if (_aiComponent.CurrentStateId == "burning")
                 return Values.HitCollision.None;
 

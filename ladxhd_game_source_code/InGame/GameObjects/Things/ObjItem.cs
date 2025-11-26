@@ -187,13 +187,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             else if (_item.Name == "ruby")
                 height = 14;
 
-            _collectionRectangle = new CRectangle(EntityPosition,
-                new Rectangle(
-                    -_sourceRectangle.Width / 2 - 1, -height,
-                    _sourceRectangle.Width + 2, height));
-            var box = new CBox(EntityPosition,
-                -_sourceRectangle.Width / 2, -height,
-                _sourceRectangle.Width, height, 16);
+            Rectangle collectRect = new Rectangle(-_sourceRectangle.Width / 2 - 1, -height, _sourceRectangle.Width + 2, height);
+            _collectionRectangle = new CRectangle(EntityPosition, collectRect);
+
+            var box = new CBox(EntityPosition, -_sourceRectangle.Width / 2, -height, _sourceRectangle.Width, height, 16);
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
@@ -373,10 +370,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 SpriteEffects.FlipHorizontally | wingFlap, 0);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // item can be collected with the sword
-            if ((damageType & HitType.Sword) != 0)
+            if ((hitType & HitType.Sword) != 0)
                 Collect();
 
             return Values.HitCollision.NoneBlocking;

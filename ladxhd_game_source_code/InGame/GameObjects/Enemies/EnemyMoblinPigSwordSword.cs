@@ -70,9 +70,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (damageType == HitType.MagicRod || damageType == HitType.MagicPowder || damageType == HitType.Bow || damageType == HitType.Hookshot || damageType == HitType.Boomerang ||
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (hitType == HitType.MagicRod || hitType == HitType.MagicPowder || hitType == HitType.Bow || hitType == HitType.Hookshot || hitType == HitType.Boomerang ||
                 (_lastHitTime != 0 && Game1.TotalGameTime - _lastHitTime < 250))
                 return Values.HitCollision.None;
 

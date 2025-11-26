@@ -456,9 +456,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (_blinkTigger.IsRunning() || !_hittable || !IsVisible() || (damageType & HitType.Bomb) == 0)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (_blinkTigger.IsRunning() || !_hittable || !IsVisible() || (hitType & HitType.Bomb) == 0)
                 return Values.HitCollision.None;
 
             _wasHit = true;

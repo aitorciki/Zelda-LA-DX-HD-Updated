@@ -516,14 +516,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _explosionAnimator.Draw(spriteBatch, EntityPosition.Position, Color.White);
         }
 
-        public Values.HitCollision OnHitHeart(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHitHeart(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             // can not get attacked while not visible
-            if (!_attackOut || (type & HitType.Sword) == 0)
+            if (!_attackOut || (hitType & HitType.Sword) == 0)
                 return Values.HitCollision.None;
 
             var wasAlive = _aiDamageState.CurrentLives > 0;
-            var hitReturn = _aiDamageState.OnHit(originObject, direction, type, damage, false);
+            var hitReturn = _aiDamageState.OnHit(originObject, direction, hitType, damage, false);
 
             if (_aiDamageState.CurrentLives <= 0 && wasAlive)
             {
@@ -544,10 +548,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return hitReturn;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             // can get pulled out by the hookshot at animation frame 1, 2 and 3
-            if (_aiComponent.CurrentStateId == "attack" && 0 < _animator.CurrentFrameIndex && _animator.CurrentFrameIndex < 4 && type == HitType.Hookshot)
+            if (_aiComponent.CurrentStateId == "attack" && 0 < _animator.CurrentFrameIndex && _animator.CurrentFrameIndex < 4 && hitType == HitType.Hookshot)
             {
                 _hockshotPosition = MapManager.ObjLink.Hookshot.HookshotPosition.Position;
                 _hookshotOffset = EntityPosition.Position - _hockshotPosition;

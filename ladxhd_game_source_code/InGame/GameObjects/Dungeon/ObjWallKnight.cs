@@ -33,10 +33,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             map.Objects.SpawnObject(_knight);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // gets destroyed by a bomb
-            if (damageType == HitType.Bomb)
+            if (hitType == HitType.Bomb)
             {
                 Game1.GameManager.PlaySoundEffect("D378-09-09");
 

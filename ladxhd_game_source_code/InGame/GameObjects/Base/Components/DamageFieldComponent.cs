@@ -16,17 +16,17 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public OnDamagedPlayerTemplate OnDamagedPlayer;
 
         public CBox CollisionBox;
-        public HitType DamageType;
+        public HitType HitType;
 
         public float PushMultiplier = 1.75f;
         public int Strength;
         public int Direction = -1;
         public bool IsActive = true;
 
-        public DamageFieldComponent(CBox collisionBox, HitType damageType, int damageStrength)
+        public DamageFieldComponent(CBox collisionBox, HitType hitType, int damageStrength)
         {
             CollisionBox = collisionBox;
-            DamageType = damageType;
+            HitType = hitType;
             Strength = damageStrength;
             OnDamage = DamagePlayer;
         }
@@ -36,7 +36,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             if (MapManager.ObjLink.HoleFalling == true)
                 return false;
 
-            var damagedPlayer = MapManager.ObjLink.HitPlayer(CollisionBox.Box, DamageType, Strength, PushMultiplier, Direction);
+            var damagedPlayer = MapManager.ObjLink.HitPlayer(CollisionBox.Box, HitType, Strength, PushMultiplier, Direction);
             if (damagedPlayer && OnDamagedPlayer != null)
                 OnDamagedPlayer();
 

@@ -359,24 +359,28 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             // can only hit the boss with the hookshot or an arrow
-            if ((damageType & (HitType.Hookshot | HitType.Bow | HitType.MagicRod | HitType.Boomerang)) == 0 ||
+            if ((hitType & (HitType.Hookshot | HitType.Bow | HitType.MagicRod | HitType.Boomerang)) == 0 ||
                 (_aiComponent.CurrentStateId != "eye1" && _aiComponent.CurrentStateId != "eye2") ||
                 _aiDamageState.IsInDamageState())
             {
                 return Values.HitCollision.RepellingParticle;
             }
 
-            if (damageType == HitType.Bow)
+            if (hitType == HitType.Bow)
                 damage *= 2;
-            if (damageType == HitType.MagicRod)
+            if (hitType == HitType.MagicRod)
                 damage *= 2;
-            if (damageType == HitType.Boomerang)
+            if (hitType == HitType.Boomerang)
                 damage = 4;
 
-            _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             if (_aiDamageState.CurrentLives <= 0)
             {

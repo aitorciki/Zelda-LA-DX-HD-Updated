@@ -97,24 +97,28 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
 
             if (_aiComponent.CurrentStateId == "idle" || _aiComponent.CurrentStateId == "awaking")
                 return Values.HitCollision.RepellingParticle;
 
-            if (damageType == HitType.MagicRod || damageType == HitType.MagicPowder)
+            if (hitType == HitType.MagicRod || hitType == HitType.MagicPowder)
                 return Values.HitCollision.Blocking;
 
-            if (damageType == HitType.Bomb || damageType == HitType.Bow)
-                return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            if (hitType == HitType.Bomb || hitType == HitType.Bow)
+                return _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
-            if (damageType == HitType.Boomerang)
-                return _aiDamageState.OnHit(gameObject, direction, damageType, 1, pieceOfPower);
+            if (hitType == HitType.Boomerang)
+                return _aiDamageState.OnHit(gameObject, direction, hitType, 1, pieceOfPower);
 
-            if (damageType == HitType.Hookshot)
+            if (hitType == HitType.Hookshot)
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _damageField.IsActive = false;
@@ -122,7 +126,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sunnedState.StartStun();
             }
 
-            _aiDamageState.HitKnockBack(gameObject, direction, damageType, pieceOfPower, false);
+            _aiDamageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
 
             Game1.GameManager.PlaySoundEffect("D360-09-09");
 

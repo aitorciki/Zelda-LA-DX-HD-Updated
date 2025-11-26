@@ -222,8 +222,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk_" + _direction);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_damageState.CurrentLives <= 0)
             {
                 _damageField.IsActive = false;
@@ -231,11 +235,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _pushComponent.IsActive = false;
             }
             // Sword spin ignores the jumping logic.
-            if ((damageType & HitType.SwordSpin) != 0 || (damageType & HitType.BowWow) != 0)
-                return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            if ((hitType & HitType.SwordSpin) != 0 || (hitType & HitType.BowWow) != 0)
+                return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             // Sword can't deal damage while flying.
-            if ((damageType & HitType.Sword) != 0 && !_body.IsGrounded)
+            if ((hitType & HitType.Sword) != 0 && !_body.IsGrounded)
                 return Values.HitCollision.None;
 
             // Fly over the player if the octorok is facing Link.
@@ -244,18 +248,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_direction != (playerDirection + 2) % 4 && _damageSwitch.State &&
                 (_aiComponent.CurrentStateId == "walking" || _aiComponent.CurrentStateId == "idle") &&
-                damageType != HitType.PegasusBootsSword &&
-                damageType != HitType.Bow &&
-                damageType != HitType.Hookshot &&
-                damageType != HitType.MagicRod &&
-                damageType != HitType.MagicPowder &&
-                damageType != HitType.Boomerang)
+                hitType != HitType.PegasusBootsSword &&
+                hitType != HitType.Bow &&
+                hitType != HitType.Hookshot &&
+                hitType != HitType.MagicRod &&
+                hitType != HitType.MagicPowder &&
+                hitType != HitType.Boomerang)
             {
                 _aiComponent.ChangeState("flying");
                 return Values.HitCollision.None;
             }
             // If we got here, it was probably a hit from the back or another weapon than sword.
-            return _damageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

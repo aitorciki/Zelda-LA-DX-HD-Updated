@@ -163,13 +163,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             if (_isRotating)
                 return Values.HitCollision.None;
 
             // powder?
-            if (damageType == HitType.MagicPowder)
+            if (hitType == HitType.MagicPowder)
                 StartMoving();
 
             return Values.HitCollision.Blocking;

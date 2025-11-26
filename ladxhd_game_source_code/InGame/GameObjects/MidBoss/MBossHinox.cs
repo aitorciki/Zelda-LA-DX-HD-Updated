@@ -356,8 +356,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiComponent.CurrentStateId == "idle")
                 return Values.HitCollision.None;
 
@@ -371,13 +375,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _aiComponent.CurrentStateId != "run")
                 _aiComponent.ChangeState("throwBomb");
 
-            if (damageType == HitType.Bow || damageType == HitType.Bomb || damageType == HitType.MagicRod)
+            if (hitType == HitType.Bow || hitType == HitType.Bomb || hitType == HitType.MagicRod)
                 damage *= 2;
 
-            if (damageType == HitType.Boomerang)
+            if (hitType == HitType.Boomerang)
                 damage = 2;
 
-            var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            var hitCollision = _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
 
             // Stop walking and stop the animation when dead.
             if (_aiDamageState.CurrentLives <= 0)

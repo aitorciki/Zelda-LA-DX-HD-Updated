@@ -253,8 +253,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (!_bushDestroyed && _type == 0)
             {
                 _bushDestroyed = true;
@@ -262,7 +266,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (!_carriedObject.IsDead)
                     ((ObjBush)_carriedObject).DestroyBush(direction);
 
-                if (damageType == HitType.Bomb || damageType == HitType.Bow || damageType == HitType.Hookshot)
+                if (hitType == HitType.Bomb || hitType == HitType.Bow || hitType == HitType.Hookshot)
                     return Values.HitCollision.Blocking;
             }
             // Attacks get repelled by stone/skull.
@@ -274,7 +278,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Object has been removed and beetle is vulnerable.
             _sprite.IsVisible = true;
 
-            return _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            return _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
 
         private void OnDeath(bool pieceOfPower)

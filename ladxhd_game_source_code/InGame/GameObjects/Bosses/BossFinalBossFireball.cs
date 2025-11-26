@@ -1,13 +1,13 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
-using ProjectZ.InGame.SaveLoad;
-using ProjectZ.InGame.Things;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
-using ProjectZ.InGame.Map;
 using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.GameObjects.Things;
+using ProjectZ.InGame.Map;
+using ProjectZ.InGame.SaveLoad;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
@@ -202,9 +202,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             OnDeath();
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if ((type & HitType.Sword) == 0 || (type & HitType.SwordHold) != 0)
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if ((hitType & HitType.Sword) == 0 || (hitType & HitType.SwordHold) != 0)
                 return Values.HitCollision.None;
 
             // can not be hit before moving for a little while

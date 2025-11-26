@@ -480,13 +480,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
             if (_aiDamageState.CurrentLives <= 0)
                 return Values.HitCollision.None;
 
             // can only be hit after beeing spawned
-            if (!_attackable || ((type & HitType.Sword) == 0))
+            if (!_attackable || ((hitType & HitType.Sword) == 0))
                 return Values.HitCollision.RepellingParticle;
 
             // close the eyes for a short time
@@ -496,7 +500,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _animator.Play("damaged");
             }
 
-            _aiDamageState.OnHit(originObject, direction, type, damage, false);
+            _aiDamageState.OnHit(originObject, direction, hitType, damage, false);
 
             if (_aiDamageState.CurrentLives <= 0)
             {
