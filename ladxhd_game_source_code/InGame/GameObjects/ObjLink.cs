@@ -446,6 +446,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isLocked;
         private bool _isGrabbed;
         private bool _isFlying;
+        private bool _wasFlying;
         private bool _inDungeon;
 
         public bool FreezeWorldForEvents;
@@ -2081,6 +2082,9 @@ namespace ProjectZ.InGame.GameObjects
                             CurrentState = State.ChargeSwimming;
                         else
                             CurrentState = State.Swimming;
+
+                        // Reset the "was flying" state when swimming. Swimming doesn't matter if player was flying.
+                        _wasFlying = false;
 
                         // only push the player if he walks into the water and does not jump
                         if (!_lastFieldState.HasFlag(fieldState))
@@ -4610,6 +4614,7 @@ namespace ProjectZ.InGame.GameObjects
 
             _isRafting = false;
             _isFlying = false;
+            _wasFlying = false;
 
             _isClimbing = false;
 
@@ -4983,12 +4988,14 @@ namespace ProjectZ.InGame.GameObjects
         public void StartFlying(ObjCock objCock)
         {
             _isFlying = true;
+            _wasFlying = false;
             _objRooster = objCock;
         }
 
         public void StopFlying(Vector2 velocity)
         {
             _isFlying = false;
+            _wasFlying = true;
 
             _body.IgnoresZ = false;
             _body.IsGrounded = false;
@@ -5004,11 +5011,12 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateFlying()
         {
+            // Player is currently carrying the rooster around.
             if (_isFlying && CurrentState == State.Carrying)
             {
-                // The hit velocity is added to the movement (*2) for the flame trap knockback on the way 
+                // The hit velocity is added to the movement (*3) for the flame trap knockback on the way 
                 // to level 8 as the normal value sent back is not strong enough to knock it back.
-                var moveVelocity = ControlHandler.GetMoveVector2() + _hitVelocity * 2;
+                var moveVelocity = ControlHandler.GetMoveVector2() + (_hitVelocity * 3);
 
                 var moveVelocityLength = moveVelocity.Length();
                 if (moveVelocityLength > 1)
@@ -5020,6 +5028,21 @@ namespace ProjectZ.InGame.GameObjects
                     var vectorDirection = ToDirection(moveVelocity);
                     Direction = vectorDirection;
                 }
+            }
+
+            // The player hit the ground or water after throwing the rooster.
+            if (CurrentState == State.Idle && _body.IsGrounded && _wasFlying)
+            {
+                // Check if the player is over water.
+                var fieldState = SystemBody.GetFieldState(_body);
+
+                // Reduce velocity by 50% hitting water. Reduce it to zero when hitting land.
+                if (fieldState.HasFlag(MapStates.FieldStates.DeepWater))
+                    _body.Velocity = _body.Velocity * 0.5f;
+                else
+                    _body.Velocity = Vector3.Zero;
+
+                _wasFlying = false;
             }
         }
 
