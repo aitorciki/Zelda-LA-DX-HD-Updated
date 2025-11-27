@@ -109,6 +109,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isMoving;
         private Map.Map _map;
 
+        // Prevent player from jumping past the bridge sequence forcing hookshot usage.
+        RectangleF _blockingField;
+        Vector2 _blockingVector;
+        bool _blockingStart;
+        bool _blockingFinish;
+
         public bool IsVisible { get; internal set; }
 
         public ObjMarin() : base("marin") { }
@@ -397,46 +403,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.Jumping)
             {
-                var playerPosition = MapManager.ObjLink.EntityPosition.Position;
-                var playerDirection = EntityPosition.Position - playerPosition;
-                var distance = playerDirection.Length();
-                if (distance < 72 && !_helpDialogShown)
-                {
-                    _helpDialogShown = true;
-                    Game1.GameManager.StartDialogPath("marin_help");
-                }
-                else if (distance > 128)
-                {
-                    _helpDialogShown = false;
-                }
-
-                if (!_isPulled && distance < 16 && playerDirection.X > 8)
-                {
-                    _isPulled = true;
-                    _pullOffsetY = (int)playerDirection.Y;
-                    _animator.Play("stand_0");
-                }
-
-                if (_isPulled)
-                {
-                    EntityPosition.Set(new Vector2(playerPosition.X + 14, playerPosition.Y + _pullOffsetY));
-                    if (!MapManager.ObjLink.IsUsingHookshot())
-                    {
-                        _isPulled = false;
-                        _currentState = States.Saved;
-                        Game1.GameManager.StartDialogPath("marin_saved");
-                    }
-                }
-
-                if (_animator.CurrentAnimation.Id == "jump" && _body.IsGrounded)
-                {
-                    _animator.Play("land");
-                }
-                if (_animator.CurrentAnimation.Id == "land" && !_animator.IsPlaying)
-                {
-                    _animator.Play("jump");
-                    _body.Velocity.Z = 1.25f;
-                }
+                UpdateMountainSequence();
             }
             else if (_currentState == States.DungeonReturn)
             {
@@ -451,6 +418,93 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _noteCount += Game1.DeltaTime;
             else
                 _noteCount = _noteEndTime;
+        }
+
+        private void UpdateMountainSequence()
+        {
+            // Only allow the player through when using hookshot.
+            if (!_blockingFinish && MapManager.ObjLink.CurrentState != ObjLink.State.Hookshot)
+            {
+                // If Link is falling down the hole, reset the blocking states.
+                if (MapManager.ObjLink.CurrentState == ObjLink.State.Falling)
+                {
+                    _blockingField = RectangleF.Empty;
+                    _blockingStart = false;
+                    _blockingVector = Vector2.Zero;
+                }
+                // If Link is currently trying to jump over the bridge.
+                else
+                {
+                    // Set up the blocking field rectangle to the right of Marin.
+                    _blockingField = new RectangleF(EntityPosition.X + 6, EntityPosition.Y - 15, 18, 34);
+
+                    // Check to see if Link entered the blocking field.
+                    if (_blockingField.Contains(MapManager.ObjLink.EntityPosition.Position))
+                    {
+                        // Set up the blocking position.
+                        if (!_blockingStart)
+                            _blockingVector = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y);
+
+                        // Start blocking at that position.
+                        _blockingStart = true;
+
+                        // Don't trap Link in the air. Stop blocking when Z depth hits zero.
+                        if (MapManager.ObjLink.EntityPosition.Z > 0)
+                            MapManager.ObjLink.SetPosition(_blockingVector);
+                    }
+                }
+            }
+            // Get player position, direction, and distance from Marin.
+            var playerPosition = MapManager.ObjLink.EntityPosition.Position;
+            var playerDirection = EntityPosition.Position - playerPosition;
+            var distance = playerDirection.Length();
+
+            // If distance is less than 72 and dialog isn't visible, show it.
+            if (distance < 72 && !_helpDialogShown)
+            {
+                _helpDialogShown = true;
+                Game1.GameManager.StartDialogPath("marin_help");
+            }
+            // If distance is greater than 128 track that the dialog is not shown.
+            else if (distance > 128)
+            {
+                _helpDialogShown = false;
+            }
+            // When the distance is less than 16 assume the player is mid-flight with the
+            // hookshot and encountered Marin. Start the pull and set the pull offset.
+            if (!_isPulled && distance < 16 && playerDirection.X > 8)
+            {
+                _blockingFinish = true;
+                _isPulled = true;
+                _pullOffsetY = (int)playerDirection.Y;
+                _animator.Play("stand_0");
+            }
+            // The hookshot is currently being used and pulling Marin.
+            if (_isPulled)
+            {
+                // Update the position of Marin as she is being pulled.
+                EntityPosition.Set(new Vector2(playerPosition.X + 14, playerPosition.Y + _pullOffsetY));
+
+                // When the hookshot is finished assume we're on the other side of the gap.
+                if (!MapManager.ObjLink.IsUsingHookshot())
+                {
+                    _blockingFinish = false;
+                    _isPulled = false;
+                    _currentState = States.Saved;
+                    Game1.GameManager.StartDialogPath("marin_saved");
+                }
+            }
+            // When Marin jumped and is falling, play the "landing" animation.
+            if (_animator.CurrentAnimation.Id == "jump" && _body.IsGrounded)
+            {
+                _animator.Play("land");
+            }
+            // When Marin touches ground and jumps, play the "jumping" animation.
+            if (_animator.CurrentAnimation.Id == "land" && !_animator.IsPlaying)
+            {
+                _animator.Play("jump");
+                _body.Velocity.Z = 1.25f;
+            }
         }
 
         private void UpdateReturn()
