@@ -282,8 +282,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Offset the player to not move outside.
             var dist = 16;
 
-            // Up: The path to the jump has been found.
-            if (_foundPath && posY < roomY * Values.FieldHeight + dist && (roomX == 1 || roomX == 2) && roomY == 2)
+            // Up (Classic Camera): The path to the jump has been found. Room Y remains 1 during classic camera.
+            if (_foundPath && posY < roomY * Values.FieldHeight + dist && (roomX == 1 || roomX == 2) && roomY == 1)
+            {
+                OffsetPlayer(roomX == 1 ? 0 : -1, 0);
+            }
+            // Up (Normal Camera): The path to the jump has been found. Room Y remains 2 during normal camera.
+            else if (_foundPath && posY < roomY * Values.FieldHeight + dist && (roomX == 1 || roomX == 2) && roomY == 2)
             {
                 OffsetPlayer(roomX == 1 ? 0 : -1, -1);
             }
