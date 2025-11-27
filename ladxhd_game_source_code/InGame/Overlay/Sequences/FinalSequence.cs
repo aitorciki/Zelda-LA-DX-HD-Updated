@@ -675,17 +675,17 @@ namespace ProjectZ.InGame.Overlay.Sequences
                         Game1.GbsPlayer.SetVolumeMultiplier(0f);
                     }
                     // Seagull sound triggers.
-                    if (_screen6Counter > 12800 && !_marinSeagullScree[0])
+                    if (_screen6Counter > 12500 && !_marinSeagullScree[0])
                     {
                         Game1.GameManager.PlaySoundEffect("D360-33-21");
                         _marinSeagullScree[0] = true;
                     }
-                    if (_screen6Counter > 16000 && !_marinSeagullScree[1])
+                    if (_screen6Counter > 14500 && !_marinSeagullScree[1])
                     {
                         Game1.GameManager.PlaySoundEffect("D360-33-21");
                         _marinSeagullScree[1] = true;
                     }
-                    if (_screen6Counter > 16800 && !_marinSeagullScree[2])
+                    if (_screen6Counter > 16500 && !_marinSeagullScree[2])
                     {
                         Game1.GameManager.PlaySoundEffect("D360-33-21");
                         _marinSeagullScree[2] = true;
