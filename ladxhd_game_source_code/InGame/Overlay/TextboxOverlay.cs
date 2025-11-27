@@ -29,7 +29,7 @@ namespace ProjectZ.InGame.Overlay
 
         public float TransitionState => _currentOpacity;
 
-        private const int ScrollSpeed = 20;
+        private int _scrollSpeed = 20;
 
         private readonly Animator _animator;
 
@@ -80,6 +80,7 @@ namespace ProjectZ.InGame.Overlay
         private bool _isChoice;
         private bool _openDialog = false;
         private bool _boxEnd;
+        private bool _skipToEnd;
 
         private string _scrollText;
         private float _scrollCounter;
@@ -122,26 +123,29 @@ namespace ProjectZ.InGame.Overlay
             if (MapManager.ObjLink.IsTransitioning)
                 return;
 
-            // update the opacity of the textbox background
+            // Fade textbox in or out depending on IsOpen.
             if (IsOpen && _currentOpacity < 1)
                 _currentOpacity += TransitionSpeed * Game1.TimeMultiplier;
             else if (!IsOpen && _currentOpacity > 0)
                 _currentOpacity -= TransitionSpeed * Game1.TimeMultiplier;
             _currentOpacity = MathHelper.Clamp(_currentOpacity, 0, 1);
 
+            // If fully faded out, close logical dialog state.
             if (_currentOpacity <= 0 && _openDialog)
             {
                 _openDialog = false;
                 Game1.GameManager.SaveManager.SetString("dialogOpen", "0");
             }
-
+            // When fully visible, allow dialog logic to run.
             if (_currentOpacity >= 1)
                 UpdateDialogBox();
 
+            // Apply slide-in easing animation from below.
             _textboxOffsetY = (float)Math.Sin((1 - _currentOpacity) * Math.PI / 2) * 3 * _uiScale;
 
             UpdateTextBoxState();
 
+            // Update choice display animations when needed.
             if (_isChoice && !_running && _end)
             {
                 _choicePercentage = AnimationHelper.MoveToTarget(_choicePercentage, 1, 0.075f * Game1.TimeMultiplier);
@@ -173,6 +177,7 @@ namespace ProjectZ.InGame.Overlay
 
                 }
             }
+            // Freeze or unfreeze game logic as needed.
             UpdateGameState();
         }
 
@@ -242,15 +247,18 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdateDialogBox()
         {
+            // Update the text animation.
             _animator.Update();
 
+            // It's a choice dialog at the end of the text so update the choice.
             if (_isChoice && !_running && _end)
                 ChoiceUpdate();
 
+            // If text is scrolling.
             if (_textScrolling)
             {
+                // Subtract from scroll counter until end is areached.
                 _scrollCounter -= Game1.DeltaTime;
-
                 if (_scrollCounter <= 0)
                 {
                     _textScrolling = false;
@@ -258,27 +266,31 @@ namespace ProjectZ.InGame.Overlay
                 }
                 return;
             }
+            // Detect confirm, cancel, and potentially start button if dialog skip is enabled in options.
             var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton);
             var cancelPressed = ControlHandler.ButtonPressed(ControlHandler.CancelButton);
             var startPressed = ControlHandler.ButtonPressed(CButtons.Start) && GameSettings.DialogSkip;
 
+            // If pressing the start button rapidly skip through the text.
             if (startPressed)
             {
-                _end = true;
-                _running = false;
+                _skipToEnd = true;
+                _scrollSpeed = 100;
             }
-
-            if (confirmPressed || cancelPressed || startPressed)
+            // Button was pressed to continue the textbox or it was skipped.
+            if (confirmPressed || cancelPressed || startPressed || _skipToEnd)
             {
+                // The end of the text has been reached.
                 if (_end)
                 {
-                    // If we're at the end, close if not choice mode or if confirmed in choice mode
-                    if (!_isChoice || (confirmPressed && _isChoice))
+                    // Close if not a choice, or select the choice if it is.
+                    if (!_isChoice || (_isChoice && confirmPressed))
                     {
                         OwlMode = false;
                         IsOpen = false;
                         InputHandler.ResetInputState();
 
+                        // Save the current choice (key value pair) to the SaveManager dictionary.
                         if (_isChoice && confirmPressed)
                             Game1.GameManager.SaveManager.SetString(_choiceKey, _currentChoiceSelection.ToString());
 
@@ -286,15 +298,20 @@ namespace ProjectZ.InGame.Overlay
                         MapManager.ObjLink.ToggleBlockButton(false);
                     }
                 }
+                // Not the end of the text.
                 else
                 {
+                    // Text was waiting for button press.
                     if (!_running)
                     {
-                        _textMult = 1;
+                        // Set speed and continue printing text.
+                        _textMult = _skipToEnd ? 350 : 1;
                         _running = true;
 
+                        // If at the end of the textbox.
                         if (_boxEnd)
                         {
+                            // Clear the textbox.
                             _currentLine = 0;
                             _currentState += _currentDialogCount + 1;
                             _currentDialogCount = 0;
@@ -305,25 +322,27 @@ namespace ProjectZ.InGame.Overlay
                         else
                             _currentLineAddition = 0;
                     }
+                    // Button press speeds up printing text.
                     else
-                        _textMult = 4;
+                        _textMult = _skipToEnd ? 350 : 4;
                 }
             }
-            // scroll text
+            // Scroll the text if currently printing text using the multiplier.
             if (_running)
                 _textScrollCounter += Game1.DeltaTime * _textMult;
 
+            // If there is room print the next letter (I think).
             var updated = false;
-            while (_running && _currentState + _currentDialogCount < _strFullText.Length && _textScrollCounter > ScrollSpeed)
+            while (_running && _currentState + _currentDialogCount < _strFullText.Length && _textScrollCounter > _scrollSpeed)
             {
                 updated = true;
-                _textScrollCounter -= ScrollSpeed;
-
+                _textScrollCounter -= _scrollSpeed;
                 NextLetter(false);
             }
             if (updated)
                 _strDialog = _strFullText.Substring(_currentState, _currentDialogCount);
 
+            // The end of the dialog was reached so play a sound and update appropriate variables.
             if (_running && _currentState + _currentDialogCount >= _strFullText.Length)
             {
                 _end = true;
@@ -462,6 +481,9 @@ namespace ProjectZ.InGame.Overlay
             _currentState = 0;
             _currentDialogCount = 0;
             _textMult = 1;
+            _skipToEnd = false;
+            _scrollSpeed = 20;
+            _textScrollCounter = 0;
 
             _strFullText = SetUpString(dialogText);
             _textOffsetY = CalculateTextOffsetY(_strFullText);
@@ -488,6 +510,9 @@ namespace ProjectZ.InGame.Overlay
             _currentState = 0;
             _currentDialogCount = 0;
             _textMult = 1;
+            _skipToEnd = false;
+            _scrollSpeed = 20;
+            _textScrollCounter = 0;
 
             _choiceKey = choiceKey;
             _strFullText = SetUpString(choiceText);
