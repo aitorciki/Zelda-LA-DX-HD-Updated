@@ -96,6 +96,7 @@ namespace ProjectZ.InGame.Overlay
 
         public void Load(ContentManager content)
         {
+            // Add all game sequences to the stack.
             _gameSequences.Add("map", new MapOverlaySequence());
             _gameSequences.Add("marinBeach", new MarinBeachSequence());
             _gameSequences.Add("marinCliff", new MarinCliffSequence());
@@ -110,11 +111,13 @@ namespace ProjectZ.InGame.Overlay
             _gameSequences.Add("final", new FinalSequence());
             _gameSequences.Add("painting", new PaintingSequence());
 
+            // Set the size of the UI elements.
             _mapSize = new Point(144 + 2 * _marginMap, 144 + 2 * _marginMap);
             _dungeonSize = new Point(80, 106);
             _inventorySize = new Point(268, 208);
             _overlaySize = new Point(_inventorySize.X + _margin + _dungeonSize.X, _inventorySize.Y);
 
+            // Set up the overlays.
             TextboxOverlay = new TextboxOverlay();
             InGameHud = new HudOverlay();
             _mapOverlay = new MapOverlay(_mapSize.X, _mapSize.Y, _marginMap, false);
@@ -122,6 +125,7 @@ namespace ProjectZ.InGame.Overlay
             _dungeonOverlay = new DungeonOverlay(_dungeonSize.X, _dungeonSize.Y);
             _photoOverlay = new PhotoOverlay();
 
+            // Load up all of the overlays.
             _mapOverlay.Load();
             _dungeonOverlay.Load();
             _photoOverlay.Load();
@@ -129,6 +133,7 @@ namespace ProjectZ.InGame.Overlay
 
         public void RefreshPhotoOverlay()
         {
+            // Used to swap between sepia/colored photos.
             _photoOverlay.Reload();
         }
 
@@ -150,76 +155,29 @@ namespace ProjectZ.InGame.Overlay
             if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory) && ControlHandler.ButtonPressed(CButtons.Start) && !DisableInventoryToggle && !_hideHud && !TextboxOverlay.IsOpen)
                 ToggleState(MenuState.Inventory);
 
-            // Don't perform scaling unless no menu is currently opened.
+            // Update the textbox and peform button scale change if a menu is currently not visible.
             if (_currentMenuState == MenuState.None)
             {
-                // Update the Textbox Overlay.
+                // Update the textbox overlay.
                 TextboxOverlay.Update();
 
-                // Increase the timer if one of the scaling buttons are held.
-                if (_scaleButtonDown)
-                    _scaleButtonTimer += Game1.DeltaTime;
-
-                // Increase/Decrease game scale. Start the timer so that there is a 500ms repeat delay.
-                if (ControlHandler.ButtonPressed(CButtons.LT))
-                {
-                    UpdateGameScale(GameScaleDirection.Decrease);
-                    _scaleButtonDown = true;
-                    _scaleButtonTimer = -425f;
-                    _scaleButtonPeriod = 75;
-                }
-                if (ControlHandler.ButtonPressed(CButtons.RT))
-                {
-                    UpdateGameScale(GameScaleDirection.Increase);
-                    _scaleButtonDown = true;
-                    _scaleButtonTimer = -425f;
-                    _scaleButtonPeriod = 75;
-                }
-
-                // Increase/Decrease game scale repeatedly while button is held every 75ms.
-                if (ControlHandler.ButtonDown(CButtons.LT) && _scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod)
-                {
-                    UpdateGameScale(GameScaleDirection.Decrease);
-                    _scaleButtonTimer = 0;
-                    _scaleButtonCount++;
-                }
-                if (ControlHandler.ButtonDown(CButtons.RT) && _scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod)
-                {
-                    UpdateGameScale(GameScaleDirection.Increase);
-                    _scaleButtonTimer = 0;
-                    _scaleButtonCount++;
-                }
-                // The longer the button is held down, the faster the "zoom" will get. The left value in the switch represents
-                // how many scaling iterations have passed, the right value represents how many milliseconds between iterations.
-                _scaleButtonPeriod = _scaleButtonCount switch
-                {
-                    <  5  => 75,
-                    <  8  => 60,
-                    <  12 => 55,
-                    <  15 => 40,
-                    <  18 => 25,
-                    <  21 => 10,
-                    >= 24 =>  5,
-                    _ => _scaleButtonPeriod
-                };
-                // When either button is released, reset the repeat variables.
-                if (ControlHandler.ButtonReleased(CButtons.LT) || ControlHandler.ButtonReleased(CButtons.RT))
-                {
-                    _scaleButtonDown = false;
-                    _scaleButtonTimer = 0;
-                    _scaleButtonCount = 0;
-                }
+                // Update scale via button presses.
+                ButtonScaleChange();
             }
+            // The menu is currently so pause updating the game.
             else if (_currentMenuState == MenuState.Menu)
             {
                 Game1.UpdateGame = false;
             }
+            // The inventory menu is open so pause updating the game.
             else if (_currentMenuState == MenuState.Inventory)
             {
                 Game1.UpdateGame = false;
 
+                // Detect if the map screen transition is taking place.
                 if (_isChanging)
                 {
+                    // Transition between map and inventory screens.
                     _changeCount += (_updateInventory ? 1 : -1) * Game1.DeltaTime;
                     if (_changeCount >= ChangeTime || _changeCount < 0)
                     {
@@ -228,81 +186,187 @@ namespace ProjectZ.InGame.Overlay
                         _updateInventory = !_updateInventory;
                     }
                 }
+                // A transition between inventory and map is not taking place.
                 else
                 {
+                    // Check if the select button has been pressed. 
                     if (ControlHandler.ButtonPressed(CButtons.Select) && !TextboxOverlay.IsOpen)
                         ToggleInventoryMap();
 
+                    // Update the inventory menu (cursor movement, item selections, etc).
                     if (_updateInventory)
                         _inventoryOverlay.UpdateMenu();
 
+                    // Map overlay is currently in the forefront.
                     _mapOverlay.IsSelected = !_updateInventory;
                     _mapOverlay.Update();
-                    // update the text box
-                    TextboxOverlay.Update();
 
+                    // Update the textbox overlay (map area descriptions).
+                    TextboxOverlay.Update();
                     _dungeonOverlay.Update();
                 }
             }
+            // Photo overlay is currently open.
             else if (_currentMenuState == MenuState.PhotoBook)
             {
+                // Pause updating the game.
                 Game1.UpdateGame = false;
 
-                // update the text box
+                // Update the textbox overlay and photo overlay.
                 TextboxOverlay.Update();
                 _photoOverlay.Update();
             }
+            // Sequence overlay is currently open (Marin on the beach, Mr.Write Christine picture, painting, etc.).
             else if (_currentMenuState == MenuState.GameSequence)
             {
+                // Pause updating the game but force dialog updates.
                 Game1.ForceDialogUpdate = true;
                 Game1.UpdateGame = false;
 
-                // update the text box
+                // Update the textbox overlay and game sequences.
                 TextboxOverlay.Update();
                 _gameSequences[_currentSequenceName].Update();
             }
+            // Update the fade in/out effect.
             UpdateFade();
 
+            // Update the HUD (hearts, rupees, keys, save icon).
             InGameHud.Update(_hudPercentage, (1 - _hudPercentage) * HudTransparency);
 
+            // Allow overlays and inventory to be closed/opened again via button press.
             DisableOverlayToggle = false;
             DisableInventoryToggle = false;
+        }
+        private void ChangeGameScale(GameScaleDirection scaleDirection)
+        {
+            // Get the maximum scale and add 1 for auto-scale.
+            int maxScale = Game1.MaxGameScale + 1;
+
+            // Do not adjust the scale when classic camera is active.
+            if (Camera.ClassicMode)
+                return;
+
+            // If both LT and RT are pressed together, set the scaling to auto-scaling.
+            if (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
+            {
+                GameSettings.GameScale = maxScale;
+            }
+            // If either LT or RT were pressed scale up or down.
+            else if (ControlHandler.ButtonDown(CButtons.RT) || ControlHandler.ButtonDown(CButtons.LT))
+            {
+                // When autoscaling is set, match the scaling value so it can move up and down smoothly.
+                if (GameSettings.GameScale == maxScale)
+                {
+                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, maxScale);
+                    gameScale = gameScale / 2;
+                    GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
+                }
+                // Set the new scale using the passed parameter.
+                int newScale = GameSettings.GameScale + (int)scaleDirection;
+
+                // Do not let the scale fall outside the slider range.
+                if (newScale >= -3 && newScale < maxScale)
+                    GameSettings.GameScale = newScale;
+            }
+            // Apply current scaling settings.
+            Game1.ScaleChanged = true;
+        }
+
+        public void ButtonScaleChange()
+        {
+            // Increase the timer if one of the scaling buttons are held.
+            if (_scaleButtonDown)
+                _scaleButtonTimer += Game1.DeltaTime;
+
+            // Increase/Decrease game scale. Start the timer so that there is a 500ms repeat delay.
+            if (ControlHandler.ButtonPressed(CButtons.LT))
+            {
+                ChangeGameScale(GameScaleDirection.Decrease);
+                _scaleButtonDown = true;
+                _scaleButtonTimer = -425f;
+                _scaleButtonPeriod = 75;
+            }
+            else if (ControlHandler.ButtonPressed(CButtons.RT))
+            {
+                ChangeGameScale(GameScaleDirection.Increase);
+                _scaleButtonDown = true;
+                _scaleButtonTimer = -425f;
+                _scaleButtonPeriod = 75;
+            }
+            // Increase/Decrease game scale repeatedly while button is held every 75ms.
+            if (ControlHandler.ButtonDown(CButtons.LT) && _scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod)
+            {
+                ChangeGameScale(GameScaleDirection.Decrease);
+                _scaleButtonTimer = 0;
+                _scaleButtonCount++;
+            }
+            if (ControlHandler.ButtonDown(CButtons.RT) && _scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod)
+            {
+                ChangeGameScale(GameScaleDirection.Increase);
+                _scaleButtonTimer = 0;
+                _scaleButtonCount++;
+            }
+            // The longer the button is held down, the faster the "zoom" will get. The left value in the switch represents
+            // how many scaling iterations have passed, the right value represents how many milliseconds between iterations.
+            _scaleButtonPeriod = _scaleButtonCount switch
+            {
+                <  5  => 75,
+                <  8  => 60,
+                <  12 => 55,
+                <  15 => 40,
+                <  18 => 25,
+                <  21 => 10,
+                >= 24 =>  5,
+                _ => _scaleButtonPeriod
+            };
+            // When either button is released, reset the repeat variables.
+            if (ControlHandler.ButtonReleased(CButtons.LT) || ControlHandler.ButtonReleased(CButtons.RT))
+            {
+                _scaleButtonDown = false;
+                _scaleButtonTimer = 0;
+                _scaleButtonCount = 0;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            // draw the game ui; fade out with overlay fadein
+            // Draw the game UI; fade out with overlay fade in.
             InGameHud.DrawTop(spriteBatch, _hudPercentage, (1 - _hudPercentage) * HudTransparency);
 
-            // draw the text box
+            // Draw the Textbox overlay.
             TextboxOverlay.DrawTop(spriteBatch);
 
-            // draw the inventory/map/photo overlay/gamesequence
+            // Draw the Inventory / Map Screen / Photo Overlay / Game Sequence.
             if (_fadeAnimationPercentage > 0)
             {
+                // If the current or last menu state is the inventory.
                 if (_currentMenuState == MenuState.Inventory || _lastMenuState == MenuState.Inventory)
                 {
-                    // draw the menu on the screen
+                    // Draw the menu on the screen.
                     var menuY = 25 * _scale * (1 - _fadeAnimationPercentage);
                     var menuColor = Color.White * _fadeAnimationPercentage;
 
+                    // Try to align the inventory while the dungeon panel is on the side of it.
+                    // When the resololution is not wide enough move the inventory to the left.
                     int dungeonOffset;
+
                     if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
                         dungeonOffset = (_margin + _dungeonSize.X) * _scale / 2;
                     else
-                    {
-                        // try to align the inventory while the dungeon panel is on the side of it
-                        // when the resololution is not wide enough move the inventory to the left
                         dungeonOffset = Math.Clamp((_margin + _dungeonSize.X) * _scale / 2, -16, (Game1.WindowWidth - _overlayWidth) / 2 - 8);
-                    }
+
                     spriteBatch.Draw(_menuRenderTarget2D, new Rectangle(
                         (int)_menuPosition.X + dungeonOffset, (int)(_menuPosition.Y - menuY), _overlayWidth, _overlayHeight), menuColor);
                 }
+                // Draw the Photobook overlay.
                 else if (_currentMenuState == MenuState.PhotoBook || _lastMenuState == MenuState.PhotoBook)
                     _photoOverlay.Draw(spriteBatch, _fadeAnimationPercentage);
+
+                // Draw the current game sequence.
                 else if (_currentMenuState == MenuState.GameSequence || _lastMenuState == MenuState.GameSequence)
                     _gameSequences[_currentSequenceName].Draw(spriteBatch, _fadeAnimationPercentage);
 
+                // Draw the inventory screen.
                 if (_currentMenuState == MenuState.Inventory)
                 {
                     var selectStr = "";
@@ -314,7 +378,6 @@ namespace ProjectZ.InGame.Overlay
                     var strType = Game1.LanguageManager.GetString((_updateInventory ? "overlay_map" : "overlay_inventory"), "error");
                     var inputHelper = selectStr + ": " + strType;
 
-                    //var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
                     spriteBatch.DrawString(Resources.GameFont, inputHelper,
                         new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale), Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
                 }
@@ -323,7 +386,7 @@ namespace ProjectZ.InGame.Overlay
 
         private void EnsureMenuRenderTarget()
         {
-            // skip creation if width/height invalid (can happen during resize or at startup)
+            // Skip creation if width/height is invalid (can happen during resize or at startup).
             if (_overlayWidth <= 0 || _overlayHeight <= 0)
                 return;
 
@@ -350,17 +413,21 @@ namespace ProjectZ.InGame.Overlay
 
         public void DrawRenderTarget(SpriteBatch spriteBatch)
         {
+            // If the fade percentage is above zero and a game sequence is currently visible, draw it with current render target.
             if (_fadeAnimationPercentage > 0 && (_currentMenuState == MenuState.GameSequence || _lastMenuState == MenuState.GameSequence))
                 _gameSequences[_currentSequenceName].DrawRT(spriteBatch);
 
+            // If the inventory is currently visible.
             if (_currentMenuState == MenuState.Inventory)
             {
                 // Ensure the render target exists and has valid size
                 EnsureMenuRenderTarget();
 
+                // Don't try drawing if RT is currently null.
                 if (_menuRenderTarget2D == null)
-                    return; // can't safely draw if it failed to create
+                    return;
 
+                // Draw the various overlays.
                 _mapOverlay.DrawRenderTarget(spriteBatch);
                 _inventoryOverlay.DrawRT(spriteBatch);
                 _dungeonOverlay.DrawOnRenderTarget(spriteBatch);
@@ -368,6 +435,7 @@ namespace ProjectZ.InGame.Overlay
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(_menuRenderTarget2D);
                 Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
+                // Draw the inventory.
                 DrawInventory(spriteBatch);
             }
         }
@@ -443,13 +511,12 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdateRenderTarget()
         {
+            // Update all render targets.
             if (_menuRenderTarget2D == null || _menuRenderTarget2D.Width != _overlayWidth || _menuRenderTarget2D.Height != _overlayHeight)
                 _menuRenderTarget2D = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _overlayWidth, _overlayHeight);
 
             _inventoryOverlay.UpdateRenderTarget();
-
             _mapOverlay.UpdateRenderTarget();
-
             _dungeonOverlay.UpdateRenderTarget();
 
             UpdateOverlayDimensions();
@@ -457,15 +524,18 @@ namespace ProjectZ.InGame.Overlay
 
         public void OpenPhotoOverlay()
         {
+            // Open photo overlay and set the menu state.
             _photoOverlay.OnOpen();
             SetState(MenuState.PhotoBook);
         }
 
         public void StartSequence(string name)
         {
+            // Exit if the sequence doesn't exist in the dictionary.
             if (!_gameSequences.ContainsKey(name))
                 return;
 
+            // Start the sequence and set the menu state.
             _currentSequenceName = name;
             _gameSequences[_currentSequenceName].OnStart();
             SetState(MenuState.GameSequence);
@@ -473,6 +543,7 @@ namespace ProjectZ.InGame.Overlay
 
         public GameSequence GetCurrentGameSequence()
         {
+            // Get the current game sequence.
             if (_currentSequenceName != null && _gameSequences.ContainsKey(_currentSequenceName))
                 return _gameSequences[_currentSequenceName];
 
@@ -501,19 +572,19 @@ namespace ProjectZ.InGame.Overlay
 
         private void UpdateFade()
         {
-            // update the fading effect
+            // Update the fade in/out effect.
             if (_fading)
             {
                 _fadeCount += Game1.DeltaTime * _fadeDir;
 
-                // finished closing/opening
+                // Fade in/out has finished.
                 if (_fadeCount <= 0 || _fadeCount >= _fadeTime)
                 {
                     _fading = false;
                     _fadeCount = MathHelper.Clamp((float)_fadeCount, 0, _fadeTime);
                 }
             }
-
+            // Update the fade percentage.
             var fadePercentage = (float)_fadeCount / _fadeTime;
             _fadeAnimationPercentage = (float)Math.Sin(Math.PI / 2 * fadePercentage);
             _blurRectangle.BackgroundColor = Color.Black * 0.5f * _fadeAnimationPercentage;
@@ -522,7 +593,7 @@ namespace ProjectZ.InGame.Overlay
             if (_fadeAnimationPercentage <= 0 && _currentSequenceName != null && _currentMenuState == MenuState.None)
                 _currentSequenceName = null;
 
-            // hide the hud
+            // Hide the HUD.
             if (TextboxOverlay.IsOpen || _currentMenuState != MenuState.None || _hideHud)
             {
                 _hudState = AnimationHelper.MoveToTarget(_hudState, 1, 0.1f * Game1.TimeMultiplier);
@@ -531,7 +602,7 @@ namespace ProjectZ.InGame.Overlay
             {
                 _hudState = AnimationHelper.MoveToTarget(_hudState, 0, 0.1f * Game1.TimeMultiplier);
             }
-
+            // Update the HUD percentage.
             _hudPercentage = (float)Math.Sin(Math.PI / 2 * _hudState);
         }
 
@@ -548,17 +619,19 @@ namespace ProjectZ.InGame.Overlay
 
         private void SetState(MenuState newState)
         {
-            // don't change the state if a textbox is open
+            // Don't change the state if a textbox is open.
             if (TextboxOverlay.IsOpen || DisableOverlayToggle)
                 return;
 
-            // pause the currently playing soundeffects
+            // Pause the currently playing soundeffects.
             if (newState == MenuState.Inventory || newState == MenuState.Menu)
                 Game1.GameManager.PauseSoundEffects();
 
+            // Play the menu opening sound when opening the options menu or inventory menu.
             if (newState == MenuState.Inventory || newState == MenuState.Menu)
                 Game1.GameManager.PlaySoundEffect("D360-17-11");
 
+            // The inventory open was opened.
             if (newState == MenuState.Inventory)
             {
                 _isChanging = false;
@@ -568,9 +641,10 @@ namespace ProjectZ.InGame.Overlay
                 _mapOverlay.OnFocus();
                 _dungeonOverlay.OnFocus();
             }
+            // The options menu was opened.
             else if (newState == MenuState.Menu)
             {
-                // don't open the menu while closing it
+                // Don't allow opening the menu again until it has closed.
                 Game1.UiPageManager.ChangePage(typeof(GameMenuPage), null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
             }
             _fading = true;
@@ -579,43 +653,9 @@ namespace ProjectZ.InGame.Overlay
             _currentMenuState = newState;
         }
 
-        private void UpdateGameScale(GameScaleDirection scaleDirection)
-        {
-            // Get the maximum scale and add 1 for auto-scale.
-            int maxScale = Game1.MaxGameScale + 1;
-
-            // Do not adjust the scale when classic camera is active.
-            if (Camera.ClassicMode)
-                return;
-
-            // If both LT and RT are pressed together, set the scaling to auto-scaling.
-            if (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
-            {
-                GameSettings.GameScale = maxScale;
-            }
-            // If either LT or RT were pressed scale up or down.
-            else if (ControlHandler.ButtonDown(CButtons.RT) || ControlHandler.ButtonDown(CButtons.LT))
-            {
-                // When autoscaling is set, match the scaling value so it can move up and down smoothly.
-                if (GameSettings.GameScale == maxScale)
-                {
-                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, maxScale);
-                    gameScale = gameScale / 2;
-                    GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
-                }
-                // Set the new scale using the passed parameter.
-                int newScale = GameSettings.GameScale + (int)scaleDirection;
-
-                // Do not let the scale fall outside the slider range.
-                if (newScale >= -3 && newScale < maxScale)
-                    GameSettings.GameScale = newScale;
-            }
-            // Apply current scaling settings.
-            Game1.ScaleChanged = true;
-        }
-
         public void CloseOverlay()
         {
+            // Play the menu closing sound when closing the options menu or inventory menu.
             if (_currentMenuState == MenuState.Inventory || _currentMenuState == MenuState.Menu)
                 Game1.GameManager.PlaySoundEffect("D360-18-12");
 
@@ -624,14 +664,17 @@ namespace ProjectZ.InGame.Overlay
             _lastMenuState = _currentMenuState;
             _currentMenuState = MenuState.None;
 
+            // Store last input state and close all open pages.
             InputHandler.ResetInputState();
             Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
 
+            // Resume the sound effects.
             Game1.GameManager.ContinueSoundEffects();
         }
 
         public bool MenuIsOpen()
         {
+            // Store the menu state when opening the menu.
             return _currentMenuState == MenuState.Menu;
         }
     }
