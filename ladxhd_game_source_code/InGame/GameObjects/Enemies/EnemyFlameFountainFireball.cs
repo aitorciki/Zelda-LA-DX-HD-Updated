@@ -63,7 +63,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            if (MapManager.ObjLink.CurrentState == ObjLink.State.Ocarina)
+            // If the game world is frozen (via ocarina) don't progress "_liveCounter".
+            if (MapManager.ObjLink.FreezeWorldForEvents)
                 return;
 
             // blink
