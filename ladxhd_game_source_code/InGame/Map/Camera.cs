@@ -7,22 +7,6 @@ namespace ProjectZ.InGame.Map
 {
     public class Camera
     {
-        public Matrix TransformMatrix
-        {
-            get
-            {
-                float tx = (float)Math.Round(-RoundX);
-                float ty = (float)Math.Round(-RoundY);
-
-                return Matrix.CreateScale(Scale) *
-                       Matrix.CreateTranslation(new Vector3(tx, ty, 0)) *
-                       Matrix.CreateTranslation(new Vector3(
-                           (int)(_viewportWidth * 0.5f),
-                           (int)(_viewportHeight * 0.5f),
-                           0)) *
-                       Game1.GameManager.GetMatrix;
-            }
-        }
         public Vector2 Location;
         public Vector2 MoveLocation;
         private Rectangle fieldRect;
@@ -32,15 +16,27 @@ namespace ProjectZ.InGame.Map
         public float ShakeOffsetY;
         public float CameraFollowMultiplier = 1;
 
-        public static bool  SnapCamera;
-        public static float SnapCameraTimer;
-
         private float RoundedShakeX => MathF.Round(ShakeOffsetX);
         private float RoundedShakeY => MathF.Round(ShakeOffsetY);
 
-        // this is needed so there is no texture bleeding while rendering the game
+        // This is needed so there is no texture bleeding while rendering the game.
         public float RoundX => (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
         public float RoundY => (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
+
+        public Matrix TransformMatrix
+        {
+            get
+            {
+                float tx = (float)Math.Round(-RoundX);
+                float ty = (float)Math.Round(-RoundY);
+
+                return Matrix.CreateScale(Scale) *
+                       Matrix.CreateTranslation(new Vector3(tx, ty, 0)) *
+                       Matrix.CreateTranslation(new Vector3((int)(_viewportWidth * 0.5f), (int)(_viewportHeight * 0.5f), 0)) * Game1.GameManager.GetMatrix;
+            }
+        }
+        public static bool  SnapCamera;
+        public static float SnapCameraTimer;
 
         public int X => (int)Math.Round(Location.X + ShakeOffsetX * Scale);
         public int Y => (int)Math.Round(Location.Y + ShakeOffsetY * Scale);
@@ -78,22 +74,15 @@ namespace ProjectZ.InGame.Map
             return rectangle;
         }
 
-        public Rectangle GetGameViewBig()
-        {
-            var rectangle = new Rectangle(
-                (int)(RoundX / Scale) - Values.MinWidth,
-                (int)(RoundY / Scale) - Values.MinHeight,
-                Values.MinWidth * 2, Values.MinHeight * 2);
-            return rectangle;
-        }
-
         public Vector2 GetFieldCenter()
         {
-            // Get the field rectangle and its center
-            fieldRect = MapManager.ObjLink.Map.GetField(
-                (int)MapManager.ObjLink.EntityPosition.X,
-                (int)MapManager.ObjLink.EntityPosition.Y
-            );
+            Vector2 fieldCoords = MapManager.ObjLink.EntityPosition.Position;
+
+            if (Game1.ClassicCamera.CameraFieldCoords != Vector2.Zero && MapManager.ObjLink.Map.MapName != "overworld.map")
+                fieldCoords = Game1.ClassicCamera.CameraFieldCoords;
+
+            fieldRect = MapManager.ObjLink.Map.GetField((int)fieldCoords.X, (int)fieldCoords.Y);
+
             int rectCenterX = (fieldRect.X + fieldRect.Width / 2) * ScaleValue;
             int rectCenterY = (fieldRect.Y + fieldRect.Height / 2) * ScaleValue;
             return new Vector2(rectCenterX, rectCenterY);
@@ -107,7 +96,7 @@ namespace ProjectZ.InGame.Map
                 if (SnapCameraTimer > 0)
                     SnapCameraTimer -= Game1.DeltaTime;
 
-                // Get the field rectangle and its center
+                // Get the field rectangle and its center.
                 Vector2 rectCenter = GetFieldCenter();
 
                 // Snap when no smoothing, when snapping is enabled, or when the snap timer is set.
@@ -120,7 +109,7 @@ namespace ProjectZ.InGame.Map
                 if (MoveLocation != rectCenter)
                     MoveLocation = rectCenter;
 
-                // Smoothly move camera toward MoveLocation
+                // Smoothly move camera toward MoveLocation.
                 var direction = MoveLocation - Location;
                 if (direction != Vector2.Zero)
                 {
@@ -135,7 +124,7 @@ namespace ProjectZ.InGame.Map
                     if (moveY)
                         Location.Y += cameraSpeed.Y;
 
-                    // Snap if close enough
+                    // Snap if close enough.
                     if (distance <= 0.1f * Game1.TimeMultiplier)
                         Location = MoveLocation;
                 }
@@ -165,7 +154,7 @@ namespace ProjectZ.InGame.Map
                     if (distance <= 0.1f * Game1.TimeMultiplier)
                         MoveLocation = position;
                 }
-                // this is needed so the player does not wiggle around while the camera is following him
+                // This is needed so the player does not wiggle around while the camera is following him.
                 if (moveX)
                     _cameraDistance.X = position.X - MoveLocation.X;
                 if (moveY)
@@ -250,7 +239,7 @@ namespace ProjectZ.InGame.Map
                     var screenW = viewport.Width;
                     var screenH = viewport.Height;
 
-                    // Compute the rectangle’s position on screen
+                    // Compute the rectangle’s position on screen.
                     var rectScreenX = drawOffset.X + fieldX - Location.X;
                     var rectScreenY = drawOffset.Y + fieldY - Location.Y;
 

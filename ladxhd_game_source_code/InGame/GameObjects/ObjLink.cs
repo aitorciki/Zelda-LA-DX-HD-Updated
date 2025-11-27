@@ -5886,13 +5886,21 @@ namespace ProjectZ.InGame.GameObjects
             // Disable classic camera during the final stairs.
             CheckFinalStairs(Map);
 
-            // Make sure to not start falling while transitioning into a 2d map with a ladder.
-            if (state == 0 && Map.Is2dMap)
-                _body.IgnoresZ = true;
+            // Check if the transition state is "state 0".
+            if (state == 0)
+            {
+                // Make sure to not start falling while transitioning into a 2d map with a ladder.
+                if (Map.Is2dMap)
+                    _body.IgnoresZ = true;
 
+                // If the map contains camera objects, set the closest one to Link.
+                if (Camera.ClassicMode)
+                    Game1.ClassicCamera.SetClosestCoords();
+            }
             if (DirectionEntry >= 0)
                 Direction = DirectionEntry;
 
+            // Make sure the transition has both a start and end position.
             if (NextMapPositionStart.HasValue && NextMapPositionEnd.HasValue)
             {
                 var newPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state);
@@ -5969,6 +5977,9 @@ namespace ProjectZ.InGame.GameObjects
                 PreventReset = true;
                 PreventResetTimer = 200f;
             }
+            // Always clear the list of camera field objects if loading into the overworld.
+            if (!Game1.ClassicCamera.CameraFieldLock || Map.MapName == "overworld.map")
+                Game1.ClassicCamera.ClearList();
         }
 
         #endregion

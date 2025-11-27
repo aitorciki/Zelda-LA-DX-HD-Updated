@@ -33,6 +33,7 @@ namespace ProjectZ
         public static GameManager GameManager = new GameManager();
         public static GbsPlayer GbsPlayer = new GbsPlayer();
         public static Random RandomNumber = new Random();
+        public static CameraField ClassicCamera = new CameraField();
         public static EditorManager EditorManager;
   
         public static int WindowWidth;

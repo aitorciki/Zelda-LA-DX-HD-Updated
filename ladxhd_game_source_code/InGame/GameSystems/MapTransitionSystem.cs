@@ -61,13 +61,9 @@ namespace ProjectZ.InGame.GameSystems
         private bool _wobbleTransitionOut;
         private bool _wobbleTransitionIn;
 
-        private string _mapNameHackIn;
-        private string _mapNameHackOut;
-
         public MapTransitionSystem(MapManager gameMapManager)
         {
             _gameMapManager = gameMapManager;
-
             _transitionObject = new ObjTransition(_gameMapManager.CurrentMap);
         }
 
@@ -85,8 +81,6 @@ namespace ProjectZ.InGame.GameSystems
                     MapManager.ObjLink.SetNextMapPosition(_nextMapPosition);
 
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
-                _mapNameHackIn = MapManager.ObjLink.Map.MapName;
-                _mapNameHackOut = _nextMapName;
                 _nextMapName = null;
             }
 
@@ -220,48 +214,6 @@ namespace ProjectZ.InGame.GameSystems
                 return;
 
             _transitionObject.Draw(spriteBatch);
-
-            // This goofy hack covers up the top of the screen when Link is transitioning. It is hidden by the circle shader so it
-            // should never be visible. Even when Link should not appear, he pops up for a brief second. This hack covers that up.
-            if (Camera.ClassicMode && _transitionObject.Percentage > 0.80f && _transitionObject.WobbleTransition == false)
-            {
-                // We only want to do this for fully opaque black transitions.
-                if (_transitionObject.TransitionColor == new Color(0,0,0,255))
-                {
-                    Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
-
-                    var viewport = spriteBatch.GraphicsDevice.Viewport;
-
-                    // When the black border is enabled, 10% is more than enough.
-                    var screenPercent = 0.10f;
-
-                    // If using the SGB border, we need a bit more...
-                    if (GameSettings.ClassicBorders == 2)
-                        screenPercent = 0.25f;
-
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, viewport.Width, (int)(viewport.Height * screenPercent)), _transitionObject.TransitionColor);
-                    spriteBatch.End();
-                }
-            }
-            // A hack for the 2D "bridge" map with the fisherman. Link pops up on the right of the screen briefly when transitioning in and out so hide him.
-            if (Camera.ClassicMode && (_mapNameHackIn == "bridge.map" || _mapNameHackOut == "bridge.map") && _transitionObject.Percentage > 0.40f && _transitionObject.WobbleTransition == false)
-            {
-                Game1.GameManager.DrawPlayerOnTopPercentage = 0f;
-
-                var viewport = spriteBatch.GraphicsDevice.Viewport;
-
-                    // When the black border is enabled, 25% is more than enough.
-                    var screenPercent = 0.25f;
-
-                    // If using the SGB border, we need a bit more...
-                    if (GameSettings.ClassicBorders == 2)
-                        screenPercent = 0.35f;
-
-                spriteBatch.Begin();
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, (int)(viewport.Width * screenPercent), viewport.Height), _transitionObject.TransitionColor);
-                spriteBatch.End();
-            }
         }
 
         public void SetColorMode(Color color, float colorTransparency, bool playerOnTop = true)
