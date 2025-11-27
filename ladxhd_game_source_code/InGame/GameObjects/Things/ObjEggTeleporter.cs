@@ -11,7 +11,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjEggTeleporter : GameObject
     {
-        private readonly List<GameObject> _bodyObjects = new List<GameObject>();
+        private readonly List<GameObject> _mapObjects = new List<GameObject>();
 
         struct RoomState
         {
@@ -95,13 +95,17 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Camera.SnapCameraTimer = 50f;
                 MapManager.ObjLink.EntityPosition.Set(newpos);
 
-                // If Link has any items out teleport those too.
-                _bodyObjects.Clear();
-                Map.Objects.GetComponentList(_bodyObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, BodyComponent.Mask);
+                _mapObjects.Clear();
+                Map.Objects.GetComponentList(_mapObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, DrawComponent.Mask);
 
-                foreach (var gameObject in _bodyObjects)
-                    if (!(gameObject is ObjLink))
+                foreach (var gameObject in _mapObjects)
+                {
+                    if (gameObject is ObjBoomerang)
                         gameObject.EntityPosition.Offset(offset);
+
+                    else if (gameObject is ObjAnimator)
+                        Map.Objects.DeleteObjects.Add(gameObject);
+                }
             }
         }
 
@@ -338,13 +342,17 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
                 MapManager.Camera.SoftUpdate(goalPosition);
             }
-            // If Link has any items out teleport those too.
-            _bodyObjects.Clear();
-            Map.Objects.GetComponentList(_bodyObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, BodyComponent.Mask);
+            _mapObjects.Clear();
+            Map.Objects.GetComponentList(_mapObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, DrawComponent.Mask);
 
-            foreach (var gameObject in _bodyObjects)
-                if (!(gameObject is ObjLink))
+            foreach (var gameObject in _mapObjects)
+            {
+                if (gameObject is ObjBoomerang)
                     gameObject.EntityPosition.Offset(offset);
+
+                else if (gameObject is ObjAnimator)
+                    Map.Objects.DeleteObjects.Add(gameObject);
+            }
         }
 
         private void DrawLight(SpriteBatch spriteBatch)

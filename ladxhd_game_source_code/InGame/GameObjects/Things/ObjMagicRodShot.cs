@@ -97,7 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y - (int)EntityPosition.Z,
                 0, 0, Values.LayerPlayer, "Particles/flame", "idle", true);
             Map.Objects.SpawnObject(animation);
-
+            Map.Objects.RegisterAlwaysAnimateObject(animation);
             Map.Objects.DeleteObjects.Add(this);
         }
     }
