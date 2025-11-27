@@ -447,7 +447,6 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isGrabbed;
         private bool _isFlying;
         private bool _wasFlying;
-        private bool _inDungeon;
 
         public bool FreezeWorldForEvents;
 
@@ -464,10 +463,6 @@ namespace ProjectZ.InGame.GameObjects
         int   light_blu = 255;
         float light_bright = 1.0f;
         int   light_size = 120;
-
-        // Disabled lahdmod variables.
-        bool  disable_moonwalk;
-        bool  modern_analog;
 
         public ObjLink() : base((Map.Map)null)
         {
@@ -4568,7 +4563,6 @@ namespace ProjectZ.InGame.GameObjects
             Animation.Play((CarryShield ? "stands_" : "stand_") + Direction);
             _spriteTransparency = 1;
 
-            _inDungeon = false;
             NextMapFallStart = false;
             NextMapFallRotateStart = false;
 
@@ -4698,14 +4692,6 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.StopGuardianAcorn();
                 Game1.GameManager.StopPieceOfPower();
             }
-            // Track if currently in a dungeon.
-            if (Map != null && Map.DungeonMode)
-            {
-                _inDungeon = true;
-            }
-            else
-                _inDungeon = false;
-
             // If the player has not saved BowWow yet or has turned him in.
             var hasBowWow = Game1.GameManager.SaveManager.GetString("has_bowWow","0") == "1";
 
