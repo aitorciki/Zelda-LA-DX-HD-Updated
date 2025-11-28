@@ -538,7 +538,6 @@ namespace ProjectZ.InGame.Map
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
                 (int)(Game1.RenderHeight / MapManager.Camera.Scale), 0, 1);
-
             spriteBatch.End();
         }
 
@@ -712,7 +711,6 @@ namespace ProjectZ.InGame.Map
                         DrawRectangle(spriteBatch, pushableComponent.BoxInteractable.Box.Rectangle(), Color.Aqua);
                     }
                 }
-
                 spriteBatch.End();
             }
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, MapManager.Camera.TransformMatrix);
@@ -785,10 +783,8 @@ namespace ProjectZ.InGame.Map
 
                     return light0.Layer - light1.Layer;
                 }
-
                 return 0;
             });
-
             for (var i = 0; i < _lightObjectList.Count; i++)
             {
                 if (_lightObjectList[i].IsActive)
@@ -816,7 +812,7 @@ namespace ProjectZ.InGame.Map
             ObjectList.Clear();
             ObjectListB.Clear();
             AlwaysAnimateObjectsMain.Clear();
-        //    AlwaysAnimateObjectsTemp.Clear();
+            AlwaysAnimateObjectsTemp.Clear();
         }
 
         private void ClearPools()
@@ -1085,7 +1081,6 @@ namespace ProjectZ.InGame.Map
                     return maxDepth;
                 }
             }
-
             return 0;
         }
 
@@ -1104,7 +1099,6 @@ namespace ProjectZ.InGame.Map
                 if (component.IsActive && component.Rectangle.Rectangle.Intersects(rectangle))
                     return gameObject;
             }
-
             return null;
         }
 
@@ -1142,7 +1136,6 @@ namespace ProjectZ.InGame.Map
                 if (!multidamage && hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
                     return hitCollision;
             }
-
             return hitCollision;
         }
 
@@ -1195,7 +1188,6 @@ namespace ProjectZ.InGame.Map
                     }
                 }
             }
-
             return outPushComponent;
         }
 
@@ -1223,7 +1215,6 @@ namespace ProjectZ.InGame.Map
                 if (component.IsActive && component.BoxInteractable.Box.Intersects(box) && component.InteractFunction())
                     return true;
             }
-
             return false;
         }
     }
