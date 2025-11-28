@@ -6,6 +6,8 @@ using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
+using ProjectZ.InGame.GameObjects;
+
 #if WINDOWS
 using System.Windows.Forms;
 #endif
@@ -83,8 +85,9 @@ namespace ProjectZ.InGame.GameSystems
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
                 _nextMapName = null;
 
-                // If classic camera is enabled then find the closest camera.
-                if (Camera.ClassicMode)
+                // If classic camera is enabled then find the closest camera. Do not try to find a camera
+                // field object during ocarina teleport or it will pan to the nearest one that is found.
+                if (Camera.ClassicMode && MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport)
                     Game1.ClassicCamera.FindClosestCoords();
             }
 
