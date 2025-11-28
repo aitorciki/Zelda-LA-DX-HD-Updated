@@ -177,9 +177,10 @@ namespace ProjectZ.InGame.GameObjects
         private const string _spawnGhostKey = "spawn_ghost";
         private ObjGhost _objGhost;
         private bool _spawnGhost;
+        private float _flyStartZPos;
 
         // Egg Follower Turnaround
-        bool  _eggPreventStart;
+        bool _eggPreventStart;
         float _eggPreventTimer;
 
         // Trapped State
@@ -2565,9 +2566,13 @@ namespace ProjectZ.InGame.GameObjects
                 if (tileDiff.Y < 0) newResetPosition.Y -= 2;  // Came from bottom → push up
 
                 // For Z check if jumping. If on ground set Z to current Z but if in air set Z to what it was before jump.
-                newResetPositionZ = (_body.IsGrounded)
+                newResetPositionZ = _body.IsGrounded
                     ? EntityPosition.Z
-                    : (_jumpStartZPos);
+                    : _jumpStartZPos;
+
+                newResetPositionZ = _isFlying
+                    ? _flyStartZPos
+                    : newResetPositionZ;
 
                 // Check if there is no hole at the new position.
                 var bodyBox = new Box(newResetPosition.X + _body.BodyBox.OffsetX, newResetPosition.Y + _body.BodyBox.OffsetY, 0, _body.Width, _body.Height, 8);
@@ -4977,6 +4982,7 @@ namespace ProjectZ.InGame.GameObjects
             _isFlying = true;
             _wasFlying = false;
             _objRooster = objCock;
+            _flyStartZPos = MathF.Truncate(EntityPosition.Z);
         }
 
         public void StopFlying(Vector2 velocity)
@@ -4988,6 +4994,7 @@ namespace ProjectZ.InGame.GameObjects
             _body.IsGrounded = false;
             _body.JumpStartHeight = 0;
 
+            _flyStartZPos = 0;
             _lastMoveVelocity = Vector2.Zero;
 
             if (_objRooster != null)
