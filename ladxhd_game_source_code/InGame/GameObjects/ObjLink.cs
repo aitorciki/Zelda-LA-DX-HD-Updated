@@ -153,6 +153,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool NextMapFallRotateStart;
         public bool TransitionOutWalking;
         public bool TransitionInWalking;
+        public bool BlackScreenOverride;
         private double _fallEntryCounter;
         private bool _wasTransitioning;
         private bool _startBedTransition;
@@ -5965,11 +5966,13 @@ namespace ProjectZ.InGame.GameObjects
             // Manbo's song transition can freeze the game so unfreeze it now.
             FreezeGame(false);
 
-            // When classic camera is enabled don't reset monsters immediately after transition.
+            // When classic camera is enabled don't reset objects immediately after transition. Also enable
+            // the "BlackScreenOverride" which draws Link behind the circle shader for the first load in.
             if (Camera.ClassicMode)
             {
                 PreventReset = true;
                 PreventResetTimer = 200f;
+                BlackScreenOverride = false;
             }
             // Always clear the list of camera field objects if loading into the overworld.
             Game1.ClassicCamera.ClearList();

@@ -1656,6 +1656,7 @@ namespace ProjectZ.InGame.Things
             MapManager.ObjLink.EntityPosition.Z = 0;
             MapManager.ObjLink.TransitionOutWalking = false;
             MapManager.ObjLink.TransitionInWalking = false;
+            MapManager.ObjLink.BlackScreenOverride = true;
 
             MapManager.ObjLink.InitGame();
 
@@ -1707,6 +1708,7 @@ namespace ProjectZ.InGame.Things
             MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position;
             MapManager.ObjLink.TransitionOutWalking = false;
             MapManager.ObjLink.TransitionInWalking = false;
+            MapManager.ObjLink.BlackScreenOverride = true;
 
             // Default Z-Position to zero.
             MapManager.ObjLink.EntityPosition.Z = 0;
@@ -1809,9 +1811,9 @@ namespace ProjectZ.InGame.Things
 
             MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
             MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position;
-
             MapManager.ObjLink.TransitionOutWalking = false;
             MapManager.ObjLink.TransitionInWalking = false;
+            MapManager.ObjLink.BlackScreenOverride = true;
 
             // respawn looking down
             MapManager.ObjLink.DirectionEntry = 3;
