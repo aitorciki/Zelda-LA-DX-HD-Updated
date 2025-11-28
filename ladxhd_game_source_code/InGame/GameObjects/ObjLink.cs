@@ -5968,8 +5968,7 @@ namespace ProjectZ.InGame.GameObjects
                 PreventResetTimer = 200f;
             }
             // Always clear the list of camera field objects if loading into the overworld.
-            if (!Game1.ClassicCamera.CameraFieldLock || Map.MapName == "overworld.map")
-                Game1.ClassicCamera.ClearList();
+            Game1.ClassicCamera.ClearList();
 
             // Reset the field object variable so it can be set again.
             SetFieldObject = false;

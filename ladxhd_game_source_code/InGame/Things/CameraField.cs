@@ -12,12 +12,10 @@ namespace ProjectZ.InGame.Things
         public List<ObjCameraField> CameraFieldList = new List<ObjCameraField>();
 
         public Vector2 CameraFieldCoords;
-        public bool CameraFieldLock;
 
-        public void AddToList(ObjCameraField fieldCenter, bool cameraLock)
+        public void AddToList(ObjCameraField fieldCenter)
         {
             CameraFieldList.Add(fieldCenter);
-            CameraFieldLock = cameraLock;
         }
 
         public void SetClosestCoords()
@@ -62,7 +60,7 @@ namespace ProjectZ.InGame.Things
                 if (gameObject is ObjCameraField camField)
                 {
                     // Add the camera object to the list.
-                    AddToList(camField, false);
+                    AddToList(camField);
                 }
                 // Set the closest camera to 
                 SetClosestCoords();
@@ -74,7 +72,6 @@ namespace ProjectZ.InGame.Things
             // Clear the camera field object list and clear properties.
             CameraFieldList.Clear();
             CameraFieldCoords = Vector2.Zero;
-            CameraFieldLock = false;
         }
     }
 }

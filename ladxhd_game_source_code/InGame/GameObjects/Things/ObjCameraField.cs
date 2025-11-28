@@ -11,11 +11,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             EditorColor = Color.Yellow * 0.65f;
         }
 
-        public ObjCameraField(Map.Map map, int posX, int posY, bool cameraLock) : base(map)
+        public ObjCameraField(Map.Map map, int posX, int posY) : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
-            Game1.ClassicCamera.AddToList(this, cameraLock);
+            Game1.ClassicCamera.AddToList(this);
         }
     }
 }
