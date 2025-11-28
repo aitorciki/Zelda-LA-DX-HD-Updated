@@ -163,7 +163,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _repelTimer.Reset();
 
             // stun state
-            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang)
+            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang || hitType == HitType.ThrownObject)
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _damageField.IsActive = false;
