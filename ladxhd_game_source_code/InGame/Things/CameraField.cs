@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 
@@ -7,7 +8,9 @@ namespace ProjectZ.InGame.Things
 {
     public class CameraField
     {
+        public List<GameObject> GameObjectList = new List<GameObject>();
         public List<ObjCameraField> CameraFieldList = new List<ObjCameraField>();
+
         public Vector2 CameraFieldCoords;
         public bool CameraFieldLock;
 
@@ -25,13 +28,15 @@ namespace ProjectZ.InGame.Things
                 CameraFieldCoords = Vector2.Zero;
                 return;
             }
+            // Get Link's position to determine the closest camera.
             Vector2 playerPos = MapManager.ObjLink.EntityPosition.Position;
             ObjCameraField closestCam = null;
             float closestDist = float.MaxValue;
 
-            // If there are multiple camera objects, find the closest camera to Link.
+            // Loop through all the camera objects found.
             foreach (ObjCameraField fieldCenter in CameraFieldList)
             {
+                // If there are multiple camera objects, find the closest camera to Link.
                 float dist = Vector2.Distance(playerPos, fieldCenter.EntityPosition.Position);
 
                 if (dist < closestDist)
@@ -43,8 +48,30 @@ namespace ProjectZ.InGame.Things
             // Return the coordinates of the closest camera.
             CameraFieldCoords = new Vector2(closestCam.EntityPosition.X, closestCam.EntityPosition.Y);
         }
+
+        public void FindClosestCoords()
+        {
+            // Grab objects with a certain range.
+            GameObjectList.Clear();
+            GameObjectList = MapManager.ObjLink.Map.Objects.GetObjects((int)MapManager.ObjLink.EntityPosition.X - 160, (int)MapManager.ObjLink.EntityPosition.Y -100, 320, 200);
+
+            // Loop through the game objects.
+            foreach (var gameObject in GameObjectList)
+            {
+                // Find camera field objects.
+                if (gameObject is ObjCameraField camField)
+                {
+                    // Add the camera object to the list.
+                    AddToList(camField, false);
+                }
+                // Set the closest camera to 
+                SetClosestCoords();
+            }
+        }
+
         public void ClearList()
         {
+            // Clear the camera field object list and clear properties.
             CameraFieldList.Clear();
             CameraFieldCoords = Vector2.Zero;
             CameraFieldLock = false;

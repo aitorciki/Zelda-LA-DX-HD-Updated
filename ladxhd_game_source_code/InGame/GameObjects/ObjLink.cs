@@ -430,6 +430,7 @@ namespace ProjectZ.InGame.GameObjects
         public Rectangle ContrastField = Rectangle.Empty;
         public ObjFieldBarrier[] FieldBarrier;
         public bool FieldChange;
+        public bool SetFieldObject;
 
         // Prevents Enemy Position Reset
         public bool PreventReset;
@@ -5880,8 +5881,11 @@ namespace ProjectZ.InGame.GameObjects
                     _body.IgnoresZ = true;
 
                 // If the map contains camera objects, set the closest one to Link.
-                if (Camera.ClassicMode)
+                if (Camera.ClassicMode && !SetFieldObject)
+                {
+                    SetFieldObject = true;
                     Game1.ClassicCamera.SetClosestCoords();
+                }
             }
             if (DirectionEntry >= 0)
                 Direction = DirectionEntry;
@@ -5966,6 +5970,9 @@ namespace ProjectZ.InGame.GameObjects
             // Always clear the list of camera field objects if loading into the overworld.
             if (!Game1.ClassicCamera.CameraFieldLock || Map.MapName == "overworld.map")
                 Game1.ClassicCamera.ClearList();
+
+            // Reset the field object variable so it can be set again.
+            SetFieldObject = false;
         }
 
         #endregion

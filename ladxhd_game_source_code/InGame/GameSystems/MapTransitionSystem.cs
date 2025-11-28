@@ -82,6 +82,10 @@ namespace ProjectZ.InGame.GameSystems
 
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
                 _nextMapName = null;
+
+                // If classic camera is enabled then find the closest camera.
+                if (Camera.ClassicMode)
+                    Game1.ClassicCamera.FindClosestCoords();
             }
 
             if (_transitionEnded)
