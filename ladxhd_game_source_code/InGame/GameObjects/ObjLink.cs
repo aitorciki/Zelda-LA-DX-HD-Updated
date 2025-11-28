@@ -3516,16 +3516,18 @@ namespace ProjectZ.InGame.GameObjects
             // Unfreeze the game world when the song is finished.
             FreezeGame(false);
 
-            // continue playing music
+            // Continue playing the music.
             if (_ocarinaSong != 1)
                 Game1.GbsPlayer.Play();
 
+            // Bad ocarina song was played.
             if (_ocarinaSong == -1)
             {
                 ReturnToIdle();
                 Game1.GameManager.StartDialogPath("ocarina_bad");
                 return;
             }
+            // Manbo's Mambo was played.
             if (_ocarinaSong == 1)
             {
                 // Freeze the game during the transition.
