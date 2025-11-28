@@ -5,29 +5,40 @@
   * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes classic camera bugs.
   * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects. 
   * Slightly increase the size of the damage box of Magic Powder and allow it to deal damage as soon as it's used.
+  * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Running with Pegasus Boots can now smash large crystals without needing the sword equipped.
   * Reduce fairy spawn rate of Ghini to 10% (from 75%) and allow it to drop other items at normal drop rates.
   * Increase the knockback of the Flame Fountain on the way to dungeon 8 so the player can't force their way through with boots.
   * The fisherman on the boat on the "Bridge" map is now drawn on a lower layer than Link so his sprite is always behind Link.
   * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
+  * Fire spawned from Magic Rod shots added to the "always animate" list so despawns when outside of the current viewport.
+  * Bombs have been added to the "always animate" list which allows them to explode when outside of the current viewport.
   * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
   * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
   * Fix death sequence to use potion first. This fixes a "stuck in air" bug when dying/healing while flying with the rooster.
+  * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix several tiles of land north of the lake near Dungeon 3 to be diggable. Trying to dig them with the shovel would repel it.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
   * Fix visible tiles in the desert cave that make it apparent there is a secret room in the cave.
   * Fix Tal Tal Mountain Range hole entry into the water cave to show a "falling" entry instead of just appearing in the cave.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
+  * Fix collision blockers in a cave on the way to level 8 dungeon with a large gap. Flying could move the camera to a bad field.
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
   * Fix enemy Antifairy to properly remove its damage field when burning it with Magic Powder.
+  * Fix enemy Arm Mimic to get stunned when throwing objects (like pots) at them.
   * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
   * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
   * Fix enemy Cheep Cheep from launching the player if jumped on just right while slightly in the water.
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
+  * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
   * Fix dungeon 5 missing leave button that resets block positions and push multiple buttons inward towards the room to reset sooner.
   * Fix dungeon 5 hookshot anchors (koopa faces) to have collision.
+  * Fix dungeon 8 bombable walls around the switch to not have cracks. This is how it was in the original games.
+  * Fix dungeon 8 block to be movable near a stairway in a room north of the map with the Peahat enemies.
+  * Fix Egg final dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
+  * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
 
 ## **v1.4.9**
 ### **The "Beginning of the End" Update**
