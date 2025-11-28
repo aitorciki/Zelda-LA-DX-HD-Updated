@@ -173,10 +173,11 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 OnDeath(false);
                 return Values.HitCollision.Enemy;
             }
-
+            // If the enemy can detect hits even when health is 0 (or lower).
             if (damage <= 0 && IgnoreZeroDamage || DamageTrigger.CurrentTime > 0)
                 return Values.HitCollision.Enemy;
 
+            // Reduce the enemy's health by the amount of damage recieved.
             CurrentLives -= damage;
 
             // Burn on powder impact.
@@ -199,10 +200,11 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     return Values.HitCollision.Enemy;
                 }
             }
+            // Don't register a hit if object is burning.
             if (_aiComponent.CurrentStateId == "burning")
                 return Values.HitCollision.None;
 
-            // play sound effect
+            // Play the appropriate "hit" sound effect.
             if (!BossHitSound)
             {
                 if (pieceOfPower)
@@ -217,7 +219,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 else
                     Game1.GameManager.PlaySoundEffect("D370-07-07");
             }
-
+            // If the player reduced the damage launch effect.
             if (pieceOfPower && !GameSettings.NoDamageLaunch)
                 _aiComponent.ChangeState("pieceOfPower");
             else
@@ -228,7 +230,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     _aiComponent.ChangeState("damage");
                 }
             }
-
             DamageTrigger.OnInit();
 
             _damageBlink = damage > 0;
@@ -246,14 +247,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     _body.Velocity.Y = direction.Y * HitMultiplierY;
                 }
             }
-
-            // trigger death event?
+            // Trigger death when the enemy health is depleted.
             if (CurrentLives <= 0)
             {
                 OnLiveZeroed?.Invoke();
                 _deathCountdown.OnInit();
+                gameObject.Map.Objects.RegisterAlwaysAnimateObject(gameObject);
             }
-
             return Values.HitCollision.Enemy;
         }
 
@@ -281,14 +281,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             if (!HasDamageState)
                 _aiComponent.States[_aiComponent.LastStateId].Update?.Invoke();
 
-            // draw a trail
+            // Draw a trail of smoke as the enemy travels.
             if (_pieceOfPowerCounter <= 0)
             {
                 _pieceOfPowerCounter = 80;
                 var animation = new ObjAnimator(_gameObject.Map, 0, 0, 0, 0, Values.LayerPlayer, "Particles/pieceOfPowerTrail", "run", true);
-                animation.EntityPosition.Set(_body.Position.Position +
-                                             new Vector2(_body.OffsetX + _body.Width / 2f, _body.OffsetY + _body.Height / 2f));
-                animation.EntityPosition.Z = _body.Position.Z;
+                var aniOffset = new Vector3(_body.OffsetX + _body.Width / 2f, _body.OffsetY + _body.Height / 2f, 0);
+                animation.EntityPosition.Set(_body.Position.ToVector3() + aniOffset);
                 Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(animation);
                 _pieceOfPowerDeathCount++;
             }
@@ -301,7 +300,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             if ((_body.LastVelocityCollision & Values.BodyCollision.Vertical) != 0)
                 _body.Velocity.Y = 0;
 
-            // glide on the wall depending on the angle the body moved towards the wall
+            // Glide on the wall depending on the angle the body moved towards the wall.
             if (((_body.LastVelocityCollision & Values.BodyCollision.Horizontal) != 0 && MathF.Abs(_body.Velocity.X) > MathF.Abs(_body.Velocity.Y)) ||
                 ((_body.LastVelocityCollision & Values.BodyCollision.Vertical) != 0 && MathF.Abs(_body.Velocity.Y) > MathF.Abs(_body.Velocity.X)))
             {
@@ -320,6 +319,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     _body.Velocity.X = 0;
                     _body.Velocity.Y = 0;
                     OnDeath(true);
+                    _gameObject.Map.Objects.RegisterAlwaysAnimateObject(_gameObject);
                 }
                 else
                 {
@@ -334,30 +334,30 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             _body.VelocityTarget = Vector2.Zero;
 
-            // spawn explosion effect
+            // Spawn the burning effect.
             var burnAnimator = new ObjAnimator(_gameObject.Map, 0, 0, 0, 0, Values.LayerTop, "Particles/flame", "idle", false);
             burnAnimator.EntityPosition.Set(_gameObject.EntityPosition.Position);
 
-            // move the animation with the game object
+            // Move the animation with the game object.
             burnAnimator.EntityPosition.SetParent(_gameObject.EntityPosition,
                 new Vector2((int)(_body.OffsetX + _body.Width / 2) + FlameOffset.X,
                             (int)(_body.OffsetY + _body.Height) - 8 + FlameOffset.Y));
 
-            // remove the burning sprite if the ai state changes (e.g. by falling down a hole)
+            // Remove the burning sprite if the ai state changes (e.g. by falling down a hole).
             burnAnimator.Animator.OnFrameChange = () =>
             {
-                // @HACK
                 burnAnimator.AnimationComponent.UpdateSprite();
                 if (_aiComponent.Owner.Map == null || _aiComponent.CurrentStateId != "burning")
                     burnAnimator.Map.Objects.DeleteObjects.Add(burnAnimator);
             };
+            // Remove the burning sprite if the animation has finished.
             burnAnimator.Animator.OnAnimationFinished = () =>
             {
                 FinishBurning();
                 burnAnimator.Map.Objects.DeleteObjects.Add(burnAnimator);
             };
-
             Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(burnAnimator);
+            Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(burnAnimator);
         }
 
         private void UpdateBurning()
@@ -386,7 +386,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 _aiComponent.LastStateId != "pieceOfPower" &&
                 _aiComponent.LastStateId != "knockBack")
             {
-                // go back to the previous state without calling the init methods
+                // Go back to the previous state without calling the init methods.
                 if (HasDamageState && _returnState)
                 {
                     _returnState = false;
@@ -399,13 +399,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         {
             _sprite.SpriteShader = _normalShader;
 
-            // go back to the previous state without calling the init methods
+            // Go back to the previous state without calling the init methods.
             _aiComponent.ChangeState(_aiComponent.LastStateId, true);
         }
 
         private void DeathTick(double time)
         {
-            // die when the time is over or the velocity of the body is low enough
+            // Destroy the enemy when the timer runs out or the velocity is reduced to the threshold.
             if (time <= 0 || (time < _cooldownTime - 175 && _body.Velocity.Length() < 0.5f && HitMultiplierX > 0 && HitMultiplierY > 0))
             {
                 if (_pieceOfPower)
@@ -413,7 +413,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                     _body.Drag = _bodyDrag;
                     _body.DragAir = _bodyDragAir;
                 }
-
                 _deathCountdown.Stop();
                 OnDeath(false);
             }
@@ -438,8 +437,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             var posX = (int)_gameObject.EntityPosition.X - ExplostionWidth / 2 + Game1.RandomNumber.Next(0, ExplostionWidth) - 8;
             var posY = (int)_gameObject.EntityPosition.Y - (int)_gameObject.EntityPosition.Z + ExplosionOffsetY - ExplostionHeight + Game1.RandomNumber.Next(0, ExplostionHeight) - 8;
 
-            // spawn explosion effect
-            _gameObject.Map.Objects.SpawnObject(new ObjAnimator(_gameObject.Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true));
+            // Spawn the particle effect just before the explosion.
+            var explosionAnimation = new ObjAnimator(_gameObject.Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true);
+            _gameObject.Map.Objects.SpawnObject(explosionAnimation);
+            _gameObject.Map.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
         }
 
         public void OnDeathBoss(bool pieceOfPower)
@@ -449,7 +450,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             IsActive = false;
 
-            // start the death animation
+            // Start the death animation.
             _aiComponent.ChangeState("deathBoss");
         }
 
@@ -460,30 +461,31 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             _gameObject.Map.Objects.DeleteObjects.Add(_gameObject);
 
-            // play sound effect
+            // Play piece of power sound effect.
             if (pieceOfPower)
                 Game1.GameManager.PlaySoundEffect("D370-18-12");
 
-            // play death sound
+            // Play explosion death sound.
             if (PlayDeathSound)
                 Game1.GameManager.PlaySoundEffect("D378-19-13");
 
-            // spawn explosion effect
+            // Spawn the explosion effect.
             var bodyCenter = _body.BodyBox.Box.Center;
             bodyCenter.Y += ExplosionOffsetY;
             if (DeathAnimation)
             {
                 if (!pieceOfPower)
                 {
-                    Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(
-                        new ObjAnimator(_gameObject.Map, (int)bodyCenter.X - 12, (int)(bodyCenter.Y - _body.Position.Z - 12 - 5),
-                        Values.LayerTop, "Particles/explosion0", "run", true));
+                    var explosionAnimation = new ObjAnimator(_gameObject.Map, (int)bodyCenter.X - 12, (int)(bodyCenter.Y - _body.Position.Z - 12 - 5), Values.LayerTop, "Particles/explosion0", "run", true);
+                    Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(explosionAnimation);
+                    Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
                 }
                 else
                 {
-                    var animation = new ObjAnimator(_gameObject.Map, 0, 0, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
-                    animation.EntityPosition.Set(new Vector2(bodyCenter.X, bodyCenter.Y - _body.Position.Z));
-                    Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(animation);
+                    var explosionAnimation = new ObjAnimator(_gameObject.Map, 0, 0, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
+                    explosionAnimation.EntityPosition.Set(new Vector2(bodyCenter.X, bodyCenter.Y - _body.Position.Z));
+                    Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(explosionAnimation);
+                    Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
                 }
             }
             if (!SpawnItems)

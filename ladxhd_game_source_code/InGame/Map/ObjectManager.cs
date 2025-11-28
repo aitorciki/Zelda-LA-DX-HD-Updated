@@ -281,7 +281,8 @@ namespace ProjectZ.InGame.Map
         public void RegisterAlwaysAnimateObject(GameObject obj)
         {
             lock (_alwaysAnimateLock)
-                AlwaysAnimateObjectsMain.Add(obj);
+                if (!AlwaysAnimateObjectsMain.Contains(obj))
+                    AlwaysAnimateObjectsMain.Add(obj);
         }
 
         public void UpdateAnimations()
