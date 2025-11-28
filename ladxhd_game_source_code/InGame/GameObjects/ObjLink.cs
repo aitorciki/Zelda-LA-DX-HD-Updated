@@ -2809,7 +2809,6 @@ namespace ProjectZ.InGame.GameObjects
                 if (_instantPickup) { HoldStoneLifter(); }
 
             }
-
             UpdatePegasusBoots();
 
             // shield pushing
@@ -2843,16 +2842,17 @@ namespace ProjectZ.InGame.GameObjects
                     ReturnToIdle();
                 else
                 {
-                    if (CurrentState == State.Blocking || CurrentState == State.AttackBlocking)
-                        CurrentState = State.ChargeBlocking;
-                    else if (CurrentState == State.Jumping)
-                        CurrentState = State.ChargeJumping;
-                    else if (CurrentState == State.AttackSwimming)
-                        CurrentState = State.ChargeSwimming;
-                    else
-                        CurrentState = State.Charging;
-
-                    // start charging sword
+                    // If in another state when charge begins set a dual charging state.
+                    CurrentState = CurrentState switch
+                    {
+                        State.Blocking       => State.ChargeBlocking,
+                        State.AttackBlocking => State.ChargeBlocking,
+                        State.Jumping        => State.ChargeJumping,
+                        State.AttackJumping  => State.ChargeJumping,
+                        State.AttackSwimming => State.ChargeSwimming,
+                        _ => State.Charging
+                    };
+                    // Play animation and add to charge counter.
                     AnimatorWeapons.Play("stand_" + Direction);
                     _swordPokeCounter = _swordPokeTime;
                 }
@@ -2867,8 +2867,7 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentState == State.PickingUp)
                 UpdatePickup();
 
-            if (!Animation.IsPlaying &&
-                (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
+            if (!Animation.IsPlaying && (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
                 ReturnToIdle();
 
             UpdateHookshot();
@@ -2955,28 +2954,32 @@ namespace ProjectZ.InGame.GameObjects
             Animation.Play("attack_" + Direction);
             AnimatorWeapons.Play("attack_" + Direction);
             AttackDirection = Direction;
-            _swordChargeCounter = sword_charge_time;
             IsPoking = false;
+
+            _swordChargeCounter = sword_charge_time;
             _pokeStart = false;
             _stopCharging = false;
             _swordPoked = false;
             _shotSword = false;
+
             StopRaft();
 
-            if (CurrentState == State.Blocking)
-                CurrentState = State.AttackBlocking;
-            else if (CurrentState == State.Swimming)
-                CurrentState = State.AttackSwimming;
-            else if (CurrentState == State.Jumping)
-                CurrentState = State.AttackJumping;
-            else
-                CurrentState = State.Attacking;
-
+            // If in an accompanying state switch to a merged state.
+            CurrentState = CurrentState switch
+            {
+                State.Blocking => State.AttackBlocking,
+                State.Swimming => State.AttackSwimming,
+                State.Jumping  => State.AttackJumping,
+                _ => State.Attacking
+            };
+            // Reset the jump hack timer.
             _jumpEndTimer = 0;
         }
 
         private void HoldSword()
         {
+            // Since there is no state to know when the sword is held this
+            // variable can be referenced to perform that check.
             _isHoldingSword = true;
         }
 
@@ -3433,21 +3436,28 @@ namespace ProjectZ.InGame.GameObjects
             if ((CurrentState != State.Idle && CurrentState != State.Pushing) || _isClimbing)
                 return;
 
+            // Used when drawing the notes.
             _ocarinaNoteIndex = 0;
             _ocarinaCounter = 0;
 
+            // Pause whatever music is playing.
             Game1.GbsPlayer.Pause();
 
-            if (Game1.GameManager.SelectedOcarinaSong == 0)
-                Game1.GameManager.PlaySoundEffect("D370-09-09");
-            else if (Game1.GameManager.SelectedOcarinaSong == 1)
-                Game1.GameManager.PlaySoundEffect("D370-11-0B");
-            else if (Game1.GameManager.SelectedOcarinaSong == 2)
-                Game1.GameManager.PlaySoundEffect("D370-10-0A");
-            else
-                Game1.GameManager.PlaySoundEffect("D370-21-15");
-
+            // Set the selected ocarina song integer.
             _ocarinaSong = Game1.GameManager.SelectedOcarinaSong;
+
+            // Get the song that has been selected.
+            string ocarinaSong = _ocarinaSong switch
+            {
+                0 => "D370-09-09",  // Ballad of the Windfish
+                1 => "D370-11-0B",  // Manbo's Mambo
+                2 => "D370-10-0A",  // Frog's Song of Soul
+                _ => "D370-21-15"   // Bad Playing
+            };
+            // Play the selected song.
+            Game1.GameManager.PlaySoundEffect(ocarinaSong);
+
+            // Set the state, face Link forward, and show the animation.
             CurrentState = State.Ocarina;
             Direction = 3;
             Animation.Play("ocarina");
@@ -3462,19 +3472,22 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateOcarina()
         {
+            // Ocarina is still being played.
             if (CurrentState == State.Ocarina)
             {
-                // finished playing the ocarina song?
+                // Finished playing the ocarina.
                 if (!Animation.IsPlaying)
                 {
                     FinishedOcarinaSong();
                     return;
                 }
+                // Update animation.
                 UpdateOcarinaAnimation();
             }
+            // Manbo's Mambo teleport is currently in progress.
             else if (CurrentState == State.OcarinaTeleport)
             {
-                // show the animation while teleporting
+                // Show the animation while teleporting.
                 CurrentState = State.Idle;
             }
         }
@@ -4089,7 +4102,6 @@ namespace ProjectZ.InGame.GameObjects
                 _bootsHolding = false;
                 _bootsRunning = false;
                 _bootsCounter = 0;
-
                 return;
             }
             // stop running but start charging with a time boost
@@ -4324,7 +4336,6 @@ namespace ProjectZ.InGame.GameObjects
                     _preCarryCounter = PreCarryTime;
                     CurrentState = State.Carrying;
                 }
-
                 var pickupTime = 1 - MathF.Cos((_preCarryCounter / PreCarryTime) * (MathF.PI / 2));
 
                 var carryPositionXY = Vector2.Lerp(
@@ -4814,7 +4825,6 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState == State.Powdering)
                     CurrentState = State.Idle;
             }
-
             _body.VelocityTarget = Vector2.Zero;
             _moveVelocity = Vector2.Zero;
             _hitVelocity = Vector2.Zero;
@@ -5801,12 +5811,7 @@ namespace ProjectZ.InGame.GameObjects
                     _isClimbing = true;
                     Direction = 1;
                 }
-
-                // prevent the player from falling down while climbing up a ladder
-                //if ((Direction % 2) != 0)
                 _body.IgnoresZ = true;
-                // fall down
-                //else if (_body.Velocity.Y < 0)
                 _body.Velocity.Y = 0.0f;
             }
             else
@@ -5821,9 +5826,6 @@ namespace ProjectZ.InGame.GameObjects
             {
                 var newPosition = Vector2.Lerp(MapTransitionStart.Value, MapTransitionEnd.Value, state);
 
-                // fall down to the ground
-                //if (Map.Is2dMap && (Direction % 2) == 0)
-                //    newPosition.Y = EntityPosition.Y;
                 SetPosition(newPosition);
 
                 // Recalculate scale when classic dungeons is enabled.
@@ -5845,10 +5847,10 @@ namespace ProjectZ.InGame.GameObjects
             HoleFalling = false;
         }
 
-        public void SetFollowerMapState(Map.Map map)
+        public void SetFollowerMapState()
         {
             // Disable followers on maps that contain the "NoFollowers" map object.
-            if (map.NoFollowers || map.Is2dMap)
+            if (Map.NoFollowers || Map.Is2dMap)
                 _objFollower.IsActive = false;
 
             // Marin has her own method of respawning. Not doing it this way breaks her dungeon transition.
@@ -5902,7 +5904,7 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     var followerPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state * 0.5f);
                     _objFollower.SetPosition(followerPosition);
-                    SetFollowerMapState(Map);
+                    SetFollowerMapState();
                 }
             }
             // Lock the camera while transitioning.
