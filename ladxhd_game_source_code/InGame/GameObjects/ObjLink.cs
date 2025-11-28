@@ -130,9 +130,8 @@ namespace ProjectZ.InGame.GameObjects
 
         // Holes
         private Point _lastTilePosition;
-        private Vector2 _holeResetPoint;
-        private Vector3 _alternativeHoleResetPosition;
-        private float _holeResetPointZ;
+        private Vector3 _holeResetPosition;
+        private Vector3 _altHoleResetPosition;
         private float _holeFallCounter;
         private bool _isFallingIntoHole;
         private double _holeTeleportCounter;
@@ -1167,7 +1166,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 // Draw the save hole position.
                 spriteBatch.Draw(Resources.SprWhite,
-                    new Vector2(_holeResetPoint.X - 5, _holeResetPoint.Y - 5), new Rectangle(0, 0,
+                    new Vector2(_holeResetPosition.X - 5, _holeResetPosition.Y - 5), new Rectangle(0, 0,
                        10, 10), Color.HotPink * 0.65f);
 
                 // Draw weapon damage rectangle.
@@ -2534,11 +2533,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateSavePosition()
         {
-            var bodyCenter = _body.BodyBox.Box.Center;
-            var currentTilePosition = new Point(((int)bodyCenter.X - Map.MapOffsetX * 16) / 160, ((int)bodyCenter.Y - Map.MapOffsetY * 16) / 128);
-            var tileDiff = currentTilePosition - _lastTilePosition;
-            var newResetPosition  = _holeResetPoint;
-            var newResetPositionZ = _holeResetPointZ;
+            Vector2 bodyCenter = _body.BodyBox.Box.Center;
+            Vector3 newResetPosition = _holeResetPosition;
+            Point currentTilePosition = new Point(((int)bodyCenter.X - Map.MapOffsetX * 16) / 160, ((int)bodyCenter.Y - Map.MapOffsetY * 16) / 128);
+            Point tileDiff = currentTilePosition - _lastTilePosition;
             _lastTilePosition = currentTilePosition;
 
             // update position?
@@ -2547,7 +2545,7 @@ namespace ProjectZ.InGame.GameObjects
                 var tileSize = 16;
 
                 // Zero out the alternative reset position.
-                _alternativeHoleResetPosition = Vector3.Zero;
+                _altHoleResetPosition = Vector3.Zero;
 
                 // For X and Y check if the room has changed since last check.
                 newResetPosition.X = (tileDiff.X == 0)
@@ -2566,13 +2564,13 @@ namespace ProjectZ.InGame.GameObjects
                 if (tileDiff.Y < 0) newResetPosition.Y -= 2;  // Came from bottom → push up
 
                 // For Z check if jumping. If on ground set Z to current Z but if in air set Z to what it was before jump.
-                newResetPositionZ = _body.IsGrounded
+                newResetPosition.Z = _body.IsGrounded
                     ? EntityPosition.Z
                     : _jumpStartZPos;
 
-                newResetPositionZ = _isFlying
+                newResetPosition.Z = _isFlying
                     ? _flyStartZPos
-                    : newResetPositionZ;
+                    : newResetPosition.Z;
 
                 // Check if there is no hole at the new position.
                 var bodyBox = new Box(newResetPosition.X + _body.BodyBox.OffsetX, newResetPosition.Y + _body.BodyBox.OffsetY, 0, _body.Width, _body.Height, 8);
@@ -2580,8 +2578,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 if (!Map.Objects.Collision(bodyBox, Box.Empty, Values.CollisionTypes.Hole, 0, 0, ref outBox))
                 {
-                    _holeResetPoint  = newResetPosition;
-                    _holeResetPointZ = newResetPositionZ;
+                    _holeResetPosition = newResetPosition;
                 }
             }
         }
@@ -2593,35 +2590,32 @@ namespace ProjectZ.InGame.GameObjects
             MapManager.ObjLink.SaveDirection = Direction;
         }
 
-        private void SetHoleResetPosition(Vector2 position)
+        private void SetHoleResetPosition(Vector3 position)
         {
             // Sets hole reset position on map initialization.
-            _holeResetPoint  = position;
-            _holeResetPointZ = EntityPosition.Z;
+            _holeResetPosition = position;
 
             var offset = Map != null ? new Point(Map.MapOffsetX, Map.MapOffsetY) : Point.Zero;
             _lastTilePosition = new Point(((int)position.X - offset.X * 16) / 160, ((int)position.Y - offset.Y * 16) / 128);
         }
 
-        public void SetHoleResetPosition(Vector2 position, int direction)
+        public void SetHoleResetPosition(Vector3 position, int direction)
         {
+            // If Link jumped when setting the hole reset point then use the Z value before the jump started.
+            float positionZ = _body.IsGrounded ? position.Z : _jumpStartZPos;
+
             // Sets an "alternate" reset point when walking over a "ObjHoleResetPoint".
-            float positionZ = (_body.IsGrounded)
-                ? EntityPosition.Z
-                : (_jumpStartZPos);
-
-            if (direction == 0)
-                _alternativeHoleResetPosition = new Vector3(position.X + MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ);
-            else if (direction == 1)
-                _alternativeHoleResetPosition = new Vector3(position.X + 8, position.Y + _body.Height + 1, positionZ);
-            else if (direction == 2)
-                _alternativeHoleResetPosition = new Vector3(position.X + 16 - MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ);
-            else if (direction == 3)
-                _alternativeHoleResetPosition = new Vector3(position.X + 8, position.Y + 16, positionZ);
-
+            _altHoleResetPosition = direction switch
+            {
+                0 => new Vector3(position.X + MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ),
+                1 => new Vector3(position.X + 8, position.Y + _body.Height + 1, positionZ),
+                2 => new Vector3(position.X + 16 - MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ),
+                3 => new Vector3(position.X + 8, position.Y + 16, positionZ),
+                _ => Vector3.Zero
+            };
             // Also used for the drown reset point. Instead of opening up the can of worms of converting the drown 
-            // reset point to a Vector3 just use the X and Y coordinates from the _alternativeHoleResetPosition.
-            _drownResetPosition = new Vector2(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y);
+            // reset point to a Vector3 just use the X and Y coordinates from the _altHoleResetPosition.
+            _drownResetPosition = new Vector2(_altHoleResetPosition.X, _altHoleResetPosition.Y);
         }
 
         private void UpdateDrownResetPosition()
@@ -2702,16 +2696,16 @@ namespace ProjectZ.InGame.GameObjects
         private void MoveToHoleResetPosition()
         {
             // Create the respawn point and move Link to it.
-            Vector3 resetPosition = new Vector3(_holeResetPoint.X, _holeResetPoint.Y, _holeResetPointZ);
+            Vector3 resetPosition = _holeResetPosition;
             WasHoleReset = true;
             EntityPosition.Set(resetPosition);
 
             // Alternative reset point.
             var cBox = Box.Empty;
-            if (_alternativeHoleResetPosition != Vector3.Zero &&
+            if (_altHoleResetPosition != Vector3.Zero &&
                 Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, _body.CollisionTypes, 0, 0, ref cBox))
             {
-                resetPosition = new Vector3(_alternativeHoleResetPosition.X, _alternativeHoleResetPosition.Y, _alternativeHoleResetPosition.Z);
+                resetPosition = _altHoleResetPosition;
                 EntityPosition.Set(resetPosition);
             }
             HoleFalling = false;
@@ -4687,7 +4681,7 @@ namespace ProjectZ.InGame.GameObjects
             }
 
             if (NextMapPositionEnd.HasValue)
-                SetHoleResetPosition(NextMapPositionEnd.Value);
+                SetHoleResetPosition(new Vector3(NextMapPositionEnd.Value.X, NextMapPositionEnd.Value.Y, 0));
 
             if (Is2DMode)
                 MapInit2D();
@@ -5918,8 +5912,7 @@ namespace ProjectZ.InGame.GameObjects
             _isWalking = TransitionInWalking;
 
             // Set the hole and water reset position to be at the transition entrance.
-            _holeResetPoint = EntityPosition.Position;
-            _holeResetPointZ = EntityPosition.Z;
+            _holeResetPosition = EntityPosition.ToVector3();
             _drownResetPosition = EntityPosition.Position;
 
             UpdateSwimmingPartOne();

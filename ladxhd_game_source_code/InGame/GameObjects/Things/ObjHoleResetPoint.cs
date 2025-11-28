@@ -28,7 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnCollision(GameObject gameObject)
         {
-            MapManager.ObjLink.SetHoleResetPosition(EntityPosition.Position, _direction);
+            MapManager.ObjLink.SetHoleResetPosition(EntityPosition.ToVector3(), _direction);
         }
     }
 }
