@@ -50,6 +50,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             foreach (GameObject gameObject in _objectList)
             {
+                // Skip ObjSprite which could be Bow Wow's chain.
+                if (gameObject is ObjSprite)
+                    continue;
+
                 if (gameObject.Tags != Values.GameObjectTag.Enemy &&
                     !(gameObject is ObjSprite) &&
                     !(gameObject is ObjPersonNew) &&
