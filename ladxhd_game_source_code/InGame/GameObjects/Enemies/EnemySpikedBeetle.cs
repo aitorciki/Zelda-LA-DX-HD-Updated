@@ -41,7 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
-            OnReset = ToWalking;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spiked beetle");
             _animator.Play("walk");
@@ -105,16 +105,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
-        private void Update()
+        private void Reset()
         {
-            if (_body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
-                _playerInsideField = true;
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+            ToWalking();
         }
 
         private void OnBurn()
         {
             _animator.Pause();
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+        }
+
+        private void Update()
+        {
+            if (_body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
+                _playerInsideField = true;
         }
 
         private void ToWaiting()

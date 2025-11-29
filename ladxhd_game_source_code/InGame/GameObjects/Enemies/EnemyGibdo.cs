@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/gibdo");
             _animator.Play("idle");
@@ -88,10 +89,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+        }
+
         private void OnBurn()
         {
             _animator.Pause();
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void OnDeath(bool pieceOfPower)

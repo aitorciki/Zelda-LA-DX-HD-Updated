@@ -15,6 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly BodyComponent _body;
         private readonly AiDamageState _aiDamageState;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly Animator _animator;
 
@@ -82,7 +83,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -8, -8, 0, 16, 16, 8);
             var damageBox = new CBox(EntityPosition, -7, -7, 0, 14, 14, 4);
 
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
@@ -94,6 +95,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
         }
 
@@ -101,6 +105,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Pause();
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

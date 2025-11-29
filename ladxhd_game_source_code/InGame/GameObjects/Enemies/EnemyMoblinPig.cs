@@ -97,8 +97,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("idle");
             _damageState.CurrentLives = ObjLives.MoblinPig;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void InitIdle()
@@ -107,12 +119,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = Vector2.Zero;
 
             ThrowSpear();
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void InitWalking()

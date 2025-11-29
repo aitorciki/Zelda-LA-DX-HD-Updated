@@ -91,9 +91,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _body.IgnoresZ = true;
+            _body.IgnoreHoles = true;
+            _body.VelocityTarget = Vector2.Zero;
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("cooldown");
             _animator.Play("idle");
-            _body.VelocityTarget = Vector2.Zero;
         }
 
         private void OnBurn()
@@ -101,6 +106,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.IgnoresZ = false;
             _body.IgnoreHoles = false;
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void StartIdle()

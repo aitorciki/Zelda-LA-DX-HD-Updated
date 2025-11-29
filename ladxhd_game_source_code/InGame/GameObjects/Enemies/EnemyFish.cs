@@ -12,13 +12,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyFish : GameObject
     {
+        private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+
         private AnimationComponent _animationComponent;
         private AiComponent _aiComponent;
         private AiDamageState _damageState;
         private BodyComponent _body;
         private Animator _animator;
         private CSprite _sprite;
-        private readonly DamageFieldComponent _damageField;
 
         private float _speed = 0.5f;
         private int _direction;
@@ -35,6 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 11, 0);
             EntitySize = new Rectangle(-8, -11 - 16, 16, 32);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/fish");
             _animator.Play("swim");
@@ -75,12 +79,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var pushableBox = new CBox(EntityPosition, -7, -11, 0, 14, 14, 8, true);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, _damageState.OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, _damageState.OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { DeepWaterOutline = true, WaterOutlineOffsetY = 1 });
+        }
+
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+            _body.IgnoresZ = true;
         }
 
         private void StartSwimming()
@@ -115,14 +136,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.DragAir = 1.0f;
 
             Splash();
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
-            _body.IgnoresZ = true;
-            IsActive = false;
         }
 
         private void UpdateJump()

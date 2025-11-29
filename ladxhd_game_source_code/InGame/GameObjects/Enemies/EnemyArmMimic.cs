@@ -83,9 +83,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("idle");
             _damageState.CurrentLives = ObjLives.ArmMimic;
             _body.VelocityTarget = Vector2.Zero;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void Update()
@@ -136,12 +148,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             if (!moved)
                 _animator.Pause();
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

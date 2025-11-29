@@ -99,9 +99,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("idle");
             _animator.Play("idle");
             _damageState.CurrentLives = ObjLives.Moblin;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void InitIdle()
@@ -174,12 +186,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // stop walking
             _aiComponent.ChangeState("idle");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void OnHoleAbsorb()

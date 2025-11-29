@@ -21,6 +21,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly AiDamageState _damageState;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
 
         private readonly Rectangle _roomRectangle;
         private readonly Vector2 _roomCenter;
@@ -104,8 +106,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -10, -15, 0, 20, 15, 8, true);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageBox, OnPush));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
@@ -123,12 +125,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+
             EntityPosition.Z = 0;
             _animator.Play("idle");
             _aiComponent.ChangeState("idle");
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
             _damageState.CurrentLives = ObjLives.Vire;
+        }
+
+        private void OnBurn()
+        {
+            _body.IgnoresZ = false;
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void UpdateIdle()
@@ -187,13 +203,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _batRight.EntityPosition.Set(spawnPosition);
 
             Map.Objects.DeleteObjects.Add(this);
-        }
-
-        private void OnBurn()
-        {
-            _body.IgnoresZ = false;
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void UpdateRepelled()

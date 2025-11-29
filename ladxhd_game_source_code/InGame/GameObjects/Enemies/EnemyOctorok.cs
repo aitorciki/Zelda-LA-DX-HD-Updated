@@ -96,7 +96,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("idle");
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
         }
 
         public override void Init()
@@ -153,12 +165,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _direction = Game1.RandomNumber.Next(0, 4);
             _animator.Play("walk_" + _direction);
             _body.VelocityTarget = AnimationHelper.DirectionOffset[_direction] * _walkSpeed;
-        }
-
-        private void OnBurn()
-        {
-            _damageField.IsActive = false;
-            _animator.Pause();
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

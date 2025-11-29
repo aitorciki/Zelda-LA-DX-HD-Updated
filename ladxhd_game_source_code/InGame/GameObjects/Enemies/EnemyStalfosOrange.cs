@@ -98,8 +98,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("walking");
             _damageState.CurrentLives = ObjLives.StalfosOrange;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void UpdateWalking()
@@ -149,12 +161,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _throwBone = _isBoneThrower;
             _throwCounter = 300;
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void UpdateJumping()

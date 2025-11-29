@@ -120,8 +120,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _sword.Animator.Continue();
+            _sword._damageField.IsActive = true;
+            _animator.Continue();
+
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("idle");
             _damageState.CurrentLives = ObjLives.MoblinPigSword;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _sword.Animator.Pause();
+            _sword._damageField.IsActive = false;
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         public override void Init()
@@ -132,14 +149,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // start randomly idle or walking facing a random direction
             _direction = Game1.RandomNumber.Next(0, 4);
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 2) == 0 ? "walking" : "idle");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _sword.Animator.Pause();
-            _sword._damageField.IsActive = false;
-            _damageField.IsActive = false;
         }
 
         private void UpdateDamageTick()

@@ -90,6 +90,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _animator.Play("idle");
             _aiComponent.ChangeState("idle");
             _body.VelocityTarget = Vector2.Zero;

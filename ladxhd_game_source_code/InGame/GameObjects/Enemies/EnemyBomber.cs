@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
         private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
 
         private ObjBomb _objBomb;
@@ -74,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 4, true);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -86,6 +87,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+
             if (_objBomb != null)
                 Map.Objects.DeleteObjects.Add(_objBomb);
         }
@@ -97,6 +102,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.DragAir = 0.9f;
             _body.Bounciness = 0.5f;
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
         }
 
         private void InitWaiting()

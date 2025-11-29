@@ -116,6 +116,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.IsActive = false;
                 _damageState.IsActive = false;
                 _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
                 _sprite.IsVisible = IsVisible = false;
             }
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
@@ -123,19 +125,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
             _pushable = false;
             _body.IsActive = false;
             _body.Velocity.Z = 0;
             _body.VelocityTarget = Vector2.Zero;
             _damageState.IsActive = false;
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
             _sprite.IsVisible = false;
             _aiComponent.ChangeState("init");
         }
 
-        /// <summary>
-        /// Function used by the chest to stay in the air for a little bit before falling down
-        /// </summary>
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+        }
+
         public void SpawnDelay()
         {
             _body.IgnoresZ = true;
@@ -162,13 +172,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("jump");
             _aiComponent.ChangeState("jumping");
             _sprite.Color = Color.Transparent;
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
-            IsActive = false;
         }
 
         private void UpdateNotSpawned()

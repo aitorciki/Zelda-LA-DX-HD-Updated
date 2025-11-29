@@ -97,9 +97,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             ToIdle();
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _shootCountdown.Stop();
             _sprite.IsVisible = true;
             _damageState.CurrentLives = ObjLives.Pairodd;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void ToSpawning()
@@ -151,12 +163,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (playerDistance.Length() < 36)
                 _aiComponent.ChangeState("preDespawn");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void Shoot()

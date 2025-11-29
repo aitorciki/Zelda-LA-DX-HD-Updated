@@ -50,6 +50,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 15, 0);
             EntitySize = new Rectangle(-8, -15 - 16, 16, 32);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/octorok");
             _fieldRectangle = map.GetField(posX, posY);
@@ -109,6 +110,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+            _aiComponent.ChangeState("idle");
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+        }
+
         private void InitIdle()
         {
             _animator.Play("stand_" + _direction);
@@ -160,11 +178,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.Velocity.Z = 1.25f;
             _body.AvoidTypes = Values.CollisionTypes.NPCWall;
             _body.FieldRectangle = RectangleF.Empty;
-        }
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void UpdateFlying()

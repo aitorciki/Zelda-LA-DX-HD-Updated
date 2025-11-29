@@ -88,6 +88,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.DeleteObjects.Add(this);
         }
 
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            IsActive = false;
+        }
+
         private void InitSpawn()
         {
             _animator.Play("spawn");
@@ -97,13 +104,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (!_animator.IsPlaying)
                 _aiComponent.ChangeState("walking");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
-            IsActive = false;
         }
 
         private void InitWalking()

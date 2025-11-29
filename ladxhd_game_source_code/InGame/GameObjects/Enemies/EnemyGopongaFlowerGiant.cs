@@ -15,7 +15,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _damageState;
         private readonly HittableComponent _hitComponent;
-        private readonly BoxCollisionComponent _collisionComponent;
+        private readonly PushableComponent _pushComponent;
+        private BoxCollisionComponent _collisionComponent;
+
+        private CBox _collisionBox;
 
         private bool _dealsDamage = true;
         private int _lives = ObjLives.GopongaGiant;
@@ -32,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
             CanReset = false;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/goponga flower giant");
             _animator.OnAnimationFinished = AnimationFinished;
@@ -46,7 +50,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.Field,
                 IgnoresZ = true 
             };
-            var collisionBox = new CBox(EntityPosition, -15, -13, 30, 28, 8);
+            _collisionBox = new CBox(EntityPosition, -15, -13, 30, 28, 8);
             var hittableBox = new CBox(EntityPosition, -15, -13, 30, 28, 8);
             var damageBox = new CBox(EntityPosition, -16, -14, 32, 30, 8);
 
@@ -62,14 +66,36 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             aiComponent.ChangeState("idle");
 
             AddComponent(AiComponent.Index, aiComponent);
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer) { WaterOutline = false });
+        }
+
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+
+            if (_collisionComponent == null)
+                AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _dealsDamage = false;
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+            RemoveComponent(CollisionComponent.Index);
+            _collisionComponent = null;
         }
 
         private void Update()
@@ -98,13 +124,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return false;
         }
 
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _dealsDamage = false;
-            _damageField.IsActive = false;
-            RemoveComponent(CollisionComponent.Index);
-        }
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             return true;

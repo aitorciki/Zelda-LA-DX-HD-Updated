@@ -69,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMove);
             _aiComponent.States.Add("trap", stateTrap);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             _damageState.OnDeath = OnDeath;
             ToMoving();
 
@@ -92,8 +92,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("moving");
             _damageState.CurrentLives = ObjLives.LikeLike;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void UpdatePosition(CPosition newPosition)

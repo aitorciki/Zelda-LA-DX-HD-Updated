@@ -37,6 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -24, 16, 24);
             CanReset = true;
+            OnReset = Reset;
 
             if (color == 0)
             {
@@ -105,6 +106,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new DrawShadowCSpriteComponent(sprite));
 
             _aiComponent.ChangeState("idle");
+        }
+
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void InitIdle()
@@ -186,12 +203,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void OnHolePull(Vector2 direction, float percentage)
         {
             _aiComponent.ChangeState("holePull");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

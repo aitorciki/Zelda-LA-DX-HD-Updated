@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 13, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/red zol");
             _animator.Play("walk_1");
@@ -113,17 +114,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
-        private void InitWaiting()
+        private void Reset()
         {
-            _body.VelocityTarget = Vector2.Zero;
-            _animator.Play("idle");
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
         }
 
         private void OnBurn()
         {
             _animator.Pause();
             _damageField.IsActive = false;
-            IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+        }
+
+        private void InitWaiting()
+        {
+            _body.VelocityTarget = Vector2.Zero;
+            _animator.Play("idle");
         }
 
         private void EndWaiting()

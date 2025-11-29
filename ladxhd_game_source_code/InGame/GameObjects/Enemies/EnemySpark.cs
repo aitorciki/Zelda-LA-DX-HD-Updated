@@ -16,6 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly Animator _animator;
         private readonly BodyComponent _body;
+        private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
 
         private Vector2 _lastPosition;
         private string _destructionKey;
@@ -94,8 +96,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!string.IsNullOrEmpty(destructionKey))
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChanged));
 
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -112,6 +114,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
             _lastPosition = ResetPosition.Position;
             _moveDir = _resetDir;
             _goingClockwise = _resetClockwise;

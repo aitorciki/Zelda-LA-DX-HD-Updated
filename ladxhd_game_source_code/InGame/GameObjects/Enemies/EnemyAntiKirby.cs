@@ -17,6 +17,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
 
         private readonly ObjAnimator _suckParticles;
@@ -90,7 +91,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -13, 0, 14, 13, 8, true);
             var damageBox = new CBox(EntityPosition, -6, -12, 12, 12, 2);
 
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
@@ -114,6 +115,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Play("idle_0");
             _aiComponent.ChangeState("idle");
+            _hitComponent.IsActive = true;
             _damageState.CurrentLives = ObjLives.AntiKirby;
         }
 

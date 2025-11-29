@@ -106,11 +106,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             EntityPosition.Z = 0;
+
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
             _animator.SpeedMultiplier = 0;
             _aiComponent.ChangeState("start");
             _damageState.CurrentLives = ObjLives.Peahat;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
         }
 
         private void OnCollision(Values.BodyCollision collision)
@@ -125,13 +139,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, _body.Velocity.Z);
 
             return true;
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
-            IsActive = false;
         }
 
         private void EndStunned()

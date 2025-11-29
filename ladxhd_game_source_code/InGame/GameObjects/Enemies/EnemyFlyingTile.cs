@@ -115,6 +115,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerBottom, map);
         }
 
+        private void OnBurn()
+        {
+            SetSaveString();
+
+            _animator.Pause();
+            _body.IgnoresZ = false;
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+        }
+
         public override void Init()
         {
             // get the hole that is under the tile
@@ -129,15 +140,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // disable the hole under the tile
                 _objHole.SetActive(false);
             }
-        }
-
-        private void OnBurn()
-        {
-            SetSaveString();
-
-            _animator.Pause();
-            _body.IgnoresZ = false;
-            _damageField.IsActive = false;
         }
 
         private void OnDamagePlayer()

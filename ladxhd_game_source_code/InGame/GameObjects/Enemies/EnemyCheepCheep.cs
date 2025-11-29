@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _damageState;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
 
         private readonly CBox _damageBox;
         private readonly CBox _headJumpBox;
@@ -41,6 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _dir = dir;
             _canJump = canJump;
@@ -96,12 +98,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _headJumpBox = new CBox(EntityPosition, -6, -16, 0, 12, 6, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+        }
+
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _aiComponent.ChangeState("moving");
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
@@ -185,12 +202,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var newPosition = _jumpStart - new Vector2(0, 64) * MathF.Sin((float)(time / JumpTime) * MathF.PI);
             EntityPosition.Set(newPosition);
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void EndJump()

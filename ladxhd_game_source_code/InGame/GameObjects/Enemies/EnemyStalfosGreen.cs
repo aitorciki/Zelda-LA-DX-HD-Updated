@@ -98,8 +98,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
             _aiComponent.ChangeState("walking");
             _damageState.CurrentLives = ObjLives.StalfosGreen;
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+        }
+
+        private void OnBurn()
+        {
+            _body.Velocity = Vector3.Zero;
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         public void SetAirPosition(int posZ)
@@ -124,13 +137,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void ToWalk()
         {
             _aiComponent.ChangeState("walking");
-        }
-
-        private void OnBurn()
-        {
-            _body.Velocity = Vector3.Zero;
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void UpdateWalking()

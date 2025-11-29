@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/iron mask");
 
@@ -92,6 +93,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
+        private void Reset()
+        {
+            _isUnprotected = false;
+            _animator.Play("walk_" + _direction);
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+        }
+
         private void InitStunned()
         {
             if (!_isUnprotected)
@@ -138,12 +156,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // stop walking
             _aiComponent.ChangeState("idle");
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void OnHoleAbsorb()

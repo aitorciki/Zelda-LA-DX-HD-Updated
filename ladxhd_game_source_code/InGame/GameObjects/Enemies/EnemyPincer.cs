@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly BodyComponent _body;
         private readonly AiStunnedState _stunnedState;
 
@@ -81,10 +83,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -5, -5, 0, 10, 10, 4);
             var hittableBox = new CBox(EntityPosition, -7, -7, 14, 14, 8);
 
-            AddComponent(PushableComponent.Index, new PushableComponent(hittableBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
@@ -92,9 +94,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _animator.Continue();
             _attackCounter = 0;
             _sprite.IsVisible = false;
             _damageField.IsActive = false;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("waiting");
             _damageState.CurrentLives = ObjLives.Pincer;
         }
@@ -120,8 +125,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnBurn()
         {
-            _damageField.IsActive = false;
             _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void ToWaiting()

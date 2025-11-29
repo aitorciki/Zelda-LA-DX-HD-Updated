@@ -104,6 +104,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Deactivate();
             _bodyDrawComponent.IsActive = false;
             _sprite.IsVisible = false;
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+            _pushComponent.IsActive = true;
             _aiComponent.ChangeState("init");
         }
 
@@ -111,6 +115,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Pause();
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private void OnEnterSpawnArea(GameObject gameObject)

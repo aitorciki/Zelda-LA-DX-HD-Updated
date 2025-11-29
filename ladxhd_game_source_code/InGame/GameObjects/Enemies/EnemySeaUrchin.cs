@@ -12,6 +12,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemySeaUrchin : GameObject
     {
+        private readonly Animator _animator;
         private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
         private readonly HittableComponent _hitComponent;
@@ -48,13 +49,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.Player
             };
             var sprite = new CSprite(EntityPosition);
-            var animator = AnimatorSaveLoad.LoadAnimator("Enemies/sea urchin");
-            animator.Play("idle");
+            _animator = AnimatorSaveLoad.LoadAnimator("Enemies/sea urchin");
+            _animator.Play("idle");
 
             // randomize the start frame
-            animator.SetFrame(Game1.RandomNumber.Next(0, animator.CurrentAnimation.Frames.Length));
+            _animator.SetFrame(Game1.RandomNumber.Next(0, _animator.CurrentAnimation.Frames.Length));
 
-            var animatorComponent = new AnimationComponent(animator, sprite, new Vector2(-8, -16));
+            var animatorComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
             var aiComponent = new AiComponent();
             aiComponent.States.Add("idle", new AiState());
@@ -75,15 +76,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }
 
-        private void OnBurn()
-        {
-            _dealsDamage = false;
-            RemoveComponent(CollisionComponent.Index);
-        }
-
         private void Reset()
         {
+            _animator.Continue();
+            _hitComponent.IsActive = true;
+            _collisionComponent.IsActive = true;
+            _pushComponent.IsActive = true;
+            _dealsDamage = true;
             _lastPosition = ResetPosition.Position;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _hitComponent.IsActive = false;
+            _collisionComponent.IsActive = false;
+            _pushComponent.IsActive = false;
+            _dealsDamage = false;
+            RemoveComponent(CollisionComponent.Index);
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

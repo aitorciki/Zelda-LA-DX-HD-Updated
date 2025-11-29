@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _aiDamageState;
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
 
         private readonly CPosition _headPosition;
         private readonly CBox _headBox;
@@ -32,6 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = false;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/piranha plant");
 
@@ -59,13 +61,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_headBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(_headBox, _aiDamageState.OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_headBox, _aiDamageState.OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerBottom));
 
             Deactivate();
+        }
+
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
         }
 
         private void ToIdle()
@@ -95,12 +111,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("hidden");
                 Deactivate();
             }
-        }
-
-        private void OnBurn()
-        {
-            _animator.Pause();
-            _damageField.IsActive = false;
         }
 
         private void Activate()

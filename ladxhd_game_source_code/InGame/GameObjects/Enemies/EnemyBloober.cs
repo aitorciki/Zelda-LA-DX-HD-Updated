@@ -14,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _damageState;
 
@@ -31,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _startPosition = EntityPosition.Position;
 
@@ -64,12 +66,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 12, 8);
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 12, 4);
             
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, _damageState.OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, _damageState.OnHit));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+        }
+
+        private void Reset()
+        {
+            _animator.Continue();
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
         }
 
         private void ToMoveUp()
@@ -126,6 +135,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Pause();
             _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
         }
 
         private void UpdateDown()
