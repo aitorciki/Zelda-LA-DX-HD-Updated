@@ -3,7 +3,8 @@
 ## **v1.5.0 (Pre-Release)**
 ### **The "Awakening From the Dream" Update**
   * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes classic camera bugs.
-  * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects. 
+  * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
+  * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
   * Slightly increase the size of the damage box of Magic Powder and allow it to deal damage as soon as it's used.
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Running with Pegasus Boots can now smash large crystals without needing the sword equipped.
@@ -16,15 +17,22 @@
   * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
   * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
   * Fix death sequence to use potion first. This fixes a "stuck in air" bug when dying/healing while flying with the rooster.
+  * Fix crossing a hole reset point while flying with the rooster from storing the Z position which reset Link in the air.
+  * Fix trading the stick to Tarin for the honeycomb. Talking to him would just show a message that says "error".
   * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
+  * Fix bushes from respawning that cover stairs when changing fields when classic camera is active.
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix several tiles of land north of the lake near Dungeon 3 to be diggable. Trying to dig them with the shovel would repel it.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
   * Fix visible tiles in the desert cave that make it apparent there is a secret room in the cave.
+  * Fix cracked tiles to always detect when Link is pushing against a stone. Sometimes pushing would prevent them from breaking.
   * Fix Tal Tal Mountain Range hole entry into the water cave to show a "falling" entry instead of just appearing in the cave.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
+  * Fix the cave where the Magnifying Lens is to not hide Bow Wow's chain before grabbing the Magnifying Lens.
+  * Fix visibility of rooms behind bombable walls in a cave near pig moblins and a cave on the mountain with shallow water.
   * Fix collision blockers in a cave on the way to level 8 dungeon with a large gap. Flying could move the camera to a bad field.
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
+  * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
   * Fix enemy Antifairy to properly remove its damage field when burning it with Magic Powder.
   * Fix enemy Arm Mimic to get stunned when throwing objects (like pots) at them.
   * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
@@ -33,6 +41,7 @@
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
   * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
+  * Fix dungeon doors so that they consume small keys again. This was a huge game-breaking issue.
   * Fix dungeon 5 missing leave button that resets block positions and push multiple buttons inward towards the room to reset sooner.
   * Fix dungeon 5 hookshot anchors (koopa faces) to have collision.
   * Fix dungeon 8 bombable walls around the switch to not have cracks. This is how it was in the original games.
