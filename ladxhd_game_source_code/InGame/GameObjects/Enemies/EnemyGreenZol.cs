@@ -116,8 +116,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.IsActive = false;
                 _damageState.IsActive = false;
                 _damageField.IsActive = false;
-                _hitComponent.IsActive = true;
-                _pushComponent.IsActive = false;
                 _sprite.IsVisible = IsVisible = false;
             }
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
@@ -132,8 +130,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = Vector2.Zero;
             _damageState.IsActive = false;
             _damageField.IsActive = false;
-            _hitComponent.IsActive = true;
-            _pushComponent.IsActive = false;
             _sprite.IsVisible = false;
             _aiComponent.ChangeState("init");
         }
