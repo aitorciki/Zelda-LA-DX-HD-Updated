@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _fieldPosX;
         private readonly int _fieldPosY;
 
-        public bool RespawnGras = true;
+        public bool RespawnGrass = true;
         public bool OnSpinyBeetle = false;
         public bool _isThrown;
 
@@ -266,7 +266,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // sound effect
             Game1.GameManager.PlaySoundEffect("D378-05-05");
 
-            if (RespawnGras)
+            if (RespawnGrass)
                 Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
 
             // delete this object

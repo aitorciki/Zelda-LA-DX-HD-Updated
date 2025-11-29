@@ -55,6 +55,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             // spawn object deactivated
             Map.Objects.SpawnObject(_spawnObject);
 
+            // If it's a bush, don't create a bush respawner.
+            if (_spawnObject is ObjBush bush)
+                bush.RespawnGrass = false;
+
             // add key change listener
             if (!string.IsNullOrEmpty(_strKey))
             {
