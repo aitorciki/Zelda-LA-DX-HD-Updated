@@ -84,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (moveDirections != 0)
                 AddComponent(BodyComponent.Index, _body);
 
-            AddComponent(PushableComponent.Index, new PushableComponent(_box, OnPush) { InertiaTime = 450 });
+            AddComponent(PushableComponent.Index, new PushableComponent(_box, OnPush) { InertiaTime = 500 });
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_box, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(0, -sprite.SourceRectangle.Height), layer));
 

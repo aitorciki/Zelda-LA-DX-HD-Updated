@@ -63,6 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (MapManager.ObjLink._body.BodyBox.Box.Intersects(_collisionBox))
             {
                 if (MapManager.ObjLink.CurrentState != ObjLink.State.Idle &&
+                    MapManager.ObjLink.CurrentState != ObjLink.State.Pushing &&
                     MapManager.ObjLink.CurrentState != ObjLink.State.Stunned)
                     return;
 
