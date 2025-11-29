@@ -38,6 +38,7 @@
   * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
   * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
   * Fix enemy Cheep Cheep from launching the player if jumped on just right while slightly in the water.
+  * Fix enemy Leevers from spawning on the ledges above the cave in the desert where Link can't reach by adding collision.
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
   * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
