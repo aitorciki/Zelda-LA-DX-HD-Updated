@@ -51,27 +51,26 @@ namespace ProjectZ.InGame.GameObjects.Things
         public ObjEggTeleporter(Map.Map map, int posX, int posY) : base(map)
         {
             for (var y = 0; y < RoomStates.GetLength(1); y++)
+            {
                 for (var x = 0; x < RoomStates.GetLength(0); x++)
                 {
                     RoomStates[x, y] = new RoomState();
                     RoomStates[x, y].Light = tDark;
                     RoomStates[x, y].LightTarget = tDark;
                 }
-
+            }
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
-            // 0: left; 1: up; 2: right
-            // load the directions that where set at the start of the game
+            // Load the directions that were set at the start of the game.
             var eggDirections = Game1.GameManager.SaveManager.GetString("eggDirections", "0");
-            if (eggDirections == "0")
-                _targetPath = new int[] { 0, 0, 1, 2, 2, 1, 0 };
-            else if (eggDirections == "1")
-                _targetPath = new int[] { 2, 1, 1, 2, 1, 1, 2 };
-            else if (eggDirections == "2")
-                _targetPath = new int[] { 0, 1, 2, 1, 0, 1, 2 };
-            else
-                _targetPath = new int[] { 2, 2, 2, 2, 1, 1, 1 };
+            _targetPath = eggDirections switch
+            {
+                "0" => new int[] { 0, 0, 1, 2, 2, 1, 0 },
+                "1" => new int[] { 2, 1, 1, 2, 1, 1, 2 },
+                "2" => new int[] { 0, 1, 2, 1, 0, 1, 2 },
+                "3" => new int[] { 2, 2, 2, 2, 1, 1, 1 }
+            };
         }
 
         // Assume six rooms: 4 rooms in a square, 1 room above, 1 room below. Let's number those rooms:
@@ -385,7 +384,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                         spriteBatch.Draw(Resources.SprLightRoomV, new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight), Color.Black * lightValue);
                 }
             }
-
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, MapManager.LightBlendState,
                 MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap, null, null, null, MapManager.Camera.TransformMatrix);
