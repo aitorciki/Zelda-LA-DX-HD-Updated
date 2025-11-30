@@ -12,6 +12,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly CSprite _sprite;
         private double _liveTime = 2500;
+        private readonly DamageFieldComponent _damageField;
 
         public EnemyVireball(Map.Map map, Vector2 position, Vector2 velocity) : base(map)
         {
@@ -20,6 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-5, -5, 10, 10);
             CanReset = false;
+            OnReset = Reset;
 
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/vireball");
             animator.Play("idle");
@@ -47,6 +49,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
             Map.Objects.RegisterAlwaysAnimateObject(this);
+        }
+
+        private void Reset()
+        {
+            _sprite.IsVisible = false;
+            _damageField.IsActive = false;
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         private void Update()

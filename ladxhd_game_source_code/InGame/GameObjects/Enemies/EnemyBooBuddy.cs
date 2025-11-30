@@ -48,6 +48,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 24, 0);
             EntitySize = new Rectangle(-8, -21, 16, 21);
             CanReset = true;
+            OnReset = Reset;
 
             _ligthKey = lightKey;
 
@@ -101,6 +102,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
             Map.Objects.RegisterAlwaysAnimateObject(this);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("attacking");
         }
 
         private void KeyChanged()

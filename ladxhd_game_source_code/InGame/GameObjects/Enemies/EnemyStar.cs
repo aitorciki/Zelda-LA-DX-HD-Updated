@@ -10,6 +10,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyStar : GameObject
     {
+        private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
         private readonly Animator _animator;
@@ -47,11 +48,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
 
-            var aiComponent = new AiComponent();
-            aiComponent.States.Add("idle", new AiState());
-            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
-
-            aiComponent.ChangeState("idle");
+            _aiComponent = new AiComponent();
+            _aiComponent.States.Add("idle", new AiState());
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
+            _aiComponent.ChangeState("idle");
 
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 13, 4);
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 13, 8);
@@ -59,7 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(AiComponent.Index, aiComponent);
+            AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -73,6 +73,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
+            _aiComponent.ChangeState("idle");
         }
 
         private void OnBurn()

@@ -13,7 +13,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
 
-
         public EnemyWizzrobeProjectile(Map.Map map, Vector2 position, int direction, float speed) : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);

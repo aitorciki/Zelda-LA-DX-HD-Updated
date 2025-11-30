@@ -96,7 +96,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
-            ToIdle();
             _animator.Continue();
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
@@ -104,6 +103,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _shootCountdown.Stop();
             _sprite.IsVisible = true;
             _damageState.CurrentLives = ObjLives.Pairodd;
+            ToIdle();
         }
 
         private void OnBurn()

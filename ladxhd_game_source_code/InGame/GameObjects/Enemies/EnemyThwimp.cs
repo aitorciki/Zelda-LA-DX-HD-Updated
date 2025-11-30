@@ -25,8 +25,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -64, 16, 114);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/thwimp");
             _animator.Play("idle");
@@ -67,6 +69,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
         }
 
         private void UpdateIdle()

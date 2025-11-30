@@ -26,8 +26,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-32, -8 - 32, 64, 64);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _startPosition = EntityPosition.Position;
 
@@ -66,6 +68,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.ChangeState("hidden");
             hiddenCountdown.CurrentTime = timeOffset;
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("hidden");
         }
 
         private void InitFlying()

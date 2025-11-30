@@ -40,8 +40,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Trap;
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
             CanReset = false;
+            OnReset = Reset;
 
             _roomName = roomName;
             _entryId = entryId;
@@ -95,13 +97,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!_isPusher)
             {
                 // POLISH: center the player when he gets absorbed
-                AddComponent(CollisionComponent.Index,
-                    new BoxCollisionComponent(new CBox(posX + 3, posY + 2, 0, 10, 12, 16), Values.CollisionTypes.Hole));
-                AddComponent(ObjectCollisionComponent.Index,
-                    new ObjectCollisionComponent(new Rectangle(posX + 6, posY + 6, 4, 4), OnCollision));
+                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(posX + 3, posY + 2, 0, 10, 12, 16), Values.CollisionTypes.Hole));
+                AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX + 6, posY + 6, 4, 4), OnCollision));
             }
-
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerBottom));
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

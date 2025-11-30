@@ -14,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly DamageFieldComponent _damageField;
         private readonly AiDamageState _damageState;
+        private readonly AiComponent _aiComponent;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
         private BoxCollisionComponent _collisionComponent;
@@ -33,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
             CanReset = false;
             OnReset = Reset;
@@ -54,18 +56,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -15, -13, 30, 28, 8);
             var damageBox = new CBox(EntityPosition, -16, -14, 32, 30, 8);
 
-            var aiComponent = new AiComponent();
-            aiComponent.States.Add("idle", new AiState(() => { }));
-            _damageState = new AiDamageState(this, body, aiComponent, sprite, _lives)
+            _aiComponent = new AiComponent();
+            _aiComponent.States.Add("idle", new AiState(() => { }));
+            _damageState = new AiDamageState(this, body, _aiComponent, sprite, _lives)
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
                 FlameOffset = new Point(0, -8),
                 OnBurn = OnBurn
             };
-            aiComponent.ChangeState("idle");
+            _aiComponent.ChangeState("idle");
 
-            AddComponent(AiComponent.Index, aiComponent);
+            AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
@@ -82,6 +84,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
+            _aiComponent.ChangeState("idle");
 
             if (_collisionComponent == null)
                 AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));

@@ -13,6 +13,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemySeaUrchin : GameObject
     {
         private readonly Animator _animator;
+        private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly BodyComponent _body;
         private readonly HittableComponent _hitComponent;
@@ -57,16 +58,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var animatorComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
-            var aiComponent = new AiComponent();
-            aiComponent.States.Add("idle", new AiState());
-            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives) { OnBurn = OnBurn };
-            aiComponent.ChangeState("idle");
+            _aiComponent = new AiComponent();
+            _aiComponent.States.Add("idle", new AiState());
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8, true);
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(AiComponent.Index, aiComponent);
+            AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 0 });
@@ -84,6 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _pushComponent.IsActive = true;
             _dealsDamage = true;
             _lastPosition = ResetPosition.Position;
+            _aiComponent.ChangeState("idle");
         }
 
         private void OnBurn()

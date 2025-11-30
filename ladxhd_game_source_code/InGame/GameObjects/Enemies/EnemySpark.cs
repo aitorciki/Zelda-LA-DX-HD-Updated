@@ -106,12 +106,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
-        public override void Init()
-        {
-            _init = true;
-            base.Init();
-        }
-
         private void Reset()
         {
             _animator.Continue();
@@ -121,6 +115,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _moveDir = _resetDir;
             _goingClockwise = _resetClockwise;
             _directionChangeTime = 0;
+        }
+
+        public override void Init()
+        {
+            _init = true;
+            base.Init();
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

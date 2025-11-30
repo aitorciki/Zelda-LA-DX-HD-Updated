@@ -74,11 +74,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("shaking", stateShaking);
             _aiComponent.States.Add("jumping", stateJumping);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
-            {
-                OnDeath = OnDeath,
-                OnBurn = OnBurn
-            };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnDeath = OnDeath, OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, null, null, 100);
             new AiDeepWaterState(_body);
 
@@ -120,6 +116,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
+            _aiComponent.ChangeState("waiting");
         }
 
         private void OnBurn()

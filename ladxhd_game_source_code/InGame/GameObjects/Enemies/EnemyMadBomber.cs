@@ -47,6 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 15, 0);
             EntitySize = new Rectangle(-8, -15, 16, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _spawnPosition = new Vector2(posX + 8, posY + 15);
 
@@ -92,6 +93,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(body, _sprite, Values.LayerPlayer));
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("hidden");
+            _damageState.CurrentLives = ObjLives.MadBomber;
         }
 
         private void OnDeath(bool pieceofpower)

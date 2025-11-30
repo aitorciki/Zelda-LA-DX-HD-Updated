@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float JumpSpeed = 0.25f;
         private int _lives = ObjLives.BonePutter;
         private int _livesWings = ObjLives.BonePutterWing;
+        private bool _hasWings;
 
         public EnemyBonePutter() : base("bone putter") { }
 
@@ -41,6 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 16, 16);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = true;
+            OnReset = Reset;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/bone putter");
 
@@ -60,6 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY)
             };
+            _hasWings = hasWings;
 
             var roomRectangle = map.GetField(posX, posY);
             _roomCenter = new Vector2(roomRectangle.Center.X, roomRectangle.Center.Y + 8);
@@ -74,8 +77,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("jumping", stateJumping);
             _aiComponent.States.Add("holePull", stateHole);
             new AiFallState(_aiComponent, _body, null, null, 200);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, hasWings ? _livesWings : _lives, false);
-            _aiComponent.ChangeState(hasWings ? "flying" : "jumping");
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _hasWings ? _livesWings : _lives, false);
+            _aiComponent.ChangeState(_hasWings ? "flying" : "jumping");
 
             var hittableBox = new CBox(EntityPosition, -6, -15, 2, 12, 14, 8, true);
             var damageBox = new CBox(EntityPosition, -6, -15, 2, 12, 14, 4, true);
@@ -91,6 +94,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState(_hasWings ? "flying" : "jumping");
         }
 
         public bool StartJump()

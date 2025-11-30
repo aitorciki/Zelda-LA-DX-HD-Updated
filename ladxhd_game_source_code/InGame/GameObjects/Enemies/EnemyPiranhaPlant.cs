@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = false;
             OnReset = Reset;
@@ -75,6 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Continue();
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
+            _aiComponent.ChangeState("hidden");
         }
 
         private void OnBurn()

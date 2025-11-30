@@ -85,6 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
+            ToWalking();
         }
 
         private void OnBurn()

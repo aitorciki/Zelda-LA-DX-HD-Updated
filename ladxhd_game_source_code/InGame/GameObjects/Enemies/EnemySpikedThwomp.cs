@@ -32,8 +32,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         public EnemySpikedThwomp(Map.Map map, int posX, int posY) : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
+            ResetPosition  = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
-            CanReset = false;
+            CanReset = true;
+            OnReset = Reset;
 
             _startPosition = EntityPosition.Position;
 
@@ -81,6 +83,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(BodyComponent.Index, _body);
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
+        }
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

@@ -83,15 +83,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
-        private void InitMoving()
-        {
-            _animator.Play("walk");
-        }
-
         private void Reset()
         {
             _isFollowing = false;
             _wasFollowing = false;
+        }
+
+        private void InitMoving()
+        {
+            _animator.Play("walk");
         }
 
         private void UpdateMoving()

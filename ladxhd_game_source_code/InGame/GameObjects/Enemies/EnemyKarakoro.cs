@@ -57,6 +57,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ResetPosition  = new CPosition(posX + 8, posY + 12, 0);
             EntitySize = new Rectangle(-12, -15, 24, 16);
             CanReset = true;
+            OnReset = Reset;
 
             _colorIndex = MathHelper.Clamp(colorIndex, 0, 2);
             _strKey = strKey;
@@ -152,6 +153,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { Height = 1.0f, Rotation = 0.1f, ShadowWidth = 10, ShadowHeight = 5 });
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("walk");
         }
 
         private void OnKeyChange()

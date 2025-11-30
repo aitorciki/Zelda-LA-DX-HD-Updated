@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -13,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyAntiFairy : GameObject
     {
+        private readonly AiComponent _aiComponent;
         private readonly BodyComponent _body;
         private readonly AiDamageState _aiDamageState;
         private readonly HittableComponent _hitComponent;
@@ -68,11 +70,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
 
-            var aiComponent = new AiComponent();
-            aiComponent.States.Add("idle", new AiState());
-            aiComponent.ChangeState("idle");
+            _aiComponent = new AiComponent();
+            _aiComponent.States.Add("idle", new AiState());
+            _aiComponent.ChangeState("idle");
 
-            _aiDamageState = new AiDamageState(this, _body, aiComponent, sprite, _lives, false)
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false)
             {
                 IgnoreZeroDamage = true,
                 FlameOffset = new Point(0, 2),
@@ -84,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -7, -7, 0, 14, 14, 4);
 
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(AiComponent.Index, aiComponent);
+            AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -96,6 +98,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _animator.Continue();
+            _aiComponent.ChangeState("idle");
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
