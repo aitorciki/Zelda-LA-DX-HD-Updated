@@ -69,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.ChangeState("waiting");
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn, OnDeath = OnDeath };
 
             var hittableBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 8, true);
             var damageBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 4, true);
@@ -156,6 +156,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = new Vector2((float)Math.Cos(randomDir), (float)Math.Sin(randomDir)) * 0.5f;
         }
 
+        private void OnDeath(bool pieceOfPower)
+        {
+            if (fairySpawn)
+                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0));
+
+            _damageState.BaseOnDeath(pieceOfPower);
+        }
+
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
@@ -170,10 +178,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 return Values.HitCollision.None;
             }
+            // Magic Rod has 50% chance to spawn fairy.
+            if ((hitType & HitType.MagicRod) != 0 && !fairySpawn)
+            {
+                if (Game1.RandomNumber.Next(0,2) == 0)
+                    fairySpawn = true;
+            }
+            // Boomerang has 100% chance to spawn fairy.
             if ((hitType & HitType.Boomerang) != 0 && !fairySpawn)
             {
                 fairySpawn = true;
-                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 4, 0));
+            }
+            // Magic Powder has unique death and 100% chance to spawn fairy.
+            if ((hitType & HitType.MagicPowder) != 0 && !fairySpawn)
+            {
+                fairySpawn = true;
+
+                // We just delete the enemy instead of returning damage state.
+                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0));
+                Map.Objects.DeleteObjects.Add(this);
+
+                // Play the crunch sound and show the smoke effect.
+                Game1.GameManager.PlaySoundEffect("D360-03-03");
+                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X-8, (int)EntityPosition.Y-26, Values.LayerTop, "Particles/spawn", "run", true);
+                Map.Objects.SpawnObject(explosionAnimation);
+                return Values.HitCollision.None;
             }
             return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
