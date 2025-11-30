@@ -258,6 +258,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("leaveButton", new GameObjectTemplate(typeof(ObjButtonLeave), new object[] { null, 0, 16, 16, false }));
             ObjectTemplates.Add("buttonTouch", new GameObjectTemplate(typeof(ObjButtonTouch), new object[] { 16, 16, null, null, true, false }));
             ObjectTemplates.Add("buttonOrder", new GameObjectTemplate(typeof(ObjButtonOrder), new object[] { 0, null, null, false }));
+            ObjectTemplates.Add("tilePuzzle", new GameObjectTemplate(typeof(ObjDungeonTilePuzzle), new object[] { null, null, null, false }));
 
             ObjectTemplates.Add("scriptBox", new GameObjectTemplate(typeof(ObjIntroStarter), new object[] { }));
             ObjectTemplates.Add("dialogBox", new GameObjectTemplate(typeof(ObjDialogBox), new object[] { null }));
