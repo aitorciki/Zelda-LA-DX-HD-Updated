@@ -74,8 +74,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             new AiFallState(_aiComponent, _body, null, null, 200);
             _aiComponent.ChangeState("idle");
 
-            _box = new CBox(EntityPosition, collisionRectangle.X, collisionRectangle.Y,
-                collisionRectangle.Width, collisionRectangle.Height, 16);
+            _box = new CBox(EntityPosition, collisionRectangle.X, collisionRectangle.Y, collisionRectangle.Width, collisionRectangle.Height, 16);
 
             var sprite = Resources.GetSprite(spriteId);
 
@@ -120,56 +119,49 @@ namespace ProjectZ.InGame.GameObjects.Things
             ToMoving();
         }
 
-        private static float OverlapArea(Box a, Box b)
+        private bool IsClosestStone()
         {
-            float xOverlap = Math.Max(0,
-                Math.Min(a.Right, b.Right) - Math.Max(a.Left, b.Left));
-            float yOverlap = Math.Max(0,
-                Math.Min(a.Back, b.Back) - Math.Max(a.Front, b.Front));
+            // Get Link body component to access box.
+            var bodyLink = MapManager.ObjLink.Components[BodyComponent.Index] as BodyComponent;
 
-            return xOverlap * yOverlap;
-        }
+            // Get the center of Link's body box.
+            var bodyBoxLink = bodyLink.BodyBox.Box;
+            var boxLinkCenter = new Vector2(bodyBoxLink.Center.X, bodyBoxLink.Center.Y);
 
-        private bool IsPlayerOverlappingMoreThanOthers()
-        {
-            var playerBody = MapManager.ObjLink.Components[BodyComponent.Index] as BodyComponent;
-            if (playerBody == null) return true;
+            // Distance from player to this stone.
+            var bxBoxCenter = new Vector2(_box.Box.Center.X, _box.Box.Center.Y);
+            var nearestDist = Vector2.DistanceSquared(boxLinkCenter, bxBoxCenter);
 
-            Box playerBox = playerBody.BodyBox.Box;
-            float myOverlap = OverlapArea(playerBox, _box.Box);
-            var playerCenter = new Vector2(playerBox.Center.X, playerBox.Center.Y);
-            var myCenter     = new Vector2(_box.Box.Center.X, _box.Box.Center.Y);
-            float myDist     = Vector2.DistanceSquared(playerCenter, myCenter);
-
+            // Search for stones in a reasonable area around the player.
             _groupOfMoveStone.Clear();
-            Map.Objects.GetComponentList(_groupOfMoveStone,
-                (int)MapManager.ObjLink.EntityPosition.X - 16, 
-                (int)MapManager.ObjLink.EntityPosition.Y - 16, 
-                32, 32, BodyComponent.Mask);
+            Map.Objects.GetComponentList(_groupOfMoveStone, (int)boxLinkCenter.X - 32, (int)boxLinkCenter.Y - 32, 64, 64, BodyComponent.Mask);
 
-            const float epsilon = 0.5f;
-
+            // Loop through all stones found in the region.
             foreach (var obj in _groupOfMoveStone)
             {
+                // If it's not a stone or it's the current stone continue.
                 if (obj is not ObjMoveStone other) continue;
-                if (other == this || other._aiComponent.CurrentStateId != "idle") continue;
+                if (other == this) continue;
 
-                float otherOverlap = OverlapArea(playerBox, other._box.Box);
+                // Only compare with idle stones (moving stones can't be pushed anyway).
+                if (other._aiComponent.CurrentStateId != "idle")
+                    continue;
 
-                if (otherOverlap > myOverlap + epsilon) return false;
+                // Distance from player to another stone.
+                var stBoxCenter = new Vector2(other._box.Box.Center.X, other._box.Box.Center.Y);
+                var fartherDist = Vector2.DistanceSquared(boxLinkCenter, stBoxCenter);
 
-                if (Math.Abs(otherOverlap - myOverlap) <= epsilon)
-                {
-                    var otherCenter = new Vector2(other._box.Box.Center.X, other._box.Box.Center.Y);
-                    if (Vector2.DistanceSquared(playerCenter, otherCenter) < myDist)
-                        return false;
-                }
+                // If another stone is closer, this one should not be pushed.
+                if (fartherDist < nearestDist)
+                    return false;
             }
+            // No other stones are closer so push this one.
             return true;
         }
+
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
-            if (!IsPlayerOverlappingMoreThanOthers())
+            if (!IsClosestStone())
                 return false;
 
             if (AnotherStoneMoving)
