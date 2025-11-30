@@ -2083,9 +2083,9 @@ namespace ProjectZ.InGame.GameObjects
                         // Reset the "was flying" state when swimming. Swimming doesn't matter if player was flying.
                         _wasFlying = false;
 
-                        // only push the player if he walks into the water and does not jump
+                        // Only push the player if he walks into the water and does not jump. Jumping is handled in another location.
                         if (!_lastFieldState.HasFlag(fieldState))
-                            _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.75f;
+                            _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.35f;
 
                         // splash effect
                         var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
@@ -4289,6 +4289,10 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Charging;
                 else
                     ReturnToIdle();
+
+                // Only push the player if he jumps into the water and does not walk. Walking is handled in another location.
+                if (SystemBody.GetFieldState(_body).HasFlag(MapStates.FieldStates.DeepWater))
+                    _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.5f;
             }
         }
 
