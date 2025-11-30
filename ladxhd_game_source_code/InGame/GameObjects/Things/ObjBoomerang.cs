@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
@@ -15,11 +16,10 @@ namespace ProjectZ.InGame.GameObjects.Things
     public class ObjBoomerang : GameObject
     {
         private readonly List<GameObject> _itemList = new List<GameObject>();
-
         private readonly BodyComponent _body;
         private readonly CBox _damageBox;
 
-        private ObjItem _item;
+        private List<ObjItem> _itemsGrabbed = new List<ObjItem>();
         private ObjDungeonFairy _fairy;
 
         private Vector2 _startPosition;
@@ -75,66 +75,77 @@ namespace ProjectZ.InGame.GameObjects.Things
             _direction = direction;
             _body.VelocityTarget = Vector2.Zero;
             _body.CollisionTypes = Values.CollisionTypes.Normal;
-            // if the player is on an upper level he can shoot down through walls that are blocking if the is not on the upper level
             _body.Level = MapStates.GetLevel(MapManager.ObjLink._body.CurrentFieldState);
 
             _comingBack = false;
             _isReady = false;
-            _item = null;
+            _itemsGrabbed.Clear();
         }
 
         private void Update()
         {
+            // A null map can cause a crash so make sure it isn't null for some reason.
             if (Map == null) return;
+
+            // Set up some shortcut vars for Link.
+            ObjLink Link = MapManager.ObjLink;
+            Vector2 LinkPos = Link.EntityPosition.Position;
 
             // Play sound effect.
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
 
             if (!_comingBack)
             {
+                // Update the boomerang's position.
                 EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, 4, 0.35f * Game1.TimeMultiplier);
 
-                var distance = (_startPosition - EntityPosition.Position).Length();
-                var speed = 3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
+                // Get the position and set the speed of the boomerang.
+                float distance = (_startPosition - EntityPosition.Position).Length();
+                float speed = 3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
                 _body.VelocityTarget = _direction * speed;
 
                 // Only enforce field boundaries when ClassicCamera mode is active.
-                if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
+                if (Camera.ClassicMode && !Link.CurrentField.Contains(EntityPosition.Position))
                 {
                     ComeBack(true);
                     return;
                 }
-
+                // The distance from Link that the boomerang travels.
                 if (distance >= 80)
                     ComeBack();
             }
             else
             {
+                // Update the boomerang's position.
                 EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, 4, 1.25f * Game1.TimeMultiplier);
 
-                var direction = new Vector2(
-                    MapManager.ObjLink.EntityPosition.Position.X,
-                    MapManager.ObjLink.EntityPosition.Position.Y - 3) - EntityPosition.Position;
-                var distance = direction.Length();
-                var speed = 3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
-                speed = Math.Min(speed, distance);
+                // Get the direction, position, and set the speed of the boomerang.
+                Vector2 direction = new Vector2(LinkPos.X, LinkPos.Y - 3) - EntityPosition.Position;
+                float distance = direction.Length();
+                float speed = Math.Min(3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2)), distance);
 
+                // Normalize the direction if it's not zero.
                 if (direction != Vector2.Zero)
                     direction.Normalize();
+
+                // Apply the speed to the boomerang.
                 _body.VelocityTarget = direction * speed;
 
-                if ((Map.Is2dMap || Math.Abs(MapManager.ObjLink.EntityPosition.Z - EntityPosition.Z) <= 6) && distance < 2)
+                // Remove the boomerang when it returns to Link.
+                if ((Map.Is2dMap || Math.Abs(Link.EntityPosition.Z - EntityPosition.Z) <= 6) && distance < 2)
                 {
                     _isReady = true;
                     Map.Objects.DeleteObjects.Add(this);
                 }
             }
-
+            // Find items to collect.
             CollectItem();
 
+            // Find enemies to hit.
             var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.Boomerang, 32, false);
-            if (!_comingBack &&
-                (collision & (Values.HitCollision.Blocking | Values.HitCollision.Repelling | Values.HitCollision.Enemy)) != 0)
+
+            // Return the boomerang if it collision hits something.
+            if (!_comingBack && (collision & (Values.HitCollision.Blocking | Values.HitCollision.Repelling | Values.HitCollision.Enemy)) != 0)
             {
                 var particle = (collision & Values.HitCollision.Repelling) != 0;
                 ComeBack(particle);
@@ -146,37 +157,38 @@ namespace ProjectZ.InGame.GameObjects.Things
             // I once experienced a strange crash where "Map" was null. Not sure how... so prevent that I guess.
             if (Map == null) { return; }
 
-            if (_item != null && !_item.Collected)
-                return;
-
-            _item = null;
             _itemList.Clear();
 
+            // Search for objects via collision component mask.
             Map.Objects.GetComponentList(_itemList, (int)_damageBox.Box.X, (int)_damageBox.Box.Y,
                 (int)_damageBox.Box.Width, (int)_damageBox.Box.Height, CollisionComponent.Mask);
 
             // Check if an item was found.
             foreach (var gameObject in _itemList)
             {
+                // Create box reference and get object via collision component.
                 var collidingBox = Box.Empty;
                 var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
-                if ((collisionObject.CollisionType & Values.CollisionTypes.Item) != 0 &&
-                     collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox))
+
+                // Get objects colliding with the boomerang.
+                if ((collisionObject.CollisionType & Values.CollisionTypes.Item) != 0 && 
+                    collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox))
                 {
-                    // Boomerang comes in contact with item.
-                    if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
+                    // Type of colliding object is an item.
+                    if (collisionObject.Owner is ObjItem newItem)
                     {
-                        ObjItem newItem = (collisionObject.Owner as ObjItem);
-                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying && !newItem._itemName.Contains("instrument"))
+                        // Item must be active, not collected, not flying, not an instrument, and not in the boomerang list.
+                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying && 
+                            !newItem._itemName.Contains("instrument") && !_itemsGrabbed.Contains(newItem))
                         {
-                            _item = newItem;
-                            _item.InitCollection();
+                            _itemsGrabbed.Add(newItem);
+                            newItem.InitCollection();
                         }
                     }
-                    // Boomerang comes in contact with a fairy.
-                    else if (collisionObject.Owner.GetType() == (typeof(ObjDungeonFairy)))
+                    // Type of colliding object is a fairy.
+                    else if (collisionObject.Owner is ObjDungeonFairy fairy)
                     {
-                        _fairy = collisionObject.Owner as ObjDungeonFairy;
+                        _fairy = fairy;
                         _fairy.RemoveCooldown();
                     }
                 }
@@ -185,31 +197,42 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateItemPosition(CPosition position)
         {
-            _item?.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
+            // Loop through the items in the list.
+            foreach (var item in _itemsGrabbed.ToList())
+            {
+                // If itemn wasn't collected update its postion.
+                if (item != null && !item.Collected)
+                    item.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
+
+                // Otherwise remove the item from the list.
+                else
+                    _itemsGrabbed.Remove(item);
+            }
         }
 
         private void UpdateFairyPosition(CPosition position)
         {
+            // Update the position of the fairy.
             _fairy?.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
         }
 
         private void OnCollision(Values.BodyCollision collision)
         {
+            // Return the boomerang if it hits a wall.
             ComeBack(true);
         }
 
         private void ComeBack(bool particle = false)
         {
-
+            // Draw the "sparking" effect and play the sound if set.
             if (particle)
             {
                 var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
                 animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
                 Map.Objects.SpawnObject(animation);
-
                 Game1.GameManager.PlaySoundEffect("D360-07-07");
             }
-
+            // Specify that it's coming back and remove collision.
             _comingBack = true;
             _body.CollisionTypes = Values.CollisionTypes.None;
         }
