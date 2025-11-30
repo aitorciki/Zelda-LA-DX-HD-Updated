@@ -59,6 +59,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_spawnObject is ObjBush bush)
                 bush.RespawnGrass = false;
 
+            // If it's a stone, don't create a stone respawner.
+            if (_spawnObject is ObjStone stone)
+                stone.NoRespawn = true;
+
             // add key change listener
             if (!string.IsNullOrEmpty(_strKey))
             {

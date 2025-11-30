@@ -3226,7 +3226,7 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     // Object is an "instant pickup" type.
                     Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle), typeof(EnemyKarakoro), typeof(ObjDungeonHorseHead), typeof(ObjBall), typeof(ObjBird) };
-                    bool isSpinyBeetle = grabbedObject is ObjBush bush && bush.OnSpinyBeetle || grabbedObject is ObjStone stone && stone.OnSpinyBeetle;
+                    bool isSpinyBeetle = grabbedObject is ObjBush bush && bush.NoRespawn || grabbedObject is ObjStone stone && stone.NoRespawn;
 
                     // If it's an instant pickup type, remember it and store the object type.
                     if (isSpinyBeetle || ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes))

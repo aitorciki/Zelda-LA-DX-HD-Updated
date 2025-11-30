@@ -32,7 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _fieldPosY;
 
         public bool RespawnGrass = true;
-        public bool OnSpinyBeetle = false;
+        public bool NoRespawn = false;
         public bool _isThrown;
 
         public ObjBush(Map.Map map, int posX, int posY, string spawnItem, string spriteId,
