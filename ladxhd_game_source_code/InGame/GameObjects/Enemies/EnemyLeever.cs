@@ -105,7 +105,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _bodyDrawComponent.IsActive = false;
             _sprite.IsVisible = false;
             _animator.Continue();
-            _damageField.IsActive = true;
+            _damageField.IsActive = false;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
             _aiComponent.ChangeState("init");
