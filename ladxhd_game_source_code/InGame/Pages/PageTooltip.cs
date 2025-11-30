@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.Interface
 
         // Textbox scale: relative to menu size.
         static float widthScale  = 0.85f;
-        static float heightScale = 0.35f;
+        static float heightScale = 0.40f;
 
         // Textbox background.
         static Color backgroundColor = Color.Black;
