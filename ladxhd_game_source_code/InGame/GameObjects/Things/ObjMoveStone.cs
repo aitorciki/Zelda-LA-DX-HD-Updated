@@ -79,10 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var sprite = Resources.GetSprite(spriteId);
 
             AddComponent(AiComponent.Index, _aiComponent);
-
-            if (moveDirections != 0)
-                AddComponent(BodyComponent.Index, _body);
-
+            AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_box, OnPush) { InertiaTime = 500 });
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_box, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(0, -sprite.SourceRectangle.Height), layer));
@@ -119,73 +116,71 @@ namespace ProjectZ.InGame.GameObjects.Things
             ToMoving();
         }
 
-        private bool IsClosestStone()
+        private bool IsClosestStone(Vector2 pushDirection)
         {
-            // Get Link body component to access box.
-            var bodyLink = MapManager.ObjLink.Components[BodyComponent.Index] as BodyComponent;
+            const float biasStrength = 48f;
 
-            // Get the center of Link's body box.
-            var bodyBoxLink = bodyLink.BodyBox.Box;
-            var boxLinkCenter = new Vector2(bodyBoxLink.Center.X, bodyBoxLink.Center.Y);
+            // Get Link's body component and body box.
+            var bodyComLink = MapManager.ObjLink.Components[BodyComponent.Index] as BodyComponent;
+            var bodyBoxLink = bodyComLink.BodyBox.Box;
 
-            // Distance from player to this stone.
-            var bxBoxCenter = new Vector2(_box.Box.Center.X, _box.Box.Center.Y);
-            var nearestDist = Vector2.DistanceSquared(boxLinkCenter, bxBoxCenter);
+            // Get the center of Link's body and the center of the stone's body.
+            Vector2 boxCenterLink = new(bodyBoxLink.Center.X, bodyBoxLink.Center.Y);
+            Vector2 boxCenterRock = new(_box.Box.Center.X, _box.Box.Center.Y);
+            Vector2 distBoxCenter = Vector2.Normalize(boxCenterRock - boxCenterLink);
 
-            // Search for stones in a reasonable area around the player.
+            // Compare the distance and give it a score to compare to other stones.
+            float dotLinkRock = Vector2.Dot(distBoxCenter, pushDirection);
+            float distSquared = Vector2.DistanceSquared(boxCenterLink, boxCenterRock);
+            float stoneScoreA = distSquared - dotLinkRock * biasStrength;
+
+            // Find nearby objects to add to a list to find stones.
             _groupOfMoveStone.Clear();
-            Map.Objects.GetComponentList(_groupOfMoveStone, (int)boxLinkCenter.X - 32, (int)boxLinkCenter.Y - 32, 64, 64, BodyComponent.Mask);
+            Map.Objects.GetComponentList(_groupOfMoveStone, (int)boxCenterLink.X - 32, (int)boxCenterLink.Y - 32, 64, 64, BodyComponent.Mask);
 
-            // Loop through all stones found in the region.
+            // Loop through the object group.
             foreach (var obj in _groupOfMoveStone)
             {
-                // If it's not a stone or it's the current stone continue.
-                if (obj is not ObjMoveStone other) continue;
-                if (other == this) continue;
+                // If the object is not a stone then skip it.
+                if (obj is not ObjMoveStone otherStone) continue;
+                if (otherStone == this) continue;
 
-                // Only compare with idle stones (moving stones can't be pushed anyway).
-                if (other._aiComponent.CurrentStateId != "idle")
-                    continue;
+                // Get the center of this stone's box.
+                Vector2 boxCentOther = new(otherStone._box.Box.Center.X, otherStone._box.Box.Center.Y);
+                Vector2 distBoxOther = Vector2.Normalize(boxCentOther - boxCenterLink);
+                
+                // Get the distance score of this stone compared to Link.
+                float dotRockOther = Vector2.Dot(distBoxOther, pushDirection);
+                float distSquOther = Vector2.DistanceSquared(boxCenterLink, boxCentOther);
+                float stoneScoreB  = distSquOther - dotRockOther * biasStrength;
 
-                // Distance from player to another stone.
-                var stBoxCenter = new Vector2(other._box.Box.Center.X, other._box.Box.Center.Y);
-                var fartherDist = Vector2.DistanceSquared(boxLinkCenter, stBoxCenter);
-
-                // If another stone is closer, this one should not be pushed.
-                if (fartherDist < nearestDist)
+                // If it's score is not higher than the previous stone then don't push it.
+                if (stoneScoreB < stoneScoreA)
                     return false;
             }
-            // No other stones are closer so push this one.
             return true;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
-            if (!IsClosestStone())
+            // Must be closest stone, no other stone is moving, impact push type, in idle state, and not heavy without power bracelet.
+            if (!IsClosestStone(direction) || AnotherStoneMoving || type == PushableComponent.PushType.Impact || 
+                _aiComponent.CurrentStateId != "idle" || (_type == 1 && Game1.GameManager.StoneGrabberLevel <= 0))
                 return false;
 
-            if (AnotherStoneMoving)
-                return false;
-
-            if (type == PushableComponent.PushType.Impact ||
-                _aiComponent.CurrentStateId != "idle")
-                return false;
-
-            if (_type == 1 && Game1.GameManager.StoneGrabberLevel <= 0)
-                return false;
-
+            // Get the direction the stone should move.
             _moveDirection = AnimationHelper.GetDirection(direction);
 
+            // Make sure the stone can move into the direction pushed.
             if (_allowedDirections != -1 && (_allowedDirections & (0x01 << _moveDirection)) == 0)
                 return false;
 
-            // only move if there is nothing blocking the way
+            // Only move if there is nothing blocking the way.
             var pushVector = AnimationHelper.DirectionOffset[_moveDirection];
             var collidingRectangle = Box.Empty;
-            if (Map.Objects.Collision(new Box(
-                    EntityPosition.X + pushVector.X * 16,
-                    EntityPosition.Y + pushVector.Y * 16 - 16, 0, 16, 16, 16),
-                Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref collidingRectangle))
+            var collisionBox = new Box(EntityPosition.X + pushVector.X * 16, EntityPosition.Y + pushVector.Y * 16 - 16, 0, 16, 16, 16);
+
+            if (Map.Objects.Collision(collisionBox, Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref collidingRectangle))
                 return true;
 
             _startPosition = EntityPosition.Position;
