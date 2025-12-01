@@ -45,7 +45,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _shownDialog;
         private bool _healMode;
 
-        private Rectangle _field;
         private bool _musicPlaying;
 
         public ObjFairy() : base("npc_fairy") { }
@@ -59,10 +58,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _strDialogPath = strDialogPath;
 
             _healMode = string.IsNullOrEmpty(strDialogPath);
-            _field = map.GetField(posX, posY);
 
             _body = new BodyComponent(EntityPosition, -5, -16, 10, 16, 8)
             {
+                FieldRectangle = map.GetField(posX, posY),
                 IgnoresZ = true
             };
 
@@ -97,6 +96,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void UpdatePosition()
@@ -149,19 +149,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
             }
             // Play the music when Link enters the current field the fairy is in.
-            Rectangle currentField = _field;
             bool _stateIdle = _aiComponent.CurrentStateId == "idle";
 
-            // Adjust the rect slightly when classic camera is enabled.
-            if (Camera.ClassicMode)
-                currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
-
-            if (_stateIdle && !_musicPlaying && currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_stateIdle && !_musicPlaying && _body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 Game1.GameManager.SetMusic(11, 2);
                 _musicPlaying = true;
             }
-            else if (_musicPlaying && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            else if (_musicPlaying && !_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 Game1.GameManager.SetMusic(-1, 2);
                 _musicPlaying = false;

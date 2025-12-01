@@ -49,8 +49,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _enterDungeonMessage;
         public bool _dungeonLeaveSequence;
 
-        private Rectangle _field;
-
         private Vector2 _returnStart;
         private Vector2 _returnEnd;
 
@@ -109,6 +107,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isMoving;
         private Map.Map _map;
 
+        private Rectangle _fieldRectangle;
+
         // Prevent player from jumping past the bridge sequence forcing hookshot usage.
         RectangleF _blockingField;
         Vector2 _blockingVector;
@@ -133,8 +133,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _map = map;
 
-            if (map != null)
-                _field = map.GetField(posX, posY);
+            if (_map != null)
+                _fieldRectangle = map.GetField(posX, posY);
 
             _body = new BodyComponent(EntityPosition, -4, -10, 8, 10, 8)
             {
@@ -156,6 +156,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+
+            if (Map != null)
+                Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public override void Init()
@@ -184,7 +187,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("jump_down_" + _walkDirection);
             }
 
-            // is disabled for the current room?
+            // Is disabled for the current room?
             var wasHidden = IsHidden;
             if (IsHidden)
             {
@@ -247,8 +250,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             var mariaState = Game1.GameManager.SaveManager.GetString("maria_state");
 
-            // singing for the animals
-            // TODO: fade in music
             if (mariaState == "3" || mariaState == "8")
             {
                 if (Components[CollisionComponent.Index] != null)
@@ -299,8 +300,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _currentState = States.AnimalSinging;
 
                 StartSinging();
-                // TODO: blend in with distance
-                //Game1.GameManager.SetMusic(46, 2);
             }
             else if (mariaState == "5")
             {
@@ -357,15 +356,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.AnimalSinging)
             {
-                Rectangle currentField = _field;
-
-                // Shrink the field slightly with Classic Camera so the song stops just before the transition since
-                // objects outside of the current field are not updated and the song won't be able to trigger the stop.
-                if (Camera.ClassicMode)
-                    currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
-
                 // start/stop depending on the distance to the player
-                var nearPlayer = currentField.Contains(MapManager.ObjLink.EntityPosition.Position);
+                var nearPlayer = _fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position);
 
                 if (!_isSingingWithSound && nearPlayer)
                 {
@@ -380,14 +372,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.Singing)
             {
-                Rectangle currentField = _field;
-
-                // Shrink the field slightly with Classic Camera so the song stops just before the transition since
-                // objects outside of the current field are not updated and the song won't be able to trigger the stop.
-                if (Camera.ClassicMode)
-                    currentField = new Rectangle(_field.X + 1, _field.Y + 1, _field.Width - 2, _field.Height - 2);
-
-                if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+                if (!_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
                 {
                     StopSinging();
                     _currentState = States.Idle;
