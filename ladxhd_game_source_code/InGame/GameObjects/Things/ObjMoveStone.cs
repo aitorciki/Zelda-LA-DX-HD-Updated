@@ -26,6 +26,12 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Vector2 _startPosition;
         private Vector2 _goalPosition;
 
+        private readonly int _baseX;
+        private readonly int _baseY;
+        private readonly string _spriteId;
+        Rectangle _collisionRect;
+        int _layer;
+
         private readonly string _strKey;
         private readonly string _strKeyDir;
         private readonly string _strResetKey;
@@ -35,16 +41,22 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _moveDirection;
         private bool _freezePlayer;
         private bool _isResetting;
+        private bool _respawn;
 
         // type 1 sets the key directly on push and resets it on spawn
         // used for the gravestone
         private int _type;
 
-        public ObjMoveStone(Map.Map map, int posX, int posY, int moveDirections, string strKey,
-            string spriteId, Rectangle collisionRectangle, int layer, int type, bool freezePlayer, string resetKey) : base(map, spriteId)
+        public ObjMoveStone(Map.Map map, int posX, int posY, int moveDirections, string strKey, string spriteId, Rectangle collisionRectangle, int layer, int type, bool freezePlayer, string resetKey) : base(map, spriteId)
         {
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(0, -16, 16, 16);
+
+            _baseX = posX;
+            _baseY = posY;
+            _spriteId = spriteId;
+            _collisionRect = collisionRectangle;
+            _layer = layer;
 
             _allowedDirections = moveDirections;
             _strKey = strKey;
@@ -55,11 +67,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _body = new BodyComponent(EntityPosition, 3, -13, 10, 10, 8)
             {
-                IgnoreHeight = true,
-                IgnoreHoles = true,
+                HoleOnPull = OnHolePull,
+                IgnoreHeight = true
             };
-
-            // moves the stone
             var movingTrigger = new AiTriggerCountdown(_moveTime, MoveTick, MoveEnd);
             var movedState = new AiState { Init = InitMoved };
 
@@ -90,12 +100,24 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Game1.GameManager.SaveManager.SetString(_strKeyDir, "-1");
         }
 
+        private void OnHolePull(Vector2 direction, float percentage)
+        {
+            if (!_respawn)
+            {
+                Map.Objects.SpawnObject(new ObjMoveStoneRespawner(Map, _baseX, _baseY, _allowedDirections, _strKey, _spriteId, _collisionRect, _layer, _type, _freezePlayer, _strResetKey));
+                _respawn = true;
+            }
+            return;
+        }
+
         private void OnKeyChange()
         {
-            // check if the block should be moved back to the start position
+            // Check if the block should be moved back to the start position.
             var keyState = Game1.GameManager.SaveManager.GetString(_strResetKey);
             if (keyState == "1" && _aiComponent.CurrentStateId == "moved")
+            {
                 ResetToStart();
+            }
         }
 
         private void ResetToStart()
@@ -219,6 +241,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void MoveEnd()
         {
+            // can fall into holes after finishing the movement animation
+            _body.IgnoreHoles = false;
+
             // finished moving
             Move(1);
 
@@ -259,9 +284,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                     break;
                 }
             }
-
-            // can fall into holes after finishing the movement animation
-            _body.IgnoreHoles = false;
         }
 
         private void InitMoved()
@@ -277,7 +299,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     (int)(_body.Position.Y + _body.OffsetY + _body.Height - 2),
                     Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
                 Map.Objects.SpawnObject(fallAnimation);
-
+                Map.Objects.SpawnObject(new ObjMoveStoneRespawner(Map, _baseX, _baseY, _allowedDirections, _strKey, _spriteId, _collisionRect, _layer, _type, _freezePlayer, _strResetKey));
                 Map.Objects.DeleteObjects.Add(this);
             }
         }
@@ -289,8 +311,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition.Set(Vector2.Lerp(_startPosition, _goalPosition, amount));
 
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 16, 17, 17, BodyComponent.Mask);
+            Map.Objects.GetComponentList(_collidingObjects, (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 16, 17, 17, BodyComponent.Mask);
 
             foreach (var collidingObject in _collidingObjects)
             {
