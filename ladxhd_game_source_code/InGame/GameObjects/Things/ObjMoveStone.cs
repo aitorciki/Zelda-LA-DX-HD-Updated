@@ -68,6 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _body = new BodyComponent(EntityPosition, 3, -13, 10, 10, 8)
             {
                 HoleOnPull = OnHolePull,
+                IgnoreHoles = true,
                 IgnoreHeight = true
             };
             var movingTrigger = new AiTriggerCountdown(_moveTime, MoveTick, MoveEnd);
@@ -102,7 +103,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnHolePull(Vector2 direction, float percentage)
         {
-            if (!_respawn)
+            if (!_respawn && percentage > 0.98f)
             {
                 Map.Objects.SpawnObject(new ObjMoveStoneRespawner(Map, _baseX, _baseY, _allowedDirections, _strKey, _spriteId, _collisionRect, _layer, _type, _freezePlayer, _strResetKey));
                 _respawn = true;
@@ -125,7 +126,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             _isResetting = true;
             _goalPosition = _startPosition;
             _startPosition = EntityPosition.Position;
-
             _moveDirection = (_moveDirection + 2) % 4;
 
             if (!string.IsNullOrEmpty(_strKeyDir))
@@ -306,6 +306,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Move(float amount)
         {
+            if (amount > 0.8)
+                _body.IgnoreHoles = false;
+
             var lastBox = _box.Box;
 
             EntityPosition.Set(Vector2.Lerp(_startPosition, _goalPosition, amount));

@@ -77,7 +77,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _nextMap = nextMapId;
             _exitId = exitId;
 
-            var pushableBox = new CBox(EntityPosition, 0, 0, 0, 16, 16, 4, true);
+            var pushableBox = new CBox(EntityPosition, 1, 1, 0, 5, 5, 4, true);
 
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(pushableBox, Values.CollisionTypes.StoneBlock) { });
 
