@@ -15,10 +15,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjMoveStone : GameObject
     {
-        private static bool AnotherStoneMoving => CurrentlyMoving.Count > 0;
-
-        private static readonly HashSet<ObjMoveStone> CurrentlyMoving = new HashSet<ObjMoveStone>();
-
         private readonly List<GameObject> _collidingObjects = new List<GameObject>();
         private readonly List<GameObject> _groupOfMoveStone = new List<GameObject>();
         private readonly List<GameObject> _groupOfBarrier = new List<GameObject>();
@@ -164,7 +160,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             // Must be closest stone, no other stone is moving, impact push type, in idle state, and not heavy without power bracelet.
-            if (!IsClosestStone(direction) || AnotherStoneMoving || type == PushableComponent.PushType.Impact || 
+            if (!IsClosestStone(direction) || type == PushableComponent.PushType.Impact || 
                 _aiComponent.CurrentStateId != "idle" || (_type == 1 && Game1.GameManager.StoneGrabberLevel <= 0))
                 return false;
 
@@ -180,7 +176,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var collidingRectangle = Box.Empty;
             var collisionBox = new Box(EntityPosition.X + pushVector.X * 16, EntityPosition.Y + pushVector.Y * 16 - 16, 0, 16, 16, 16);
 
-            if (Map.Objects.Collision(collisionBox, Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref collidingRectangle))
+            if (Map.Objects.Collision(collisionBox, Box.Empty, Values.CollisionTypes.Normal | Values.CollisionTypes.StoneBlock, 0, 0, ref collidingRectangle))
                 return true;
 
             _startPosition = EntityPosition.Position;
@@ -188,8 +184,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             _goalPosition = new Vector2(
                 _startPosition.X + pushVector.X * 16,
                 _startPosition.Y + pushVector.Y * 16);
-
-            CurrentlyMoving.Add(this);
 
             ToMoving();
 
@@ -268,8 +262,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // can fall into holes after finishing the movement animation
             _body.IgnoreHoles = false;
-
-            CurrentlyMoving.Remove(this);
         }
 
         private void InitMoved()

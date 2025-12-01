@@ -7,41 +7,42 @@ namespace ProjectZ.InGame.Things
         [Flags]
         public enum CollisionTypes
         {
-            None = 0x00,
-            Normal = 0x01,
-            Hole = 0x02,
-            PlayerItem = 0x04,
-            Player = 0x08,
-            Enemy = 0x10,
-            Ladder = 0x20,
-            LadderTop = 0x40,
-            NPCWall = 0x80,
-            Item = 0x100,
-            DrownExclude = 0x200,
-            Hookshot = 0x400,
-            DeepWater = 0x800,
-            MovingPlatform = 0x1000,
-            RaftExit = 0x2000,
-            PushIgnore = 0x4000,
-            Destroyable = 0x8000,
-            ThrowIgnore = 0x10000,
-            ThrowWeaponIgnore = 0x20000,
-            NPC = 0x40000,
-            NonWater = 0x80000,
-            Field = 0x100000
+            None              = 0,
+            Normal            = 1 << 0,
+            Hole              = 1 << 1,
+            PlayerItem        = 1 << 2,
+            Player            = 1 << 3,
+            Enemy             = 1 << 4,
+            Ladder            = 1 << 5,
+            LadderTop         = 1 << 6,
+            NPCWall           = 1 << 7,
+            Item              = 1 << 8,
+            DrownExclude      = 1 << 9,
+            Hookshot          = 1 << 10,
+            DeepWater         = 1 << 11,
+            MovingPlatform    = 1 << 12,
+            RaftExit          = 1 << 13,
+            PushIgnore        = 1 << 14,
+            Destroyable       = 1 << 15,
+            ThrowIgnore       = 1 << 16,
+            ThrowWeaponIgnore = 1 << 17,
+            NPC               = 1 << 18,
+            NonWater          = 1 << 19,
+            Field             = 1 << 20,
+            StoneBlock        = 1 << 21,
         }
 
         [Flags]
         public enum BodyCollision
         {
-            None = 0,
-            Floor = 1,
-            Left = 2,
-            Right = 4,
-            Top = 8,
-            Bottom = 16,
-            Horizontal = 32,
-            Vertical = 64
+            None        = 0,
+            Floor       = 1,
+            Left        = 2,
+            Right       = 4,
+            Top         = 8,
+            Bottom      = 16,
+            Horizontal  = 32,
+            Vertical    = 64
         }
 
         [Flags]
@@ -53,21 +54,20 @@ namespace ProjectZ.InGame.Things
             NoneBlocking = 4,
             Particle = 8,
             Repelling = 16,
-            RepellingParticle = 8 + 16,
-            
-            Repelling0 = 32, // repell much
-            Repelling1 = 64, // repell not so much
+            RepellingParticle = 24,
+            Repelling0 = 32,
+            Repelling1 = 64,
         }
 
         [Flags]
         public enum GameObjectTag
         {
-            None = 0,
-            Enemy = 1,
-            Trap = 2,
-            Damage = 4,
-            Hole = 8,
-            Lamp = 16,
+            None    = 0,
+            Enemy   = 1,
+            Trap    = 2,
+            Damage  = 4,
+            Hole    = 8,
+            Lamp    = 16,
             Ocarina = 32
         }
     }

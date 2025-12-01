@@ -77,11 +77,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             _nextMap = nextMapId;
             _exitId = exitId;
 
+            var pushableBox = new CBox(EntityPosition, 0, 0, 0, 16, 16, 4, true);
+
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(pushableBox, Values.CollisionTypes.StoneBlock) { });
+
             if (!string.IsNullOrEmpty(_nextMap) && !string.IsNullOrEmpty(_exitId))
             {
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-                AddComponent(ObjectCollisionComponent.Index,
-                    new ObjectCollisionComponent(_collisionRectangle, OnCollision));
+                AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(_collisionRectangle, OnCollision));
             }
         }
 

@@ -37,7 +37,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IsDead = true;
                 return;
             }
-
             _collisionRectangle = new Rectangle(posX, posY, buttonWidth, buttonHeight);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
