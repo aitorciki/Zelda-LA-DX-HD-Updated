@@ -131,6 +131,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _pushComponent.IsActive = false;
         }
 
+        private void TryReleaseStun()
+        {
+            if (!_stunnedState.Active)
+                _damageField.IsActive = true;
+        }
+
         private void ToWaiting()
         {
             _aiComponent.ChangeState("waiting");
@@ -150,6 +156,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.IsVisible = true;
                 _animator.Play("eyes");
             }
+            TryReleaseStun();
         }
 
         private void ToAttack()
@@ -170,6 +177,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_attackCounter >= 1)
                 _aiComponent.ChangeState("attackWait");
+
+            TryReleaseStun();
         }
 
         private void ToRetract()
@@ -190,6 +199,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_attackCounter <= 0)
                 ToWaiting();
+
+            TryReleaseStun();
         }
 
         private void Draw(SpriteBatch spriteBatch)
@@ -230,6 +241,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (hitType == HitType.MagicPowder)
             {
+                _damageField.IsActive = false;
                 _stunnedState.StartStun();
                 return Values.HitCollision.Enemy;
             }

@@ -95,11 +95,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageState.BaseOnDeath(false);
         }
 
+        private void TryReleaseStun()
+        {
+            if (!_stunnedState.Active)
+                _damageField.IsActive = true;
+        }
+
         private void InitWaiting()
         {
             _body.VelocityTarget = Vector2.Zero;
             _animator.Play("stand");
             _damageField.IsActive = true;
+            TryReleaseStun();
         }
 
         private void EndWaiting()
@@ -107,6 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
             if (distance.Length() < 64 && _body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
                 _aiComponent.ChangeState("jumping");
+            TryReleaseStun();
         }
 
         private void InitJump()
@@ -137,18 +145,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 var randomDirection = Game1.RandomNumber.Next(0, 100) / 100f * Math.PI * 2;
                 jumpDirection = new Vector2((float)Math.Sin(randomDirection), (float)Math.Cos(randomDirection));
             }
-
             _body.VelocityTarget = jumpDirection * 0.75f;
         }
 
         private void UpdateJumping()
         {
-            // finished jumping?
             if (_body.IsGrounded)
             {
                 _animator.Play("stand");
                 _aiComponent.ChangeState("waiting");
             }
+            TryReleaseStun();
         }
 
         private void StartStun()
@@ -159,6 +166,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.Bounciness = 0.65f;
             _stunnedState.StartStun();
             _animator.Play("jump");
+            _damageField.IsActive = false;
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
@@ -179,8 +187,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.MagicPowder || hitType == HitType.Hookshot || hitType == HitType.Boomerang)
             {
                 direction *= 0.25f;
+
                 StartStun();
-                _damageField.IsActive = false;
 
                 var hitState = _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
 

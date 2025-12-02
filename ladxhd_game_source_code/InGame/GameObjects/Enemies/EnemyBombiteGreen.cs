@@ -94,6 +94,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
         }
 
+        private void TryReleaseStun()
+        {
+            if (!_aiStunnedState.Active)
+                _damageField.IsActive = true;
+        }
+
         private void InitIdle()
         {
             _animator.Play("idle");
@@ -103,6 +109,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_follow && !_damageState.IsInDamageState())
                 _aiComponent.ChangeState("follow");
+            TryReleaseStun();
         }
 
         private void UpdateFollow()
@@ -135,6 +142,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 else
                     _body.VelocityTarget = Vector2.Zero;
             }
+            TryReleaseStun();
         }
 
         private void ChangeDirection()
@@ -196,6 +204,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity.X += direction.X * 4.0f;
                 _body.Velocity.Y += direction.Y * 4.0f;
 
+                _damageField.IsActive = false;
                 _aiStunnedState.StartStun();
                 _animator.Pause();
 
@@ -224,7 +233,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.Velocity.Y += direction.Y * 1.0f;
                 _damageState.SetDamageState(false);
             }
-
             if (!_aiStunnedState.IsStunned())
                 _follow = true;
 

@@ -101,6 +101,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState.CurrentLives = ObjLives.MadBomber;
         }
 
+        private void TryReleaseStun()
+        {
+            if (!_aiStunnedState.Active)
+                _damageField.IsActive = true;
+        }
+
         private void OnDeath(bool pieceofpower)
         {
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
@@ -118,46 +124,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState.BaseOnDeath(pieceofpower);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
-        {
-            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (hitType == HitType.CrystalSmash)
-                return Values.HitCollision.None;
-
-            if (_damageState.IsInDamageState())
-                return Values.HitCollision.None;
-
-            if (_aiComponent.CurrentStateId == "coming")
-                _wasHit = true;
-
-            // stun state
-            if (hitType == HitType.Hookshot)
-            {
-                _damageState.SetDamageState(false);
-
-                _aiStunnedState.StartStun();
-                _animator.Pause();
-
-                return Values.HitCollision.Enemy;
-            }
-
-            if (hitType == HitType.Bow || hitType == HitType.MagicRod)
-                damage = 1;
-            if (hitType == HitType.MagicPowder || hitType == HitType.Boomerang)
-                damage = 0;
-
-            var hitReturn = _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
-
-            // make sure to not disapear while moving out of the hole with piece of power active
-            if (_damageState.CurrentLives <= 0)
-            {
-                _animator.Pause();
-                _damageState.HasDamageState = true;
-            }
-
-            return hitReturn;
-        }
-
         private void ToCooldown()
         {
             _aiComponent.ChangeState("cooldown");
@@ -170,6 +136,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - new Vector2(_spawnPosition.X, _spawnPosition.Y - 15);
             if (playerDirection.Length() < 64)
                 ToComing();
+
+            TryReleaseStun();
         }
 
         private void ToComing()
@@ -214,6 +182,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 ToLeaving();
             }
+            TryReleaseStun();
         }
 
         private void ToLeaving()
@@ -247,6 +216,48 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (!_animator.IsPlaying)
                 ToCooldown();
+
+            TryReleaseStun();
+        }
+
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        {
+            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
+            if (hitType == HitType.CrystalSmash)
+                return Values.HitCollision.None;
+
+            if (_damageState.IsInDamageState())
+                return Values.HitCollision.None;
+
+            if (_aiComponent.CurrentStateId == "coming")
+                _wasHit = true;
+
+            // stun state
+            if (hitType == HitType.Hookshot)
+            {
+                _damageState.SetDamageState(false);
+
+                _aiStunnedState.StartStun();
+                _animator.Pause();
+                _damageField.IsActive = false;
+
+                return Values.HitCollision.Enemy;
+            }
+
+            if (hitType == HitType.Bow || hitType == HitType.MagicRod)
+                damage = 1;
+            if (hitType == HitType.MagicPowder || hitType == HitType.Boomerang)
+                damage = 0;
+
+            var hitReturn = _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
+
+            // make sure to not disapear while moving out of the hole with piece of power active
+            if (_damageState.CurrentLives <= 0)
+            {
+                _animator.Pause();
+                _damageState.HasDamageState = true;
+            }
+            return hitReturn;
         }
     }
 }
