@@ -240,15 +240,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // Find how many bosses still remain.
             _bossCount = GetDodongoSnakeCount();
 
-            // Get the current field the boss is in.
-            Rectangle currentField = GameMath.RectFToRect(_body.FieldRectangle);
-
-            // Adjust the rect slightly when classic camera is enabled.
-            if (Camera.ClassicMode)
-                currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
-
             // Check if player is in the field rect.
-            if (currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 // Track when the encounter has started so the music isn't altered unintentionally
                 _encountered = true;
@@ -258,7 +251,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     Game1.GameManager.SetMusic(79, 2);
             }
             // Check if the player left the room.
-            else if (!currentField.Contains(MapManager.ObjLink.EntityPosition.Position) && _encountered)
+            else if (!_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position) && _encountered)
             {
                 // Disable the encounter.
                 _encountered = false;
@@ -271,6 +264,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var offset = 0.5f;
             var speed = 55;
+
             _sprite.DrawOffset.X = -8 + ((_direction == 0 || _direction == 2) ? MathF.Sin((float)(Game1.TotalGameTime / speed)) * offset : 0);
             _sprite.DrawOffset.Y = -16 + ((_direction == 1 || _direction == 3) ? MathF.Sin((float)(Game1.TotalGameTime / speed)) * offset : 0);
 

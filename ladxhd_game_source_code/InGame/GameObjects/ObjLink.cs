@@ -1516,6 +1516,14 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("link_dive");
             }
 
+            // Dodongo snakes use an invisible button to reset their music.
+            var dSnakeMusic = Game1.GameManager.SaveManager.GetString("dodongo_snake_music");
+            if (!string.IsNullOrEmpty(dSnakeMusic))
+            {
+                Game1.GameManager.SetMusic(-1, 2);
+                Game1.GameManager.SaveManager.RemoveString("dodongo_snake_music");
+            }
+
             // Boomerang Trade: Hidden Goriya
             // Can be exchanged for: Shovel, Feather
             var boomerangValue = Game1.GameManager.SaveManager.GetString("boomerang_trade");
