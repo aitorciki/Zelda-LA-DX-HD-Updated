@@ -1395,6 +1395,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private void OnKeyChange()
         {
+            // Freeze the game if the value is set.
             var strFreeze = "freezeGame";
             var FreezeGame = Game1.GameManager.SaveManager.GetString(strFreeze, "0");
             if (FreezeGame == "1")
@@ -1402,6 +1403,7 @@ namespace ProjectZ.InGame.GameObjects
             else if (FreezeGame == "0")
                 FreezeWorldForEvents = false;
 
+            // Change the color of the tunic in the color dungeon.
             var strCloak = "cloak_transition";
             var cloakTransition = Game1.GameManager.SaveManager.GetString(strCloak);
             if (cloakTransition == "1")
@@ -1416,17 +1418,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.CloakShow0;
             }
 
-            // play animation?
-            var strAnimation = "link_direction";
-            var newDirection = Game1.GameManager.SaveManager.GetString(strAnimation);
-            if (!string.IsNullOrEmpty(newDirection))
-            {
-                Direction = int.Parse(newDirection);
-                UpdateAnimation();
-                Game1.GameManager.SaveManager.SetString(strAnimation, null);
-            }
-
-            // start moving? [set:link_move,-16,32]
+            // Movement was forced through "script.zScript".
             var moveValue = Game1.GameManager.SaveManager.GetString("link_move");
             if (!string.IsNullOrEmpty(moveValue))
             {
@@ -1447,6 +1439,7 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("link_move");
             }
 
+            // Idle state was forced through "script.zScript".
             var idleValue = Game1.GameManager.SaveManager.GetString("link_idle");
             if (!string.IsNullOrEmpty(idleValue))
             {
@@ -1454,6 +1447,35 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("link_idle");
             }
 
+            // Facing was forced through "script.zScript".
+            var strAnimation = "link_direction";
+            var newDirection = Game1.GameManager.SaveManager.GetString(strAnimation);
+            if (!string.IsNullOrEmpty(newDirection))
+            {
+                Direction = int.Parse(newDirection);
+                UpdateAnimation();
+                Game1.GameManager.SaveManager.SetString(strAnimation, null);
+            }
+
+            // Animation was forced through "script.zScript".
+            var animationValue = Game1.GameManager.SaveManager.GetString("link_animation");
+            if (!string.IsNullOrEmpty(animationValue))
+            {
+                Animation.Play(animationValue);
+                CurrentState = State.Sequence;
+                Game1.GameManager.SaveManager.RemoveString("link_animation");
+            }
+
+            // Diving was forced through "script.zScript".
+            var diveValue = Game1.GameManager.SaveManager.GetString("link_dive");
+            if (!string.IsNullOrEmpty(diveValue))
+            {
+                _diveCounter = int.Parse(diveValue);
+                CurrentState = State.Swimming;
+                Game1.GameManager.SaveManager.RemoveString("link_dive");
+            }
+
+            // Hide the HUD was forced through "script.zScript".
             var hideHudValue = Game1.GameManager.SaveManager.GetString("hide_hud");
             if (!string.IsNullOrEmpty(hideHudValue))
             {
@@ -1461,7 +1483,7 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("hide_hud");
             }
 
-            // start moving? [set:link_push,-16,0,200]
+            // Photo Mouse pushes Link back (used in photo sequences in "script.zScript").
             var pushValue = Game1.GameManager.SaveManager.GetString("link_push");
             if (!string.IsNullOrEmpty(pushValue))
             {
@@ -1487,15 +1509,7 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("link_push");
             }
 
-            // link animation
-            var animationValue = Game1.GameManager.SaveManager.GetString("link_animation");
-            if (!string.IsNullOrEmpty(animationValue))
-            {
-                Animation.Play(animationValue);
-                CurrentState = State.Sequence;
-                Game1.GameManager.SaveManager.RemoveString("link_animation");
-            }
-
+            // Used during the ending sequence when talking to the Wind Fish and showing the 8 instruments.
             var linkFinal = Game1.GameManager.SaveManager.GetString("link_final");
             if (!string.IsNullOrEmpty(linkFinal))
             {
@@ -1507,13 +1521,16 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("link_final");
             }
 
-            // start diving?
-            var diveValue = Game1.GameManager.SaveManager.GetString("link_dive");
-            if (!string.IsNullOrEmpty(diveValue))
+            // Mountain photo sequence: Drop the rooster if flying when it starts.
+            var mntPhoto = Game1.GameManager.SaveManager.GetString("photo_12", "0") == "1";
+            var hasRooster = Game1.GameManager.SaveManager.GetString("has_rooster", "0") == "1";
+            var dropRooster = Game1.GameManager.SaveManager.GetString("drop_rooster", "0") == "1";
+
+            if (mntPhoto && hasRooster && dropRooster)
             {
-                _diveCounter = int.Parse(diveValue);
-                CurrentState = State.Swimming;
-                Game1.GameManager.SaveManager.RemoveString("link_dive");
+                ReleaseCarriedObject();
+                ReturnToIdle();
+                Game1.GameManager.SaveManager.RemoveString("drop_rooster");
             }
 
             // Dodongo snakes use an invisible button to reset their music.
@@ -1548,6 +1565,8 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.GameManager.StartDialogPath("npc_hidden_reject");
                 }
             }
+
+            // Boomerang Return: Hidden Goriya
             var boomerangReturnValue = Game1.GameManager.SaveManager.GetString("boomerang_trade_return");
             if (!string.IsNullOrEmpty(boomerangReturnValue))
             {
@@ -1562,13 +1581,15 @@ namespace ProjectZ.InGame.GameObjects
                 MapManager.ObjLink.PickUpItem(item, true);
                 _pickupDialogOverride = "npc_hidden_4";
             }
-            // Spawn the ghost.
+
+            // Spawn the Ghost who wants to go to the house by the bay.
             var spawnGhostValue = Game1.GameManager.SaveManager.GetString(_spawnGhostKey);
             if (!string.IsNullOrEmpty(spawnGhostValue))
             {
                 _spawnGhost = true;
             }
-            // Borrow the rooster.
+
+            // Borrow the rooster from the hen house (after dungeon 8 is finished).
             var borrowRooster = Game1.GameManager.SaveManager.GetString("borrow_rooster");
             if (borrowRooster == "0")
             {
@@ -1588,7 +1609,8 @@ namespace ProjectZ.InGame.GameObjects
                 Map.Objects.SpawnObject(_objRooster);
                 _objRooster.BorrowRooster();
             }
-            // Take a walk with Marin.
+
+            // Take a walk with Marin (after dungeon 8 is finished).
             var borrowMarin = Game1.GameManager.SaveManager.GetString("borrow_marin");
             if (borrowMarin == "0")
             {
@@ -1602,6 +1624,7 @@ namespace ProjectZ.InGame.GameObjects
                 PickUpItem(itemMarin, false, false, true);
                 SpawnMarin();
             }
+
             // Prevent entry to Egg with a follower during second chance.
             var egg_turn_around = Game1.GameManager.SaveManager.GetString("egg_turn_around");
 
