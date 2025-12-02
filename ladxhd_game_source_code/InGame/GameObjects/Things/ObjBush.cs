@@ -3,6 +3,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -182,6 +183,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             // the collision box is in conflict with itself and self denotates when thrown.
             if (hitType == HitType.ThrownObject && gameObject.GetType() == typeof(ObjBush))
                 return Values.HitCollision.None;
+
+            // Magic Powder has unique death and 100% chance to spawn fairy.
+            if ((hitType & HitType.MagicPowder) != 0)
+            {
+                // We just delete the enemy instead of returning damage state.
+                Map.Objects.DeleteObjects.Add(this);
+
+                // Try to spawn an item.
+                SpawnItem(direction);
+
+                // Play the sound and show the smoke effect.
+                Game1.GameManager.PlaySoundEffect("D360-47-2F");
+                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, Values.LayerTop, "Particles/spawn", "run", true);
+                Map.Objects.SpawnObject(explosionAnimation);
+                return Values.HitCollision.None;
+            }
 
             // Damage types that don't destroy the bush. If it does not have a collider it is grass.
             if (IsDead ||
