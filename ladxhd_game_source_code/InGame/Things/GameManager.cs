@@ -1159,6 +1159,9 @@ namespace ProjectZ.InGame.Things
 
         public void ShakeScreen(int time, int maxX, int maxY, float shakeSpeedX, float shakeSpeedY, int startDirX = 1, int startDirY = 1)
         {
+            if (!GameSettings.ScreenShake)
+                return;
+
             _shakeCountX = time;
             _shakeCountY = time;
             _maxOffsetX = maxX;

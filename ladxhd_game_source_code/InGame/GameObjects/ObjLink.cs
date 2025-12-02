@@ -807,7 +807,6 @@ namespace ProjectZ.InGame.GameObjects
                     if (_finalSeqCounter <= 0)
                         ((MapShowSystem)Game1.GameManager.GameSystems[typeof(MapShowSystem)]).StartEnding();
                 }
-
                 return;
             }
             else if (CurrentState == State.CloakShow0)
@@ -4987,14 +4986,12 @@ namespace ProjectZ.InGame.GameObjects
             Game1.GameManager.InflictDamage(damage);
 
             // Shake the screen on damage if the user has it enabled.
-            if (GameSettings.ScreenShake)
-            {
-                var freezeTime = 67;
-                var shakeMult = (100.0f / freezeTime) * MathF.PI;
-                Game1.FreezeTime = Game1.TotalGameTime + freezeTime;
-                Game1.GameManager.ShakeScreen(freezeTime, (int)(direction.X * 2), (int)(direction.Y * 2), shakeMult, shakeMult);
-                UpdateDamageShader();
-            }
+            var freezeTime = 67;
+            var shakeMult = (100.0f / freezeTime) * MathF.PI;
+            Game1.FreezeTime = Game1.TotalGameTime + freezeTime;
+            Game1.GameManager.ShakeScreen(freezeTime, (int)(direction.X * 2), (int)(direction.Y * 2), shakeMult, shakeMult);
+            UpdateDamageShader();
+
             return true;
         }
 
