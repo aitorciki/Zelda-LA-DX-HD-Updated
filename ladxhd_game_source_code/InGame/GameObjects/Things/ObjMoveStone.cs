@@ -43,6 +43,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isResetting;
         private bool _respawn;
 
+        public bool NoRespawn;
+
         // type 1 sets the key directly on push and resets it on spawn
         // used for the gravestone
         private int _type;
@@ -67,7 +69,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _body = new BodyComponent(EntityPosition, 3, -13, 10, 10, 8)
             {
-                HoleOnPull = OnHolePull,
                 IgnoreHoles = true,
                 IgnoreHeight = true
             };
@@ -78,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _aiComponent.States.Add("idle", new AiState());
             _aiComponent.States.Add("moving", new AiState { Trigger = { movingTrigger } });
             _aiComponent.States.Add("moved", movedState);
-            new AiFallState(_aiComponent, _body, null, null, 200);
+            new AiFallState(_aiComponent, _body, OnHoleAbsorb, null, 200);
             _aiComponent.ChangeState("idle");
 
             _box = new CBox(EntityPosition, collisionRectangle.X, collisionRectangle.Y, collisionRectangle.Width, collisionRectangle.Height, 16);
@@ -101,14 +102,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Game1.GameManager.SaveManager.SetString(_strKeyDir, "-1");
         }
 
-        private void OnHolePull(Vector2 direction, float percentage)
+        private void OnHoleAbsorb()
         {
-            if (!_respawn && percentage > 0.98f)
-            {
+            if (!NoRespawn)
                 Map.Objects.SpawnObject(new ObjMoveStoneRespawner(Map, _baseX, _baseY, _allowedDirections, _strKey, _spriteId, _collisionRect, _layer, _type, _freezePlayer, _strResetKey));
-                _respawn = true;
-            }
-            return;
         }
 
         private void OnKeyChange()
@@ -241,9 +238,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void MoveEnd()
         {
-            // can fall into holes after finishing the movement animation
-            _body.IgnoreHoles = false;
-
             // finished moving
             Move(1);
 
@@ -284,6 +278,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                     break;
                 }
             }
+            // Can fall into holes after finishing the movement animation.
+            _body.IgnoreHoles = false;
         }
 
         private void InitMoved()
@@ -306,9 +302,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Move(float amount)
         {
-            if (amount > 0.8)
-                _body.IgnoreHoles = false;
-
             var lastBox = _box.Box;
 
             EntityPosition.Set(Vector2.Lerp(_startPosition, _goalPosition, amount));

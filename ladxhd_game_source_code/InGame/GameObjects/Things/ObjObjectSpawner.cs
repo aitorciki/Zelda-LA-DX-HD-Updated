@@ -63,6 +63,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_spawnObject is ObjStone stone)
                 stone.NoRespawn = true;
 
+            // If it's a move stone, don't create a move stone respawner.
+            if (_spawnObject is ObjMoveStone moveStone)
+                moveStone.NoRespawn = true;
+
             // add key change listener
             if (!string.IsNullOrEmpty(_strKey))
             {
