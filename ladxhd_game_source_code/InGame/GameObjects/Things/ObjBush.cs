@@ -185,19 +185,23 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             // Magic Powder has unique death and 100% chance to spawn fairy.
-            if ((hitType & HitType.MagicPowder) != 0)
+            if ((hitType & HitType.MagicPowder) != 0!)
             {
-                // We just delete the enemy instead of returning damage state.
-                Map.Objects.DeleteObjects.Add(this);
+                // Don't do this to grass, only bushes.
+                if (!_setGrassField)
+                {
+                    // We just delete the enemy instead of returning damage state.
+                    Map.Objects.DeleteObjects.Add(this);
 
-                // Try to spawn an item.
-                SpawnItem(direction);
+                    // Try to spawn an item.
+                    SpawnItem(direction);
 
-                // Play the sound and show the smoke effect.
-                Game1.GameManager.PlaySoundEffect("D360-09-09");
-                Game1.GameManager.PlaySoundEffect("D360-47-2F");
-                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, Values.LayerTop, "Particles/spawn", "run", true);
-                Map.Objects.SpawnObject(explosionAnimation);
+                    // Play the sound and show the smoke effect.
+                    Game1.GameManager.PlaySoundEffect("D360-09-09");
+                    Game1.GameManager.PlaySoundEffect("D360-47-2F");
+                    var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, Values.LayerTop, "Particles/spawn", "run", true);
+                    Map.Objects.SpawnObject(explosionAnimation);
+                }
                 return Values.HitCollision.None;
             }
 
