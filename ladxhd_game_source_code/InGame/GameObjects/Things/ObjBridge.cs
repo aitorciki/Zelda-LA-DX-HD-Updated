@@ -78,7 +78,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _spawnedMonkeys = true;
 
                 for (var i = 0; i < _workers.Length; i++)
+                {
                     Map.Objects.SpawnObject(_workers[i]);
+                    Map.Objects.RegisterAlwaysAnimateObject(_workers[i]);
+                }
             }
             // When the stick is collected, remove the collider.
             value = Game1.GameManager.SaveManager.GetString("ow_trade4");
