@@ -194,6 +194,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 SpawnItem(direction);
 
                 // Play the sound and show the smoke effect.
+                Game1.GameManager.PlaySoundEffect("D360-09-09");
                 Game1.GameManager.PlaySoundEffect("D360-47-2F");
                 var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, Values.LayerTop, "Particles/spawn", "run", true);
                 Map.Objects.SpawnObject(explosionAnimation);
