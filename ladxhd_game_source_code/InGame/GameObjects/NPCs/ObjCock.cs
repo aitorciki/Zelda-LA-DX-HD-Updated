@@ -447,6 +447,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.ChangeState("following");
             _carriableCompnent.IsActive = true;
             RemoveComponent(CollisionComponent.Index);
+            ((DrawComponent)Components[DrawComponent.Index]).Layer = Values.LayerPlayer;
         }
     }
 }
