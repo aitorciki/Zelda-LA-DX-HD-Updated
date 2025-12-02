@@ -4,6 +4,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
@@ -37,8 +38,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             _live[1] = 1;
             _live[2] = 1;
 
-            _hitBox = new Box(EntityPosition.X - 5, EntityPosition.Y - 8, 0, 10, 10, 8);
-
             // play sound effect
             if (playerPowder)
                 Game1.GameManager.PlaySoundEffect("D360-05-05", true);
@@ -50,14 +49,33 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
+        private Box GetPowderAttackBox()
+        {
+            var key = MapManager.ObjLink.Direction;
+            var offsets = key switch
+            {
+                1 => ( -5, -20, +10, +10),
+                2 => ( +4, -10, +12, +10),
+                3 => ( -5,   0, +10, +10),
+                _ => (-16, -10, +12, +10)
+            };
+            var (xOff, yOff, wOff, hOff) = offsets;
+
+            return new Box(
+                MapManager.ObjLink.EntityPosition.X + xOff,
+                MapManager.ObjLink.EntityPosition.Y + yOff, 0,
+                wOff, hOff, 8);
+        }
+
         public void Update()
         {
             var finishedFalling = true;
+            _hitBox = GetPowderAttackBox();
 
             for (var i = 0; i < _points.Length; i++)
             {
                 // If it hasn't dealt damage yet, deal damage.
-                if (!_damage)
+                if (_points[i].Z <= 4.5 && !_damage)
                 {
                     _damage = true;
                     Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y), _hitBox, HitType.MagicPowder, 2, false, false);
