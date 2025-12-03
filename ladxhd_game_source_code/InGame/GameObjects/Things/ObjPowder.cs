@@ -54,10 +54,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             var key = MapManager.ObjLink.Direction;
             var offsets = key switch
             {
-                1 => ( -5, -20, +10, +10),
-                2 => ( +4, -10, +12, +10),
-                3 => ( -5,   0, +10, +10),
-                _ => (-16, -10, +12, +10)
+                1 => ( -5, -26, +10, +16),
+                2 => ( +4, -10, +16, +10),
+                3 => ( -5,   0, +10, +16),
+                _ => (-20, -10, +16, +10)
             };
             var (xOff, yOff, wOff, hOff) = offsets;
 
