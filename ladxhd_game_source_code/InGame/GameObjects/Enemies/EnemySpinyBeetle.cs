@@ -39,6 +39,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _bushDestroyed;
         private int _lives = ObjLives.SpinyBeetle;
 
+        private float moveTimer;
+
         public EnemySpinyBeetle() : base("spiny beetle") { }
 
         public EnemySpinyBeetle(Map.Map map, int posX, int posY, int type) : base(map)
@@ -92,13 +94,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _objectPickedUp = false;
 
             var stateInit = new AiState(UpdateInit);
-            stateInit.Trigger.Add(new AiTriggerCountdown(1500, null, () => _aiComponent.ChangeState("hiding")));
+            stateInit.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("hiding")));
+
             var stateHiding = new AiState(UpdateHiding);
-            stateHiding.Trigger.Add(_hiddenTimer = new AiTriggerTimer(500));
+            stateHiding.Trigger.Add(_hiddenTimer = new AiTriggerTimer(650));
+
             var stateMoving = new AiState(UpdateMoving);
-            stateMoving.Trigger.Add(new AiTriggerRandomTime(ToHide, 550, 850));
+            //stateMoving.Trigger.Add(new AiTriggerRandomTime(ToHide, 0, 10));
+
             var stateRunning = new AiState();
-            stateRunning.Trigger.Add(new AiTriggerRandomTime(ChangeDirection, 550, 850));
+            stateRunning.Trigger.Add(new AiTriggerRandomTime(ChangeDirection, 500, 650));
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("init", stateInit);
@@ -106,6 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("running", stateRunning);
             new AiFallState(_aiComponent, _body);
+
             _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnDeath = OnDeath };
             _aiComponent.ChangeState("moving");
 
@@ -163,11 +169,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY))
             {
-                // Horizontal / Vertical
-                if (Math.Abs(distance.Y) < 8 && distance.Length() < 64)
+                const float axisTolerance  = 8f;
+                const float detectionRange = 160f;
+
+                if (Math.Abs(distance.Y) < axisTolerance && distance.Length() < detectionRange)
                     return Math.Sign(distance.X) < 0 ? 0 : 2;
-                if (Math.Abs(distance.X) < 8 && distance.Y > 0 && distance.Y < 32)
+
+                if (Math.Abs(distance.X) < axisTolerance && distance.Y > 0 && distance.Y < detectionRange)
                     return 3;
+
+                if (Math.Abs(distance.X) < axisTolerance && distance.Y < 0 && Math.Abs(distance.Y) < detectionRange)
+                    return 1;
             }
             return -1;
         }
@@ -205,6 +217,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateMoving()
         {
+            moveTimer += Game1.DeltaTime;
+
+            if (moveTimer > 750)
+            {
+                moveTimer = 0f;
+                _hiddenTimer.Reset();
+                _damageField.IsActive = false;
+                _body.VelocityTarget = Vector2.Zero;
+                _sprite.IsVisible = false;
+                _aiComponent.ChangeState("hiding");
+                UpdateObjPosition(EntityPosition);
+            }
             CheckCarrier();
         }
 
@@ -215,6 +239,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 ToWalk();
                 _body.VelocityTarget = AnimationHelper.DirectionOffset[playerDirection];
+                moveTimer = 0f;
             }
             CheckCarrier();
         }
