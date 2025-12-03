@@ -54,6 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoreHeight = true,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NonWater |
                                  Values.CollisionTypes.NPCWall
             };
 
