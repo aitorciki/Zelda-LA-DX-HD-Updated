@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
@@ -28,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
 
+
         private readonly Color _lightColor = new Color(255, 200, 200);
 
         private readonly Vector2 _startPosition;
@@ -46,6 +49,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private bool _isAlive = true;
 
         private Vector2 _preAttackVelocity;
+
+        private List<ObjAnglerFishBarrier> fishBarrier = new List<ObjAnglerFishBarrier>();
 
         public BossAnglerFish() : base("angler fish") { }
 
@@ -132,6 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
         private void UpdateWaiting()
@@ -152,9 +158,43 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // spawn dialog
             Game1.GameManager.StartDialogPath("d4_nightmare");
 
+            // spawn the barrier
+            SpawnBarrier();
+
             // start moving and start spawning fish
             _body.VelocityTarget.Y = 0.5f;
             _fishCountdown.OnInit();
+        }
+
+        private void SpawnBarrier()
+        {
+            int posX = 16;
+            int posY = 128;
+
+            for (int i = 0; i < 10; i++) 
+            {
+                fishBarrier.Add(new ObjAnglerFishBarrier(Map, posX, posY));
+                posX += 16;
+            }
+            foreach (var barrier in fishBarrier) 
+            {
+                Map.Objects.SpawnObject(barrier);
+            }
+        }
+
+        private void DestroyBarrier()
+        {
+            foreach (var barrier in fishBarrier) 
+            {
+                Map.Objects.DeleteObjects.Add(barrier);
+            }
+        }
+
+        private void Update()
+        {
+            // If Link dies, destroy the barrier.
+            if (MapManager.ObjLink.CurrentState == ObjLink.State.Dying)
+                DestroyBarrier();
         }
 
         private void StartAttacking()
@@ -313,6 +353,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Game1.GameManager.StopMusic(20, 2);
 
             Map.Objects.DeleteObjects.Add(this);
+            DestroyBarrier();
         }
 
         private void SpawnHeart()
