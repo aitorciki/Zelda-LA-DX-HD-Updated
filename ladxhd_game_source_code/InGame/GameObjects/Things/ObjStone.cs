@@ -289,7 +289,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             // Remove the stone and create a respawner.
-            Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage, FromObjSpawner));
+            if (!NoRespawn)
+                Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage, FromObjSpawner));
+
             Map.Objects.DeleteObjects.Add(this);
 
             // play sound effect
