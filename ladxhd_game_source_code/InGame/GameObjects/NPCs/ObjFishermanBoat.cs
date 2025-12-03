@@ -201,20 +201,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.SaveManager.RemoveString(pullMouseString);
             }
 
-            var photoString = "fisherman_photo";
-            var photoValue = Game1.GameManager.SaveManager.GetString(photoString);
-            if (!string.IsNullOrEmpty(photoValue))
-            {
-                if (photoValue == "1")
-                    MapManager.ObjLink.DisableDirHack2D = true;
-
-                if (photoValue == "0")
-                {
-                    MapManager.ObjLink.DisableDirHack2D = false;
-                    Game1.GameManager.SaveManager.RemoveString(photoString);
-                }
-            }
-
             var fallString = "fisherman_fall";
             var fallValue = Game1.GameManager.SaveManager.GetString(fallString);
             if (!string.IsNullOrEmpty(fallValue))
@@ -238,6 +224,28 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 if (_photoMouse != null)
                     Map.Objects.DeleteObjects.Add(_photoMouse);
                 Game1.GameManager.SaveManager.RemoveString(resetString);
+            }
+
+            var tradeName = "hook_trade";
+            var tradeValue = Game1.GameManager.SaveManager.GetString(tradeName);
+            if (!string.IsNullOrEmpty(tradeValue))
+            {
+                if (tradeValue == "0")
+                    MapManager.ObjLink.DisableDirHack2D = true;
+                if (tradeValue == "1")
+                    MapManager.ObjLink.DisableDirHack2D = false;
+                Game1.GameManager.SaveManager.RemoveString(tradeName);
+            }
+
+            var photoString = "fisherman_photo";
+            var photoValue = Game1.GameManager.SaveManager.GetString(photoString);
+            if (!string.IsNullOrEmpty(photoValue))
+            {
+                if (photoValue == "0")
+                    MapManager.ObjLink.DisableDirHack2D = true;
+                if (photoValue == "1")
+                    MapManager.ObjLink.DisableDirHack2D = false;
+                Game1.GameManager.SaveManager.RemoveString(photoString);
             }
         }
     }
