@@ -51,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
         }
-
+        
         private void SpawnSword()
         {
             _spawnedSword = true;
@@ -61,6 +61,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _swordBody.OffsetY -= 1;
             _swordBody.Bounciness2D = 0.5f;
             Map.Objects.SpawnObject(_objSword);
+            MapManager.ObjLink.DisableDirHack2D = true;
         }
 
         private void Update()
@@ -123,6 +124,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     _swordHitFloor = true;
                     ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = true;
+                    MapManager.ObjLink.DisableDirHack2D = false;
                 }
             }
         }

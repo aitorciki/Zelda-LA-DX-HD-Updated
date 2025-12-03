@@ -25,11 +25,12 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _fillBar;
 
         private float _soundCounter;
-        private float _partileCounter = 1250;
+        private float _particleCounter = 1250;
         private bool _particle;
 
         private float _spawnCounter = 300;
         private bool _spawnPresent;
+        private bool _spawnSword;
 
         public ObjShellHouse() : base("shell_bar") { }
 
@@ -92,6 +93,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            // Check for the player hitting the trigger point and start the count.
             var playerDistance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
             if (!_triggerEntryDialog && playerDistance.X < 105)
             {
@@ -99,17 +101,22 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Game1.GameManager.StartDialogPath("shell_mansion_entry");
             }
 
+            // The player walked in far enough to trigger the bar.
             if (!_triggerDialog && playerDistance.X < 66)
             {
                 _fillBar = true;
                 _triggerDialog = true;
+                MapManager.ObjLink.CurrentState = ObjLink.State.Idle;
             }
 
+            // Start filling the bar.
             if (_fillBar)
             {
+                // Disable the 2D move hack and freeze the player.
                 MapManager.ObjLink.FreezePlayer();
                 MapManager.ObjLink.DisableDirHack2D = true;
 
+                // Play the counting up sound at random intervals.
                 _soundCounter -= Game1.DeltaTime;
                 if (_soundCounter < 0)
                 {
@@ -160,13 +167,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 }
             }
 
-            // wait a little bit while showing the particles
+            // The meter has finished counting up.
             else if (_particle)
             {
                 MapManager.ObjLink.FreezePlayer();
 
-                if (_partileCounter > 0)
-                    _partileCounter -= Game1.DeltaTime;
+                // Wait until timer is finished.
+                if (_particleCounter > 0)
+                    _particleCounter -= Game1.DeltaTime;
                 else
                 {
                     _particle = false;
@@ -178,6 +186,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                          SpawnShell = _shellCount >= 5 && _PresentCount == 0 || 
                                       _shellCount >= 10 && _PresentCount < 2;
 
+                    // If a shell is spawned then show an explosion effect.
                     if (SpawnShell)
                     {
                         _spawnPresent = true;
@@ -188,10 +197,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                         objExplosion.EntityPosition.Set(new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 64));
                         Map.Objects.SpawnObject(objExplosion);
                     }
+                    // If more than 20 shells were collected spawn the sword.
                     else if (_shellCount >= 20)
                     {
                         Game1.GameManager.StartDialogPath("shell_mansion_sword");
+                        _spawnSword = true;
                     }
+                    // Spawn the "not enough shells" message.
                     else
                     {
                         Game1.GameManager.StartDialogPath("shell_mansion_nothing");
@@ -200,9 +212,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             else
             {
-                MapManager.ObjLink.DisableDirHack2D = false;
+                // If the sword is spawned don't disable the direction hack as "ObjSwordSpawner" will handle it.
+                if (!_spawnSword)
+                    MapManager.ObjLink.DisableDirHack2D = false;
             }
-
+            // Spawn a shell preset if enough shells were collected.
             if (_spawnPresent)
             {
                 if (_spawnCounter > 0)
@@ -215,7 +229,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     Map.Objects.SpawnObject(objItem);
                 }
             }
-
+            // Update the bar animation.
             if (_barAnimator.IsPlaying)
                 _barAnimator.Update();
         }
