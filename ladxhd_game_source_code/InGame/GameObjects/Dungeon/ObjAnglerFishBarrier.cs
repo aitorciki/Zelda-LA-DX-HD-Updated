@@ -20,7 +20,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             var sprite = Resources.GetSprite("fish_barrier");
             _sprite = new CSprite(sprite, EntityPosition, Vector2.Zero);
-            _sprite.Color = Color.White * 0f;
 
             var collisionBox = new CBox(posX, posY, 0, 16, 16, 16);
 
