@@ -54,30 +54,29 @@ namespace ProjectZ.InGame.GameObjects.Things
             var key = MapManager.ObjLink.Direction;
             var offsets = key switch
             {
-                1 => ( -5, -26, +10, +16),
-                2 => ( +4, -10, +16, +10),
-                3 => ( -5,   0, +10, +16),
-                _ => (-20, -10, +16, +10)
+                1 => ( -3, -13, +10, +16),
+                2 => ( -8, -10, +16, +10),
+                3 => ( -7, -10, +10, +16),
+                _ => ( -8, -10, +16, +10)
             };
             var (xOff, yOff, wOff, hOff) = offsets;
 
             return new Box(
-                MapManager.ObjLink.EntityPosition.X + xOff,
-                MapManager.ObjLink.EntityPosition.Y + yOff, 0,
+                EntityPosition.X + xOff,
+                EntityPosition.Y + yOff, 0,
                 wOff, hOff, 8);
         }
 
         public void Update()
         {
             var finishedFalling = true;
-            _hitBox = GetPowderAttackBox();
-
             for (var i = 0; i < _points.Length; i++)
             {
                 // If it hasn't dealt damage yet, deal damage.
                 if (_points[i].Z <= 4.5 && !_damage)
                 {
                     _damage = true;
+                    _hitBox = GetPowderAttackBox();
                     Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y), _hitBox, HitType.MagicPowder, 2, false, false);
                 }
                 if (_points[i].Z <= 0)
