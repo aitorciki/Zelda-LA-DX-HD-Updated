@@ -190,7 +190,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // Don't do this to grass, only bushes.
                 if (!_setGrassField)
                 {
-                    // We just delete the enemy instead of returning damage state.
+                    // Create a respawner for the bush.
+                    if (RespawnGrass)
+                        Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
+
+                    // We just delete the bush instead of returning damage state.
                     Map.Objects.DeleteObjects.Add(this);
 
                     // Try to spawn an item.
