@@ -35,7 +35,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
             // draw the sprite shadow
             var multSprite = 1 - _body.Position.Z / 10f;
-            if (multSprite > 0)
+            if (multSprite > 0 && Owner.Map != null)
                 _sprite.DrawShadow(spriteBatch, Color.White * Transparency * multSprite, -1, Height ?? Owner.Map.ShadowHeight, Rotation ?? Owner.Map.ShadowRotation);
 
             // draw the shadow circle shadow below the body
