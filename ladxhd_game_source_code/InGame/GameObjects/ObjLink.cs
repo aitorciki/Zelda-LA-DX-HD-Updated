@@ -1488,7 +1488,6 @@ namespace ProjectZ.InGame.GameObjects
             {
                 var split = pushValue.Split(',');
 
-                // init movement
                 if (split.Length == 1)
                 {
                     _pushStart = EntityPosition.Position;
@@ -1836,7 +1835,6 @@ namespace ProjectZ.InGame.GameObjects
                 _swordChargeCounter = sword_charge_time;
                 _isHoldingSword = false;
             }
-            _isWalking = false;
             WasHoleReset = false;
         }
 
@@ -2525,6 +2523,9 @@ namespace ProjectZ.InGame.GameObjects
             }
             else if (CurrentState == State.Drowning)
                 Animation.Play("drown");
+
+            // If anything forced walking, disable it now that the animation has played.
+            _isWalking = false;
         }
 
         private void UpdateHeartWarningSound()
@@ -6020,6 +6021,11 @@ namespace ProjectZ.InGame.GameObjects
         public Vector2 GetSwimVelocity()
         {
             return _swimVelocity;
+        }
+
+        public void LinkWalking(bool walk)
+        {
+            _isWalking = walk;
         }
 
         public ObjMarin GetMarin()
