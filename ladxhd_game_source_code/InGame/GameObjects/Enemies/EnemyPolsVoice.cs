@@ -111,8 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void EndWaiting()
         {
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
-            if (distance.Length() < 64 && _body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
+            if (_body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
                 _aiComponent.ChangeState("jumping");
             TryReleaseStun();
         }

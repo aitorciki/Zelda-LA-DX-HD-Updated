@@ -147,9 +147,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void EndIdle()
         {
-            // only start walking if the player is in the range of the enemy
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-            if (playerDistance.Length() > 50)
+            if (!_body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
             {
                 _ai.ChangeState("idle");
                 return;

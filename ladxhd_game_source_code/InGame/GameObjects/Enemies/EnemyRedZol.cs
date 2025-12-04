@@ -135,8 +135,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void EndWaiting()
         {
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
-            if (distance.Length() > 80 || !_body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
+            if (!_body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
                 return;
 
             if (Game1.RandomNumber.Next(0, 10) == 0)
