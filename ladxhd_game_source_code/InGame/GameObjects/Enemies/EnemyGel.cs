@@ -130,6 +130,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageState.IsActive = false;
                 Map.Objects.DeleteObjects.Add(this);
             }
+            _ai.ChangeState("idle");
         }
 
         public void InitSpawn()
