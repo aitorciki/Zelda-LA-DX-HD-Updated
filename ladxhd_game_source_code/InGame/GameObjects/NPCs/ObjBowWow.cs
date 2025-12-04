@@ -173,7 +173,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _pushComponent.IsActive = !follow;
 
             if (follow)
+            {
+                MapManager.ObjLink.SetBowWowFollower(this);
                 Map.Objects.RegisterAlwaysAnimateObject(this);
+            }
         }
 
         private void ToIdle()

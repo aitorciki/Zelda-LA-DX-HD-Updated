@@ -53,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     (int)(Game1.RenderHeight / MapManager.Camera.Scale), BodyComponent.Mask);
             }
             // Always include Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang, Link._objBowWow })
+            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
             {
                 if (gameObject != null && !_objectList.Contains(gameObject))
                     _objectList.Add(gameObject);

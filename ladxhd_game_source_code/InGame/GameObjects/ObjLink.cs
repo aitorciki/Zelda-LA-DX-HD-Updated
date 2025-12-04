@@ -172,7 +172,7 @@ namespace ProjectZ.InGame.GameObjects
         public GameObjectFollower _objFollower;
         private ObjCock _objRooster;
         private ObjMarin _objMaria;
-        public ObjBowWow _objBowWow;
+        private ObjBowWow _objBowWow;
 
         private const string _spawnGhostKey = "spawn_ghost";
         private ObjGhost _objGhost;
@@ -5567,10 +5567,12 @@ namespace ProjectZ.InGame.GameObjects
                 else
                     _objFollower.EntityPosition.Set(fallPositionV3);
             }
+            if (_objBowWow != null)
+                _objBowWow.EntityPosition.Set(fallPositionV3);
+
             if (_spriteShadow != null)
-            {
                 _spriteShadow.EntityPosition.Set(fallPositionV2);
-}
+
             // Only jump to the new position if it is a different teleporter at a different location.
             if (!Camera.ClassicMode && positionDistance.Length() > 64)
                 MapManager.Camera.ForceUpdate(Game1.GameManager.MapManager.GetCameraTarget());
@@ -6023,6 +6025,11 @@ namespace ProjectZ.InGame.GameObjects
         public ObjMarin GetMarin()
         {
             return _objMaria;
+        }
+
+        public void SetBowWowFollower(ObjBowWow bowWow)
+        {
+            _objBowWow = bowWow;
         }
 
         #endregion
