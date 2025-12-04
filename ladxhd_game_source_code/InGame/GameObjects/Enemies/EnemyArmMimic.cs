@@ -160,6 +160,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
@@ -167,6 +168,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!_repelTimer.State)
                 return Values.HitCollision.None;
             _repelTimer.Reset();
+
+            // Magic Powder does nothing.
+            if (hitType == HitType.MagicPowder)
+            {
+                return Values.HitCollision.None;
+            }
 
             // stun state
             if (hitType == HitType.Hookshot || hitType == HitType.Boomerang || hitType == HitType.ThrownObject)
