@@ -350,7 +350,7 @@ namespace ProjectZ.InGame.Map
                    (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
             }
             // Always update Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang, Link._objBowWow })
+            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
             {
                 if (gameObject != null && !_updateGameObject.Contains(gameObject))
                     _updateGameObject.Add(gameObject);
@@ -406,7 +406,7 @@ namespace ProjectZ.InGame.Map
                     (int)Link.BodyRectangle.Width, (int)Link.BodyRectangle.Height, ObjectCollisionComponent.Mask);
             }
             // Always include Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang, Link._objBowWow })
+            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
             {
                 if (gameObject != null && !_collidingObjectList.Contains(gameObject))
                     _collidingObjectList.Add(gameObject);
@@ -454,7 +454,7 @@ namespace ProjectZ.InGame.Map
                     (int)playerDamageBox.Width,(int)playerDamageBox.Height, DamageFieldComponent.Mask);
             }
             // Always include Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang, Link._objBowWow })
+            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
             {
                 if (gameObject != null && !_damageFieldObjects.Contains(gameObject))
                     _damageFieldObjects.Add(gameObject);
