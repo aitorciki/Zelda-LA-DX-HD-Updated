@@ -108,7 +108,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (!string.IsNullOrEmpty(_triggerKey))
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false });
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
@@ -130,7 +130,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _animator.Play("idle_1");
                 boneOffset = 32;
             }
-
             _bone = new MBossRollingBonesBone(map, posX, posY, boneOffset);
             map.Objects.SpawnObject(_bone);
 
@@ -152,7 +151,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 // start boss music
                 Game1.GameManager.SetMusic(79, 2);
-
+                _hitComponent.IsActive = true;
                 _aiComponent.ChangeState("initJump");
             }
         }

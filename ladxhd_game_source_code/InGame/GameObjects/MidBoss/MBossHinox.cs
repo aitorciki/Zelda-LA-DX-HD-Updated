@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var hittableBox = new CBox(EntityPosition, -14, -28, 0, 28, 28, 8);
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false });
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -150,12 +150,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 // Use the current reset state to know whether or not to start it's walk AI state.
                 if (CanReset)
                     _aiComponent.ChangeState("walk");
+
+                // Enable the hit component.
+                _hitComponent.IsActive = true;
             }
             // Stop the music when the player leaves the room.
             else if (_playerInRoom && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
                 Game1.GameManager.SetMusic(-1, 2);
                 _playerInRoom = false;
+
+                // Disable the hit component.
+                _hitComponent.IsActive = false;
             }
         }
 

@@ -93,7 +93,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 50 });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit) { IsActive = false });
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -109,6 +109,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 {
                     _entered = true;
                     Game1.GameManager.SetMusic(79, 2);
+                    _hitComponent.IsActive = true;
                 }
             }
         }
