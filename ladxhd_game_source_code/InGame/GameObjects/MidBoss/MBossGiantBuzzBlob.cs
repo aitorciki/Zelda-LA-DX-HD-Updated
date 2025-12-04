@@ -119,7 +119,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false });
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -135,6 +135,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 Game1.GameManager.StartDialogPath("giant_buzz_blob_enter");
                 _aiComponent.ChangeState("idleDelay");
+                _hitComponent.IsActive = true;
             }
         }
 
