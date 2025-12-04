@@ -116,7 +116,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // awake if the player is close enough
             var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-            if (distance.Length() < 32)
+            if (distance.Length() < 42)
                 _aiComponent.ChangeState("awake");
         }
 
