@@ -113,6 +113,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _animator.Continue();
+            _spawnSmallZols = true;
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
