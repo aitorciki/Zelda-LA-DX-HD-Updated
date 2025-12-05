@@ -4,6 +4,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -67,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
             _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
-            new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
+            new AiFallState(_aiComponent, _body, OnHoleAbsorb, OnHoleDeath);
 
             _aiComponent.ChangeState("moving");
             _maxSpeed = GameMath.GetRandomFloat(0.25f, 0.55f);
@@ -89,6 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _isFollowing = false;
             _wasFollowing = false;
+            _animator.SpeedMultiplier = 1.0f;
             _aiComponent.ChangeState("moving");
         }
 
@@ -181,6 +183,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.SpeedMultiplier = 2.0f;
             _animator.Play("walk");
+        }
+
+        private void OnHoleDeath()
+        {
+            Map.Objects.SpawnObject(new EnemyHardhatBeetleRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 16, _body.FieldRectangle));
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
