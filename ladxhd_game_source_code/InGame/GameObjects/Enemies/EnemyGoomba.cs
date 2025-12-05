@@ -107,6 +107,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
+            _bodyCollision.IsActive = true;
             _aiComponent.ChangeState("walking");
         }
 
@@ -116,6 +117,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
             _pushComponent.IsActive = false;
+            _bodyCollision.IsActive = false;
         }
 
         private void InitWalking()
