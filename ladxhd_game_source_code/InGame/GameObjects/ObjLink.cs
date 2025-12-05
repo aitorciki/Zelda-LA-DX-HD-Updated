@@ -3581,7 +3581,7 @@ namespace ProjectZ.InGame.GameObjects
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
                 transitionSystem.ResetTransition();
 
-                if (Map.DungeonMode)
+                if (Map.DungeonMode || Map.DungeonMapless)
                 {
                     // HACK: If the player used the warp above level 8 and entered the dungeon, the save position is set to the warp
                     // rather than the dungeon 8 entrance. So if the last position is the warp, overwrite it with dungeon 8 entrance.
