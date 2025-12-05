@@ -90,7 +90,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Continue();
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
-            _aiComponent.ChangeState("waiting");
+            _aiComponent.ChangeState("moving");
+
             if (_objBomb != null)
                 Map.Objects.DeleteObjects.Add(_objBomb);
         }

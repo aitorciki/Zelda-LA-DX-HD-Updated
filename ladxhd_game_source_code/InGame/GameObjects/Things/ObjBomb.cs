@@ -97,7 +97,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _bodyShadow = new BodyDrawShadowComponent(Body, sprite));
-            Map.Objects.RegisterAlwaysAnimateObject(this);
+
+            if (_playerBomb)
+                Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Update()
