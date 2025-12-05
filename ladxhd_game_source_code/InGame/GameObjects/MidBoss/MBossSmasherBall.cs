@@ -3,6 +3,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
 
@@ -60,7 +61,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/explosion0", "runc", true);
             animation.EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8));
             Map.Objects.SpawnObject(animation);
-
+            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0));
             Map.Objects.DeleteObjects.Add(this);
         }
 
