@@ -6035,7 +6035,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public void PlayWeaponAnimation(string animationName, int direction)
         {
-            AnimatorWeapons.Play(animationName + direction);
+            AnimatorWeapons.Play(animationName + direction.ToString());
         }
 
         public ObjMarin GetMarin()
