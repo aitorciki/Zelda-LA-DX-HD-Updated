@@ -1770,6 +1770,11 @@ namespace ProjectZ.InGame.GameObjects
                     }
                     _swordPokeCounter -= Game1.DeltaTime;
                 }
+                else
+                {
+                    IsPoking = false;
+                    _swordPokeCounter = _swordPokeTime;
+                }
             }
         }
 
