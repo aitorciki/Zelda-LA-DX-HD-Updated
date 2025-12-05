@@ -70,6 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
 
             _aiComponent.ChangeState("moving");
+            _maxSpeed = GameMath.GetRandomFloat(0.25f, 0.55f);
 
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableRectangle = new CBox(EntityPosition, -8, -14, 16, 14, 8);
