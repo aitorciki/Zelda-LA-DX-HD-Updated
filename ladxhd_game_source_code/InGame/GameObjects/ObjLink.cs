@@ -6033,6 +6033,11 @@ namespace ProjectZ.InGame.GameObjects
             _isWalking = walk;
         }
 
+        public void PlayWeaponAnimation(string animationName, int direction)
+        {
+            AnimatorWeapons.Play(animationName + direction);
+        }
+
         public ObjMarin GetMarin()
         {
             return _objMaria;
