@@ -199,7 +199,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Collect item with the sword by adding a hit component to the item. Guardian
             // Acorn and Piece of Power "ShowAnimation" is 1 so we need to add as special cases.
-            if (_item.ShowAnimation == 0 || _item.Name == "guardianAcorn" || _item.Name == "pieceOfPower")
+            if (_item.ShowAnimation == 0 || _item.Name == "guardianAcorn" || _item.Name == "pieceOfPower" || _itemName.StartsWith("instrument"))
             {
                 AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
             }
@@ -372,6 +372,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // If it's an instrument collide with items.
+            if (_itemName.StartsWith("instrument"))
+                return Values.HitCollision.RepellingParticle;
+
             // item can be collected with the sword
             if ((hitType & HitType.Sword) != 0)
                 Collect();
