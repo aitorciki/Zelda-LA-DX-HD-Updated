@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -117,12 +118,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // also only applies to Gels that were spawned from splitting a Red Zol.
             if (IsActive && WasSpawned)
             {
+                List<GameObject> enemyTriggers = new List<GameObject>();
+
                 // Make sure both Gels are alive and check the index to prevent double respawn.
                 if (OtherGel != null && !IsDead && !OtherGel.IsDead && IsMainGel)
                 {
                     // Spawn the Red Zol if both Gels are alive. 
                     var newZol = new EnemyRedZol(Map, (int)ZolRespawnPos.X, (int)ZolRespawnPos.Y);
                     Map.Objects.SpawnObject(newZol);
+
+                    // If there is utility objects in the room find them.
+                    Map.Objects.GetGameObjectsWithTag(enemyTriggers, Values.GameObjectTag.Utility,
+                        (int)_body.FieldRectangle.X, (int)_body.FieldRectangle.Y, (int)_body.FieldRectangle.Width, (int)_body.FieldRectangle.Height);
+
+                    // Loop through the list of utility objects.
+                    foreach (var trigger in enemyTriggers) 
+                    {
+                        // If it's an enemy trigger add the Red Zol.
+                        if (trigger is ObjEnemyTrigger etrig)
+                        {
+                            etrig.EnemyTriggerList.Add(newZol);
+                            newZol.AddToEnemyTriggerGroup(etrig);
+                        }
+                    }
                 }
                 // Always remove the Gel.
                 IsActive = false;

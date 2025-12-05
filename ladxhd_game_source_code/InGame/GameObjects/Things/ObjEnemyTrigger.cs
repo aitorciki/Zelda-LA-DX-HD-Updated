@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
@@ -8,7 +9,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjEnemyTrigger : GameObject
     {
-        private readonly List<GameObject> _enemyList = new List<GameObject>();
+        public List<GameObject> EnemyTriggerList = new List<GameObject>();
         private readonly Rectangle _triggerField;
         private readonly string _triggerKey;
 
@@ -19,6 +20,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public ObjEnemyTrigger(Map.Map map, int posX, int posY, string triggerKey) : base(map)
         {
+            EntityPosition = new CPosition(posX, posY, 0);
+
+            Tags = Values.GameObjectTag.Utility;
+
             if (string.IsNullOrEmpty(triggerKey))
             {
                 IsDead = true;
@@ -37,14 +42,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_init)
             {
                 _init = true;
+
                 // get the enemies the object should watch over
-                Map.Objects.GetGameObjectsWithTag(_enemyList, Values.GameObjectTag.Enemy,
+                Map.Objects.GetGameObjectsWithTag(EnemyTriggerList, Values.GameObjectTag.Enemy,
                     _triggerField.X, _triggerField.Y, _triggerField.Width, _triggerField.Height);
             }
-
             _enemiesAlive = false;
+
             // check if the enemies where deleted from the map
-            foreach (var gameObject in _enemyList)
+            foreach (var gameObject in EnemyTriggerList)
                 if (gameObject.Map != null)
                     _enemiesAlive = true;
 

@@ -68,7 +68,8 @@ namespace ProjectZ.InGame.Things
             Damage  = 4,
             Hole    = 8,
             Lamp    = 16,
-            Ocarina = 32
+            Ocarina = 32,
+            Utility = 64
         }
     }
 }

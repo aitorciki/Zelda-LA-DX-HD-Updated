@@ -233,7 +233,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            // spawn small zols if the damage is not over the amount of HP they have
+            // If the damage is greater than the number of lives they have kill it outright.
             if (damage > _lives)
             {
                 ((HittableComponent)Components[HittableComponent.Index]).IsActive = false;
@@ -242,12 +242,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
+            // Spawn Gels if the damage is not over the amount of HP they have.
             else
             {
                 _damageState.SpawnItems = false;
                 _damageState.DeathAnimation = false;
             }
             return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
+        }
+
+        public void AddToEnemyTriggerGroup(ObjEnemyTrigger etrigger)
+        {
+            // If respawned in a room with an enemy trigger, this is a means 
+            // to adding the two Gels spawned with the Zol to the trigger list.
+            etrigger.EnemyTriggerList.Add(_gel0);
+            etrigger.EnemyTriggerList.Add(_gel1);
         }
     }
 }
