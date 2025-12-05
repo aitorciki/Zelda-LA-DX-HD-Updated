@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -12,6 +12,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyHardhatBeetle : GameObject
     {
+        private readonly AiComponent _aiComponent;
         private readonly BodyComponent _body;
         private readonly AiStunnedState _stunnedState;
         private readonly Animator _animator;
@@ -60,15 +61,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 FieldRectangle = fieldRectangle
             };
 
-            var aiComponent = new AiComponent();
+            _aiComponent = new AiComponent();
             var stateMoving = new AiState(UpdateMoving) { Init = InitMoving };
-            aiComponent.States.Add("moving", stateMoving);
-            _stunnedState = new AiStunnedState(aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
-            _damageState = new AiDamageState(this, _body, aiComponent, sprite, _lives);
+            _aiComponent.States.Add("moving", stateMoving);
+            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
-            new AiFallState(aiComponent, _body, OnHoleAbsorb, null);
+            new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
 
-            aiComponent.ChangeState("moving");
+            _aiComponent.ChangeState("moving");
 
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableRectangle = new CBox(EntityPosition, -8, -14, 16, 14, 8);
@@ -78,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1.25f });
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(AiComponent.Index, aiComponent);
+            AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
@@ -87,6 +88,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _isFollowing = false;
             _wasFollowing = false;
+            _aiComponent.ChangeState("moving");
         }
 
         private void InitMoving()
