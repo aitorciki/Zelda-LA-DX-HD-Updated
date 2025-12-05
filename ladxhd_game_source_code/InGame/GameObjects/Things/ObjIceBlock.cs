@@ -20,6 +20,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _respawnCounter;
         private bool _isActive = true;
 
+        int _posX;
+        int _posY;
+
         public ObjIceBlock() : base("ice block") { }
 
         public ObjIceBlock(Map.Map map, int posX, int posY) : base(map)
@@ -28,6 +31,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
             _field = map.GetField(posX, posY);
+
+            _posX = posX;
+            _posY = posY;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Objects/ice block");
             _animator.Play("idle");
@@ -101,8 +107,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             Game1.GameManager.PlaySoundEffect("D378-19-13");
 
-            var animation = new ObjAnimator(Map,
-                (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0, Values.LayerPlayer, "Particles/ice block despawn", "run", true);
+            Map.Objects.SpawnObject(new ObjIceBlockRespawner(Map, _posX, _posY, false));
+            var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0, Values.LayerPlayer, "Particles/ice block despawn", "run", true);
             Map.Objects.SpawnObject(animation);
 
             _respawnCounter = RespawnTime;
