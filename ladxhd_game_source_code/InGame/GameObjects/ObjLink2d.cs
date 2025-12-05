@@ -534,10 +534,14 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState != State.Attacking && 
                 CurrentState != State.Blocking &&
                 CurrentState != State.AttackBlocking && 
+                CurrentState != State.Powdering && 
+                CurrentState != State.Bombing && 
+                CurrentState != State.MagicRod && 
+                CurrentState != State.Throwing && 
                 CurrentState != State.Carrying && 
                 CurrentState != State.Charging && 
                 CurrentState != State.ChargeBlocking && 
-                (CurrentState != State.MagicRod || _body.IsGrounded || _isClimbing)) || _inWater)
+                (_body.IsGrounded || _isClimbing)) || _inWater)
             {
                 _moveVector2D = Vector2.Zero;
                 _lastBaseMoveVelocity = _moveVector2D;
