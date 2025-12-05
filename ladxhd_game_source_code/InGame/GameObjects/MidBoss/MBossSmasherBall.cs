@@ -177,6 +177,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.IsActive = true;
         }
 
+        public void DisableDamageField()
+        {
+            _damageField.IsActive = false;
+        }
+
         private void Collision(Values.BodyCollision direction)
         {
             if ((direction & Values.BodyCollision.Floor) != 0)

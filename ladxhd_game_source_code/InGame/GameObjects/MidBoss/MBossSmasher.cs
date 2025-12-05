@@ -183,6 +183,16 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 MathHelper.Lerp(_pickupStart.Y, ballTargetPosition.Y, percentageY));
 
             _ball.EntityPosition.Set(new Vector3(newBallPosition.X, EntityPosition.Y + 1, newBallPosition.Y));
+
+            var Link = MapManager.ObjLink;
+            var lState = Link.CurrentState;
+
+            if (lState == ObjLink.State.Pulling || lState == ObjLink.State.PreCarrying || lState == ObjLink.State.Carrying)
+            {
+                _ball.DisableDamageField();
+                _aiComponent.ChangeState("walk");
+                _ball.EndPickup();
+            }
         }
 
         private void PickupEnd()
