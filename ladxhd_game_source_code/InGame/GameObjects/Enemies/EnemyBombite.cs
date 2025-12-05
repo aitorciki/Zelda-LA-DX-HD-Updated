@@ -159,6 +159,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
+            // Don't register sword hits at all and instead just start the pinball state.
+            if ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordHold) != 0)
+            {
+                _body.VelocityTarget = direction * 3;
+                _animator.Play("damage");
+                _aiComponent.ChangeState("pong");
+                return Values.HitCollision.None;
+            }
+
             if (!_damageCooldown.State || gameObject == this)
                 return Values.HitCollision.None;
             _damageCooldown.Reset();
