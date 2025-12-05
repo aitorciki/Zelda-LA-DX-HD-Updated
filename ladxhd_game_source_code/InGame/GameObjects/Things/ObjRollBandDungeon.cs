@@ -60,6 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 // Pairodds should not be pushed by conveyor belts.
                 if (gameObject is EnemyPairodd) { continue; }
+                if (gameObject is EnemyKeese) { continue; }
 
                 var gameObjectBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
                 if (gameObjectBody.IsActive && gameObjectBody.IsGrounded && _collisionBox.Intersects(gameObjectBody.BodyBox.Box))
