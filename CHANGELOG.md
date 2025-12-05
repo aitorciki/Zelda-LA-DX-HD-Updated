@@ -6,8 +6,13 @@
   * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes classic camera bugs.
   * Rework pushable stones so that their behavior when pushed is much closer to how it is in the original games.
   * Pushable stones respawn when pushed down holes and when changing fields when classic camera is active.
+  * Ice Blocks (found in underground maps in dungeon 8) respawn when chaing fields when classic camera is active.
   * Link gets a slight "push" when jumping into water. The push when walking into water was slightly reduced.
   * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
+  * Disable the 2D directional hack when trading the fishing hook to the fisherman for the necklace/pink bra.
+  * Update Bow Wow's teleportation behavior when jumping into a world teleporter. It's still not perfect but improved.
+  * Play the secret sound in Richard's Villa when pushing the box to open the passage to the Slime Key.
+  * Fix removing the "poking" state when poking is finished. This bugged out the jump fix hack.
   * Fix death sequence to use potion first. This fixes a "stuck in air" bug when dying/healing while flying with the rooster.
   * Fix crossing a hole reset point while flying with the rooster from storing the Z position which reset Link in the air.
   * Fix the rooster from being drawn in the background layer when borrwing it from the hen house (after dungeon 8 is complete).
@@ -17,6 +22,7 @@
   * Fix sequence of trading bananas to monkeys with classic camera enabled by adding monkeys to always animate list.
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
+  * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
   
 ### **User Interface:**
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
@@ -26,28 +32,46 @@
 ### **Items:**
   * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
   * The Boomerang item has been reworked so that it can collect multiple items on a single throw.
-  * Slightly increase the size of the damage box of Magic Powder and move the damage box with the player as they move.
+  * Increase the size of the damage box of Magic Powder to the width or height of a tile (or 16 pixels, depends on direction).
   * Magic Powder can no longer hit grass. Bushes and grass share an object so they also share hit types so they need filtering code.
   * Running with Pegasus Boots can now smash large crystals without needing the sword equipped.
   * Fire spawned from Magic Rod shots added to the "always animate" list so despawns when outside of the current viewport.
   * Bombs have been added to the "always animate" list which allows them to explode when outside of the current viewport.
+  * Items will no longer stop Link from moving when using them on 2D maps (bow, hookshot, boomerang, etc).
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
+  * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc). 
   
 ### **Enemies:**
+  * When entering a boss doorway that closes behind Link, push Link forward into the boss room like the original game.
   * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
   * Reduce fairy spawn rate of Ghini to 10% (from 75%) and allow it to drop other items at normal drop rates.
   * Increase the knockback of the Flame Fountain on the way to dungeon 8 so the player can't force their way through with boots.
   * Update "stunned" state of several enemies to either lose their damage field while stunned or gain it back as soon as stun ends.
+  * Don't respawn Spiny Beetle carry object when grabbing it and throwing it into a hole when Classic Camera is active.
+  * When fighting the boss Angler Fish in dungeon 4, a barrier is spawned at the top of the arena to prevent leaving.
+  * Remove activation range check from Pols Voice, Red Zol, and Gel. They will become active when entering the field they are on.
+  * Change enemy Piranha collision types to "non-water" type like the Water Tektites in dungeon 4. This collision only blocks them.
+  * Disable the hit component of some minibosses until the boss is enaged: Rolling Bones, Cue Ball, and Hinox.
   * Fix the burning state to reset when changing fields in classic camera. Enemy should return to normal state and remove burn.
   * Fix enemy Antifairy to properly remove its damage field when burning it with Magic Powder.
   * Fix enemy Arm Mimic to get stunned when throwing objects (like pots) at them.
+  * Fix enemy Arm Mimic to be invincible to Magic Powder.
   * Fix enemy Bomber to have unique death with Magic Powder that spawns a fairy 100% of the time. Magic rod spawns fairy 50% of the time.
-  * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
-  * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
+  * Fix enemy Bombite to bounce off the sword when held outward in a charge state without the sword being put away afterwards.
   * Fix enemy Cheep Cheep from launching the player if jumped on just right while slightly in the water.
+  * Fix enemy Gel to properly respawn when changing fields in classic camera instead of burning to death off screen.
+  * Fix enemy Goomba to lose it's collision box when set on fire.
+  * Fix enemy Hardhat Beetle to be able to be killed using bombs. This also spawns a bomb after death. Also remove initial idle delay.
+  * Fix enemy Keese to not be affected by conveyor belts. Dungeon 3 is about the only place this is relevant.
   * Fix enemy Leevers from spawning on the ledges above the cave in the desert where Link can't reach by adding collision.
+  * Fix enemy Red Zol to spawn Gels in classic camera after burning and respawning with a field change. 
+  * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
+  * Fix enemy Spiny Beetle AI behavior to act much closer to how they do in the original game.
+  * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
+  * Fix miniboss Smasher when both Link and him pick up the ball simultaneously. Also the ball spawns a fairy when destroyed.
+  * Fix boss Angler Fish arena camera to not fall below the boss field which is just a black screen.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
   * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
   
@@ -70,6 +94,7 @@
   * Fix the cave where the Magnifying Lens is to not hide Bow Wow's chain before grabbing the Magnifying Lens.
   * Fix visibility of rooms behind bombable walls in a cave near pig moblins and a cave on the mountain with shallow water.
   * Fix missing stairs object in the same mountain cave with bombable wall which slows down movement when walking on stairs.
+  * Fix collision above the cave just north of Mr. Write's house. With standard camera Moblins would often walk into the cliff.
   * Fix collision blockers in a cave on the way to level 8 dungeon with a large gap. Flying could move the camera to a bad field.
   * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
   
@@ -86,7 +111,8 @@
   * Fix dungeon 7 missing collision near torches and bombable wall in the small block passage in the room with the final pillar.
   * Fix dungeon 8 bombable walls around the switch to not have cracks. This is how it was in the original games.
   * Fix dungeon 8 block to be movable near a stairway in a room north of the map with the Peahat enemies.
-  * Fix Egg final dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
+  * Fix Egg dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
+  * Fix Manbo's Song when played in the Egg to teleport the player to the entrance and not the pond.
 
 ## **v1.4.9**
 ### **The "Beginning of the End" Update**
