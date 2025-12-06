@@ -5759,6 +5759,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 if (ShowItem.Name == "sword2")
                 {
+                    _jumpEndTimer = 0;
                     _shownSwordLv2Dialog = false;
                     _showSwordL2ParticleCounter = 0;
                     CurrentState = State.SwordShowLv2;
