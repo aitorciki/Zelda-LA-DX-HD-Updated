@@ -177,9 +177,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 if (Math.Abs(distance.X) < axisTolerance && distance.Y > 0 && distance.Y < detectionRange)
                     return 3;
-
-                if (Math.Abs(distance.X) < axisTolerance && distance.Y < 0 && Math.Abs(distance.Y) < detectionRange)
-                    return 1;
             }
             return -1;
         }
