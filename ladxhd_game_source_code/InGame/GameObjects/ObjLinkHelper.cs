@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Dungeon;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects
@@ -29,10 +30,16 @@ namespace ProjectZ.InGame.GameObjects
             foreach (var gameObject in _destroyableWallList)
             {
                 var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
-                if ((collisionObject.CollisionType & Values.CollisionTypes.Destroyable) != 0 &&
-                    collisionObject.Collision(box, 0, 0, ref collidingBox))
+
+                if (collisionObject.Collision(box, 0, 0, ref collidingBox))
                 {
-                    return true;
+                    // The poked object is a bombable wall.
+                    if ((collisionObject.CollisionType & Values.CollisionTypes.Destroyable) != 0)
+                        return true;
+
+                    // The poked object is a locked dungeon door.
+                    if (gameObject is ObjDungeonDoor door && door.GetMode() == 1)
+                        return true;
                 }
             }
             return false;

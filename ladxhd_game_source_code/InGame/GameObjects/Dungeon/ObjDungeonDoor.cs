@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly string _strKey;
         private readonly string _strPushKey;
         private readonly string _pushItem;
+        private readonly int _mode;
 
         private float _doorState;
         private bool _wasUpdated;
@@ -32,6 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             
             _strKey = strKey;
             _strPushKey = strPushKey;
+            _mode = mode;
 
             if (string.IsNullOrEmpty(_strKey))
             {
@@ -177,6 +179,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                     _doorState = 1;
                 }
             }
+        }
+        public int GetMode()
+        {
+            return _mode;
         }
     }
 }
