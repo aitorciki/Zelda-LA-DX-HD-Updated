@@ -68,6 +68,7 @@
   * Fix enemy Red Zol to spawn Gels in classic camera after burning and respawning with a field change. 
   * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
   * Fix enemy Spiny Beetle AI behavior to act much closer to how they do in the original game.
+  * Fix enemy Vacuum from causing Link to get stuck in a specific direction if it fell outside the camera viewport.
   * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix miniboss Smasher when both Link and him pick up the ball simultaneously. Also the ball spawns a fairy when destroyed.
