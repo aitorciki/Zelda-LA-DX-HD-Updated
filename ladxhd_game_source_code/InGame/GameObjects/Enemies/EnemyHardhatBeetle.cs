@@ -63,14 +63,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
 
             _aiComponent = new AiComponent();
-            var stateMoving = new AiState(UpdateMoving) { Init = InitMoving };
+
+            var stateWaiting = new AiState { Init = InitWaiting };
+            stateWaiting.Trigger.Add(new AiTriggerRandomTime(UpdateWaiting, 75, 100));
+            var stateMoving = new AiState(UpdateMoving);
+
+            _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
             _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
             _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, OnHoleDeath);
 
-            _aiComponent.ChangeState("moving");
+            _aiComponent.ChangeState("waiting");
             _maxSpeed = GameMath.GetRandomFloat(0.25f, 0.55f);
 
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
@@ -90,13 +95,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _isFollowing = false;
             _wasFollowing = false;
-            _animator.SpeedMultiplier = 1.0f;
-            _aiComponent.ChangeState("moving");
+            _aiComponent.ChangeState("waiting");
         }
 
-        private void InitMoving()
+        private void InitWaiting()
         {
             _animator.Play("walk");
+            _animator.SpeedMultiplier = 1.0f;
+        }
+
+        private void UpdateWaiting()
+        {
+            if (_body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
+                _aiComponent.ChangeState("moving");
         }
 
         private void UpdateMoving()

@@ -3,8 +3,9 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
-using ProjectZ.InGame.Map;
 using ProjectZ.InGame.GameObjects.Enemies;
+using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -58,6 +59,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Remove the respawner itself
             Map.Objects.DeleteObjects.Add(this);
 
+            // If not in classic camera, spawn a smoke effect.
+            if (!Camera.ClassicMode) 
+            {
+                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/spawn", "run", true);
+                Map.Objects.SpawnObject(explosionAnimation);
+                Game1.GameManager.PlaySoundEffect("D360-47-2F");
+            }
             // Spawn the original enemy
             Map.Objects.SpawnObject(new EnemyHardhatBeetle(Map, (int)EntityPosition.X, (int)EntityPosition.Y));
         }
