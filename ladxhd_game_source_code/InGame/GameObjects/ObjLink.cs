@@ -1719,8 +1719,9 @@ namespace ProjectZ.InGame.GameObjects
                     return;
 
                 // colliding horizontally or vertically? -> start pushing
-                if (CurrentState == State.Idle && _isWalking && (
-                        (collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
+                if (CurrentState == State.Idle && 
+                        _body.IsGrounded && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero) && 
+                        ((collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
                         (collision & Values.BodyCollision.Vertical) != 0 && (Direction == 1 || Direction == 3)))
                 {
                     var box = _body.BodyBox.Box;
