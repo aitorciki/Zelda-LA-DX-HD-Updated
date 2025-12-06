@@ -257,7 +257,7 @@ namespace ProjectZ.InGame.GameObjects
 
             ObjectTemplates.Add("button", new GameObjectTemplate(typeof(ObjButton), new object[] { null }));
             ObjectTemplates.Add("leaveButton", new GameObjectTemplate(typeof(ObjButtonLeave), new object[] { null, 0, 16, 16, false }));
-            ObjectTemplates.Add("pushButton", new GameObjectTemplate(typeof(ObjButtonPush), new object[] { null, 0, 16, 16 }));
+            ObjectTemplates.Add("pushButton", new GameObjectTemplate(typeof(ObjButtonPush), new object[] { null, 1, 0, 16, 16 }));
             ObjectTemplates.Add("buttonTouch", new GameObjectTemplate(typeof(ObjButtonTouch), new object[] { 16, 16, null, null, true, false }));
             ObjectTemplates.Add("buttonOrder", new GameObjectTemplate(typeof(ObjButtonOrder), new object[] { 0, null, null, false }));
             ObjectTemplates.Add("tilePuzzle", new GameObjectTemplate(typeof(ObjDungeonTilePuzzle), new object[] { null, null, null, false }));

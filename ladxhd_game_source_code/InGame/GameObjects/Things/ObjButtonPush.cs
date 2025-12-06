@@ -13,8 +13,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private int _pushDirection;
         private string _strKey;
+        private string _strValue;
 
-        public ObjButtonPush(Map.Map map, int posX, int posY, string destroyKey, int pushDirection, int buttonWidth, int buttonHeight) : base(map)
+        public ObjButtonPush(Map.Map map, int posX, int posY, string destroyKey, int destroyValue, int pushDirection, int buttonWidth, int buttonHeight) : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -22,8 +23,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _pushDirection = pushDirection;
             _strKey = destroyKey;
+            _strValue = destroyValue.ToString();
 
-            if (string.IsNullOrEmpty(_strKey) || Game1.GameManager.SaveManager.GetString(destroyKey) == "1")
+            if (string.IsNullOrEmpty(_strKey) || Game1.GameManager.SaveManager.GetString(_strKey) == _strValue)
             {
                 IsDead = true;
                 return;
@@ -56,7 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void OnKeyChange()
         {
             // Remove the push button if the key value is set to 1.
-            if (Game1.GameManager.SaveManager.GetString(_strKey, "0") == "1")
+            if (string.IsNullOrEmpty(_strKey) || Game1.GameManager.SaveManager.GetString(_strKey) == _strValue)
                 Map.Objects.DeleteObjects.Add(this);
         }
     }
