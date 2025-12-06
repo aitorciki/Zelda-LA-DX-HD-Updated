@@ -101,6 +101,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX + 6, posY + 6, 4, 4), OnCollision));
             }
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerBottom));
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Reset()
