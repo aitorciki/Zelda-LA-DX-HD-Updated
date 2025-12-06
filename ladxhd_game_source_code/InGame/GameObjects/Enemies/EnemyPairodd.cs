@@ -222,6 +222,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // Remove components when killed.
+            if (_damageState.CurrentLives <= 0)
+            {
+                _damageField.IsActive = false;
+                _hitComponent.IsActive = false;
+                _pushComponent.IsActive = false;
+            }
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
@@ -246,12 +253,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.Bomb)
                 damage = 1;
 
-            if (_damageState.CurrentLives <= 0)
-            {
-                _damageField.IsActive = false;
-                _hitComponent.IsActive = false;
-                _pushComponent.IsActive = false;
-            }
             return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
         }
     }
