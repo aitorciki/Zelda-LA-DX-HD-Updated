@@ -4759,7 +4759,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             // The BowWow object is designed to automatically set to "_objBowWow" so it needs to be
             // terminated when it is not supposed to be in use or we get an invisible BowWow following.
-            if (Map.DungeonMode || Game1.GameManager.SaveManager.GetString("has_bowWow","0") != "1")
+            if ((Map != null && Map.DungeonMode) || Game1.GameManager.SaveManager.GetString("has_bowWow","0") != "1")
                 _objBowWow = null;
 
             Game1.GameManager.UseShockEffect = false;
