@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
@@ -12,8 +13,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Box _collisionBox;
 
         private int _pushDirection;
-        private string _strKey;
-        private string _strValue;
+        private string _destroyKey;
+        private int _destroyValue;
 
         public ObjButtonPush(Map.Map map, int posX, int posY, string destroyKey, int destroyValue, int pushDirection, int buttonWidth, int buttonHeight) : base(map)
         {
@@ -22,10 +23,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             EditorColor = Color.Blue * 0.5f;
 
             _pushDirection = pushDirection;
-            _strKey = destroyKey;
-            _strValue = destroyValue.ToString();
+            _destroyKey = destroyKey;
+            _destroyValue = destroyValue;
 
-            if (string.IsNullOrEmpty(_strKey) || Game1.GameManager.SaveManager.GetString(_strKey) == _strValue)
+            // Get the current value of the destroy key.
+            int currentValue = 0;
+            if (!string.IsNullOrEmpty(_destroyKey))
+                currentValue = Convert.ToInt32(Game1.GameManager.SaveManager.GetString(_destroyKey));
+
+            // Remove the push button if the current value is equal to or greater than the destroy value.
+            if (currentValue >= _destroyValue)
             {
                 IsDead = true;
                 return;
@@ -57,8 +64,13 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnKeyChange()
         {
-            // Remove the push button if the key value is set to 1.
-            if (string.IsNullOrEmpty(_strKey) || Game1.GameManager.SaveManager.GetString(_strKey) == _strValue)
+            // Get the current value of the destroy key.
+            int currentValue = 0;
+            if (!string.IsNullOrEmpty(_destroyKey))
+                currentValue = Convert.ToInt32(Game1.GameManager.SaveManager.GetString(_destroyKey));
+
+            // Remove the push button if the current value is equal to or greater than the destroy value.
+            if (currentValue >= _destroyValue)
                 Map.Objects.DeleteObjects.Add(this);
         }
     }
