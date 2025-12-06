@@ -449,6 +449,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isGrabbed;
         private bool _isFlying;
         private bool _wasFlying;
+        private Map.Map _previousMap;
 
         public bool FreezeWorldForEvents;
 
@@ -4741,23 +4742,29 @@ namespace ProjectZ.InGame.GameObjects
             if (Is2DMode)
                 MapInit2D();
 
-            // Reset Guardian Acorn and Piece of Power when not in a dungeon.
-            if (Map != null && !Map.DungeonMode && !Map.DungeonMapless)
+            // Stop Guardian Acorn and Piece of Power during certain transitions.
+            if (Map != null && _previousMap != null)
             {
-                Game1.GameManager.StopGuardianAcorn();
-                Game1.GameManager.StopPieceOfPower();
-            }
-            // If the player has not saved BowWow yet or has turned him in.
-            var hasBowWow = Game1.GameManager.SaveManager.GetString("has_bowWow","0") == "1";
+                bool isOverworld = Map.MapName == "overworld.map" || _previousMap.MapName == "overworld.map";
+                bool mapIsCave   = !string.IsNullOrEmpty(Map.MapName) && Map.MapName.StartsWith("cave");
+                bool prevIsCave  = !string.IsNullOrEmpty(_previousMap.MapName) && _previousMap.MapName.StartsWith("cave");
+                bool mapsNotCave = !mapIsCave && !prevIsCave;
+                bool notDungeon  = !Map.DungeonMode && !Map.DungeonMapless;
 
+                if (isOverworld || (mapsNotCave && notDungeon))
+                {
+                    Game1.GameManager.StopGuardianAcorn();
+                    Game1.GameManager.StopPieceOfPower();
+                }
+            }
             // The BowWow object is designed to automatically set to "_objBowWow" so it needs to be
             // terminated when it is not supposed to be in use or we get an invisible BowWow following.
-            if (!hasBowWow || Map.DungeonMode)
-            {
+            if (Map.DungeonMode || Game1.GameManager.SaveManager.GetString("has_bowWow","0") != "1")
                 _objBowWow = null;
-            }
+
             Game1.GameManager.UseShockEffect = false;
         }
+
 
         public void InitEnding()
         {
@@ -5818,6 +5825,8 @@ namespace ProjectZ.InGame.GameObjects
 
         public void StartTransitioning()
         {
+            _previousMap = Map;
+
             IsTransitioning = true;
 
             _drawBody.Layer = Values.LayerTop;
