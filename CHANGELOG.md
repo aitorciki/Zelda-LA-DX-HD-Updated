@@ -23,12 +23,13 @@
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
   * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
-  
+
 ### **User Interface:**
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
-  
+  * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
+
 ### **Items:**
   * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
   * The Boomerang item has been reworked so that it can collect multiple items on a single throw.
@@ -38,18 +39,20 @@
   * Fire spawned from Magic Rod shots added to the "always animate" list so despawns when outside of the current viewport.
   * Bombs have been added to the "always animate" list which allows them to explode when outside of the current viewport.
   * Items will no longer stop Link from moving when using them on 2D maps (bow, hookshot, boomerang, etc).
+  * Fix playing the "holding" animation when jumping onto the Level 2 sword sprite after turning in 20 shells in Seashell Mansion.
+  * Fix powerup status between map transitions. It is kept when current/next map are both either a cave or a dungeon.
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
   * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc). 
-  
+
 ### **Enemies:**
-  * When entering a boss doorway that closes behind Link, push Link forward into the boss room like the original game.
   * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
   * Reduce fairy spawn rate of Ghini to 10% (from 75%) and allow it to drop other items at normal drop rates.
   * Increase the knockback of the Flame Fountain on the way to dungeon 8 so the player can't force their way through with boots.
   * Update "stunned" state of several enemies to either lose their damage field while stunned or gain it back as soon as stun ends.
   * Don't respawn Spiny Beetle carry object when grabbing it and throwing it into a hole when Classic Camera is active.
   * When fighting the boss Angler Fish in dungeon 4, a barrier is spawned at the top of the arena to prevent leaving.
+  * Hardhat Beetle respawns when pushed down a hole, leaving the room, and re-entering. Modern camera shows special respawn effects.
   * Remove activation range check from Pols Voice, Red Zol, and Gel. They will become active when entering the field they are on.
   * Change enemy Piranha collision types to "non-water" type like the Water Tektites in dungeon 4. This collision only blocks them.
   * Disable the hit component of some minibosses until the boss is enaged: Rolling Bones, Cue Ball, and Hinox.
@@ -75,7 +78,7 @@
   * Fix boss Angler Fish arena camera to not fall below the boss field which is just a black screen.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
   * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
-  
+
 ### **Overworld:**
   * The fisherman on the boat on the "Bridge" map is now drawn on a lower layer than Link so his sprite is always behind Link.
   * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
@@ -98,10 +101,12 @@
   * Fix collision above the cave just north of Mr. Write's house. With standard camera Moblins would often walk into the cliff.
   * Fix collision blockers in a cave on the way to level 8 dungeon with a large gap. Flying could move the camera to a bad field.
   * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
-  
+
 ### **Dungeons:**
+  * When entering a doorway that closes behind Link, push Link forward into the room like the original game did.
   * Implement three additional missing Level 4 dungeon tile puzzle variations. This port only had a single puzzle implemented.
   * Handle the situation where someone completes Level 8 dungeon before Level 7 dungeon (as in setting the correct states).
+  * Dungeon doors now make the same hollow "clank" sound when poked as bombable walls like the original games.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
   * Fix dungeon doors so that they consume small keys again. This was a huge game-breaking issue.
   * Fix several 2D maps in dungeon 3, dungeon 6, and dungeon 8 to not change and update Link's position on the minimap.
@@ -144,14 +149,14 @@
   * Fix seashell mansion where Link should be frozen but could change his direction as the meter is counting up.
   * Fix missing Buzz Blobs near Animal Village and missing Mushroom Bomber near the river passageway close to Animal Village.
   * Fix a single tile outside of the cave to not play Animal Village music when new option "Classic Music Cues" is disabled.
-  * Fix enemy Spiny Beetle to be able to fall down holes by fixing it's size dimensions. Also fix it's reset with Classic Camera.
-  * Fix enemy Pols Voice attack sound effects. Stun items were making the metallic "ting" sound and sword had all the wrong sound effects.
+  * Fix enemy Anti-Kirby vacuum sound effect to be silenced if the player dies while it happening. This prevents an endless loop of the sound.
   * Fix enemy Arm Mimic movement animations fighting between two directions when walking diagonally.
   * Fix enemy Bomber bombs to despawn when changing fields in Classic Camera. Also always spawn a fairy when killed with Boomerang.
   * Fix enemy Cheep-Cheep stomp conditions and remove its damage field component after it has been stomped.
   * Fix enemy Flame Trap flames to persist through playing the ocarina. This exploit allowed the player to skip the mirror shield requirement.
-  * Fix enemy Anti-Kirby vacuum sound effect to be silenced if the player dies while it happening. This prevents an endless loop of the sound.
   * Fix enemy Pairodd teleport activation range to be closer to the original game. This seems to almost perfectly duplicate behaviors.
+  * Fix enemy Pols Voice attack sound effects. Stun items were making the metallic "ting" sound and sword had all the wrong sound effects.
+  * Fix enemy Spiny Beetle to be able to fall down holes by fixing it's size dimensions. Also fix it's reset with Classic Camera.
   * Fix dungeon 3 blocks to reset positions when walking over certain leave buttons.
   * Fix dungeon 5 blocks to reset positions when walking over certain leave buttons. Also fix door to shut after leaving passageway.
   * Fix dungeon 7 keyhole to show the "missing key" message when the player does not have the bird key.
@@ -195,7 +200,7 @@
   * Fix a potential "hitch" in the air when falling jumping/falling into 2D maps from a hole above (such as dungeon 1 Moldorm pit).
   * Fix keyboard keys when in editor mode to actually map to a real keyboard.
   * Many other small fixes and tweaks spread out everywhere. This version had too many changes to keep track of everything.
-  
+
 ## **v1.4.7**
 ### **The "Feature Complete" Update**
   * Implement system to reset enemy positions when changing fields when Classic Camera is enabled.
