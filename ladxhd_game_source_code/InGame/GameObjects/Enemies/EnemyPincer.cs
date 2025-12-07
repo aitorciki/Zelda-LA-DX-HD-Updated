@@ -2,9 +2,10 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -35,6 +36,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = ObjLives.Pincer;
 
         private float _waitTimer;
+        private bool _powderWindow;
 
         public EnemyPincer() : base("pincer") { }
 
@@ -150,6 +152,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_waitTimer < 750f)
             {
+                _powderWindow = true;
                 _waitTimer += Game1.DeltaTime;
                 return;
             }
@@ -160,6 +163,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 EntityPosition.Set(_spawnPosition);
 
+                _powderWindow = false;
                 _sprite.IsVisible = true;
                 _animator.Play("eyes");
             }
@@ -246,6 +250,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
+
+            // Simulate the enemy falling down the hole since it can't actually be absorbed by holes.
+            if (hitType == HitType.MagicPowder && _powderWindow)
+            {
+                // Play the "falling down hole" sound effect.
+                Game1.GameManager.PlaySoundEffect("D360-03-03");
+                Game1.GameManager.PlaySoundEffect("D360-24-18");
+
+                // Spawn the graphics for it.
+                var fallAnimation = new ObjAnimator(_aiComponent.Owner.Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
+                fallAnimation.EntityPosition.Set(new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
+                    _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
+                _aiComponent.Owner.Map.Objects.SpawnObject(fallAnimation);
+
+                // Remove the object from the map.
+                Map.Objects.DeleteObjects.Add(this);
+            }
 
             // can only attack while the enemy is attacking
             if (_aiComponent.CurrentStateId != "attacking" &&
