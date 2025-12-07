@@ -157,7 +157,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return;
             }
             _direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 4);
-            if (_direction.Length() < 42)
+            if (_direction.Length() < 32)
             {
                 _aiComponent.ChangeState("spawning");
 
