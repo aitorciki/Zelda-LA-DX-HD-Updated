@@ -374,7 +374,12 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // If it's an instrument collide with items.
             if (_itemName.StartsWith("instrument"))
+            {
+                if ((hitType & HitType.Sword) != 0)
+                    return Values.HitCollision.None;
+
                 return Values.HitCollision.RepellingParticle;
+            }
 
             // item can be collected with the sword
             if ((hitType & HitType.Sword) != 0)
