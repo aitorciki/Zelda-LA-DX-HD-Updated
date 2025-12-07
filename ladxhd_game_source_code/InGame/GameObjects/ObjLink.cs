@@ -4975,14 +4975,12 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _body.Velocity.Z = 1.0f;
             }
-
             // redirect the down force to the sides
             if (Map.Is2dMap && _body.IsGrounded && direction.Y > 0)
             {
                 direction.X += Math.Sign(direction.X) * Math.Abs(direction.Y) * 0.5f;
                 direction.Y = 0;
             }
-
             // fall down on damage taken while climbing
             if (Map.Is2dMap && _isClimbing)
                 _isClimbing = false;

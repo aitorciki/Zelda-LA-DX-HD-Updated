@@ -131,19 +131,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             else
                 _body.VelocityTarget = Vector2.Zero;
 
-            _isFollowing = _body.FieldRectangle.Intersects(MapManager.ObjLink.BodyRectangle);
+            _isFollowing = MapManager.ObjLink.BodyRectangle.Intersects(_body.FieldRectangle);
 
             if (_isFollowing)
-            {
-                _vecDirection = new Vector2(
-                    MapManager.ObjLink.EntityPosition.X - EntityPosition.X,
-                    MapManager.ObjLink.EntityPosition.Y - EntityPosition.Y);
+                _vecDirection = new Vector2(MapManager.ObjLink.EntityPosition.X - EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - EntityPosition.Y);
+            else
+                _vecDirection = new Vector2(ResetPosition.X - EntityPosition.X, ResetPosition.Y - EntityPosition.Y);
 
-                if (_vecDirection != Vector2.Zero)
-                    _vecDirection.Normalize();
+            if (!_isFollowing && (int)EntityPosition.X == (int)ResetPosition.X && (int)EntityPosition.Y == (int)ResetPosition.Y)
+            {
+                _body.VelocityTarget = Vector2.Zero;
+                _aiComponent.ChangeState("waiting");
             }
+
+            if (_vecDirection != Vector2.Zero)
+                _vecDirection.Normalize();
+
             _damageField.IsActive = true;
-            _wasFollowing = _isFollowing;
+            _wasFollowing = _isFollowing | !Camera.ClassicMode;
             _isFollowing = false;
         }
 
