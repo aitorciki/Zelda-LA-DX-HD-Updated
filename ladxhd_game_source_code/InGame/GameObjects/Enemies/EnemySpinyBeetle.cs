@@ -23,6 +23,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         }
         private readonly GameObject _carriedObject;
         private readonly CarriableComponent _carriableComponent;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
@@ -112,16 +114,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("running", stateRunning);
             new AiFallState(_aiComponent, _body);
 
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnDeath = OnDeath };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnDeath = OnDeath, OnBurn = OnBurn };
             _aiComponent.ChangeState("moving");
 
             var damageCollider = new CBox(EntityPosition, -5, -2, 0, 10, 10, 4);
             var hittableRectangle = new CBox(EntityPosition, -5, -2, 10, 10, 8);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableRectangle, OnHit));
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
@@ -145,6 +147,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Always delete the beetle and spawn a new one.
             Map.Objects.DeleteObjects.Add(this);
             Map.Objects.SpawnObject(new EnemySpinyBeetle(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 7, _type));
+        }
+
+        private void OnBurn()
+        {
+            _animator.Pause();
+            _damageField.IsActive = false;
+            _hitComponent.IsActive = false;
+            _pushComponent.IsActive = false;
         }
 
         private bool CarriableObjectPickedUp()
