@@ -120,14 +120,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                         _soundCounter += 75;
                     }
                 }
-
                 _lastPosition = EntityPosition.Position;
 
                 return true;
             }
             if (_dealsDamage)
             {
-                MapManager.ObjLink.HitPlayer(-direction, HitType.Enemy, _collisionDamage, true);
+                MapManager.ObjLink.HitPlayer(-direction, HitType.Enemy, _collisionDamage, false);
             }
             return false;
         }
