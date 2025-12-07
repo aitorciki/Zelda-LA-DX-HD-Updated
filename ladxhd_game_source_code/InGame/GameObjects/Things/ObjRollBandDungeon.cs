@@ -58,7 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             foreach (var gameObject in _collidingObjects)
             {
-                // Pairodds should not be pushed by conveyor belts.
+                // Pairodds or Keese should not be pushed by conveyor belts.
                 if (gameObject is EnemyPairodd) { continue; }
                 if (gameObject is EnemyKeese) { continue; }
 

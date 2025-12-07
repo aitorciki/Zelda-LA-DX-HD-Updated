@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
@@ -13,39 +14,36 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Box _collisionBox;
 
         private int _pushDirection;
-        private string _destroyKey;
-        private int _destroyValue;
+        private string _strKey;
+        private int _activeValue;
 
-        public ObjButtonPush(Map.Map map, int posX, int posY, string destroyKey, int destroyValue, int pushDirection, int buttonWidth, int buttonHeight) : base(map)
+        public ObjButtonPush(Map.Map map, int posX, int posY, string strKey, int activeValue, int pushDirection, int buttonWidth, int buttonHeight) : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
             EditorColor = Color.Blue * 0.5f;
 
             _pushDirection = pushDirection;
-            _destroyKey = destroyKey;
-            _destroyValue = destroyValue;
+            _strKey = strKey;
+            _activeValue = activeValue;
 
-            // Get the current value of the destroy key.
-            int currentValue = 0;
-            if (!string.IsNullOrEmpty(_destroyKey))
-                currentValue = Convert.ToInt32(Game1.GameManager.SaveManager.GetString(_destroyKey));
-
-            // Remove the push button if the current value is equal to or greater than the destroy value.
-            if (currentValue >= _destroyValue)
-            {
-                IsDead = true;
-                return;
-            }
             _collisionBox = new Box(posX, posY, 0, buttonWidth, buttonHeight, 32);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
         }
 
         private void Update()
         {
+            // Get the current value of the activate key.
+            int currentValue = 0;
+            if (!string.IsNullOrEmpty(_strKey))
+            {
+                string value = Game1.GameManager.SaveManager.GetString(_strKey);
+                int.TryParse(value, out currentValue);
+            }
+
             // The player walked into the push button collision box.
-            if (_collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
+            if (currentValue == _activeValue && 
+                _collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
             {
                 // Shorten the reference.
                 var Link = MapManager.ObjLink;
@@ -60,18 +58,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (Link.IsChargingState(Link.CurrentState))
                     Link.PlayWeaponAnimation("stand_", _pushDirection);
             }
-        }
-
-        private void OnKeyChange()
-        {
-            // Get the current value of the destroy key.
-            int currentValue = 0;
-            if (!string.IsNullOrEmpty(_destroyKey))
-                currentValue = Convert.ToInt32(Game1.GameManager.SaveManager.GetString(_destroyKey));
-
-            // Remove the push button if the current value is equal to or greater than the destroy value.
-            if (currentValue >= _destroyValue)
-                Map.Objects.DeleteObjects.Add(this);
         }
     }
 }
