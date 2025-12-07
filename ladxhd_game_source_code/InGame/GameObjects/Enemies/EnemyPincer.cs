@@ -239,19 +239,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            if (hitType == HitType.MagicPowder)
-            {
-                _damageField.IsActive = false;
-                _stunnedState.StartStun();
-                return Values.HitCollision.Enemy;
-            }
-
             // can only attack while the enemy is attacking
             if (_aiComponent.CurrentStateId != "attacking" &&
                 _aiComponent.CurrentStateId != "attackWait" &&
                 _aiComponent.CurrentStateId != "retract" &&
                 !_stunnedState.IsStunned())
                 return Values.HitCollision.None;
+
+            if (hitType == HitType.MagicPowder)
+            {
+                _damageField.IsActive = false;
+                _stunnedState.StartStun();
+                return Values.HitCollision.Enemy;
+            }
 
             if (_aiComponent.CurrentStateId == "attacking")
                 _aiComponent.ChangeState("attackWait");

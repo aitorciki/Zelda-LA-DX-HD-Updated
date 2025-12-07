@@ -81,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableRectangle = new CBox(EntityPosition, -8, -14, 16, 14, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField =new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1.25f });
