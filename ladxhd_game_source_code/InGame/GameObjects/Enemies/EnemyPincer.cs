@@ -34,6 +34,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dirIndex;
         private int _lives = ObjLives.Pincer;
 
+        private float _waitTimer;
+
         public EnemyPincer() : base("pincer") { }
 
         public EnemyPincer(Map.Map map, int posX, int posY) : base(map)
@@ -146,6 +148,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateWaiting()
         {
+            if (_waitTimer < 750f)
+            {
+                _waitTimer += Game1.DeltaTime;
+                return;
+            }
             _direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 4);
             if (_direction.Length() < 42)
             {
@@ -161,6 +168,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void ToAttack()
         {
+            _waitTimer = 0;
             _damageField.IsActive = true;
             _aiComponent.ChangeState("attacking");
             GetAttackDirection();
