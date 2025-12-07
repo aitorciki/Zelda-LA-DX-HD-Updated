@@ -37,6 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _waitTimer;
         private bool _powderWindow;
+        private bool _wasStunned;
 
         public EnemyPincer() : base("pincer") { }
 
@@ -137,8 +138,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void TryReleaseStun()
         {
-            if (!_stunnedState.Active)
+            if (!_stunnedState.Active && _wasStunned)
+            {
                 _damageField.IsActive = true;
+                _wasStunned = false;
+            }
         }
 
         private void ToWaiting()
@@ -176,6 +180,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _aiComponent.ChangeState("attacking");
             GetAttackDirection();
+            TryReleaseStun();
         }
 
         private void UpdateAttack()
@@ -198,6 +203,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("retract");
             _retractStartPosition = EntityPosition.Position - _spawnPosition;
             _attackCounter = 1;
+            TryReleaseStun();
         }
 
         private void UpdateRetract()
@@ -278,6 +284,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (hitType == HitType.MagicPowder)
             {
+                _wasStunned = true;
                 _damageField.IsActive = false;
                 _stunnedState.StartStun();
                 return Values.HitCollision.Enemy;
