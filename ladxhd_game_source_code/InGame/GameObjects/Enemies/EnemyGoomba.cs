@@ -107,8 +107,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
-            _bodyCollision.IsActive = true;
+            _animator.Play("walk");
             _aiComponent.ChangeState("walking");
+
+            if (_bodyCollision != null)
+                _bodyCollision.IsActive = true;
         }
 
         private void OnBurn()
@@ -117,7 +120,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
             _pushComponent.IsActive = false;
-            _bodyCollision.IsActive = false;
+
+            if (_bodyCollision != null)
+                _bodyCollision.IsActive = false;
         }
 
         private void InitWalking()
