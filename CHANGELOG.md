@@ -26,6 +26,7 @@
   * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
 
 ### **User Interface:**
+  * Add a new "Game Type" option to the New Game menu. Otions are: Use Settings, Modern, and Classic which mostly affect camera.
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Block pressing "Start" to open the inventory screen during a number of events and cutscenes.
