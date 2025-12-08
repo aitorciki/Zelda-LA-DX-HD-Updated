@@ -198,11 +198,33 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 // Player status resumed in "UpdateSaddled" method.
                 _disablePlayer = true;
                 MapManager.ObjLink.DisableDirHack2D = true;
+                MapManager.ObjLink.DisableInventory(true);
                 Game1.GameManager.StartDialogPath("grim_creeper_3");
                 _aiComponent.ChangeState("spawnDelay");
             }
             else
             {
+                ToAttack();
+            }
+        }
+
+        private void UpdateSaddled()
+        {
+            if (_body.Velocity.X > -3)
+                _body.Velocity.X -= 0.15f * Game1.TimeMultiplier;
+            if (_body.Velocity.Y > -2)
+                _body.Velocity.Y -= 0.01f * Game1.TimeMultiplier;
+
+            if (EntityPosition.X < _startPosition.X - 23)
+            {
+                _animator.Play("cglide_-1");
+            }
+            if (EntityPosition.X < _startPosition.X - 180)
+            {
+                // start attacking
+                _disablePlayer = false;
+                MapManager.ObjLink.DisableDirHack2D = false;
+                MapManager.ObjLink.DisableInventory(false);
                 ToAttack();
             }
         }
@@ -426,26 +448,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             if (EntityPosition.X < _startPosition.X - 180 || _startPosition.X + 180 < EntityPosition.X)
                 _aiComponent.ChangeState("gone");
-        }
-
-        private void UpdateSaddled()
-        {
-            if (_body.Velocity.X > -3)
-                _body.Velocity.X -= 0.15f * Game1.TimeMultiplier;
-            if (_body.Velocity.Y > -2)
-                _body.Velocity.Y -= 0.01f * Game1.TimeMultiplier;
-
-            if (EntityPosition.X < _startPosition.X - 23)
-            {
-                _animator.Play("cglide_-1");
-            }
-            if (EntityPosition.X < _startPosition.X - 180)
-            {
-                // start attacking
-                _disablePlayer = false;
-                MapManager.ObjLink.DisableDirHack2D = false;
-                ToAttack();
-            }
         }
 
         private void InitGrimSaddle()
