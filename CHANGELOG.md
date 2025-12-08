@@ -19,6 +19,7 @@
   * Fix cracked tiles to always detect when Link is pushing against a stone. Sometimes pushing would prevent them from breaking.
   * Fix several caves with move stones so that their positions reset when crossing over a certain threshold.
   * Fix Marin singing, great fairy, and Dodongo Snakes to always properly reset music when leaving the current field.
+  * Fix number of bushes outside Sales House O'Bananas so that there is two blocking the path instead of three.
   * Fix sequence of trading bananas to monkeys with classic camera enabled by adding monkeys to always animate list.
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
@@ -27,9 +28,10 @@
 ### **User Interface:**
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
-  * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
+  * Block pressing "Start" to open the inventory screen during a number of events and cutscenes.
   * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
-
+  * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
+  
 ### **Items:**
   * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
   * The Boomerang item has been reworked so that it can collect multiple items on a single throw.
@@ -43,7 +45,9 @@
   * Fix powerup status between map transitions. It is kept when current/next map are both either a cave or a dungeon.
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
+  * Fix shield appearing on Link when swallowed by a Like-Like. It will now properly disappear and reappear depending on equipped status.
   * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc). 
+  * Fix Link's facing direction when teleporting with the ocarina on the overworld using Manbo's song then saving/loading the game.
 
 ### **Enemies:**
   * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
@@ -68,7 +72,9 @@
   * Fix enemy Hardhat Beetle to be able to be killed using bombs. This also spawns a bomb after death. Also remove initial idle delay.
   * Fix enemy Keese to not be affected by conveyor belts. Dungeon 3 is about the only place this is relevant.
   * Fix enemy Leevers from spawning on the ledges above the cave in the desert where Link can't reach by adding collision.
-  * Fix enemy Red Zol to spawn Gels in classic camera after burning and respawning with a field change. 
+  * Fix enemy Pincer stun state, when it can deal damage, activation range, and replicate narrow window to kill instantly with powder.
+  * Fix enemy Red Zol to spawn Gels in classic camera after burning and respawning with a field change.
+  * Fix enemy Sea Urchin to deal damage from the side when blocking with the shield. This has been broken since v1.3.3.
   * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
   * Fix enemy Spiny Beetle AI behavior to act much closer to how they do in the original game.
   * Fix enemy Vacuum from causing Link to get stuck in a specific direction if it fell outside the camera viewport.
@@ -76,6 +82,7 @@
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix miniboss Smasher when both Link and him pick up the ball simultaneously. Also the ball spawns a fairy when destroyed.
   * Fix boss Angler Fish arena camera to not fall below the boss field which is just a black screen.
+  * Fix boss Evil Eagle cutscene to play at the same position on the ladder as the original game instead of on top of the tower.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
   * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
 
