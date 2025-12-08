@@ -232,7 +232,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 MapManager.ObjLink.SaveMap = Map.MapName;
                 MapManager.ObjLink.SavePosition = transitionEnd;
-                MapManager.ObjLink.SaveDirection = _direction;
+
+                // HACK: The map transition code is dog shit. When Link plays Manbo's song and teleports to the pond, the direction is never
+                // set and ends up as "-1". I have no idea how to fix this properly. How do we even end up here? Why is ocarina teleport even 
+                // using "ObjDoor" in the first place? This is beyond fucking stupid so just hack in a fix.
+                if (MapManager.ObjLink.CurrentState == ObjLink.State.OcarinaTeleport && MapManager.ObjLink.Map.MapName == "overworld.map")
+                    MapManager.ObjLink.SaveDirection = 3;
+                else
+                    MapManager.ObjLink.SaveDirection = _direction;
 
                 // If autosave is enabled, then save the game now.
                 if (GameSettings.Autosave)
