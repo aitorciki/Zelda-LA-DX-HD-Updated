@@ -12,6 +12,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _audioSettingsLayout;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+        private readonly InterfaceListLayout _toggleAudioClassic;
         private bool _showTooltip;
 
         public AudioSettingsPage(int width, int height)
@@ -30,36 +31,38 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Music Volume
             _contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_music_volume",
-                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.MusicVolume, number => { GameSettings.MusicVolume = number; })
-            { SetString = number => " " + number + "%" });
+                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.MusicVolume, 
+                number => { GameSettings.MusicVolume = number; })
+                { SetString = number => " " + number + "%" });
 
             // Slider: Sound Effects Volume
             _contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_effect_volume",
-                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, number => 
-                { 
-                    Game1.GameManager.UpdateSoundEffects();
-                    GameSettings.EffectVolume = number; 
-                })
-            { SetString = number => " " + number + "%" });
+                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, 
+                number => { Game1.GameManager.UpdateSoundEffects(); GameSettings.EffectVolume = number; })
+                { SetString = number => " " + number + "%" });
 
             // Button: Classic Music Tile Cues
-            var toggleAudioClassic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_audio_classic_music", GameSettings.ClassicMusic, newState => { GameSettings.ClassicMusic = newState; });
-            _contentLayout.AddElement(toggleAudioClassic);
+            _toggleAudioClassic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
+                "settings_audio_classic_music", GameSettings.ClassicMusic, 
+                newState => { GameSettings.ClassicMusic = newState; });
+            _contentLayout.AddElement(_toggleAudioClassic);
 
             // Button: Mute Inactive Window
             var toggleAudioMute = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_audio_mute_inactive", GameSettings.MuteInactive, newState => { GameSettings.MuteInactive = newState; });
+                "settings_audio_mute_inactive", GameSettings.MuteInactive, 
+                newState => { GameSettings.MuteInactive = newState; });
             _contentLayout.AddElement(toggleAudioMute);
 
             // Button: Low Hearts Alarm
             var toggleHeartBeep = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_audio_heartbeep", GameSettings.HeartBeep, newState => { GameSettings.HeartBeep = newState; });
+                "settings_audio_heartbeep", GameSettings.HeartBeep, 
+                newState => { GameSettings.HeartBeep = newState; });
             _contentLayout.AddElement(toggleHeartBeep);
 
             // Button: Mute Powerup Music
             var toggleNoPowerupMusic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_audio_mute_powerups", GameSettings.MutePowerups, newState => { GameSettings.MutePowerups = newState; });
+                "settings_audio_mute_powerups", GameSettings.MutePowerups, 
+                newState => { GameSettings.MutePowerups = newState; });
             _contentLayout.AddElement(toggleNoPowerupMusic);
 
             // Bottom Bar / Back Button:
@@ -136,6 +139,12 @@ namespace ProjectZ.InGame.Pages
             }
             // Display the tooltip in the tooltip window.
             return tooltip;
+        }
+
+        public void SetClassicAudio(bool state)
+        {
+            var toggle = (InterfaceToggle)_toggleAudioClassic.Elements[1];
+            toggle.ToggleState = state;
         }
     }
 }

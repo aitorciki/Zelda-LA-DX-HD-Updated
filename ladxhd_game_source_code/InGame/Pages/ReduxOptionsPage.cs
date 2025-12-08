@@ -32,46 +32,50 @@ namespace ProjectZ.InGame.Pages
             // Menu Border Slider:
             var menuBricksSlider = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
                 buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
-                number =>
-                {
-                    GameSettings.MenuBorder = number;
-                })
-            { SetString = number => MenuBorderScaleSliderAdjustment(number) };
+                number => { GameSettings.MenuBorder = number; })
+                { SetString = number => MenuBorderScaleSliderAdjustment(number) };
             _contentLayout.AddElement(menuBricksSlider);
 
             // Variable Width Font Toggle:
             var toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_vwfont", GameSettings.VarWidthFont, newState => { PressButtonDialogFontChange(newState); });
+                "settings_redux_vwfont", GameSettings.VarWidthFont, 
+                newState => { PressButtonDialogFontChange(newState); });
             _contentLayout.AddElement(toggleVariableFont);
 
             // Disable Helper Interactions:
             var toggleHelperText = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_nohelptext", GameSettings.NoHelperText, newState => { PressButtonToggleHelpers(newState); });
+                "settings_redux_nohelptext", GameSettings.NoHelperText, 
+                newState => { PressButtonToggleHelpers(newState); });
             _contentLayout.AddElement(toggleHelperText);
 
             // Enable Dialog Skip:
             var toggleDialogSkip = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_dialogskip", GameSettings.DialogSkip, newState => { PressButtonToggleDialogSkip(newState); });
+                "settings_redux_dialogskip", GameSettings.DialogSkip, 
+                newState => { PressButtonToggleDialogSkip(newState); });
             _contentLayout.AddElement(toggleDialogSkip);
 
             // Disable Censorship:
             var toggleUncensored = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_uncensor", GameSettings.Uncensored, newState => { PressButtonToggleUncensored(newState); });
+                "settings_redux_uncensor", GameSettings.Uncensored, 
+                newState => { PressButtonToggleUncensored(newState); });
             _contentLayout.AddElement(toggleUncensored);
 
             // Enable No Missables:
             var toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_unmissables", GameSettings.Unmissables, newState => { PressButtonToggleUnmissables(newState); });
+                "settings_redux_unmissables", GameSettings.Unmissables, 
+                newState => { PressButtonToggleUnmissables(newState); });
             _contentLayout.AddElement(toggleUnmissables);
 
             // Colored Photos:
             var togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_photoscolor", GameSettings.PhotosColor, newState => { PressButtonTogglePhotosColor(newState); });
+                "settings_redux_photoscolor", GameSettings.PhotosColor, 
+                newState => { PressButtonTogglePhotosColor(newState); });
             _contentLayout.AddElement(togglePhotosColor);
 
             // No Animal Damage:
             var toggleAnimalDamage = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_redux_noanimaldmg", GameSettings.NoAnimalDamage, newState => { PressButtonNoAnimalDamage(newState); });
+                "settings_redux_noanimaldmg", GameSettings.NoAnimalDamage, 
+                newState => { PressButtonNoAnimalDamage(newState); });
             _contentLayout.AddElement(toggleAnimalDamage);
 
             // Bottom Bar / Back Button:

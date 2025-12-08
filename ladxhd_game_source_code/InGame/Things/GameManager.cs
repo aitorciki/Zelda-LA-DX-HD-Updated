@@ -1,6 +1,6 @@
 ﻿﻿using System;
-﻿using System.IO;
 using System.Collections.Generic;
+﻿using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameSystems;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Overlay;
+using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 
 namespace ProjectZ.InGame.Things
@@ -119,6 +120,7 @@ namespace ProjectZ.InGame.Things
             get { return ThiefState ? Game1.LanguageManager.GetString("savename_thief", "error") : RealSaveName; }
             set { RealSaveName = value; } 
         } 
+        public int GameType = 0;
 
         // playtime tracking
         public float TotalPlaytime = 0.0f; // total playtime across all sessions in minutes
@@ -1577,6 +1579,36 @@ namespace ProjectZ.InGame.Things
                     MapManager.ObjLink.CarrySword = true;
                 else if (Equipment[i]?.Name == "shield" || Equipment[i]?.Name == "mirrorShield")
                     MapManager.ObjLink.CarryShield = true;
+            }
+        }
+
+        public void SetGameTypeSettings()
+        {
+            if (GameType == 1)
+            {
+                GameSettings.ClassicMusic = false;
+                GameSettings.ClassicCamera = false;
+                GameSettings.ClassicDungeon = false;
+                GameSettings.ClassicBorders = 0;
+            }
+            else if (GameType == 2)
+            {
+                GameSettings.ClassicMusic = true;
+                GameSettings.ClassicCamera = true;
+                GameSettings.ClassicDungeon = false;
+                GameSettings.ClassicBorders = 1;
+            }
+            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audPage))
+            {
+                var audioPage = (AudioSettingsPage)audPage;
+                audioPage.SetClassicAudio(GameSettings.ClassicMusic);
+            }
+            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
+            {
+                var cameraPage = (CameraSettingsPage)camPage;
+                cameraPage.SetClassicCamera(GameSettings.ClassicCamera);
+                cameraPage.SetClassicDungeon(GameSettings.ClassicDungeon);
+                cameraPage.SetClassicBorder(GameSettings.ClassicBorders);
             }
         }
 

@@ -37,11 +37,8 @@ namespace ProjectZ.InGame.Pages
             // Slider: Sub-Language
             _subLangSlider = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
                 buttonWidth, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
-                number =>
-                {
-                    Game1.LanguageManager.CurrentSubLanguageIndex = number;
-                })
-            { SetString = number => LangSliderAdjustment(number) };
+                number => { Game1.LanguageManager.CurrentSubLanguageIndex = number; })
+                { SetString = number => LangSliderAdjustment(number) };
             _contentLayout.AddElement(_subLangSlider);
 
             // Button: Controller Type
@@ -51,32 +48,32 @@ namespace ProjectZ.InGame.Pages
 
             // Button: Swap Confirm & Cancel
             var toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_swapbuttons", GameSettings.SwapButtons, newState => 
-                { 
-                    _controlCooldown = 500f;
-                    GameSettings.SwapButtons = newState;
-                    ControlHandler.SetConfirmCancelButtons();
-                });
+                "settings_game_swapbuttons", GameSettings.SwapButtons, 
+                newState => { _controlCooldown = 500f; GameSettings.SwapButtons = newState; ControlHandler.SetConfirmCancelButtons(); });
             _contentLayout.AddElement(toggleSwapButtons);
 
             // Button: Save Position
             var toggleSavePosition = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_saveposition", GameSettings.StoreSavePos, newState => { GameSettings.StoreSavePos = newState; });
+                "settings_game_saveposition", GameSettings.StoreSavePos, 
+                newState => { GameSettings.StoreSavePos = newState; });
             _contentLayout.AddElement(toggleSavePosition);
 
             // Button: AutoSave
             var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
+                "settings_game_autosave", GameSettings.Autosave, 
+                newState => { GameSettings.Autosave = newState; });
             _contentLayout.AddElement(toggleAutosave);
 
             // Button: Items on Right
             var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_items_on_right", GameSettings.ItemsOnRight, newState => { GameSettings.ItemsOnRight = newState; });
+                "settings_game_items_on_right", GameSettings.ItemsOnRight, 
+                newState => { GameSettings.ItemsOnRight = newState; });
             _contentLayout.AddElement(toggleItemSlotSide);
 
             // Button: Classic Movement
             var toggleOldMovement = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
-                "settings_game_classic_movement", GameSettings.OldMovement, newState => { GameSettings.OldMovement = newState; });
+                "settings_game_classic_movement", GameSettings.OldMovement, 
+                newState => { GameSettings.OldMovement = newState; });
             _contentLayout.AddElement(toggleOldMovement);
 
             // Bottom Bar / Back Button:

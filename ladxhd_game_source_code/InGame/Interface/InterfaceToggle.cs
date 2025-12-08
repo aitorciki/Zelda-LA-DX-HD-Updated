@@ -26,7 +26,11 @@ namespace ProjectZ.InGame.Interface
 
         private bool _toggleState;
 
-        public bool ToggleState => _toggleState;
+        public bool ToggleState
+        {
+            get => _toggleState;
+            set => _toggleState = value;
+        }
 
         public InterfaceToggle()
         {

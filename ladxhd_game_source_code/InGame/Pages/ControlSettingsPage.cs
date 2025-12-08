@@ -66,12 +66,8 @@ namespace ProjectZ.InGame.Pages
                 _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
 
                 var remapButton = new InterfaceButton(new Point(buttonWidth + lableWidth * 2, lableHeight), new Point(0, 0), _remapButtons[index],
-                    element =>
-                    {
-                        _updateButton = true;
-                        _selectedButton = eButton;
-                    })
-                { CornerRadius = 0, Color = Color.Transparent };
+                    element => { _updateButton = true; _selectedButton = eButton; })
+                    { CornerRadius = 0, Color = Color.Transparent };
 
                 remapButtons.AddElement(remapButton);
                 remapButtons.AddElement(new InterfaceListLayout() { Size = new Point(1, 1) });

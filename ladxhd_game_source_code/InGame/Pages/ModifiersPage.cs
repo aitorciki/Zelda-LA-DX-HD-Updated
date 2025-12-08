@@ -32,46 +32,40 @@ namespace ProjectZ.InGame.Pages
             // Slider: Extra Enemy HP
             var enemyHPSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_enemy_hp",
                 buttonWidth, new Point(1, 2), 0, 30, 1, GameSettings.EnemyBonusHP,
-                number =>
-                {
-                    GameSettings.EnemyBonusHP = number;
-                })
-            { SetString = number => EnemyHPSliderAdjustment(number) };
+                number => { GameSettings.EnemyBonusHP = number; })
+                { SetString = number => EnemyHPSliderAdjustment(number) };
             _contentLayout.AddElement(enemyHPSlider);
 
             // Slider: Damage Taken Multiplier
             var damageTakenSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damage",
                 buttonWidth, new Point(1, 2), 0, 10, 1, GameSettings.DmgMultiplier,
-                number =>
-                {
-                    GameSettings.DmgMultiplier = number;
-                })
-            { SetString = number => DamageTakenSliderAdjustment(number) };
+                number => { GameSettings.DmgMultiplier = number; })
+                { SetString = number => DamageTakenSliderAdjustment(number) };
             _contentLayout.AddElement(damageTakenSlider);
 
             // Slider: Movement Speed
             var movementSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_movespeed",
                 buttonWidth, new Point(1, 2), 0, 10, 1, (int)(GameSettings.MoveSpeedAdded * 10),
-                number =>
-                {
-                    GameSettings.MoveSpeedAdded = number / 10f;
-                })
-            { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
+                number => { GameSettings.MoveSpeedAdded = number / 10f; })
+                { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
             _contentLayout.AddElement(movementSlider);
 
             // Button: No Damage Launch
             var toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, newState => { GameSettings.NoDamageLaunch = newState; });
+                "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, 
+                newState => { GameSettings.NoDamageLaunch = newState; });
             _contentLayout.AddElement(toggleNoDmgLaunch);
 
             // Button: No Heart Drops
             var toggleNoHearts = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_mods_nohearts", GameSettings.NoHeartDrops, newState => { GameSettings.NoHeartDrops = newState; });
+                "settings_mods_nohearts", GameSettings.NoHeartDrops, 
+                newState => { GameSettings.NoHeartDrops = newState; });
             _contentLayout.AddElement(toggleNoHearts);
 
             // Button: Sword Block Projectiles
             var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 16), new Point(5, 2),
-                "settings_mods_swordblock", GameSettings.SwordBlock, newState => { GameSettings.SwordBlock = newState; });
+                "settings_mods_swordblock", GameSettings.SwordBlock, 
+                newState => { GameSettings.SwordBlock = newState; });
             _contentLayout.AddElement(toggleSwordBlock);
 
             // Bottom Bar / Back Button:
