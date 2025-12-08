@@ -143,8 +143,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     else if (_direction == 2)
                         transitionEnd = MapManager.ObjLink.EntityPosition.Position + new Vector2(-8, 0);
                     else if (_direction == 3)
-                        transitionEnd = MapManager.ObjLink.EntityPosition.Position +
-                                        new Vector2(MapManager.ObjLink.GetSwimVelocity().X * 8, -8);
+                        transitionEnd = MapManager.ObjLink.EntityPosition.Position + new Vector2(MapManager.ObjLink.GetSwimVelocity().X * 8, -8);
 
                     // look at the camera
                     MapManager.ObjLink.Direction = 3;
@@ -159,14 +158,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 color = Color.White;
                 colorMode = true;
             }
-
+            // Play the stairs sound effect.
             Game1.GameManager.PlaySoundEffect("D378-06-06");
 
             MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
             MapManager.ObjLink.MapTransitionEnd = transitionEnd;
             MapManager.ObjLink.TransitionOutWalking = MapManager.ObjLink.EntityPosition.Position != transitionEnd;
 
-            // append a map change
+            // Append a map change.
             var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
             transitionSystem.AppendMapChange(_nextMap, _exitId, false, false, color, colorMode);
         }
@@ -183,15 +182,17 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (_mode == 0 || _mode == 1)
             {
-                if (_direction == 0)
-                    transitionEnd.X = _collisionRectangle.X - MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) - _positionOffset;
-                else if (_direction == 1)
-                    transitionEnd.Y = _collisionRectangle.Y - _positionOffset;
-                else if (_direction == 2)
-                    transitionEnd.X = _collisionRectangle.X + _collisionRectangle.Width + MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) + _positionOffset;
-                else if (_direction == 3)
-                    transitionEnd.Y = _collisionRectangle.Y + _collisionRectangle.Height + MapManager.ObjLink._body.Height + _positionOffset;
-
+                if (MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport)
+                {
+                    if (_direction == 0)
+                        transitionEnd.X = _collisionRectangle.X - MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) - _positionOffset;
+                    else if (_direction == 1)
+                        transitionEnd.Y = _collisionRectangle.Y - _positionOffset;
+                    else if (_direction == 2)
+                        transitionEnd.X = _collisionRectangle.X + _collisionRectangle.Width + MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) + _positionOffset;
+                    else if (_direction == 3)
+                        transitionEnd.Y = _collisionRectangle.Y + _collisionRectangle.Height + MapManager.ObjLink._body.Height + _positionOffset;
+                }
                 // walk on the ground
                 if (Map.Is2dMap && (_direction % 2) == 0)
                 {
@@ -200,9 +201,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 }
             }
             else if (_mode == 2)
-            {
                 MapManager.ObjLink.NextMapFallStart = true;
-            }
+
             else if (_mode == 3)
             {
                 if (_direction == 0)
@@ -220,32 +220,21 @@ namespace ProjectZ.InGame.GameObjects.Things
                 //transitionEnd.Y = _collisionRectangle.Y + _collisionRectangle.Height + MapManager.ObjLink._body.Height - _positionOffset;
             }
             else if (_mode == 5)
-            {
                 transitionEnd = transitionStart + new Vector2(0, -0.5f) * 60 * (MapTransitionSystem.ChangeMapTime / 1000f);
-            }
+
             else if (_mode == 6)
-            {
                 MapManager.ObjLink.NextMapFallRotateStart = true;
-            }
+
             // If it's an autosave door then store current map stuff.
             if (_savePosition)
             {
                 MapManager.ObjLink.SaveMap = Map.MapName;
                 MapManager.ObjLink.SavePosition = transitionEnd;
-
-                // HACK: The map transition code is dog shit. When Link plays Manbo's song and teleports to the pond, the direction is never
-                // set and ends up as "-1". I have no idea how to fix this properly. How do we even end up here? Why is ocarina teleport even 
-                // using "ObjDoor" in the first place? This is beyond fucking stupid so just hack in a fix.
-                if (MapManager.ObjLink.CurrentState == ObjLink.State.OcarinaTeleport && MapManager.ObjLink.Map.MapName == "overworld.map")
-                    MapManager.ObjLink.SaveDirection = 3;
-                else
-                    MapManager.ObjLink.SaveDirection = _direction;
+                MapManager.ObjLink.SaveDirection = _direction;
 
                 // If autosave is enabled, then save the game now.
                 if (GameSettings.Autosave)
-                {
                     SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
-                }
             }
             // If it's a Level 8 backdoor then force front entrance info.
             if (_backdoorLevel8)

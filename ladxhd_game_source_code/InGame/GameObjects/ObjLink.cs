@@ -154,6 +154,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool TransitionOutWalking;
         public bool TransitionInWalking;
         public bool BlackScreenOverride;
+        public bool OcarinaDungeonTeleport;
         private double _fallEntryCounter;
         private bool _wasTransitioning;
         private bool _startBedTransition;
@@ -3599,6 +3600,7 @@ namespace ProjectZ.InGame.GameObjects
                     // Respawn at the dungeon entrance.
                     SetNextMapPosition(SavePosition);
                     transitionSystem.AppendMapChange(SaveMap, null, false, false, Color.White, true);
+                    OcarinaDungeonTeleport = true;
                 }
                 else
                 {
@@ -5994,6 +5996,13 @@ namespace ProjectZ.InGame.GameObjects
 
             IsTransitioning = false;
 
+            // If using Manbo's song in a dungeon, force the player to face north.
+            if (OcarinaDungeonTeleport)
+            {
+                Direction = 1;
+                Animation.Play("stand_" + Direction);
+                OcarinaDungeonTeleport = false;
+            }
             if (!Map.Is2dMap)
             {
                 _body.Velocity.X = 0;
@@ -6003,16 +6012,18 @@ namespace ProjectZ.InGame.GameObjects
             if ((SystemBody.GetFieldState(_body) & MapStates.FieldStates.DeepWater) == 0 && CurrentState != State.Swimming && !_isClimbing)
                 _body.IgnoresZ = false;
 
+            // Restore the player's draw layer.
             _drawBody.Layer = Values.LayerPlayer;
 
+            // Restore the camera following the player.
             MapManager.Camera.CameraFollowMultiplier = 1.0f;
 
+            // Used solely to show the message after the player steals from the shop.
             if (_showStealMessage)
             {
                 _showStealMessage = false;
                 Game1.GameManager.StartDialogPath("shopkeeper_steal");
             }
-
             // Restart the music.
             if (!GameSettings.MutePowerups && (Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive))
                 Game1.GameManager.StartPieceOfPowerMusic(1);
