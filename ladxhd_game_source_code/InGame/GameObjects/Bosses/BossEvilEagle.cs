@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateIdle()
         {
-            if (MapManager.ObjLink.EntityPosition.Y > 80f || MapManager.ObjLink.IsClimbing() || MapManager.ObjLink.IsJumping())
+            if (MapManager.ObjLink.EntityPosition.Y > 126f || MapManager.ObjLink.IsJumping())
                 return;
 
             if (!_playedIntro)
@@ -198,7 +198,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 // Player status resumed in "UpdateSaddled" method.
                 _disablePlayer = true;
                 MapManager.ObjLink.DisableDirHack2D = true;
-                MapManager.ObjLink.Animation.Play("stand_0");
                 Game1.GameManager.StartDialogPath("grim_creeper_3");
                 _aiComponent.ChangeState("spawnDelay");
             }
