@@ -30,7 +30,7 @@ namespace ProjectZ.InGame.GameObjects
         public enum State
         {
             Idle, Pushing, Grabbing, Pulling, PreCarrying, Carrying, Throwing, CarryingItem, PickingUp, Falling,
-            Attacking, Blocking, AttackBlocking, Charging, ChargeBlocking, Jumping, AttackJumping, ChargeJumping, 
+            Attacking, Blocking, AttackBlocking, Charging, ChargeBlocking, Jumping, AttackJumping, ChargeJumping,
             Ocarina, OcarinaTeleport, Rafting, Pushed,
             FallRotateEntry,
             Drowning, Drowned, Swimming, AttackSwimming, ChargeSwimming,
@@ -328,7 +328,7 @@ namespace ProjectZ.InGame.GameObjects
         private float _ocarinaCounter;
         private int _ocarinaNoteIndex;
         private int _ocarinaSong;
-        
+
         // Power Bracelet
         private const float PullTime = 100;
         private const float PullMaxTime = 400;
@@ -426,7 +426,7 @@ namespace ProjectZ.InGame.GameObjects
         private ObjSpriteShadow _spriteShadow;
 
         // Field Properties
-        public Rectangle CurrentField  = Rectangle.Empty;
+        public Rectangle CurrentField = Rectangle.Empty;
         public Rectangle PreviousField = Rectangle.Empty;
         public Rectangle ContrastField = Rectangle.Empty;
         public ObjFieldBarrier[] FieldBarrier;
@@ -454,18 +454,18 @@ namespace ProjectZ.InGame.GameObjects
         public bool FreezeWorldForEvents;
 
         // Mod File Values (ObjLink.lahdmod)
-        bool  sword1_beam = false;
-        bool  always_beam = false;
-        bool  cast2d_beam = false;
-        int   length_beam = 600;
+        bool sword1_beam = false;
+        bool always_beam = false;
+        bool cast2d_beam = false;
+        int length_beam = 600;
         float sword_charge_time = 500;
         float boots_charge_time = 500;
-        bool  light_source = false;
-        int   light_red = 255;
-        int   light_grn = 255;
-        int   light_blu = 255;
+        bool light_source = false;
+        int light_red = 255;
+        int light_grn = 255;
+        int light_blu = 255;
         float light_bright = 1.0f;
-        int   light_size = 120;
+        int light_size = 120;
 
         public ObjLink() : base((Map.Map)null)
         {
@@ -610,8 +610,8 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     if (_isHoldingSword)
                     {
-                        string shieldString = CarryShield 
-                            ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_" 
+                        string shieldString = CarryShield
+                            ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_"
                             : "_";
 
                         CurrentState = State.ChargeJumping;
@@ -650,8 +650,8 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentField == ContrastField) return;
 
             // Spawn in the field barrier rectangles.
-            FieldBarrier[0].SetPosition(CurrentField.X - 16, CurrentField.Y - 16); 
-            FieldBarrier[1].SetPosition(CurrentField.X - 16, CurrentField.Y + 128); 
+            FieldBarrier[0].SetPosition(CurrentField.X - 16, CurrentField.Y - 16);
+            FieldBarrier[1].SetPosition(CurrentField.X - 16, CurrentField.Y + 128);
             FieldBarrier[2].SetPosition(CurrentField.X - 16, CurrentField.Y);
             FieldBarrier[3].SetPosition(CurrentField.X + 160, CurrentField.Y);
         }
@@ -698,7 +698,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (PreventResetTimer > 0)
                 {
                     PreventResetTimer -= Game1.DeltaTime;
-                    if (PreventResetTimer < 0) 
+                    if (PreventResetTimer < 0)
                         PreventReset = false;
                 }
             }
@@ -720,7 +720,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 // Timer must be active for it to remain true.
                 PreventDamageTimer -= Game1.DeltaTime;
-                if (PreventDamageTimer <= 0) 
+                if (PreventDamageTimer <= 0)
                     PreventDamage = false;
             }
             // Update falling into a map transition (I think).
@@ -860,6 +860,7 @@ namespace ProjectZ.InGame.GameObjects
             else if (CurrentState == State.ShowToadstool)
             {
                 CurrentState = State.Idle;
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
             }
             else if (CurrentState == State.SwordShowLv2)
             {
@@ -880,6 +881,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             else if (CurrentState == State.PickingUp && !_pickingUpInstrument && !_pickingUpSword)
             {
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
                 Game1.GameManager.FreezeWorldAroundPlayer = true;
             }
             else if (CurrentState == State.TeleporterUpWait)
@@ -1036,7 +1038,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // draw the player sprite behind the sword
-            if (Direction != 1 && !_isTrapped  && CurrentState != State.ChargeSwimming)
+            if (Direction != 1 && !_isTrapped && CurrentState != State.ChargeSwimming)
                 _bodyDrawFunction(spriteBatch);
 
             // draw the sword/magic rod
@@ -1194,7 +1196,7 @@ namespace ProjectZ.InGame.GameObjects
                     foreach (var barrier in FieldBarrier)
                     {
                         spriteBatch.Draw(Resources.SprWhite,
-                            new Vector2(barrier.CollisionBox.X, barrier.CollisionBox.Y), new Rectangle(0, 0, 
+                            new Vector2(barrier.CollisionBox.X, barrier.CollisionBox.Y), new Rectangle(0, 0,
                             (int)barrier.CollisionBox.Width, (int)barrier.CollisionBox.Height), Color.Blue * 0.75f);
                     }
                 }
@@ -1601,9 +1603,9 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
                 var itemRooster = new GameItemCollected("rooster") { Count = 1 };
                 PickUpItem(itemRooster, false, false, true);
-                _objFollower = _objRooster = new ObjCock(Map, 
-                    (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X), 
-                    (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X), 
+                _objFollower = _objRooster = new ObjCock(Map,
+                    (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X),
+                    (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X),
                     "borrow_rooster");
                 Map.Objects.SpawnObject(_objRooster);
                 _objRooster.BorrowRooster();
@@ -1716,12 +1718,12 @@ namespace ProjectZ.InGame.GameObjects
                 OnMoveCollision2D(collision);
             else
             {
-                if (_isRotating) 
+                if (_isRotating)
                     return;
 
                 // colliding horizontally or vertically? -> start pushing
-                if (CurrentState == State.Idle && 
-                        _body.IsGrounded && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero) && 
+                if (CurrentState == State.Idle &&
+                        _body.IsGrounded && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero) &&
                         ((collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
                         (collision & Values.BodyCollision.Vertical) != 0 && (Direction == 1 || Direction == 3)))
                 {
@@ -1802,9 +1804,9 @@ namespace ProjectZ.InGame.GameObjects
             // Get a list of NPCs to check if sword crosses their hitbox.
             List<GameObject> npcList = new List<GameObject>();
 
-            Map.Objects.GetComponentList(npcList, 
-                (int)SwordBox.X, (int)SwordBox.Y, 
-                (int)SwordBox.Width, (int)SwordBox.Height, 
+            Map.Objects.GetComponentList(npcList,
+                (int)SwordBox.X, (int)SwordBox.Y,
+                (int)SwordBox.Width, (int)SwordBox.Height,
                 CollisionComponent.Mask);
 
             // Loop through the NPCs checking for collision.
@@ -1814,7 +1816,7 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     var collisionObject = npc.Components[CollisionComponent.Index] as CollisionComponent;
                     var collisionBody = npc.Components[CollisionComponent.Index] as BodyCollisionComponent;
-                    if (collisionObject != null && collisionBody != null && collisionBody.IsActive && 
+                    if (collisionObject != null && collisionBody != null && collisionBody.IsActive &&
                         (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
                     {
                         // If the sword box and body box intersect return true.
@@ -1948,7 +1950,7 @@ namespace ProjectZ.InGame.GameObjects
             // If shadows is disabled then draw a sprite shadow.
             if (!GameSettings.EnableShadows)
             {
-                if(_spriteShadow == null)
+                if (_spriteShadow == null)
                 {
                     _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
                 }
@@ -2074,7 +2076,7 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateSpriteShadow()
         {
             // If the shadow is spawned.
-            if (_spriteShadow != null) 
+            if (_spriteShadow != null)
             {
                 // But currently spawned on this map.
                 if (_spriteShadow.Map != Map)
@@ -2101,7 +2103,7 @@ namespace ProjectZ.InGame.GameObjects
             // start/stop swimming or drowning
             if (!_isRafting && !_isFlying && fieldState.HasFlag(MapStates.FieldStates.DeepWater) && CurrentState != State.Dying)
             {
-                if (!IsJumpingState(CurrentState) && CurrentState != State.PickingUp && _body.IsGrounded )
+                if (!IsJumpingState(CurrentState) && CurrentState != State.PickingUp && _body.IsGrounded)
                 {
                     ReleaseCarriedObject();
                     var inLava = fieldState.HasFlag(MapStates.FieldStates.Lava);
@@ -2150,8 +2152,10 @@ namespace ProjectZ.InGame.GameObjects
                                     Vector2 offset = move * 5.5f;
 
                                     // The Y axis needs a lesser nudge when going down and a huge nudge going up.
-                                    if (offset.Y < -5f) { offset = new Vector2(offset.X, -2f); };
-                                    if (offset.Y > 5f)  { offset = new Vector2(offset.X, 9f); };
+                                    if (offset.Y < -5f) { offset = new Vector2(offset.X, -2f); }
+                                    ;
+                                    if (offset.Y > 5f) { offset = new Vector2(offset.X, 9f); }
+                                    ;
 
                                     // Move Link to the offset position.
                                     EntityPosition.Set(EntityPosition.Position + offset);
@@ -2285,19 +2289,19 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateWalking()
         {
-            if (CurrentState != State.Idle && 
-                !IsAttackingState(CurrentState) && 
-                !IsChargingState(CurrentState) && 
-                !IsBlockingState(CurrentState) && 
-                !IsSwimmingState(CurrentState) && 
-                CurrentState != State.CarryingItem && 
-                CurrentState != State.Pushing && 
-                CurrentState != State.Powdering && 
-                CurrentState != State.Bombing && 
-                CurrentState != State.MagicRod && 
-                CurrentState != State.Throwing && 
-                (CurrentState != State.Carrying || _isFlying) && 
-                (!IsJumpingState(CurrentState) || _railJump) || !CanWalk || _isRafting) 
+            if (CurrentState != State.Idle &&
+                !IsAttackingState(CurrentState) &&
+                !IsChargingState(CurrentState) &&
+                !IsBlockingState(CurrentState) &&
+                !IsSwimmingState(CurrentState) &&
+                CurrentState != State.CarryingItem &&
+                CurrentState != State.Pushing &&
+                CurrentState != State.Powdering &&
+                CurrentState != State.Bombing &&
+                CurrentState != State.MagicRod &&
+                CurrentState != State.Throwing &&
+                (CurrentState != State.Carrying || _isFlying) &&
+                (!IsJumpingState(CurrentState) || _railJump) || !CanWalk || _isRafting)
                 return;
 
             var walkVelocity = Vector2.Zero;
@@ -2366,7 +2370,7 @@ namespace ProjectZ.InGame.GameObjects
                     }
                 }
                 // Update the direction the player is walking towards.
-                if (!IsAttackingState(CurrentState) && 
+                if (!IsAttackingState(CurrentState) &&
                     !IsChargingState(CurrentState))
                 {
                     Direction = ToDirection(walkVelocity);
@@ -2416,7 +2420,7 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         // Running jump: determine locked axis and apply smooth slowdown if opposite input.
                         float lockedAxis = lockX ? _lastMoveVelocity.X : _lastMoveVelocity.Y;
-                        float inputAxis  = lockX ? walkVelocity.X : walkVelocity.Y;
+                        float inputAxis = lockX ? walkVelocity.X : walkVelocity.Y;
 
                         lockedAxis = (Math.Sign(inputAxis) != Math.Sign(lockedAxis) && inputAxis != 0)
                             ? MathHelper.Lerp(lockedAxis, inputAxis * _currentWalkSpeed, lerpAmount)
@@ -2448,8 +2452,8 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // Include the shield in the animation string if available ("s_" for shield, "ms_" for mirror shield).
-            string shieldString = CarryShield 
-                ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_" 
+            string shieldString = CarryShield
+                ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_"
                 : "_";
 
             // Pegasus boots running animation.
@@ -2490,7 +2494,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState == State.FallRotateEntry)
                 Animation.Play("stand" + shieldString + animDirection);
             // The "jump-land" hack plays the "stand" animation briefly.
-            else if (_jumpEndTimer > 0 && 
+            else if (_jumpEndTimer > 0 &&
                 !IsAttackingState(CurrentState) &&
                 CurrentState != State.Dying &&
                 CurrentState != State.ShowToadstool &&
@@ -2660,8 +2664,8 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateDrownResetPosition()
         {
             // save the last position the player is grounded to use for the reset position if the player drowns
-            if (!IsJumpingState(CurrentState) && 
-                CurrentState != State.Drowning && 
+            if (!IsJumpingState(CurrentState) &&
+                CurrentState != State.Drowning &&
                 CurrentState != State.Drowned && _body.IsGrounded)
             {
                 var bodyCenter = new Vector2(EntityPosition.X, EntityPosition.Y - _body.Height / 2f);
@@ -2884,10 +2888,10 @@ namespace ProjectZ.InGame.GameObjects
                     // If in another state when charge begins set a dual charging state.
                     CurrentState = CurrentState switch
                     {
-                        State.Blocking       => State.ChargeBlocking,
+                        State.Blocking => State.ChargeBlocking,
                         State.AttackBlocking => State.ChargeBlocking,
-                        State.Jumping        => State.ChargeJumping,
-                        State.AttackJumping  => State.ChargeJumping,
+                        State.Jumping => State.ChargeJumping,
+                        State.AttackJumping => State.ChargeJumping,
                         State.AttackSwimming => State.ChargeSwimming,
                         _ => State.Charging
                     };
@@ -2921,22 +2925,22 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? useItem = item.Name switch
             {
-                "sword1"        => UseSword,
-                "sword2"        => UseSword,
-                "feather"       => UseFeather,
-                "toadstool"     => UseToadstool,
-                "powder"        => UsePowder,
-                "bomb"          => UseBomb,
-                "bow"           => UseArrow,
-                "shovel"        => UseShovel,
-                "stonelifter"   => UseStoneLifter,
-                "stonelifter2"  => UseStoneLifter,
-                "hookshot"      => UseHookshot,
-                "boomerang"     => UseBoomerang,
-                "magicRod"      => UseMagicRod,
-                "ocarina"       => UseOcarina,
-                "pegasusBoots"  => UsePegasusBoots,
-                _               => null
+                "sword1" => UseSword,
+                "sword2" => UseSword,
+                "feather" => UseFeather,
+                "toadstool" => UseToadstool,
+                "powder" => UsePowder,
+                "bomb" => UseBomb,
+                "bow" => UseArrow,
+                "shovel" => UseShovel,
+                "stonelifter" => UseStoneLifter,
+                "stonelifter2" => UseStoneLifter,
+                "hookshot" => UseHookshot,
+                "boomerang" => UseBoomerang,
+                "magicRod" => UseMagicRod,
+                "ocarina" => UseOcarina,
+                "pegasusBoots" => UsePegasusBoots,
+                _ => null
             };
             useItem?.Invoke();
         }
@@ -2945,15 +2949,15 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? holdItem = item.Name switch
             {
-                "sword1"        => HoldSword,
-                "sword2"        => HoldSword,
-                "feather"       => HoldFeather,
-                "shield"        => HoldShield,
-                "mirrorShield"  => HoldShield,
-                "stonelifter"   => HoldStoneLifter,
-                "stonelifter2"  => HoldStoneLifter,
-                "pegasusBoots"  => HoldPegasusBoots,
-                _               => null
+                "sword1" => HoldSword,
+                "sword2" => HoldSword,
+                "feather" => HoldFeather,
+                "shield" => HoldShield,
+                "mirrorShield" => HoldShield,
+                "stonelifter" => HoldStoneLifter,
+                "stonelifter2" => HoldStoneLifter,
+                "pegasusBoots" => HoldPegasusBoots,
+                _ => null
             };
             holdItem?.Invoke();
         }
@@ -2962,10 +2966,10 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? releaseItem = item.Name switch
             {
-                "shield"        => ReleaseShield,
-                "mirrorShield"  => ReleaseShield,
-                "feather"       => ReleaseFeather,
-                _               => null
+                "shield" => ReleaseShield,
+                "mirrorShield" => ReleaseShield,
+                "feather" => ReleaseFeather,
+                _ => null
             };
             releaseItem?.Invoke();
         }
@@ -2973,15 +2977,15 @@ namespace ProjectZ.InGame.GameObjects
         private void UseSword()
         {
             // Workaround when charging sword and walking into an NPC.
-            if (_npcCrossSword) 
+            if (_npcCrossSword)
                 _npcCrossSword = false;
 
             if (!IsAttackingState(CurrentState) &&
                 !IsBlockingState(CurrentState) &&
-                CurrentState != State.Idle && 
-                CurrentState != State.Pushing && 
-                CurrentState != State.Rafting && 
-                (CurrentState != State.Jumping || _railJump) && 
+                CurrentState != State.Idle &&
+                CurrentState != State.Pushing &&
+                CurrentState != State.Rafting &&
+                (CurrentState != State.Jumping || _railJump) &&
                 (CurrentState != State.Swimming || !Map.Is2dMap))
                 return;
 
@@ -3008,7 +3012,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 State.Blocking => State.AttackBlocking,
                 State.Swimming => State.AttackSwimming,
-                State.Jumping  => State.AttackJumping,
+                State.Jumping => State.AttackJumping,
                 _ => State.Attacking
             };
             // Reset the jump hack timer.
@@ -3283,8 +3287,8 @@ namespace ProjectZ.InGame.GameObjects
                 if (carriableComponent?.Pull != null)
                 {
                     // If being pulled get the vector. If not then reset it.
-                    Vector2 pullVector = _pullCounter > 0 
-                        ? moveVec 
+                    Vector2 pullVector = _pullCounter > 0
+                        ? moveVec
                         : Vector2.Zero;
 
                     // If the pull has failed and the pull counter is below zero, reset the pull counter.
@@ -3337,9 +3341,9 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // Only run if idle or using hookshot for the forced return.
-            if (CurrentState != State.Idle && 
-                CurrentState != State.Rafting && 
-                CurrentState != State.Pushing && 
+            if (CurrentState != State.Idle &&
+                CurrentState != State.Rafting &&
+                CurrentState != State.Pushing &&
                 CurrentState != State.Hookshot &&
                 (!Map.Is2dMap || CurrentState != State.Swimming))
                 return;
@@ -3430,10 +3434,10 @@ namespace ProjectZ.InGame.GameObjects
                 boomerangVector.Normalize();
             else
                 boomerangVector = _lastBaseMoveVelocity;
-                if (boomerangVector != Vector2.Zero)
-                    boomerangVector.Normalize();
-                else
-                    boomerangVector = _walkDirection[Direction];
+            if (boomerangVector != Vector2.Zero)
+                boomerangVector.Normalize();
+            else
+                boomerangVector = _walkDirection[Direction];
 
             Boomerang.Start(Map, spawnPosition, boomerangVector);
             Map.Objects.SpawnObject(Boomerang);
@@ -3587,9 +3591,9 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     // HACK: If the player used the warp above level 8 and entered the dungeon, the save position is set to the warp
                     // rather than the dungeon 8 entrance. So if the last position is the warp, overwrite it with dungeon 8 entrance.
-                    if (SavePosition == new Vector2(280,102) && SaveMap == "overworld.map")
+                    if (SavePosition == new Vector2(280, 102) && SaveMap == "overworld.map")
                     {
-                        SavePosition = new Vector2(576,1028);
+                        SavePosition = new Vector2(576, 1028);
                         SaveMap = "dungeon8.map";
                     }
                     // Respawn at the dungeon entrance.
@@ -3635,10 +3639,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private void HoldShield()
         {
-            if (CurrentState != State.Idle && 
-                CurrentState != State.Pushing && 
-                CurrentState != State.Attacking && 
-                CurrentState != State.Rafting && 
+            if (CurrentState != State.Idle &&
+                CurrentState != State.Pushing &&
+                CurrentState != State.Attacking &&
+                CurrentState != State.Rafting &&
                 CurrentState != State.Charging)
                 return;
 
@@ -3693,11 +3697,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _)       => ( -9, -18, +4, +2), // Up
-                (2, _)       => (-11, -16, +4, +2), // Right
-                (3, true)    => ( -8, -18, +4, +3), // Down (Mirror Shield)
-                (3, false)   => ( -9, -18, +4, +3), // Down
-                (_, _)       => ( -7, -16, +4, +2), // Left
+                (1, _) => (-9, -18, +4, +2), // Up
+                (2, _) => (-11, -16, +4, +2), // Right
+                (3, true) => (-8, -18, +4, +3), // Down (Mirror Shield)
+                (3, false) => (-9, -18, +4, +3), // Down
+                (_, _) => (-7, -16, +4, +2), // Left
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
@@ -3746,7 +3750,7 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
-        private Box GetSwordDamageBox(RectangleF collisionRectangle) => 
+        private Box GetSwordDamageBox(RectangleF collisionRectangle) =>
             new Box(
                 collisionRectangle.X + EntityPosition.X + _animationOffsetX,
                 collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, -8,
@@ -3854,7 +3858,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 < 0 => _lastSwimDirection = 0,
                 > 0 => _lastSwimDirection = 2,
-                _   => _lastSwimDirection
+                _ => _lastSwimDirection
             };
             if (CurrentState == State.ChargeSwimming && moveDirX % 2 == 0)
                 AnimatorWeapons.Play("stand_" + moveDirX);
@@ -4018,6 +4022,8 @@ namespace ProjectZ.InGame.GameObjects
         {
             if (ShowItem != null)
             {
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
                 _itemShowCounter -= Game1.DeltaTime;
 
                 if (_itemShowCounter <= 0)
@@ -4047,7 +4053,7 @@ namespace ProjectZ.InGame.GameObjects
                         _itemShowCounter = 250;
 
                         if (ShowItem.Name == "sword1")
-                            _itemShowCounter = 5650; 
+                            _itemShowCounter = 5650;
                         else if (ShowItem.Name.StartsWith("instrument"))
                             _itemShowCounter = 1000;
                     }
@@ -4120,10 +4126,10 @@ namespace ProjectZ.InGame.GameObjects
             var key = Direction;
             var offsets = key switch
             {
-                1 => ( -7,  -16, +14,  +5),
-                2 => ( +5,  -12,  +5, +14),
-                3 => ( -7,   +1, +14,  +5),
-                _ => ( -10, -12,  +5, +14)
+                1 => (-7, -16, +14, +5),
+                2 => (+5, -12, +5, +14),
+                3 => (-7, +1, +14, +5),
+                _ => (-10, -12, +5, +14)
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
@@ -4152,10 +4158,10 @@ namespace ProjectZ.InGame.GameObjects
                 _bootsRunning = false;
 
                 // Over/equals 500 = subtract 300. Above zero = halve it. At 0 = use value.
-                _bootsCounter = boots_charge_time >= 500 
-                    ? boots_charge_time - 300 
-                    : boots_charge_time > 0 
-                        ? boots_charge_time / 2 
+                _bootsCounter = boots_charge_time >= 500
+                    ? boots_charge_time - 300
+                    : boots_charge_time > 0
+                        ? boots_charge_time / 2
                         : boots_charge_time;
             }
             if (_bootsHolding || _bootsRunning)
@@ -4650,7 +4656,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public void MapInit()
         {
-            if (!IsSwimmingState(CurrentState) && 
+            if (!IsSwimmingState(CurrentState) &&
                 CurrentState != State.OcarinaTeleport)
                 CurrentState = State.Idle;
 
@@ -4746,10 +4752,10 @@ namespace ProjectZ.InGame.GameObjects
             if (Map != null && _previousMap != null)
             {
                 bool isOverworld = Map.MapName == "overworld.map" || _previousMap.MapName == "overworld.map";
-                bool mapIsCave   = !string.IsNullOrEmpty(Map.MapName) && Map.MapName.StartsWith("cave");
-                bool prevIsCave  = !string.IsNullOrEmpty(_previousMap.MapName) && _previousMap.MapName.StartsWith("cave");
+                bool mapIsCave = !string.IsNullOrEmpty(Map.MapName) && Map.MapName.StartsWith("cave");
+                bool prevIsCave = !string.IsNullOrEmpty(_previousMap.MapName) && _previousMap.MapName.StartsWith("cave");
                 bool mapsNotCave = !mapIsCave && !prevIsCave;
-                bool notDungeon  = !Map.DungeonMode && !Map.DungeonMapless;
+                bool notDungeon = !Map.DungeonMode && !Map.DungeonMapless;
 
                 if (isOverworld || (mapsNotCave && notDungeon))
                 {
@@ -4759,7 +4765,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             // The BowWow object is designed to automatically set to "_objBowWow" so it needs to be
             // terminated when it is not supposed to be in use or we get an invisible BowWow following.
-            if ((Map != null && Map.DungeonMode) || Game1.GameManager.SaveManager.GetString("has_bowWow","0") != "1")
+            if ((Map != null && Map.DungeonMode) || Game1.GameManager.SaveManager.GetString("has_bowWow", "0") != "1")
                 _objBowWow = null;
 
             Game1.GameManager.UseShockEffect = false;
@@ -4837,6 +4843,8 @@ namespace ProjectZ.InGame.GameObjects
             {
                 var walkVelocity = ControlHandler.GetMoveVector2();
 
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
                 if (Animation.CurrentAnimation.Id == "intro_sit" &&
                     !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen && walkVelocity.Length() > Values.ControllerDeadzone)
                 {
@@ -4872,7 +4880,7 @@ namespace ProjectZ.InGame.GameObjects
                 // make sure to fall down when jumping into a game sequence
                 _body.Velocity.X = 0;
                 _body.Velocity.Y = 0;
-                if (IsJumpingState(CurrentState) || 
+                if (IsJumpingState(CurrentState) ||
                     CurrentState == State.Powdering)
                     CurrentState = State.Idle;
             }
@@ -4906,7 +4914,7 @@ namespace ProjectZ.InGame.GameObjects
             bool facingDir = Direction == ReverseDirection(direction);
 
             // If everything passes, it's a block.
-            return (!inside || box.Intersects(_shieldBox)) && facingDir ;
+            return (!inside || box.Intersects(_shieldBox)) && facingDir;
         }
 
         public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
@@ -4919,7 +4927,7 @@ namespace ProjectZ.InGame.GameObjects
             RectangleF boxRect = box.Rectangle();
 
             // Get the centers of the rectangles.
-            Vector2 boxCenter = new Vector2(boxRect.X + boxRect.Width / 2f, boxRect.Y + boxRect.Height / 2f);;
+            Vector2 boxCenter = new Vector2(boxRect.X + boxRect.Width / 2f, boxRect.Y + boxRect.Height / 2f); ;
             Vector2 bodyCenter = BodyRectangle.Center;
             Vector2 boxDir = bodyCenter - boxCenter;
             Vector2 vecDirection;
@@ -5763,7 +5771,6 @@ namespace ProjectZ.InGame.GameObjects
                     _showSwordL2ParticleCounter = 0;
                     CurrentState = State.SwordShowLv2;
                 }
-
                 // not sure if this is what should happen here
                 ReleaseCarriedObject();
             }
@@ -5847,11 +5854,11 @@ namespace ProjectZ.InGame.GameObjects
                 MapManager.ObjLink.StopFlying(Vector2.Zero);
 
             // make sure the player walks
-            if (MapTransitionStart.HasValue && 
+            if (MapTransitionStart.HasValue &&
                 MapTransitionEnd.HasValue &&
                 !IsSwimmingState(CurrentState) &&
-                CurrentState != State.BedTransition && 
-                CurrentState != State.Knockout && 
+                CurrentState != State.BedTransition &&
+                CurrentState != State.Knockout &&
                 CurrentState != State.OcarinaTeleport)
                 CurrentState = State.Idle;
 

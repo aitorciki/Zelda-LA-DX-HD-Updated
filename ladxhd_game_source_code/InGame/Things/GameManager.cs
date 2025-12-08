@@ -1726,8 +1726,9 @@ namespace ProjectZ.InGame.Things
             transitionSystem.LoadMapFromFile(LoadedMap, true, true, Values.MapFirstTransitionColor, false);
             transitionSystem.AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
 
-            // If the game was saved while frozen for some reason, unfreeze it.
+            // If the game was saved frozen or the inventory disabled, unfreeze and enable the inventory.
             MapManager.ObjLink.FreezeGame(false);
+            MapManager.ObjLink.DisableInventory(false);
         }
 
         private void SaveFileFix_v1()

@@ -21,6 +21,14 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.SetString("freezeGame", "0");
         }
 
+        public void DisableInventory(bool disable)
+        {
+            if (disable)
+                Game1.GameManager.SaveManager.SetString("disable_inventory", "1");
+            else
+                Game1.GameManager.SaveManager.SetString("disable_inventory", "0");
+        }
+
         private bool DestroyableWall(Box box)
         {
             _destroyableWallList.Clear();

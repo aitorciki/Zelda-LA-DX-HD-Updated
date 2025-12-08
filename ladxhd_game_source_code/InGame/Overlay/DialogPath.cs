@@ -888,6 +888,22 @@ namespace ProjectZ.InGame.Overlay
             return true;
         }
     }
+    class DialogDisableInventory : DialogAction
+    {
+        private bool _enable;
+
+        public DialogDisableInventory(bool enable)
+        {
+            _enable = enable;
+        }
+
+        public override bool Execute()
+        {
+            var enable = Convert.ToInt32(_enable).ToString();
+            Game1.GameManager.SaveManager.SetString("disable_inventory", enable);
+            return true;
+        }
+    }
 
     class DialogPath
     {

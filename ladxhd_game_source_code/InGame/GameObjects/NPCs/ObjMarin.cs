@@ -635,12 +635,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 MapManager.ObjLink.StopOcarinaDuo();
                 Game1.GameManager.StartDialogPath("marin_singing_end");
                 Game1.GameManager.SetMusic(-1, 2);
-
                 Game1.GameManager.SaveManager.RemoveString("marin_sing_position");
             }
 
             if (_duoIndex == 0)
                 MapManager.ObjLink.FreezePlayer();
+
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
         private void OnCollision(Values.BodyCollision collision)

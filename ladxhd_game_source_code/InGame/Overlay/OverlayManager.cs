@@ -6,8 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
 using ProjectZ.Base.UI;
 using ProjectZ.InGame.Controls;
-using ProjectZ.InGame.Overlay.Sequences;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Overlay.Sequences;
 using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.Things;
 
@@ -147,12 +147,16 @@ namespace ProjectZ.InGame.Overlay
 
         public void Update()
         {
+            // See if the inventory was disabled in "script.zScript".
+            bool disableInventory = Game1.GameManager.SaveManager.GetString("disable_inventory", "0") == "1";
+
             // Toggle Game Options Menu Overlay
             if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Menu) && ControlHandler.ButtonPressed(CButtons.Select))
                 ToggleState(MenuState.Menu);
 
             // Toggle the Inventory / Map Overlay
-            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory) && ControlHandler.ButtonPressed(CButtons.Start) && !DisableInventoryToggle && !_hideHud && !TextboxOverlay.IsOpen)
+            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory) && ControlHandler.ButtonPressed(CButtons.Start) && 
+                !disableInventory && !DisableInventoryToggle && !_hideHud && !TextboxOverlay.IsOpen)
                 ToggleState(MenuState.Inventory);
 
             // Update the textbox and peform button scale change if a menu is currently not visible.

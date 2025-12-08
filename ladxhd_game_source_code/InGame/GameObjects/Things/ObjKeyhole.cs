@@ -83,6 +83,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _counter += Game1.DeltaTime;
 
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
             if (!_rumbling && _counter > 500)
             {
                 _rumbling = true;

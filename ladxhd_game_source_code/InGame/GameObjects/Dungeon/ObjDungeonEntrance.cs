@@ -54,7 +54,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _counter -= Game1.DeltaTime;
 
-            if (_counter > 0) 
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
+            if (_counter > 0)
                 return;
 
             _counter += _openSpeed;

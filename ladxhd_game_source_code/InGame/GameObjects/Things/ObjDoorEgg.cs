@@ -87,6 +87,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             MapManager.ObjLink.FreezePlayer();
 
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
             _instrumentCounter += Game1.DeltaTime;
 
             // instrument apearing sounds
