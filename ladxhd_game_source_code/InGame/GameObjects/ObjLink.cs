@@ -3519,6 +3519,9 @@ namespace ProjectZ.InGame.GameObjects
             // Ocarina is still being played.
             if (CurrentState == State.Ocarina)
             {
+                // Disable the inventory while the ocarina plays.
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
                 // Finished playing the ocarina.
                 if (!Animation.IsPlaying)
                 {
