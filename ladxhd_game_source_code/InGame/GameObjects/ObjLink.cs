@@ -5122,6 +5122,7 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.GameManager.Equipment[i].Name == "shield")
                 {
                     Game1.GameManager.RemoveItem("shield", 1);
+                    CarryShield = false;
                     return true;
                 }
             }
