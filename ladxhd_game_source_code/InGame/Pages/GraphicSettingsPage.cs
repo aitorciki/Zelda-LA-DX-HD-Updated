@@ -111,7 +111,7 @@ namespace ProjectZ.InGame.Pages
 
             // Translate values below 1x and when autoscale is set.
             return number == maxScale
-                ? " Auto-Detect"
+                ? " " + Game1.LanguageManager.GetString("settings_graphics_autodetect", "error")
                 : number switch
                 {
                      0 => " 50%",
@@ -125,7 +125,7 @@ namespace ProjectZ.InGame.Pages
         private string UIScaleSliderAdjustmentString(int number)
         {
             if (number == 11)
-                return " Auto-Detect";
+                return " " + Game1.LanguageManager.GetString("settings_graphics_autodetect", "error");
             return " " + number + "x";
         }
 

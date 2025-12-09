@@ -98,16 +98,16 @@ namespace ProjectZ.InGame.Pages
             }
 
             // Create a slider to select the game type.
-            _gameTypeLayout = new InterfaceListLayout { Size = new Point(200, 22), HorizontalMode = true, Selectable = true };
-            var gameSetupSlider = new InterfaceSlider(Resources.GameFont, "new_game_menu_game_type", 200, new Point(1, 2), 0, 2, 1, Game1.GameManager.GameType, 
+            _gameTypeLayout = new InterfaceListLayout { Size = new Point(260, 22), HorizontalMode = true, Selectable = true };
+            var gameSetupSlider = new InterfaceSlider(Resources.GameFont, "new_game_menu_game_type", 260, new Point(1, 2), 0, 2, 1, Game1.GameManager.GameType, 
                 number => { Game1.GameManager.GameType = number; }) { SetString = number => GameTypeScaleSliderAdjustment(number) };
             _gameTypeLayout.AddElement(gameSetupSlider);
             _newGameLayout.AddElement(_gameTypeLayout);
 
             // Create the "Back" and "Start" buttons.
-            _bottomLayout = new InterfaceListLayout { Size = new Point(200, 34), HorizontalMode = true, Selectable = true };
-            _bottomLayout.AddElement(new InterfaceButton(new Point(99, 20), new Point(1, 0), "new_game_menu_back", OnClickBackButton));
-            _bottomLayout.AddElement(new InterfaceButton(new Point(99, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
+            _bottomLayout = new InterfaceListLayout { Size = new Point(260, 34), HorizontalMode = true, Selectable = true };
+            _bottomLayout.AddElement(new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_back", OnClickBackButton));
+            _bottomLayout.AddElement(new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
             _bottomLayout.Select(InterfaceElement.Directions.Right, false);
             _bottomLayout.Deselect(false);
             _newGameLayout.AddElement(_bottomLayout);
