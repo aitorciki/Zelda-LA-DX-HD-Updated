@@ -1713,6 +1713,7 @@ namespace ProjectZ.InGame.Things
             SaveGameSaveLoad.LoadSaveFile(this, slot);
 
             // Fixes changes to save files that are now invalid.
+            SaveFileFix_v0();
             SaveFileFix_v1();
             SaveFileFix_v2();
 
@@ -1763,14 +1764,26 @@ namespace ProjectZ.InGame.Things
             MapManager.ObjLink.DisableInventory(false);
         }
 
+        private void SaveFileFix_v0()
+        {
+            // If second_chance doesn't exist and the Level 7/8 dungeons have been completed.
+            var secondchance = Game1.GameManager.GetItem("second_chance") == null;
+            var instrument07 = Game1.GameManager.GetItem("instrument6") != null;
+            var instrument08 = Game1.GameManager.GetItem("instrument7") != null;
+
+            // Add the second chance key and set it to 1.
+            if (secondchance && instrument07 && instrument08)
+                SaveManager.SetString("second_chance", "1");
+        }
+
         private void SaveFileFix_v1()
         {
             // Fixes teleporter IDs on version 1 save files.
             string saveVersionStr = SaveManager.GetString("save_version", "0");
             int.TryParse(saveVersionStr, out int saveVersion);
 
-            // This only affects version 1 save files.
-            if (saveVersion == 1)
+            // This only affects v0 and v1 save files.
+            if (saveVersion >= 1)
             {
                 // Get the unlocked state of the teleporters that have reversed indexes.
                 string teleporter1 = SaveManager.GetString("unlocked_teleporter_1", "none");
@@ -1791,8 +1804,8 @@ namespace ProjectZ.InGame.Things
                         SaveManager.RemoveString("unlocked_teleporter_2");
                     }
                 }
-                // Increment the save version.
-                SaveManager.SetString("save_version", SaveFileVersion);
+                // Increment the save version to 2 so the next fix picks it up.
+                SaveManager.SetString("save_version", "2");
             }
         }
 
