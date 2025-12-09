@@ -140,9 +140,9 @@ namespace ProjectZ.InGame.Pages
         {
             string gameType = number switch
             {
-                0 => "Use Settings",
-                1 => "Modern",
-                2 => "Classic"
+                0 => Game1.LanguageManager.GetString("new_game_menu_gtype_settings", "error"),
+                1 => Game1.LanguageManager.GetString("new_game_menu_gtype_modern", "error"),
+                2 => Game1.LanguageManager.GetString("new_game_menu_gtype_classic", "error")
             };
             return " " + gameType;
         }
