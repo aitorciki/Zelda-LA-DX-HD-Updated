@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.Pages
 
         private readonly InterfaceButton _newGameButton;
         private readonly InterfaceLabel _labelNameInput;
+        private readonly InterfaceSlider _gameTypeSlider;
 
         private const int MaxNameLength = 12;
         private string _strNameInput;
@@ -99,9 +100,9 @@ namespace ProjectZ.InGame.Pages
 
             // Create a slider to select the game type.
             _gameTypeLayout = new InterfaceListLayout { Size = new Point(260, 22), HorizontalMode = true, Selectable = true };
-            var gameSetupSlider = new InterfaceSlider(Resources.GameFont, "new_game_menu_game_type", 260, new Point(1, 2), 0, 2, 1, Game1.GameManager.GameType, 
+            _gameTypeSlider = new InterfaceSlider(Resources.GameFont, "new_game_menu_game_type", 260, new Point(1, 2), 0, 3, 1, Game1.GameManager.GameType, 
                 number => { Game1.GameManager.GameType = number; }) { SetString = number => GameTypeScaleSliderAdjustment(number) };
-            _gameTypeLayout.AddElement(gameSetupSlider);
+            _gameTypeLayout.AddElement(_gameTypeSlider);
             _newGameLayout.AddElement(_gameTypeLayout);
 
             // Create the "Back" and "Start" buttons.
@@ -126,6 +127,7 @@ namespace ProjectZ.InGame.Pages
             // reset the name of the save slot
             _strNameInput = "Link";
             _labelNameInput.SetText(_strNameInput + " ");
+            _gameTypeSlider.CurrentStep = 0;
 
             _upperMode = true;
             UpdateKeyboard();
@@ -142,7 +144,8 @@ namespace ProjectZ.InGame.Pages
             {
                 0 => Game1.LanguageManager.GetString("new_game_menu_gtype_settings", "error"),
                 1 => Game1.LanguageManager.GetString("new_game_menu_gtype_modern", "error"),
-                2 => Game1.LanguageManager.GetString("new_game_menu_gtype_classic", "error")
+                2 => Game1.LanguageManager.GetString("new_game_menu_gtype_classic", "error"),
+                3 => Game1.LanguageManager.GetString("new_game_menu_gtype_hybrid", "error")
             };
             return " " + gameType;
         }
@@ -183,7 +186,9 @@ namespace ProjectZ.InGame.Pages
             {
                 // close the page
                 if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                {
                     Game1.UiPageManager.PopPage();
+                }
             }
 
             // The tooltip button was pressed.
@@ -287,11 +292,29 @@ namespace ProjectZ.InGame.Pages
             {
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_entry", "error"); break; }
                 case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_keyboard", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype", "error"); break; }
             }
+
             // Return the tooltip if index is between 1 and 3.
-            if (index is >= 1 and <= 3)
+            if (index is >= 1 and <= 2)
                 return tooltip;
+
+            // If the index is 3 we need to get the sub-indexes.
+            if (index == 3)
+            {
+                // Get the currently selected index.
+                index = _gameTypeSlider.CurrentStep;
+
+                // Use the selected index to determine which tooltip to show.
+                switch (index) 
+                {
+                    case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype0", "error"); break; }
+                    case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype1", "error"); break; }
+                    case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype2", "error"); break; }
+                    case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype3", "error"); break; }
+                }
+                // Return one of the tooltips.
+                return tooltip;
+            }
 
             // If the index is 4 we need to get the sub-indexes.
             if (index == 4)

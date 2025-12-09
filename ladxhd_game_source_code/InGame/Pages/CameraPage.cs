@@ -15,6 +15,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleClassicCamera;
         private readonly InterfaceListLayout _toggleClassicDungeon;
         private readonly InterfaceListLayout _toggleCameraLock;
+        private readonly InterfaceListLayout _toggleCameraSmooth;
         private readonly InterfaceSlider _sliderCameraBorder;
         private readonly InterfaceSlider _sliderBorderOpacity;
         public static bool _reloadMenus;
@@ -23,6 +24,8 @@ namespace ProjectZ.InGame.Pages
         public void SetClassicCamera(bool state) => ((InterfaceToggle)_toggleClassicCamera.Elements[1]).ToggleState = state;
         public void SetClassicDungeon(bool state) => ((InterfaceToggle)_toggleClassicDungeon.Elements[1]).ToggleState = state;
         public void SetClassicBorder(int value) => _sliderCameraBorder.CurrentStep = value;
+        public void SetCameraLock(bool state) => ((InterfaceToggle)_toggleCameraLock.Elements[1]).ToggleState = state;
+        public void SetCameraSmooth(bool state) => ((InterfaceToggle)_toggleCameraSmooth.Elements[1]).ToggleState = state;
 
         public CameraSettingsPage(int width, int height)
         {
@@ -69,10 +72,10 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(_toggleCameraLock);
 
             // Button: Smooth Camera
-            var smoothCameraToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            _toggleCameraSmooth = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
                 "settings_camera_smoothcamera", GameSettings.SmoothCamera, 
                 newState => { GameSettings.SmoothCamera = newState; });
-            _contentLayout.AddElement(smoothCameraToggle);
+            _contentLayout.AddElement(_toggleCameraSmooth);
 
             // Button: Screen-Shake
             var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),

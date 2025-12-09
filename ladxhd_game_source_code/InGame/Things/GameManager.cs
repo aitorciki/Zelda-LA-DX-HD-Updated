@@ -1584,20 +1584,37 @@ namespace ProjectZ.InGame.Things
 
         public void SetGameTypeSettings()
         {
+            // Game Type is set to "Modern".
             if (GameType == 1)
             {
                 GameSettings.ClassicMusic = false;
                 GameSettings.ClassicCamera = false;
                 GameSettings.ClassicDungeon = false;
                 GameSettings.ClassicBorders = 0;
+                GameSettings.CameraLock = false;
+                GameSettings.SmoothCamera = true;
             }
+            // Game Type is set to "Classic".
             else if (GameType == 2)
             {
                 GameSettings.ClassicMusic = true;
                 GameSettings.ClassicCamera = true;
                 GameSettings.ClassicDungeon = false;
                 GameSettings.ClassicBorders = 1;
+                GameSettings.CameraLock = false;
+                GameSettings.SmoothCamera = true;
             }
+            // Game type is set to "Hybrid".
+            else if (GameType == 3)
+            {
+                GameSettings.ClassicMusic = true;
+                GameSettings.ClassicCamera = true;
+                GameSettings.ClassicDungeon = true;
+                GameSettings.ClassicBorders = 1;
+                GameSettings.CameraLock = false;
+                GameSettings.SmoothCamera = true;
+            }
+            // Apply the settings to the settings menus.
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audPage))
             {
                 var audioPage = (AudioSettingsPage)audPage;
@@ -1609,6 +1626,8 @@ namespace ProjectZ.InGame.Things
                 cameraPage.SetClassicCamera(GameSettings.ClassicCamera);
                 cameraPage.SetClassicDungeon(GameSettings.ClassicDungeon);
                 cameraPage.SetClassicBorder(GameSettings.ClassicBorders);
+                cameraPage.SetCameraLock(GameSettings.CameraLock);
+                cameraPage.SetCameraSmooth(GameSettings.SmoothCamera);
             }
         }
 
@@ -1627,6 +1646,7 @@ namespace ProjectZ.InGame.Things
             SaveManager.Reset();
 
             // Save file versions:
+            // 0: The "save_version" key doesn't exist.
             // 1: Seashell Mansion & "Nothing is Missable" enabled.
             // 2: World teleporter indexes fixed.
             // 3: Dungeon 3 has a new map.
