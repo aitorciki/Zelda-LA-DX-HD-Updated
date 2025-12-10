@@ -116,6 +116,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 // If it's been collected, it will show up as "0" and not "null".
                 if (Game1.GameManager.GetItem(_pushItem)?.Count == null)
                 {
+                    // Don't show the message if disable helper text is enabled.
+                    if (GameSettings.NoHelperText)
+                        return false;
+
                     // Start the dialog if the player doesn't have the nightmare key.
                     Game1.GameManager.StartDialogPath("door_" + _pushItem);
                     return false;
