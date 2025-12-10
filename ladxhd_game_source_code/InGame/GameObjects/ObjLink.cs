@@ -693,12 +693,16 @@ namespace ProjectZ.InGame.GameObjects
                 // not sure how this could be done better
                 UpdatePositionCarriedObject(EntityPosition);
             }
-
+            // If Link is currently locked. Usually set when a dialog is open.
             if (!UpdatePlayer)
             {
+                // If holding a toadstool then disable inventory.
+                if (CurrentState == State.ShowToadstool)
+                    Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
                 UpdatePlayer = true;
 
-                // only update the animation
+                // Only update Link's animation.
                 if (!Is2DMode)
                     UpdateAnimation();
                 else
@@ -782,7 +786,6 @@ namespace ProjectZ.InGame.GameObjects
             else if (CurrentState == State.ShowToadstool)
             {
                 CurrentState = State.Idle;
-                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
             }
             else if (CurrentState == State.SwordShowLv2)
             {
