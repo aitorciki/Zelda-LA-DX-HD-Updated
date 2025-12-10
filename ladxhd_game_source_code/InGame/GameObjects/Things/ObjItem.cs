@@ -443,7 +443,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Do not collect the item while the player is jumping. Once again we need a special case for 
             // Guardian Acorn and Piece of Power as they could be collected while jumping in the original game.
             if (_item.ShowAnimation != 0 && _item.Name != "guardianAcorn" && _item.Name != "pieceOfPower" &&
-                ((!Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded) || (Map.Is2dMap && !MapManager.ObjLink._body.IsGrounded && !MapManager.ObjLink.IsInWater2D())))
+                ((!Map.Is2dMap && !MapManager.ObjLink.IsGrounded()) || (Map.Is2dMap && !MapManager.ObjLink.IsGrounded() && !MapManager.ObjLink.IsInWater2D())))
             {
                 return;
             }

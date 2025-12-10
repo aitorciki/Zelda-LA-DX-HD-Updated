@@ -211,7 +211,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var lastJumpCounter = _jumpCounter;
                 _jumpCounter += Game1.DeltaTime;
                 // finished jumping?
-                if (MapManager.ObjLink._body.IsGrounded || _jumpCounter > _jumpTime)
+                if (MapManager.ObjLink.IsGrounded() || _jumpCounter > _jumpTime)
                 {
                     _jumpTime = 0;
                     EntityPosition.Set(_targetPosition);

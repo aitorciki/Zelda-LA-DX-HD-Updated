@@ -79,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            if (!MapManager.ObjLink._body.IsGrounded)
+            if (!MapManager.ObjLink.IsGrounded())
                 return Values.HitCollision.None;
 
             if ((hitType & HitType.Sword) == 0)

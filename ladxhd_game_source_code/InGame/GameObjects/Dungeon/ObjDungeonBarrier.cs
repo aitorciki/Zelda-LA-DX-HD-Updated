@@ -129,7 +129,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                         LinkHack = collidingObject as ObjLink;
 
                         // He must be both jumping and his starting jump height must be less than 4.00.
-                        if (!LinkHack.IsJumpingState(LinkHack.CurrentState) && LinkHack._jumpStartZPos >= 4.00)
+                        if (!LinkHack.IsJumpingState() && LinkHack._jumpStartZPos >= 4.00)
                             LinkHack = null;
                     }
                 }

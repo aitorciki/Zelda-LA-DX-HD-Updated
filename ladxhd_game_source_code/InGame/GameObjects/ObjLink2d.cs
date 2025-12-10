@@ -402,7 +402,7 @@ namespace ProjectZ.InGame.GameObjects
                     }
                 }
                 else if ((_jumpEndTimer > 0 && 
-                    !IsAttackingState(CurrentState) &&
+                    !IsAttackingState() &&
                     CurrentState != State.Dying &&
                     CurrentState != State.ShowToadstool &&
                     CurrentState != State.PickingUp &&
@@ -438,7 +438,7 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("drown");
             }
             // Force a direction from analog stick movement.
-            if (!DisableDirHack2D && !IsChargingState(CurrentState) && CurrentState != State.Grabbing && 
+            if (!DisableDirHack2D && !IsChargingState() && CurrentState != State.Grabbing && 
                 CurrentState != State.Pulling && CurrentState != State.Hookshot && !_isHoldingSword)
             {
                 Vector2 moveVector = ControlHandler.GetMoveVector2();
@@ -581,7 +581,7 @@ namespace ProjectZ.InGame.GameObjects
                     Direction = 1;
             }
             // boot running; stop if the player tries to move in the opposite direction
-            else if (_bootsRunning && (walkVelLength < Values.ControllerDeadzone || vectorDirection != (Direction + 2) % 4))
+            else if (_bootsRunning && (walkVelLength < Values.ControllerDeadzone || vectorDirection != ReverseDirection(Direction)))
             {
                 if (!_bootsStop)
                     _moveVector2D = AnimationHelper.DirectionOffset[Direction] * 2;
@@ -787,7 +787,7 @@ namespace ProjectZ.InGame.GameObjects
             // collision with the ground
             if ((collision & Values.BodyCollision.Bottom) != 0)
             {
-                if (IsJumpingState(CurrentState) || CurrentState == State.BootKnockback)
+                if (IsJumpingState() || CurrentState == State.BootKnockback)
                 {
                     if (CurrentState == State.ChargeJumping)
                         CurrentState = State.Charging;

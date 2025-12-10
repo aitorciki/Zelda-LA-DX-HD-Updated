@@ -224,6 +224,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
         public static Values.BodyCollision MoveBody(BodyComponent body, Vector2 offset, Values.CollisionTypes collisionTypes, bool isPusher, bool slide, bool ignoreField)
         {
+            if (body.IgnoreCollision)
+            {
+                body.Position.X += offset.X;
+                body.Position.Y += offset.Y;
+                return Values.BodyCollision.None;
+            }
+
             var collisionType = Values.BodyCollision.None;
 
             // move body in one step without aligning it to colliding objects

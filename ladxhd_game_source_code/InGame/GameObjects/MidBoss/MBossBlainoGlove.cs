@@ -52,12 +52,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool DamagePlayer()
         {
             // is the player blocking?
-            if (_stunMode &&
-                (MapManager.ObjLink.CurrentState == State.Blocking || 
-                MapManager.ObjLink.CurrentState == State.AttackBlocking || 
-                MapManager.ObjLink.CurrentState == State.ChargeBlocking) &&
+            if (_stunMode && (MapManager.ObjLink.IsBlockingState()) &&
                 ((_hitDirection == -1 && MapManager.ObjLink.Direction != 0) ||
-                 (_hitDirection == 1 && MapManager.ObjLink.Direction != 2)))
+                (_hitDirection == 1 && MapManager.ObjLink.Direction != 2)))
             {
                 _blaino.GlovePush(new Vector2(-_hitDirection * 3.5f, 0));
 

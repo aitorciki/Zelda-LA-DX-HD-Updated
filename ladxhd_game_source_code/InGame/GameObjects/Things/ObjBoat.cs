@@ -115,7 +115,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // is the player standing on the platform?
             var wasStandingOnTop = _isStandingOnTop;
-            _isStandingOnTop = MapManager.ObjLink._body.IsGrounded &&
+            _isStandingOnTop = MapManager.ObjLink.IsGrounded() &&
                                MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box);
 
             // jumped ontop of the boat?

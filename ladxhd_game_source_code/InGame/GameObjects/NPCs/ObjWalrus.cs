@@ -118,8 +118,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateSleep()
         {
             // trigger dialog on entering the trigger area while marin is following the player
-            if (MapManager.ObjLink._body.IsGrounded &&
-                _triggerRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
+            if (MapManager.ObjLink.IsGrounded() && _triggerRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
             {
                 if (!_intersecting)
                 {

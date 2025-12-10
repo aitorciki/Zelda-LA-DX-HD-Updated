@@ -64,13 +64,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             {
                 if (MapManager.ObjLink.CurrentState != ObjLink.State.Idle &&
                     MapManager.ObjLink.CurrentState != ObjLink.State.Pushing &&
-                    MapManager.ObjLink.CurrentState != ObjLink.State.Stunned)
+                    MapManager.ObjLink.IsStunned())
                     return;
 
                 _breakCounter += Game1.DeltaTime;
 
                 // reset the time while hitting; in dungeon 8 there is a lot of breaking floor with enemies ontop that would be otherwise really hard to clear
-                if (MapManager.ObjLink.CurrentState == ObjLink.State.Attacking || MapManager.ObjLink.CurrentState == ObjLink.State.AttackBlocking)
+                if (MapManager.ObjLink.IsAttackingState())
                     _breakCounter = 0;
 
                 // spawn the hole and delete itself

@@ -193,7 +193,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void Update()
         {
             // If Link dies, destroy the barrier.
-            if (MapManager.ObjLink.CurrentState == ObjLink.State.Dying)
+            if (MapManager.ObjLink.IsDying())
                 DestroyBarrier();
         }
 

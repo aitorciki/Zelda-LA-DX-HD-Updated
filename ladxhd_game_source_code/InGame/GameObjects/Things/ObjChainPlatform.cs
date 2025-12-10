@@ -101,7 +101,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _wasMoved = false;
 
             // is the player standing on the platform?
-            var standingOnTop = MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box) && MapManager.ObjLink._body.IsGrounded;
+            var standingOnTop = MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box) && MapManager.ObjLink.IsGrounded();
 
             if (standingOnTop && PlayerIsMovable())
             {

@@ -406,7 +406,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 // make sure to let the player go if he was grabbed
                 MapManager.ObjLink.EndGrab();
             }
-
             return hitCollision;
         }
     }

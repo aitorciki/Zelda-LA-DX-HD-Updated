@@ -87,12 +87,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public int DeepWaterOffset = -3;
 
         public int Level = 0;
-
-        // used to make the xy movement happen in one step
-        // if there is a collision do not move any of them independently
-        public bool SimpleMovement = false;
-        // if the body is already inside a collider ignore the collider or not
-        public bool IgnoreInsideCollision = true;
+        
+        public bool SimpleMovement = false;             // Used to make the X/Y movement happen in one step.
+        public bool IgnoreCollision = false;            // Outright ignore all collision.
+        public bool IgnoreInsideCollision = true;       // If alread inside a collider, ignore collision.
 
         public bool IsActive = true;
         public bool IsGrounded = true;
@@ -104,7 +102,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public bool IsSlider;
         public bool IsAbsorbed;
         public bool WasHolePulled;
-        public bool DisableVelocityTargetMultiplier;    // this is used for the vacuum
+        public bool DisableVelocityTargetMultiplier;    // This is used for the vacuum.
         public bool RestAdditionalMovement = true;
         public bool SplashEffect = true;
         public bool UpdateFieldState = true;

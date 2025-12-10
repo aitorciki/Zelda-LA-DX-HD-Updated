@@ -109,7 +109,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _isColliding = true;
 
             // first step on the door?
-            if (MapManager.ObjLink.WasHoleReset || MapManager.ObjLink.CurrentState == ObjLink.State.Dying || _wasColliding || _isTransitioning)
+            if (MapManager.ObjLink.WasHoleReset || MapManager.ObjLink.IsDying() || _wasColliding || _isTransitioning)
                 return;
 
             _isTransitioning = true;

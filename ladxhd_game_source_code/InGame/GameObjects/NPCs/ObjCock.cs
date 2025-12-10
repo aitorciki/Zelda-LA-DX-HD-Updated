@@ -319,8 +319,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             // If Link is jumping then store that jump as a high jump the next time the rooster is grounded.
-            if (Link.IsJumpingState(Link.CurrentState) && _body.IsGrounded &&
-                (Link.GetRailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
+            if (Link.IsJumpingState() && _body.IsGrounded &&
+                (Link.RailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
             {
                 _highJump = true;
             }
@@ -335,7 +335,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     jumpHeight = 1;
 
                 // If a jump has been stored or it Link jumped on the same frame the chicken was grounded.
-                if (_highJump || Link.IsJumpingState(Link.CurrentState) || Link.IsRailJumping())
+                if (_highJump || Link.IsJumpingState() || Link.IsRailJumping())
                 {
                     jumpHeight = 2.25f;
                     _highJump = false;

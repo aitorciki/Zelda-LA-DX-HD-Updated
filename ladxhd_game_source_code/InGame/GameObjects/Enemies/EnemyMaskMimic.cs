@@ -131,7 +131,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     {
                         moved = true;
 
-                        if (!MapManager.ObjLink.IsChargingState(MapManager.ObjLink.CurrentState))
+                        if (!MapManager.ObjLink.IsChargingState())
                         {
                             // deadzone to not have a fixed point where the direction gets changed
                             if (Math.Abs(moveVelocity.X) * ((_direction % 2 == 0) ? 1.1f : 1f) >

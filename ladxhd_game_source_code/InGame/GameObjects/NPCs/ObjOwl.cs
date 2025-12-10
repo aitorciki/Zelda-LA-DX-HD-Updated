@@ -226,7 +226,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Freeze the game as the owl enters the map.
             if (noFreeze != "1")
             {
-                Link.FreezeGame(true);
+                Link.FreezeAnimations(true);
                 Link.DisableInventory(true);
             }
             Link.FreezePlayer();
@@ -349,7 +349,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.SetMusic(-1, 2);
 
             // Unfreeze the game as the owl starts leaving.
-            MapManager.ObjLink.FreezeGame(false);
+            MapManager.ObjLink.FreezeAnimations(false);
             MapManager.ObjLink.DisableInventory(false);
         }
 

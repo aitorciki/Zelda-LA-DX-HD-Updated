@@ -79,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void OnCollision(GameObject gameObject)
         {
             // is the player standing on the button?
-            if (MapManager.ObjLink._body.IsGrounded)
+            if (MapManager.ObjLink.IsGrounded())
                 _isColliding = true;
         }
 

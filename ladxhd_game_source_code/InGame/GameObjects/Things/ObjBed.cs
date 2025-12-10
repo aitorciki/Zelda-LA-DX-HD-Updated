@@ -35,18 +35,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
-        private bool IsStateValid(ObjLink.State currentState)
+        private bool IsStateValid()
         {
-            return !(MapManager.ObjLink.IsAttackingState(currentState) || 
-                    MapManager.ObjLink.IsChargingState(currentState) || 
-                    MapManager.ObjLink.IsBlockingState(currentState) || 
-                    MapManager.ObjLink.IsJumpingState(currentState));
+            return !(MapManager.ObjLink.IsAttackingState() || 
+                    MapManager.ObjLink.IsChargingState() || 
+                    MapManager.ObjLink.IsBlockingState() || 
+                    MapManager.ObjLink.IsJumpingState());
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
         {
             // Check if the state is valid and the transition hasn't already started.
-            if (IsStateValid(MapManager.ObjLink.CurrentState) & !_startBed)
+            if (IsStateValid() & !_startBed)
             {
                 // Jump into the bed and start the transition.
                 _startBed = true;

@@ -1780,7 +1780,7 @@ namespace ProjectZ.InGame.Things
             transitionSystem.AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
 
             // If the game was saved frozen or the inventory disabled, unfreeze and enable the inventory.
-            MapManager.ObjLink.FreezeGame(false);
+            MapManager.ObjLink.FreezeAnimations(false);
             MapManager.ObjLink.DisableInventory(false);
         }
 
