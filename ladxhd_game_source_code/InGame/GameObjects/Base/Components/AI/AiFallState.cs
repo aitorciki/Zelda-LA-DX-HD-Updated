@@ -35,7 +35,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             _aiComponent.ChangeState("falling");
 
-            _body.Drag = 0.0f;
             _body.VelocityTarget = Vector2.Zero;
 
             _onAbsorb?.Invoke();
