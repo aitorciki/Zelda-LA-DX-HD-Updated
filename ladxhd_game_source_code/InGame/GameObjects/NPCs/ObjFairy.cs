@@ -173,6 +173,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _healStepAmount = Math.Clamp((int)Math.Ceiling(neededSteps / (float)healingSteps), 1, 8);
             
             Game1.GameManager.StartDialogPath("fairy");
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
         private void UpdateHealing()
@@ -186,7 +187,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _heartTimer += Game1.DeltaTime;
 
-            // start healing
             if (_heartTimer > HealingStart)
                 _healCounter += Game1.DeltaTime;
 
@@ -201,12 +201,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     Game1.GameManager.HealPlayer(_healStepAmount);
                 }
             }
-
             if (_heartTimer > DespawnStart)
             {
                 Game1.GameManager.PlaySoundEffect("D360-38-26");
                 _aiComponent.ChangeState("despawning");
             }
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
         private void InitDespawning()
@@ -214,6 +214,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _despawnCounter = DespawnTime;
             Game1.GameManager.SetMusic(-1, 2);
             _musicPlaying = false;
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
         private void UpdateDespawning()
@@ -235,6 +236,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _color = Color.White * despawnState;
             _shadowComponent.Transparency = despawnState;
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
         private void OnCollision(GameObject gameObject)
