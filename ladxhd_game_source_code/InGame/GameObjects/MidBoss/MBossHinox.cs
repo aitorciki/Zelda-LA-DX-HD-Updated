@@ -63,7 +63,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body = new BodyComponent(EntityPosition, -14, -20, 28, 20, 8)
             {
                 IgnoreHoles = true,
-                FieldRectangle = Map.GetField(posX, posY, 8)
+                FieldRectangle = Map.GetField(posX, posY)
             };
 
             _aiComponent = new AiComponent();
@@ -145,6 +145,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 // Do not play music if it's already playing.
                 if (Game1.GameManager.GetCurrentMusic() != 79)
                     Game1.GameManager.SetMusic(79, 2);
+
                 _playerInRoom = true;
 
                 // Use the current reset state to know whether or not to start it's walk AI state.
