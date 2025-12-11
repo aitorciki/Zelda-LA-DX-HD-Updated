@@ -421,11 +421,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 else
                 {
                     // Set up the blocking field rectangle to the right of Marin.
-                    _blockingField = new RectangleF(EntityPosition.X + 6, EntityPosition.Y - 15, 18, 34);
+                    _blockingField = new RectangleF(EntityPosition.X + 6, EntityPosition.Y - 15, 18, 50);
 
                     // Check to see if Link entered the blocking field.
                     if (_blockingField.Contains(MapManager.ObjLink.EntityPosition.Position))
                     {
+                        // Throw the rooster if using it.
+                        if (MapManager.ObjLink.IsFlying())
+                            MapManager.ObjLink.ReleaseCarriedObject();
+
                         // Set up the blocking position.
                         if (!_blockingStart)
                             _blockingVector = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y);
