@@ -24,14 +24,16 @@
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
   * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
+  * Fix old save files to work with "Nothing is Missable" option which allows getting the followers back and other stuff.
 
 ### **User Interface:**
-  * Add a new "Game Type" option to the New Game menu. Otions are: Use Settings, Modern, and Classic which mostly affect camera.
+  * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Block pressing "Start" to open the inventory screen during a number of events and cutscenes.
   * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
   * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
+  * The option "Disable Helper Messages" also blocks the dialog shown when touching the nightmare door without the nightmare key. 
   
 ### **Items:**
   * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
@@ -90,11 +92,14 @@
 ### **Overworld:**
   * The fisherman on the boat on the "Bridge" map is now drawn on a lower layer than Link so his sprite is always behind Link.
   * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
+  * Also prevent flying with rooster to Marin on bridge if Level 8 dungeon was completed before Level 7 dungeon and rooster is borrowed.
+  * Don't spawn the owl if Marin is saved on the bridge and Level 8 dungeon was completed before Level 7 dungeon as the tip would be invalid.
   * When the mountain bridge photo sequence starts, if holding the rooster it is now dropped before the sequence starts.
   * In the cave passage to Tal Tal Mountain range, respawn the skull in the room with the large hookshot gap and chest.
   * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
-  * Add a secret sound to the shortcut passageway near Level 4 when pushing the rock into the hole and creating a shortcut.
+  * Add a secret sound to the shortcut passageway near Level 4 dungeon when pushing the rock into the hole and creating a shortcut.
   * Fix the stone in the forest passageway to the bat (Li'l Devil/Mad Batter, whatever you want to call it) to play the secret sound.
+  * Fix the owl "freeze" trigger to only not apply during the egg opening sequence and the end credits.
   * Fix trading the stick to Tarin for the honeycomb. Talking to him would just show a message that says "error".
   * Fix bushes to show the proper smoke graphics and sound effects when sprinkling Magic Powder on them.
   * Fix bushes & rocks from respawning that cover stairs when changing fields when classic camera is active.
@@ -107,7 +112,7 @@
   * Fix visibility of rooms behind bombable walls in a cave near pig moblins and a cave on the mountain with shallow water.
   * Fix missing stairs object in the same mountain cave with bombable wall which slows down movement when walking on stairs.
   * Fix collision above the cave just north of Mr. Write's house. With standard camera Moblins would often walk into the cliff.
-  * Fix collision blockers in a cave on the way to level 8 dungeon with a large gap. Flying could move the camera to a bad field.
+  * Fix collision blockers in a cave on the way to Level 8 dungeon with a large gap. Flying could move the camera to a bad field.
   * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
 
 ### **Dungeons:**
@@ -122,7 +127,9 @@
   * Fix dungeon 3 bombable walls around the nightmare key room to not have cracks. This is how it was in the original game.
   * Fix dungeon 5 missing leave button that resets block positions and push multiple buttons inward towards the room to reset sooner.
   * Fix dungeon 5 hookshot anchors (koopa faces) to have collision (they have two types: hookshot collision + movement collision).
+  * Fix dungeon 7 main keyhole to open up the dungeon so that the key can only be inserted from the front.
   * Fix dungeon 7 missing collision near torches and bombable wall in the small block passage in the room with the final pillar.
+  * Fix dungeon 7 3rd floor before the pillars are brought down to more closely match the original layout.
   * Fix dungeon 8 bombable walls around the switch to not have cracks. This is how it was in the original games.
   * Fix dungeon 8 block to be movable near a stairway in a room north of the map with the Peahat enemies.
   * Fix Egg dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
@@ -163,6 +170,7 @@
   * Fix enemy Cheep-Cheep stomp conditions and remove its damage field component after it has been stomped.
   * Fix enemy Flame Trap flames to persist through playing the ocarina. This exploit allowed the player to skip the mirror shield requirement.
   * Fix enemy Pairodd teleport activation range to be closer to the original game. This seems to almost perfectly duplicate behaviors.
+  * Fix enemy Sea Urchins to deal damage from the side when blocking. This is not perfect by any means but it's an improvement.
   * Fix enemy Pols Voice attack sound effects. Stun items were making the metallic "ting" sound and sword had all the wrong sound effects.
   * Fix enemy Spiny Beetle to be able to fall down holes by fixing it's size dimensions. Also fix it's reset with Classic Camera.
   * Fix dungeon 3 blocks to reset positions when walking over certain leave buttons.
