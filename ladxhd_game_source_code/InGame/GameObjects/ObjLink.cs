@@ -4555,7 +4555,7 @@ namespace ProjectZ.InGame.GameObjects
             RemoveCarriedObject();
         }
 
-        private void ReleaseCarriedObject()
+        public void ReleaseCarriedObject()
         {
             // let the carried item fall down
             if (_carriedComponent == null)

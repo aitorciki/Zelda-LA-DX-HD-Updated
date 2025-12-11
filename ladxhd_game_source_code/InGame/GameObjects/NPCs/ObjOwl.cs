@@ -213,23 +213,30 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (Game1.GameManager.GetCurrentMusic() != 88)
                 Game1.GameManager.SetMusic(33, 2);
 
-            // If the final instrument has been obtained don't freeze the game anymore or the
-            // game will softlock when attempting to crack open the egg as the owl never leaves.
-            var noFreeze = Game1.GameManager.SaveManager.GetString("d8_instrument");
+            // Don't softlock the game when opening the egg or the ending sequence.
+            var noFreeze = _keyCondition == "9_0" || _keyCondition == "final";
 
             // Force Link back into an "idle" state when encountering the owl.
             ObjLink Link = MapManager.ObjLink;
+
+            // Release the rooster if holding onto it.
+            if (Link.IsFlying())
+                Link.ReleaseCarriedObject();
+
+            // Play stand, set Link to idle, and set his jump position to zero.
             Link.Animation.Play("stand_" + Link.Direction);
             Link.CurrentState = ObjLink.State.Idle;
             Link.EntityPosition.Z = 0;
 
             // Freeze the game as the owl enters the map.
-            if (noFreeze != "1")
+            if (!noFreeze)
             {
                 Link.FreezeAnimations(true);
                 Link.DisableInventory(true);
             }
+            // Always freeze Link.
             Link.FreezePlayer();
+
             _wasTriggered = true;
 
             _drawComponent.IsActive = true;
@@ -285,6 +292,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _sprite.Color = Color.White * (time / 0.1f);
             else
                 _sprite.Color = Color.White;
+
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
         private void InitTalking()
