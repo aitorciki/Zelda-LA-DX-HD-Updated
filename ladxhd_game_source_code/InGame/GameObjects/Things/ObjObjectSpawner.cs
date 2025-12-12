@@ -57,7 +57,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // If it's a bush, don't create a bush respawner.
             if (_spawnObject is ObjBush bush)
-                bush.RespawnGrass = false;
+                bush.NoRespawn = true;
 
             // If it's a stone, don't create a stone respawner.
             if (_spawnObject is ObjStone stone)

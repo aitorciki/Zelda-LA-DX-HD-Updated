@@ -8,6 +8,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjIceBlockRespawner : GameObject
     {
+        private readonly float _posX;
+        private readonly float _posY;
         private int _lastFieldTime;
         private bool _respawnStart;
         private float _respawnTimer;
@@ -18,6 +20,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
+            _posX = posX;
+            _posY = posY;
             _respawnedFromSpawner = fromSpawner;
             _lastFieldTime = Map.GetUpdateState(EntityPosition.Position);
 
@@ -33,11 +37,17 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (Camera.ClassicMode)
             {
-                // Classic mode = respawn when changing fields
+                // If the field has changed, then start the respawn.
                 if (MapManager.ObjLink.FieldChange)
                     _respawnStart = true;
 
-                if (_respawnStart)
+                // We only want to respawn objects that were on the field we left.
+                var currentField = Map.GetField((int)_posX, (int)_posY);
+                var FieldsMatch = currentField == MapManager.ObjLink.CurrentField;
+
+                // Respawn after a slight delay. Always animate list makes sure that all
+                // of the ice blocks respawn even when they are off the screen.
+                if (_respawnStart && !FieldsMatch)
                 {
                     _respawnTimer += Game1.DeltaTime;
                     if (_respawnTimer >= 250)

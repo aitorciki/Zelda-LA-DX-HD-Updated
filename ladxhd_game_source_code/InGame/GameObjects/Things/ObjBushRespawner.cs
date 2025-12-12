@@ -8,6 +8,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjBushRespawner : GameObject
     {
+        private readonly float _posX;
+        private readonly float _posY;
         private readonly string _spawnItem;
         private readonly string _spriteId;
         private readonly bool _hasCollider;
@@ -27,6 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
+            _posX = posX;
+            _posY = posY;
             _spawnItem = spawnItem;
             _spriteId = spriteId;
             _hasCollider = hasCollider;
@@ -47,12 +51,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             // If classic camera mode is active, respawn when leaving the current field.
             if (Camera.ClassicMode)
             {
+                // If the field has changed, then start the respawn.
                 if (MapManager.ObjLink.FieldChange)
                     _respawnStart = true;
 
+                // We only want to respawn objects that were on the field we left.
+                var currentField = Map.GetField((int)_posX, (int)_posY);
+                var FieldsMatch = currentField == MapManager.ObjLink.CurrentField;
+
                 // Respawn after a slight delay. Always animate list makes sure that all
                 // of the bushes and grass respawn even when they are off the screen.
-                if (_respawnStart)
+                if (_respawnStart && !FieldsMatch)
                 {
                     _respawnTimer += Game1.DeltaTime;
                     if (_respawnTimer >= 250)

@@ -8,6 +8,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjStoneRespawner : GameObject
     {
+        private readonly float _posX;
+        private readonly float _posY;
         private readonly string _spriteId;
         private readonly string _spawnItem;
         private readonly string _pickupKey;
@@ -25,6 +27,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
+            _posX = posX;
+            _posY = posY;
             _spriteId = spriteId;
             _spawnItem = spawnItem;
             _pickupKey = pickupKey;
@@ -46,10 +50,17 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (Camera.ClassicMode)
             {
+                // If the field has changed, then start the respawn.
                 if (MapManager.ObjLink.FieldChange)
                     _respawnStart = true;
 
-                if (_respawnStart)
+                // We only want to respawn objects that were on the field we left.
+                var currentField = Map.GetField((int)_posX, (int)_posY);
+                var FieldsMatch = currentField == MapManager.ObjLink.CurrentField;
+
+                // Respawn after a slight delay. Always animate list makes sure that all
+                // of the stones respawn even when they are off the screen.
+                if (_respawnStart && !FieldsMatch)
                 {
                     _respawnTimer += Game1.DeltaTime;
                     if (_respawnTimer >= 250)

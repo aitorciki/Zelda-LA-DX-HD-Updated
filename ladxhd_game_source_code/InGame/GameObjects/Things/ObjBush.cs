@@ -31,8 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _fieldPosX;
         private readonly int _fieldPosY;
 
-        public bool RespawnGrass = true;
-        public bool NoRespawn = false;
+        public bool NoRespawn;
         public bool _isThrown;
 
         public ObjBush(Map.Map map, int posX, int posY, string spawnItem, string spriteId,
@@ -190,7 +189,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (!_setGrassField)
                 {
                     // Create a respawner for the bush.
-                    if (RespawnGrass)
+                    if (!NoRespawn)
                         Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
 
                     // We just delete the bush instead of returning damage state.
@@ -292,7 +291,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // sound effect
             Game1.GameManager.PlaySoundEffect("D378-05-05");
 
-            if (RespawnGrass)
+            if (!NoRespawn)
                 Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
 
             // delete this object

@@ -77,7 +77,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // spawn a bush carried by the beetle
             if (type == 0)
-                _carriedObject = new ObjBush(map, posX, posY, null, "bush_0", true, true, false, Values.LayerPlayer, null) { RespawnGrass = false, NoRespawn = true };
+                _carriedObject = new ObjBush(map, posX, posY, null, "bush_0", true, true, false, Values.LayerPlayer, null) { NoRespawn = true };
             else if (type == 1)
                 _carriedObject = new ObjStone(map, posX, posY, "stone_0", null, null, null, false, false) { NoRespawn = true };
             else
