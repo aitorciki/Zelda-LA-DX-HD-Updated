@@ -14,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects
     {
         //-------------------------------------------------------------------------------------------------------
         // One-line "getter" functions.
+        public bool IsInWater2D() => (_inWater);
         public bool IsDiving() => (CurrentState == State.Swimming && _diveCounter > 0);
         public bool IsGrounded() => (_body.IsGrounded && !_railJump && !_isFlying);
         public bool IsRailJumping() => (_railJump);
@@ -29,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects
 
         //-------------------------------------------------------------------------------------------------------
         // One-line "setter" functions.
+        public void InflictSpikeDamage2D() => _spikeDamage = true;
         public void SetBowWowFollower(ObjBowWow bowWow) => _objBowWow = bowWow;
         public void LinkWalking(bool walk) => _isWalking = walk;
         public void ToggleBlockButton(bool toggle) => _blockButton = toggle;
@@ -36,9 +38,8 @@ namespace ProjectZ.InGame.GameObjects
 
         //-------------------------------------------------------------------------------------------------------
         // Enable/Disable game states by using a SaveManager key-value pair.
-        public void DisableInventory(bool disable) => Game1.GameManager.SaveManager.SetInt("disable_inventory", disable ? 1 : 0);
-
-        public void FreezeAnimations(bool freeze) => Game1.GameManager.SaveManager.SetInt("freezeGame", freeze ? 1 : 0);
+        public void DisableInventory(bool disable) => Game1.GameManager.SaveManager.SetString("disable_inventory", disable ? "1" : "0");
+        public void FreezeAnimations(bool freeze)  => Game1.GameManager.SaveManager.SetString("freezeGame", freeze ? "1" : "0");
 
         //-------------------------------------------------------------------------------------------------------
         // Various functions to set, manipulate, or reference "Direction".

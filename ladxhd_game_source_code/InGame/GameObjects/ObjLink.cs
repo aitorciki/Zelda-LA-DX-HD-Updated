@@ -2657,8 +2657,7 @@ namespace ProjectZ.InGame.GameObjects
             // We only use the field barrier when "Classic Camera" is active.
             if (Camera.ClassicMode)
             {
-                // Detect when the field has changed. This is disabled in ObjectManager as soon
-                // as the enemy reset loop runs and resets their positions on the previous field.
+                // Detect when the field has changed.
                 FieldChange = CurrentField != ContrastField;
 
                 // Store the previous field that was just left.
@@ -3216,22 +3215,22 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? useItem = item.Name switch
             {
-                "sword1" => UseSword,
-                "sword2" => UseSword,
-                "feather" => UseFeather,
-                "toadstool" => UseToadstool,
-                "powder" => UsePowder,
-                "bomb" => UseBomb,
-                "bow" => UseArrow,
-                "shovel" => UseShovel,
-                "stonelifter" => UseBracelet,
-                "stonelifter2" => UseBracelet,
-                "hookshot" => UseHookshot,
-                "boomerang" => UseBoomerang,
-                "magicRod" => UseMagicRod,
-                "ocarina" => UseOcarina,
-                "pegasusBoots" => UsePegasusBoots,
-                _ => null
+                "sword1"        => UseSword,
+                "sword2"        => UseSword,
+                "feather"       => UseFeather,
+                "toadstool"     => UseToadstool,
+                "powder"        => UsePowder,
+                "bomb"          => UseBomb,
+                "bow"           => UseArrow,
+                "shovel"        => UseShovel,
+                "stonelifter"   => UseBracelet,
+                "stonelifter2"  => UseBracelet,
+                "hookshot"      => UseHookshot,
+                "boomerang"     => UseBoomerang,
+                "magicRod"      => UseMagicRod,
+                "ocarina"       => UseOcarina,
+                "pegasusBoots"  => UsePegasusBoots,
+                _               => null
             };
             useItem?.Invoke();
         }
@@ -3240,15 +3239,15 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? holdItem = item.Name switch
             {
-                "sword1" => HoldSword,
-                "sword2" => HoldSword,
-                "feather" => HoldFeather,
-                "shield" => HoldShield,
-                "mirrorShield" => HoldShield,
-                "stonelifter" => HoldBracelet,
-                "stonelifter2" => HoldBracelet,
-                "pegasusBoots" => HoldPegasusBoots,
-                _ => null
+                "sword1"        => HoldSword,
+                "sword2"        => HoldSword,
+                "feather"       => HoldFeather,
+                "shield"        => HoldShield,
+                "mirrorShield"  => HoldShield,
+                "stonelifter"   => HoldBracelet,
+                "stonelifter2"  => HoldBracelet,
+                "pegasusBoots"  => HoldPegasusBoots,
+                _               => null
             };
             holdItem?.Invoke();
         }
@@ -3257,10 +3256,10 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? releaseItem = item.Name switch
             {
-                "shield" => ReleaseShield,
-                "mirrorShield" => ReleaseShield,
-                "feather" => ReleaseFeather,
-                _ => null
+                "shield"        => ReleaseShield,
+                "mirrorShield"  => ReleaseShield,
+                "feather"       => ReleaseFeather,
+                _               => null
             };
             releaseItem?.Invoke();
         }
@@ -3545,7 +3544,7 @@ namespace ProjectZ.InGame.GameObjects
             _isHoldingSword = true;
         }
 
-        private Box GetSwordDamageBox(RectangleF collisionRectangle) =>
+        private Box GetSwordDamageBox(RectangleF collisionRectangle) => 
             new Box(
                 collisionRectangle.X + EntityPosition.X + _animationOffsetX,
                 collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, -8,
@@ -3653,7 +3652,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 < 0 => _lastSwimDirection = 0,
                 > 0 => _lastSwimDirection = 2,
-                _ => _lastSwimDirection
+                _   => _lastSwimDirection
             };
             if (CurrentState == State.ChargeSwimming && moveDirX % 2 == 0)
                 AnimatorWeapons.Play("stand_" + moveDirX);
@@ -3863,11 +3862,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _) => (-9, -18, +4, +2), // Up
-                (2, _) => (-11, -16, +4, +2), // Right
-                (3, true) => (-8, -18, +4, +3), // Down (Mirror Shield)
-                (3, false) => (-9, -18, +4, +3), // Down
-                (_, _) => (-7, -16, +4, +2), // Left
+                (1, _)     => ( -9, -18, +4, +2), // Up
+                (2, _)     => (-11, -16, +4, +2), // Right
+                (3, true)  => ( -8, -18, +4, +3), // Down (Mirror Shield)
+                (3, false) => ( -9, -18, +4, +3), // Down
+                (_, _)     => ( -7, -16, +4, +2), // Left
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
@@ -4978,10 +4977,10 @@ namespace ProjectZ.InGame.GameObjects
             var key = Direction;
             var offsets = key switch
             {
-                1 => (-7, -16, +14, +5),
-                2 => (+5, -12, +5, +14),
-                3 => (-7, +1, +14, +5),
-                _ => (-10, -12, +5, +14)
+                1 => (  -7, -16, +14,  +5),
+                2 => (  +5, -12,  +5, +14),
+                3 => (  -7,  +1, +14,  +5),
+                _ => ( -10, -12,  +5, +14)
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;

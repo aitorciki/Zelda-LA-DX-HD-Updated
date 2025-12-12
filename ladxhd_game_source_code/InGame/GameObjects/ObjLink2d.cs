@@ -823,20 +823,5 @@ namespace ProjectZ.InGame.GameObjects
                 _swimVelocity.Y = 0;
             }
         }
-
-        public bool IsClimbing()
-        {
-            return _isClimbing;
-        }
-
-        public bool IsInWater2D()
-        {
-            return _inWater;
-        }
-
-        public void InflictSpikeDamage2D()
-        {
-            _spikeDamage = true;
-        }
     }
 }
