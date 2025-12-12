@@ -298,7 +298,7 @@ namespace ProjectZ.InGame.Controls
             return false;
         }
 
-        public static bool ButtonPressed(CButtons button)
+        public static bool ButtonPressed(CButtons button, bool controllerOnly = false)
         {
             var direction = GetGamepadDirection();
             if (_initDirection && direction.Length() >= Values.ControllerDeadzone)
@@ -310,9 +310,10 @@ namespace ProjectZ.InGame.Controls
             }
 
             // check the keyboard buttons
-            for (var i = 0; i < ButtonDictionary[button].Keys.Length; i++)
-                if (InputHandler.KeyPressed(ButtonDictionary[button].Keys[i]))
-                    return true;
+            if (!controllerOnly)
+                for (var i = 0; i < ButtonDictionary[button].Keys.Length; i++)
+                    if (InputHandler.KeyPressed(ButtonDictionary[button].Keys[i]))
+                        return true;
 
             // check the gamepad buttons
             for (var i = 0; i < ButtonDictionary[button].Buttons.Length; i++)

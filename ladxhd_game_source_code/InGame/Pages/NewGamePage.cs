@@ -16,10 +16,11 @@ namespace ProjectZ.InGame.Pages
         private InterfaceListLayout[] _keyboardRows;
 
         private InterfaceListLayout _newGameLayout;
+        private InterfaceListLayout _keyboardLayout;
         private InterfaceListLayout _gameTypeLayout;
         private InterfaceListLayout _bottomLayout;
 
-        private readonly InterfaceButton _newGameButton;
+        private readonly InterfaceButton _nameEntryButton;
         private readonly InterfaceLabel _labelNameInput;
         private readonly InterfaceSlider _gameTypeSlider;
 
@@ -32,6 +33,9 @@ namespace ProjectZ.InGame.Pages
 
         private bool _upperMode;
         private bool _showTooltip;
+
+        private float _keyRepeatTimer;
+        private float _keyRepeatLimit = 500;
 
         private char[,] _charactersUpper = new char[,]
         {
@@ -59,12 +63,12 @@ namespace ProjectZ.InGame.Pages
             _labelNameInput = new InterfaceLabel(null) { Selectable = true, Size = new Point(200, 20) };
             var layerButton = new InterfaceListLayout { Size = new Point(200, 20) };
             layerButton.AddElement(_labelNameInput);
-            _newGameButton = new InterfaceButton { Size = new Point(200, 20), InsideElement = layerButton };
-            _newGameLayout.AddElement(_newGameButton);
+            _nameEntryButton = new InterfaceButton { Size = new Point(200, 20), InsideElement = layerButton };
+            _newGameLayout.AddElement(_nameEntryButton);
 
             // Create the keyboard layout.
             {
-                var keyboardLayout = new InterfaceListLayout { AutoSize = true, Margin = new Point(0, 5), Selectable = true };
+                _keyboardLayout = new InterfaceListLayout { AutoSize = true, Margin = new Point(0, 5), Selectable = true };
 
                 var keyWidth = 20;
                 var keyHeight = 20;
@@ -93,9 +97,9 @@ namespace ProjectZ.InGame.Pages
                         _keyboardRows[y].AddElement(_keyboardButtons[y, x]);
                     }
                     _keyboardRows[y].SetSelectionIndex(4);
-                    keyboardLayout.AddElement(_keyboardRows[y]);
+                    _keyboardLayout.AddElement(_keyboardRows[y]);
                 }
-                _newGameLayout.AddElement(keyboardLayout);
+                _newGameLayout.AddElement(_keyboardLayout);
             }
 
             // Create a slider to select the game type.
@@ -164,7 +168,7 @@ namespace ProjectZ.InGame.Pages
         {
             base.Update(pressedButtons, gameTime);
 
-            // @HACK: going up/down we select the correct button
+            // Keep the current column when moving around on the keyboard.
             for (var y = 0; y < _charactersUpper.GetLength(0); y++)
                 for (int x = 0; x < _charactersUpper.GetLength(1); x++)
                     if (_keyboardButtons[y, x] != null && _keyboardButtons[y, x].Selected)
@@ -173,33 +177,72 @@ namespace ProjectZ.InGame.Pages
                             _keyboardRows[y1].SetSelectionIndex(x);
                     }
 
-            if (_newGameButton.Selected)
+            // When the name entry button is selected, allow keyboard input and
+            // deleting characters with the controller "Cancel" button.
+            if (_nameEntryButton.Selected)
             {
-                // get the keyboard input
                 var strInput = InputHandler.ReturnCharacter();
                 AddCharacters(strInput);
 
-                if (InputHandler.KeyPressed(Keys.Back))
-                    RemoveCharacter();
-            }
-            else
-            {
-                // close the page
-                if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
-                {
+                // The "Back" button was pressed on controller only.
+                if (ControlHandler.ButtonPressed(ControlHandler.CancelButton, true))
                     Game1.UiPageManager.PopPage();
+
+                // When pressing/holding the "Delete" key.
+                else if (InputHandler.KeyDown(Keys.Back))
+                {
+                    // On first press delete a character.
+                    if (_keyRepeatTimer == 0)
+                        RemoveCharacter();
+
+                    // Start a timer for 500ms before repeating deleting.
+                    _keyRepeatTimer += Game1.DeltaTime;
+
+                    // When timer expires restart it at a faster rate.
+                    if (_keyRepeatTimer > _keyRepeatLimit)
+                    {
+                        _keyRepeatLimit = 50;
+                        _keyRepeatTimer = 0;
+                    }
+                }
+                // When releasing the "Delete" key.
+                else if (!InputHandler.KeyDown(Keys.Back))
+                {
+                    // Reset the timer and the repeat rate.
+                    _keyRepeatTimer = 0;
+                    _keyRepeatLimit = 500;
                 }
             }
-
-            // The tooltip button was pressed.
-            if (ControlHandler.ButtonPressed(CButtons.Y))
+            // When the keyboard layout is selected, only allow input via the
+            // on-screen keys and allow deleting with controller "Cancel" button.
+            else if (_keyboardLayout.Selected)
             {
-                _showTooltip = !_showTooltip;
-                if (_showTooltip)
-                    Game1.GameManager.PlaySoundEffect("D360-21-15");
+                if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                    RemoveCharacter();
+            }
+            // When any other button is selected.
+            else
+            {
+                // The "Back" button was pressed.
+                if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                    Game1.UiPageManager.PopPage();
+
+                // The "Tooltip" button was pressed.
+                if (ControlHandler.ButtonPressed(CButtons.Y))
+                {
+                    _showTooltip = !_showTooltip;
+                    if (_showTooltip)
+                        Game1.GameManager.PlaySoundEffect("D360-21-15");
+                }
+            }
+            // Allow toggling caps lock with the LT or RT buttons.
+            if (ControlHandler.ButtonPressed(CButtons.LT, true) || ControlHandler.ButtonPressed(CButtons.RT, true))
+            {
+                _upperMode = !_upperMode;
+                UpdateKeyboard();
             }
             // Hide the tooltip when pressing anything.
-            else if (ControlHandler.AnyButtonPressed())
+            if (ControlHandler.AnyButtonPressed())
                 _showTooltip = false;
 
             _labelNameInput.SetText(_strNameInput + ((gameTime.TotalGameTime.Milliseconds % 500) < 250 ? "_" : " "));
