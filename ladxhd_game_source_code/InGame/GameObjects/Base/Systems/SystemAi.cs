@@ -25,11 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                Pool.GetComponentList(_objectList, 
-                    ObjectManager.UpdateField.X, 
-                    ObjectManager.UpdateField.Y,
-                    ObjectManager.UpdateField.Width, 
-                    ObjectManager.UpdateField.Height, AiComponent.Mask);
+                Pool.GetComponentList(_objectList, ObjectManager.UpdateField.X, ObjectManager.UpdateField.Y, ObjectManager.UpdateField.Width, ObjectManager.UpdateField.Height, AiComponent.Mask);
                 _objectList.RemoveAll(o => o?.EntityPosition != null && !ObjectManager.ActualField.Contains(o.EntityPosition.Position));
             }
             // Normal Camera: Update objects that are within the viewport.

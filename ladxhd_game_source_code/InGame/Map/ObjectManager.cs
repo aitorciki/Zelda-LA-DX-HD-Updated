@@ -232,9 +232,6 @@ namespace ProjectZ.InGame.Map
 
                     // Reset any dug holes on the current field.
                     _ = Owner.ResetCurrentFieldHoleMap();
-
-                    // But always update the FieldChange.
-                    Link.FieldChange = false;
                 }
             }
             // Add the always animate objects from the main list to the temporary list here. The objects are copied to this 
@@ -335,8 +332,7 @@ namespace ProjectZ.InGame.Map
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, 
-                    UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
+                _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
                 _updateGameObject.RemoveAll(o => o?.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
             }
             // Normal Camera: Update objects that are within the viewport.
@@ -395,8 +391,7 @@ namespace ProjectZ.InGame.Map
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y,
-                    UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
+                _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
                 _collidingObjectList.RemoveAll(o => o?.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
             }
             // Normal Camera: Update objects that are within the player’s body rectangle.
