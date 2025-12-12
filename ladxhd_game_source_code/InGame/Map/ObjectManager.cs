@@ -309,9 +309,10 @@ namespace ProjectZ.InGame.Map
             var Link = MapManager.ObjLink;
             _updateGameObject.Clear();
 
-            _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X - 16, Link.PreviousField.Y - 16, 
-                Link.PreviousField.Width + 32, Link.PreviousField.Height + 32, DrawComponent.Mask);
-            _updateGameObject.RemoveAll(o => o?.EntityPosition != null && !Link.PreviousField.Contains(o.EntityPosition.Position));
+            // Get all objects on the previous field with a DrawComponent. Add 4 additional pixels to the
+            // bottom of the field to get objects that potentially fall outside the range of the field.
+            _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X, Link.PreviousField.Y, 
+                Link.PreviousField.Width, Link.PreviousField.Height + 4, DrawComponent.Mask);
 
             foreach (var gameObject in _updateGameObject)
             {
