@@ -37,12 +37,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     (int)(Game1.RenderWidth / MapManager.Camera.Scale),
                     (int)(Game1.RenderHeight / MapManager.Camera.Scale), AiComponent.Mask);
             }
-            // Always include Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
-            {
-                if (gameObject != null && !_objectList.Contains(gameObject))
-                    _objectList.Add(gameObject);
-            }
             // Always include certain objects that are flagged as "always animate".
             foreach (var gameObject in _objectManager.AlwaysAnimateObjectsTemp)
             {

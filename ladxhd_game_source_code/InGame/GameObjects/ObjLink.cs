@@ -1682,6 +1682,7 @@ namespace ProjectZ.InGame.GameObjects
                     (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X),
                     "borrow_rooster");
                 Map.Objects.SpawnObject(_objRooster);
+                Map.Objects.RegisterAlwaysAnimateObject(_objFollower);
                 _objRooster.BorrowRooster();
             }
 
@@ -4730,6 +4731,7 @@ namespace ProjectZ.InGame.GameObjects
 
             Boomerang.Start(Map, spawnPosition, boomerangVector);
             Map.Objects.SpawnObject(Boomerang);
+            Map.Objects.RegisterAlwaysAnimateObject(Boomerang);
 
             if (CurrentState != State.Jumping &&
                 CurrentState != State.ChargeJumping)
@@ -5176,6 +5178,7 @@ namespace ProjectZ.InGame.GameObjects
                     _objFollower.Map = Map;
                     Map.Objects.SpawnObject(_objFollower);
                 }
+                Map.Objects.RegisterAlwaysAnimateObject(_objFollower);
             }
             // Remove the current follower from the map.
             else if (_objFollower != null)
@@ -5206,6 +5209,7 @@ namespace ProjectZ.InGame.GameObjects
             _objMaria.SetPosition(marinSpawnPos);
             _objMaria.SetFacingDirection(_objMaria, Direction);
             _objFollower = _objMaria;
+            Map.Objects.RegisterAlwaysAnimateObject(_objFollower);
         }
 
         private void UpdateGhostSpawn()

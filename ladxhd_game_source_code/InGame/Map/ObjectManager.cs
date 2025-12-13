@@ -346,12 +346,6 @@ namespace ProjectZ.InGame.Map
                    (int)(updateFieldSize.X / MapManager.Camera.Scale),
                    (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
             }
-            // Always update Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
-            {
-                if (gameObject != null && !_updateGameObject.Contains(gameObject))
-                    _updateGameObject.Add(gameObject);
-            }
             // Always update certain objects that are flagged as "always animate".
             foreach (var gameObject in AlwaysAnimateObjectsTemp)
             {
@@ -401,12 +395,6 @@ namespace ProjectZ.InGame.Map
                 _gameObjectPool.GetComponentList(_collidingObjectList, (int)Link.BodyRectangle.X, (int)Link.BodyRectangle.Y,
                     (int)Link.BodyRectangle.Width, (int)Link.BodyRectangle.Height, ObjectCollisionComponent.Mask);
             }
-            // Always include Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
-            {
-                if (gameObject != null && !_collidingObjectList.Contains(gameObject))
-                    _collidingObjectList.Add(gameObject);
-            }
             // Always include certain objects that are flagged as "always animate".
             foreach (var gameObject in AlwaysAnimateObjectsTemp)
             {
@@ -448,12 +436,6 @@ namespace ProjectZ.InGame.Map
             {
                 _gameObjectPool.GetComponentList(_damageFieldObjects, (int)playerDamageBox.X, (int)playerDamageBox.Y,
                     (int)playerDamageBox.Width,(int)playerDamageBox.Height, DamageFieldComponent.Mask);
-            }
-            // Always include Link's follower, the boomerang, and BowWow (when rescued).
-            foreach (var gameObject in new GameObject?[] { Link._objFollower, Link.Boomerang })
-            {
-                if (gameObject != null && !_damageFieldObjects.Contains(gameObject))
-                    _damageFieldObjects.Add(gameObject);
             }
             // Always include certain objects that are flagged as "always animate".
             foreach (var gameObject in AlwaysAnimateObjectsTemp)
@@ -615,6 +597,7 @@ namespace ProjectZ.InGame.Map
                         (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
                         (int)(Game1.RenderHeight / MapManager.Camera.Scale));
+
                     foreach (var gameObject in db_gameObjectList)
                     {
                         if (gameObject.EntityPosition != null && !(gameObject is ObjLamp))
@@ -806,10 +789,10 @@ namespace ProjectZ.InGame.Map
 
         public void Clear()
         {
-            ObjectList.Clear();
-            ObjectListB.Clear();
             AlwaysAnimateObjectsMain.Clear();
             AlwaysAnimateObjectsTemp.Clear();
+            ObjectList.Clear();
+            ObjectListB.Clear();
         }
 
         private void ClearPools()

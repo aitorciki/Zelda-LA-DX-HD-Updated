@@ -85,7 +85,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Update()
         {
             // A null map can cause a crash so make sure it isn't null for some reason.
-            if (Map == null) return;
+            if (Map == null) 
+                return;
 
             // Set up some shortcut vars for Link.
             ObjLink Link = MapManager.ObjLink;
@@ -224,6 +225,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void ComeBack(bool particle = false)
         {
+            // A null map can cause a crash so make sure it isn't null for some reason.
+            if (Map == null) 
+                return;
+
             // Draw the "sparking" effect and play the sound if set.
             if (particle)
             {

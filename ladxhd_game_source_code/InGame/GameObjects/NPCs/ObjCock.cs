@@ -163,6 +163,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Update()
         {
+            // A null map can cause a crash so make sure it isn't null for some reason.
+            if (Map == null)
+                return;
+
             // do not follow the player into dungeons
             if (Map.DungeonMode && _resurrected)
                 SetActive(false);
