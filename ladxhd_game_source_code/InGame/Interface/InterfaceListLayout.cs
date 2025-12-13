@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
+using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Interface
@@ -192,6 +193,11 @@ namespace ProjectZ.InGame.Interface
                 _selectionIndex = 0;
                 dir = 1;
             }
+            // Now this is interesting. If spamming directions (especially diagonal directions) on the main menu
+            // screen, it's possible to select an invalid index and crash the game. Let's prevent that here.
+            var currentPage = Game1.UiPageManager.GetCurrentPage();
+            if (currentPage != null && currentPage.GetType() == typeof(MainMenuPage) && _selectionIndex == 3)
+                return;
 
             // find a selectable item in the list
             while (!Elements[_selectionIndex].Selectable || !Elements[_selectionIndex].Visible)
