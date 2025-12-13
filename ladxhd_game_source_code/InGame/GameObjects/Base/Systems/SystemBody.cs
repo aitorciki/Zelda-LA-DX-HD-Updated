@@ -300,7 +300,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
                     // try to push the colliding object
                     // if this is done before the alignment it can happen that the body walks into the object it is pushing
-                    if (isPusher && Math.Abs(offset.X) > Math.Abs(offset.Y))
+                    if (isPusher && Math.Abs(offset.X) >= Math.Abs(offset.Y))
                     {
                         var pushRectangle = new Box(
                             body.Position.X + offset.X + body.OffsetX, body.Position.Y + body.OffsetY, body.Position.Z, body.Width, body.Height, body.Depth);
@@ -357,7 +357,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     }
 
                     // try to push the colliding object
-                    if (isPusher && Math.Abs(offset.X) < Math.Abs(offset.Y))
+                    if (isPusher && Math.Abs(offset.X) <= Math.Abs(offset.Y))
                     {
                         var pushRectangle = new Box(
                             body.Position.X + body.OffsetX, body.Position.Y + offset.Y + body.OffsetY, body.Position.Z, body.Width, body.Height, body.Depth);

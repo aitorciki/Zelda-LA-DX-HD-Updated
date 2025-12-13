@@ -43,7 +43,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             CanReset = true;
             OnReset = Reset;
 
-            _body = new BodyComponent(EntityPosition, -8, -16, 16, 14, 8)
+            _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
             {
                 Bounciness = 0.25f,
                 Drag = 0.85f,
@@ -71,29 +71,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy) { Collision = IsColliding });
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 0 });
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
-        }
-
-        private bool IsColliding(Box box, int dir, int level, ref Box collidingBox)
-        {
-            if (ReferenceEquals(box, MapManager.ObjLink._body.BodyBox) || box.Equals(MapManager.ObjLink._body.BodyBox.Box))
-            {
-                if (dir != MapManager.ObjLink.Direction)
-                {
-                    var direction = ControlHandler.GetMoveVector2();
-                    MapManager.ObjLink.HitPlayer(-direction, HitType.Enemy, _collisionDamage, false);
-                }
-            }
-            if (!IsActive || !box.Intersects(_collisionComponent.Body.BodyBox.Box))
-                return false;
-
-            collidingBox = _collisionComponent.Body.BodyBox.Box;
-            return true;
         }
 
         private void Reset()
@@ -143,9 +126,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return true;
             }
             if (_dealsDamage)
-            {
                 MapManager.ObjLink.HitPlayer(-direction, HitType.Enemy, _collisionDamage, false);
-            }
+
             return false;
         }
 
