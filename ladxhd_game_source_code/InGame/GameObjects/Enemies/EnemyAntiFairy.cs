@@ -7,6 +7,7 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -19,6 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiDamageState _aiDamageState;
         private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
         private readonly Animator _animator;
 
         private int _lives = ObjLives.AntiFairy;
@@ -92,6 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush) { RepelMultiplier = 1.75f });
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
@@ -109,6 +112,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Pause();
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
+        }
+
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            OnCollision(MapManager.ObjLink.Direction % 2 == 0
+                ? Values.BodyCollision.Horizontal
+                : Values.BodyCollision.Vertical);
+            return true;
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
