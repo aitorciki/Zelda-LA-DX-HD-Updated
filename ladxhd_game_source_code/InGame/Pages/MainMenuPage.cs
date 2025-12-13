@@ -21,12 +21,14 @@ namespace ProjectZ.InGame.Pages
         public InterfaceListLayout[] SaveEntries = new InterfaceListLayout[SaveStateManager.SaveCount];
 
         private float[] _playerSelectionState = new float[SaveStateManager.SaveCount];
-        private InterfaceImage[] _playerImage = new InterfaceImage[SaveStateManager.SaveCount];
         private InterfaceButton[] _saveButtons = new InterfaceButton[SaveStateManager.SaveCount];
-
         private Dictionary<string, object> _newGameIntent = new Dictionary<string, object>();
 
         private Animator _playerAnimation = new Animator();
+        private Animator _swordAnimation = new Animator();
+
+        private InterfacePlayerImage [] _playerImage = new InterfacePlayerImage[SaveStateManager.SaveCount];
+
         private DictAtlasEntry _heartSprite;
 
         private InterfaceElement[][] _heartImage = new InterfaceElement[4][];
@@ -43,6 +45,8 @@ namespace ProjectZ.InGame.Pages
         private InterfaceListLayout _menuBottomBar;
         private InterfaceListLayout _saveFileList;
 
+        private string[] cloakColors = new string[SaveStateManager.SaveCount];
+
         private int _selectedSaveIndex;
         private bool _selectStoredSave;
 
@@ -57,7 +61,10 @@ namespace ProjectZ.InGame.Pages
             _heartSprite = Resources.GetSprite("heart menu");
 
             _playerAnimation = AnimatorSaveLoad.LoadAnimator("menu_link");
-            _playerAnimation.Play("idle");
+            _playerAnimation.Play("green");
+
+            _swordAnimation = AnimatorSaveLoad.LoadAnimator("menu_link");
+            _swordAnimation.Play("sword");
 
             _newGameButtonLayout = new InterfaceListLayout { Size = saveButtonRec };
             _newGameButtonLayout.AddElement(new InterfaceLabel("main_menu_new_game"));
@@ -90,11 +97,9 @@ namespace ProjectZ.InGame.Pages
                         _heartImage[i] = new InterfaceElement[14];
                         for (var j = 0; j < 7; j++)
                         {
-                            // top row
+                            int k = j + 7;
                             _heartImage[i][j] = rowOne.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
-                            // bottom row
-                            _heartImage[i][j + 7] =
-                                rowTwo.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
+                            _heartImage[i][k] = rowTwo.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
                         }
 
                         hearts.AddElement(rowOne);
@@ -133,7 +138,7 @@ namespace ProjectZ.InGame.Pages
 
                     // dummy layout
                     SaveEntries[i].AddElement(new InterfaceListLayout { Size = new Point(sideSize - 20, 20) });
-                    SaveEntries[i].AddElement(_playerImage[i] = new InterfaceImage(_playerAnimation.SprTexture, _playerAnimation.CurrentFrame.SourceRectangle, new Point(20, 16), new Point(0, 0)));
+                    SaveEntries[i].AddElement(_playerImage[i] = new InterfacePlayerImage(_playerAnimation, _swordAnimation, _playerAnimation.SprTexture, _playerAnimation.CurrentFrame.SourceRectangle, new Point(24, 16), new Point(0, 0)));
 
                     // save file
                     SaveEntries[i].AddElement(_saveButtons[i]);
@@ -275,7 +280,6 @@ namespace ProjectZ.InGame.Pages
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
-
             // If the player wants to automatically select the last save file accessed.
             if (GameSettings.StoreSavePos && !_selectStoredSave)
             {
@@ -320,6 +324,17 @@ namespace ProjectZ.InGame.Pages
                 // Close the menu page and change to the intro screen.
                 Game1.ScreenManager.ChangeScreen(Values.ScreenNameIntro);
                 Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
+            }
+            // Get the selected index to get the cloak color.
+            var index = _saveFileList.SelectionIndex;
+
+            // Update the cloak color.
+            if (index is >= 0 and <= 4)
+            {
+                if (!string.IsNullOrEmpty(cloakColors[index]))
+                    _playerAnimation.Play(cloakColors[index]);
+                else
+                    _playerAnimation.Play("green");
             }
         }
 
@@ -413,12 +428,31 @@ namespace ProjectZ.InGame.Pages
                 {
                     _saveButtons[i].InsideElement = _saveButtonLayouts[i];
                 }
+                // If the player has stolen an item, replace it with the "Thief" name.
+                _saveNames[i].SetText(SaveStateManager.SaveStates[i].Thief 
+                    ? Game1.LanguageManager.GetString("savename_thief", "error") 
+                    : SaveStateManager.SaveStates[i].Name);
 
-                _saveNames[i].SetText(SaveStateManager.SaveStates[i].Thief ? Game1.LanguageManager.GetString("savename_thief", "error") : SaveStateManager.SaveStates[i].Name);
+                // Load the players rupee count.
                 _saveRuby[i].SetText(SaveStateManager.SaveStates[i].CurrentRubee.ToString());
-                
-                // format playtime display as HH:MM
-                var totalMinutes = SaveStateManager.SaveStates[i].TotalPlaytimeMinutes;
+
+                // Get the color of the player's cloak.
+                var cloak = SaveStateManager.SaveStates[i].CloakType;
+                var shield = SaveStateManager.SaveStates[i].MirrorShield;
+                string baseColor = cloak switch
+                {
+                    1         => "blue",
+                    2         => "red",
+                    _         => "green"
+                };
+                // Player has the Level 2 sword so show it on Link's sprite.
+                _playerImage[i].ShowSword = SaveStateManager.SaveStates[i]?.SwordLevel2 == true;
+
+                // Player has the mirror shield so show it on Link's sprite.
+                cloakColors[i] = shield ? baseColor + "s" : baseColor;
+
+                // Playtime format displays as: HH:MM
+                var totalMinutes = SaveStateManager.SaveStates[i].TotalPlaytime;
                 var hours = (int)(totalMinutes / 60);
                 var minutes = (int)(totalMinutes % 60);
                 var playtimeText = $"{hours:D2}:{minutes:D2}";

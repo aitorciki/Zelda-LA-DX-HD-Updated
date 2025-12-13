@@ -16,6 +16,12 @@ namespace ProjectZ.InGame.SaveLoad
         private readonly Dictionary<string, float> _floatDictionary = new Dictionary<string, float>();
         private readonly Dictionary<string, string> _stringDictionary = new Dictionary<string, string>();
 
+        private bool _hasSwordLevel2;
+        private bool _hasMirrorShield;
+
+        public bool HasSwordLevel2 { get => _hasSwordLevel2; }
+        public bool HasMirrorShield { get => _hasMirrorShield; }
+
         public static string GetSaveFilePath()
         {
             string portable = Path.Combine(Values.WorkingDirectory,"portable.txt");
@@ -156,6 +162,11 @@ namespace ProjectZ.InGame.SaveLoad
                                 }
                                 else if (strSplit[0] == "s")
                                 {
+                                    if (strSplit[2] == "sword2:1")
+                                        _hasSwordLevel2 = true;
+                                    if (strSplit[2] == "mirrorShield:1")
+                                        _hasMirrorShield = true;
+
                                     _stringDictionary.Add(strSplit[1], valueString);
                                 }
                             }

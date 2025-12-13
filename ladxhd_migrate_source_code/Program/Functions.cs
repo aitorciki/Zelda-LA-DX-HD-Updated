@@ -20,6 +20,7 @@ namespace LADXHD_Migrater
         private static string[] langDialog = new[] { "dialog_deu.lng", "dialog_esp.lng", "dialog_fre.lng", "dialog_ind.lng", "dialog_ita.lng", "dialog_por.lng", "dialog_rus.lng" };
         private static string[] smallFonts = new[] { "smallFont_redux.png", "smallFont_vwf.png", "smallFont_vwf_redux.png" };
         private static string[] backGround = new[] { "menuBackgroundB.png", "menuBackgroundC.png", "sgb_border.png" };
+        private static string[] linkImages = new[] { "link1.png" };
         private static string[] npcImages  = new[] { "npcs_redux.png" };
         private static string[] itemImages = new[] { "items_deu.png", "items_esp.png", "items_fre.png", "items_ind.png", "items_ita.png", "items_por.png", "items_rus.png", "items_redux.png", 
                                                      "items_redux_deu.png", "items_redux_esp.png", "items_redux_fre.png", "items_redux_ind.png", "items_redux_ita.png", "items_redux_por.png", "items_redux_rus.png" };
@@ -41,6 +42,7 @@ namespace LADXHD_Migrater
             { "dialog_eng.lng",     langDialog },
             { "smallFont.png",      smallFonts },
             { "menuBackground.png", backGround },
+            { "link0.png",          linkImages },
             { "npcs.png",            npcImages },
             { "items.png",          itemImages },
             { "intro.png",          introImage },

@@ -1729,7 +1729,7 @@ namespace ProjectZ.InGame.Things
 
             MapManager.ObjLink.InitGame();
 
-            // Load the values from "saveGame#". 
+            // Load the values from "save#" and "saveGame#". 
             SaveGameSaveLoad.LoadSaveFile(this, slot);
 
             // Fixes changes to save files that are now invalid.

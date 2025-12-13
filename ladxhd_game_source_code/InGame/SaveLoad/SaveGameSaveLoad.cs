@@ -177,7 +177,6 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static void LoadSaveFile(GameManager gameManager, int slot)
         {
-            // save game variables
             if (!gameManager.SaveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot)))
                 return;
 
