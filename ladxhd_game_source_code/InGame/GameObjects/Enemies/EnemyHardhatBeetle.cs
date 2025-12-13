@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
-            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
+            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false, ReturnState = "waiting" };
             _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, OnHoleDeath);
