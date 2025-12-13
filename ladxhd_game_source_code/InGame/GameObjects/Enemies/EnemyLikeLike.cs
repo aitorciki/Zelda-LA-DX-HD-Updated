@@ -46,7 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
-            _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
+            _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
             {
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |
@@ -76,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // start randomly idle or walking facing a random direction
             _direction = Game1.RandomNumber.Next(0, 4);
 
-            var boxHittable = new CBox(EntityPosition, -7, -14, 14, 14, 8);
+            var boxHittable = new CBox(EntityPosition, -8, -16, 16, 16, 8);
             _collisionBox = new CBox(EntityPosition, -5, -10, 10, 8, 2);
 
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(boxHittable, OnHit));
@@ -131,7 +131,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void ToTrap()
         {
             MapManager.ObjLink.TrapPlayer();
-            MapManager.ObjLink.SetPosition(EntityPosition.Position);
+            MapManager.ObjLink.SetPosition(new Vector2(EntityPosition.Position.X, EntityPosition.Y - 3));
 
             if (!_stoleShield)
             {

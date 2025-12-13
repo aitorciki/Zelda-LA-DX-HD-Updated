@@ -527,16 +527,16 @@ namespace ProjectZ.InGame.GameObjects
 
             _arrowOffset = new[]
             {
-                new Vector2(-10, -2),
+                new Vector2(-6, -2),
                 new Vector2(-2, -CollisionBoxSize.Y -1),
-                new Vector2(10, -2),
-                new Vector2(2, 6)
+                new Vector2(6, -2),
+                new Vector2(2, 4)
             };
 
             _magicRodOffset = new[]
             {
                 new Vector2(-10, -4),
-                new Vector2(-4, -CollisionBoxSize.Y - 8),
+                new Vector2(-4, -CollisionBoxSize.Y - 4),
                 new Vector2(10, -4),
                 new Vector2(3, 4)
             };
