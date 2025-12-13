@@ -83,7 +83,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
