@@ -1929,7 +1929,7 @@ namespace ProjectZ.InGame.GameObjects
 
             var vectorDirection = ToDirection(walkVelocity);
 
-            if (_bootsRunning && (walkVelLength < Values.ControllerDeadzone || vectorDirection != ReverseDirection(Direction)))
+            if (_bootsRunning && (walkVelLength < GameSettings.DeadZone || vectorDirection != ReverseDirection(Direction)))
             {
                 if (_bootsLastDirection != Direction)
                     _bootsStop = true;
@@ -1950,7 +1950,7 @@ namespace ProjectZ.InGame.GameObjects
                     _moveVelocity = Vector2.Zero;
                 }
             }
-            else if (walkVelLength > Values.ControllerDeadzone)
+            else if (walkVelLength > GameSettings.DeadZone)
             {
                 // slow down in the grass
                 if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.IsGrounded)
@@ -3020,7 +3020,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (moveVelocityLength > 1)
                     moveVelocity.Normalize();
 
-                if (moveVelocityLength > Values.ControllerDeadzone)
+                if (moveVelocityLength > GameSettings.DeadZone)
                 {
                     _isWalking = true;
                     _objRaft.TargetVelocity(moveVelocity * 0.5f);
@@ -5270,7 +5270,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (moveVelocityLength > 1)
                     moveVelocity.Normalize();
 
-                if (moveVelocityLength > Values.ControllerDeadzone)
+                if (moveVelocityLength > GameSettings.DeadZone)
                 {
                     _objRooster.TargetVelocity(moveVelocity, 0.5f, Direction);
                     var vectorDirection = ToDirection(moveVelocity);
@@ -5333,7 +5333,7 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
                 if (Animation.CurrentAnimation.Id == "intro_sit" &&
-                    !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen && walkVelocity.Length() > Values.ControllerDeadzone)
+                    !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen && walkVelocity.Length() > GameSettings.DeadZone)
                 {
                     CurrentState = State.Idle;
                     Direction = 2;

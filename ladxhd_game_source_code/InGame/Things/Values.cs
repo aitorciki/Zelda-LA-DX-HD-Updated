@@ -78,8 +78,6 @@ namespace ProjectZ.InGame.Things
         public const string ScreenNameEditorAnimation = "ANIMATION_EDITOR";
         public const string ScreenNameSpriteAtlasEditor = "SPRITE_ATLAS_EDITOR";
 
-        public static float ControllerDeadzone = 0.1f;
-
         public const float UiBackgroundRadius = 2.0f;
         public const float UiTextboxRadius = 3.0f;
 

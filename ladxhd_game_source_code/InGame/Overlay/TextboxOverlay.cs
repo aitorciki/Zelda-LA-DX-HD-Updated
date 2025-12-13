@@ -413,7 +413,7 @@ namespace ProjectZ.InGame.Overlay
             var direction = ControlHandler.GetMoveVector2();
             var dir = AnimationHelper.GetDirection(direction);
 
-            if (direction.Length() > Values.ControllerDeadzone && (dir == 0 || dir == 2))
+            if (direction.Length() > GameSettings.DeadZone && (dir == 0 || dir == 2))
             {
                 _selectionCounter -= Game1.DeltaTime;
 

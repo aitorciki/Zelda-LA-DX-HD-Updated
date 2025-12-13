@@ -19,9 +19,10 @@ namespace ProjectZ.InGame.Pages
         public ReduxOptionsPage(int width, int height, ContentManager content)
         {
             EnableTooltips = true;
-
             _content = content;
+
             var buttonWidth = 320;
+            var buttonHeight = 16;
 
             // Redux Settings Layout
             _reduxOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -29,51 +30,44 @@ namespace ProjectZ.InGame.Pages
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Menu Border Slider:
-            var menuBricksSlider = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
-                buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
-                number => { GameSettings.MenuBorder = number; })
-                { SetString = number => MenuBorderScaleSliderAdjustment(number) };
-            _contentLayout.AddElement(menuBricksSlider);
-
             // Variable Width Font Toggle:
-            var toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_vwfont", GameSettings.VarWidthFont, 
                 newState => { PressButtonDialogFontChange(newState); });
             _contentLayout.AddElement(toggleVariableFont);
 
             // Disable Helper Interactions:
-            var toggleHelperText = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleHelperText = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_nohelptext", GameSettings.NoHelperText, 
                 newState => { PressButtonToggleHelpers(newState); });
             _contentLayout.AddElement(toggleHelperText);
 
             // Enable Dialog Skip:
-            var toggleDialogSkip = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleDialogSkip = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_dialogskip", GameSettings.DialogSkip, 
                 newState => { PressButtonToggleDialogSkip(newState); });
             _contentLayout.AddElement(toggleDialogSkip);
 
             // Disable Censorship:
-            var toggleUncensored = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleUncensored = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_uncensor", GameSettings.Uncensored, 
                 newState => { PressButtonToggleUncensored(newState); });
             _contentLayout.AddElement(toggleUncensored);
 
             // Enable No Missables:
-            var toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_unmissables", GameSettings.Unmissables, 
                 newState => { PressButtonToggleUnmissables(newState); });
             _contentLayout.AddElement(toggleUnmissables);
 
             // Colored Photos:
-            var togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_photoscolor", GameSettings.PhotosColor, 
                 newState => { PressButtonTogglePhotosColor(newState); });
             _contentLayout.AddElement(togglePhotosColor);
 
             // No Animal Damage:
-            var toggleAnimalDamage = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleAnimalDamage = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_redux_noanimaldmg", GameSettings.NoAnimalDamage, 
                 newState => { PressButtonNoAnimalDamage(newState); });
             _contentLayout.AddElement(toggleAnimalDamage);
@@ -122,19 +116,6 @@ namespace ProjectZ.InGame.Pages
                 PageLayout.Select(InterfaceElement.Directions.Top, false);
             }
             _reloadMenus = false;
-        }
-
-        private string MenuBorderScaleSliderAdjustment(int number)
-        {
-            // Swap out the menu border with it's replacement.
-            Resources.RefreshMenuBorderTexture(_content, number);
-
-            return ": " + number switch
-            {
-                0 => Game1.LanguageManager.GetString("settings_redux_menubricksA", "error"),
-                1 => Game1.LanguageManager.GetString("settings_redux_menubricksB", "error"),
-                2 => Game1.LanguageManager.GetString("settings_redux_menubricksC", "error")
-            };
         }
 
         public void PressButtonDialogFontChange(bool newState)
@@ -209,14 +190,13 @@ namespace ProjectZ.InGame.Pages
             // Use the selected index to determine which tooltip to show.
             switch (index) 
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_menubricks", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_vwfont", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_nohelptext", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dialogskip", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_uncensor", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_unmissables", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_photoscolor", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_noanimaldmg", "error"); break; }
+                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_vwfont", "error"); break; }
+                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_nohelptext", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dialogskip", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_uncensor", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_unmissables", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_photoscolor", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_noanimaldmg", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

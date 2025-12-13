@@ -55,10 +55,11 @@ namespace ProjectZ.InGame.Pages
             AddPage(new DeleteSaveSlotPage(_width, _height));
             AddPage(new NewGamePage(_width, _height));
             AddPage(new SettingsPage(_width, _height));
-            AddPage(new GameSettingsPage(_width, _height));
+            AddPage(new GameSettingsPage(_width, _height, content));
             AddPage(new GraphicSettingsPage(_width, _height));
             AddPage(new AudioSettingsPage(_width, _height));
             AddPage(new ControlSettingsPage(_width, _height));
+            AddPage(new ControlMappingPage(_width, _height));
             AddPage(new CameraSettingsPage(_width, _height));
             AddPage(new ReduxOptionsPage(_width, _height, content));
             AddPage(new ModifiersPage(_width, _height));

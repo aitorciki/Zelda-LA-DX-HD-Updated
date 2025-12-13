@@ -24,7 +24,10 @@ namespace ProjectZ.InGame.Pages
 
             // Graphics Settings Layout
             _graphicSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+
             var buttonWidth = 320;
+            var buttonHeight = 16;
+
             _graphicSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_graphics_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
@@ -44,31 +47,31 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(_uiScaleSlider);
 
             // Button: Fullscreen
-            _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_fullscreen", GameSettings.IsFullscreen, 
                 newState => { Game1.ToggleFullscreen(); Game1.ScaleChanged = true; });
             _contentLayout.AddElement(_toggleFullscreen);
 
             // Button: Exclusive Fullscreen
-            _toggleExFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            _toggleExFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_exfullscreen", GameSettings.ExFullscreen, 
                 newState => { GameSettings.ExFullscreen = newState; });
             _contentLayout.AddElement(_toggleExFullscreen);
 
             // Button: Dynamic Shadows
-            var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                "settings_graphics_shadow", GameSettings.EnableShadows, 
                newState => GameSettings.EnableShadows = newState);
              _contentLayout.AddElement(shadowToggle);
 
             // Button: Vertical Sync
-            var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_fps_lock", GameSettings.VerticalSync, 
                 newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
             _contentLayout.AddElement(toggleFpsLock);
 
             // Button: Epilepsy Safe
-            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 14), new Point(5, 2),
+            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_epilepsysafe", GameSettings.EpilepsySafe, 
                 newState => { GameSettings.EpilepsySafe = newState; });
             _contentLayout.AddElement(toggleEpilepsySafe);

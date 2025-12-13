@@ -1,205 +1,158 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using ProjectZ.Base;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
 {
     class ControlSettingsPage : InterfacePage
     {
-        private readonly InterfaceListLayout[] _remapButtons;
+        private readonly InterfaceListLayout _controlSettingsList;
+        private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
-
-        // Being able to reference a static field makes updating the label text much easier down the road.
-        public static InterfaceLabel[] _buttonLabels = new InterfaceLabel[14];
-
-        private CButtons _selectedButton;
-        private bool _updateButton;
-
-        private int _lastControllerIndex = ControlHandler.ControllerIndex;
+        private readonly InterfaceButton _controllerType;
+        private readonly InterfaceSlider _subLangSlider;
+        private float _controlCooldown = 0f;
+        private bool _showTooltip;
 
         public ControlSettingsPage(int width, int height)
         {
-            // Control Settings Layout
-            var controlLayout = new InterfaceListLayout { Size = new Point(width, height - 16), Selectable = true };
+            EnableTooltips = true;
 
-            controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header", new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
+            // Game Settings Layout
+            _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
-            var controllerHeight = (int)(height * Values.MenuContentSize);
+            var buttonWidth = 320;
+            var buttonHeight = 16;
 
-            var buttonWidth = 65;
-            var lableWidth = 140;
-            var lableHeight = 10;
-            var headerHeight = 12;
+            _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
+                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
 
-            var remapHeader = new InterfaceListLayout { AutoSize = true, Margin = new Point(0, 1), HorizontalMode = true, CornerRadius = 0, Color = Values.MenuButtonColor };
-            remapHeader.AddElement(new InterfaceListLayout() { Size = new Point(buttonWidth, headerHeight) });
-            remapHeader.AddElement(new InterfaceLabel("settings_controls_keyboad", new Point(lableWidth, headerHeight), new Point(0, 0)));
-            remapHeader.AddElement(new InterfaceLabel("settings_controls_gamepad", new Point(lableWidth, headerHeight), new Point(0, 0)));
-            controlLayout.AddElement(remapHeader);
+            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            var remapButtons = new InterfaceListLayout { AutoSize = true, Margin = new Point(2, 0), Selectable = true };
-            _remapButtons = new InterfaceListLayout[Enum.GetValues(typeof(CButtons)).Length - 3];
-            var index = 0;
+            // Slider: Deadzone
+            var sliderDeadzone = new InterfaceSlider(Resources.GameFont, "settings_controls_deadzone", 
+                buttonWidth, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
+                number => { GameSettings.DeadZone = (float)(number * 0.01); })
+                { SetString = number => ": " + number + "%" };
+            _contentLayout.AddElement(sliderDeadzone);
 
-            foreach (CButtons eButton in Enum.GetValues(typeof(CButtons)))
-            {
-                if (eButton == CButtons.None || eButton == CButtons.LS || eButton == CButtons.RS)
-                    continue;
+            // Button: Controller Type
+            _contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "", PressButtonSetController));
+            _controllerType.InsideLabel.OverrideText = Game1.LanguageManager.GetString("settings_controls_gamepad", "error") + ": " + GameSettings.Controller;
 
-                // Override the button text when we reach the face and top buttons.
-                string overrideText = "";
-                if (index is >= 4 and <= 13)
-                    overrideText =  ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, index - 4];
+            // Button: Remap Settings
+            _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
+                "settings_controls_remap", element => { Game1.UiPageManager.ChangePage(typeof(ControlMappingPage)); }));
 
-                // Most buttons are pulled from language files except for when override text is not empty.
-                _remapButtons[index] = new InterfaceListLayout { Size = new Point(buttonWidth + lableWidth * 2, lableHeight), HorizontalMode = true };
+            // Button: Swap Confirm & Cancel
+            var toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_controls_swapbuttons", GameSettings.SwapButtons, 
+                newState => { _controlCooldown = 500f; GameSettings.SwapButtons = newState; ControlHandler.SetConfirmCancelButtons(); });
+            _contentLayout.AddElement(toggleSwapButtons);
 
-                _remapButtons[index].AddElement(_buttonLabels[index] = new InterfaceLabel("settings_controls_" + eButton, new Point(buttonWidth, lableHeight), Point.Zero)
-                    { CornerRadius = 0, Color = Values.MenuButtonColor, OverrideText = overrideText });
+            // Button: Classic Movement
+            var toggleOldMovement = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_controls_classicmove", GameSettings.OldMovement, 
+                newState => { GameSettings.OldMovement = newState; });
+            _contentLayout.AddElement(toggleOldMovement);
 
-                _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
-                _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
-
-                var remapButton = new InterfaceButton(new Point(buttonWidth + lableWidth * 2, lableHeight), new Point(0, 0), _remapButtons[index],
-                    element => { _updateButton = true; _selectedButton = eButton; })
-                    { CornerRadius = 0, Color = Color.Transparent };
-
-                remapButtons.AddElement(remapButton);
-                remapButtons.AddElement(new InterfaceListLayout() { Size = new Point(1, 1) });
-
-                index++;
-            }
-            // Bottom Bar / Reset Button / Back Button:
-            _bottomBar = new InterfaceListLayout { Size = new Point(width - 50, (int)(height * Values.MenuFooterSize) - 20), HorizontalMode = true, Selectable = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_controls_reset", OnClickReset));
-            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
-            controlLayout.AddElement(remapButtons);
-            controlLayout.AddElement(_bottomBar);
-            PageLayout = controlLayout;
-
-            // Force an update of the UI.
-            UpdateUi();
+            // Bottom Bar / Back Button:
+            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
+            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _controlSettingsList.AddElement(_contentLayout);
+            _controlSettingsList.AddElement(_bottomBar);
+            PageLayout = _controlSettingsList;
         }
 
-        public static void UpdateLabels()
+        public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
-            for (int index = 0; index < _buttonLabels.Length ; index++)
+            base.Update(pressedButtons, gameTime);
+
+            if (_controlCooldown > 0f)
+                _controlCooldown -= Game1.DeltaTime;
+
+            // The back button was pressed.
+            if (_controlCooldown <= 0f && ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                Game1.UiPageManager.PopPage();
+
+            // The tooltip button was pressed.
+            if (ControlHandler.ButtonPressed(CButtons.Y))
             {
-                string overrideText = "";
-
-                if (index is >= 4 and <= 13)
-                    overrideText = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, index - 4];
-
-                if (overrideText != "")
-                    _buttonLabels[index].OverrideText = overrideText;
+                _showTooltip = !_showTooltip;
+                if (_showTooltip)
+                    Game1.GameManager.PlaySoundEffect("D360-21-15");
             }
+            // Hide the tooltip when pressing anything.
+            else if (ControlHandler.AnyButtonPressed())
+                _showTooltip = false;
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
-            // We only want to force an update if the controller has changed.
-            if (_lastControllerIndex != ControlHandler.ControllerIndex)
-            {
-                UpdateUi();
-                _lastControllerIndex = ControlHandler.ControllerIndex;
-            }
-
             // the left button is always the first one selected
             _bottomBar.Deselect(false);
-            _bottomBar.Select(InterfaceElement.Directions.Right, false);
+            _bottomBar.Select(InterfaceElement.Directions.Left, false);
             _bottomBar.Deselect(false);
 
             PageLayout.Deselect(false);
             PageLayout.Select(InterfaceElement.Directions.Top, false);
         }
 
-        public override void Update(CButtons pressedButtons, GameTime gameTime)
+        public void PressButtonSetController(InterfaceElement element)
         {
-            if (_updateButton)
-            {
-                // update the selected button binding
-                var pressedKeys = InputHandler.GetPressedKeys();
-                if (pressedKeys.Count > 0)
-                {
-                    _updateButton = false;
-                    UpdateKeyboard(_selectedButton, pressedKeys[0]);
-                    UpdateUi();
-                }
-                var pressedGamepadButtons = InputHandler.GetPressedButtons();
-                if (pressedGamepadButtons.Count > 0)
-                {
-                    _updateButton = false;
-                    UpdateButton(_selectedButton, pressedGamepadButtons[0]);
-                    UpdateUi();
-                }
-                InputHandler.ResetInputState();
-            }
-            else
-            {
-                // needs to be after the update button stuff
-                base.Update(pressedButtons, gameTime);
+            // Push forward the index +1 and loop back around.
+            int index = Array.IndexOf(ControlHandler.ControllerNames, GameSettings.Controller);
+            index = (index + 1) % ControlHandler.ControllerNames.Length;
+            GameSettings.Controller = ControlHandler.ControllerNames[index];
+            ControlHandler.SetControllerIndex();
 
-                // close the page
-                if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
-                    Game1.UiPageManager.PopPage();
+            // Override the button text with this fancy hack.
+            _controllerType.InsideLabel.OverrideText = Game1.LanguageManager.GetString("settings_controls_gamepad", "error") + ": " + GameSettings.Controller;
+
+            // Update the buttons on the controller page.
+            ControlMappingPage.UpdateLabels();
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        {
+            // Always draw the menu even when not showing tooltips.
+            base.Draw(spriteBatch, position, height, alpha);
+
+            // If the user pressed the top most face button, show the tooltip window.
+            if (_showTooltip)
+            {
+                string tooltipText = GetOptionToolip();
+                PageTooltip.Draw(spriteBatch, tooltipText);
             }
         }
 
-        public void UpdateUi()
+        private string GetOptionToolip()
         {
-            var buttonNr = 0;
+            // Detect back button press by checking the index of the main InterfaceListLayout.
+            if (_controlSettingsList.SelectionIndex == 2)
+                return  Game1.LanguageManager.GetString("tooltip_default", "error");
 
-            // This method is responsible for displaying the keyboard and controller buttons.
-            foreach (var bEntry in ControlHandler.ButtonDictionary)
+            // Detect the chosen button by checking the content InterfaceListLayout.
+            int index = _contentLayout.SelectionIndex;
+            string tooltip = "Select an option to view its tooltip.";
+
+            // Use the selected index to determine which tooltip to show.
+            switch (index) 
             {
-                if (bEntry.Key == CButtons.LS || bEntry.Key == CButtons.RS)
-                    continue;
-
-                var str = "";
-
-                for (var j = 0; j < bEntry.Value.Keys.Length; j++)
-                    str += bEntry.Value.Keys[j];
-
-                ((InterfaceLabel)_remapButtons[buttonNr].Elements[1]).SetText(str);
-
-                str = " ";
-                for (var j = 0; j < bEntry.Value.Buttons.Length; j++)
-                    str += ControlHandler.GetButtonName(bEntry.Value.Buttons[j]);
-
-                ((InterfaceLabel)_remapButtons[buttonNr].Elements[2]).SetText(str);
-
-                buttonNr++;
+                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_deadzone", "error"); break; }
+                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_gamepad", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_remap", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_swapconfirm", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_classicmove", "error"); break; }
             }
-        }
-
-        private void UpdateKeyboard(CButtons buttonIndex, Keys newKey)
-        {
-            foreach (var button in ControlHandler.ButtonDictionary)
-                if (button.Value.Keys[0] == newKey && button.Key != buttonIndex)
-                    button.Value.Keys[0] = ControlHandler.ButtonDictionary[_selectedButton].Keys[0];
-
-            ControlHandler.ButtonDictionary[_selectedButton].Keys = new Keys[] { newKey };
-        }
-
-        private void UpdateButton(CButtons buttonIndex, Buttons newButton)
-        {
-            foreach (var button in ControlHandler.ButtonDictionary)
-                if (button.Value.Buttons[0] == newButton && button.Key != buttonIndex)
-                    button.Value.Buttons[0] = ControlHandler.ButtonDictionary[_selectedButton].Buttons[0];
-
-            ControlHandler.ButtonDictionary[_selectedButton].Buttons = new Buttons[] { newButton };
-        }
-
-        private void OnClickReset(InterfaceElement element)
-        {
-            ControlHandler.ResetControls();
-            UpdateUi();
-            InputHandler.ResetInputState();
+            // Display the tooltip in the tooltip window.
+            return tooltip;
         }
     }
 }

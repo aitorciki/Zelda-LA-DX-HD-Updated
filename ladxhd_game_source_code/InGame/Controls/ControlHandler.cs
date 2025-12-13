@@ -174,7 +174,7 @@ namespace ProjectZ.InGame.Controls
             var gamepadState = GamePad.GetState(PlayerIndex.One);
             var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
 
-            if (vec.Length() < Values.ControllerDeadzone)
+            if (vec.Length() < GameSettings.DeadZone)
                 vec = Vector2.Zero;
 
             if (vec == Vector2.Zero)
@@ -206,7 +206,7 @@ namespace ProjectZ.InGame.Controls
             _initDirection = _scrollCounter == ScrollStartTime;
 
             var direction = GetMoveVector2();
-            if (direction.Length() >= Values.ControllerDeadzone)
+            if (direction.Length() >= GameSettings.DeadZone)
                 _scrollCounter -= Game1.DeltaTime;
             else
                 _scrollCounter = ScrollStartTime;
@@ -227,7 +227,7 @@ namespace ProjectZ.InGame.Controls
         public static bool MenuButtonPressed(CButtons button)
         {
             var direction = GetGamepadDirection();
-            if (direction.Length() >= Values.ControllerDeadzone)
+            if (direction.Length() >= GameSettings.DeadZone)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if (((dir == 0 && button == CButtons.Left) || 
@@ -260,7 +260,7 @@ namespace ProjectZ.InGame.Controls
         {
             var direction = GetGamepadDirection();
 
-            if (direction.Length() >= Values.ControllerDeadzone)
+            if (direction.Length() >= GameSettings.DeadZone)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
@@ -301,7 +301,7 @@ namespace ProjectZ.InGame.Controls
         public static bool ButtonPressed(CButtons button, bool controllerOnly = false)
         {
             var direction = GetGamepadDirection();
-            if (_initDirection && direction.Length() >= Values.ControllerDeadzone)
+            if (_initDirection && direction.Length() >= GameSettings.DeadZone)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
@@ -330,7 +330,7 @@ namespace ProjectZ.InGame.Controls
         public static bool ButtonReleased(CButtons button)
         {
             var direction = GetGamepadDirection();
-            if (direction.Length() >= Values.ControllerDeadzone)
+            if (direction.Length() >= GameSettings.DeadZone)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||

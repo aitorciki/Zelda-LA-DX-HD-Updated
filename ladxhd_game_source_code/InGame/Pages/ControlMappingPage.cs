@@ -1,0 +1,205 @@
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using ProjectZ.Base;
+using ProjectZ.InGame.Controls;
+using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Things;
+
+namespace ProjectZ.InGame.Pages
+{
+    class ControlMappingPage : InterfacePage
+    {
+        private readonly InterfaceListLayout[] _remapButtons;
+        private readonly InterfaceListLayout _bottomBar;
+
+        // Being able to reference a static field makes updating the label text much easier down the road.
+        public static InterfaceLabel[] _buttonLabels = new InterfaceLabel[14];
+
+        private CButtons _selectedButton;
+        private bool _updateButton;
+
+        private int _lastControllerIndex = ControlHandler.ControllerIndex;
+
+        public ControlMappingPage(int width, int height)
+        {
+            // Control Settings Layout
+            var controlLayout = new InterfaceListLayout { Size = new Point(width, height - 16), Selectable = true };
+
+            controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_remapheader", new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
+
+            var controllerHeight = (int)(height * Values.MenuContentSize);
+
+            var buttonWidth = 65;
+            var lableWidth = 140;
+            var lableHeight = 10;
+            var headerHeight = 12;
+
+            var remapHeader = new InterfaceListLayout { AutoSize = true, Margin = new Point(0, 1), HorizontalMode = true, CornerRadius = 0, Color = Values.MenuButtonColor };
+            remapHeader.AddElement(new InterfaceListLayout() { Size = new Point(buttonWidth, headerHeight) });
+            remapHeader.AddElement(new InterfaceLabel("settings_controls_keyboad", new Point(lableWidth, headerHeight), new Point(0, 0)));
+            remapHeader.AddElement(new InterfaceLabel("settings_controls_gamepad", new Point(lableWidth, headerHeight), new Point(0, 0)));
+            controlLayout.AddElement(remapHeader);
+
+            var remapButtons = new InterfaceListLayout { AutoSize = true, Margin = new Point(2, 0), Selectable = true };
+            _remapButtons = new InterfaceListLayout[Enum.GetValues(typeof(CButtons)).Length - 3];
+            var index = 0;
+
+            foreach (CButtons eButton in Enum.GetValues(typeof(CButtons)))
+            {
+                if (eButton == CButtons.None || eButton == CButtons.LS || eButton == CButtons.RS)
+                    continue;
+
+                // Override the button text when we reach the face and top buttons.
+                string overrideText = "";
+                if (index is >= 4 and <= 13)
+                    overrideText =  ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, index - 4];
+
+                // Most buttons are pulled from language files except for when override text is not empty.
+                _remapButtons[index] = new InterfaceListLayout { Size = new Point(buttonWidth + lableWidth * 2, lableHeight), HorizontalMode = true };
+
+                _remapButtons[index].AddElement(_buttonLabels[index] = new InterfaceLabel("settings_controls_" + eButton, new Point(buttonWidth, lableHeight), Point.Zero)
+                    { CornerRadius = 0, Color = Values.MenuButtonColor, OverrideText = overrideText });
+
+                _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
+                _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
+
+                var remapButton = new InterfaceButton(new Point(buttonWidth + lableWidth * 2, lableHeight), new Point(0, 0), _remapButtons[index],
+                    element => { _updateButton = true; _selectedButton = eButton; })
+                    { CornerRadius = 0, Color = Color.Transparent };
+
+                remapButtons.AddElement(remapButton);
+                remapButtons.AddElement(new InterfaceListLayout() { Size = new Point(1, 1) });
+
+                index++;
+            }
+            // Bottom Bar / Reset Button / Back Button:
+            _bottomBar = new InterfaceListLayout { Size = new Point(width - 50, (int)(height * Values.MenuFooterSize) - 20), HorizontalMode = true, Selectable = true };
+            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_controls_reset", OnClickReset));
+            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            controlLayout.AddElement(remapButtons);
+            controlLayout.AddElement(_bottomBar);
+            PageLayout = controlLayout;
+
+            // Force an update of the UI.
+            UpdateUi();
+        }
+
+        public static void UpdateLabels()
+        {
+            for (int index = 0; index < _buttonLabels.Length ; index++)
+            {
+                string overrideText = "";
+
+                if (index is >= 4 and <= 13)
+                    overrideText = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, index - 4];
+
+                if (overrideText != "")
+                    _buttonLabels[index].OverrideText = overrideText;
+            }
+        }
+
+        public override void OnLoad(Dictionary<string, object> intent)
+        {
+            // We only want to force an update if the controller has changed.
+            if (_lastControllerIndex != ControlHandler.ControllerIndex)
+            {
+                UpdateUi();
+                _lastControllerIndex = ControlHandler.ControllerIndex;
+            }
+
+            // the left button is always the first one selected
+            _bottomBar.Deselect(false);
+            _bottomBar.Select(InterfaceElement.Directions.Right, false);
+            _bottomBar.Deselect(false);
+
+            PageLayout.Deselect(false);
+            PageLayout.Select(InterfaceElement.Directions.Top, false);
+        }
+
+        public override void Update(CButtons pressedButtons, GameTime gameTime)
+        {
+            if (_updateButton)
+            {
+                // update the selected button binding
+                var pressedKeys = InputHandler.GetPressedKeys();
+                if (pressedKeys.Count > 0)
+                {
+                    _updateButton = false;
+                    UpdateKeyboard(_selectedButton, pressedKeys[0]);
+                    UpdateUi();
+                }
+                var pressedGamepadButtons = InputHandler.GetPressedButtons();
+                if (pressedGamepadButtons.Count > 0)
+                {
+                    _updateButton = false;
+                    UpdateButton(_selectedButton, pressedGamepadButtons[0]);
+                    UpdateUi();
+                }
+                InputHandler.ResetInputState();
+            }
+            else
+            {
+                // needs to be after the update button stuff
+                base.Update(pressedButtons, gameTime);
+
+                // close the page
+                if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                    Game1.UiPageManager.PopPage();
+            }
+        }
+
+        public void UpdateUi()
+        {
+            var buttonNr = 0;
+
+            // This method is responsible for displaying the keyboard and controller buttons.
+            foreach (var bEntry in ControlHandler.ButtonDictionary)
+            {
+                if (bEntry.Key == CButtons.LS || bEntry.Key == CButtons.RS)
+                    continue;
+
+                var str = "";
+
+                for (var j = 0; j < bEntry.Value.Keys.Length; j++)
+                    str += bEntry.Value.Keys[j];
+
+                ((InterfaceLabel)_remapButtons[buttonNr].Elements[1]).SetText(str);
+
+                str = " ";
+                for (var j = 0; j < bEntry.Value.Buttons.Length; j++)
+                    str += ControlHandler.GetButtonName(bEntry.Value.Buttons[j]);
+
+                ((InterfaceLabel)_remapButtons[buttonNr].Elements[2]).SetText(str);
+
+                buttonNr++;
+            }
+        }
+
+        private void UpdateKeyboard(CButtons buttonIndex, Keys newKey)
+        {
+            foreach (var button in ControlHandler.ButtonDictionary)
+                if (button.Value.Keys[0] == newKey && button.Key != buttonIndex)
+                    button.Value.Keys[0] = ControlHandler.ButtonDictionary[_selectedButton].Keys[0];
+
+            ControlHandler.ButtonDictionary[_selectedButton].Keys = new Keys[] { newKey };
+        }
+
+        private void UpdateButton(CButtons buttonIndex, Buttons newButton)
+        {
+            foreach (var button in ControlHandler.ButtonDictionary)
+                if (button.Value.Buttons[0] == newButton && button.Key != buttonIndex)
+                    button.Value.Buttons[0] = ControlHandler.ButtonDictionary[_selectedButton].Buttons[0];
+
+            ControlHandler.ButtonDictionary[_selectedButton].Buttons = new Buttons[] { newButton };
+        }
+
+        private void OnClickReset(InterfaceElement element)
+        {
+            ControlHandler.ResetControls();
+            UpdateUi();
+            InputHandler.ResetInputState();
+        }
+    }
+}
