@@ -1800,7 +1800,7 @@ namespace ProjectZ.InGame.GameObjects
             // Check conditions where the player wouldn't take damage.
             if (_hitCount > 0 || CurrentState == State.Dying || CurrentState == State.PickingUp ||
                 CurrentState == State.Drowning || CurrentState == State.Drowned || CurrentState == State.Knockout ||
-                IsDiving() || Game1.GameManager.UseShockEffect || !UpdatePlayer || _isTrapped)
+                IsDiving() || Game1.GameManager.UseShockEffect || !UpdatePlayer)
             {
                 return false;
             }
@@ -1828,8 +1828,10 @@ namespace ProjectZ.InGame.GameObjects
                 _isClimbing = false;
 
             // Hit velocity is responsible for knockback.
-            if (!_isRafting)
+            if (!_isRafting && !_isTrapped)
                 _hitVelocity += direction;
+            else
+                _hitVelocity = Vector2.Zero;
 
             if (_hitCount > 0)
                 return false;
