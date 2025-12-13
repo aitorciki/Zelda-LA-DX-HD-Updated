@@ -130,7 +130,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                         // Use the direction from ObjLink instead of AnimationHelper since it
                         // has "bias" built into the four directions (fixes diagonal movement).
-                        _direction = MapManager.ObjLink.ToDirection(moveVelocity);
+                        if (!MapManager.ObjLink.IsChargingState())
+                            _direction = MapManager.ObjLink.ToDirection(moveVelocity);
 
                         if (_animator.CurrentAnimation.Id != "walk_" + _direction)
                             _animator.Play("walk_" + _direction);
