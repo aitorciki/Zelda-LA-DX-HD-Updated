@@ -436,17 +436,20 @@ namespace ProjectZ.InGame.Pages
                 // Load the players rupee count.
                 _saveRuby[i].SetText(SaveStateManager.SaveStates[i].CurrentRubee.ToString());
 
-                // Get the color of the player's cloak.
+                // Does the player have: level 2 sword, mirror shield, colored tunic.
+                var sword = SaveStateManager.SaveStates[i].SwordLevel2;
                 var cloak = SaveStateManager.SaveStates[i].CloakType;
                 var shield = SaveStateManager.SaveStates[i].MirrorShield;
+
+                // The "animation" ID to play based on tunic color.
                 string baseColor = cloak switch
                 {
-                    1         => "blue",
-                    2         => "red",
-                    _         => "green"
+                    1 => "blue",
+                    2 => "red",
+                    _ => "green"
                 };
                 // Player has the Level 2 sword so show it on Link's sprite.
-                _playerImage[i].ShowSword = SaveStateManager.SaveStates[i]?.SwordLevel2 == true;
+                _playerImage[i].ShowSword = sword;
 
                 // Player has the mirror shield so show it on Link's sprite.
                 cloakColors[i] = shield ? baseColor + "s" : baseColor;
