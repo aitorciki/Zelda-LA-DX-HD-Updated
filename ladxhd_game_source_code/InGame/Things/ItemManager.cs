@@ -640,7 +640,6 @@ namespace ProjectZ.InGame.Things
             _items.Add("shieldBack", new GameItem(
                 Resources.GetSprite("shield"),
                 name: "shield",
-                pickUpDialog: "shield_back",
                 soundEffectName: "D370-01-01",
                 count: 1,
                 maxCount: 1,
