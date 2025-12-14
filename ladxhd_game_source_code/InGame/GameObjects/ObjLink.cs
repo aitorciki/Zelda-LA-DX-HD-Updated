@@ -202,6 +202,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public CBox DamageCollider;
         private Vector2 _hitVelocity;
+
         public const int BlinkTime = 66;
         public const int CooldownTime = BlinkTime * 16;
 

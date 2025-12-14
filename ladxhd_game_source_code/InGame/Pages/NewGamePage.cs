@@ -226,23 +226,23 @@ namespace ProjectZ.InGame.Pages
                 // The "Back" button was pressed.
                 if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                     Game1.UiPageManager.PopPage();
-
-                // The "Tooltip" button was pressed.
-                if (ControlHandler.ButtonPressed(CButtons.Y))
-                {
-                    _showTooltip = !_showTooltip;
-                    if (_showTooltip)
-                        Game1.GameManager.PlaySoundEffect("D360-21-15");
-                }
+            }
+            // The "Tooltip" button was pressed.
+            if (ControlHandler.ButtonPressed(CButtons.Y, true))
+            {
+                _showTooltip = !_showTooltip;
+                if (_showTooltip)
+                    Game1.GameManager.PlaySoundEffect("D360-21-15");
             }
             // Allow toggling caps lock with the LT or RT buttons.
-            if (ControlHandler.ButtonPressed(CButtons.LT, true) || ControlHandler.ButtonPressed(CButtons.RT, true))
+            else if (ControlHandler.ButtonPressed(CButtons.LT, true) || ControlHandler.ButtonPressed(CButtons.RT, true) || 
+                ControlHandler.ButtonPressed(CButtons.LB, true) || ControlHandler.ButtonPressed(CButtons.RB, true))
             {
                 _upperMode = !_upperMode;
                 UpdateKeyboard();
             }
             // Hide the tooltip when pressing anything.
-            if (ControlHandler.AnyButtonPressed())
+            else if (ControlHandler.AnyButtonPressed())
                 _showTooltip = false;
 
             _labelNameInput.SetText(_strNameInput + ((gameTime.TotalGameTime.Milliseconds % 500) < 250 ? "_" : " "));
