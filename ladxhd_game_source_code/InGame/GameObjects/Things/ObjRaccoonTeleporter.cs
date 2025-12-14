@@ -52,20 +52,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_isTeleporting)
                 return;
 
-            // Always freeze for raccoon transition. Level 6 check for classic camera.
-            if (_mode == 0)
-                 MapManager.ObjLink.FreezePlayer();
-            else if (_mode == 1 && !Camera.ClassicMode)
+            // Classic camera tries to "fake" a screen transition.
+            if (!Camera.ClassicMode)
                 MapManager.ObjLink.FreezePlayer();
 
             // Snap the camera when classic camera is active.
-            if (_mode == 1 && Camera.ClassicMode)
+            if (Camera.ClassicMode)
             {
                 Camera.SnapCameraTimer = 10f;
                 _teleportTime -= 250;
                 extraYOffset = 9;
             }
-            else if (_mode == 1 && !Camera.ClassicMode)
+            else if (!Camera.ClassicMode)
             {
                 _teleportTime = 300;
             }
@@ -90,11 +88,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _isTeleporting = false;
 
                 // Give Link a slight push to force a screen transition.
-                if (_mode == 1 && Camera.ClassicMode)
+                if (Camera.ClassicMode)
                     MapManager.ObjLink._body.Velocity.Y += -0.35f;
             }
             // Smooth out the transition for raccoon teleport or Level 6 when in normal camera mode.
-            if (_mode == 0 || (_mode == 1 && !Camera.ClassicMode))
+            if (!Camera.ClassicMode)
             {
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
                 transitionSystem.SetColorMode(_mode == 0 ? Color.White : Color.Black, MathHelper.Clamp(_teleportCount / _fadeTime, 0, 1), false);
