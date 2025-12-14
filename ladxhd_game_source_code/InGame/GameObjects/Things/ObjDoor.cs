@@ -230,7 +230,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 MapManager.ObjLink.SaveMap = Map.MapName;
                 MapManager.ObjLink.SavePosition = transitionEnd;
-                MapManager.ObjLink.SaveDirection = _direction;
+
+                // If using the ocarina to teleport to Manbo's pond overwrite the direction.
+                MapManager.ObjLink.SaveDirection = (_entryId == "ocarina_entry") ? 3 : _direction;
 
                 // If autosave is enabled, then save the game now.
                 if (GameSettings.Autosave)
