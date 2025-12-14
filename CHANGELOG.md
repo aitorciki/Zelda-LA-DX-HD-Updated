@@ -2,31 +2,24 @@
 
 ## **v1.5.0 (Pre-Release)**
 ### **The "Awakening From the Dream" Update**
+
 ### **General:**
   * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes classic camera bugs.
+  * Fix all Classic Camera respawning issues including: respawning on current field, field edge, and not respawning at all.
   * Rework pushable stones so that their behavior when pushed is much closer to how it is in the original games.
   * Pushable stones respawn when pushed down holes and when changing fields when classic camera is active.
-  * Ice Blocks (found in underground maps in dungeon 8) respawn when chaing fields when classic camera is active.
-  * Link gets a slight "push" when jumping into water. The push when walking into water was slightly reduced.
-  * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
-  * Disable the 2D directional hack when trading the fishing hook to the fisherman for the necklace/pink bra.
-  * Update Bow Wow's teleportation behavior when jumping into a world teleporter. It's still not perfect but improved.
-  * Play the secret sound in Richard's Villa when pushing the box to open the passage to the Slime Key.
   * Fix removing the "poking" state when poking is finished. This bugged out the jump fix hack.
   * Fix death sequence to use potion first. This fixes a "stuck in air" bug when dying/healing while flying with the rooster.
-  * Fix crossing a hole reset point while flying with the rooster from storing the Z position which reset Link in the air.
-  * Fix the rooster from being drawn in the background layer when borrwing it from the hen house (after dungeon 8 is complete).
   * Fix cracked tiles to always detect when Link is pushing against a stone. Sometimes pushing would prevent them from breaking.
-  * Fix several caves with move stones so that their positions reset when crossing over a certain threshold.
-  * Fix Marin singing, great fairy, and Dodongo Snakes to always properly reset music when leaving the current field.
-  * Fix number of bushes outside Sales House O'Bananas so that there is two blocking the path instead of three.
-  * Fix sequence of trading bananas to monkeys with classic camera enabled by adding monkeys to always animate list.
+  * Fix several caves with pushable stones so that their positions reset when crossing over a certain threshold.
+  * Fix Marin singing, Great Fairy, Hinox, and Dodongo Snakes to always reset music when leaving current field with Classic Camera.
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
-  * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
   * Fix old save files to work with "Nothing is Missable" option which allows getting the followers back and other stuff.
 
 ### **User Interface:**
+  * File select screen Link sprite: show tunic color, sword if Lvl2 sword collected, and shield if Mirror Shield collected.
+  * Added a new "Controls" page where control options are now located, remapping can be done, as well as a new "Dead Zone" option.
   * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
@@ -36,48 +29,49 @@
   * The option "Disable Helper Messages" also blocks the dialog shown when touching the nightmare door without the nightmare key. 
   
 ### **Items:**
-  * Using some items will no longer stop the player while using: Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
-  * The Boomerang item has been reworked so that it can collect multiple items on a single throw.
+  * Some items will no longer stop Link while casting: Boomerang, Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
+  * The Boomerang item has been reworked so that it can collect multiple items on a single throw, but can still only grab 1 fairy.
   * Increase the size of the damage box of Magic Powder to the width or height of a tile (or 16 pixels, depends on direction).
   * Magic Powder can no longer hit grass. Bushes and grass share an object so they also share hit types so they need filtering code.
-  * Running with Pegasus Boots can now smash large crystals without needing the sword equipped.
+  * Running with Pegasus Boots can now smash large crystals without needing to have the sword equipped.
   * Fire spawned from Magic Rod shots added to the "always animate" list so despawns when outside of the current viewport.
   * Bombs have been added to the "always animate" list which allows them to explode when outside of the current viewport.
-  * Items will no longer stop Link from moving when using them on 2D maps (bow, hookshot, boomerang, etc).
+  * Remove the message when getting your shield back from Like Like since the original game did not have one.
+  * Fix shield appearing on Link when swallowed by a Like Like. It will now properly disappear and reappear depending on equipped status.
   * Fix playing the "holding" animation when jumping onto the Level 2 sword sprite after turning in 20 shells in Seashell Mansion.
-  * Fix powerup status between map transitions. It is kept when current/next map are both either a cave or a dungeon.
+  * Fix Piece of Power/Guardian Acorn status between map transitions. It is kept when current/next map are either a cave or a dungeon.
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
-  * Fix shield appearing on Link when swallowed by a Like-Like. It will now properly disappear and reappear depending on equipped status.
-  * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc). 
   * Fix Link's facing direction when teleporting with the ocarina on the overworld using Manbo's song then saving/loading the game.
+  * Fix Link's facing direction when teleporting with the ocarina in Level 7 dungeon floors 2+ or Level 8 dungeon via backdoor entry.
+  * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc) since it was like this in the original game.
 
 ### **Enemies:**
   * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
-  * Reduce fairy spawn rate of Ghini to 10% (from 75%) and allow it to drop other items at normal drop rates.
-  * Increase the knockback of the Flame Fountain on the way to dungeon 8 so the player can't force their way through with boots.
   * Update "stunned" state of several enemies to either lose their damage field while stunned or gain it back as soon as stun ends.
   * Don't respawn Spiny Beetle carry object when grabbing it and throwing it into a hole when Classic Camera is active.
-  * When fighting the boss Angler Fish in dungeon 4, a barrier is spawned at the top of the arena to prevent leaving.
   * Hardhat Beetle respawns when pushed down a hole, leaving the room, and re-entering. Modern camera shows special respawn effects.
-  * Remove activation range check from Pols Voice, Red Zol, and Gel. They will become active when entering the field they are on.
   * Change enemy Piranha collision types to "non-water" type like the Water Tektites in dungeon 4. This collision only blocks them.
+  * Reduce fairy spawn rate of Ghini to 25% (from 75%) and allow it to drop other items at normal drop rates.
+  * Remove activation range check from Pols Voice, Red Zol, and Gel. They will become active when entering the field they are on.
+  * Increase the knockback of the Flame Fountain on the way to dungeon 8 so the player can't force their way through with boots.
   * Disable the hit component of some minibosses until the boss is enaged: Rolling Bones, Cue Ball, and Hinox.
+  * When fighting the boss Angler Fish in dungeon 4, a barrier is spawned at the top of the arena to prevent leaving.
   * Fix the burning state to reset when changing fields in classic camera. Enemy should return to normal state and remove burn.
-  * Fix enemy Antifairy to properly remove its damage field when burning it with Magic Powder.
-  * Fix enemy Arm Mimic to get stunned when throwing objects (like pots) at them.
-  * Fix enemy Arm Mimic to be invincible to Magic Powder.
+  * Fix enemy Antifairy to properly remove its damage field when burning it with Magic Powder and fix it's interaction with shield.
+  * Fix enemy Arm Mimic to get stunned when throwing objects (like pots) at them and make them invincible to Magic Powder.
   * Fix enemy Bomber to have unique death with Magic Powder that spawns a fairy 100% of the time. Magic rod spawns fairy 50% of the time.
   * Fix enemy Bombite to bounce off the sword when held outward in a charge state without the sword being put away afterwards.
   * Fix enemy Cheep Cheep from launching the player if jumped on just right while slightly in the water.
   * Fix enemy Gel to properly respawn when changing fields in classic camera instead of burning to death off screen.
-  * Fix enemy Goomba to lose it's collision box when set on fire.
+  * Fix enemy Goomba to lose it's collision box when set on fire (does not affect Goombas on 3D maps, aka Level 7 dungeon).
   * Fix enemy Hardhat Beetle to be able to be killed using bombs. This also spawns a bomb after death. Also remove initial idle delay.
   * Fix enemy Keese to not be affected by conveyor belts. Dungeon 3 is about the only place this is relevant.
   * Fix enemy Leevers from spawning on the ledges above the cave in the desert where Link can't reach by adding collision.
+  * Fix enemy Like Like taking damage from items when swallowed. Link now also takes damage from outside sources when trapped.
   * Fix enemy Pincer stun state, when it can deal damage, activation range, and replicate narrow window to kill instantly with powder.
   * Fix enemy Red Zol to spawn Gels in classic camera after burning and respawning with a field change.
-  * Fix enemy Sea Urchin to deal damage from the side when blocking with the shield. This has been broken since v1.3.3.
+  * Fix enemy Sea Urchins to properly deal damage when touched from the sides. This was a really tricky problem.
   * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
   * Fix enemy Spiny Beetle AI behavior to act much closer to how they do in the original game.
   * Fix enemy Vacuum from causing Link to get stuck in a specific direction if it fell outside the camera viewport.
@@ -90,21 +84,31 @@
   * Fix boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
 
 ### **Overworld:**
+  * Disable the 2D directional hack when trading the fishing hook to the fisherman for the necklace/pink bra.
   * The fisherman on the boat on the "Bridge" map is now drawn on a lower layer than Link so his sprite is always behind Link.
-  * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
-  * Also prevent flying with rooster to Marin on bridge if Level 8 dungeon was completed before Level 7 dungeon and rooster is borrowed.
-  * Don't spawn the owl if Marin is saved on the bridge and Level 8 dungeon was completed before Level 7 dungeon as the tip would be invalid.
-  * When the mountain bridge photo sequence starts, if holding the rooster it is now dropped before the sequence starts.
-  * In the cave passage to Tal Tal Mountain range, respawn the skull in the room with the large hookshot gap and chest.
-  * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
+  * Link gets a slight "push" when jumping into water. The push when walking into water was slightly reduced.
+  * Play the secret sound in Richard's Villa when pushing the box to open the passage to the Slime Key.
   * Add a secret sound to the shortcut passageway near Level 4 dungeon when pushing the rock into the hole and creating a shortcut.
+  * Update Bow Wow's teleportation behavior when jumping into a world teleporter. It's still not perfect but improved.
+  * In the cave passage to Tal Tal Mountain range, respawn the skull in the room with the large hookshot gap and chest.
+  * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
+  * Don't spawn the owl if Marin is saved on the bridge and Level 8 dungeon was completed before Level 7 dungeon as the tip would be invalid.
+  * Also prevent flying with rooster to Marin on bridge if Level 8 dungeon was completed before Level 7 dungeon and rooster is borrowed.
+  * When the mountain bridge photo sequence starts, if holding the rooster it is now dropped before the sequence starts.
+  * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
+  * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
+  * Fix the rooster from being drawn in the background layer when borrowing it from the hen house (after dungeon 8 is complete).
+  * Fix crossing a hole reset point while flying with the rooster from storing the Z position which reset Link in the air.
   * Fix the stone in the forest passageway to the bat (Li'l Devil/Mad Batter, whatever you want to call it) to play the secret sound.
+  * Fix number of bushes outside Sales House O'Bananas so that there is two blocking the path instead of three.
+  * Fix sequence of trading bananas to monkeys with classic camera enabled by adding monkeys to always animate list.
   * Fix the owl "freeze" trigger to only not apply during the egg opening sequence and the end credits.
   * Fix trading the stick to Tarin for the honeycomb. Talking to him would just show a message that says "error".
   * Fix bushes to show the proper smoke graphics and sound effects when sprinkling Magic Powder on them.
   * Fix bushes & rocks from respawning that cover stairs when changing fields when classic camera is active.
   * Fix bushes & rocks that open up into passageways to play the "secret sound" when revealing the staircase.
   * Fix the dresser in the Raft House to have the same interaction message as all other dressers.
+  * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
   * Fix several tiles of land north of the lake near Dungeon 3 to be diggable. Trying to dig them with the shovel would repel it.
   * Fix visible tiles in the desert cave that make it apparent there is a secret room in the cave.
   * Fix Tal Tal Mountain Range hole entry into the water cave to show a "falling" entry instead of just appearing in the cave.
@@ -113,6 +117,8 @@
   * Fix missing stairs object in the same mountain cave with bombable wall which slows down movement when walking on stairs.
   * Fix collision above the cave just north of Mr. Write's house. With standard camera Moblins would often walk into the cliff.
   * Fix collision blockers in a cave on the way to Level 8 dungeon with a large gap. Flying could move the camera to a bad field.
+  * Fix collision of the Hen House roof. It may have been possible to get into the sky with a clever jump.
+  * Fix Hen House NPC to be at his original position and make it so cuccos do not collide with him (like the original game).
   * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
 
 ### **Dungeons:**
@@ -120,6 +126,7 @@
   * Implement three additional missing Level 4 dungeon tile puzzle variations. This port only had a single puzzle implemented.
   * Handle the situation where someone completes Level 8 dungeon before Level 7 dungeon (as in setting the correct states).
   * Dungeon doors now make the same hollow "clank" sound when poked as bombable walls like the original games.
+  * Ice Blocks (found in underground maps in dungeon 8) respawn when changing fields when classic camera is active.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
   * Fix dungeon doors so that they consume small keys again. This was a huge game-breaking issue.
   * Fix several 2D maps in dungeon 3, dungeon 6, and dungeon 8 to not change and update Link's position on the minimap.
