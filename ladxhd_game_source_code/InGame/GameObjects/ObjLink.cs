@@ -2247,7 +2247,7 @@ namespace ProjectZ.InGame.GameObjects
             // start/stop swimming or drowning
             if (!_isRafting && !_isFlying && fieldState.HasFlag(MapStates.FieldStates.DeepWater) && CurrentState != State.Dying)
             {
-                if (CurrentState != State.PickingUp && _body.IsGrounded)
+                if (!IsJumpingState() && CurrentState != State.PickingUp && _body.IsGrounded)
                 {
                     ReleaseCarriedObject();
                     var inLava = fieldState.HasFlag(MapStates.FieldStates.Lava);
