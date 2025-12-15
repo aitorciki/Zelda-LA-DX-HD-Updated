@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,6 +50,12 @@ namespace ProjectZ.InGame.Pages
                 number => { GameSettings.MenuBorder = number; })
                 { SetString = number => MenuBorderScaleSliderAdjustment(number) };
             _contentLayout.AddElement(menuBricksSlider);
+
+            // Button: Classic Sword
+            var toggleClassicSword = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_game_classicsword", GameSettings.ClassicSword, 
+                newState => { GameSettings.ClassicSword = newState; });
+            _contentLayout.AddElement(toggleClassicSword);
 
             // Button: Save Position
             var toggleSavePosition = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
@@ -174,9 +179,10 @@ namespace ProjectZ.InGame.Pages
                 case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_language", "error"); break; }
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error"); break; }
                 case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_menubricks", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicsword", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

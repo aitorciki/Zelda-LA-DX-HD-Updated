@@ -68,9 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Body.OffsetY = -1;
                 Body.Height = 1;
             }
-
             _playerBomb = playerBomb;
-            // explode on collision with the floor
             _floorExplode = floorExplode;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Objects/bomb");
@@ -93,8 +91,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (playerBomb)
                 AddComponent(PushableComponent.Index, new PushableComponent(Body.BodyBox, OnPush) { RepelMultiplier = 0.5f });
 
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(
-                new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
+            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _bodyShadow = new BodyDrawShadowComponent(Body, sprite));
 
@@ -121,7 +118,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                             MapManager.ObjLink.HitPlayer(collisionBox, HitType.Bomb, 4);
                     }
                 }
-
                 // remove bomb if the animation is finished
                 if (!_animator.IsPlaying)
                     _map.Objects.DeleteObjects.Add(this);
@@ -141,7 +137,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (_bombCounter <= 0)
                     Explode();
             }
-
             // fall into the water
             if (!_map.Is2dMap && Body.IsGrounded && Body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater))
             {
@@ -155,7 +150,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                         (int)(Body.Position.Y + Body.OffsetY + Body.Height / 2.0f),
                         Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
                     _map.Objects.SpawnObject(fallAnimation);
-
                     _map.Objects.DeleteObjects.Add(this);
                 }
             }
@@ -180,7 +174,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Body.Position.X + Body.OffsetX + Body.Width / 2.0f - 5,
                 Body.Position.Y + Body.OffsetY + Body.Height / 2.0f - 5));
             _map.Objects.SpawnObject(fallAnimation);
-
             _map.Objects.DeleteObjects.Add(this);
         }
 
@@ -210,7 +203,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 EntityPosition.Y = newPosition.Y - newPosition.Z;
                 EntityPosition.Z = 0;
             }
-
             EntityPosition.NotifyListeners();
             return true;
         }
@@ -310,12 +302,15 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, Body.Velocity.Z);
                 return true;
             }
-
             return false;
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // If "Classic Sword" is enabled, do not let the sword interact.
+            if (GameSettings.ClassicSword && ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0 || (hitType & HitType.ClassicSword) != 0))
+                return Values.HitCollision.None;
+
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
@@ -330,7 +325,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 EntityPosition.Z = 0;
                 objArrow.InitBombMode(this);
             }
-
             if (_arrowMode)
                 return Values.HitCollision.None;
 
@@ -349,7 +343,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Body.DragAir = 0.925f;
                 Body.Velocity.Y = direction.Y * 2f;
             }
-
             return Values.HitCollision.Blocking;
         }
     }

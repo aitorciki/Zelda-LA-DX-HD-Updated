@@ -19,15 +19,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         private string _exitId;
 
         private int _direction;
-
-        // 0: normal door
-        // 1: stairs
-        // 2: no walk in transition + fall
-        // 3: swim in transition
-        // 4: no walk in transition
-        // 5: final stairs transition
-        // 6: fall + rotate
-        // 7: fall
         private int _mode;
         private int _positionOffset;
 
@@ -36,6 +27,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         public bool _savePosition;
         public bool _backdoorLevel8;
         private bool _isTransitioning;
+
+        //----------------------------------------
+        //  Door Type Modes:
+        //----------------------------------------
+        //  0: Normal Door
+        //  1: Stairs
+        //  2: No walk in Transition + Falling
+        //  3: Swim in Transition
+        //  4: No walk in Transition
+        //  5: Final Stairs Transition
+        //  6: Falling Rotate
+        //  7: Falling
+        //----------------------------------------
 
         public ObjDoor() : base("editor door")
         {

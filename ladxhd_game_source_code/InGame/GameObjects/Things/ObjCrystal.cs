@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
@@ -90,9 +91,15 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            // If "Classic Sword" is enabled, only the tile that the bush/grass is on should "hit".
+            if (!_isHardCrystal && MapManager.ObjLink.ClassicSword && (hitType & HitType.Sword) != 0 && !MapManager.ObjLink.IsPoking)
+                return Values.HitCollision.None;
+
+            // For large crystals, only dashing with Pegasus Boots should be able to smash them. "CrystalSmash" is dashing when sword is unequipped.
             if ((_isHardCrystal && hitType != HitType.PegasusBootsSword && hitType != HitType.CrystalSmash) || (hitType & HitType.SwordHold) != 0 || hitType == HitType.Hookshot)
                 return Values.HitCollision.None;
 
+            // For small crystals, all kinds of shit can smash them.
             if ((hitType & HitType.Sword) != 0 && (hitType & HitType.Boomerang) != 0 && (hitType & HitType.Hookshot) != 0 && (hitType & HitType.Bomb) != 0)
                 return Values.HitCollision.None;
 

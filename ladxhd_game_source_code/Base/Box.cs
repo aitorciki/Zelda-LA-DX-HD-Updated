@@ -7,6 +7,8 @@ namespace ProjectZ.Base
     {
         public static readonly Box Empty = new Box();
 
+        public bool IsEmpty =>  Width <= 0f || Height <= 0f || Depth <= 0f;
+
         public float X;
         public float Y;
         public float Z;
@@ -96,13 +98,13 @@ namespace ProjectZ.Base
             return hash.ToHashCode();
         }
 
-        public static bool operator ==(Box a, Box b)
+        public static bool operator == (Box a, Box b)
         {
             return a.X == b.X && a.Y == b.Y && a.Z == b.Z &&
                    a.Width == b.Width && a.Height == b.Height && a.Depth == b.Depth;
         }
 
-        public static bool operator !=(Box a, Box b)
+        public static bool operator != (Box a, Box b)
         {
             return a.X != b.X || a.Y != b.Y || a.Z != b.Z &&
                    a.Width != b.Width || a.Height != b.Height || a.Depth != b.Depth;

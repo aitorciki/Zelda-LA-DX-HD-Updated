@@ -16,6 +16,7 @@ namespace ProjectZ.InGame.SaveLoad
             Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
             Game1.LanguageManager.CurrentSubLanguageIndex = saveManager.GetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
             GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
+            GameSettings.ClassicSword = saveManager.GetBool("ClassicSword", GameSettings.ClassicSword);
             GameSettings.StoreSavePos = saveManager.GetBool("StoreSavePos", GameSettings.StoreSavePos);
             GameSettings.LastSavePos = saveManager.GetInt("LastSavePos", GameSettings.LastSavePos);
             GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
@@ -82,6 +83,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
             saveManager.SetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
             saveManager.SetInt("MenuBorder", GameSettings.MenuBorder);
+            saveManager.SetBool("ClassicSword", GameSettings.ClassicSword);
             saveManager.SetBool("StoreSavePos", GameSettings.StoreSavePos);
             saveManager.SetInt("LastSavePos", GameSettings.LastSavePos);
             saveManager.SetBool("Autosave", GameSettings.Autosave);

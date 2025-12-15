@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.Things
         SwordHold = 0x01 << 13,
         SwordSpin = 0x01 << 14,
         CrystalSmash = 0x01 << 15,
+        ClassicSword = 0x01 << 16,
 
         // used to hit the player
         Spikes = 0x01 << 15,

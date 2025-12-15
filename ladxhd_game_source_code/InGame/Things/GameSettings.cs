@@ -4,6 +4,7 @@
     {
         // Game Settings
         public static int     MenuBorder      =  0;
+        public static bool    ClassicSword    =  false;
         public static bool    StoreSavePos    =  false;
         public static int     LastSavePos     =  0;
         public static bool    Autosave        =  true;
