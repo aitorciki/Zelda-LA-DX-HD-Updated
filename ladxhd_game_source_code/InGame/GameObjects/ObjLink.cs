@@ -203,8 +203,10 @@ namespace ProjectZ.InGame.GameObjects
         public CBox DamageCollider;
         private Vector2 _hitVelocity;
 
-        public const int BlinkTime = 66;
-        public const int CooldownTime = BlinkTime * 16;
+
+        public static int BlinkTime = 66;
+        public static int CooldownTime = BlinkTime * GameSettings.DmgCooldown;
+
 
         private double _hitCount;
         private double _hitRepelTime;
@@ -1796,7 +1798,7 @@ namespace ProjectZ.InGame.GameObjects
             return HitPlayer(vecDirection * pushMultiplier, type, damage, blocked);
         }
 
-        public bool HitPlayer(Vector2 direction, HitType type, int damage, bool blocked, int damageCooldown = CooldownTime)
+        public bool HitPlayer(Vector2 direction, HitType type, int damage, bool blocked, int damageCooldown = 0)
         {
             // Check conditions where the player wouldn't take damage.
             if (_hitCount > 0 || CurrentState == State.Dying || CurrentState == State.PickingUp ||
@@ -1839,7 +1841,12 @@ namespace ProjectZ.InGame.GameObjects
 
             Game1.GameManager.PlaySoundEffect("D370-03-03");
 
-            _hitCount = damageCooldown;
+            // Use the calculated cooldown if not set by an external call.
+            if (damageCooldown != 0)
+                _hitCount = damageCooldown;
+            else
+                _hitCount = CooldownTime;
+
             Game1.GameManager.InflictDamage(damage);
 
             // Shake the screen on damage if the user has it enabled.
@@ -2124,16 +2131,18 @@ namespace ProjectZ.InGame.GameObjects
 
                 // colliding horizontally or vertically? -> start pushing
                 if (CurrentState == State.Idle &&
-                        _body.IsGrounded && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero) &&
-                        ((collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
-                        (collision & Values.BodyCollision.Vertical) != 0 && (Direction == 1 || Direction == 3)))
+                    _body.IsGrounded && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero) &&
+                    ((collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
+                    (collision & Values.BodyCollision.Vertical) != 0 && (Direction == 1 || Direction == 3)))
                 {
                     var box = _body.BodyBox.Box;
+
                     // offset by one in the walk direction
                     box.X += AnimationHelper.DirectionOffset[Direction].X;
                     box.Y += AnimationHelper.DirectionOffset[Direction].Y;
                     var cBox = Box.Empty;
                     var outBox = Box.Empty;
+
                     // check if the object we are walking into is actually an object where the push animation should be played
                     if (Map.Objects.Collision(box, cBox, _body.CollisionTypes, Values.CollisionTypes.PushIgnore, Direction, _body.Level, ref outBox))
                         CurrentState = State.Pushing;

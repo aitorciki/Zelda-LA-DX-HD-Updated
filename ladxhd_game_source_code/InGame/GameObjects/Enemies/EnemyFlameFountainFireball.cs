@@ -57,7 +57,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool HitPlayer()
         {
-            // cooldown is lower so that the player will not get through the flamse
+            // Cooldown is lower so that the player will not get through the flames.
             return MapManager.ObjLink.HitPlayer(new Vector2(0, 3), HitType.Enemy, _damageComponent.Strength, true, ObjLink.CooldownTime / 2);
         }
 

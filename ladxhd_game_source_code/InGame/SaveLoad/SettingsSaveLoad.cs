@@ -66,6 +66,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Modifiers Settings
             GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             GameSettings.DmgMultiplier = saveManager.GetInt("DmgMultiplier", GameSettings.DmgMultiplier);
+            GameSettings.DmgCooldown = saveManager.GetInt("DmgCooldown", GameSettings.DmgCooldown);
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             GameSettings.NoHeartDrops = saveManager.GetBool("NoHeartDrops", GameSettings.NoHeartDrops);
@@ -134,6 +135,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Modifiers Settings
             saveManager.SetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
             saveManager.SetInt("DmgMultiplier", GameSettings.DmgMultiplier);
+            saveManager.SetInt("DmgCooldown", GameSettings.DmgCooldown);
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             saveManager.SetBool("NoHeartDrops", GameSettings.NoHeartDrops);

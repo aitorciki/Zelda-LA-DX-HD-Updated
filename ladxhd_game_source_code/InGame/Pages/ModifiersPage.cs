@@ -44,6 +44,13 @@ namespace ProjectZ.InGame.Pages
                 { SetString = number => DamageTakenSliderAdjustment(number) };
             _contentLayout.AddElement(damageTakenSlider);
 
+            // Slider: Damage Cooldown (Invincibility Frames)
+            var damageCooldownSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damagecd",
+                buttonWidth, new Point(1, 2), 0, 100, 1, GameSettings.DmgCooldown,
+                number => { GameSettings.DmgCooldown = number; })
+                { SetString = number => DamageCooldownSliderAdjustment(number) };
+            _contentLayout.AddElement(damageCooldownSlider);
+
             // Slider: Movement Speed
             var movementSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_movespeed",
                 buttonWidth, new Point(1, 2), 0, 10, 1, (int)(GameSettings.MoveSpeedAdded * 10),
@@ -120,8 +127,18 @@ namespace ProjectZ.InGame.Pages
             return ": " + number + "x";
         }
 
+        private string DamageCooldownSliderAdjustment(int number)
+        {
+            // Update the damage cooldown.
+            ObjLink.CooldownTime = ObjLink.BlinkTime * GameSettings.DmgCooldown;
+
+            // Return the text to show.
+            return ": " + number + "x (" + ObjLink.CooldownTime + "ms)";
+        }
+
         private string AddedMoveSpeedSliderAdjustment(int number)
         {
+            // Divide the value by 10 to get the decimal percentage.
             float addmove = (float)(number / 10f);
             int percent = number * 10;
             MapManager.ObjLink.AlterMoveSpeed(addmove);
@@ -156,10 +173,11 @@ namespace ProjectZ.InGame.Pages
             {
                 case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_enemy_hp", "error"); break; }
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_damage", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_movespeed", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_swordblock", "error"); break; }
+                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_damagecd", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_movespeed", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_swordblock", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

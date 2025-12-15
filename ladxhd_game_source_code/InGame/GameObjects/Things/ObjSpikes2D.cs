@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(0, 0, 16, 16);
 
             var box = new CBox(posX, posY + 10, 0, 16, 6, 8);
+
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Object, 2)
             {
                 OnDamage = DamagePlayer
