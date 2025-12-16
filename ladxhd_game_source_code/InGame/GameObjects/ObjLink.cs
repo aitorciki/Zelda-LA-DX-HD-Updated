@@ -4105,25 +4105,29 @@ namespace ProjectZ.InGame.GameObjects
                 }
             }
             // touched the ground
-            if (!_railJump && _body.IsGrounded && _body.Velocity.Z <= 0)
+            if (_body.IsGrounded && _body.Velocity.Z <= 0)
             {
                 // Only push the player if he jumps into the water and does not walk. Walking is handled in another location.
                 if (SystemBody.GetFieldState(_body).HasFlag(MapStates.FieldStates.DeepWater))
+                {
                     _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.5f;
-
+                }
                 // HACK: Jumping then just before landing plays the same frame of animation as the first
                 // frame in walking. This timer forces "stand" animation for a few frames.
-                else
+                else if (!_railJump)
                     _jumpEndTimer = 75;
 
                 // Reset the jump starting Z position to 0.
                 _jumpStartZPos = 0;
 
-                // Keep the charging state if it was held during a jump.
-                if (CurrentState == State.ChargeJumping)
-                    CurrentState = State.Charging;
-                else
-                    ReturnToIdle();
+                if (!_railJump)
+                {
+                    // Keep the charging state if it was held during a jump.
+                    if (CurrentState == State.ChargeJumping)
+                        CurrentState = State.Charging;
+                    else
+                        ReturnToIdle();
+                }
             }
         }
 
