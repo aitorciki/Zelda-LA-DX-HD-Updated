@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
@@ -24,11 +25,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly DamageFieldComponent _damageField;
 
         private const float WalkSpeed = 0.5f;
+        private RectangleF _fieldRect;
 
         private int _direction;
         private bool _startedAnimation;
         private bool _follow;
         private int _lives = ObjLives.BombiteGreen;
+        private bool _wasStunned;
 
         public EnemyBombiteGreen() : base("bombiteGreen") { }
 
@@ -57,6 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Bounciness = 0.25f,
                 Drag = 0.85f,
             };
+            _fieldRect = map.GetField(posX, posY);
 
             var stateIdle = new AiState(UpdateIdle) { Init = InitIdle };
             stateIdle.Trigger.Add(new AiTriggerRandomTime(ChangeDirection, 250, 500));
@@ -96,8 +100,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void TryReleaseStun()
         {
-            if (!_aiStunnedState.Active)
+            if (!_aiStunnedState.Active && _wasStunned)
+            {
                 _damageField.IsActive = true;
+                _wasStunned = false;
+            }
         }
 
         private void InitIdle()
@@ -108,7 +115,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateIdle()
         {
             if (_follow && !_damageState.IsInDamageState())
+            {
                 _aiComponent.ChangeState("follow");
+                _damageField.IsActive = false;
+            }
             TryReleaseStun();
         }
 
@@ -157,7 +167,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var objExplosion = new ObjBomb(Map, EntityPosition.X, EntityPosition.Y, false, false);
             objExplosion.Explode();
             Map.Objects.SpawnObject(objExplosion);
-
+            Map.Objects.SpawnObject(new EnemyBombiteRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 16, _fieldRect, true));
             Map.Objects.DeleteObjects.Add(this);
         }
 
@@ -207,6 +217,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageField.IsActive = false;
                 _aiStunnedState.StartStun();
                 _animator.Pause();
+                _wasStunned = true;
 
                 return Values.HitCollision.Enemy;
             }
