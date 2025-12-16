@@ -2298,9 +2298,7 @@ namespace ProjectZ.InGame.GameObjects
 
                                     // The Y axis needs a lesser nudge when going down and a huge nudge going up.
                                     if (offset.Y < -5f) { offset = new Vector2(offset.X, -2f); }
-                                    ;
                                     if (offset.Y > 5f) { offset = new Vector2(offset.X, 9f); }
-                                    ;
 
                                     // Move Link to the offset position.
                                     EntityPosition.Set(EntityPosition.Position + offset);
