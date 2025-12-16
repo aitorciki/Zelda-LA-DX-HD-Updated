@@ -496,7 +496,7 @@ namespace ProjectZ.InGame.GameObjects
                 IsSlider = true,
                 MaxJumpHeight = 3,
                 Drag = 0.80f,
-                DragAir = 0.9f,
+                DragAir = 0.80f,
                 Gravity = -0.15f,
                 Gravity2D = 0.1f,
                 AbsorbStop = 0.35f,
