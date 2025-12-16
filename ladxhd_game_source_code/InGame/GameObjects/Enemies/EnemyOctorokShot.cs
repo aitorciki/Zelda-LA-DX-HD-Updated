@@ -5,7 +5,6 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Things;
-using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -76,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, _pushableComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.35f });
+            AddComponent(PushableComponent.Index, _pushableComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.75f });
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer));
