@@ -26,10 +26,10 @@ namespace ProjectZ.InGame.Things
         ClassicSword = 0x01 << 16,
 
         // used to hit the player
-        Spikes = 0x01 << 15,
-        Object = 0x01 << 16,
-        Enemy = 0x01 << 17,
-        Boss = 0x01 << 18,
-        Projectile = 0x01 << 19,
+        Spikes = 0x01 << 17,
+        Object = 0x01 << 18,
+        Enemy = 0x01 << 19,
+        Boss = 0x01 << 20,
+        Projectile = 0x01 << 21,
     }
 }
