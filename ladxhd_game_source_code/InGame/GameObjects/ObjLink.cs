@@ -3835,6 +3835,7 @@ namespace ProjectZ.InGame.GameObjects
                 SpawnRepelParticle(collisionRectangle);
             }
             RepelPlayer(hitCollision, direction);
+        }
 
         private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
         {
