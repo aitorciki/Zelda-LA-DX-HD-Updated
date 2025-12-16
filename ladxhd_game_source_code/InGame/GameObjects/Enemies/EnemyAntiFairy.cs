@@ -94,7 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush) { RepelMultiplier = 1.75f });
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 

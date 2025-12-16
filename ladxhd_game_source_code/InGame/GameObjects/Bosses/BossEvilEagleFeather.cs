@@ -48,7 +48,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(PushableComponent.Index, new PushableComponent(pushBox, OnPush) { RepelMultiplier = 0.075f });
+            AddComponent(PushableComponent.Index, new PushableComponent(pushBox, OnPush) { RepelMultiplier = 0.2f });
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
             Map.Objects.RegisterAlwaysAnimateObject(this);

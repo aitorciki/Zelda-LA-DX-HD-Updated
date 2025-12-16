@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
 
             var bodyBox = new CBox(EntityPosition, 0, 0, 0, 16, 16, 4);
-            AddComponent(PushableComponent.Index, new PushableComponent(bodyBox, OnPush) { RepelMultiplier = 1.5f });
+            AddComponent(PushableComponent.Index, new PushableComponent(bodyBox, OnPush));
             AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(bodyBox, HitType.Enemy, 4));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);

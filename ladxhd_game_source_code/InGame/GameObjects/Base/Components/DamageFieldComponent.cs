@@ -18,7 +18,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public CBox CollisionBox;
         public HitType HitType;
 
-        public float PushMultiplier = 1.75f;
+        public float PushMultiplier = 1.85f;
         public int Strength;
         public int Direction = -1;
         public bool IsActive = true;

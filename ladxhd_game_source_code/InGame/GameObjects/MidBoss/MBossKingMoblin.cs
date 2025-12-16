@@ -113,7 +113,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             if (!string.IsNullOrEmpty(_triggerKey))
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 1 });
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 4 });
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { OnDamagedPlayer = OnDamagedPlayer });
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
@@ -281,7 +281,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _aiComponent.ChangeState("attack");
 
-            _damageField.PushMultiplier = 3.5f;
+            _damageField.PushMultiplier = 2.5f;
             _body.VelocityTarget = new Vector2(_direction == 0 ? -1 : 1, 0) * 2.5f;
             _animator.Play("attack_" + _direction);
         }

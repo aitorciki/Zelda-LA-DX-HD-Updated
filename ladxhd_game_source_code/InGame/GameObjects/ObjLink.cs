@@ -495,7 +495,7 @@ namespace ProjectZ.InGame.GameObjects
                 IsPusher = true,
                 IsSlider = true,
                 MaxJumpHeight = 3,
-                Drag = 0.9f,
+                Drag = 0.80f,
                 DragAir = 0.9f,
                 Gravity = -0.15f,
                 Gravity2D = 0.1f,
@@ -3614,7 +3614,7 @@ namespace ProjectZ.InGame.GameObjects
                             _hitParticleTime = Game1.TotalGameTime;
                             SpawnRepelParticle(collisionRectangle);
                         }
-                        RepelPlayer(hitCollision, direction, 1.75f);
+                        RepelPlayer(hitCollision, direction, 6.5f);
                     }
                     // If it's a standard sword attack or <other>?
                     else
@@ -3628,7 +3628,7 @@ namespace ProjectZ.InGame.GameObjects
                         else
                             CurrentState = State.Attacking;
 
-                        RepelPlayer(hitCollision, direction);
+                        RepelPlayer(hitCollision, direction, 6.5f);
                     }
                 }
                 else if (_swordChargeCounter > 0)
@@ -3834,7 +3834,7 @@ namespace ProjectZ.InGame.GameObjects
                 _hitParticleTime = Game1.TotalGameTime;
                 SpawnRepelParticle(collisionRectangle);
             }
-            RepelPlayer(hitCollision, direction);
+            RepelPlayer(hitCollision, direction, 6.5f);
         }
 
         private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
