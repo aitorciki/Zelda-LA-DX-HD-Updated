@@ -53,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _dyingState = 4;
         private int _tailState = 2;
         private float _dyingCounter = 250;
+        private float _soundTimer = 200;
 
         private bool _blinking;
 
@@ -119,26 +120,41 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("waiting");
 
             _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, 1);
-            var damageCollider = new CBox(EntityPosition, -6, -6, 0, 12, 12, 8);
+            var damageCollider = new CBox(EntityPosition, -8, -8, 0, 16, 16, 8);
 
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChang));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.0f });
+            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 5.5f });
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { PushMultiplier = 2.5f } );
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             // add the tail to the map
             _tail = new BossMoldormTail(map, this);
             map.Objects.SpawnObject(_tail);
         }
-
-        private void ToWalking()
+        private void Update()
         {
-            _aiComponent.ChangeState("moving");
-            _sprite.SourceRectangle = _headSourceRectangle;
-            _blinking = false;
+            if (_aiComponent.CurrentStateId == "dying")
+                return;
+
+            if (_aiComponent.CurrentStateId == "moving" && _aiComponent.CurrentStateId != "damage")
+                Game1.GameManager.PlaySoundEffect("D378-27-1B", false);
+
+            else if (_aiComponent.CurrentStateId == "running" || _aiComponent.CurrentStateId == "damage")
+            {
+                Game1.GameManager.StopSoundEffect("D378-27-1B");
+
+                _soundTimer -= Game1.DeltaTime;
+
+                if (_soundTimer <= 0)
+                {
+                    Game1.GameManager.PlaySoundEffect("D378-01-01");
+                    _soundTimer = 200;
+                }
+            }
         }
 
         private void UpdateMoving()
@@ -210,6 +226,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _aiComponent.ChangeState("dying");
             Game1.GameManager.PlaySoundEffect("D370-16-10");
+            Game1.GameManager.StopSoundEffect("D378-27-1B");
         }
 
         private void UpdateDying()
@@ -313,7 +330,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Game1.GameManager.PlaySoundEffect("D370-07-07");
 
             if (_lives > 0)
+            {
+                _soundTimer = 0;
                 _aiComponent.ChangeState("damage");
+            }
             else
                 ToDying();
 

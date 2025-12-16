@@ -24,7 +24,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, nightmare.OnHitTail));
             AddComponent(BaseAnimationComponent.Index, new AnimationComponent(animator, sprite, new Vector2(-8, -8)));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
-            AddComponent(PushableComponent.Index, new PushableComponent(new CBox(EntityPosition, -6, -6, 12, 12, 8), OnPush) { RepelMultiplier = 1.5f });
+            AddComponent(PushableComponent.Index, new PushableComponent(new CBox(EntityPosition, -6, -6, 12, 12, 8), OnPush) { RepelMultiplier = 5.5f });
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
