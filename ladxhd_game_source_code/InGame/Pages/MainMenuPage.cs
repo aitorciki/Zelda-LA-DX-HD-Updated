@@ -11,12 +11,7 @@ namespace ProjectZ.InGame.Pages
 {
     class MainMenuPage : InterfacePage
     {
-        enum State
-        {
-            Select,
-            Delete,
-            Copy
-        }
+        enum State { Select, Delete, Copy }
 
         public InterfaceListLayout[] SaveEntries = new InterfaceListLayout[SaveStateManager.SaveCount];
 
@@ -27,21 +22,22 @@ namespace ProjectZ.InGame.Pages
         private Animator _playerAnimation = new Animator();
         private Animator _swordAnimation = new Animator();
 
-        private InterfacePlayerImage [] _playerImage = new InterfacePlayerImage[SaveStateManager.SaveCount];
+        private InterfacePlayerImage[] _playerImage = new InterfacePlayerImage[SaveStateManager.SaveCount];
 
         private DictAtlasEntry _heartSprite;
 
         private InterfaceElement[][] _heartImage = new InterfaceElement[4][];
 
         private InterfaceGravityLayout[] _saveButtonLayouts = new InterfaceGravityLayout[SaveStateManager.SaveCount];
+
         private InterfaceLabel[] _saveNames = new InterfaceLabel[SaveStateManager.SaveCount];
-        private InterfaceLabel[] _saveRuby = new InterfaceLabel[SaveStateManager.SaveCount];
+        private InterfaceLabel[] _saveRupees = new InterfaceLabel[SaveStateManager.SaveCount];
         private InterfaceLabel[] _savePlaytime = new InterfaceLabel[SaveStateManager.SaveCount];
+
         private InterfaceListLayout[] _deleteCopyLayouts = new InterfaceListLayout[SaveStateManager.SaveCount];
 
         private InterfaceListLayout _mainLayout;
         private InterfaceListLayout _newGameButtonLayout;
-
         private InterfaceListLayout _menuBottomBar;
         private InterfaceListLayout _saveFileList;
 
@@ -54,7 +50,6 @@ namespace ProjectZ.InGame.Pages
         {
             var smallButtonWidth = 100;
             var smallButtonMargin = 2;
-
             var saveButtonRec = new Point(204, 32);
             var sideSize = 70;
 
@@ -69,152 +64,130 @@ namespace ProjectZ.InGame.Pages
             _newGameButtonLayout = new InterfaceListLayout { Size = saveButtonRec };
             _newGameButtonLayout.AddElement(new InterfaceLabel("main_menu_new_game"));
 
-            // list of all save files
+            // Save File List
+            _saveFileList = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true };
+            for (var i = 0; i < SaveStateManager.SaveCount; i++)
             {
-                _saveFileList = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true };
-                for (var i = 0; i < SaveStateManager.SaveCount; i++)
+                _saveButtonLayouts[i] = new InterfaceGravityLayout { Size = new Point(saveButtonRec.X, saveButtonRec.Y) };
+
+                var numberWidth = 17;
+                var saveSlotNumber = new InterfaceLabel(null, new Point(numberWidth, 28), Point.Zero)
+                { Gravity = InterfaceElement.Gravities.Left };
+                saveSlotNumber.SetText((i + 1).ToString());
+
+                _saveButtonLayouts[i].AddElement(saveSlotNumber);
+
+                var saveInfoLayout = new InterfaceListLayout { HorizontalMode = true, Size = new Point(saveButtonRec.X - numberWidth, saveButtonRec.Y), Gravity = InterfaceElement.Gravities.Right };
+
+                // Current Heart Count
                 {
-                    _saveButtonLayouts[i] = new InterfaceGravityLayout { Size = new Point(saveButtonRec.X, saveButtonRec.Y) };
+                    var heartsWidth = saveButtonRec.X / 2 - numberWidth - 20;
+                    var hearts = new InterfaceListLayout { Size = new Point(heartsWidth, 30) };
 
-                    var numberWidth = 17;
-                    var saveSlotNumber = new InterfaceLabel(null, new Point(numberWidth, 28), Point.Zero)
-                    { Gravity = InterfaceElement.Gravities.Left };
-                    saveSlotNumber.SetText((i + 1).ToString());
+                    var rowOne = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Right };
+                    var rowTwo = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Right };
 
-                    _saveButtonLayouts[i].AddElement(saveSlotNumber);
-
-                    var saveInfoLayout = new InterfaceListLayout { HorizontalMode = true, Size = new Point(saveButtonRec.X - numberWidth, saveButtonRec.Y), Gravity = InterfaceElement.Gravities.Right };
-
-                    // hearts on the left
+                    _heartImage[i] = new InterfaceElement[14];
+                    for (var j = 0; j < 7; j++)
                     {
-                        var heartsWidth = saveButtonRec.X / 2 - numberWidth - 20;
-                        var hearts = new InterfaceListLayout { Size = new Point(heartsWidth, 30) };
-
-                        var rowOne = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Right };
-                        var rowTwo = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Right };
-
-                        // hearts
-                        _heartImage[i] = new InterfaceElement[14];
-                        for (var j = 0; j < 7; j++)
-                        {
-                            int k = j + 7;
-                            _heartImage[i][j] = rowOne.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
-                            _heartImage[i][k] = rowTwo.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
-                        }
-
-                        hearts.AddElement(rowOne);
-                        hearts.AddElement(rowTwo);
-
-                        saveInfoLayout.AddElement(hearts);
+                        int k = j + 7;
+                        _heartImage[i][j] = rowOne.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
+                        _heartImage[i][k] = rowTwo.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Right });
                     }
+                    hearts.AddElement(rowOne);
+                    hearts.AddElement(rowTwo);
 
-                    // name + rubys + playtime on the right
-                    {
-                        var rightWidth = saveButtonRec.X / 2 + 8;
-                        var middle = new InterfaceListLayout { Gravity = InterfaceElement.Gravities.Left, Margin = new Point(2, 0), Size = new Point(rightWidth, 30) };
-
-                        // name
-                        middle.AddElement(_saveNames[i] = new InterfaceLabel(null, new Point(rightWidth - 18, 10), Point.Zero) { Margin = new Point(1, 0), TextAlignment = InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Bottom });
-                        // ruby
-                        middle.AddElement(_saveRuby[i] = new InterfaceLabel(null, new Point(rightWidth - 17, 10), Point.Zero) { Margin = new Point(0, 0), TextAlignment = InterfaceElement.Gravities.Left });
-                        // playtime
-                        middle.AddElement(_savePlaytime[i] = new InterfaceLabel(null, new Point(rightWidth - 17, 10), Point.Zero) { Margin = new Point(0, 0), TextAlignment = InterfaceElement.Gravities.Left });
-
-                        saveInfoLayout.AddElement(middle);
-                    }
-
-                    var i1 = i;
-                    _saveButtonLayouts[i].AddElement(saveInfoLayout);
-
-                    _saveButtons[i] = new InterfaceButton
-                    {
-                        InsideElement = _saveButtonLayouts[i],
-                        Size = new Point(saveButtonRec.X, saveButtonRec.Y),
-                        Margin = new Point(0, 2),
-                        ClickFunction = e => OnClickSave(i1)
-                    };
-
-                    SaveEntries[i] = new InterfaceListLayout { HorizontalMode = true, Gravity = InterfaceElement.Gravities.Right, AutoSize = true, Selectable = true };
-
-                    // dummy layout
-                    SaveEntries[i].AddElement(new InterfaceListLayout { Size = new Point(sideSize - 20, 20) });
-                    SaveEntries[i].AddElement(_playerImage[i] = new InterfacePlayerImage(_playerAnimation, _swordAnimation, _playerAnimation.SprTexture, _playerAnimation.CurrentFrame.SourceRectangle, new Point(24, 16), new Point(0, 0)));
-
-                    // save file
-                    SaveEntries[i].AddElement(_saveButtons[i]);
-
-                    // copy/delete options
-                    var currentSlot = i;
-                    _deleteCopyLayouts[i] = new InterfaceListLayout
-                    {
-                        Gravity = InterfaceElement.Gravities.Right,
-                        Size = new Point(sideSize, saveButtonRec.Y),
-                        PreventSelection = true,
-                        Selectable = true,
-                        Visible = false
-                    };
-
-                    var insideCopy = new InterfaceListLayout() { Size = new Point(sideSize - 4, 13) };
-                    insideCopy.AddElement(new InterfaceLabel("main_menu_copy") { Size = new Point(40, 12), TextAlignment = InterfaceElement.Gravities.Bottom });
-                    _deleteCopyLayouts[i].AddElement(new InterfaceButton(new Point(sideSize - 4, 13), new Point(0, 1), insideCopy, element => OnClickCopy(currentSlot)));
-
-                    var insideDelete = new InterfaceListLayout() { Size = new Point(sideSize - 4, 13) };
-                    insideDelete.AddElement(new InterfaceLabel("main_menu_erase") { Size = new Point(40, 12), TextAlignment = InterfaceElement.Gravities.Bottom });
-                    _deleteCopyLayouts[i].AddElement(new InterfaceButton(new Point(sideSize - 4, 13), new Point(0, 1), insideDelete, element => OnClickDelete(currentSlot)));
-
-                    SaveEntries[i].AddElement(_deleteCopyLayouts[i]);
-
-                    // add save button to the main layout
-                    _saveFileList.AddElement(SaveEntries[i]);
+                    saveInfoLayout.AddElement(hearts);
                 }
-            }
-
-            var buttonHeight = 18;
-
-            // menu bottom bar
-            {
-                _menuBottomBar = new InterfaceListLayout
+                // Name / Rupees / Playtime
                 {
-                    Size = new Point(saveButtonRec.X, (int)(height * Values.MenuFooterSize)),
-                    HorizontalMode = true,
-                    Selectable = true
+                    var rightWidth = saveButtonRec.X / 2 + 8;
+                    var middle = new InterfaceListLayout { Gravity = InterfaceElement.Gravities.Left, Margin = new Point(2, 0), Size = new Point(rightWidth, 30) };
+
+                    middle.AddElement(_saveNames[i] = new InterfaceLabel(null, new Point(rightWidth - 18, 10), Point.Zero) { Margin = new Point(1, 0), TextAlignment = InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Bottom });
+                    middle.AddElement(_saveRupees[i] = new InterfaceLabel(null, new Point(rightWidth - 17, 10), Point.Zero) { Margin = new Point(0, 0), TextAlignment = InterfaceElement.Gravities.Left });
+                    middle.AddElement(_savePlaytime[i] = new InterfaceLabel(null, new Point(rightWidth - 17, 10), Point.Zero) { Margin = new Point(0, 0), TextAlignment = InterfaceElement.Gravities.Left });
+
+                    saveInfoLayout.AddElement(middle);
+                }
+                var i1 = i;
+                _saveButtonLayouts[i].AddElement(saveInfoLayout);
+
+                _saveButtons[i] = new InterfaceButton
+                {
+                    InsideElement = _saveButtonLayouts[i],
+                    Size = new Point(saveButtonRec.X, saveButtonRec.Y),
+                    Margin = new Point(0, 2),
+                    ClickFunction = e => OnClickSave(i1)
                 };
 
-                var smallButtonLayout = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
-                smallButtonLayout.AddElement(new InterfaceLabel("main_menu_settings") { Gravity = InterfaceElement.Gravities.Center });
-                _menuBottomBar.AddElement(new InterfaceButton
-                {
-                    Size = new Point(smallButtonWidth, buttonHeight),
-                    InsideElement = smallButtonLayout,
-                    Margin = new Point(smallButtonMargin, 0),
-                    ClickFunction = element =>
-                    {
-                        Game1.UiPageManager.ChangePage(typeof(SettingsPage));
-                    }
-                });
+                SaveEntries[i] = new InterfaceListLayout { HorizontalMode = true, Gravity = InterfaceElement.Gravities.Right, AutoSize = true, Selectable = true };
+                SaveEntries[i].AddElement(new InterfaceListLayout { Size = new Point(sideSize - 20, 20) });
+                SaveEntries[i].AddElement(_playerImage[i] = new InterfacePlayerImage(_playerAnimation, _swordAnimation, _playerAnimation.SprTexture, _playerAnimation.CurrentFrame.SourceRectangle, new Point(24, 16), new Point(0, 0)));
+                SaveEntries[i].AddElement(_saveButtons[i]);
 
-                var smallButtonLayout2 = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
-                smallButtonLayout2.AddElement(new InterfaceLabel("main_menu_quit") { Gravity = InterfaceElement.Gravities.Center });
-                _menuBottomBar.AddElement(new InterfaceButton
+                // Copy / Delete Options
+                var currentSlot = i;
+                _deleteCopyLayouts[i] = new InterfaceListLayout
                 {
-                    Size = new Point(smallButtonWidth, buttonHeight),
-                    InsideElement = smallButtonLayout2,
-                    Margin = new Point(smallButtonMargin, 0),
-                    ClickFunction = element =>
-                    {
-                        Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
-                    }
-                });
+                    Gravity = InterfaceElement.Gravities.Right,
+                    Size = new Point(sideSize, saveButtonRec.Y),
+                    PreventSelection = true,
+                    Selectable = true,
+                    Visible = false
+                };
+
+                var insideCopy = new InterfaceListLayout() { Size = new Point(sideSize - 4, 13) };
+                insideCopy.AddElement(new InterfaceLabel("main_menu_copy") { Size = new Point(40, 12), TextAlignment = InterfaceElement.Gravities.Bottom });
+                _deleteCopyLayouts[i].AddElement(new InterfaceButton(new Point(sideSize - 4, 13), new Point(0, 1), insideCopy, element => OnClickCopy(currentSlot)));
+
+                var insideDelete = new InterfaceListLayout() { Size = new Point(sideSize - 4, 13) };
+                insideDelete.AddElement(new InterfaceLabel("main_menu_erase") { Size = new Point(40, 12), TextAlignment = InterfaceElement.Gravities.Bottom });
+                _deleteCopyLayouts[i].AddElement(new InterfaceButton(new Point(sideSize - 4, 13), new Point(0, 1), insideDelete, element => OnClickDelete(currentSlot)));
+
+                SaveEntries[i].AddElement(_deleteCopyLayouts[i]);
+                _saveFileList.AddElement(SaveEntries[i]);
             }
+            var buttonHeight = 18;
 
-            // main layout
+            // Bottom Bar
+            _menuBottomBar = new InterfaceListLayout
             {
-                _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
+                Size = new Point(saveButtonRec.X, (int)(height * Values.MenuFooterSize)),
+                HorizontalMode = true,
+                Selectable = true
+            };
 
-                _mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "main_menu_select_header", new Point(width, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-                _mainLayout.AddElement(_saveFileList);
-                _mainLayout.AddElement(_menuBottomBar);
-            }
+            var smallButtonLayout = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
+            smallButtonLayout.AddElement(new InterfaceLabel("main_menu_settings") { Gravity = InterfaceElement.Gravities.Center });
+            _menuBottomBar.AddElement(new InterfaceButton
+            {
+                Size = new Point(smallButtonWidth, buttonHeight),
+                InsideElement = smallButtonLayout,
+                Margin = new Point(smallButtonMargin, 0),
+                ClickFunction = element =>
+                {
+                    Game1.UiPageManager.ChangePage(typeof(SettingsPage));
+                }
+            });
+
+            var smallButtonLayout2 = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
+            smallButtonLayout2.AddElement(new InterfaceLabel("main_menu_quit") { Gravity = InterfaceElement.Gravities.Center });
+            _menuBottomBar.AddElement(new InterfaceButton
+            {
+                Size = new Point(smallButtonWidth, buttonHeight),
+                InsideElement = smallButtonLayout2,
+                Margin = new Point(smallButtonMargin, 0),
+                ClickFunction = element =>
+                {
+                    Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
+                }
+            });
+
+            _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
+            _mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "main_menu_select_header", new Point(width, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
+            _mainLayout.AddElement(_saveFileList);
+            _mainLayout.AddElement(_menuBottomBar);
 
             PageLayout = _mainLayout;
             PageLayout.Select(InterfaceElement.Directions.Top, false);
@@ -222,12 +195,10 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
-            // load the savestates
             SaveStateManager.LoadSaveData();
 
             UpdateUi();
 
-            // select the savestate
             if (_selectedSaveIndex != -1)
             {
                 _saveFileList.Elements[_selectedSaveIndex].Deselect(false);
@@ -246,6 +217,7 @@ namespace ProjectZ.InGame.Pages
         public override void OnReturn(Dictionary<string, object> intent)
         {
             UpdateUi();
+
             base.OnReturn(intent);
 
             if (intent != null && intent.TryGetValue("deleteReturn", out var deleteReturn) && (bool)deleteReturn)
@@ -394,15 +366,17 @@ namespace ProjectZ.InGame.Pages
                 Game1.GameManager.LoadSaveFile(saveIndex);
                 // close the menu page
                 Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
+                // Store the last game save that was selected.
+                GameSettings.LastSavePos = saveIndex;
             }
             else
             {
                 // change to the NewGamePage
                 _newGameIntent["SelectedSaveSlot"] = saveIndex;
                 Game1.UiPageManager.ChangePage(typeof(NewGamePage), _newGameIntent);
+                // Store the last game save that was selected.
+                GameSettings.LastSavePos = saveIndex;
             }
-            // Store the last game save that was selected.
-            GameSettings.LastSavePos = saveIndex;
             _selectStoredSave = false;
         }
 
@@ -434,7 +408,7 @@ namespace ProjectZ.InGame.Pages
                     : SaveStateManager.SaveStates[i].Name);
 
                 // Load the players rupee count.
-                _saveRuby[i].SetText(SaveStateManager.SaveStates[i].CurrentRubee.ToString());
+                _saveRupees[i].SetText(SaveStateManager.SaveStates[i].CurrentRupees.ToString());
 
                 // Does the player have: level 2 sword, mirror shield, colored tunic.
                 var sword = SaveStateManager.SaveStates[i].SwordLevel2;

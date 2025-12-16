@@ -18,9 +18,17 @@ namespace ProjectZ.InGame.SaveLoad
 
         private bool _hasSwordLevel2;
         private bool _hasMirrorShield;
+        private bool[] _hasInstruments;
 
         public bool HasSwordLevel2 { get => _hasSwordLevel2; }
         public bool HasMirrorShield { get => _hasMirrorShield; }
+
+        public bool HasInstrument(int index)
+        {
+            if (_hasInstruments == null || index < 0 || index >= _hasInstruments.Length)
+                return false;
+            return _hasInstruments[index];
+        }
 
         public static string GetSaveFilePath()
         {
@@ -76,7 +84,6 @@ namespace ProjectZ.InGame.SaveLoad
             }
 
 #if WINDOWS
-            // @TODO: this is bad; maybe try to write the file into another directory?
             MessageBox.Show("Error while saving", "Saving Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
 #endif
         }
@@ -98,17 +105,13 @@ namespace ProjectZ.InGame.SaveLoad
             {
                 foreach (var element in _boolDictionary)
                     writer.WriteLine("b " + element.Key + " " + element.Value);
-
                 foreach (var element in _intDictionary)
                     writer.WriteLine("i " + element.Key + " " + element.Value);
-
                 foreach (var element in _floatDictionary)
                     writer.WriteLine("f " + element.Key + " " + element.Value.ToString(CultureInfo.InvariantCulture));
-
                 foreach (var element in _stringDictionary)
                     writer.WriteLine("s " + element.Key + " " + element.Value);
             }
-
             fileStream.Close();
             fileStream.Dispose();
         }
@@ -132,6 +135,8 @@ namespace ProjectZ.InGame.SaveLoad
             if (!File.Exists(filePath))
                 return false;
 
+            _hasInstruments = new bool[8];
+
             for (var i = 0; i < Values.LoadRetries; i++)
             {
                 try
@@ -141,7 +146,6 @@ namespace ProjectZ.InGame.SaveLoad
                         while (!reader.EndOfStream)
                         {
                             var line = reader.ReadLine();
-
                             var strSplit = line?.Split(' ');
 
                             if (strSplit?.Length >= 3)
@@ -149,56 +153,51 @@ namespace ProjectZ.InGame.SaveLoad
                                 var valueString = line.Substring(strSplit[0].Length + strSplit[1].Length + 2);
 
                                 if (strSplit[0] == "b")
-                                {
                                     _boolDictionary.Add(strSplit[1], Convert.ToBoolean(valueString));
-                                }
+                                
                                 else if (strSplit[0] == "i")
-                                {
                                     _intDictionary.Add(strSplit[1], Convert.ToInt32(valueString));
-                                }
+                                
                                 else if (strSplit[0] == "f")
-                                {
                                     _floatDictionary.Add(strSplit[1], float.Parse(valueString, CultureInfo.InvariantCulture));
-                                }
+                                
                                 else if (strSplit[0] == "s")
                                 {
                                     if (strSplit[2] == "sword2:1")
                                         _hasSwordLevel2 = true;
                                     if (strSplit[2] == "mirrorShield:1")
                                         _hasMirrorShield = true;
-
+                                    for (int j = 0; j < 8; j++) 
+                                    {
+                                        if (strSplit[2] == "instrument" + j + ":1")
+                                            _hasInstruments[j] = true;
+                                    }
                                     _stringDictionary.Add(strSplit[1], valueString);
                                 }
                             }
                         }
                     }
-
                     return true;
                 }
                 catch (Exception) { }
             }
-
             return false;
         }
 
-        // bool
         public void SetBool(string key, bool value)
         {
             if (_boolDictionary.ContainsKey(key))
             {
                 if (_historyEnabled && _boolDictionary[key] != value)
                     _history.Push(new HistoryFrame() { Key = key, BoolValueOld = _boolDictionary[key], BoolValue = value });
-
                 _boolDictionary[key] = value;
             }
             else
             {
                 if (_historyEnabled)
                     _history.Push(new HistoryFrame() { Key = key, BoolValue = value });
-
                 _boolDictionary.Add(key, value);
             }
-
             Game1.GameManager.MapManager.CurrentMap.Objects.TriggerKeyChange();
         }
 
@@ -210,7 +209,6 @@ namespace ProjectZ.InGame.SaveLoad
             return defaultReturn;
         }
 
-        // int
         public void SetInt(string key, int value)
         {
             if (_intDictionary.ContainsKey(key))
@@ -227,7 +225,6 @@ namespace ProjectZ.InGame.SaveLoad
 
                 _intDictionary.Add(key, value);
             }
-
             Game1.GameManager.MapManager.CurrentMap.Objects.TriggerKeyChange();
         }
 
@@ -258,11 +255,9 @@ namespace ProjectZ.InGame.SaveLoad
 
                 _intDictionary.Remove(key);
             }
-
             Game1.GameManager.MapManager.CurrentMap.Objects.TriggerKeyChange();
         }
 
-        // float
         public void SetFloat(string key, float value)
         {
             if (_floatDictionary.ContainsKey(key))
@@ -279,7 +274,6 @@ namespace ProjectZ.InGame.SaveLoad
 
                 _floatDictionary.Add(key, value);
             }
-
             Game1.GameManager.MapManager.CurrentMap.Objects.TriggerKeyChange();
         }
 
@@ -296,7 +290,6 @@ namespace ProjectZ.InGame.SaveLoad
             return defaultReturn;
         }
 
-        // string
         public void SetString(string key, string value)
         {
             if (_stringDictionary.ContainsKey(key))
@@ -313,7 +306,6 @@ namespace ProjectZ.InGame.SaveLoad
 
                 _stringDictionary.Add(key, value);
             }
-
             Game1.GameManager.MapManager.CurrentMap.Objects.TriggerKeyChange();
         }
 
@@ -340,7 +332,6 @@ namespace ProjectZ.InGame.SaveLoad
 
                 _stringDictionary.Remove(key);
             }
-
             Game1.GameManager.MapManager.CurrentMap.Objects.TriggerKeyChange();
         }
 

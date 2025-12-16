@@ -10,12 +10,13 @@ namespace ProjectZ.InGame.SaveLoad
             public string Name;
             public int MaxHearts;
             public int CurrentHealth;
-            public int CurrentRubee;
+            public int CurrentRupees;
             public int CloakType;
             public float TotalPlaytime;
             public bool SwordLevel2;
             public bool MirrorShield;
             public bool Thief;
+            public bool[] Instruments = new bool[8];
         }
 
         public static SaveState[] SaveStates = new SaveState[SaveCount];
@@ -28,22 +29,26 @@ namespace ProjectZ.InGame.SaveLoad
             {
                 var saveManager = new SaveManager();
 
-                // check if the save was loaded or not
                 if (saveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + i)))
                 {
                     SaveStates[i] = new SaveState();
                     SaveStates[i].Name = saveManager.GetString("savename");
                     SaveStates[i].CurrentHealth = saveManager.GetInt("currentHealth");
                     SaveStates[i].MaxHearts = saveManager.GetInt("maxHearts");
-                    SaveStates[i].CurrentRubee = saveManager.GetInt("rubyCount", 0);
+                    SaveStates[i].CurrentRupees = saveManager.GetInt("rubyCount", 0);
                     SaveStates[i].CloakType = saveManager.GetInt("cloak", 0);
                     SaveStates[i].TotalPlaytime = saveManager.GetFloat("totalPlaytime", 0.0f);
                     SaveStates[i].SwordLevel2 = saveManager.HasSwordLevel2;
                     SaveStates[i].MirrorShield = saveManager.HasMirrorShield;
                     SaveStates[i].Thief = saveManager.GetBool("ThiefState", false);
+
+                    for (var j = 0; j < 8; j++)
+                        SaveStates[i].Instruments[j] = saveManager.HasInstrument(j);
                 }
                 else
+                {
                     SaveStates[i] = null;
+                }
             }
         }
     }

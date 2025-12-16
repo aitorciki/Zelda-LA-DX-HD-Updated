@@ -878,6 +878,7 @@ namespace ProjectZ.InGame.GameObjects
                     // save settings?
                     if (GameSettings.Autosave)
                     {
+                        SettingsSaveLoad.SaveSettings();
                         SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
                     }
                     Camera.SnapCamera = false;
@@ -3834,7 +3835,6 @@ namespace ProjectZ.InGame.GameObjects
                 SpawnRepelParticle(collisionRectangle);
             }
             RepelPlayer(hitCollision, direction);
-        }
 
         private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
         {

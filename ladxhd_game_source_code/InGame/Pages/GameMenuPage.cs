@@ -68,6 +68,7 @@ namespace ProjectZ.InGame.Pages
         {
             MapManager.ObjLink.DisableItems = true;
             MapManager.ObjLink.DisableItemCounter = 350;
+            SettingsSaveLoad.SaveSettings();
             SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
             Game1.GameManager.InGameOverlay.CloseOverlay();
         }
