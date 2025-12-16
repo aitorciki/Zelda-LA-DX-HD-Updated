@@ -292,6 +292,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _drawGlove = true;
 
             _animator.Play("hit1");
+            Game1.GameManager.PlaySoundEffect("D360-51-33");
         }
 
         private void TickSwing0(double counter)

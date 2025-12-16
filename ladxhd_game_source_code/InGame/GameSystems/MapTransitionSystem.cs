@@ -403,7 +403,7 @@ namespace ProjectZ.InGame.GameSystems
             _nextMapColor = Color.White;
 
             // take longer
-            AdditionalBlackScreenDelay = 1000;
+            AdditionalBlackScreenDelay = 750;
         }
 
         public void ResetTransition()

@@ -257,6 +257,9 @@ namespace ProjectZ.InGame.GameObjects
             if (CurrentState == State.Knockout)
                 return;
 
+            if (Camera.ClassicMode)
+                Camera.SnapCameraTimer = 100;
+
             CurrentState = State.Knockout;
 
             MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
