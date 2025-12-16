@@ -152,15 +152,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (type == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (ValidateHit(type, pieceOfPower))
+            if (ValidateHit(hitType, pieceOfPower))
             {
-                if (type != HitType.BowWow && (type == HitType.MagicRod || damage >= _damageState.CurrentLives))
+                if (hitType != HitType.BowWow && (hitType == HitType.MagicRod || damage >= _damageState.CurrentLives))
                 {
                     _damageState.HitMultiplierX = 4;
                     _damageState.HitMultiplierY = 4;
@@ -173,7 +173,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                         _hitComponent.IsActive = false;
                         _collisionComponent.IsActive = false;
                     }
-                    return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+                    return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
                 }
                 return Values.HitCollision.None;
             }

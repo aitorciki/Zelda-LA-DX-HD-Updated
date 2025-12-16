@@ -444,10 +444,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sprite.Color = Color.White;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (type == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             if (_damageState.IsInDamageState() || originObject == this)
@@ -458,12 +458,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
 
                 _aiComponent.ChangeState("ball");
-                _damageState.HitKnockBack(originObject, direction, type, pieceOfPower, false);
+                _damageState.HitKnockBack(originObject, direction, hitType, pieceOfPower, false);
 
                 return Values.HitCollision.Blocking;
             }
 
-            if (type == HitType.Bow)
+            if (hitType == HitType.Bow)
                 return Values.HitCollision.Repelling;
 
             return Values.HitCollision.Particle | Values.HitCollision.Blocking;

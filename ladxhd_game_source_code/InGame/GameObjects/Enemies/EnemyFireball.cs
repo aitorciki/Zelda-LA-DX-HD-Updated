@@ -88,13 +88,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Delete();
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (type == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if ((type & HitType.Sword) == 0)
+            if ((hitType & HitType.Sword) == 0)
                 return Values.HitCollision.None;
 
             Game1.GameManager.PlaySoundEffect("D360-03-03");

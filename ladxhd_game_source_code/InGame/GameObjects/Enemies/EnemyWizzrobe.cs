@@ -156,10 +156,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.SpawnObject(projectile);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (type == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can not hit the enemy while he is spawning or hidden
@@ -167,13 +167,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 (_aiComponent.CurrentStateId != "stand" && !_aiStunnedState.IsStunned()))
                 return Values.HitCollision.None;
 
-            if (type == HitType.Hookshot || type == HitType.Boomerang)
+            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang)
             {
                 _aiStunnedState.StartStun();
                 _damageField.IsActive = false;
             }
 
-            if (type == HitType.MagicPowder)
+            if (hitType == HitType.MagicPowder)
             {
                 _aiStunnedState.StartStun();
                 _damageState.SetDamageState(false);
@@ -184,14 +184,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // @TODO: not sure if thrown object damage is right
-            if (type == HitType.Bomb || type == HitType.ThrownObject)
+            if (hitType == HitType.Bomb || hitType == HitType.ThrownObject)
                 damage = 4;
-            else if (type == HitType.Bow || type == HitType.MagicRod)
+            else if (hitType == HitType.Bow || hitType == HitType.MagicRod)
                 damage = 1;
             else
                 damage = 0;
 
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)

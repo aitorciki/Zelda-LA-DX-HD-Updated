@@ -17,10 +17,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly CBox _collisionBox;
-        private readonly AiTriggerTimer _collisionTimer;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
 
+        private float _collisionTimer;
         private float _moveSpeed = 0.5f;
         private int _direction;
         private bool _hasPlayerTrapped;
@@ -62,7 +62,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var stateMove = new AiState(UpdateMoving);
             stateMove.Trigger.Add(new AiTriggerRandomTime(ChangeDirection, 350, 650));
-            stateMove.Trigger.Add(_collisionTimer = new AiTriggerTimer(1750));
             var stateTrap = new AiState(UpdateTrap);
 
             _aiComponent = new AiComponent();
@@ -93,6 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Reset()
         {
             _animator.Continue();
+            _collisionTimer = 0;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
             _aiComponent.ChangeState("moving");
@@ -118,12 +118,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 1.0f;
             _aiComponent.ChangeState("moving");
             _hasPlayerTrapped = false;
+            _collisionTimer = 1750;
+            _body.Drag = 0.85f;
         }
 
         private void UpdateMoving()
         {
+            if (_collisionTimer > 0)
+                _collisionTimer -= Game1.DeltaTime;
+
             // collided with the player?
-            if (_collisionTimer.State && !MapManager.ObjLink.IsTrapped() &&
+            if (_collisionTimer <= 0 && !MapManager.ObjLink.IsTrapped() &&
                 _collisionBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
                 ToTrap();
         }
@@ -131,7 +136,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void ToTrap()
         {
             MapManager.ObjLink.TrapPlayer();
-            MapManager.ObjLink.SetPosition(new Vector2(EntityPosition.Position.X, EntityPosition.Y - 3));
+            MapManager.ObjLink.SetPosition(new Vector2(EntityPosition.Position.X, EntityPosition.Y - 1));
 
             if (!_stoleShield)
             {
@@ -142,6 +147,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 2.0f;
             _aiComponent.ChangeState("trap");
             _body.VelocityTarget = Vector2.Zero;
+            _body.Drag = 0;
             _hasPlayerTrapped = true;
         }
 
@@ -195,7 +201,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (hitType == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             if (_hasPlayerTrapped && (hitType & HitType.Sword) != 0)

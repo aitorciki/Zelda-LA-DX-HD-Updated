@@ -178,7 +178,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (hitType == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0)
                 return Values.HitCollision.None;
 
             // Prevent the bush from colliding with itself. Because it "can hit" and also "be hit"

@@ -167,16 +167,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _animator.Play("walk_" + _direction);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (type == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can be hit if the damage source is coming from the back
             var dir = AnimationHelper.GetDirection(direction);
 
-            if (!_isUnprotected && type == HitType.Hookshot && dir == (_direction + 2) % 4 &&
+            if (!_isUnprotected && hitType == HitType.Hookshot && dir == (_direction + 2) % 4 &&
                 _aiComponent.CurrentStateId != "stunned")
             {
                 Game1.GameManager.PlaySoundEffect("D370-01-01");
@@ -187,16 +187,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // throw objects will kill him directly
-            if (type == HitType.ThrownObject || type == HitType.Bomb || type == HitType.MagicPowder || type == HitType.MagicRod)
-                return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            if (hitType == HitType.ThrownObject || hitType == HitType.Bomb || hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
+                return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
 
             // gets attacked from behind or is unprotected?
-            if (dir == (_direction) % 4 || _isUnprotected || type == HitType.Hookshot)
-                return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            if (dir == (_direction) % 4 || _isUnprotected || hitType == HitType.Hookshot)
+                return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
 
             // gets attacked from behind/sides by a bow
-            if ((dir != (_direction + 2) % 4) && (type == HitType.Bow || type == HitType.Boomerang))
-                return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            if ((dir != (_direction + 2) % 4) && (hitType == HitType.Bow || hitType == HitType.Boomerang))
+                return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
 
             if (_aiComponent.CurrentStateId != "stunned")
             {

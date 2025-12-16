@@ -212,10 +212,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition.Z = 0;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (type == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             if (_aiComponent.CurrentStateId == "stunned")
@@ -235,7 +235,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
-            return _damageState.OnHit(originObject, direction, type, damage, pieceOfPower);
+            return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
         }
     }
 }

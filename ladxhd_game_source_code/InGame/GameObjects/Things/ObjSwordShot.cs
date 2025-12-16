@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 OnCollision(Values.BodyCollision.None);
                 return;
             }
-            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.SwordShot, _damage, false);
+            var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageBox.Box, HitType.SwordShot, _damage, false);
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Enemy)) != 0)
                 Map.Objects.DeleteObjects.Add(this);
         }

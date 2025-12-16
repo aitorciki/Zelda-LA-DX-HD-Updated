@@ -230,7 +230,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _pushComponent.IsActive = false;
             }
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (hitType == HitType.CrystalSmash)
+            if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             if (!_damageState.IsActive || _damageState.IsInDamageState())

@@ -533,7 +533,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-6, -2),
                 new Vector2(-2, -CollisionBoxSize.Y -1),
                 new Vector2(6, -2),
-                new Vector2(2, 4)
+                new Vector2(2, 2)
             };
 
             _magicRodOffset = new[]
@@ -541,15 +541,15 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-10, -4),
                 new Vector2(-4, -CollisionBoxSize.Y - 4),
                 new Vector2(10, -4),
-                new Vector2(3, 4)
+                new Vector2(3, 2)
             };
 
             _shootSwordOffset = new[]
             {
-                new Vector2(-10, -4),
-                new Vector2(-5, -CollisionBoxSize.Y - 8),
-                new Vector2(10, -4),
-                new Vector2(4, 4)
+                new Vector2(-6, -4),
+                new Vector2(-5, -CollisionBoxSize.Y - 3),
+                new Vector2(6, -4),
+                new Vector2(4, 2)
             };
 
             _hookshotOffset = new[]
@@ -3909,7 +3909,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.Charging;
         }
 
-        private Box GetShieldRectangle()
+        private Box GetShieldBox()
         {
             // The mirror shield requires a slightly different offset than the normal shield
             // when facing south. I'm guessing that it's actually one pixel larger facing down.
@@ -3929,7 +3929,7 @@ namespace ProjectZ.InGame.GameObjects
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
 
-            // Return the proper shield rectangle based on direction.
+            // Return the proper shield box based on direction.
             return new Box(
                 EntityPosition.X + rect.X + xOff,
                 EntityPosition.Y + rect.Y + yOff, 0,
@@ -3944,7 +3944,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // Get the shield rectangle.
-            _shieldBox = GetShieldRectangle();
+            _shieldBox = GetShieldBox();
             var pushedRectangle = Map.Objects.PushObject(_shieldBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
 
             // Push the object and get repelled from the pushed object.
