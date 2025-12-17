@@ -68,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _fieldRectangle = map.GetField(posX, posY);
 
-            Body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8)
+            Body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
             {
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |
