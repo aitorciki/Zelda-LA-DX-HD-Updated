@@ -127,7 +127,6 @@ namespace ProjectZ.InGame.Things
         public float CurrentSessionPlaytime = 0.0f; // current session playtime in minutes
 
         public float DrawPlayerOnTopPercentage;
-        public bool FreezeWorldAroundPlayer;
 
         // save game data
         public string LoadedMap;
@@ -817,8 +816,8 @@ namespace ProjectZ.InGame.Things
                 damage = (int)MathF.Ceiling(damage / 2f);
             if (GuardianAcornIsActive)
                 damage = (int)MathF.Ceiling(damage / 2f);
-            if (GameSettings.DmgMultiplier > 0)
-                damage = (int)MathF.Ceiling(damage) * GameSettings.DmgMultiplier;
+
+            damage = (int)MathF.Ceiling(damage) * GameSettings.DamageFactor;
 
             CurrentHealth -= damage;
 

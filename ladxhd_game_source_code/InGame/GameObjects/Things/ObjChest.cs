@@ -96,7 +96,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 if (_itemName == "greenZol")
                 {
-                    // @TODO: sound effect
                     var greenZol = new EnemyGreenZol(Map, posX, posY, 8, false);
                     greenZol.SpawnDelay();
                     _spawnObject = greenZol;

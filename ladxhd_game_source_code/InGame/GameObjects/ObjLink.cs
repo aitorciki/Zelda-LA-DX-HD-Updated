@@ -455,6 +455,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _wasFlying;
         private Map.Map _previousMap;
 
+        public bool FreezeWorldAroundPlayer;
         public bool FreezeWorldForEvents;
 
         // Mod File Values (ObjLink.lahdmod)
@@ -810,7 +811,7 @@ namespace ProjectZ.InGame.GameObjects
             else if (CurrentState == State.PickingUp && !_pickingUpInstrument && !_pickingUpSword)
             {
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
-                Game1.GameManager.FreezeWorldAroundPlayer = true;
+                FreezeWorldAroundPlayer = true;
             }
             else if (CurrentState == State.TeleporterUpWait)
             {

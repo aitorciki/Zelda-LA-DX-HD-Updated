@@ -39,8 +39,8 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Damage Taken Multiplier
             var damageTakenSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damage",
-                buttonWidth, new Point(1, 2), 0, 10, 1, GameSettings.DmgMultiplier,
-                number => { GameSettings.DmgMultiplier = number; })
+                buttonWidth, new Point(1, 2), 0, 10, 1, GameSettings.DamageFactor,
+                number => { GameSettings.DamageFactor = number; })
                 { SetString = number => DamageTakenSliderAdjustment(number) };
             _contentLayout.AddElement(damageTakenSlider);
 

@@ -184,15 +184,12 @@ namespace ProjectZ.InGame.Map
                 AddSpawnedObjects();
                 return;
             }
-            // While I'm not entirely sure what all the functions of this code are, I do know it is used when pulling items
-            // out of chests. Without it, when opening a chest the item will "stick" to Link's head and not enter the inventory.
-            // My guess based on what it looks like, as long as "FreezeWorldAroundPlayer" is true, which can remain true if set
-            // during an update loop, it will not run the rest of the code beyond this point while still updating Link's main
-            // "Update" loop. Not sure why disabling this breaks picking up an item out of a chest, but I'm sure it does.
+            // Freezes the world for a single frame when opening chests or picking up items. Without it, the item will
+            // stick to Link's head and not disappear. I have no idea why this works but it's required.
 
-            if (Game1.GameManager.FreezeWorldAroundPlayer)
+            if (Link.FreezeWorldAroundPlayer)
             {
-                Game1.GameManager.FreezeWorldAroundPlayer = false;
+                Link.FreezeWorldAroundPlayer = false;
                 var updateComponent = (UpdateComponent)MapManager.ObjLink.Components[UpdateComponent.Index];
                 updateComponent?.UpdateFunction();
                 return;
