@@ -42,7 +42,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         public ObjDungeonHorseHead(Map.Map map, int posX, int posY, string strKey, int direction) : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 13, 0);
+            ResetPosition  = new CPosition(posX + 8, posY + 13, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
+            CanReset = true;
 
             _strKey = strKey;
             _direction = direction;
