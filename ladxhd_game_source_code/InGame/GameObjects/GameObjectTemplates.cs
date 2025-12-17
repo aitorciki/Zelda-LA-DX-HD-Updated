@@ -375,7 +375,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("roomDarkener", new GameObjectTemplate(typeof(ObjRoomDarkener), new object[] { 0.8f, 0.3f }));
             ObjectTemplates.Add("colorShift", new GameObjectTemplate(typeof(ObjColorShift), new object[] { 0, 16, 16 }));
             ObjectTemplates.Add("dungeonKeyhole", new GameObjectTemplate(typeof(ObjKeyhole), new object[] { null, null, null }));
-            ObjectTemplates.Add("enemytrigger", new GameObjectTemplate(typeof(ObjEnemyTrigger), new object[] { null }));
+            ObjectTemplates.Add("enemytrigger", new GameObjectTemplate(typeof(ObjEnemyTrigger), new object[] { null, false }));
             ObjectTemplates.Add("hitTrigger", new GameObjectTemplate(typeof(ObjHitTrigger), new object[] { 0, null, 16, 16, 200, true, true }));
             ObjectTemplates.Add("killOrderTrigger", new GameObjectTemplate(typeof(ObjKillTrigger), new object[] { null }));
             ObjectTemplates.Add("graveTrigger", new GameObjectTemplate(typeof(ObjGraveTrigger), new object[] { null }));

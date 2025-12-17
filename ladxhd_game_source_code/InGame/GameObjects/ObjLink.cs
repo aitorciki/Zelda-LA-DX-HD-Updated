@@ -1669,6 +1669,13 @@ namespace ProjectZ.InGame.GameObjects
                 _spawnGhost = true;
             }
 
+            // We don't need this sticking around so remove it.
+            var mountainPhoto = Game1.GameManager.SaveManager.GetString("start_mountain_photo");
+            if (!string.IsNullOrEmpty(mountainPhoto))
+            {
+                Game1.GameManager.SaveManager.RemoveString("start_mountain_photo");
+            }
+
             // Borrow the rooster from the hen house (after dungeon 8 is finished).
             var borrowRooster = Game1.GameManager.SaveManager.GetString("borrow_rooster");
             if (borrowRooster == "0")

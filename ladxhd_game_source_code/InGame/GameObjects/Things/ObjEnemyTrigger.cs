@@ -13,12 +13,15 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Rectangle _triggerField;
         private readonly string _triggerKey;
 
+        private int _posX;
+        private int _posY;
         private bool _enemiesAlive;
         private bool _init;
+        private bool _respawn;
 
         public ObjEnemyTrigger() : base("editor enemy trigger") { }
 
-        public ObjEnemyTrigger(Map.Map map, int posX, int posY, string triggerKey) : base(map)
+        public ObjEnemyTrigger(Map.Map map, int posX, int posY, string triggerKey, bool respawn) : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
 
@@ -29,9 +32,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IsDead = true;
                 return;
             }
-
+            _posX = posX;
+            _posY = posY;
             _triggerKey = triggerKey;
             _triggerField = map.GetField(posX, posY);
+            _respawn = respawn;
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
@@ -62,6 +67,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             //RemoveComponent(UpdateComponent.Index);
             // remove the object
             Map.Objects.DeleteObjects.Add(this);
+
+            if (_respawn)
+                Map.Objects.SpawnObject(new ObjEnemyTrigger(Map, _posX, _posY, _triggerKey, _respawn));
         }
     }
 }
