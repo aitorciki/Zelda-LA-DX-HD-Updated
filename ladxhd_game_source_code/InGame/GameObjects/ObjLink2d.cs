@@ -581,7 +581,7 @@ namespace ProjectZ.InGame.GameObjects
                     Direction = 1;
             }
             // boot running; stop if the player tries to move in the opposite direction
-            else if (_bootsRunning && (walkVelLength < GameSettings.DeadZone || vectorDirection != ReverseDirection(Direction)))
+            else if (_bootsRunning && (walkVelLength < 0 || vectorDirection != ReverseDirection(Direction)))
             {
                 if (!_bootsStop)
                     _moveVector2D = AnimationHelper.DirectionOffset[Direction] * 2;
@@ -589,7 +589,7 @@ namespace ProjectZ.InGame.GameObjects
                 _lastMoveVelocity = _moveVector2D;
             }
             // normally walking on the floor
-            else if (walkVelLength > GameSettings.DeadZone)
+            else if (walkVelLength > 0)
             {
                 // if the player is walking he is walking left or right
                 if (walkVelocity.X != 0)
@@ -680,7 +680,7 @@ namespace ProjectZ.InGame.GameObjects
             var moveVectorLength = moveVector.Length();
             moveVectorLength = Math.Clamp(moveVectorLength, 0, MaxSwimSpeed2D);
 
-            if (moveVectorLength > GameSettings.DeadZone)
+            if (moveVectorLength > 0)
             {
                 moveVector.Normalize();
                 moveVector *= moveVectorLength;

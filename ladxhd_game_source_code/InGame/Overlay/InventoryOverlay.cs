@@ -137,7 +137,7 @@ namespace ProjectZ.InGame.Overlay
             var selectionOffset = 0;
 
             var direction = ControlHandler.GetMoveVector2();
-            if (direction.Length() > GameSettings.DeadZone)
+            if (direction.Length() > 0)
             {
                 _selectionCounter -= Game1.DeltaTime;
                 if (_selectionCounter <= 0 || !_selectionButtonPressed)

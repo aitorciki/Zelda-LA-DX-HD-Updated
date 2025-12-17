@@ -133,10 +133,10 @@ namespace ProjectZ.InGame.Interface
 
             var direction = 0;
 
-            if (HorizontalMode ? ControlHandler.MenuButtonPressed(CButtons.Left) : ControlHandler.MenuButtonPressed(CButtons.Up))
+            if (HorizontalMode ? ControlHandler.MenuButtonDown(CButtons.Left) : ControlHandler.MenuButtonDown(CButtons.Up))
                 direction = -1;
 
-            if (HorizontalMode ? ControlHandler.MenuButtonPressed(CButtons.Right) : ControlHandler.MenuButtonPressed(CButtons.Down))
+            if (HorizontalMode ? ControlHandler.MenuButtonDown(CButtons.Right) : ControlHandler.MenuButtonDown(CButtons.Down))
                 direction = 1;
 
             if (direction == 0)

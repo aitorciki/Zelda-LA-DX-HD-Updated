@@ -19,8 +19,8 @@ namespace ProjectZ.InGame.Controls
         public static bool LastKeyboardDown;
         public static bool LastDirectionDPad;
 
-        private const int ScrollStartTime = 350;
-        private const int ScrollTime = 100;
+        private const int ScrollStartTime = 500;
+        private const int ScrollTime = 125;
 
         private static float _scrollCounter;
         private static bool _initDirection;
@@ -163,34 +163,6 @@ namespace ProjectZ.InGame.Controls
             }
         }
 
-        public static Vector2 GetGamepadDirection()
-        {
-            var gamepadState = GamePad.GetState(PlayerIndex.One);
-            return new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
-        }
-
-        public static Vector2 GetMoveVector2()
-        {
-            var gamepadState = GamePad.GetState(PlayerIndex.One);
-            var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
-
-            if (vec.Length() < GameSettings.DeadZone)
-                vec = Vector2.Zero;
-
-            if (vec == Vector2.Zero)
-            {
-                if (ButtonDown(CButtons.Left))
-                    vec += new Vector2(-1, 0);
-                if (ButtonDown(CButtons.Right))
-                    vec += new Vector2(1, 0);
-                if (ButtonDown(CButtons.Up))
-                    vec += new Vector2(0, -1);
-                if (ButtonDown(CButtons.Down))
-                    vec += new Vector2(0, 1);
-            }
-            return vec;
-        }
-
         public static Vector2 GetCamVector2()
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
@@ -206,7 +178,8 @@ namespace ProjectZ.InGame.Controls
             _initDirection = _scrollCounter == ScrollStartTime;
 
             var direction = GetMoveVector2();
-            if (direction.Length() >= GameSettings.DeadZone)
+
+            if (direction.Length() != 0)
                 _scrollCounter -= Game1.DeltaTime;
             else
                 _scrollCounter = ScrollStartTime;
@@ -224,21 +197,41 @@ namespace ProjectZ.InGame.Controls
             DebugButtons = CButtons.None;
         }
 
-        public static bool MenuButtonPressed(CButtons button)
-        {
-            var direction = GetGamepadDirection();
-            if (direction.Length() >= GameSettings.DeadZone)
-            {
-                var dir = AnimationHelper.GetDirection(direction);
-                if (((dir == 0 && button == CButtons.Left) || 
-                    (dir == 1 && button == CButtons.Up) ||
-                    (dir == 2 && button == CButtons.Right) || 
-                    (dir == 3 && button == CButtons.Down)) && 
-                    (_scrollCounter < 0 || _initDirection))
-                    return true;
-            }
 
-            return ButtonPressed(button) || (ButtonDown(button) && _scrollCounter < 0);
+
+        public static Vector2 GetMoveVector2()
+        {
+            var gamepadState = GamePad.GetState(PlayerIndex.One);
+
+            var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+
+            if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
+                vec = Vector2.Zero;
+
+            if (vec == Vector2.Zero)
+            {
+                if (ButtonDown(CButtons.Left))
+                    vec += new Vector2(-1, 0);
+                if (ButtonDown(CButtons.Right))
+                    vec += new Vector2(1, 0);
+                if (ButtonDown(CButtons.Up))
+                    vec += new Vector2(0, -1);
+                if (ButtonDown(CButtons.Down))
+                    vec += new Vector2(0, 1);
+            }
+            return vec;
+        }
+
+        public static Vector2 GetAnalogDirection()
+        {
+            var gamepadState = GamePad.GetState(PlayerIndex.One);
+
+            var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+
+            if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
+                vec = Vector2.Zero;
+
+            return vec;
         }
 
         public static bool LastButtonDown(CButtons button)
@@ -258,9 +251,9 @@ namespace ProjectZ.InGame.Controls
 
         public static bool ButtonDown(CButtons button)
         {
-            var direction = GetGamepadDirection();
+            var direction = GetAnalogDirection();
 
-            if (direction.Length() >= GameSettings.DeadZone)
+            if (_initDirection && direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
@@ -281,27 +274,11 @@ namespace ProjectZ.InGame.Controls
             return false;
         }
 
-        public static bool TrendyButtonDown(CButtons button)
-        {
-            // Check keyboard bindings.
-            foreach (var key in ButtonDictionary[button].Keys)
-                if (InputHandler.KeyDown(key))
-                    return true;
-
-            // Check gamepad bindings.
-            if (button == CancelButton)
-                return InputHandler.GamePadDown(GameSettings.SwapButtons ? Buttons.A : Buttons.B);
-
-            if (button == ConfirmButton)
-                return InputHandler.GamePadDown(GameSettings.SwapButtons ? Buttons.B : Buttons.A);
-
-            return false;
-        }
-
         public static bool ButtonPressed(CButtons button, bool controllerOnly = false)
         {
-            var direction = GetGamepadDirection();
-            if (_initDirection && direction.Length() >= GameSettings.DeadZone)
+            var direction = GetAnalogDirection();
+
+            if (_initDirection && direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
@@ -329,8 +306,8 @@ namespace ProjectZ.InGame.Controls
 
         public static bool ButtonReleased(CButtons button)
         {
-            var direction = GetGamepadDirection();
-            if (direction.Length() >= GameSettings.DeadZone)
+            var direction = GetAnalogDirection();
+            if  (direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
                 if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
@@ -351,6 +328,41 @@ namespace ProjectZ.InGame.Controls
             return false;
         }
 
+        public static bool MenuButtonDown(CButtons button)
+        {
+            var direction = GetAnalogDirection();
+
+            if (direction != Vector2.Zero)
+            {
+                var dir = AnimationHelper.GetDirection(direction);
+                if (((dir == 0 && button == CButtons.Left) || 
+                    (dir == 1 && button == CButtons.Up) ||
+                    (dir == 2 && button == CButtons.Right) || 
+                    (dir == 3 && button == CButtons.Down)) && 
+                    (_scrollCounter < 0 || _initDirection))
+                    return true;
+            }
+
+            return ButtonPressed(button) || (ButtonDown(button) && _scrollCounter < 0);
+        }
+
+        public static bool TrendyButtonDown(CButtons button)
+        {
+            // Check keyboard bindings.
+            foreach (var key in ButtonDictionary[button].Keys)
+                if (InputHandler.KeyDown(key))
+                    return true;
+
+            // Check gamepad bindings.
+            if (button == CancelButton)
+                return InputHandler.GamePadDown(GameSettings.SwapButtons ? Buttons.A : Buttons.B);
+
+            if (button == ConfirmButton)
+                return InputHandler.GamePadDown(GameSettings.SwapButtons ? Buttons.B : Buttons.A);
+
+            return false;
+        }
+
         public static CButtons GetPressedButtons()
         {
             CButtons pressedButtons = 0;
@@ -366,7 +378,6 @@ namespace ProjectZ.InGame.Controls
                     if (InputHandler.GamePadPressed(bEntry.Value.Buttons[i]))
                         pressedButtons |= bEntry.Key;
             }
-
             return pressedButtons;
         }
 
