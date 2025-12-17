@@ -53,7 +53,7 @@
 
         // Modifiers Settings
         public static int     EnemyBonusHP    =  0;
-        public static int     DamageFactor    =  1;
+        public static int     DamageFactor    =  4;
         public static int     DmgCooldown     =  16;
         public static float   MoveSpeedAdded  =  0;
         public static bool    NoDamageLaunch  =  false;

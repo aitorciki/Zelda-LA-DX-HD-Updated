@@ -817,7 +817,7 @@ namespace ProjectZ.InGame.Things
             if (GuardianAcornIsActive)
                 damage = (int)MathF.Ceiling(damage / 2f);
 
-            damage = (int)MathF.Ceiling(damage) * GameSettings.DamageFactor;
+            damage = (int)MathF.Ceiling(damage * (GameSettings.DamageFactor * 0.25f));
 
             CurrentHealth -= damage;
 
