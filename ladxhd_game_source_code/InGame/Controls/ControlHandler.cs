@@ -384,6 +384,10 @@ namespace ProjectZ.InGame.Controls
             // Detect any digital button press.
             foreach (var bEntry in ButtonDictionary)
             {
+                for (var i = 0; i < bEntry.Value.Keys.Length; i++)
+                    if (InputHandler.KeyPressed(bEntry.Value.Keys[i]))
+                        return true;
+
                 for (var i = 0; i < bEntry.Value.Buttons.Length; i++)
                     if (InputHandler.GamePadPressed(bEntry.Value.Buttons[i]))
                         return true;
