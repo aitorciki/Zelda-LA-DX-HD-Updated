@@ -53,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _fieldRectangle = map.GetField(posX, posY, 15);
 
             // this is the same size as the player so that it can not get thrown into the wall
-            _body = new BodyComponent(EntityPosition, -5, -10, 10, 10, 14)
+            _body = new BodyComponent(EntityPosition, -4, -8, 8, 8, 14)
             {
                 CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
                 MoveCollision = Collision,

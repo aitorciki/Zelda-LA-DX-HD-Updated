@@ -197,8 +197,6 @@ namespace ProjectZ.InGame.Controls
             DebugButtons = CButtons.None;
         }
 
-
-
         public static Vector2 GetMoveVector2()
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
