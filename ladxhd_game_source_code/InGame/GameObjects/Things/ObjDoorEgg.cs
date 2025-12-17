@@ -51,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _relicOffsets[3] = new Vector2(16, 48);
 
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -16, 16, 16, 8), Values.CollisionTypes.Normal));
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed) { InteractRect = new Rectangle(-48, -48 - 8, 96, 96) } );
+            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed) { InteractRect = new Rectangle(-62, -62, 124, 124) } );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
         }
