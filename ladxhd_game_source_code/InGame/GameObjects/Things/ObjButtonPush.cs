@@ -53,10 +53,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Link._body.VelocityTarget = velocity;
                 Link.Direction = _pushDirection;
                 Link.LinkWalking(true);
+                Link.DisableInput = true;
 
                 // If charging the sword, correct the sword's direction.
                 if (Link.IsChargingState())
-                    Link.PlayWeaponAnimation("stand_", _pushDirection);
+                    Link.PlayWeaponAnimation("stand_" + _pushDirection);
             }
         }
     }

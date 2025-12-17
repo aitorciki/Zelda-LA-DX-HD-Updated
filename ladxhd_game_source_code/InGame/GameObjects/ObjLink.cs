@@ -449,6 +449,7 @@ namespace ProjectZ.InGame.GameObjects
         private DictAtlasEntry _stunnedParticleSprite;
 
         public bool UpdatePlayer;
+        public bool DisableInput;
         private bool _isLocked;
         private bool _isGrabbed;
         private bool _isFlying;
@@ -959,6 +960,9 @@ namespace ProjectZ.InGame.GameObjects
             // Capture the current field now so it can be compared on the next frame to see if
             // the field has changed. We only want to update the FieldBarrier on field changes.
             ContrastField = CurrentField;
+
+            // If input was disabled, enable it now.
+            DisableInput = false;
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1920,6 +1924,8 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateWalking()
         {
+            if (DisableInput) return;
+
             if (CurrentState != State.Idle &&
                 !IsAttackingState() &&
                 !IsChargingState() &&

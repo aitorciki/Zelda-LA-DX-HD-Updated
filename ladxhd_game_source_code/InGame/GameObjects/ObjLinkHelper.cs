@@ -111,9 +111,9 @@ namespace ProjectZ.InGame.GameObjects
 
         //-------------------------------------------------------------------------------------------------------
         // Used in "ObjPushButton" to force Link to put the sword away.
-        public void PlayWeaponAnimation(string animationName, int direction)
+        public void PlayWeaponAnimation(string animationName)
         {
-            AnimatorWeapons.Play(animationName + direction.ToString());
+            AnimatorWeapons.Play(animationName);
         }
 
         //-------------------------------------------------------------------------------------------------------
