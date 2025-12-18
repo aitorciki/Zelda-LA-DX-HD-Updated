@@ -96,8 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             // For large crystals, only dashing with Pegasus Boots should be able to smash them. "CrystalSmash" is dashing when sword is unequipped.
-            if ((_isHardCrystal && hitType != HitType.PegasusBootsSword && hitType != HitType.CrystalSmash) || 
-                (hitType & HitType.SwordHold) != 0 || hitType == HitType.Hookshot || (hitType & HitType.ClassicSword) != 0)
+            if ((_isHardCrystal && hitType != HitType.PegasusBootsSword && hitType != HitType.CrystalSmash) || (hitType & HitType.SwordHold) != 0 || hitType == HitType.Hookshot)
                 return Values.HitCollision.None;
 
             // For small crystals, all kinds of shit can smash them.

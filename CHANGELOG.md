@@ -20,23 +20,29 @@
 ### **User Interface:**
   * File select screen Link sprite: show tunic color, sword if Lvl2 sword collected, and shield if Mirror Shield collected.
   * Added a new "Controls" page where control options are now located, remapping can be done, as well as a new "Dead Zone" option.
+  * Separate analog input from directional pad input logic. This allows Dead Zone to not affect D-Pad but can disable analog.
   * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Block pressing "Start" to open the inventory screen during a number of events and cutscenes.
   * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
+  * Modifier "Damage Multiplier" can now be set in 0.25 increments and 0% damage makes Link invincible.
+  * Added a new modifier "Damage Cooldown" which can increase or reduce the length Link is invincible after taking a hit.
+  * The option "Disable Helper Messages" also blocks the dialog shown when touching the nightmare door without the nightmare key.
   * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
-  * The option "Disable Helper Messages" also blocks the dialog shown when touching the nightmare door without the nightmare key. 
+  * Fix the "space" character in the variable width font to take up less space. It now matches the ROM hack it was based on.
   
 ### **Items:**
   * Some items will no longer stop Link while casting: Boomerang, Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
   * The Boomerang item has been reworked so that it can collect multiple items on a single throw, but can still only grab 1 fairy.
+  * Implement "Classic Sword" option that works like the original game where it can only cut a single bush, grass, or crystal at a time.
   * Increase the size of the damage box of Magic Powder to the width or height of a tile (or 16 pixels, depends on direction).
   * Magic Powder can no longer hit grass. Bushes and grass share an object so they also share hit types so they need filtering code.
   * Running with Pegasus Boots can now smash large crystals without needing to have the sword equipped.
   * Fire spawned from Magic Rod shots added to the "always animate" list so despawns when outside of the current viewport.
   * Bombs have been added to the "always animate" list which allows them to explode when outside of the current viewport.
   * Remove the message when getting your shield back from Like Like since the original game did not have one.
+  * Opening chests immediately freezes the world instead of after a delay. Also, the items raises slightly higher above the chest.
   * Fix shield appearing on Link when swallowed by a Like Like. It will now properly disappear and reappear depending on equipped status.
   * Fix playing the "holding" animation when jumping onto the Level 2 sword sprite after turning in 20 shells in Seashell Mansion.
   * Fix Piece of Power/Guardian Acorn status between map transitions. It is kept when current/next map are either a cave or a dungeon.
@@ -50,13 +56,14 @@
   * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
   * Update "stunned" state of several enemies to either lose their damage field while stunned or gain it back as soon as stun ends.
   * Don't respawn Spiny Beetle carry object when grabbing it and throwing it into a hole when Classic Camera is active.
-  * Hardhat Beetle respawns when pushed down a hole, leaving the room, and re-entering. Modern camera shows special respawn effects.
   * Change enemy Piranha collision types to "non-water" type like the Water Tektites in dungeon 4. This collision only blocks them.
   * Reduce fairy spawn rate of Ghini to 25% (from 75%) and allow it to drop other items at normal drop rates.
   * Remove activation range check from Pols Voice, Red Zol, and Gel. They will become active when entering the field they are on.
   * Increase the knockback of the Flame Fountain on the way to dungeon 8 so the player can't force their way through with boots.
   * Disable the hit component of some minibosses until the boss is enaged: Rolling Bones, Cue Ball, and Hinox.
   * When fighting the boss Angler Fish in dungeon 4, a barrier is spawned at the top of the arena to prevent leaving.
+  * Increase the body box size of sworded enemies to 16x16 pixels: Moblins, Pig-Moblins, Shrouded Stalfos, and Darknuts.
+  * Enemies that respawned in the original game when changing fields now respawn here: Bombite, Spiny Beetle, Hardhat Beetle.
   * Fix the burning state to reset when changing fields in classic camera. Enemy should return to normal state and remove burn.
   * Fix enemy Antifairy to properly remove its damage field when burning it with Magic Powder and fix it's interaction with shield.
   * Fix enemy Arm Mimic to get stunned when throwing objects (like pots) at them and make them invincible to Magic Powder.
@@ -78,6 +85,7 @@
   * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix miniboss Smasher when both Link and him pick up the ball simultaneously. Also the ball spawns a fairy when destroyed.
+  * Fix boss Moldorm to have the "ticking" sound effects. Also increase it's knockbacks and damage box size.
   * Fix boss Angler Fish arena camera to not fall below the boss field which is just a black screen.
   * Fix boss Evil Eagle cutscene to play at the same position on the ladder as the original game instead of on top of the tower.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
@@ -96,11 +104,14 @@
   * Also prevent flying with rooster to Marin on bridge if Level 8 dungeon was completed before Level 7 dungeon and rooster is borrowed.
   * When the mountain bridge photo sequence starts, if holding the rooster it is now dropped before the sequence starts.
   * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
+  * Increase the distance when jumping off of cliffs onto land or water below. Also try to push Link slightly when landing in water.
   * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
+  * Seal up the bushes entrance to the hedge maze holding the slime key. It was possible to cheese past it and get to Level 3 dungeon early.
   * Fix the rooster from being drawn in the background layer when borrowing it from the hen house (after dungeon 8 is complete).
   * Fix crossing a hole reset point while flying with the rooster from storing the Z position which reset Link in the air.
   * Fix the stone in the forest passageway to the bat (Li'l Devil/Mad Batter, whatever you want to call it) to play the secret sound.
   * Fix number of bushes outside Sales House O'Bananas so that there is two blocking the path instead of three.
+  * Fix jumping into water. It would play Link's "stand" animation for a single frame before it played his swimming animation.
   * Fix sequence of trading bananas to monkeys with classic camera enabled by adding monkeys to always animate list.
   * Fix the owl "freeze" trigger to only not apply during the egg opening sequence and the end credits.
   * Fix trading the stick to Tarin for the honeycomb. Talking to him would just show a message that says "error".
@@ -128,6 +139,7 @@
   * Dungeon doors now make the same hollow "clank" sound when poked as bombable walls like the original games.
   * Ice Blocks (found in underground maps in dungeon 8) respawn when changing fields when classic camera is active.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
+  * Fix horse heads to not be able to clip through the wall if standing beside/parallel from the wall and throwing it.
   * Fix dungeon doors so that they consume small keys again. This was a huge game-breaking issue.
   * Fix several 2D maps in dungeon 3, dungeon 6, and dungeon 8 to not change and update Link's position on the minimap.
   * Fix dungeon 1 to remove a crystal structure that did not exit in the original game. It could also get in the way of classic camera.
