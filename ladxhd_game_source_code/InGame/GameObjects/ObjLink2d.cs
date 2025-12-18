@@ -447,82 +447,6 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
-        private void UpdateJump2D()
-        {
-            // Update the jump hack timer.
-            if (_jumpEndTimer > 0)
-                _jumpEndTimer -= Game1.DeltaTime;
-
-            // When letting go of the jump button, the jump should end. Instead of an immediate
-            // drop off, the velocity is instead greatly reduced to reduce the pull of gravity.
-            if (!_jump2DHold && _jump2DHeld)
-            {
-                // "Threshold" is current Z velocity while "setY" is replacement velocity.
-                float threshold = -1.00f;
-                float setY = -0.50f;
-
-                // Check velocity threshold over three iterations.
-                for (int i = 0; i < 3; i++)
-                {
-                    // If currently velocity is greater than current threshold.
-                    if (_body.Velocity.Y > threshold)
-                    {
-                        // Reduce the velocity.
-                        _body.Velocity.Y = setY;
-                        _jump2DHeld = false;
-                        break;
-                    }
-                    // Adjust the values for the next iteration.
-                    threshold -= 0.15f;
-                    setY += 0.15f;
-                }
-            }
-
-            // When velocity is zero, the peak of the jump has been reached so do not allow any
-            // more manipulation of the velocity or it will create weirdness in the air.
-            if (_body.Velocity.Y > 0)
-                _jump2DHeld = false;
-
-            var initState = CurrentState;
-            if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
-                (CurrentState == State.Idle || CurrentState == State.Blocking) &&
-                (!_tryClimbing || !_ladderCollision))
-            {
-                if (CurrentState == State.Charging)
-                    CurrentState = State.ChargeJumping;
-                else
-                    CurrentState = State.Jumping;
-
-                _waterJump = false;
-
-                // if we get pushed down we change the direction in the push direction
-                // this does not work for all cases but we only need if for the evil eagle boss where it should work correctly
-                if (_body.LastAdditionalMovementVT.X != 0)
-                    Direction = _body.LastAdditionalMovementVT.X < 0 ? 0 : 2;
-
-                if (_wasClimbing)
-                {
-                    // not ontop of a ladder
-                    if (SystemBody.MoveBody(_body, new Vector2(0, 2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true) == Values.BodyCollision.None)
-                    {
-                        SystemBody.MoveBody(_body, new Vector2(0, -2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true);
-
-                        if (Math.Abs(_moveVector2D.X) >= Math.Abs(_moveVector2D.Y))
-                            Direction = _moveVector2D.X < 0 ? 0 : 2;
-                        else
-                            Direction = 1;
-                    }
-                    // aligned with the top of the ladder
-                    else
-                    {
-                        _body.IsGrounded = true;
-                        _body.Velocity.Y = _body.Gravity2D;
-                        CurrentState = initState;
-                    }
-                }
-            }
-        }
-
         private void UpdateWalking2D()
         {
             _isWalking = false;
@@ -744,7 +668,7 @@ namespace ProjectZ.InGame.GameObjects
             // is a fair bit stronger. When walking, use the maximum jump velocity.
             _body.Velocity.Y = _isClimbing 
                 ? -1.5f 
-                : _isWalking 
+                : _isWalking
                     ? -2.10f 
                     : -1.95f;
 
@@ -776,6 +700,82 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.AttackJumping;
             if (CurrentState == State.Charging)
                 CurrentState = State.ChargeJumping;
+        }
+
+        private void UpdateJump2D()
+        {
+            // Update the jump hack timer.
+            if (_jumpEndTimer > 0)
+                _jumpEndTimer -= Game1.DeltaTime;
+
+            // When letting go of the jump button, the jump should end. Instead of an immediate
+            // drop off, the velocity is instead greatly reduced to reduce the pull of gravity.
+            if (!_jump2DHold && _jump2DHeld)
+            {
+                // "Threshold" is current Z velocity while "setY" is replacement velocity.
+                float threshold = -1.00f;
+                float setY = -0.50f;
+
+                // Check velocity threshold over three iterations.
+                for (int i = 0; i < 3; i++)
+                {
+                    // If currently velocity is greater than current threshold.
+                    if (_body.Velocity.Y > threshold)
+                    {
+                        // Reduce the velocity.
+                        _body.Velocity.Y = setY;
+                        _jump2DHeld = false;
+                        break;
+                    }
+                    // Adjust the values for the next iteration.
+                    threshold -= 0.15f;
+                    setY += 0.15f;
+                }
+            }
+
+            // When velocity is zero, the peak of the jump has been reached so do not allow any
+            // more manipulation of the velocity or it will create weirdness in the air.
+            if (_body.Velocity.Y > 0)
+                _jump2DHeld = false;
+
+            var initState = CurrentState;
+            if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
+                (CurrentState == State.Idle || CurrentState == State.Blocking) &&
+                (!_tryClimbing || !_ladderCollision))
+            {
+                if (CurrentState == State.Charging)
+                    CurrentState = State.ChargeJumping;
+                else
+                    CurrentState = State.Jumping;
+
+                _waterJump = false;
+
+                // if we get pushed down we change the direction in the push direction
+                // this does not work for all cases but we only need if for the evil eagle boss where it should work correctly
+                if (_body.LastAdditionalMovementVT.X != 0)
+                    Direction = _body.LastAdditionalMovementVT.X < 0 ? 0 : 2;
+
+                if (_wasClimbing)
+                {
+                    // not ontop of a ladder
+                    if (SystemBody.MoveBody(_body, new Vector2(0, 2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true) == Values.BodyCollision.None)
+                    {
+                        SystemBody.MoveBody(_body, new Vector2(0, -2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true);
+
+                        if (Math.Abs(_moveVector2D.X) >= Math.Abs(_moveVector2D.Y))
+                            Direction = _moveVector2D.X < 0 ? 0 : 2;
+                        else
+                            Direction = 1;
+                    }
+                    // aligned with the top of the ladder
+                    else
+                    {
+                        _body.IsGrounded = true;
+                        _body.Velocity.Y = _body.Gravity2D;
+                        CurrentState = initState;
+                    }
+                }
+            }
         }
 
         private void OnMoveCollision2D(Values.BodyCollision collision)
