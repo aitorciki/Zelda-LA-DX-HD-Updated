@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         // @INFO: this time is also used in the "seashell" script and should be changed there also
         private const int FadeTime = 175;
-        private const int MoveTime = 250;
+        private const int MoveTime = 300;
 
         private bool _isActive = true;
         public override bool IsActive
@@ -175,7 +175,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             MapManager.ObjLink.FreezePlayer();
             MapManager.ObjLink.FreezeWorldForEvents = true;
-            _itemSprite.EntityPosition.Z = (float)Math.Sin((float)(MoveTime - tick) / MoveTime * Math.PI / 1.55f) * 10;
+            _itemSprite.EntityPosition.Z = (float)Math.Sin((float)(MoveTime - tick) / MoveTime * Math.PI / 1.55f) * 12;
         }
 
         private void OpeningEnd()
