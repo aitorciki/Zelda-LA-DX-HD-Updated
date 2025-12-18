@@ -315,7 +315,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnDeath(bool pieceOfPower)
         {
-            Map.Objects.SpawnObject(new EnemySpinyBeetleRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 7, _type));
+            Map.Objects.SpawnObject(new EnemySpinyBeetleRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 7, _type, _fieldRectangle));
             _aiDamageState.BaseOnDeath(pieceOfPower);
         }
 

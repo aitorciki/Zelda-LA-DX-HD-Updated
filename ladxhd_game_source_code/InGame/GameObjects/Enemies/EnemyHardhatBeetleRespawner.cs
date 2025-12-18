@@ -29,7 +29,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            // Classic Mode: respawn after field transition
+            // Classic Camera: respawn after field transition
             if (Camera.ClassicMode)
             {
                 if (MapManager.ObjLink.FieldChange)
@@ -46,7 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     }
                 }
             }
-            // Standard camera: Respawn when player leaves the field.
+            // Modern Camera: Respawn when player leaves the field.
             else
             {
                 if (!_field.Contains(MapManager.ObjLink.EntityPosition.Position))

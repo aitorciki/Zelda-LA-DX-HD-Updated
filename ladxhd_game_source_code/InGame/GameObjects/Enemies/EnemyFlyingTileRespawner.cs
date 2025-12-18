@@ -49,7 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (Camera.ClassicMode)
             {
-                // Classic mode: respawn on field change
+                // Classic Camera: respawn on field change
                 if (MapManager.ObjLink.FieldChange)
                     _respawnStart = true;
 
@@ -66,7 +66,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             else
             {
-                // Standard Camera: respawn when re-entering field
+                // Modern Camera: respawn when re-entering field
                 var updateState = Map.GetUpdateState(EntityPosition.Position);
 
                 if (_lastFieldTime < updateState)

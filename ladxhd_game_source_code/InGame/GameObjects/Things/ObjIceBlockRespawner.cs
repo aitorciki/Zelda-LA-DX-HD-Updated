@@ -60,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             else
             {
-                // Standard camera = respawn when player re-enters the field after leaving
+                // Modern Camera = respawn when player re-enters the field after leaving
                 var updateState = Map.GetUpdateState(EntityPosition.Position);
 
                 if (_lastFieldTime < updateState)
