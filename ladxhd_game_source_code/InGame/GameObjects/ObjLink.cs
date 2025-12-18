@@ -3485,6 +3485,13 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SetMusic(item.MusicName, 1);
         }
 
+        private void EndPickup()
+        {
+            _savedPreItemPickup = false;
+            SaveGameSaveLoad.ClearSaveState();
+            Game1.GameManager.SaveManager.DisableHistory();
+        }
+
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  SWORD CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4564,13 +4571,6 @@ namespace ProjectZ.InGame.GameObjects
                     }
                 }
             }
-        }
-
-        private void EndPickup()
-        {
-            _savedPreItemPickup = false;
-            SaveGameSaveLoad.ClearSaveState();
-            Game1.GameManager.SaveManager.DisableHistory();
         }
 
         private void UpdatePositionCarriedObject(CPosition newPosition)

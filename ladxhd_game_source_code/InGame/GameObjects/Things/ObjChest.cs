@@ -174,6 +174,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void OpeningTick(double tick)
         {
             MapManager.ObjLink.FreezePlayer();
+            MapManager.ObjLink.FreezeWorldForEvents = true;
             _itemSprite.EntityPosition.Z = (float)Math.Sin((float)(MoveTime - tick) / MoveTime * Math.PI / 1.55f) * 10;
         }
 

@@ -92,7 +92,7 @@ namespace ProjectZ.InGame.Map
             _systemAnimator = new SystemAnimation(this);
 
             // The type of game objects that are not frozen during events.
-            _FreezePersistTypes = new Type[]{ typeof(ObjGhost), typeof(ObjOwl) };
+            _FreezePersistTypes = new Type[]{ typeof(ObjGhost), typeof(ObjOwl), typeof(ObjChest) };
 
             // The type of game objects that can be blocked by shield.
             _ShieldDeflectTypes = new Type[]{ typeof(EnemyOctorokShot), typeof(EnemySpear) };;
