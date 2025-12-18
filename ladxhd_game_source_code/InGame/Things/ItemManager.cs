@@ -856,7 +856,6 @@ namespace ProjectZ.InGame.Things
             _items.Add("bomb", new GameItem(
                 Resources.GetSprite("bomb"),
                 name: "bomb",
-                pickUpDialog: "bomb",
                 count: 10,
                 maxCount: 30,
                 level: 0,
