@@ -37,6 +37,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             var body = new BodyComponent(EntityPosition, -2 + (dir == 1 ? 2 : (dir == 3 ? -2 : 0)), -2, 4, 4, 8)
             {
                 VelocityTarget = direction,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Instrument,
                 CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore,
                 MoveCollision = OnCollision,
                 IgnoreHoles = true,
@@ -44,7 +46,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IgnoreInsideCollision = false,
                 Level = MapStates.GetLevel(MapManager.ObjLink._body.CurrentFieldState)
             };
-
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BodyComponent.Index, body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
@@ -70,15 +71,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                     Map.Objects.DeleteObjects.Add(this);
                     return;
                 }
-
             }
-
             if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
             {
                 OnCollision(Values.BodyCollision.None);
                 return;
             }
-
             var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.MagicRod, 2, false);
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Repelling | Values.HitCollision.Enemy)) != 0)
             {

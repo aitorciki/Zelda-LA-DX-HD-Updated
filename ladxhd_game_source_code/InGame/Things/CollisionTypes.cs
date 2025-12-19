@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.Things
             NonWater          = 1 << 19,
             Field             = 1 << 20,
             StoneBlock        = 1 << 21,
+            Instrument        = 1 << 22
         }
 
         [Flags]

@@ -49,7 +49,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore,
                 IgnoreInsideCollision = false,
             };
-
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(animation, sprite, new Vector2(-6, -6));
 
@@ -68,7 +67,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         public void Start(Map.Map map, Vector3 position, Vector2 direction)
         {
             Map = map;
-
             EntityPosition.Set(new Vector3(position.X, position.Y, position.Z + 4));
 
             _startPosition = new Vector2(position.X, position.Y);

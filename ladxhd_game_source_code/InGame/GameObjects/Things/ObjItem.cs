@@ -29,6 +29,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private BodyComponent _body;
         private AiTriggerCountdown _delayCountdown;
         private BodyDrawComponent _bodyDrawComponent;
+        private BoxCollisionComponent _collisionComponent;
         private CRectangle _collectionRectangle;
 
         private Rectangle _sourceRectangle;
@@ -48,6 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public bool _isFlying;
         public bool _isSwimming;
+        public bool _isInstrument;
 
         public bool IsVisible { get; internal set; }
         private bool _despawn;
@@ -77,6 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _itemName = itemName;
             _locationBound = locationBound;
             _despawn = despawn;
+            _isInstrument = _itemName.StartsWith("instrument");
 
             if (_item == null)
             {
@@ -195,14 +198,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(_collectionRectangle, OnCollision));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(box, Values.CollisionTypes.Item));
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(box, Values.CollisionTypes.Item));
+
+            if (_isInstrument)
+                _collisionComponent.CollisionType = Values.CollisionTypes.Item | Values.CollisionTypes.Instrument;
 
             // Collect item with the sword by adding a hit component to the item. Guardian
             // Acorn and Piece of Power "ShowAnimation" is 1 so we need to add as special cases.
-            if (_item.ShowAnimation == 0 || _item.Name == "guardianAcorn" || _item.Name == "pieceOfPower" || _itemName.StartsWith("instrument"))
-            {
+            if (_item.ShowAnimation == 0 || _item.Name == "guardianAcorn" || _item.Name == "pieceOfPower" || _isInstrument)
                 AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
-            }
+
             _shadowComponent = new DrawShadowSpriteComponent(
                 Resources.SprShadow, EntityPosition, _shadowSourceRectangle,
                 new Vector2(-_sourceRectangle.Width / 2 - 1, -_sourceRectangle.Width / 4 - 2), 1.0f, 0.0f);
@@ -373,12 +378,15 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // If it's an instrument collide with items.
-            if (_itemName.StartsWith("instrument"))
+            if (_isInstrument)
             {
                 if ((hitType & HitType.Sword) != 0)
                     return Values.HitCollision.None;
 
-                return Values.HitCollision.RepellingParticle;
+                if ((hitType & HitType.Hookshot) != 0 || (hitType & HitType.Boomerang) != 0)
+                    return Values.HitCollision.RepellingParticle;
+
+                return Values.HitCollision.None;
             }
             // item can be collected with the sword
             if ((hitType & HitType.Sword) != 0)

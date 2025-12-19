@@ -51,6 +51,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             _body = new BodyComponent(EntityPosition, -1 + (int)directionOffset.X * 2, -1 + (int)directionOffset.Y * 2, 2, 2, 8)
             {
                 VelocityTarget = AnimationHelper.DirectionOffset[direction] * MoveSpeed,
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.Instrument,
                 MoveCollision = OnCollision,
                 IgnoreHoles = true,
                 IgnoresZ = true,
