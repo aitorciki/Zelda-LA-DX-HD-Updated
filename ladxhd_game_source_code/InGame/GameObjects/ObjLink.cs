@@ -203,10 +203,8 @@ namespace ProjectZ.InGame.GameObjects
         public CBox DamageCollider;
         private Vector2 _hitVelocity;
 
-
         public static int BlinkTime = 66;
         public static int CooldownTime = BlinkTime * GameSettings.DmgCooldown;
-
 
         private double _hitCount;
         private double _hitRepelTime;
@@ -455,6 +453,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isFlying;
         private bool _wasFlying;
         private Map.Map _previousMap;
+        private bool _pickingUpAnglerKey;
 
         public bool FreezeWorldAroundPlayer;
         public bool FreezeWorldForEvents;
@@ -809,7 +808,7 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Idle;
                 }
             }
-            else if (CurrentState == State.PickingUp && !_pickingUpInstrument && !_pickingUpSword)
+            else if (CurrentState == State.PickingUp && !_pickingUpInstrument && !_pickingUpSword && !_pickingUpAnglerKey)
             {
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
                 FreezeWorldAroundPlayer = true;
@@ -3296,6 +3295,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             var item = Game1.GameManager.ItemManager[itemCollected.Name];
+
             // the base item has the max count and other information
             var baseItem = Game1.GameManager.ItemManager[item.Name];
 
@@ -3309,6 +3309,7 @@ namespace ProjectZ.InGame.GameObjects
             _showItem = false;
             _pickingUpInstrument = false;
             _pickingUpSword = false;
+            _pickingUpAnglerKey = false;
 
             var equipmentPosition = 0;
             if (item.Name == "sword1")
@@ -3326,6 +3327,11 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.RemoveItem("sword1", 99);
                 Game1.GameManager.CollectItem(itemCollected, equipmentPosition);
                 Game1.GameManager.SetMusic(14, 2);
+            }
+            // Don't temporarily freeze the desert quicksand when picking up the key.
+            else if (item.Name == "dkey3")
+            {
+                _pickingUpAnglerKey = true;
             }
             else if (item.Name == "mirrorShield")
             {
@@ -3483,6 +3489,88 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.PlaySoundEffect(item.SoundEffectName, true, 1, 0, item.TurnDownMusic);
             if (item.MusicName >= 0)
                 Game1.GameManager.SetMusic(item.MusicName, 1);
+        }
+
+        private void UpdatePickup()
+        {
+            if (ShowItem != null)
+            {
+                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
+                _itemShowCounter -= Game1.DeltaTime;
+
+                if (_itemShowCounter <= 0)
+                {
+                    // show pick up text
+                    if (_showItem && CurrentState == State.PickingUp)
+                    {
+                        _showItem = false;
+
+                        // show pickup dialog
+                        if (ShowItem.PickUpDialog != null)
+                        {
+                            if (string.IsNullOrEmpty(_pickupDialogOverride))
+                                Game1.GameManager.StartDialogPath(ShowItem.PickUpDialog);
+                            else
+                            {
+                                Game1.GameManager.StartDialogPath(_pickupDialogOverride);
+                                _pickupDialogOverride = null;
+                            }
+
+                            if (!string.IsNullOrEmpty(_additionalPickupDialog))
+                            {
+                                Game1.GameManager.StartDialogPath(_additionalPickupDialog);
+                                _additionalPickupDialog = null;
+                            }
+                        }
+                        _itemShowCounter = 250;
+
+                        if (ShowItem.Name == "sword1")
+                            _itemShowCounter = 5650;
+                        else if (ShowItem.Name.StartsWith("instrument"))
+                            _itemShowCounter = 1000;
+                    }
+                    else
+                    {
+                        Game1.GameManager.SaveManager.SetString("player_shows_item", "0");
+
+                        // add the item to the inventory
+                        if (_collectedShowItem != null)
+                        {
+                            Game1.GameManager.CollectItem(_collectedShowItem, 0);
+                            _collectedShowItem = null;
+                        }
+                        // spawn the follower if one was picked up
+                        UpdateFollower(false);
+
+                        // sword spin
+                        if (ShowItem.Name == "sword1")
+                        {
+                            Game1.GameManager.PlaySoundEffect("D378-03-03");
+                            Animation.Play("swing_3");
+                            AnimatorWeapons.Play("swing_3");
+                            CurrentState = State.SwordShow0;
+                            _swordChargeCounter = 1; // don't blink
+                            ShowItem = null;
+                        }
+                        else if (ShowItem.Name.StartsWith("instrument"))
+                        {
+                            // make sure that the music is not playing
+                            Game1.GameManager.StopPieceOfPower();
+                            Game1.GameManager.StopGuardianAcorn();
+
+                            _instrumentCounter = 0;
+                            CurrentState = State.ShowInstrumentPart0;
+                        }
+                        else
+                        {
+                            ShowItem = null;
+                            if (CurrentState == State.PickingUp)
+                                ReturnToIdle();
+                        }
+                    }
+                }
+            }
         }
 
         private void EndPickup()
@@ -4471,108 +4559,6 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
 
-        private void StartPickup(CarriableComponent carriableComponent)
-        {
-            if (carriableComponent?.Init == null)
-                return;
-
-            _carriedComponent = carriableComponent;
-
-            Game1.GameManager.PlaySoundEffect("D370-02-02");
-
-            _carryStartPosition = _carriedComponent.Init();
-            _carriedComponent.IsPickedUp = true;
-            CurrentState = State.PreCarrying;
-            _preCarryCounter = 0;
-
-            _carriedGameObject = carriableComponent.Owner;
-            _carriedObjDrawComp = carriableComponent.Owner.Components[DrawComponent.Index] as DrawComponent;
-            if (_carriedObjDrawComp != null)
-                _carriedObjDrawComp.IsActive = false;
-        }
-
-        private void UpdatePickup()
-        {
-            if (ShowItem != null)
-            {
-                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
-
-                _itemShowCounter -= Game1.DeltaTime;
-
-                if (_itemShowCounter <= 0)
-                {
-                    // show pick up text
-                    if (_showItem && CurrentState == State.PickingUp)
-                    {
-                        _showItem = false;
-
-                        // show pickup dialog
-                        if (ShowItem.PickUpDialog != null)
-                        {
-                            if (string.IsNullOrEmpty(_pickupDialogOverride))
-                                Game1.GameManager.StartDialogPath(ShowItem.PickUpDialog);
-                            else
-                            {
-                                Game1.GameManager.StartDialogPath(_pickupDialogOverride);
-                                _pickupDialogOverride = null;
-                            }
-
-                            if (!string.IsNullOrEmpty(_additionalPickupDialog))
-                            {
-                                Game1.GameManager.StartDialogPath(_additionalPickupDialog);
-                                _additionalPickupDialog = null;
-                            }
-                        }
-                        _itemShowCounter = 250;
-
-                        if (ShowItem.Name == "sword1")
-                            _itemShowCounter = 5650;
-                        else if (ShowItem.Name.StartsWith("instrument"))
-                            _itemShowCounter = 1000;
-                    }
-                    else
-                    {
-                        Game1.GameManager.SaveManager.SetString("player_shows_item", "0");
-
-                        // add the item to the inventory
-                        if (_collectedShowItem != null)
-                        {
-                            Game1.GameManager.CollectItem(_collectedShowItem, 0);
-                            _collectedShowItem = null;
-                        }
-                        // spawn the follower if one was picked up
-                        UpdateFollower(false);
-
-                        // sword spin
-                        if (ShowItem.Name == "sword1")
-                        {
-                            Game1.GameManager.PlaySoundEffect("D378-03-03");
-                            Animation.Play("swing_3");
-                            AnimatorWeapons.Play("swing_3");
-                            CurrentState = State.SwordShow0;
-                            _swordChargeCounter = 1; // don't blink
-                            ShowItem = null;
-                        }
-                        else if (ShowItem.Name.StartsWith("instrument"))
-                        {
-                            // make sure that the music is not playing
-                            Game1.GameManager.StopPieceOfPower();
-                            Game1.GameManager.StopGuardianAcorn();
-
-                            _instrumentCounter = 0;
-                            CurrentState = State.ShowInstrumentPart0;
-                        }
-                        else
-                        {
-                            ShowItem = null;
-                            if (CurrentState == State.PickingUp)
-                                ReturnToIdle();
-                        }
-                    }
-                }
-            }
-        }
-
         private void UpdatePositionCarriedObject(CPosition newPosition)
         {
             if (_carriedComponent == null)
@@ -4629,6 +4615,26 @@ namespace ProjectZ.InGame.GameObjects
 
             _carriedComponent.Throw(_walkDirection[Direction] * 3f);
             RemoveCarriedObject();
+        }
+
+        private void StartPickup(CarriableComponent carriableComponent)
+        {
+            if (carriableComponent?.Init == null)
+                return;
+
+            _carriedComponent = carriableComponent;
+
+            Game1.GameManager.PlaySoundEffect("D370-02-02");
+
+            _carryStartPosition = _carriedComponent.Init();
+            _carriedComponent.IsPickedUp = true;
+            CurrentState = State.PreCarrying;
+            _preCarryCounter = 0;
+
+            _carriedGameObject = carriableComponent.Owner;
+            _carriedObjDrawComp = carriableComponent.Owner.Components[DrawComponent.Index] as DrawComponent;
+            if (_carriedObjDrawComp != null)
+                _carriedObjDrawComp.IsActive = false;
         }
 
         public void ReleaseCarriedObject()
