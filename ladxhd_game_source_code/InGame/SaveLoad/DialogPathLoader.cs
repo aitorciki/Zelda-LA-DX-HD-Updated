@@ -163,6 +163,10 @@ namespace ProjectZ.InGame.SaveLoad
                     choices[j] = stringSplit[j + 3];
                 path.Action.Add(new DialogActionDialog(stringSplit[1], stringSplit[2], choices));
             }
+            else if (stringSplit[0] == "dialog_close")
+            {
+                path.Action.Add(new DialogActionClose());
+            }
             else if (stringSplit[0] == "buy")
             {
                 path.Action.Add(new DialogActionBuyItem(stringSplit[1]));

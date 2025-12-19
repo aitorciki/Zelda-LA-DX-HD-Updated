@@ -100,6 +100,17 @@ namespace ProjectZ.InGame.Overlay
         }
     }
 
+    class DialogActionClose : DialogAction 
+    {
+        public DialogActionClose() { }
+
+        public override bool Execute() 
+        {
+            Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen = false;
+            return true;
+        }
+    }
+
     class DialogActionSetVariable : DialogAction
     {
         private readonly string _key;
