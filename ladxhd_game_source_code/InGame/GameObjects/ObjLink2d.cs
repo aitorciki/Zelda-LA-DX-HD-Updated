@@ -287,7 +287,7 @@ namespace ProjectZ.InGame.GameObjects
 
                     if (_drownedInLava)
                     {
-                        Game1.GameManager.CurrentHealth -= 2;
+                        Game1.GameManager.CurrentHealth -= (int)MathF.Ceiling(2 * (GameSettings.DamageFactor * 0.25f));
                         _drownedInLava = false;
                     }
                     _body.CurrentFieldState = MapStates.FieldStates.None;
