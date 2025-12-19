@@ -308,7 +308,7 @@ namespace ProjectZ.InGame.GameObjects
                         return true;
 
                     // The poked object is a locked dungeon door.
-                    if (gameObject is ObjDungeonDoor door && door.GetMode() == 1 && door.GetMode() == 3)
+                    if (gameObject is ObjDungeonDoor door && (door.GetMode() == 1 || door.GetMode() == 3))
                         return true;
                 }
             }
