@@ -98,7 +98,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _               => _currentState
             };
 
-            if (_currentState != State.Idle)
+            if (_currentState != State.Idle && (int)_currentState < 5)
                 MapManager.ObjLink.FreezePlayer();
 
             UpdateItemPos();
