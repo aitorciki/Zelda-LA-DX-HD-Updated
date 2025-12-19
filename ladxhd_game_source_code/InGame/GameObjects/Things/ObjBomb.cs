@@ -308,14 +308,15 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // If "Classic Sword" is enabled, do not let the sword interact.
-            if (GameSettings.ClassicSword && ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0 || (hitType & HitType.ClassicSword) != 0))
+            if (GameSettings.ClassicSword && ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0 || 
+                (hitType & HitType.SwordShot) != 0 || (hitType & HitType.ClassicSword) != 0))
                 return Values.HitCollision.None;
 
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
 
-            // got picked up by an arrow?
+            // Combine with arrows to create a bomb-arrow.
             if (_playerBomb && _bombCounter + 175 > _explosionTime && gameObject is ObjArrow objArrow)
             {
                 _arrowMode = true;
@@ -325,6 +326,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 EntityPosition.Z = 0;
                 objArrow.InitBombMode(this);
             }
+            // Don't hit the arrow part if it's a bomb-arrow.
             if (_arrowMode)
                 return Values.HitCollision.None;
 
