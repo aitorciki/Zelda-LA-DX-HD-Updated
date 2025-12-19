@@ -237,6 +237,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Map.Objects.SpawnObject(objAnimation);
 
             _aiComponent.ChangeState("spawn");
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void StartFollowing()
