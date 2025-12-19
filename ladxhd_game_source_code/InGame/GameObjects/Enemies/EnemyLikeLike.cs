@@ -46,7 +46,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
-            _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
+            _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |

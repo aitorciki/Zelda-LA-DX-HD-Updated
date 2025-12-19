@@ -380,7 +380,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 return Values.HitCollision.RepellingParticle;
             }
-
             // item can be collected with the sword
             if ((hitType & HitType.Sword) != 0)
                 Collect();

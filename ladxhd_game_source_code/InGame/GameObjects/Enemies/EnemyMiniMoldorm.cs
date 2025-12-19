@@ -103,11 +103,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateHeadSprite(Vector2 direction)
         {
-            // calculate the sprite used
-            //var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-            //direction.Normalize();
-            //_direction = -(float)Math.Atan2(direction.Y, direction.X) + (float)Math.PI;
-
             var modRotation = (MathF.Abs(_direction)) % (MathF.PI / 2);
             var sprite = MathF.PI / 8 < modRotation && modRotation < MathF.PI / 2 - MathF.PI / 8;
             _sprite.SourceRectangle = sprite ? _spriteHead1.ScaledRectangle : _spriteHead0.ScaledRectangle;
