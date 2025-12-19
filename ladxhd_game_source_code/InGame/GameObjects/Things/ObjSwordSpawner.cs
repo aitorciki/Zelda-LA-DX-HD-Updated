@@ -62,6 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _swordBody.Bounciness2D = 0.5f;
             Map.Objects.SpawnObject(_objSword);
             MapManager.ObjLink.DisableDirHack2D = true;
+            MapManager.ObjLink.DisableInventory(true);
         }
 
         private void Update()
@@ -125,6 +126,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     _swordHitFloor = true;
                     ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = true;
                     MapManager.ObjLink.DisableDirHack2D = false;
+                    MapManager.ObjLink.DisableInventory(false);
                 }
             }
         }

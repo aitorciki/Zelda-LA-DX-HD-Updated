@@ -114,6 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 // Disable the 2D move hack and freeze the player.
                 MapManager.ObjLink.FreezePlayer();
+                MapManager.ObjLink.DisableInventory(true);
                 MapManager.ObjLink.DisableDirHack2D = true;
 
                 // Play the counting up sound at random intervals.
@@ -214,7 +215,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 // If the sword is spawned don't disable the direction hack as "ObjSwordSpawner" will handle it.
                 if (!_spawnSword)
+                {
+                    MapManager.ObjLink.DisableInventory(false);
                     MapManager.ObjLink.DisableDirHack2D = false;
+                }
             }
             // Spawn a shell preset if enough shells were collected.
             if (_spawnPresent)
