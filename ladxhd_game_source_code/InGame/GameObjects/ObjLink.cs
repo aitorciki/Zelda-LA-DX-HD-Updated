@@ -300,7 +300,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool CarryShield;
         private bool _wasBlocking;
         private bool _blockButton;
-        public Box _shieldBox;
+        public Box ShieldBlockBox;
 
         // Hookshot
         public ObjHookshot Hookshot = new ObjHookshot();
@@ -962,6 +962,14 @@ namespace ProjectZ.InGame.GameObjects
 
             // If input was disabled, enable it now.
             DisableInput = false;
+
+            // Clear the sword damage box if none of the below is true.
+            if (!IsAttackingState() && !IsChargingState() && !AnimatorWeapons.IsPlaying && !_bootsRunning && !_isHoldingSword)
+                SwordDamageBox = Box.Empty;
+
+            // Clear the shield box if it's not being utilized.
+            if (!IsBlockingState() && !_bootsRunning)
+                ShieldBlockBox = Box.Empty;
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1258,7 +1266,7 @@ namespace ProjectZ.InGame.GameObjects
                         (int)swordRectangle.Width, (int)swordRectangle.Height), Color.Blue * 0.75f);
 
                 // Draw shield rectangle.
-                var shieldRectangle = _shieldBox.Rectangle();
+                var shieldRectangle = ShieldBlockBox.Rectangle();
                 spriteBatch.Draw(Resources.SprWhite,
                     new Vector2(shieldRectangle.X, shieldRectangle.Y), new Rectangle(0, 0,
                         (int)shieldRectangle.Width, (int)shieldRectangle.Height), Color.Green * 0.75f);
@@ -1763,7 +1771,7 @@ namespace ProjectZ.InGame.GameObjects
             bool facingDir = Direction == ReverseDirection(direction);
 
             // If everything passes, it's a block.
-            return (!inside || box.Intersects(_shieldBox)) && facingDir;
+            return (!inside || box.Intersects(ShieldBlockBox)) && facingDir;
         }
 
         public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
@@ -2739,18 +2747,12 @@ namespace ProjectZ.InGame.GameObjects
 
         private bool CheckNPCAvoidance()
         {
-            // Get the sword hitbox if the sword is being charged.
-            Box SwordBox = Box.Empty;
-
-            if (_isHoldingSword)
-                SwordBox = GetSwordDamageBox(AnimatorWeapons.CollisionRectangle);
-
             // Get a list of NPCs to check if sword crosses their hitbox.
             List<GameObject> npcList = new List<GameObject>();
 
             Map.Objects.GetComponentList(npcList,
-                (int)SwordBox.X, (int)SwordBox.Y,
-                (int)SwordBox.Width, (int)SwordBox.Height,
+                (int)SwordDamageBox.X, (int)SwordDamageBox.Y,
+                (int)SwordDamageBox.Width, (int)SwordDamageBox.Height,
                 CollisionComponent.Mask);
 
             // Loop through the NPCs checking for collision.
@@ -2765,7 +2767,7 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         // If the sword box and body box intersect return true.
                         var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
-                        if (bodyObject != null && SwordBox.Intersects(bodyObject.BodyBox.Box))
+                        if (bodyObject != null && SwordDamageBox.Intersects(bodyObject.BodyBox.Box))
                             return true;
                     }
                 }
@@ -4053,8 +4055,8 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // Get the shield rectangle.
-            _shieldBox = GetShieldBox();
-            var pushedRectangle = Map.Objects.PushObject(_shieldBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
+            ShieldBlockBox = GetShieldBox();
+            var pushedRectangle = Map.Objects.PushObject(ShieldBlockBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
 
             // Push the object and get repelled from the pushed object.
             if (pushedRectangle != null)
