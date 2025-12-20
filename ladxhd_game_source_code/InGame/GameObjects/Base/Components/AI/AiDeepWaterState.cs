@@ -37,7 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private void FallDeath()
         {
             // play sound effect
-            Game1.GameManager.PlaySoundEffect("D360-24-18");
+            Game1.GameManager.PlaySoundEffect("D360-14-0E");
 
             // spawn splash effect
             var fallAnimation = new ObjAnimator(_body.Owner.Map,

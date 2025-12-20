@@ -98,7 +98,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("repelled", stateRepelled);
             _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
             new AiFallState(_aiComponent, _body, null, null);
-            new AiDeepWaterState(_body);
+            var deepwaterstate = new AiDeepWaterState(_body);
+
+            _body.OnDeepWaterFunction = Drowned;
 
             _aiComponent.ChangeState("idle");
 
@@ -136,6 +138,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
             _damageState.CurrentLives = ObjLives.Vire;
+        }
+
+        private void Drowned()
+        {
+            // play sound effect
+            Game1.GameManager.PlaySoundEffect("D360-14-0E");
+
+            // spawn splash effect
+            var fallAnimation = new ObjAnimator(_body.Owner.Map,
+                (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
+                (int)(_body.Position.Y + _body.OffsetY + _body.Height / 2.0f),
+                Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+            Map.Objects.SpawnObject(fallAnimation);
+
+            Map.Objects.DeleteObjects.Add(this);
+            Map.Objects.DeleteObjects.Add(_batLeft);
+            Map.Objects.DeleteObjects.Add(_batRight);
         }
 
         private void OnBurn()
