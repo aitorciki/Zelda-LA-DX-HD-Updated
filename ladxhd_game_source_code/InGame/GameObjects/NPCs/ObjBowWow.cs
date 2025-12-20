@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -279,29 +280,47 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void ToAttack()
         {
-            // search for an enemy to attack
+            // Reset the target each attack.
+            _enemyTarget = null;
+
+            // Get a list of enemies for Bow Wow to attack.
             Map.Objects.GetGameObjectsWithTag(_enemyList, Values.GameObjectTag.Enemy,
                 (int)MapManager.ObjLink.EntityPosition.Position.X - 50,
                 (int)MapManager.ObjLink.EntityPosition.Position.Y - 50, 100, 100);
 
-            // choose a random enemy to attack
-            if (_enemyList.Count > 0)
+            // The types of enemies that Bow Wow shouldn't eat.
+            Type[] _dontEat = new Type[]{ typeof(EnemyGhini), typeof(EnemySeaUrchin), typeof(EnemyZombie) };
+            _enemyList.RemoveAll(obj => ObjectManager.IsGameObjectType(obj, _dontEat));
+
+            // Loop through the enemies in the list.
+            foreach (var obj in _enemyList)
             {
+                // Try finding a goponga flower and attack them first.
+                if (obj is EnemyGopongaFlower || obj is EnemyGopongaFlowerGiant)
+                {
+                    _enemyTarget = obj;
+                    break;
+                }
+            }
+            // Check to see if there are enemies in the list.
+            if (_enemyTarget == null && _enemyList.Count > 0)
+            {
+                // Choose a random enemy to attack.
                 var randomIndex = Game1.RandomNumber.Next(0, _enemyList.Count);
                 _enemyTarget = _enemyList[randomIndex];
 
-                // try finding a goponga flower and attack them first
+                // Loop through the list again.
                 for (var i = 0; i < _enemyList.Count; i++)
                 {
+                    // If the current enemy isn't available, try the next one.
                     if (!_enemyTarget.IsActive)
                         _enemyTarget = _enemyList[(randomIndex + i) % _enemyList.Count];
-
-                    if (_enemyTarget is EnemyGopongaFlower || _enemyTarget is EnemyGopongaFlowerGiant)
-                        break;
                 }
             }
+            // There is no enemies to attack.
             else
             {
+                // Reset back to just walking around.
                 if (_aiComponent.CurrentStateId == "iattack")
                 {
                     _animator.Play("walk_" + _direction);
@@ -309,22 +328,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     return;
                 }
             }
-
+            // Verify once again we have an enemy to attack.
             if (_enemyTarget != null && _enemyTarget.IsActive)
             {
+                // If the enemy is a fish, it might be underwater.
                 if (_enemyTarget is EnemyFish)
                 {
                     EnemyFish fish = _enemyTarget as EnemyFish;
                     fish.MakeVulerable();
                 }
-                // set the attack direction
+                // Set the attack direction.
                 var damageState = (HittableComponent)_enemyTarget.Components[HittableComponent.Index];
                 var direction = damageState.HittableBox.Box.Center - new Vector2(EntityPosition.X, EntityPosition.Y - 8);
                 if (direction != Vector2.Zero)
                     direction.Normalize();
                 _body.VelocityTarget = direction * 3;
 
-                // update the animation
+                // Update the animation.
                 _direction = AnimationHelper.GetDirection(_body.VelocityTarget);
                 _animator.Play("walk_" + _direction);
                 _aiComponent.ChangeState("attack");
