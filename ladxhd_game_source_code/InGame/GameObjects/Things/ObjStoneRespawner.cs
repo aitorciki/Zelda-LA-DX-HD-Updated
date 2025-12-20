@@ -30,12 +30,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             _posX = posX;
             _posY = posY;
             _spriteId = spriteId;
-            _spawnItem = spawnItem;
             _pickupKey = pickupKey;
             _dialogPath = dialogPath;
             _isHeavy = isHeavy;
             _potMessage = potMessage;
             _respawnedStone = fromSpawner;
+
+            // Only the first pot should contain the fairy.
+            if (spawnItem != "fairy")
+                _spawnItem = spawnItem;
+            else
+                _spawnItem = "";
 
             _lastFieldTime = Map.GetUpdateState(EntityPosition.Position);
 
@@ -91,8 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.DeleteObjects.Add(this);
 
             // Respawn original stone type
-            Map.Objects.SpawnObject(new ObjStone(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 
-                _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
+            Map.Objects.SpawnObject(new ObjStone(Map, (int)EntityPosition.X, (int)EntityPosition.Y, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
         }
     }
 }
