@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private float _currentSpeed;
         private float _lastSpeed;
         private float _speedGoal;
+        private float _lifeSpan = 12000f;
 
         private float _flyCounter;
 
@@ -81,10 +82,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                     var baseItem = Game1.GameManager.ItemManager[_carriedItem.Name];
                     _carriedItemSourceRectangle = baseItem.SourceRectangle.Value;
                 }
-
                 _targetHeight += 12;
                 _itemMode = true;
-                _collectionCounter = 750;
+                _collectionCounter = 2000;
             }
 
             // start by flying away from the player
@@ -125,6 +125,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (_collectionCooldown > 0)
                 _collectionCooldown -= Game1.DeltaTime;
 
+            _lifeSpan -= Game1.DeltaTime;
             _flyCounter -= Game1.DeltaTime;
 
             // ascent
@@ -172,11 +173,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _sprite.SpriteEffect = _direction.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             // Collision boxes of Link and fairy collide or if the lahdmod file allows sword collection.
-            if (_collectionCooldown <= 0 && (MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()) || 
-                (MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box) && sword_collect)))
-            {
+            if (_collectionCooldown <= 0 && (MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()) || (MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box) && sword_collect)))
                 CollectFairy();
-            }
+            
+            // Despawn the fairy.
+            if (_lifeSpan <= 0)
+                UpdateCollected();
         }
 
         private void CollectFairy()
