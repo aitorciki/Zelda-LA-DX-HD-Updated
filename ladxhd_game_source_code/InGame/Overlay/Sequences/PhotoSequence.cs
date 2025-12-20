@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using ProjectZ.InGame.Controls;
 
 namespace ProjectZ.InGame.Overlay.Sequences
 {
@@ -31,7 +32,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
             base.Update();
 
             _counter += Game1.DeltaTime;
-            if (_counter > 2500)
+            if (_counter > 2500 || ControlHandler.ButtonPressed(CButtons.Start))
                 Game1.GameManager.InGameOverlay.CloseOverlay();
         }
     }

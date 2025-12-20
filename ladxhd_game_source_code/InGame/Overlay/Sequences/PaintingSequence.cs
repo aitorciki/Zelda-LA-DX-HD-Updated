@@ -25,7 +25,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
             // can close the overlay if the dialog isn't running anymore
             if (!Game1.GameManager.DialogIsRunning() && closeTimer <= 0 &&
                 (ControlHandler.ButtonPressed(ControlHandler.CancelButton) || 
-                ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)))
+                ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) ||
+                ControlHandler.ButtonPressed(CButtons.Start)))
             {
                 closeTimer = 1000;
                 Game1.GameManager.InGameOverlay.CloseOverlay();
