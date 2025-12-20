@@ -64,6 +64,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 return;
 
             MapManager.ObjLink.FreezePlayer();
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             _openCounter += Game1.DeltaTime;
 

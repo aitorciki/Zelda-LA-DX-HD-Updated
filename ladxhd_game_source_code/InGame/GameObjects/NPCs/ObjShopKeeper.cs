@@ -111,6 +111,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
                 return;
 
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
+
             if (_showThunder)
             {
                 _punishCount += Game1.DeltaTime;

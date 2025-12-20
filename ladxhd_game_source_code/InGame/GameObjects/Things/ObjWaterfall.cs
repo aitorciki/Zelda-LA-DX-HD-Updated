@@ -100,6 +100,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             MapManager.ObjLink.FreezePlayer();
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             _despawnCounter += Game1.DeltaTime;
             var timeStep = _despawnCounter / 585f;

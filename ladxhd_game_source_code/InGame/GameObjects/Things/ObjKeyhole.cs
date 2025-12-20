@@ -80,10 +80,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             MapManager.ObjLink.FreezePlayer();
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             _counter += Game1.DeltaTime;
-
-            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             if (!_rumbling && _counter > 500)
             {
@@ -93,7 +92,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Game1.GameManager.PlaySoundEffect("D378-42-2A");
 
                 // rumble sound; maybe used for other dungeons?
-                //Game1.GameManager.PlaySoundEffect("D378-29-1D");
                 //Game1.GameManager.PlaySoundEffect("D378-46-2E");
 
                 // shake the screen

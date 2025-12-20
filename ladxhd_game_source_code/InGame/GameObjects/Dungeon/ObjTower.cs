@@ -104,6 +104,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 return;
 
             MapManager.ObjLink.FreezePlayer();
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             _animatorTop0.Update();
             _animatorTop1.Update();
