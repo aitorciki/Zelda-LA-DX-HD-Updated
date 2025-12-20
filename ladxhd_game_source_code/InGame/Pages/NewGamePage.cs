@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.Pages
         private InterfaceListLayout _bottomLayout;
 
         private readonly InterfaceButton _nameEntryButton;
+        private readonly InterfaceButton _startGameButton;
         private readonly InterfaceLabel _labelNameInput;
         private readonly InterfaceSlider _gameTypeSlider;
 
@@ -112,7 +113,7 @@ namespace ProjectZ.InGame.Pages
             // Create the "Back" and "Start" buttons.
             _bottomLayout = new InterfaceListLayout { Size = new Point(260, 34), HorizontalMode = true, Selectable = true };
             _bottomLayout.AddElement(new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_back", OnClickBackButton));
-            _bottomLayout.AddElement(new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
+            _bottomLayout.AddElement(_startGameButton = new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
             _bottomLayout.Select(InterfaceElement.Directions.Right, false);
             _bottomLayout.Deselect(false);
             _newGameLayout.AddElement(_bottomLayout);
@@ -245,7 +246,15 @@ namespace ProjectZ.InGame.Pages
             else if (ControlHandler.AnyButtonPressed())
                 _showTooltip = false;
 
+            // Update the entered name shown to the player.
             _labelNameInput.SetText(_strNameInput + ((gameTime.TotalGameTime.Milliseconds % 500) < 250 ? "_" : " "));
+
+            // Allow forcefully starting a new game.
+            if (ControlHandler.ButtonPressed(CButtons.Start))
+            {
+                Game1.GameManager.PlaySoundEffect("D360-19-13");
+                OnClickNewGameButton(_startGameButton);
+            }
         }
 
         private void RemoveCharacter()
