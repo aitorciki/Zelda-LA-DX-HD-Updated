@@ -60,9 +60,8 @@ namespace ProjectZ.InGame.GameObjects
                 Fall2DEntry = false;
                 CurrentState = State.Jumping;
                 _body.Velocity.Y = 1.5f;
-                _playedJumpAnimation = true;
-                if (Direction != 0 && Direction != 2)
-                    Direction = 2;
+                _playedJumpAnimation = false;
+                Direction = 1;
                 DirectionEntry = Direction;
                 Animation.Play("fall_" + Direction);
             }
@@ -78,6 +77,7 @@ namespace ProjectZ.InGame.GameObjects
             _jumpStartTime = 0;
 
             _swimDirection = DirectionEntry;
+
             // look towards the middle of the map
             if (DirectionEntry % 2 != 0)
                 _swimDirection = EntityPosition.X < Map.MapWidth * Values.TileSize / 2f ? 2 : 0;
@@ -473,7 +473,7 @@ namespace ProjectZ.InGame.GameObjects
             }
 
             var walkVelocity = Vector2.Zero;
-            if (!_isLocked && ((CurrentState != State.Attacking && CurrentState != State.AttackBlocking && CurrentState != State.AttackJumping) || !_body.IsGrounded))
+            if (!_isLocked && (!IsAttackingState() || !_body.IsGrounded))
                 walkVelocity = ControlHandler.GetMoveVector2();
 
             var walkVelLength = walkVelocity.Length();
