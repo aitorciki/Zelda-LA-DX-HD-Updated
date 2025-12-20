@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
+using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Interface
@@ -56,19 +57,37 @@ namespace ProjectZ.InGame.Interface
 
         public override InputEventReturn PressedButton(CButtons pressedButton)
         {
-            if (pressedButton != ControlHandler.ConfirmButton)
+            // HACK: Allow pressing "Start" to select a save file and only save files.
+            var currentPage = Game1.UiPageManager.GetCurrentPage();
+            var buttonText = InsideLabel?.Text;
+
+            // The hack should only be applied to the main menu page so check for that.
+            if (currentPage != null && currentPage.GetType() == typeof(MainMenuPage))
+            {
+                // Only allow Start to select the save file and not the other buttons.
+                if (pressedButton == CButtons.Start && (buttonText == "Settings" || buttonText == "Quit"))
+                    return InputEventReturn.Nothing;
+
+                // All that remains is the save file selection.
+                if (pressedButton != CButtons.Start && pressedButton != ControlHandler.ConfirmButton)
+                    return InputEventReturn.Nothing;
+            }
+            // In every other case only allow the confirm button to click a button.
+            else if (pressedButton != ControlHandler.ConfirmButton)
                 return InputEventReturn.Nothing;
 
+            // A function has been assigned to the button.
             if (ClickFunction != null)
             {
-                if (InsideLabel?.Text != "Back" && InsideLabel?.Text != "Return to Game")
-                {
+                // Play a sound effect in most cases, except when it's these buttons.
+                if (buttonText != "Back" && buttonText != "Return to Game")
                     Game1.GameManager.PlaySoundEffect("D360-19-13");
-                }
+
+                // Run the click function and return input did something.
                 ClickFunction(this);
                 return InputEventReturn.Something;
             }
-
+            // Since this is constantly checked in a loop, return nothing most of the time.
             return InputEventReturn.Nothing;
         }
 

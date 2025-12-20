@@ -157,7 +157,14 @@ namespace ProjectZ.InGame.Pages
                 HorizontalMode = true,
                 Selectable = true
             };
+            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_settings", element => Game1.UiPageManager.ChangePage(typeof(SettingsPage))));
+            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_quit", element => Game1.UiPageManager.ChangePage(typeof(ExitGamePage))));
 
+           /// NOTE: For some reason, all of this code was used to create the bottom two buttons. But the two lines above do practically the same thing. I have no idea
+           /// why the below code was used, as it's not only overly convoluted but also more limited in what can be accessed about the buttons. For example, there is a
+           /// hack on "InterfaceButton" that checks the text of the buttons. The code below does not put text on the buttons, but rather overlays it on top of them. I
+           /// decided to keep it here for now just in case the new code has issues I don't yet see. If the above works out, this should be deleted before v1.5.0.
+/*
             var smallButtonLayout = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
             smallButtonLayout.AddElement(new InterfaceLabel("main_menu_settings") { Gravity = InterfaceElement.Gravities.Center });
             _menuBottomBar.AddElement(new InterfaceButton
@@ -183,7 +190,7 @@ namespace ProjectZ.InGame.Pages
                     Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
                 }
             });
-
+*/
             _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
             _mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "main_menu_select_header", new Point(width, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _mainLayout.AddElement(_saveFileList);
