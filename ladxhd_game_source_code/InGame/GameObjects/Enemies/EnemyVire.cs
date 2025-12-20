@@ -13,8 +13,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyVire : GameObject
     {
-        private readonly EnemyVireBat _batLeft;
-        private readonly EnemyVireBat _batRight;
+        private EnemyVireBat _batLeft;
+        private EnemyVireBat _batRight;
 
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -138,6 +138,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
             _damageState.CurrentLives = ObjLives.Vire;
+
+            if (_batLeft == null || _batLeft.IsDead)
+                _batLeft = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(-0.75f, 0)) { IsActive = false };
+            if (_batRight == null || _batRight.IsDead)
+                _batRight = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(0.75f, 0)) { IsActive = false };
         }
 
         private void Drowned()
@@ -164,6 +169,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
             _pushComponent.IsActive = false;
+            _batLeft.IsDead = true;
+            _batRight.IsDead = true;
+            Map.Objects.DeleteObjects.Add(_batLeft);
+            Map.Objects.DeleteObjects.Add(_batRight);
         }
 
         private void UpdateIdle()
