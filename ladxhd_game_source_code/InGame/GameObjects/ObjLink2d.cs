@@ -11,39 +11,41 @@ namespace ProjectZ.InGame.GameObjects
     public partial class ObjLink
     {
         public bool Fall2DEntry;
-
-        // Disables direction input hack.
-        public bool DisableDirHack2D;
-
-        private Vector2 _moveVector2D;
-
         private bool Is2DMode;
 
-        // swim stuff
+        // Movement Values
+        private Vector2 _moveVector2D;
+
+        // Disable directional input hack.
+        public bool DisableDirHack2D;
+
+        // Swimming Values
         private float MaxSwimSpeed2D = 0.50f;
         private float _swimAnimationMult;
         private int _swimDirection;
         private bool _inWater;
         private bool _wasInWater;
 
-        // climb stuff
+        // Climbing Values
         private float ClimbSpeed = 0.7f;
+        private float _lastClimbY;
         private bool _isClimbing;
         private bool _wasClimbing;
         private bool _tryClimbing;
         private bool _ladderCollision;
 
-        // jump stuff
+        // Jumping Values
         private double _jumpStartTime;
         private bool _playedJumpAnimation;
         private bool _waterJump;
+        private bool _noDropSound;
 
         private bool _init;
         private bool _spikeDamage;
 
         private void MapInit2D()
         {
-            // start climbing it the player is touching a ladder at the init position
+            // Start climbing it the player is touching a ladder at the init position.
             var box = Box.Empty;
             if (Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, Values.CollisionTypes.Ladder, 3, 0, ref box))
             {
@@ -52,6 +54,7 @@ namespace ProjectZ.InGame.GameObjects
                 DirectionEntry = 1;
                 UpdateAnimation2D();
             }
+            // The player is falling into a 2D map.
             else if (Fall2DEntry)
             {
                 _jumpEndTimer = 0;
@@ -78,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects
 
             _swimDirection = DirectionEntry;
 
-            // look towards the middle of the map
+            // Look towards the middle of the map.
             if (DirectionEntry % 2 != 0)
                 _swimDirection = EntityPosition.X < Map.MapWidth * Values.TileSize / 2f ? 2 : 0;
         }
@@ -339,6 +342,26 @@ namespace ProjectZ.InGame.GameObjects
                     Map.Objects.Collision(bodyBoxFloor, Box.Empty, _body.CollisionTypes, Values.CollisionTypes.MovingPlatform, 0, 0, ref cBox))
                     _drownResetPosition = bodyCenter;
             }
+
+            // Player reached the bottom of the ladder and touched ground.
+            if (_isClimbing && _moveVector2D.Y > 0)
+            {
+                if (EntityPosition.Y == _lastClimbY)
+                {
+                    _noDropSound = true;
+                    _isClimbing = false;
+                    _tryClimbing = false;
+
+                    _body.Velocity = Vector3.Zero;
+                    _moveVector2D = Vector2.Zero;
+
+                    CurrentState = State.Idle;
+                    Direction = 1;
+                }
+            }
+            // Track the last Y position to compare to next frame.
+            if (_isClimbing)
+                _lastClimbY = EntityPosition.Y;
 
             _wasClimbing = _isClimbing;
             _wasInWater = _inWater;
@@ -801,7 +824,9 @@ namespace ProjectZ.InGame.GameObjects
                     else
                         CurrentState = State.Idle;
 
-                    Game1.GameManager.PlaySoundEffect("D378-07-07");
+                    // Play the sound when hitting the ground unless disabled.
+                    if (!_noDropSound)
+                        Game1.GameManager.PlaySoundEffect("D378-07-07");
 
                     // When hitting the ground reset the "held" state for the next jump.
                     _jump2DHeld = false;
@@ -809,6 +834,9 @@ namespace ProjectZ.InGame.GameObjects
                     // HACK: Jumping then just before landing plays the same frame of animation as the first
                     // frame in walking. This timer forces "stand" animation for a few frames.
                     _jumpEndTimer = 75;
+
+                    // Reset this value for the next go around.
+                    _noDropSound = false;
                 }
             }
             // collision with the ceiling
