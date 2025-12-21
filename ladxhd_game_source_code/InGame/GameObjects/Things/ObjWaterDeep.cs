@@ -26,7 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 new BoxCollisionComponent(new CBox(posX, posY, -12, 16, 16, 10), Values.CollisionTypes.Normal));
 
             // collider that is used for enemies to avoid the deep water; currently this is 3 high to allow blocking a body but not jumping into it
-            map.Objects.SpawnObject(new ObjCollider(map, posX, posY, 3, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.DeepWater, 0));
+            map.Objects.SpawnObject(new ObjCollider(map, posX, posY, false, 3, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.DeepWater, 0));
         }
     }
 }

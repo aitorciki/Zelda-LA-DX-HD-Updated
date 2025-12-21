@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Color _editorColor = Color.DarkRed * 0.65f;
         private readonly int _level = -1;
 
-        public ObjCollider(Map.Map map, int posX, int posY, Color editorColor, Values.CollisionTypes type, params Rectangle[] rectangles) : base(map)
+        public ObjCollider(Map.Map map, int posX, int posY, bool grabComponent, Color editorColor, Values.CollisionTypes type, params Rectangle[] rectangles) : base(map)
         {
             EditorIconSource = new Rectangle(0, 0, 16, 16);
             _editorColor = editorColor;
@@ -26,14 +26,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             CollisionBoxes = new Box[rectangles.Length];
             for (var i = 0; i < rectangles.Length; i++)
-                CollisionBoxes[i] = new Box(
-                    posX + rectangles[i].X, posY + rectangles[i].Y, 0,
-                    rectangles[i].Width, rectangles[i].Height, 16);
+            {
+                CollisionBoxes[i] = new Box(posX + rectangles[i].X, posY + rectangles[i].Y, 0, rectangles[i].Width, rectangles[i].Height, 16);
 
+                if (grabComponent)
+                    AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(rectangles[i].X, rectangles[i].Y, rectangles[i].Width, rectangles[i].Height)), null, null, null) { });
+            }
             AddComponent(CollisionComponent.Index, new CollisionComponent(MultiBoxCollision) { CollisionType = type });
         }
 
-        public ObjCollider(Map.Map map, int posX, int posY, int height, Rectangle rectangle, Values.CollisionTypes type, int level) : base(map)
+        public ObjCollider(Map.Map map, int posX, int posY, bool grabComponent, int height, Rectangle rectangle, Values.CollisionTypes type, int level) : base(map)
         {
             EditorIconSource = new Rectangle(0, 0, 16, 16);
 
@@ -46,6 +48,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 rectangle.Width, rectangle.Height, height);
 
             AddComponent(CollisionComponent.Index, new CollisionComponent(SingleBoxCollision) { CollisionType = type });
+            if (grabComponent)
+                AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(0, 0, 16, 16)), null, null, null) { });
         }
 
         private bool MultiBoxCollision(Box box, int dir, int level, ref Box collidingBox)

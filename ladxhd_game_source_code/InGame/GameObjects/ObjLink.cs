@@ -4551,9 +4551,9 @@ namespace ProjectZ.InGame.GameObjects
                                 _instantPickupObject = null;
                                 _instantPickup = false;
                             }
-                            // Reset the pull counter if it exceeds the maximum (400). This is to reset the
-                            // animation if pulling on something for long periods (like lever in level 7).
-                            if (_pullCounter > PullMaxTime)
+                            // Reset the pull counter if it exceeds the maximum (400) and the carriable component has "IsStruggle"
+                            // set on it. This is to reset the animation if pulling on the lever in level 4 and 7 dungeons.
+                            if (_pullCounter > PullMaxTime && carriableComponent.IsStruggle)
                                 _pullCounter = PullResetTime;
                         }
                     }

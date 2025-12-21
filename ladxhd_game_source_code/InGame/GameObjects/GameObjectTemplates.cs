@@ -38,46 +38,46 @@ namespace ProjectZ.InGame.GameObjects
         {
             // collision boxes
             var colliderColor = Color.OrangeRed * 0.65f;
-            ObjectTemplates.Add("c1", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 16) } }));
-            ObjectTemplates.Add("c2", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 8, 16, 8) } }));
-            ObjectTemplates.Add("c5", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 8) } }));
-            ObjectTemplates.Add("c3", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 8, 16) } }));
-            ObjectTemplates.Add("c4", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 0, 8, 16) } }));
-            ObjectTemplates.Add("cSpecial",   new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 6) } }));
-            ObjectTemplates.Add("colliderL0", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
-            ObjectTemplates.Add("colliderL1", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
-            ObjectTemplates.Add("colliderL2", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
-            ObjectTemplates.Add("colliderL3", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
+            ObjectTemplates.Add("c1", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 16) } }));
+            ObjectTemplates.Add("c2", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 8, 16, 8) } }));
+            ObjectTemplates.Add("c5", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 8) } }));
+            ObjectTemplates.Add("c3", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 8, 16) } }));
+            ObjectTemplates.Add("c4", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 0, 8, 16) } }));
+            ObjectTemplates.Add("cSpecial",   new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 16, 6) } }));
+            ObjectTemplates.Add("colliderL0", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
+            ObjectTemplates.Add("colliderL1", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
+            ObjectTemplates.Add("colliderL2", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(0, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
+            ObjectTemplates.Add("colliderL3", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, colliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(8, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
 
             var lowerColliderColor = Color.Green * 0.65f;
             var lowerCollisionType = Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowIgnore | Values.CollisionTypes.ThrowWeaponIgnore;
-            ObjectTemplates.Add("lowCollider16", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 16, 16) } }));
-            ObjectTemplates.Add("lowCollider0", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 16, 8) } }));
-            ObjectTemplates.Add("lowCollider1", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 16, 8) } }));
-            ObjectTemplates.Add("lowCollider2", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 16) } }));
-            ObjectTemplates.Add("lowCollider3", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 16) } }));
-            ObjectTemplates.Add("lowCollider_special", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 10, 16, 6) } }));
-            ObjectTemplates.Add("c13", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 8) } }));
-            ObjectTemplates.Add("c6", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 8) } }));
-            ObjectTemplates.Add("c7", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 8, 8) } }));
-            ObjectTemplates.Add("c8", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 8, 8, 8) } }));
-            ObjectTemplates.Add("c9", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
-            ObjectTemplates.Add("c10", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
-            ObjectTemplates.Add("c11", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
-            ObjectTemplates.Add("c12", new GameObjectTemplate(typeof(ObjCollider), new object[] { lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
+            ObjectTemplates.Add("lowCollider16", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 16, 16) } }));
+            ObjectTemplates.Add("lowCollider0", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 16, 8) } }));
+            ObjectTemplates.Add("lowCollider1", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 16, 8) } }));
+            ObjectTemplates.Add("lowCollider2", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 16) } }));
+            ObjectTemplates.Add("lowCollider3", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 16) } }));
+            ObjectTemplates.Add("lowCollider_special", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 10, 16, 6) } }));
+            ObjectTemplates.Add("c13", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 8) } }));
+            ObjectTemplates.Add("c6", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 8) } }));
+            ObjectTemplates.Add("c7", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 8, 8) } }));
+            ObjectTemplates.Add("c8", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 8, 8, 8) } }));
+            ObjectTemplates.Add("c9", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
+            ObjectTemplates.Add("c10", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 8, 8, 8), new Rectangle(0, 0, 16, 8) } }));
+            ObjectTemplates.Add("c11", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(0, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
+            ObjectTemplates.Add("c12", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, lowerColliderColor, lowerCollisionType, new[] { new Rectangle(8, 0, 8, 8), new Rectangle(0, 8, 16, 8) } }));
 
-            ObjectTemplates.Add("enemyWall", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.NPCWall, -1 }));
-            ObjectTemplates.Add("drownResetExclude", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.DrownExclude, -1 }));
-            ObjectTemplates.Add("hookshotGrip", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Hookshot, -1 }));
+            ObjectTemplates.Add("enemyWall", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.NPCWall, -1 }));
+            ObjectTemplates.Add("drownResetExclude", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.DrownExclude, -1 }));
+            ObjectTemplates.Add("hookshotGrip", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Hookshot, -1 }));
 
-            ObjectTemplates.Add("lowerLevelCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Normal, 0 }));
-            ObjectTemplates.Add("lowerLevelCollider1", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 8, 16, 8), Values.CollisionTypes.Normal, 0 }));
-            ObjectTemplates.Add("lowerLevelCollider2", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 8, 16), Values.CollisionTypes.Normal, 0 }));
-            ObjectTemplates.Add("colliderLevel1", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Normal, 1 }));
-            ObjectTemplates.Add("raftCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.RaftExit, 1 }));
-            ObjectTemplates.Add("nonWaterCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.NonWater, 1 }));
+            ObjectTemplates.Add("lowerLevelCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Normal, 0 }));
+            ObjectTemplates.Add("lowerLevelCollider1", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, 32, new Rectangle(0, 8, 16, 8), Values.CollisionTypes.Normal, 0 }));
+            ObjectTemplates.Add("lowerLevelCollider2", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, 32, new Rectangle(0, 0, 8, 16), Values.CollisionTypes.Normal, 0 }));
+            ObjectTemplates.Add("colliderLevel1", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.Normal, 1 }));
+            ObjectTemplates.Add("raftCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.RaftExit, 1 }));
+            ObjectTemplates.Add("nonWaterCollider", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, 32, new Rectangle(0, 0, 16, 16), Values.CollisionTypes.NonWater, 1 }));
 
-            ObjectTemplates.Add("c1PushIgnore", new GameObjectTemplate(typeof(ObjCollider), new object[] { colliderColor, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore, new[] { new Rectangle(0, 0, 16, 16) } }));
+            ObjectTemplates.Add("c1PushIgnore", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, colliderColor, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore, new[] { new Rectangle(0, 0, 16, 16) } }));
 
             ObjectTemplates.Add("oneWayBridge2", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(15, 0, 1, 16), Values.CollisionTypes.Normal, 2 }));
             ObjectTemplates.Add("oneWayBridge0", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(0, 0, 1, 16), Values.CollisionTypes.Normal, 0 }));

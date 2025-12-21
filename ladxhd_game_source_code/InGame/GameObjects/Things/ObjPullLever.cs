@@ -60,7 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!string.IsNullOrEmpty(_openStrKey))
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
 
-            AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(_position, new Rectangle(-3, -4, 6, 2)), null, null, null) { StartGrabbing = StartGrabbing, Pull = OnPull });
+            AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(_position, new Rectangle(-3, -4, 6, 2)), null, null, null) { IsStruggle = true, StartGrabbing = StartGrabbing, Pull = OnPull });
             AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, _position));

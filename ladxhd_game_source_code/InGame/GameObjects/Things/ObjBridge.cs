@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // Spawn the stick and spawn a collider so the player can't jump over it.
             var objStick = new ObjItem(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 32, "", "ow_trade4", "trade4", null);
-           _collider = new ObjCollider(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 48, Color.Red, Values.CollisionTypes.Normal, new Rectangle(0, 0, 16, 16));
+           _collider = new ObjCollider(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 48, false, Color.Red, Values.CollisionTypes.Normal, new Rectangle(0, 0, 16, 16));
 
             // If the stick has not been collected, spawn them into the map.
             if (!objStick.IsDead)

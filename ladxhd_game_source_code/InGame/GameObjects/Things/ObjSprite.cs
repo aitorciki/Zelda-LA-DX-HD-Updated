@@ -38,8 +38,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             string shadowSpriteId,
             Rectangle collisionRectangle, Values.CollisionTypes collisionType) : this(map, posX, posY, spriteId, positionOffset, layer, shadowSpriteId)
         {
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition,
-                collisionRectangle.X, collisionRectangle.Y, 0, collisionRectangle.Width, collisionRectangle.Height, 16), collisionType));
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, collisionRectangle.X, collisionRectangle.Y, 0, collisionRectangle.Width, collisionRectangle.Height, 16), collisionType));
+            AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(collisionRectangle.X, collisionRectangle.Y, collisionRectangle.Width, collisionRectangle.Height)), null, null, null) { });
         }
 
         // used for the chest

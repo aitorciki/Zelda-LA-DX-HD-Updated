@@ -195,7 +195,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (!_playedIntro)
             {
-                // Player status resumed in "UpdateSaddled" method.
+                // Intro begins: Freeze player, disable stuff, start dialog.
                 _disablePlayer = true;
                 MapManager.ObjLink.DisableDirHack2D = true;
                 MapManager.ObjLink.DisableInventory(true);
@@ -221,7 +221,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
             if (EntityPosition.X < _startPosition.X - 180)
             {
-                // start attacking
+                // Fight begins: Unfreeze player, enable stuff.
                 _disablePlayer = false;
                 MapManager.ObjLink.DisableDirHack2D = false;
                 MapManager.ObjLink.DisableInventory(false);

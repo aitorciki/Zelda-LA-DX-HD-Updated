@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public bool IsHeavy;
         public bool IsPickedUp;
+        public bool IsStruggle;
         public bool IsActive = true;
 
         public new static int Index = 3;
