@@ -640,14 +640,18 @@ namespace ProjectZ.InGame.GameObjects
         private void Jump2D(bool PlaySound = true)
         {
             // Ascend in the water faster.
-            if (CurrentState == State.Swimming)
+            if (IsSwimmingState())
             {
                 Game1.GameManager.PlaySoundEffect("D360-13-0D");
                 _swimVelocity.Y = -1.185f;
             }
             // Must not be carrying or must be in one of the following states.
-            if (CurrentState == State.Carrying || (CurrentState != State.Idle && CurrentState != State.Attacking && 
-                CurrentState != State.AttackBlocking && CurrentState != State.Charging  && CurrentState != State.ChargeBlocking))
+            if (CurrentState == State.Carrying || 
+                (CurrentState != State.Idle && 
+                CurrentState != State.Attacking && 
+                CurrentState != State.AttackBlocking && 
+                CurrentState != State.Charging && 
+                CurrentState != State.ChargeBlocking))
                 return;
 
             // All three states need to pass simultaneously to return.
