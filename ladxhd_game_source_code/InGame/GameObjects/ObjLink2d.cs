@@ -776,7 +776,7 @@ namespace ProjectZ.InGame.GameObjects
                     else
                     {
                         _body.IsGrounded = true;
-                        _body.Velocity.Y = _body.Gravity2D;
+                        _body.Velocity.Y = -0.50f;
                         CurrentState = initState;
                     }
                 }
