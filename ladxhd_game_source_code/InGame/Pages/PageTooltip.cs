@@ -16,7 +16,6 @@ namespace ProjectZ.InGame.Interface
 
         // Textbox scale: relative to menu size.
         static float widthScale  = 0.85f;
-        static float heightScale = 0.40f;
 
         // Textbox background.
         static Color backgroundColor = Color.Black;
@@ -25,10 +24,16 @@ namespace ProjectZ.InGame.Interface
         // Textbox border.
         static Color borderColor = Color.White;
         static float borderAlpha = 0.95f;
-        static int borderThickness = 2 * Game1.UiScale;
+        static int borderThickness = Game1.UiScale == 1 ? 1 : 2 * Game1.UiScale;
 
         public static void Draw(SpriteBatch spriteBatch, string text)
         {
+            // Update these as the scale may change.
+            paddingX = 10f * Game1.UiScale;
+            paddingY = 10f * Game1.UiScale;
+            widthScale  = 0.85f;
+            borderThickness = Game1.UiScale == 1 ? 1 : 2 * Game1.UiScale;
+
             // Menu size reference.
             float menuWidth = (Values.MinWidth - 32) * Game1.UiScale;
             float menuHeight = (Values.MinHeight - 32) * Game1.UiScale;
@@ -37,9 +42,21 @@ namespace ProjectZ.InGame.Interface
             float menuX = (Game1.WindowWidth - menuWidth) / 2f;
             float menuY = (Game1.WindowHeight - menuHeight) / 2f;
 
-            // Tooltip size relative to the menu.
+            // Calculate the width of the tooltip.
             float boxWidth = menuWidth * widthScale;
-            float boxHeight = menuHeight * heightScale;
+
+            // Word-wrap text and apply padding.
+            var wrappedLines = WrapText(Font, text, boxWidth - paddingX * 2);
+            float lineHeight = Font.LineSpacing * Game1.UiScale;
+            float textBlockHeight = wrappedLines.Count * lineHeight;
+
+            // Different scales make padding look different.
+            var extraPadding = Game1.UiScale == 1 ? paddingY : paddingY * 2;
+
+            // Dynamically scale the height of the tooltip.
+            float boxHeight = textBlockHeight + paddingY + borderThickness * 2;
+            float maxBoxHeight = menuHeight * 0.75f;
+            boxHeight = MathHelper.Min(boxHeight, maxBoxHeight);
 
             // Tooltip centered within the menu.
             float boxX = menuX + (menuWidth - boxWidth) / 2f;
@@ -56,15 +73,6 @@ namespace ProjectZ.InGame.Interface
 
             // Draw the black background.
             spriteBatch.Draw(Resources.SprWhite, boxRect, backgroundColor * backgroundAlpha);
-
-            // Word-wrap text and apply padding.
-            var wrappedLines = WrapText(Font, text, boxWidth - paddingX * 2);
-
-            // Compute line height.
-            float lineHeight = Font.LineSpacing * Game1.UiScale;
-
-            // Compute total text block height for vertical centering.
-            float textBlockHeight = wrappedLines.Count * lineHeight;
 
             // Starting Y position vertically centered with top/bottom padding/
             float startY = boxRect.Y + paddingY + (boxRect.Height - paddingY * 2 - textBlockHeight) / 2f;
