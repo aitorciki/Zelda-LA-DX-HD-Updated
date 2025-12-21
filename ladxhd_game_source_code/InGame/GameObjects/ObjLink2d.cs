@@ -438,7 +438,7 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("drown");
             }
             // Force a direction from analog stick movement.
-            if (!DisableDirHack2D && !IsChargingState() && CurrentState != State.Grabbing && 
+            if (!DisableDirHack2D && !IsChargingState() && CurrentState != State.Grabbing && CurrentState != State.Jumping &&
                 CurrentState != State.Pulling && CurrentState != State.Hookshot && !_isHoldingSword)
             {
                 Vector2 moveVector = ControlHandler.GetMoveVector2();
@@ -571,7 +571,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 // update the direction if the player goes left or right in the air
                 // only update the animation after the jump animation was played
-                if (CurrentState == State.Jumping && _moveVector2D != Vector2.Zero && _playedJumpAnimation)
+                if (CurrentState == State.Jumping && _moveVector2D != Vector2.Zero)
                 {
                     var newDirection = AnimationHelper.GetDirection(_moveVector2D);
                     if (newDirection % 2 == 0)
