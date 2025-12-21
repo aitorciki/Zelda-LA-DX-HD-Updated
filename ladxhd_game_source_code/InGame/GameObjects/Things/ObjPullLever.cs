@@ -79,8 +79,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void StartGrabbing()
         {
             if (MapManager.ObjLink.Direction != 1)
+            {
+                MapManager.ObjLink.CurrentState = ObjLink.State.Idle;
                 return;
-
+            }
             UpdatePlayerPosition();
         }
 
