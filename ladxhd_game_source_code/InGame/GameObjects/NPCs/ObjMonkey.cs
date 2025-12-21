@@ -271,7 +271,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var distance = MapManager.ObjLink.EntityPosition.Position - _resetPosition;
 
             // come back to the start position?
-            if (distance.Length() > 128)
+            if (distance.Length() > 128 || MapManager.ObjLink.FieldChange)
             {
                 _currentLives = MaxLives;
                 EntityPosition.Set(_resetPosition);
