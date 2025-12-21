@@ -76,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _damageBox = new CBox(EntityPosition,
                 -_collisionBoxSize[dir].X / 2 - 1, -_collisionBoxSize[dir].Y - 1, 0,
-                _collisionBoxSize[dir].X + 2, _collisionBoxSize[dir].Y + 2, 8);
+                _collisionBoxSize[dir].X + 2, _collisionBoxSize[dir].Y + 2, 8, true);
 
             var stateIdle = new AiState(UpdateIdle);
             var stateDespawn = new AiState() { Init = InitDespawn };

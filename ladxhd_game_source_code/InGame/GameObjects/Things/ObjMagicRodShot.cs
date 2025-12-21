@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
-            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8);
+            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8, true);
 
             _sprite = new CSprite("magicRodShot", EntityPosition)
             {
