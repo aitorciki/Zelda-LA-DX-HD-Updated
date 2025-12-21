@@ -566,7 +566,6 @@ namespace ProjectZ.InGame.GameObjects
                     var speed = Math.Max(walkVelocity.Length(), _lastMoveVelocity.Length());
                     _lastMoveVelocity = AnimationHelper.MoveToTarget(_lastMoveVelocity, direction * speed, 0.05f * Game1.TimeMultiplier);
                 }
-
                 _moveVector2D = _lastMoveVelocity;
 
                 // update the direction if the player goes left or right in the air

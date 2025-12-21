@@ -5892,10 +5892,12 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.ScaleChanged = true;
             }
 
-            // lock the camera while transitioning
+            // Lock the camera while transitioning.
             if (!Map.Is2dMap || Direction == 1)
                 Game1.GameManager.MapManager.UpdateCameraY = MapTransitionStart == MapTransitionEnd;
 
+            // Jump fix hack can mess up walking animation so cancel it out.
+            _jumpEndTimer = 0;
             _isWalking = TransitionOutWalking;
 
             if (Is2DMode)
