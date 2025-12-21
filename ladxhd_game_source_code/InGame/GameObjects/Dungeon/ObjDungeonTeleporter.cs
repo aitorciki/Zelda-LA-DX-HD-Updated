@@ -68,14 +68,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _sprite = new CSprite(EntityPosition);
             _animationComponent = new AnimationComponent(_centerAnimator, _sprite, Vector2.Zero);
+            _lockTeleporter = true;
 
-            // has the player just teleported to this teleporter?
+            // Has the player just teleported to this teleporter?
             if (teleporterId != null && MapManager.ObjLink.NextMapPositionId == teleporterId)
             {
                 PlacePlayer();
                 Lock();
             }
-
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
