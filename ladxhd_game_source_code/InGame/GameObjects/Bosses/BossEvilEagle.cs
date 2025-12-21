@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateIdle()
         {
-            if (MapManager.ObjLink.EntityPosition.Y > 126f || MapManager.ObjLink.IsJumpingState())
+            if (!MapManager.ObjLink.IsClimbing() || MapManager.ObjLink.EntityPosition.Y > 126f || MapManager.ObjLink.IsJumpingState())
                 return;
 
             if (!_playedIntro)

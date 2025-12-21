@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool IsTrapped() => (_isTrapped);
         public bool IsFlying() => (_isFlying && CurrentState == State.Carrying);
         public bool IsDying() => (CurrentState == State.Dying);
+        public bool IsClimbing() => (_isClimbing);
         public bool IsUsingHookshot() => (CurrentState == State.Hookshot);
         public Vector2 GetSwimVelocity() => (_swimVelocity);
         public ObjMarin GetMarin() => (_objMaria);
