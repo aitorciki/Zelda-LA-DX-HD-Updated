@@ -163,7 +163,6 @@ namespace ProjectZ.InGame.GameObjects
         // Used by "EnemyVacuum" to rotate the player while it is active.
         public void RotatePlayer()
         {
-            if (_bootsRunning) return;
             if (!_isRotating)
             {
                 _rotateDirection = Direction;
@@ -179,7 +178,7 @@ namespace ProjectZ.InGame.GameObjects
                     ? (Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_")
                     : "_";
 
-                if (IsChargingState())
+                if (IsChargingState() || _bootsRunning)
                 {
                     Animation.Play("stand" + shieldString + _rotateDirection);
                     AnimatorWeapons.Play("stand_" + _rotateDirection);

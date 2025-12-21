@@ -2522,7 +2522,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
             }
             // When the rotation from a vacuum ends, the body and weapon animators need to be resynced.
-            if (IsChargingState() && _wasRotating)
+            if ((IsChargingState() || _bootsRunning) && _wasRotating)
             {
                 Direction = _rotateDirection;
                 Animation.Play("stand" + shieldString + Direction);
@@ -3813,7 +3813,10 @@ namespace ProjectZ.InGame.GameObjects
         {
             // If the player is dashing, hold the sword out front.
             if (_bootsRunning && CarrySword)
-                AnimatorWeapons.Play("stand_" + Direction);
+                if (_isRotating)
+                    AnimatorWeapons.Play("stand_" + _rotateDirection);
+                else
+                    AnimatorWeapons.Play("stand_" + Direction);
 
             // If the sword is not out just exit.
             if (AnimatorWeapons.CollisionRectangle.IsEmpty)
