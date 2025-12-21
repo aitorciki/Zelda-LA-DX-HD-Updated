@@ -4424,9 +4424,6 @@ namespace ProjectZ.InGame.GameObjects
             if (_carriedComponent == null || CurrentState != State.Carrying)
                 return;
 
-            if (Map.Is2dMap && _isClimbing)
-                return;
-
             ThrowCarriedObject();
         }
 
