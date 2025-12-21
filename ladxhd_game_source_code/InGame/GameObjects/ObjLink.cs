@@ -5900,6 +5900,11 @@ namespace ProjectZ.InGame.GameObjects
             _jumpEndTimer = 0;
             _isWalking = TransitionOutWalking;
 
+            // Force north facing when climbing down a ladder into a
+            // door. No clue what the proper way to fix this would be.
+            if (Map.Is2dMap && _isClimbing)
+                Direction = 1;
+
             if (Is2DMode)
                 UpdateAnimation2D();
             else
