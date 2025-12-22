@@ -12,6 +12,7 @@
   * Implement ability to grab and pull on most objects. This has no practical use case but was possible in the original game.
   * When climbing a ladder on a 2D map and reaching the bottom of it, Link will properly transfer to ground instead of climbing. 
   * When climbing a ladder on a 2D map and reaching the top of it, Link will perform a small flip.
+  * Most ledges in 2D sections are now slightly sloped so they are easier to jump onto, but are flat when on top of them.
   * Fix the movement speed modifier to also increase movement speed on 2D maps.
   * Fix jumping in 2D maps so that Link always faces Left or Right even if diagonal directions are being held.
   * Fix swimming in 2D maps so that Link can "jump" (which just ascends quicker) while also charging the sword.
@@ -29,12 +30,14 @@
 ### **User Interface:**
   * File select screen Link sprite: show tunic color, sword if Lvl2 sword collected, and shield if Mirror Shield collected.
   * Tooltips on the various options menus now automatically scale with the resolution and UI scale.
+  * Players are now required to enter at least a single character for the save file name on the "New Game" screen.
   * Allow pressing "Start" to select a save file from the File Selection screen. Start also progresses "New Game" screen instantly.
   * Added a new "Controls" page where control options are now located, remapping can be done, as well as a new "Dead Zone" option.
   * Separate analog input from directional pad input logic. This allows Dead Zone to not affect D-Pad but can disable analog.
   * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
+  * Add a new Modifier named "Sword Item Interaction". This allows collecting fairies, smacking bombs, and juggling the boomerang.
   * Modifier "Damage Multiplier" can now be set in 0.25 increments and 0% damage makes Link invincible.
   * Added a new modifier "Damage Cooldown" which can increase or reduce the length Link is invincible after taking a hit.
   * The option "Disable Helper Messages" also blocks the dialog shown when touching the nightmare door without the nightmare key.
@@ -66,7 +69,7 @@
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
   * Fix Link's facing direction when teleporting with the ocarina on the overworld using Manbo's song then saving/loading the game.
   * Fix Link's facing direction when teleporting with the ocarina in Level 7 dungeon floors 2+ or Level 8 dungeon via backdoor entry.
-  * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc) since it was like this in the original game.
+  * Fix the instruments to have collision against projectiles (boomerang, hookshot, etc.) since it was like this in the original game.
 
 ### **Enemies:**
   * Defeated enemies and effects are added to "always animate" list. This prevents frozen effects if knocked out of current viewport.
@@ -174,6 +177,7 @@
   * Fix dungeon 1 to remove a crystal structure that did not exit in the original game. It could also get in the way of classic camera.
   * Fix dungeon 2 underground area that has a vase to be able to throw the vase while climbing a ladder.
   * Fix dungeon 3 bombable walls around the nightmare key room to not have cracks. This is how it was in the original game.
+  * Fix dungeon 5 entrance so that there is enough space to stand and play the ocarina before entering the dungeon door.
   * Fix dungeon 5 missing leave button that resets block positions and push multiple buttons inward towards the room to reset sooner.
   * Fix dungeon 5 hookshot anchors (koopa faces) to have collision (they have two types: hookshot collision + movement collision).
   * Fix dungeon 7 main keyhole to open up the dungeon so that the key can only be inserted from the front.
