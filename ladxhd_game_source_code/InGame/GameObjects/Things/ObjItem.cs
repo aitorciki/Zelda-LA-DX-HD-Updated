@@ -154,7 +154,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             else
                 Collectable = true;
 
-            var stateIdle = new AiState(UpdateIdle);
+            var stateIdle = new AiState(UpdateIdle);                                                                                                                                                                                                                                                                                                                                                                                                                    
             // despawn after 15sec, but only if it was jumping or fall from the sky
             if (string.IsNullOrEmpty(saveKey) && !_isFlying && !Collectable)
                 stateIdle.Trigger.Add(new AiTriggerCountdown(15000, null, ToFading));

@@ -56,9 +56,10 @@
         public static int     DamageFactor    =  4;
         public static int     DmgCooldown     =  16;
         public static float   MoveSpeedAdded  =  0;
-        public static bool    NoDamageLaunch  =  false;
         public static bool    NoHeartDrops    =  false;
+        public static bool    NoDamageLaunch  =  false;
         public static bool    SwordBlock      =  false;
+        public static bool    SwordInteract   =  false;
 
         public static int MusicVolume
         {

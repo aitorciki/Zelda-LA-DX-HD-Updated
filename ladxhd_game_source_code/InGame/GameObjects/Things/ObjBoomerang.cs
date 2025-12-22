@@ -26,6 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Vector2 _direction;
 
         private bool _comingBack;
+        private bool _swordBounce;
 
         private bool _isReady = true;
         public bool IsReady => _isReady;
@@ -93,6 +94,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Play sound effect.
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
 
+            // If "Sword Item Interactions" is enabled, bounce the boomerang off the sword.
+            if (GameSettings.SwordInteract && !_swordBounce && _comingBack && MapManager.ObjLink.SwordDamageBox.Intersects(_body.BodyBox.Box))
+            {
+                _comingBack = false;
+                _swordBounce = true;
+                _startPosition = EntityPosition.Position;
+                _body.CollisionTypes = Values.CollisionTypes.Normal;
+                var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
+                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
+                Map.Objects.SpawnObject(animation);
+                Game1.GameManager.PlaySoundEffect("D360-07-07");
+            }
+
+            // The boomerang has just been thrown out or is moving away from the player.
             if (!_comingBack)
             {
                 // Update the boomerang's position.
@@ -113,6 +128,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (distance >= 80)
                     ComeBack();
             }
+            // The boomerang is making its return trip.
             else
             {
                 // Update the boomerang's position.
@@ -237,6 +253,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             // Specify that it's coming back and remove collision.
             _comingBack = true;
+            _swordBounce = false;
             _body.CollisionTypes = Values.CollisionTypes.None;
         }
     }

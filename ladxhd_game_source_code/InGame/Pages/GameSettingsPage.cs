@@ -39,14 +39,14 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Sub-Language
             _subLangSlider = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
-                buttonWidth, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
+                buttonWidth, 11, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
                 number => { Game1.LanguageManager.CurrentSubLanguageIndex = number; })
                 { SetString = number => LangSliderAdjustment(number) };
             _contentLayout.AddElement(_subLangSlider);
 
             // Menu Border Slider:
             var menuBricksSlider = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
-                buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
+                buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
                 number => { GameSettings.MenuBorder = number; })
                 { SetString = number => MenuBorderScaleSliderAdjustment(number) };
             _contentLayout.AddElement(menuBricksSlider);

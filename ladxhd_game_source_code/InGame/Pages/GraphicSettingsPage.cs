@@ -34,14 +34,14 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Game Scale
             _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
-                buttonWidth, new Point(1, 2), -3, Game1.MaxGameScale + 1, 1, GameSettings.GameScale, 
+                buttonWidth, 11, new Point(1, 2), -3, Game1.MaxGameScale + 1, 1, GameSettings.GameScale, 
                 number => { GameSettings.GameScale = number; Game1.ScaleChanged = true; })
                 { SetString = number => GameScaleSliderAdjustmentString(number) };
             _contentLayout.AddElement(_gameScaleSlider);
 
             // Slider: UI Scale
             _uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
-                buttonWidth, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1, 
+                buttonWidth, 11, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1, 
                 number => { GameSettings.UiScale = number; Game1.ScaleChanged = true; })
                 { SetString = number => UIScaleSliderAdjustmentString(number) };
             _contentLayout.AddElement(_uiScaleSlider);

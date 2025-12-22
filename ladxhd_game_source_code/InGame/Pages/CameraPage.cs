@@ -54,14 +54,14 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Camera Border
             _sliderCameraBorder = new InterfaceSlider(Resources.GameFont, "settings_camera_camborder",
-                buttonWidth, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
+                buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
                 number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; }) 
                 { SetString = number => ClassicBorderAdjustment(number) };
             _contentLayout.AddElement(_sliderCameraBorder);
 
             // Slider: Blackout Amount
             _sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
-                buttonWidth, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
+                buttonWidth, 11, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
                 number => { GameSettings.ClassicAlpha = (float)(number * 0.01); })
                 { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
             _contentLayout.AddElement(_sliderBorderOpacity);

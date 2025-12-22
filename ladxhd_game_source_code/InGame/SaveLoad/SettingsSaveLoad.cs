@@ -68,9 +68,10 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.DamageFactor = saveManager.GetInt("DamageFactor", GameSettings.DamageFactor);
             GameSettings.DmgCooldown = saveManager.GetInt("DmgCooldown", GameSettings.DmgCooldown);
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
-            GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             GameSettings.NoHeartDrops = saveManager.GetBool("NoHeartDrops", GameSettings.NoHeartDrops);
+            GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             GameSettings.SwordBlock = saveManager.GetBool("SwordBlock", GameSettings.SwordBlock);
+            GameSettings.SwordInteract = saveManager.GetBool("SwordInteract", GameSettings.SwordInteract);
 
             ControlHandler.LoadButtonMap(saveManager);
             ControlHandler.SetControllerIndex();
@@ -137,9 +138,10 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("DamageFactor", GameSettings.DamageFactor);
             saveManager.SetInt("DmgCooldown", GameSettings.DmgCooldown);
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
-            saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             saveManager.SetBool("NoHeartDrops", GameSettings.NoHeartDrops);
+            saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
             saveManager.SetBool("SwordBlock", GameSettings.SwordBlock);
+            saveManager.SetBool("SwordInteract", GameSettings.SwordInteract);
 
             // Write the save file.
             saveManager.Save(SettingsFilePath, Values.SaveRetries);

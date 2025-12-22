@@ -22,7 +22,8 @@ namespace ProjectZ.InGame.Pages
             EnableTooltips = true;
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var buttonHeight = 13;
+            var sliderHeight = 10;
 
             // Modifiers Settings Layout
             _modifiersLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -32,37 +33,31 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Extra Enemy HP
             var enemyHPSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_enemy_hp",
-                buttonWidth, new Point(1, 2), 0, 30, 1, GameSettings.EnemyBonusHP,
+                buttonWidth, sliderHeight, new Point(1, 1), 0, 30, 1, GameSettings.EnemyBonusHP,
                 number => { GameSettings.EnemyBonusHP = number; })
                 { SetString = number => EnemyHPSliderAdjustment(number) };
             _contentLayout.AddElement(enemyHPSlider);
 
             // Slider: Damage Taken Multiplier
             var damageTakenSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damage",
-                buttonWidth, new Point(1, 2), 0, 40, 1, GameSettings.DamageFactor,
+                buttonWidth, sliderHeight, new Point(1, 1), 0, 40, 1, GameSettings.DamageFactor,
                 number => { GameSettings.DamageFactor = number; })
                 { SetString = number => DamageTakenSliderAdjustment(number) };
             _contentLayout.AddElement(damageTakenSlider);
 
             // Slider: Damage Cooldown (Invincibility Frames)
             var damageCooldownSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damagecd",
-                buttonWidth, new Point(1, 2), 0, 100, 1, GameSettings.DmgCooldown,
+                buttonWidth, sliderHeight, new Point(1, 1), 0, 100, 1, GameSettings.DmgCooldown,
                 number => { GameSettings.DmgCooldown = number; })
                 { SetString = number => DamageCooldownSliderAdjustment(number) };
             _contentLayout.AddElement(damageCooldownSlider);
 
             // Slider: Movement Speed
             var movementSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_movespeed",
-                buttonWidth, new Point(1, 2), 0, 10, 1, (int)(GameSettings.MoveSpeedAdded * 10),
+                buttonWidth, sliderHeight, new Point(1, 1), 0, 10, 1, (int)(GameSettings.MoveSpeedAdded * 10),
                 number => { GameSettings.MoveSpeedAdded = number / 10f; })
                 { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
             _contentLayout.AddElement(movementSlider);
-
-            // Button: No Damage Launch
-            var toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, 
-                newState => { GameSettings.NoDamageLaunch = newState; });
-            _contentLayout.AddElement(toggleNoDmgLaunch);
 
             // Button: No Heart Drops
             var toggleNoHearts = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
@@ -70,11 +65,23 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.NoHeartDrops = newState; });
             _contentLayout.AddElement(toggleNoHearts);
 
+            // Button: No Damage Launch
+            var toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, 
+                newState => { GameSettings.NoDamageLaunch = newState; });
+            _contentLayout.AddElement(toggleNoDmgLaunch);
+
             // Button: Sword Block Projectiles
             var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_mods_swordblock", GameSettings.SwordBlock, 
                 newState => { GameSettings.SwordBlock = newState; });
             _contentLayout.AddElement(toggleSwordBlock);
+
+            // Button: Sword Interactions
+            var toggleSwordInteract = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_mods_swordinteract", GameSettings.SwordInteract, 
+                newState => { GameSettings.SwordInteract = newState; });
+            _contentLayout.AddElement(toggleSwordInteract);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -175,9 +182,10 @@ namespace ProjectZ.InGame.Pages
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_damage", "error"); break; }
                 case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_damagecd", "error"); break; }
                 case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_movespeed", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error"); break; }
                 case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_swordblock", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_swordinteract", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.Interface
         private float _animationStepPosition;
         private float _animationStepStart;
 
-        private int _sliderHeight = 4;
+        private int _sliderHeight = 3;
         private int _lastStep = -1;
         private int _steps;
         private bool _updateText;
@@ -61,10 +61,10 @@ namespace ProjectZ.InGame.Interface
             ColorSlider = Values.MenuButtonColorSlider;
         }
 
-        public InterfaceSlider(SpriteFont font, string key, int width, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
+        public InterfaceSlider(SpriteFont font, string key, int width, int baseHeight, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
         {
             Font = font;
-            Size = new Point(width, 11 + _sliderSize.Y * 4);
+            Size = new Point(width, baseHeight + _sliderSize.Y * 4);
             Margin = margin;
 
             Start = start;

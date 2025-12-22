@@ -37,7 +37,7 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Deadzone
             var sliderDeadzone = new InterfaceSlider(Resources.GameFont, "settings_controls_deadzone", 
-                buttonWidth, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
+                buttonWidth, 11, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
                 number => { GameSettings.DeadZone = (float)(number * 0.01); })
                 { SetString = number => ": " + number + "%" };
             _contentLayout.AddElement(sliderDeadzone);

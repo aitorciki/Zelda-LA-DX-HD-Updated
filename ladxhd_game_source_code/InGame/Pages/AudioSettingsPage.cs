@@ -32,13 +32,13 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Music Volume
             _contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_music_volume",
-                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.MusicVolume, 
+                buttonWidth, 11, new Point(1, 2), 0, 100, 5, GameSettings.MusicVolume, 
                 number => { GameSettings.MusicVolume = number; })
                 { SetString = number => " " + number + "%" });
 
             // Slider: Sound Effects Volume
             _contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_effect_volume",
-                buttonWidth, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, 
+                buttonWidth, 11, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, 
                 number => { Game1.GameManager.UpdateSoundEffects(); GameSettings.EffectVolume = number; })
                 { SetString = number => " " + number + "%" });
 
