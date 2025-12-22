@@ -11,7 +11,7 @@ namespace ProjectZ.InGame.GameObjects
     public partial class ObjLink
     {
         public bool Fall2DEntry;
-        private bool Is2DMode;
+        public bool Is2DMode;
 
         // Movement Values
         private Vector2 _moveVector2D;

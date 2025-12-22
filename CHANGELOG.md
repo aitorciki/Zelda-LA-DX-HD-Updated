@@ -125,9 +125,8 @@
   * Update Bow Wow's teleportation behavior when jumping into a world teleporter. It's still not perfect but improved.
   * In the cave passage to Tal Tal Mountain range, respawn the skull in the room with the large hookshot gap and chest.
   * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
-  * Don't spawn the owl if Marin is saved on the bridge and Level 8 dungeon was completed before Level 7 dungeon as the tip would be invalid.
-  * Also prevent flying with rooster to Marin on bridge if Level 8 dungeon was completed before Level 7 dungeon and rooster is borrowed.
-  * When the mountain bridge photo sequence starts, if holding the rooster it is now dropped before the sequence starts.
+  * Don't spawn the owl if Marin is saved on the bridge and Level 8 dungeon was completed before Level 7 dungeon.
+  * The mountain bridge photo now requires no followers to be present and the Spiny Beetle must be killed beforehand.
   * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
   * Increase the distance when jumping off of cliffs onto land or water below. Also try to push Link slightly when landing in water.
   * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.

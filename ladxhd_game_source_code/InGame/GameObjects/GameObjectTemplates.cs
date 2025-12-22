@@ -80,9 +80,9 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("c1PushIgnore", new GameObjectTemplate(typeof(ObjCollider), new object[] { false, colliderColor, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore, new[] { new Rectangle(0, 0, 16, 16) } }));
 
             // One-way collision boxes.
-            ObjectTemplates.Add("oneWayBridge2", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(15, 0, 1, 16), Values.CollisionTypes.Normal, 2 }));
-            ObjectTemplates.Add("oneWayBridge0", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(0, 0, 1, 16), Values.CollisionTypes.Normal, 0 }));
-            ObjectTemplates.Add("oneWayFlatTop", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(0, 0, 16, 1), Values.CollisionTypes.Normal, 3 }));
+            ObjectTemplates.Add("oneWayBridge2", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(15, 0, 1, 16), Values.CollisionTypes.Normal, 2, false }));
+            ObjectTemplates.Add("oneWayBridge0", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(0, 0, 1, 16), Values.CollisionTypes.Normal, 0, false }));
+            ObjectTemplates.Add("oneWayFlatTop", new GameObjectTemplate(typeof(ObjColliderOneWay), new object[] { new Rectangle(0, 0, 16, 1), Values.CollisionTypes.Normal, 3, true }));
 
             // Unique collision boxes.
             ObjectTemplates.Add("2d_rounded", new GameObjectTemplate(typeof(ObjCollider), new object[] { true, specColliderColor, Values.CollisionTypes.Normal, new[] { new Rectangle(4, 0, 8, 1), new Rectangle(3, 1, 10, 1), new Rectangle(2, 2, 12, 1), new Rectangle(1, 3, 14, 1), new Rectangle(0, 4, 16, 12) }}));
