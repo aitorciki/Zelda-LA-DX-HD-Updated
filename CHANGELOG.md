@@ -12,9 +12,10 @@
   * Implement ability to grab and pull on most objects. This has no practical use case but was possible in the original game.
   * When climbing a ladder on a 2D map and reaching the bottom of it, Link will properly transfer to ground instead of climbing. 
   * When climbing a ladder on a 2D map and reaching the top of it, Link will perform a small flip.
+  * One tile high objects in 2D maps will now push the player to the top of it when jumping into and not quite reaching the top.
   * Most ledges in 2D sections are now slightly sloped so they are easier to jump onto, but are flat when on top of them.
   * Fix the movement speed modifier to also increase movement speed on 2D maps.
-  * Fix jumping in 2D maps so that Link always faces Left or Right even if diagonal directions are being held.
+  * Fix attacking and jumping in 2D maps so that Link always faces Left or Right even if diagonal directions are being held.
   * Fix swimming in 2D maps so that Link can "jump" (which just ascends quicker) while also charging the sword.
   * Fix ladder transition in 2D maps so that Link exits the map facing north and continues the climbing animation.
   * Fix removing the "poking" state when poking is finished. This bugged out the jump fix hack.
