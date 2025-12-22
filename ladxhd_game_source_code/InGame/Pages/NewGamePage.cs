@@ -34,6 +34,8 @@ namespace ProjectZ.InGame.Pages
 
         private bool _upperMode;
         private bool _showTooltip;
+        private bool _startError;
+        private bool _oneFrameBlock;
 
         private float _keyRepeatTimer;
         private float _keyRepeatLimit = 500;
@@ -226,7 +228,11 @@ namespace ProjectZ.InGame.Pages
             {
                 // The "Back" button was pressed.
                 if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+                {
+                    _startError = false;
+                    _showTooltip = false;
                     Game1.UiPageManager.PopPage();
+                }
             }
             // The "Tooltip" button was pressed.
             if (ControlHandler.ButtonPressed(CButtons.Y, true))
@@ -234,6 +240,8 @@ namespace ProjectZ.InGame.Pages
                 _showTooltip = !_showTooltip;
                 if (_showTooltip)
                     Game1.GameManager.PlaySoundEffect("D360-21-15");
+                else
+                    _startError = false;
             }
             // Allow toggling caps lock with the LT or RT buttons.
             else if (ControlHandler.ButtonPressed(CButtons.LT, true) || ControlHandler.ButtonPressed(CButtons.RT, true) || 
@@ -244,8 +252,15 @@ namespace ProjectZ.InGame.Pages
             }
             // Hide the tooltip when pressing anything.
             else if (ControlHandler.AnyButtonPressed())
-                _showTooltip = false;
-
+            {
+                if (_oneFrameBlock)
+                    _oneFrameBlock = false;
+                else
+                {
+                    _startError = false;
+                    _showTooltip = false;
+                }
+            }
             // Update the entered name shown to the player.
             _labelNameInput.SetText(_strNameInput + ((gameTime.TotalGameTime.Milliseconds % 500) < 250 ? "_" : " "));
 
@@ -293,6 +308,13 @@ namespace ProjectZ.InGame.Pages
 
         private void OnClickNewGameButton(InterfaceElement element)
         {
+            if (_strNameInput.Length <= 0)
+            {
+                _showTooltip = true;
+                _startError = true;
+                _oneFrameBlock = true;
+                return;
+            }
             string name = _strNameInput.ToLower();
 
             if (name == "totaka" || name == "totakeke" || name == "moyse")
@@ -338,6 +360,10 @@ namespace ProjectZ.InGame.Pages
             // Get the currently selected index.
             int index = _newGameLayout.SelectionIndex;
             string tooltip = "";
+
+            // Show a special message if the user tried to start without entering a name.
+            if (_startError)
+                return Game1.LanguageManager.GetString("tooltip_newgame_noname", "error");
 
             // Use the selected index to determine which tooltip to show.
             switch (index) 
