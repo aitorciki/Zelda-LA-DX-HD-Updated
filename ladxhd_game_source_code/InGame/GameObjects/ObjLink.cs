@@ -115,7 +115,6 @@ namespace ProjectZ.InGame.GameObjects
 
         // Link Direction
         public int Direction;
-        public int AttackDirection;
         private readonly Vector2[] _walkDirection = { new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1) };
         public Vector2 ForwardVector { get => _walkDirection[Direction]; }
 
@@ -196,6 +195,7 @@ namespace ProjectZ.InGame.GameObjects
         private float _swordPokeTime = 100;
         private float _swordPokeCounter;
         private bool _pokeStart;
+        private int _beamDirection;
 
         private Vector2[] _shootSwordOffset;
         private bool _shotSword;
@@ -3621,6 +3621,14 @@ namespace ProjectZ.InGame.GameObjects
             if (_npcCrossSword)
                 _npcCrossSword = false;
 
+            // Workaround for keeping direction left or right when attacking in 2D maps.
+            if (Map.Is2dMap)
+            {
+                Vector2 input = ControlHandler.GetMoveVector2();
+                if (input.X != 0 && input.Y != 0)
+                    Direction = input.X > 0 ? 2 : 0;
+            }
+            // Skip sword if any of the below is happening.
             if (!IsAttackingState() &&
                 !IsBlockingState() &&
                 CurrentState != State.Idle &&
@@ -3630,25 +3638,30 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState != State.Swimming || !Map.Is2dMap))
                 return;
 
+            // Play a random sword slash sound effect.
             var slashSounds = new[] { "D378-02-02", "D378-20-14", "D378-21-15", "D378-24-18" };
             Game1.GameManager.PlaySoundEffect(slashSounds[Game1.RandomNumber.Next(0, 4)]);
 
+            // Play the attack and weapon animation.
             Animation.Stop();
             AnimatorWeapons.Stop();
             Animation.Play("attack_" + Direction);
             AnimatorWeapons.Play("attack_" + Direction);
-            AttackDirection = Direction;
-            IsPoking = false;
 
-            _swordChargeCounter = sword_charge_time;
+            // Set up some states.
+            IsPoking = false;
             _pokeStart = false;
             _stopCharging = false;
             _swordPoked = false;
             _shotSword = false;
 
+            _swordChargeCounter = sword_charge_time;
+            _beamDirection = Direction;
+
+            // If the raft is moving stop it during attacks.
             StopRaft();
 
-            // If in an accompanying state switch to a merged state.
+            // If in an accompanying state -> switch to a merged state.
             CurrentState = CurrentState switch
             {
                 State.Blocking => State.AttackBlocking,
@@ -3923,9 +3936,9 @@ namespace ProjectZ.InGame.GameObjects
             // Default beam direction to current direction.
             var beamDirection = Direction;
 
-            // If swimming on 2D map, use the current attacking direction.
-            if (IsSwimmingState() && Map.Is2dMap)
-                beamDirection = AttackDirection;
+            // If it's a 2D map, use the "corrected" direction assessed when attacking.
+            if (Map.Is2dMap)
+                beamDirection = _beamDirection;
 
             // Shoot the sword if the player has the Level 2 sword and full health.
             if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || sword1_beam) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || always_beam) && AnimatorWeapons.CurrentFrameIndex == 2)
