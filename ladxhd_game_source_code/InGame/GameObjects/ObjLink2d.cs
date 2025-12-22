@@ -16,8 +16,9 @@ namespace ProjectZ.InGame.GameObjects
         // Movement Values
         private Vector2 _moveVector2D;
 
-        // Disable directional input hack.
+        // Disable directional input hack and drop sound effect.
         public bool DisableDirHack2D;
+        public bool NoDropSound;
 
         // Swimming Values
         private float MaxSwimSpeed2D = 0.50f;
@@ -38,7 +39,6 @@ namespace ProjectZ.InGame.GameObjects
         private double _jumpStartTime;
         private bool _playedJumpAnimation;
         private bool _waterJump;
-        private bool _noDropSound;
 
         private bool _init;
         private bool _spikeDamage;
@@ -348,7 +348,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 if (EntityPosition.Y == _lastClimbY)
                 {
-                    _noDropSound = true;
+                    NoDropSound = true;
                     _isClimbing = false;
                     _tryClimbing = false;
 
@@ -825,7 +825,7 @@ namespace ProjectZ.InGame.GameObjects
                         CurrentState = State.Idle;
 
                     // Play the sound when hitting the ground unless disabled.
-                    if (!_noDropSound)
+                    if (!NoDropSound)
                         Game1.GameManager.PlaySoundEffect("D378-07-07");
 
                     // When hitting the ground reset the "held" state for the next jump.
@@ -836,7 +836,7 @@ namespace ProjectZ.InGame.GameObjects
                     _jumpEndTimer = 75;
 
                     // Reset this value for the next go around.
-                    _noDropSound = false;
+                    NoDropSound = false;
                 }
             }
             // collision with the ceiling
@@ -849,7 +849,6 @@ namespace ProjectZ.InGame.GameObjects
                 _lastMoveVelocity = Vector2.Zero;
                 _swimVelocity.X = 0;
             }
-
             if ((collision & Values.BodyCollision.Vertical) != 0)
             {
                 _hitVelocity.Y = 0;

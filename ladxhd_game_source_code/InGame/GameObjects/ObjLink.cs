@@ -5583,6 +5583,7 @@ namespace ProjectZ.InGame.GameObjects
         {
             Map = map;
             Is2DMode = map.Is2dMap;
+            _body.EnableStepUp = Is2DMode;
 
             if (NextMapPositionStart.HasValue)
                 SetPosition(NextMapPositionStart.Value);

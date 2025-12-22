@@ -307,6 +307,35 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                         Game1.GameManager.MapManager.CurrentMap.Objects.PushObject(
                             pushRectangle, new Vector2(Math.Sign(offset.X), 0), PushableComponent.PushType.Continues);
                     }
+
+                    // Try stair-step before blocking horizontal movement
+                    if (body.EnableStepUp && body.IsGrounded && offset.X != 0 && offset.Y == 0)
+                    {
+                        for (int step = 1; step <= body.MaxStepHeight; step++)
+                        {
+                            var testBox = Box.Empty;
+
+                            // Check if step-up is possible.
+                            if (Collision(body, body.Position.X, body.Position.Y - step, 1, collisionTypes, ignoreField, ref testBox))
+                                break;
+
+                            var posX = body.Position.X + offset.X;
+                            var posY = body.Position.Y - step;
+                            var direction = offset.X < 0 ? 0 : 2;
+
+                            // Check if forward movement is possible by stepping up the step height.
+                            if (!Collision(body, posX, posY, direction, collisionTypes, ignoreField, ref testBox))
+                            {
+                                // Suppress landing sound for this frame.
+                                if (body.Owner == MapManager.ObjLink)
+                                    MapManager.ObjLink.NoDropSound = true;
+
+                                body.Position.Y -= step;
+                                body.Position.X += offset.X;
+                                return Values.BodyCollision.None;
+                            }
+                        }
+                    }
                 }
             }
 

@@ -58,6 +58,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public float AbsorbStop = 0.15f;
         public float MaxSlideDistance = 6.0f;
 
+        public bool EnableStepUp;
+        public int MaxStepHeight = 1;
+
         public float Width
         {
             get => BodyBox.Box.Width;
