@@ -41,23 +41,16 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var Link = MapManager.ObjLink;
                 var Body = Link._body;
 
-                if (!Link.Is2DMode)
-                    return false;
-
-                if (Link.EntityPosition.Y <= _collisionBox.Y)
-                    return false;
-
-                if (Body.Velocity.Y <= 0)
-                    return false;
-
+                if (!Link.Is2DMode || Link.EntityPosition.Y <= _collisionBox.Y || Body.Velocity.Y <= 0)
+                {
+                    collidingBox = _collisionBox;
+                    return true;
+                }
                 if (Math.Abs(Link.EntityPosition.Y - _collisionBox.Y) > 0.1f)
-                    Link.SetPosition(new Vector2(Link.EntityPosition.X, _collisionBox.Y));
+                    Link.SetPosition(new Vector2(Link.EntityPosition.X, _collisionBox.Y - 1));
 
-                Body.IsGrounded = true;
-                Body.Velocity.Y = 0;
-                Link.NoDropSound = true;
-                Body.SlideOffset = Vector2.Zero;
-                Link.Animation.Play("walk_" + Link.Direction);
+                if (Link.CurrentState == ObjLink.State.Jumping)
+                    Link.Animation.Play("walk_" + Link.Direction);
             }
             collidingBox = _collisionBox;
             return true;
