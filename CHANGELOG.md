@@ -4,6 +4,7 @@
 ### **The "Awakening From the Dream" Update**
 
 ### **General:**
+  * Picking up the sword at the beginning of the game on the beach now deals damage (spin will kill that urchin now).
   * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes classic camera bugs.
   * Fix all Classic Camera respawning issues including: respawning on current field, field edge, and not respawning at all.
   * Rework pushable stones so that their behavior when pushed is much closer to how it is in the original games.
@@ -33,12 +34,14 @@
   * Tooltips on the various options menus now automatically scale with the resolution and UI scale.
   * Players are now required to enter at least a single character for the save file name on the "New Game" screen.
   * Allow pressing "Start" to select a save file from the File Selection screen. Start also progresses "New Game" screen instantly.
+  * Reverse the player's current hearts on the File Selection screen to go from left to right instead of right to left.
   * Added a new "Controls" page where control options are now located, remapping can be done, as well as a new "Dead Zone" option.
   * Separate analog input from directional pad input logic. This allows Dead Zone to not affect D-Pad but can disable analog.
   * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
-  * Add a new Modifier named "Sword Item Interaction". This allows collecting fairies, smacking bombs, and juggling the boomerang.
+  * Add a new Modifier named "Extra Sword Interactions". This allows collecting fairies, smacking bombs, and juggling the boomerang.
+  * Extra Sword Interactions also allows breaking pots with Level 2 sword and beam, and the level 2 beam can also cut grass and bushes.
   * Modifier "Damage Multiplier" can now be set in 0.25 increments and 0% damage makes Link invincible.
   * Added a new modifier "Damage Cooldown" which can increase or reduce the length Link is invincible after taking a hit.
   * The option "Disable Helper Messages" also blocks the dialog shown when touching the nightmare door without the nightmare key.
@@ -47,6 +50,7 @@
   * Block pressing "Start" to open the inventory screen during a number of events and cutscenes.
   * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
   * Fix the "space" character in the variable width font to take up less space. It now matches the ROM hack it was based on.
+  * Fix the Trendy Game showing the correct buttons if they were remapped when giving the player instructions.
   
 ### **Items:**
   * Some items will no longer stop Link while casting: Boomerang, Magic Powder, Fire Rod, Bow & Arrow, Bombs, and throwing objects.
@@ -60,6 +64,7 @@
   * Bombs have been added to the "always animate" list which allows them to explode when outside of the current viewport.
   * Remove the message when buying bombs at the item shop that said something like "You got a bomb!".
   * Remove the message when getting your shield back from Like Like since the original game did not have one.
+  * It's now possible to cancel the ocarina song by pressing the button again. This doesn't trigger ocarina listener events.
   * Opening chests immediately freezes the world instead of after a delay. Also, the items raises slightly higher above the chest.
   * The Trendy Game will now allow Link to move immediately after the crane starts grabbing like in the original game.
   * Fix shield appearing on Link when swallowed by a Like Like. It will now properly disappear and reappear depending on equipped status.
@@ -105,12 +110,14 @@
   * Fix enemy Sea Urchins to properly deal damage when touched from the sides. This was a really tricky problem.
   * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
   * Fix enemy Spiny Beetle AI behavior to act much closer to how they do in the original game.
+  * Fix enemy Three-of-a-Kind face transitions to be 0.25 seconds instead of 0.50 seconds. This is closer to the original game.
   * Fix enemy Vacuum from causing Link to get stuck in a specific direction if it fell outside the camera viewport.
   * Fix enemy Vacuum to properly Spin Link and his sword when dashing with the Pegasus Boots.
   * Fix enemy Vire death when falling into lava or when burning. The bats it spawns were not destroyed and would not trigger events.
   * Fix enemy Zombies from spawning inside the walls near the graveyard by adding collision inside the walls.
   * Fix miniboss Dodongo Snakes from resetting current music to dungeon music while they were not encountered.
   * Fix miniboss Smasher when both Link and him pick up the ball simultaneously. Also the ball spawns a fairy when destroyed.
+  * Fix miniboss Giant Buzz Blob to remove its damage field after death if it dies while in the "Buzz Blob" form.
   * Fix boss Moldorm to have the "ticking" sound effects. Also increase it's knockbacks and damage box size.
   * Fix boss Angler Fish arena camera to not fall below the boss field which is just a black screen.
   * Fix boss Evil Eagle cutscene to play at the same position on the ladder as the original game instead of on top of the tower.
@@ -119,6 +126,7 @@
 
 ### **Overworld:**
   * The fisherman on the boat on the "Bridge" map is now drawn on a lower layer than Link so his sprite is always behind Link.
+  * Signposts can now be targeted with the hookshot to pull Link. This has no practical use except that it's fun.
   * Disable the 2D directional hack when trading the fishing hook to the fisherman for the necklace/pink bra.
   * Link gets a slight "push" when jumping into water. The push when walking into water was slightly reduced.
   * Play the secret sound in Richard's Villa when pushing the box to open the passage to the Slime Key.
