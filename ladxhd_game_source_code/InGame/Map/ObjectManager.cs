@@ -201,7 +201,8 @@ namespace ProjectZ.InGame.Map
 
             // Freeze most things except specific types when an event takes place. This variable should not be set directly,
             // but rather set via: Game1.GameManager.SaveManager.SetString("freezeGame", "1"); The listener on ObjLink will
-            // detect this and set the "FreezeWorldForEvents" boolean accordingly. To unfreeze, just set it back to "0". 
+            // detect this and set the "FreezeWorldForEvents" boolean accordingly. To unfreeze, just set it back to "0". It
+            // can also be set with ObjLink function "FreezeAnimations(bool)", a shortcut to set "freezeGame" to 0 or 1.
 
             if (Link.FreezeWorldForEvents)
             {

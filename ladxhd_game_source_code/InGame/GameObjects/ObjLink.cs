@@ -4871,9 +4871,15 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseOcarina()
         {
-            if ((CurrentState != State.Idle && CurrentState != State.Pushing) || _isClimbing)
+            if ((CurrentState != State.Idle && CurrentState != State.Pushing && CurrentState != State.Ocarina) || _isClimbing)
                 return;
 
+            // Cancel playing the ocarina if pressed again.
+            if (CurrentState == State.Ocarina)
+            {
+                StopOcarina();
+                return;
+            }
             // Used when drawing the notes.
             _ocarinaNoteIndex = 0;
             _ocarinaCounter = 0;
@@ -4906,6 +4912,28 @@ namespace ProjectZ.InGame.GameObjects
 
             // Freeze the game world while the song is played.
             FreezeAnimations(true);
+        }
+
+        private void StopOcarina()
+        {
+            // Try to cancel the ocarina songs.
+            Game1.GameManager.StopSoundEffect("D370-09-09");
+            Game1.GameManager.StopSoundEffect("D370-11-0B");
+            Game1.GameManager.StopSoundEffect("D370-10-0A");
+            Game1.GameManager.StopSoundEffect("D370-21-15");
+
+            // Resume the background music.
+            Game1.GbsPlayer.Play();
+
+            // This will not become some kind of exploit.
+            PreventDamage = false;
+            PreventDamageTimer = 0;
+
+            // Return to idle state.
+            CurrentState = State.Idle;
+
+            // Unfreeze the game world.
+            FreezeAnimations(false);
         }
 
         private void UpdateOcarina()
