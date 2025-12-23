@@ -20,7 +20,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly string _key;
         private readonly int _index;
 
-        private float _changeTime = 500;
+        private float _changeTime = 250;
         private float _changeCounter;
         private float _walkSpeed = 0.5f;
         private int _startingCardIndex = 0;
