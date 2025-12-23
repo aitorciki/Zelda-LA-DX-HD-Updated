@@ -336,12 +336,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (_aiDamageState.CurrentLives <= 0)
-            {
-                _damageField.IsActive = false;
-                _hitComponent.IsActive = false;
-                _pushComponent.IsActive = false;
-            }
             if (_aiDamageState.CurrentLives <= 0 || _aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
 
@@ -355,8 +349,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _wasHit = true;
                 var hit = _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
                 if (_aiDamageState.CurrentLives <= 0)
+                {
+                    _damageField.IsActive = false;
+                    _hitComponent.IsActive = false;
+                    _pushComponent.IsActive = false;
                     _aiComponent.ChangeState("death");
-
+                }
                 return hit;
             }
 
@@ -379,8 +377,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
                 var hit = _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
                 if (_aiDamageState.CurrentLives <= 0)
+                {
+                    _damageField.IsActive = false;
+                    _hitComponent.IsActive = false;
+                    _pushComponent.IsActive = false;
                     _aiComponent.ChangeState("death");
-
+                }
                 return hit;
             }
 
