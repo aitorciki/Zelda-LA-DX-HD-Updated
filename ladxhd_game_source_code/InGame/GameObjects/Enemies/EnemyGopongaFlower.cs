@@ -54,8 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.Field,
                 IgnoresZ = true 
             };
-            _collisionBox = new CBox(EntityPosition, -7, -7, 14, 14, 8);
-            var hittableBox = new CBox(EntityPosition, -8, -8, 16, 16, 8);
+
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState());
@@ -67,8 +66,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
             _aiComponent.ChangeState("idle");
 
+            var damageBox = new CBox(EntityPosition, -4, -3, 9, 8, 8);
+            _collisionBox = new CBox(EntityPosition, -4, -2, 9, 7, 8);
+            var hittableBox = new CBox(EntityPosition, -8, -8, 16, 16, 8);
+
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 4));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
             AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, body);
