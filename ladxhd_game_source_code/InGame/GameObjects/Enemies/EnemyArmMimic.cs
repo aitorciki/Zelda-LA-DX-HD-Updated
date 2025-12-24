@@ -44,7 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             var animatorComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
-            _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
+            _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 4)
             {
                 FieldRectangle = map.GetField(posX, posY),
                 CollisionTypes = Values.CollisionTypes.Normal |
@@ -67,9 +67,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.ChangeState("idle");
 
-            var hittableBox = new CBox(EntityPosition, -8, -16, 2, 16, 16, 8);
-            var damageBox = new CBox(EntityPosition, -6, -12, 2, 12, 12, 4);
-            var pushableBox = new CBox(EntityPosition, -5, -14, 2, 10, 14, 4);
+            var hittableBox = new CBox(EntityPosition, -6, -12, 0, 12, 12, 4);
+            var damageBox   = new CBox(EntityPosition, -4, -8,  0,  8,  8, 4);
+            var pushableBox = new CBox(EntityPosition, -5, -10, 0, 10, 10, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 12));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
