@@ -215,7 +215,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_damageState.IsInDamageState())
                 return Values.HitCollision.None;
 
-            if (hitType == HitType.Bomb)
+            if (hitType == HitType.Bomb || hitType == HitType.BowWow)
             {
                 _damageState.SpawnItem = "bomb_1";
                 return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
