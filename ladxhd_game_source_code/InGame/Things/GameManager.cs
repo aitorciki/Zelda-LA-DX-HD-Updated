@@ -1596,6 +1596,12 @@ namespace ProjectZ.InGame.Things
 
         public void SetGameTypeSettings()
         {
+            // Apply for any camera settings.
+            if (GameType != 0)
+            {
+                GameSettings.CameraLock = false;
+                GameSettings.SmoothCamera = true;
+            }
             // Game Type is set to "Modern".
             if (GameType == 1)
             {
@@ -1603,8 +1609,6 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicCamera = false;
                 GameSettings.ClassicDungeon = false;
                 GameSettings.ClassicBorders = 0;
-                GameSettings.CameraLock = false;
-                GameSettings.SmoothCamera = true;
             }
             // Game Type is set to "Classic".
             else if (GameType == 2)
@@ -1613,8 +1617,6 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicCamera = true;
                 GameSettings.ClassicDungeon = false;
                 GameSettings.ClassicBorders = 1;
-                GameSettings.CameraLock = false;
-                GameSettings.SmoothCamera = true;
             }
             // Game type is set to "Hybrid".
             else if (GameType == 3)
@@ -1623,8 +1625,6 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicCamera = true;
                 GameSettings.ClassicDungeon = true;
                 GameSettings.ClassicBorders = 1;
-                GameSettings.CameraLock = false;
-                GameSettings.SmoothCamera = true;
             }
             // Apply the settings to the settings menus.
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audPage))
