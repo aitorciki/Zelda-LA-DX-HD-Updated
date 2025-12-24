@@ -1641,6 +1641,8 @@ namespace ProjectZ.InGame.Things
                 cameraPage.SetCameraLock(GameSettings.CameraLock);
                 cameraPage.SetCameraSmooth(GameSettings.SmoothCamera);
             }
+            // Force a scale change as switching from either camera to the other will require it.
+            Game1.ScaleChanged = true;
         }
 
         public void StartNewGame(int slot, string slotName)
