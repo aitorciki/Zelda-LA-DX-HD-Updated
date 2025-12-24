@@ -18,15 +18,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private Animator _animator;
 
         private readonly string _key;
+        private readonly string _keyRespawn;
         private readonly int _index;
 
         private float _changeTime = 250;
         private float _changeCounter;
         private float _walkSpeed = 0.5f;
         private bool _isRemoving;
+        private bool _isRespawn;
         private int _startingCardIndex = 0;
         private int _cardIndex;
         private int _dir;
+
+        private string ActiveKey => _isRespawn ? _keyRespawn : _key;
+        private int GetCardValue(int i) => Game1.GameManager.SaveManager.GetInt(ActiveKey + i, -1);
+        private void SetSolved() => Game1.GameManager.SaveManager.SetString(ActiveKey, "1");
 
         public EnemyCardBoy() : base("card boy") { }
 
@@ -50,12 +56,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             _key = key;
+            _keyRespawn = key + "_respawn";
 
-            if (Game1.GameManager.SaveManager.GetString(_key) == "1")
-                IsDead = true;
+            _isRespawn = Game1.GameManager.SaveManager.GetString(_key) == "1";
 
-            Game1.GameManager.SaveManager.RemoveInt(_key + _index);
-
+            if (_isRespawn)
+            {
+                Game1.GameManager.SaveManager.SetString(_keyRespawn, "0");
+                Game1.GameManager.SaveManager.RemoveInt(_keyRespawn + _index);
+            }
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/card boy");
 
             _sprite = new CSprite(EntityPosition);
@@ -147,10 +156,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // reset boy
             if (_aiComponent.CurrentStateId == "waiting" &&
-                Game1.GameManager.SaveManager.GetInt(_key + _index, -1) == -1)
+                GetCardValue(_index) == -1)
                 _aiComponent.ChangeState("idle");
 
-            if (Game1.GameManager.SaveManager.GetString(_key) == "1")
+            if (Game1.GameManager.SaveManager.GetString(ActiveKey) == "1")
                 RemoveEntity();
             else
                 CheckOther();
@@ -189,9 +198,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             for (var i = 0; i < 3; i++)
             {
-                if (Game1.GameManager.SaveManager.GetInt(_key + i, -1) == -1)
+                var value = GetCardValue(i);
+
+                if (value == -1)
                     resetBoys = false;
-                if (Game1.GameManager.SaveManager.GetInt(_key + i, -1) != _cardIndex)
+                if (value != _cardIndex)
                     allEqual = false;
             }
 
@@ -200,13 +211,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Game1.GameManager.PlaySoundEffect("D360-29-1D");
 
                 for (var i = 0; i < 3; i++)
-                    Game1.GameManager.SaveManager.RemoveInt(_key + i);
+                    Game1.GameManager.SaveManager.RemoveInt(ActiveKey + i);
             }
 
             // all card boys have the same state
             if (allEqual)
             {
-                Game1.GameManager.SaveManager.SetString(_key, "1");
+                SetSolved();
                 Game1.GameManager.PlaySoundEffect("D378-19-13");
             }
         }
@@ -228,15 +239,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _sprite.SpriteShader = null;
             _aiComponent.ChangeState("waiting");
-            Game1.GameManager.SaveManager.SetInt(_key + _index, _cardIndex);
+
+            Game1.GameManager.SaveManager.SetInt(ActiveKey + _index, _cardIndex);
         }
 
         private void ResetPuzzle()
         {
             for (var i = 0; i < 3; i++)
-                Game1.GameManager.SaveManager.RemoveInt(_key + i);
+                Game1.GameManager.SaveManager.RemoveInt(ActiveKey + i);
 
-            Game1.GameManager.SaveManager.RemoveString(_key);
+            Game1.GameManager.SaveManager.RemoveString(ActiveKey);
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
