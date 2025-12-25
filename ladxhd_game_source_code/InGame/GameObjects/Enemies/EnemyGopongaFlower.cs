@@ -54,8 +54,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.Field,
                 IgnoresZ = true 
             };
-
-
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState());
             _damageState = new AiDamageState(this, body, _aiComponent, sprite, _lives)

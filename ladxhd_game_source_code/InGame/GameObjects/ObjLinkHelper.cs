@@ -31,7 +31,6 @@ namespace ProjectZ.InGame.GameObjects
 
         //-------------------------------------------------------------------------------------------------------
         // One-line "setter" functions.
-        public void InflictSpikeDamage2D() => _spikeDamage = true;
         public void SetBowWowFollower(ObjBowWow bowWow) => _objBowWow = bowWow;
         public void LinkWalking(bool walk) => _isWalking = walk;
         public void ToggleBlockButton(bool toggle) => _blockButton = toggle;
