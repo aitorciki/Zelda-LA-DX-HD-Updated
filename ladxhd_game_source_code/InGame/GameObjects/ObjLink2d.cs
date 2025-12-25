@@ -872,10 +872,8 @@ namespace ProjectZ.InGame.GameObjects
                     setY += 0.15f;
                 }
             }
-
-            // When velocity is zero, the peak of the jump has been reached so do not allow any
-            // more manipulation of the velocity or it will create weirdness in the air.
-            if (_body.Velocity.Y > 0)
+            // When velocity falls below the amount it sets, don't apply it anymore.
+            if (_body.Velocity.Y >= -0.50)
                 _jump2DHeld = false;
 
             var initState = CurrentState;
