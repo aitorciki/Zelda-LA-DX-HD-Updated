@@ -30,9 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
 
-
         private readonly Color _lightColor = new Color(255, 200, 200);
-
         private readonly Vector2 _startPosition;
 
         private readonly string _saveKey;
@@ -131,8 +129,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableRectangle, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6) { IsActive = false });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableRectangle, OnHit) { IsActive = false });
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
@@ -153,17 +151,20 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void StartMoving()
         {
-            _aiComponent.ChangeState("moving");
-
-            // spawn dialog
+            // Spawn dialog.
             Game1.GameManager.StartDialogPath("d4_nightmare");
 
-            // spawn the barrier
+            // Spawn the barrier.
             SpawnBarrier();
 
-            // start moving and start spawning fish
+            // Start moving and start spawning fish.
+            _aiComponent.ChangeState("moving");
             _body.VelocityTarget.Y = 0.5f;
             _fishCountdown.OnInit();
+
+            // Enable the fields.
+            _damageField.IsActive = true;
+            _hitComponent.IsActive = true;
         }
 
         private void SpawnBarrier()
