@@ -425,8 +425,16 @@ namespace ProjectZ.InGame.GameObjects
                 }
                 if (_body.IsGrounded && CurrentState != State.Hookshot && !_hookshotPull)
                 {
+                    // Default the added speed to zero.
+                    float addSpeed = 0;
+
                     // If the modifier to add movement speed is used then apply it to 2D walking speed.
-                    var addSpeed = walkVelocity.X > 0 ? GameSettings.MoveSpeedAdded : -GameSettings.MoveSpeedAdded;
+                    if (walkVelocity.X != 0)
+                    {
+                        addSpeed = walkVelocity.X > 0
+                            ? GameSettings.MoveSpeedAdded
+                            : -GameSettings.MoveSpeedAdded;
+                    }
                     _moveVector2D = new Vector2(walkVelocity.X + addSpeed, 0);
                     _lastMoveVelocity = _moveVector2D;
                 }
