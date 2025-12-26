@@ -115,6 +115,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var stateSpawn = new AiState { Init = InitSpawn };
             var stateSpawnAttack = new AiState(UpdateSpawnAttack);
+            var stateStart = new AiState { Init = InitHidden };
+            stateStart.Trigger.Add(new AiTriggerCountdown(6500, null, EndHidden));
             var stateHidden = new AiState { Init = InitHidden };
             stateHidden.Trigger.Add(new AiTriggerCountdown(1000, null, EndHidden));
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
@@ -130,6 +132,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _aiComponent.States.Add("spawn", stateSpawn);
             _aiComponent.States.Add("spawnAttack", stateSpawnAttack);
+            _aiComponent.States.Add("start", stateStart);
             _aiComponent.States.Add("hidden", stateHidden);
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("pulled", statePulled);
@@ -144,7 +147,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 16,
                 BossHitSound = true,
-                PlayDeathSound = true
+                PlayDeathSound = false,
+                PlayDeathExplosions = true
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 
@@ -173,7 +177,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         public void ToSpawned()
         {
-            _aiComponent.ChangeState("hidden");
+            _aiComponent.ChangeState("start");
         }
 
         private void InitSpawn()

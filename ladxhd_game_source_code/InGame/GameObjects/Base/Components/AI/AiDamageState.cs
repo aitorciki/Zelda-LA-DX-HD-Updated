@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         public bool DeathAnimation = true;
         public bool SpawnItems = true;
         public bool PlayDeathSound = true;
+        public bool PlayDeathExplosions = true;
 
         private readonly GameObject _gameObject;
         private readonly BodyComponent _body;
@@ -169,6 +170,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 // Bow Wow has a custom sound for attacking so disable the normal sound and play this one.
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
                 PlayDeathSound = false;
+                PlayDeathExplosions = false;
                 DeathAnimation = false;
                 OnDeath(false);
                 return Values.HitCollision.Enemy;
@@ -431,7 +433,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 return;
             _deathCount -= 100;
 
-            if (PlayDeathSound)
+            if (PlayDeathExplosions)
                 Game1.GameManager.PlaySoundEffect("D378-19-13");
 
             var posX = (int)_gameObject.EntityPosition.X - ExplostionWidth / 2 + Game1.RandomNumber.Next(0, ExplostionWidth) - 8;
