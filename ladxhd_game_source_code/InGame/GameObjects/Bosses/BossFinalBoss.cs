@@ -1672,7 +1672,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // Shadow of Ganon
             if (_ganonForm && !_aiDamageState.IsInDamageState() && (((hitType & HitType.PegasusBootsSword) != 0) || (hitType & HitType.SwordSpin) != 0))
             {
+                damage = 2;
+
                 _ganonLives -= damage;
+
                 if (_ganonLives <= 0)
                     _aiComponent.ChangeState("ganonDeath");
 
