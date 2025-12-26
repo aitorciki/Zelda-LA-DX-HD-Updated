@@ -100,6 +100,7 @@ namespace ProjectZ.InGame.GameObjects
         // Link Movement
         public bool CanWalk;
         private bool _isWalking;
+        private bool _forceWalking;
         private float WalkSpeed = 1.0f;
         private float WalkSpeedPoP = 1.25f;
         private float BootsRunningSpeed = 2.0f;
@@ -1523,7 +1524,7 @@ namespace ProjectZ.InGame.GameObjects
                 var velocity = new Vector2(directionX, directionY);
                 _body.VelocityTarget = velocity;
                 Direction = AnimationHelper.GetDirection(velocity);
-                _isWalking = true;
+                _forceWalking = true;
 
                 Game1.GameManager.SaveManager.SetString("link_move_collision", "0");
                 Game1.GameManager.SaveManager.RemoveString("link_move");
@@ -1596,6 +1597,14 @@ namespace ProjectZ.InGame.GameObjects
                 _pushCounter = 0;
                 CurrentState = State.Pushed;
                 Game1.GameManager.SaveManager.RemoveString("link_push");
+            }
+
+            // Used during the ending sequence to stop Link from walking.
+            var linkFinalStairStand = Game1.GameManager.SaveManager.GetString("finalstairstand");
+            if (!string.IsNullOrEmpty(linkFinalStairStand))
+            {
+                _forceWalking = false;
+                Game1.GameManager.SaveManager.RemoveString("finalstairstand");
             }
 
             // Used during the ending sequence when talking to the Wind Fish and showing the 8 instruments.
@@ -2514,7 +2523,7 @@ namespace ProjectZ.InGame.GameObjects
                 : "_";
 
             // Pegasus boots running animation.
-            if (_bootsHolding || _bootsRunning)
+            if (_bootsHolding || _bootsRunning || _forceWalking)
             {
                 _swordChargeCounter = sword_charge_time;
 
@@ -2525,7 +2534,9 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play((CarryShield ? "walkb" : "walk") + shieldString + animDirection);
 
                 // Movement speed is doubled.
-                Animation.SpeedMultiplier = 2.0f;
+                if (!_forceWalking)
+                    Animation.SpeedMultiplier = 2.0f;
+
                 return;
             }
             // When the rotation from a vacuum ends, the body and weapon animators need to be resynced.
