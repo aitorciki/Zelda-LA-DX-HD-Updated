@@ -51,6 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
+            Map.Objects.RegisterAlwaysAnimateObject(this);
 
             Game1.GameManager.PlaySoundEffect("D378-18-12", true, position);
         }

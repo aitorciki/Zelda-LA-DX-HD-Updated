@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private void Update()
