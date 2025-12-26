@@ -1607,6 +1607,13 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("finalstairstand");
             }
 
+            // Used during the ghost house sequence to stop Link from walking.
+            var seenGhostHouse = Game1.GameManager.SaveManager.GetString("ghost_seenhouse");
+            if (!string.IsNullOrEmpty(seenGhostHouse) && seenGhostHouse == "1")
+            {
+                _forceWalking = false;
+            }
+
             // Used during the ending sequence when talking to the Wind Fish and showing the 8 instruments.
             var linkFinal = Game1.GameManager.SaveManager.GetString("link_final");
             if (!string.IsNullOrEmpty(linkFinal))
