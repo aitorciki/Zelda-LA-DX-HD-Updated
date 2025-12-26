@@ -43,7 +43,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var animation = AnimatorSaveLoad.LoadAnimator("Objects/boomerang");
             animation.Play("run");
 
-            _body = new BodyComponent(EntityPosition, -3, -3, 6, 6, 8)
+            _body = new BodyComponent(EntityPosition, -1, -1, 2, 2, 8)
             {
                 IgnoresZ = true,
                 MoveCollision = OnCollision,
@@ -54,6 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var animationComponent = new AnimationComponent(animation, sprite, new Vector2(-6, -6));
 
             AddComponent(BodyComponent.Index, _body);
+            AddComponent(HittableComponent.Index, new HittableComponent(_damageBox, OnHit));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
@@ -81,6 +82,23 @@ namespace ProjectZ.InGame.GameObjects.Things
             _itemsGrabbed.Clear();
         }
 
+        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        {
+            // If "Sword Item Interactions" is enabled, bounce the boomerang off the sword.
+            if ((hitType & HitType.Sword) != 0 && GameSettings.SwordInteract && !_swordBounce && _comingBack)
+            {
+                _comingBack = false;
+                _swordBounce = true;
+                _startPosition = EntityPosition.Position;
+                _body.CollisionTypes = Values.CollisionTypes.Normal;
+                var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
+                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
+                Map.Objects.SpawnObject(animation);
+                Game1.GameManager.PlaySoundEffect("D360-07-07");
+            }
+            return Values.HitCollision.None;
+        }
+
         private void Update()
         {
             // A null map can cause a crash so make sure it isn't null for some reason.
@@ -93,19 +111,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Play sound effect.
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
-
-            // If "Sword Item Interactions" is enabled, bounce the boomerang off the sword.
-            if (GameSettings.SwordInteract && !_swordBounce && _comingBack && MapManager.ObjLink.SwordDamageBox.Intersects(_body.BodyBox.Box))
-            {
-                _comingBack = false;
-                _swordBounce = true;
-                _startPosition = EntityPosition.Position;
-                _body.CollisionTypes = Values.CollisionTypes.Normal;
-                var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
-                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
-                Map.Objects.SpawnObject(animation);
-                Game1.GameManager.PlaySoundEffect("D360-07-07");
-            }
 
             // The boomerang has just been thrown out or is moving away from the player.
             if (!_comingBack)
