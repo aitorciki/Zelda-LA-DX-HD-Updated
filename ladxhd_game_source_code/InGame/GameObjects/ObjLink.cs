@@ -1838,7 +1838,7 @@ namespace ProjectZ.InGame.GameObjects
             // Check conditions where the player wouldn't take damage.
             if (_hitCount > 0 || CurrentState == State.Dying || CurrentState == State.PickingUp ||
                 CurrentState == State.Drowning || CurrentState == State.Drowned || CurrentState == State.Knockout ||
-                IsDiving() || Game1.GameManager.UseShockEffect || !UpdatePlayer)
+                IsDiving() || Game1.GameManager.UseShockEffect || !UpdatePlayer || Hookshot.IsMoving)
             {
                 return false;
             }
