@@ -548,7 +548,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_damageState.IsInDamageState() || _aiComponent.CurrentStateId == "flyup" || _aiComponent.CurrentStateId == "damaged")
                 return Values.HitCollision.None;
 
-            if (hitType == HitType.MagicRod || hitType == HitType.Boomerang)
+            if (hitType == HitType.Boomerang)
+                damage = 2;
+
+            if (hitType == HitType.MagicRod || hitType == HitType.Bomb)
                 damage = 4;
 
             _damageComponent.IsActive = false;
