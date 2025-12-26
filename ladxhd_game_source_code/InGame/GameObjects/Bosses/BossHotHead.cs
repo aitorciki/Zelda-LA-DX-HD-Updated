@@ -110,7 +110,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 4,
                 BossHitSound = true,
-                PlayDeathSound = false
+                PlayDeathSound = true
             };
             _damageState.AddBossDamageState(OnDeath);
 

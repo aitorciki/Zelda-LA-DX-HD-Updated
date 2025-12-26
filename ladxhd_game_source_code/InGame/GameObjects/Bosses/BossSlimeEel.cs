@@ -144,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 16,
                 BossHitSound = true,
-                PlayDeathSound = false
+                PlayDeathSound = true
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 

@@ -133,7 +133,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("leave", stateLeave);
             _aiComponent.States.Add("gone", stateGone);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false, AiDamageState.BlinkTime * 2 * 10) { ExplosionOffsetY = 8 };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false, AiDamageState.BlinkTime * 2 * 10) { ExplosionOffsetY = 8, PlayDeathSound = true };
             _damageState.AddBossDamageState(OnDeath);
 
             AddComponent(AiComponent.Index, _aiComponent);
