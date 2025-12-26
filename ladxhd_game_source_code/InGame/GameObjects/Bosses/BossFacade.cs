@@ -485,6 +485,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _aiComponent.ChangeState("preDeath");
                 Game1.GameManager.StartDialogPath("facade_death");
             }
+            else
+            {
+                Game1.GameManager.PlaySoundEffect("D370-07-07");
+            }
 
             _blinkTigger.OnInit();
 
