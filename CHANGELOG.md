@@ -97,6 +97,7 @@
   * When fighting the boss Angler Fish in dungeon 4, a barrier is spawned at the top of the arena to prevent leaving.
   * Angler Fish will no longer have a hit component (it won't take damage) until the fight starts so it can't be sniped.
   * Bow Wow can no longer eat certain types of enemies: Sea Urchins, Ghini, and Zombies.
+  * The enemy Flame Trap has been added to the "always animate" list so it can't be exploited by keeping it out of camera bounds.
   * Increase the body box size of sworded enemies to 16x16 pixels: Moblins, Pig-Moblins, Shrouded Stalfos, and Darknuts.
   * Enemies that respawned in the original game when changing fields now respawn here: Bombite, Spiny Beetle, Hardhat Beetle.
   * Fix the burning state to reset when changing fields in classic camera. Enemy should return to normal state and remove burn.
@@ -133,8 +134,12 @@
   * Fix miniboss Giant Buzz Blob to remove its damage field after death if it dies while in the "Buzz Blob" form.
   * Fix boss Moldorm to have the "ticking" sound effects. Also increase it's knockbacks and damage box size.
   * Fix boss Angler Fish arena camera to not fall below the boss field which is just a black screen.
+  * Fix boss Slime Eel missing explosion sound effects and fix the duration before it starts to attack.
+  * Fix boss Facade missing "hit" sounds. When hitting it with a bomb, it would play no sound effect at all.
   * Fix boss Evil Eagle cutscene to play at the same position on the ladder as the original game instead of on top of the tower.
+  * Fix boss Hot Head missing explosion sound effects.
   * Fix boss Hardhit Beetle shots to despawn when hitting the wall so they don't fly into the ethos.
+  * Fix final boss Giant Zol from being able to be spammed with Magic Powder which can result in an instant kill.
   * Fix final boss Shadow Ganon form to take the correct amount of damage. It should always take exactly six hits to defeat.
   * Fix final boss DethI arms falling behind the shadow layer around the Egg boss room by removing the shadow layer.
 
@@ -181,6 +186,7 @@
   * Fix collision of the Hen House roof. It may have been possible to get into the sky with a clever jump.
   * Fix Hen House NPC to be at his original position and make it so cuccos do not collide with him (like the original game).
   * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
+  * Fix owl when breaking open the egg to spawn immediately after the song is played instead of from a certain distance.
 
 ### **Dungeons:**
   * When entering a doorway that closes behind Link, push Link forward into the room like the original game did.
@@ -200,6 +206,7 @@
   * Fix dungeon 1 to remove a crystal structure that did not exit in the original game. It could also get in the way of classic camera.
   * Fix dungeon 2 underground area that has a vase to be able to throw the vase while climbing a ladder.
   * Fix dungeon 3 bombable walls around the nightmare key room to not have cracks. This is how it was in the original game.
+  * Fix dungeon 5 nightmare key room to be blacked out in normal camera. This room is supposed to be hidden from the player.
   * Fix dungeon 5 entrance so that there is enough space to stand and play the ocarina before entering the dungeon door.
   * Fix dungeon 5 missing leave button that resets block positions and push multiple buttons inward towards the room to reset sooner.
   * Fix dungeon 5 hookshot anchors (koopa faces) to have collision (they have two types: hookshot collision + movement collision).
@@ -208,6 +215,7 @@
   * Fix dungeon 7 3rd floor before the pillars are brought down to more closely match the original layout.
   * Fix dungeon 8 bombable walls around the switch to not have cracks. This is how it was in the original games.
   * Fix dungeon 8 block to be movable near a stairway in a room north of the map with the Peahat enemies.
+  * Fix dungeon 8 chest spawned from Dodongo Snakes to where the snakes must be killed from the ledge above.
   * Fix Egg dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
   * Fix Manbo's Song when played in the Egg to teleport the player to the entrance and not the pond.
 
