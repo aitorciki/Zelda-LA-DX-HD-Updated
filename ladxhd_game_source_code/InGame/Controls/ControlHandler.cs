@@ -197,25 +197,49 @@ namespace ProjectZ.InGame.Controls
             DebugButtons = CButtons.None;
         }
 
+        private static Vector2 Digitalize(Vector2 vec)
+        {
+            float ax = Math.Abs(vec.X);
+            float ay = Math.Abs(vec.Y);
+
+            float threshold = 0.35f;
+
+            if (ax > ay)
+            {
+                if (ay / ax >= threshold)
+                    return new Vector2(Math.Sign(vec.X), Math.Sign(vec.Y));
+                return new Vector2(Math.Sign(vec.X), 0);
+            }
+            else
+            {
+                if (ax / ay >= threshold)
+                    return new Vector2(Math.Sign(vec.X), Math.Sign(vec.Y));
+                return new Vector2(0, Math.Sign(vec.Y));
+            }
+        }
+
         public static Vector2 GetMoveVector2()
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
 
-            var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+            Vector2 vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
 
             if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
                 vec = Vector2.Zero;
+            else if (GameSettings.DigitalAnalog)
+                vec = Digitalize(vec);
 
             if (vec == Vector2.Zero)
             {
                 if (ButtonDown(CButtons.Left))
-                    vec += new Vector2(-1, 0);
-                if (ButtonDown(CButtons.Right))
-                    vec += new Vector2(1, 0);
+                    vec.X = -1;
+                else if (ButtonDown(CButtons.Right))
+                    vec.X = 1;
+
                 if (ButtonDown(CButtons.Up))
-                    vec += new Vector2(0, -1);
-                if (ButtonDown(CButtons.Down))
-                    vec += new Vector2(0, 1);
+                    vec.Y = -1;
+                else if (ButtonDown(CButtons.Down))
+                    vec.Y = 1;
             }
             return vec;
         }

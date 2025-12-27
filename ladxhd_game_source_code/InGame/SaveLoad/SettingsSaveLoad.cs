@@ -62,6 +62,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
             GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
             GameSettings.OldMovement = saveManager.GetBool("OldMovement", GameSettings.OldMovement);
+            GameSettings.DigitalAnalog = saveManager.GetBool("DigitalAnalog", GameSettings.DigitalAnalog);
 
             // Modifiers Settings
             GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
@@ -131,6 +132,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetString("Controller", GameSettings.Controller);
             saveManager.SetBool("SwapButtons", GameSettings.SwapButtons);
             saveManager.SetBool("OldMovement", GameSettings.OldMovement);
+            saveManager.SetBool("DigitalAnalog", GameSettings.DigitalAnalog);
             ControlHandler.SaveButtonMaps(saveManager);
 
             // Modifiers Settings

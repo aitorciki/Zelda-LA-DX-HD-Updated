@@ -50,6 +50,7 @@
         public static string  Controller      =  "XBox";
         public static bool    SwapButtons     =  false;
         public static bool    OldMovement     =  false;
+        public static bool    DigitalAnalog   =  false;
 
         // Modifiers Settings
         public static int     EnemyBonusHP    =  0;
