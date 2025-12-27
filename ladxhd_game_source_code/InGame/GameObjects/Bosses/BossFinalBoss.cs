@@ -170,6 +170,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _spriteBody = Resources.GetSprite("nightmare_body");
 
             _bodyPosition = EntityPosition.Position;
+            _hideBody = true;
 
             Sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, Sprite, Vector2.Zero);
@@ -393,6 +394,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitMoveBody()
         {
+            _hideBody = false;
             Game1.GameManager.PlaySoundEffect("D360-53-35");
         }
 
