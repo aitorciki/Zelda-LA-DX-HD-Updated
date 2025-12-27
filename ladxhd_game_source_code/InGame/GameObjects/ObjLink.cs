@@ -5537,6 +5537,7 @@ namespace ProjectZ.InGame.GameObjects
             StoreItem = null;
 
             _body.IsActive = true;
+            _forceWalking = false;
 
             _objMaria = new ObjMarin(Map, 0, 0);
             _objRooster = new ObjCock(Map, 0, 0, null);
@@ -5573,7 +5574,6 @@ namespace ProjectZ.InGame.GameObjects
             _shadowComponent.IsActive = true;
 
             _isGrabbed = false;
-            _forceWalking = false;
 
             ShowItem = null;
             _collectedShowItem = null;
