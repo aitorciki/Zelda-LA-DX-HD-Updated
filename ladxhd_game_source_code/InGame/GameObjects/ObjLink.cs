@@ -3779,14 +3779,11 @@ namespace ProjectZ.InGame.GameObjects
                         AnimatorWeapons.Play("poke_" + Direction);
 
                         // If in an accompanying state -> switch to a merged state.
-                        if (IsSwimmingState())
-                            CurrentState = State.AttackSwimming;
-                        else if (IsJumpingState())
-                            CurrentState = State.AttackJumping;
-                        else if (IsBlockingState())
+                        if (CurrentState == State.Blocking)
                             CurrentState = State.AttackBlocking;
                         else
                             CurrentState = State.Attacking;
+
 
                         RepelPlayer(hitCollision, direction, knockback);
                     }
