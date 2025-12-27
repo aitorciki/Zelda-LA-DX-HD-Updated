@@ -30,6 +30,7 @@
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
   * Fix transition walk animation freezing when jumping and landing at the same moment a transition starts.
   * Fix old save files to work with "Nothing is Missable" option which allows getting the followers back and other stuff.
+  * Fix cuccos from being targetable during a "cucco swarm" after attacking one 35 times.
   * Fix a Raven from taking off during the ending cutscene causing the "wings flapping" sound to play.
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
 
@@ -41,6 +42,7 @@
   * Reverse the player's current hearts on the File Selection screen to go from left to right instead of right to left.
   * Added a new "Controls" page where control options are now located, remapping can be done, as well as a new "Dead Zone" option.
   * Separate analog input from directional pad input logic. This allows Dead Zone to not affect D-Pad but can disable analog.
+  * Add a new Input Option called "Digital Analog" which forces the analog stick to move Link in 8 directions like the D-Pad.
   * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
   * Update the tooltips for a few in-game options to be more accurate: Enable Dialog Skip, Nothing is Missable, and No Heart Drops.
@@ -217,6 +219,8 @@
   * Fix dungeon 8 block to be movable near a stairway in a room north of the map with the Peahat enemies.
   * Fix dungeon 8 chest spawned from Dodongo Snakes to where the snakes must be killed from the ledge above.
   * Fix Egg dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
+  * Fix Egg camera transition to the final maze room when classic camera is enabled. It would not transition smoothly.
+  * Fix Egg boss room from showing a black circle in the top left corner while the dialog is shown.
   * Fix Manbo's Song when played in the Egg to teleport the player to the entrance and not the pond.
 
 ## **v1.4.9**

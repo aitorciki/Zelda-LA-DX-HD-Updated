@@ -62,7 +62,7 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.OldMovement = newState; });
             _contentLayout.AddElement(toggleOldMovement);
 
-            // Button: Classic Movement
+            // Button: Digital Analog
             var toggleEightWay = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_digitalanalog", GameSettings.DigitalAnalog, 
                 newState => { GameSettings.DigitalAnalog = newState; });
