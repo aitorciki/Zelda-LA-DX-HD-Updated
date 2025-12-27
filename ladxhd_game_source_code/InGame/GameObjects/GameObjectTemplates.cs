@@ -555,7 +555,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("BowWow", new GameObjectTemplate(typeof(ObjBowWow), new object[] { null }));
             ObjectTemplates.Add("npcMonkey", new GameObjectTemplate(typeof(ObjMonkey), new object[] { }));
             ObjectTemplates.Add("bobWowSmall", new GameObjectTemplate(typeof(ObjBowWowSmall), new object[] { null }));
-            ObjectTemplates.Add("bird", new GameObjectTemplate(typeof(ObjBird), new object[] { }));
+            ObjectTemplates.Add("bird", new GameObjectTemplate(typeof(ObjBird), new object[] { false }));
             ObjectTemplates.Add("cock", new GameObjectTemplate(typeof(ObjCock), new object[] { null }));
             ObjectTemplates.Add("letterBird", new GameObjectTemplate(typeof(ObjLetterBird), new object[] { "NPCs/letterBird" }));
             ObjectTemplates.Add("letterBirdGreen", new GameObjectTemplate(typeof(ObjLetterBird), new object[] { "NPCs/letterBirdGreen" }));

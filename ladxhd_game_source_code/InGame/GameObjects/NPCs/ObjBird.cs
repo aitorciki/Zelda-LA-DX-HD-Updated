@@ -29,11 +29,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _attackingCounter;
         private float _attackTransparency;
         private bool _attackMode;
+        private bool _swarmSpawn;
         private int _hitCounter;
 
         public ObjBird() : base("bird") { }
 
-        public ObjBird(Map.Map map, int posX, int posY) : base(map)
+        public ObjBird(Map.Map map, int posX, int posY, bool swarmSpawn) : base(map)
         {
             var rectangle = new Rectangle(0, 0, 14, 8);
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
@@ -52,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                                  Values.CollisionTypes.Player,
                 AvoidTypes =     Values.CollisionTypes.Hole,
             };
+            _swarmSpawn = swarmSpawn;
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/bird");
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -15));
@@ -163,7 +165,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _attackCounter += Game1.RandomNumber.Next(300, 550);
 
-                var objBird = new ObjBird(Map, (int)EntityPosition.X, (int)EntityPosition.Y);
+                var objBird = new ObjBird(Map, (int)EntityPosition.X, (int)EntityPosition.Y, true);
                 objBird.InitAttackMode();
                 Map.Objects.SpawnObject(objBird);
                 Map.Objects.RegisterAlwaysAnimateObject(objBird);
@@ -287,7 +289,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (GameSettings.NoAnimalDamage)
+            // If it's a swarm spawn or animal damage is disabled don't register hits.
+            if (GameSettings.NoAnimalDamage || _swarmSpawn)
                 return Values.HitCollision.None;
 
             if (hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
