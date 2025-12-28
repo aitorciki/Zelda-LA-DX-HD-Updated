@@ -17,7 +17,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
-        //private readonly CRectangle _collisionRectangle;
 
         private Vector2 _startPosition;
         private Vector2 _targetPosition;
@@ -40,12 +39,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (activationValue != null && activationValue == "1")
                     _isActive = true;
             }
-
             var offsetY = -5;
             EntityPosition = new CPosition(posX + 8, posY + 16 + offsetY + (_isActive ? 16 : 0), 0);
             EntitySize = new Rectangle(-8, -16 - offsetY, 16, 16);
-
-            //_collisionRectangle = new CRectangle(EntityPosition, new Rectangle(-4, -offsetY - 6, 8, 4));
 
             Body = new BodyComponent(EntityPosition, -4, -offsetY - 14, 8, 10, 8)
             {
@@ -57,7 +53,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 MoveCollision = OnMoveCollision,
                 CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.RaftExit,
             };
-
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState(UpdateIdle));
             _aiComponent.States.Add("moving", new AiState(UpdateMoving));
@@ -73,13 +68,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(BodyComponent.Index, Body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
-
-            AddComponent(CollisionComponent.Index,
-                new BoxCollisionComponent(new CBox(EntityPosition, -8, -16 - offsetY, -8, 16, 16, 8), Values.CollisionTypes.Normal));
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -16 - offsetY, -8, 16, 16, 8), Values.CollisionTypes.Normal));
 
             if (!_isActive)
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(
-                    new CBox(EntityPosition, -8, -offsetY - 1, 16, 1, 8), Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
+                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -offsetY - 1, 16, 1, 8), Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
         }
 
         public override void Init()
@@ -93,7 +85,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             var fieldX = (int)EntityPosition.X / 16;
             var fieldY = (int)EntityPosition.Y / 16;
-
             var oldState = Map.GetFieldState(fieldX, fieldY);
             Map.SetFieldState(fieldX, fieldY, oldState ^ MapStates.FieldStates.DeepWater);
         }
@@ -164,7 +155,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 Body.VelocityTarget = direction;
             }
-
             _wasMoved = true;
         }
 
@@ -209,6 +199,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             if (!_wasMoved)
                 TargetVelocity(Vector2.Zero);
+
             _wasMoved = false;
 
             // jump
@@ -216,6 +207,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 var lastJumpCounter = _jumpCounter;
                 _jumpCounter += Game1.DeltaTime;
+
                 // finished jumping?
                 if (MapManager.ObjLink.IsGrounded() || _jumpCounter > _jumpTime)
                 {
@@ -239,9 +231,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                         MapManager.ObjLink._body.IsActive = true;
                         Body.IsActive = true;
                     }
-
                     Map.CameraTarget = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - MapManager.ObjLink.EntityPosition.Z);
-
                     var newPosition = Vector2.Lerp(_startPosition, _targetPosition, percentage);
                     EntityPosition.Set(newPosition);
                 }
@@ -256,9 +246,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Body.VelocityTarget = Vector2.Zero;
             _aiComponent.ChangeState("moving");
             EntityPosition.AddPositionListener(typeof(ObjRaft), OnPositionChange);
-
             ((DrawComponent)Components[DrawComponent.Index]).Layer = Values.LayerPlayer;
-
             MapManager.ObjLink.StartRaftRiding(this);
         }
 
@@ -270,9 +258,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Body.VelocityTarget = Vector2.Zero;
             _aiComponent.ChangeState("idle");
             EntityPosition.RemovePositionListener(typeof(ObjRaft));
-
             ((DrawComponent)Components[DrawComponent.Index]).Layer = Values.LayerBottom;
-
             MapManager.ObjLink.ExitRaft();
         }
 
