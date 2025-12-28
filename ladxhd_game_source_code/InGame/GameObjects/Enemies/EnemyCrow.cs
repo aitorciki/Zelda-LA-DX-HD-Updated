@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _dirRadius;
         private int _dirIndex;
         private bool _goldLeaf;
+        private bool _startAttack;
         private int _lives = ObjLives.Crow;
 
         private const string _leafSaveKey = "ow_goldLeafCrow";
@@ -86,7 +87,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("start", stateStart);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { MoveBody = false };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
 
             _aiComponent.ChangeState("waiting");
 
@@ -120,8 +121,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_goldLeaf)
                 _hitComponent.HittableBox = _hittableBoxFly;
-
-            _damageState.MoveBody = true;
         }
 
         private void UpdateIdle()
@@ -138,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateWaiting()
         {
             // activate the crow
-            if (!_goldLeaf && MapManager.ObjLink._body.BodyBox.Box.Intersects(_activationBox))
+            if (!_goldLeaf && (MapManager.ObjLink._body.BodyBox.Box.Intersects(_activationBox) || _startAttack))
                 _aiComponent.ChangeState("start");
         }
 
@@ -233,15 +232,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.Bow || hitType == HitType.MagicRod)
                 damage /= 2;
 
-            if (damage >= _damageState.CurrentLives)
-                _damageState.MoveBody = true;
-
             // start attacking?
             if (_aiComponent.CurrentStateId == "waiting" && (hitType == HitType.Bomb || hitType == HitType.ThrownObject))
             {
                 _aiComponent.ChangeState("start");
                 return Values.HitCollision.None;
             }
+            _startAttack = true;
 
             if (_damageState.CurrentLives <= 0)
             {

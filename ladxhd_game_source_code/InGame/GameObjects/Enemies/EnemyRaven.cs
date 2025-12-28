@@ -25,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private CSprite _sprite;
         private readonly Box _activationBox;
 
+        private bool _startAttack;
         private float _flapCounter;
         private float _fadeOutTime = 750;
         private double _dirRadius;
@@ -106,7 +107,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle_" + _dirIndex);
 
             // activate the crow
-            if (MapManager.ObjLink._body.BodyBox.Box.Intersects(_activationBox))
+            if (MapManager.ObjLink._body.BodyBox.Box.Intersects(_activationBox) || _startAttack)
             {
                 _aiComponent.ChangeState("start");
             }
@@ -199,13 +200,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.Bow || hitType == HitType.MagicRod)
                 damage /= 2;
 
-            // start attacking?
-            if (_aiComponent.CurrentStateId == "waiting" && (hitType == HitType.Bomb || hitType == HitType.ThrownObject))
-            {
-                _aiComponent.ChangeState("start");
+            _startAttack = true;
 
-                return Values.HitCollision.None;
-            }
             if (_damageState.CurrentLives <= 0)
             {
                 _damageField.IsActive = false;
