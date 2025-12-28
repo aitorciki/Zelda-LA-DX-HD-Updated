@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameSystems;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -23,6 +24,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isHoldingItem;
 
         private float _punishCount;
+        private float _punishTimer;
         private bool _punishMode;
         private bool _punishDialog;
         private bool _isPunishing = true;
@@ -40,12 +42,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // player stole from the shop the last time?
             _punishMode = Game1.GameManager.SaveManager.GetString("stoleItem") == "1";
+
             if (_punishMode)
             {
                 EntityPosition = new CPosition(posX + 8 - 39, posY + 16 - 32, 0);
                 _animator.Play("stand_3");
             }
-
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
@@ -66,8 +68,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         public override void Init()
         {
             if (_punishMode)
-                MapManager.ObjLink.NextMapPositionEnd =
-                    new Vector2(MapManager.ObjLink.NextMapPositionEnd.Value.X, MapManager.ObjLink.NextMapPositionEnd.Value.Y - 5);
+            {
+                Game1.GameManager.SaveManager.SetString("punishActive", "1");
+                MapManager.ObjLink.NextMapPositionEnd = new Vector2(MapManager.ObjLink.NextMapPositionEnd.Value.X, MapManager.ObjLink.NextMapPositionEnd.Value.Y - 5);
+            }
         }
 
         private void Update()
@@ -84,24 +88,26 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
                 MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
 
-            // rotate in the direction of the player
+            // Rotate in the direction of the player.
             var dir = AnimationHelper.GetDirection(playerDistance);
 
+            // Check to see if the direction has changed.
             if (_lastDirection != dir)
             {
                 _directionChange -= Game1.DeltaTime;
 
+                // If the direction has changed. 
                 if (_directionChange <= 0)
                 {
-                    // 50/50 chance of making the next direction change be fast or slow
-                    _directionChange = Game1.RandomNumber.Next(0, 2) == 0 ?
-                        Game1.RandomNumber.Next(0, 250) : Game1.RandomNumber.Next(1500, 2500);
-                    // look at the player
+                    // Delay the shopkeeper turn facing by a value between 0ms and 2500ms.
+                    _directionChange = Game1.RandomNumber.Next(0, 2500);
+
+                    // After the delay face the player's direction.
                     _animator.Play("stand_" + dir);
                     _lastDirection = dir;
                 }
             }
-
+            // Stop the player if the shopkeeper sees him trying to steal.
             var blockPath = _isHoldingItem && (_lastDirection == 0 || _lastDirection == 3);
             Game1.GameManager.SaveManager.SetString("isWatched", blockPath ? "1" : "0");
         }
@@ -113,6 +119,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
+            // Start showing the lightning effect.
             if (_showThunder)
             {
                 _punishCount += Game1.DeltaTime;
@@ -124,8 +131,18 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     Game1.GameManager.PlaySoundEffect("D378-38-26");
                 }
             }
+            // Start reducing health after 250ms every 100ms.
+            if (_punishCount > 50)
+            {
+                _punishTimer += Game1.DeltaTime;
 
-            // show the dialog
+                if (_punishTimer >= 50)
+                {
+                    _punishTimer = 0;
+                    Game1.GameManager.CurrentHealth -= 1;
+                }
+            }
+            // Show the dialog.
             if (!_punishDialog && !MapManager.ObjLink.IsTransitioning)
             {
                 Game1.GameManager.StartDialogPath("itemShop_revenge");
@@ -133,21 +150,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _punishDialog = true;
                 _showThunder = true;
             }
-
-            if (_punishCount >= 3200 && _isPunishing)
+            // Finish the punish mode with Link dying and a game over.
+            if (_punishCount >= 3500 && _isPunishing)
             {
                 _isPunishing = false;
                 _showThunder = false;
 
-                Game1.GameManager.SaveManager.SetString("stoleItem", "0");
-
                 Game1.GameManager.UseShockEffect = false;
-
-                // make sure the player actually dies
-                Game1.GameManager.InflictDamage(Game1.GameManager.MaxHearts * 4 * 2);
-                Game1.GameManager.RemoveItem("potion", 1);
+                Game1.GameManager.SaveManager.SetString("punishActive", "0");
+                ((GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]).StartDeath();
             }
-
+            // Make sure to update the player so the death can take place.
             if (MapManager.ObjLink.IsTransitioning || _showThunder)
                 MapManager.ObjLink.UpdatePlayer = false;
         }

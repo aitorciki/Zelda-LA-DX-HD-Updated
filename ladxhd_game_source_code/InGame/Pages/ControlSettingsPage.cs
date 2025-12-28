@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
-using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
@@ -16,7 +14,6 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
         private readonly InterfaceButton _controllerType;
-        private readonly InterfaceSlider _subLangSlider;
         private float _controlCooldown = 0f;
         private bool _showTooltip;
 
@@ -32,7 +29,6 @@ namespace ProjectZ.InGame.Pages
 
             _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Slider: Deadzone

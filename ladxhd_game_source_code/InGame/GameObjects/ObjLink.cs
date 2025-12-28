@@ -1901,33 +1901,48 @@ namespace ProjectZ.InGame.GameObjects
 
         private void OnDeath()
         {
+            // We only need to run this once.
             if (CurrentState == State.Dying)
                 return;
 
-            // has potion?
+            // Check to see if this is death by the shop keeper.
+            bool shopPunish = Game1.GameManager.SaveManager.GetString("stoleItem", "0") == "1";
+            bool shopFinish = Game1.GameManager.SaveManager.GetString("punishActive", "1") == "1";
+
+            // Has potion?
             var potion = Game1.GameManager.GetItem("potion");
-            if (potion != null && potion.Count >= 1)
+
+            // Use the potion if available but not if the death is by the shopkeeper.
+            if (potion != null && potion.Count >= 1 && !shopPunish)
             {
                 Game1.GameManager.RemoveItem("potion", 1);
                 Game1.GameManager.HealPlayer(99);
                 ItemDrawHelper.EnableHeartAnimationSound();
                 return;
             }
+            // Prevent future shopkeeper visits from slaughtering the player.
+            if (shopPunish)
+                Game1.GameManager.SaveManager.SetString("stoleItem", "0");
+
             // If carrying the rooster.
             if (IsFlying())
                 ReleaseCarriedObject();
 
+            // Set the dying state which prevents this from running again.
             CurrentState = State.Dying;
             Animation.Play("dying");
 
+            // Stop the music and play the death sound effect.
             Game1.GameManager.StopMusic(true);
             Game1.GameManager.PlaySoundEffect("D370-08-08");
 
-            // set the correct start frame depending on the direction the player is facing
+            // Set the correct start frame depending on the direction the player is facing
             int[] dirToFrame = { 0, 2, 1, 3 };
             Animation.SetFrame(dirToFrame[Direction]);
 
-            ((GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]).StartDeath();
+            // Begin the game over sequence.
+            if (!shopFinish)
+                ((GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]).StartDeath();
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

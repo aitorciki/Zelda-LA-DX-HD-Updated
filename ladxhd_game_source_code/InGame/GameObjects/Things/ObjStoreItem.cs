@@ -34,7 +34,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             _itemName = itemName;
             _item = Game1.GameManager.ItemManager[itemName];
 
-            if (_item == null)
+            bool shopPunish = Game1.GameManager.SaveManager.GetString("stoleItem", "0") == "1";
+
+            if (_item == null || shopPunish)
             {
                 IsDead = true;
                 return;
@@ -72,19 +74,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Game1.GameManager.SaveManager.SetString("itemShopItem", _itemName);
                 Game1.GameManager.SaveManager.SetString("itemShopPrice", _itemPrice.ToString());
                 Game1.GameManager.SaveManager.SetString("itemShopCount", _itemCount.ToString());
-
                 MapManager.ObjLink.StartHoldingItem(_item);
             }
             else
-            {
-
                 MapManager.ObjLink.StopHoldingItem();
-            }
 
             Game1.GameManager.PlaySoundEffect("D360-19-13");
-
             _holding = !_holding;
-
             return true;
         }
 
