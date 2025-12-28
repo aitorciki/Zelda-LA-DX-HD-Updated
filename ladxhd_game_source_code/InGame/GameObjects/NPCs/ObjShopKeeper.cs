@@ -158,6 +158,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 Game1.GameManager.UseShockEffect = false;
                 Game1.GameManager.SaveManager.SetString("punishActive", "0");
+                Game1.GameManager.SaveManager.DisableHistory();
                 ((GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]).StartDeath();
             }
             // Make sure to update the player so the death can take place.
