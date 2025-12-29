@@ -12,7 +12,8 @@
   * Pushable stones respawn when pushed down holes and when changing fields when classic camera is active.
   * Properly clear the sword damage box and the shield block box when they are no longer in use (fixes strange interactions).
   * Implement ability to grab and pull on most objects. This has no practical use case but was possible in the original game.
-  * When climbing a ladder on a 2D map and reaching the bottom of it, Link will properly transfer to ground instead of climbing. 
+  * Rework grab box so it interacts with objects more precisely and rework pulling animation to match the original game.
+  * When climbing a ladder on a 2D map and reaching the bottom of it, Link will properly transfer to ground instead of climbing.
   * When climbing a ladder on a 2D map and reaching the top of it, Link will perform a small flip.
   * One tile high objects in 2D maps will now push the player to the top of it when jumping into and not quite reaching the top.
   * Most ledges in 2D sections are now slightly sloped so they are easier to jump onto, but are flat when on top of them.
@@ -26,6 +27,7 @@
   * Fix removing the "poking" state when poking is finished. This bugged out the jump fix hack.
   * Fix death sequence to use potion first. This fixes a "stuck in air" bug when dying/healing while flying with the rooster.
   * Fix cracked tiles to always detect when Link is pushing against a stone. Sometimes pushing would prevent them from breaking.
+  * Fix pushable stones so that they can not be pushed when Link is not pushing or is positioned sideways (like when charging).
   * Fix several caves with pushable stones so that their positions reset when crossing over a certain threshold.
   * Fix Marin singing, Great Fairy, Hinox, and Dodongo Snakes to always reset music when leaving current field with Classic Camera.
   * Fix the burning sound effect to have the proper sound which is a combination of two sound effects.
@@ -36,6 +38,7 @@
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
 
 ### **User Interface:**
+  * Update File select screen to show death count, add rupee sprite, clock sprite, and show the collected instruments.
   * File select screen Link sprite: show tunic color, sword if Lvl2 sword collected, and shield if Mirror Shield collected.
   * Tooltips on the various options menus now automatically scale with the resolution and UI scale.
   * Players are now required to enter at least a single character for the save file name on the "New Game" screen.
@@ -161,7 +164,9 @@
   * Throwing the rooster over land no longer causes Link to briefly slide. Throwing it over water the slide was reduced by 50%.
   * Increase the distance when jumping off of cliffs onto land or water below. Also try to push Link slightly when landing in water.
   * Reduce the one-way bridge collider depth to 3 (from 4) which allows throwing the flying rooster and still crossing it.
-  * Seal up the bushes entrance to the hedge maze holding the slime key. It was possible to cheese past it and get to Level 3 dungeon early.
+  * Seal up the bushes entrance to the hedge maze. It was possible to cheese past it and get the Level 3 Slime Key early.
+  * Fix clipping off the raft by walking against the stairs just right. Also add a secret entrance to Rapids Ride using the rooster.
+  * Add a secret entrance into Rapids Ride using the rooster. Can you find the secret entrance and collect everything there?
   * Cracked rocks will no longer show the message when holding bombs and ice blocks don't show the message if magic rod is obtained.
   * Fix the rooster from being drawn in the background layer when borrowing it from the hen house (after dungeon 8 is complete).
   * Fix crossing a hole reset point while flying with the rooster from storing the Z position which reset Link in the air.
@@ -198,6 +203,7 @@
   * Dungeon doors now make the same hollow "clank" sound when poked as bombable walls like the original games.
   * Jars that contain a fairy and are respawned no longer contain a new fairy after it has been respawned.
   * Pull bridges found in dungeon 8 now reset on a field change when Classic Camera is enabled.
+  * Barriers have been added to always animate lists which should fix all the issues people experienced with them over time.
   * Ice Blocks (found in underground maps in dungeon 8) respawn when changing fields when classic camera is active.
   * Fix the falling animation when being dropped into a 2D underground map: Link flips and faces north.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
