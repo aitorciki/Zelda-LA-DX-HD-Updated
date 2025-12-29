@@ -4459,7 +4459,7 @@ namespace ProjectZ.InGame.GameObjects
             var spawnPosition = new Vector3(EntityPosition.X + _arrowOffset[Direction].X, EntityPosition.Y + _arrowOffset[Direction].Y + (Map.Is2dMap ? -4 : 0), EntityPosition.Z + (Map.Is2dMap ? 0 : 4));
             
             if (cast2d_arrows)
-                spawnPosition = new Vector3(EntityPosition.X + _arrowOffset[Direction].X, EntityPosition.Y + _arrowOffset[Direction].Y + (Map.Is2dMap ? -4 : 0), EntityPosition.Z + (Map.Is2dMap ? 0 : 4));
+                spawnPosition = new Vector3(EntityPosition.X + _arrowOffset[Direction].X, (EntityPosition.Y + _arrowOffset[Direction].Y + (Map.Is2dMap ? -4 : 0)) - (EntityPosition.Z + (Map.Is2dMap ? 0 : 4)), 0);
 
             Map.Objects.SpawnObject(new ObjArrow(Map, spawnPosition, Direction, Game1.GameManager.PieceOfPowerIsActive ? (arrows_speed + 1) : arrows_speed));
 
