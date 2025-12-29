@@ -179,8 +179,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             // Must be closest stone, no other stone is moving, impact push type, in idle state, and not heavy without power bracelet.
-            if (!IsClosestStone(direction) || type == PushableComponent.PushType.Impact || 
-                _aiComponent.CurrentStateId != "idle" || (_type == 1 && Game1.GameManager.StoneGrabberLevel <= 0))
+            if (!IsClosestStone(direction) || type == PushableComponent.PushType.Impact || _aiComponent.CurrentStateId != "idle" || (_type == 1 && Game1.GameManager.StoneGrabberLevel <= 0))
+                return false;
+
+            // Link must be pushing and his facing direction must match with the push direction.
+            if (!MapManager.ObjLink.WasPushing || AnimationHelper.GetDirection(direction) != MapManager.ObjLink.Direction)
                 return false;
 
             // Get the direction the stone should move.

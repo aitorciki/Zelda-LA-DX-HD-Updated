@@ -454,6 +454,8 @@ namespace ProjectZ.InGame.GameObjects
         public bool FreezeWorldAroundPlayer;
         public bool FreezeWorldForEvents;
 
+        public bool WasPushing;
+
         //====================
         // Mod File Values
         //====================
@@ -1084,10 +1086,6 @@ namespace ProjectZ.InGame.GameObjects
 
             UpdateGhostSpawn();
 
-            // stop push animation
-            if (CurrentState == State.Pushing)
-                CurrentState = State.Idle;
-
             _lastFieldState = _body.CurrentFieldState;
 
             // If shadows is disabled then draw a sprite shadow.
@@ -1109,6 +1107,15 @@ namespace ProjectZ.InGame.GameObjects
             }
             // Update sprite shadow if normal shadows are disabled.
             UpdateSpriteShadow();
+
+            // Stop pushing animation but store it for use in other places.
+            WasPushing = false;
+            if (CurrentState == State.Pushing)
+            {
+                // WasPushing can be used outside of ObjLink to know if he was pushing or not.
+                WasPushing = true;
+                CurrentState = State.Idle;
+            }
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
