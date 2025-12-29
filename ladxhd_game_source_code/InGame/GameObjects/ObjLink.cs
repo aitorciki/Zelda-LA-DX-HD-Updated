@@ -4540,7 +4540,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private RectangleF GetGrabRectangle(int dir, float size)
         {
-            float bias = 0.08f;
+            float bias = 0.16f;
             float recX = EntityPosition.X + _walkDirection[dir].X * (_body.Width / 2) - 1 - (bias / 2);
             float recY = EntityPosition.Y - _body.Height / 2 + _walkDirection[dir].Y * (_body.Height / 2) - 1 - (bias / 2);
             return new RectangleF(recX, recY, size + bias, size + bias);
