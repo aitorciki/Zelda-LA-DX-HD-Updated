@@ -11,6 +11,7 @@ namespace ProjectZ.InGame.SaveLoad
             public int MaxHearts;
             public int CurrentHealth;
             public int CurrentRupees;
+            public int Deaths;
             public int CloakType;
             public float TotalPlaytime;
             public bool SwordLevel2;
@@ -36,6 +37,7 @@ namespace ProjectZ.InGame.SaveLoad
                     SaveStates[i].CurrentHealth = saveManager.GetInt("currentHealth");
                     SaveStates[i].MaxHearts = saveManager.GetInt("maxHearts");
                     SaveStates[i].CurrentRupees = saveManager.GetInt("rubyCount", 0);
+                    SaveStates[i].Deaths = saveManager.GetInt("deathCount", 0);
                     SaveStates[i].CloakType = saveManager.GetInt("cloak", 0);
                     SaveStates[i].TotalPlaytime = saveManager.GetFloat("totalPlaytime", 0.0f);
                     SaveStates[i].SwordLevel2 = saveManager.HasSwordLevel2;

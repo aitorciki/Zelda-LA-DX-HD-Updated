@@ -3,14 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.Interface;
 
-class InterfacePlayerImage : InterfaceImage
+class InterfaceImagePlayer : InterfaceImage
 {
     private readonly Animator _player;
     private readonly Animator _sword;
 
     public bool ShowSword;
 
-    public InterfacePlayerImage(Animator player, Animator sword, Texture2D texture, Rectangle source, Point size, Point margin) : base(texture, source, size, margin)
+    public InterfaceImagePlayer(Animator player, Animator sword, Texture2D texture, Rectangle source, Point size, Point margin) : base(texture, source, size, margin)
     {
         _player = player;
         _sword = sword;

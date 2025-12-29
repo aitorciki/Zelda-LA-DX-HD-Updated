@@ -358,6 +358,24 @@ namespace ProjectZ.InGame.Things
                 new Rectangle(rectangle.X + 32 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height), _relictColorTwo, 0, Vector2.Zero, sprite.Scale, SpriteEffects.None, 0);
         }
 
+        public static void DrawInstrument(SpriteBatch spriteBatch, DictAtlasEntry sprite, Vector2 position, float uiScale)
+        {
+            var rectangle = sprite.ScaledRectangle;
+            var finalScale = sprite.Scale * uiScale;
+
+            spriteBatch.Draw(Resources.SprItem, position,
+                new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height),
+                Color.White, 0, Vector2.Zero, finalScale, SpriteEffects.None, 0);
+
+            spriteBatch.Draw(Resources.SprItem, position,
+                new Rectangle(rectangle.X + 16 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height),
+                _relictColorOne, 0, Vector2.Zero, finalScale, SpriteEffects.None, 0);
+
+            spriteBatch.Draw(Resources.SprItem, position,
+                new Rectangle(rectangle.X + 32 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height),
+                _relictColorTwo, 0, Vector2.Zero, finalScale, SpriteEffects.None, 0);
+        }
+
         public static void DrawRelictBackground(SpriteBatch spriteBatch, Vector2 position)
         {
             // draw the background
