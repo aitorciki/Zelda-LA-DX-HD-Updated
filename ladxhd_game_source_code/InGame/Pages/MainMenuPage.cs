@@ -247,8 +247,8 @@ namespace ProjectZ.InGame.Pages
                 HorizontalMode = true,
                 Selectable = true
             };
-            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_settings", element => Game1.UiPageManager.ChangePage(typeof(SettingsPage))));
-            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_quit", element => Game1.UiPageManager.ChangePage(typeof(ExitGamePage))));
+            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_settings", element => OpenSettingsPage()));
+            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_quit", element => OpenExitGamePage()));
 
             _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
             _mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "main_menu_select_header", new Point(width, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -257,6 +257,26 @@ namespace ProjectZ.InGame.Pages
 
             PageLayout = _mainLayout;
             PageLayout.Select(InterfaceElement.Directions.Top, false);
+        }
+
+
+        public void HideInstruments()
+        {
+            for (var i = 0; i < SaveStateManager.SaveCount; i++)
+                for (var j = 0; j < _instrumentSprites.Length; j++)
+                    _instrumentImages[i][j].Hidden = true;
+        }
+
+        public void OpenSettingsPage()
+        {
+            HideInstruments();
+            Game1.UiPageManager.ChangePage(typeof(SettingsPage));
+        }
+
+        public void OpenExitGamePage()
+        {
+            HideInstruments();
+            Game1.UiPageManager.ChangePage(typeof(ExitGamePage));
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
@@ -547,7 +567,7 @@ namespace ProjectZ.InGame.Pages
                 _savePlaytime[i].SetText(playtimeText);
 
                 // Load the player's collected instruments.
-                for (var j = 0; j < 8; j++)
+                for (var j = 0; j < _instrumentSprites.Length; j++)
                     _instrumentImages[i][j].Hidden = !SaveStateManager.SaveStates[i].Instruments[j];
             }
         }
