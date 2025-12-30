@@ -48,6 +48,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+
+            // Reset this value when entering the building so NPC doesn't get stuck.
+            Game1.GameManager.SaveManager.SetString("trendy_npc", "0");
         }
 
         private void Update()
@@ -77,11 +80,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void OnKeyChange()
         {
             // Disable the interact component when the game starts.
-            string npcActive = Game1.GameManager.SaveManager.GetString("trendy_npc", "0");
-            _interactComponent.IsActive = npcActive == "0";
+            bool npcActive = Game1.GameManager.SaveManager.GetString("trendy_npc", "0") == "0";
+            _interactComponent.IsActive = npcActive;
 
             // Remove the string when no longer needed.
-            if (npcActive == "0")
+            if (npcActive)
                 Game1.GameManager.SaveManager.RemoveString("trendy_npc");
         }
 
