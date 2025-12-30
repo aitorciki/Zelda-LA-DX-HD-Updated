@@ -1540,8 +1540,12 @@ namespace ProjectZ.InGame.GameObjects
             if (!string.IsNullOrEmpty(moveValue))
             {
                 CurrentState = State.Idle;
+
+                // If the player was dashing reset anything related.
                 _bootsHolding = false;
                 _bootsRunning = false;
+                _bootsWasRunning = false;
+                Animation.SpeedMultiplier = 1.0f;
 
                 var split = moveValue.Split(',');
                 var directionX = float.Parse(split[0], CultureInfo.InvariantCulture);
