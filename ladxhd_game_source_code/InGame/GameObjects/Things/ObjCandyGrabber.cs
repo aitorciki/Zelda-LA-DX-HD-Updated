@@ -297,6 +297,16 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var objBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
                 if ((gameObject is ObjItem || _marinGame) && objBody.BodyBox.Box.Intersects(_grabberRectangle))
                 {
+                    // When grabbing an item, set the item's save key so the game knows when to end. The 
+                    // exception is when the item is the Yoshi Doll. If setting the key and leaving it would 
+                    // disappear forever so we also use an alternate key "trendy_5" which is set when grabbed.
+                    if (gameObject is ObjItem objitem)
+                    {
+                        if (objitem._itemName == "trade0")
+                            Game1.GameManager.SaveManager.SetString("trendy_5", "1");
+                        else
+                            Game1.GameManager.SaveManager.SetString(objitem.SaveKey, "1");
+                    }
                     StartGrabbing(objBody);
                     return;
                 }
