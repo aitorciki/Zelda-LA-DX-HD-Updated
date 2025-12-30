@@ -657,6 +657,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _aiComponent.CurrentStateId != "preDamaged" && _aiComponent.CurrentStateId != "damaged" &&
                 _aiComponent.CurrentStateId != "attack" && _aiComponent.CurrentStateId != "wobble" && _aiComponent.CurrentStateId != "standUp"))
             {
+                _shownIntroText = true;
                 _aiComponent.ChangeState("preDamaged");
                 _aiDamageState.OnHit(gameObject, direction, hitType, 0, pieceOfPower);
                 return Values.HitCollision.Repelling;
