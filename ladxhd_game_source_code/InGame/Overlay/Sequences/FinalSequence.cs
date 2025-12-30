@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Overlay.Sequences
@@ -707,7 +708,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                         _screen6Counter = 0;
                         _marSeagull = null;
                         _marinSeagull = false;
-
                         ExitToIntro();
                     }
                 }
@@ -767,12 +767,27 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
         private void ExitToIntro()
         {
+            // Clear the save state and disable history as we don't want to save "final" stuff.
+            SaveGameSaveLoad.ClearSaveState();
+            Game1.GameManager.SaveManager.RevertHistory();
+            Game1.GameManager.SaveManager.DisableHistory();
+
+            // Remove the last boss keys so the player can fight them again.
+            Game1.GameManager.SaveManager.RemoveString("killed_final_boss");
+            Game1.GameManager.SaveManager.RemoveString("spawn_final_stairs");
+            Game1.GameManager.SaveManager.RemoveString("final_boss_death");
+
             // Restore classic camera setting to what it was before the stairs sequence.
             GameSettings.ClassicCamera = Game1.StoredClassicCam;
             Game1.ScaleChanged = true;
             Game1.ScreenManager.ChangeScreen(Values.ScreenNameIntro);
             Game1.GameManager.InGameOverlay.CloseOverlay();
             Game1.StoredClassicCam = false;
+
+            // Set the save file's cleared state and save.
+            Game1.GameManager.GameCleared = true;
+            SaveGameSaveLoad.SaveGame(Game1.GameManager, true);
+
         }
 
         private bool NextCredits()

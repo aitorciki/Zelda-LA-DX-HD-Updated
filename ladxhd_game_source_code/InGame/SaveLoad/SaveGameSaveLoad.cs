@@ -101,6 +101,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("guardianAcornCount", gameManager.GuardianAcornCount);
             saveManager.SetInt("pieceOfPowerCount", gameManager.PieceOfPowerCount);
             saveManager.SetFloat("totalPlaytime", gameManager.TotalPlaytime + gameManager.CurrentSessionPlaytime);
+            saveManager.SetBool("cleared", gameManager.GameCleared);
 
             saveManager.SetBool("debugMode", gameManager.DebugMode);
 
@@ -201,6 +202,7 @@ namespace ProjectZ.InGame.SaveLoad
             gameManager.DeathCount = saveManager.GetInt("deathCount", 0);
             gameManager.KillCount = saveManager.GetInt("killCount", 0);
             gameManager.TotalPlaytime = saveManager.GetFloat("totalPlaytime", 0.0f);
+            gameManager.GameCleared = saveManager.GetBool("cleared", false);
             gameManager.CurrentSessionPlaytime = 0.0f;
 
             gameManager.DebugMode = saveManager.GetBool("debugMode", false);

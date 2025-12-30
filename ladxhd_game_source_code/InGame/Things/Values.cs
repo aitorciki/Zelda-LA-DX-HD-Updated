@@ -14,7 +14,7 @@ namespace ProjectZ.InGame.Things
         public static Color ColorUiEditor = new Color(41, 57, 85) * 0.85f;
 
         public static Color MenuButtonColor = new Color(40, 64, 128);
-        public static Color MenuButtonColorSelected = new Color(112, 144, 216);
+        public static Color MenuButtonColorSelected = new Color(90, 110, 170);
         public static Color MenuButtonColorSlider = new Color(40, 64, 128);
 
         public static Color MenuButtonColorDisabled = new Color(100, 100, 100);

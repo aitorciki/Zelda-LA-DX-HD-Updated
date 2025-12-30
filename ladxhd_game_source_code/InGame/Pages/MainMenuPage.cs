@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -33,7 +34,14 @@ namespace ProjectZ.InGame.Pages
         private DictAtlasEntry _clockSprite;
         private InterfaceImage[] _clockImages = new InterfaceImage[SaveStateManager.SaveCount];
 
+        private DictAtlasEntry _deathSprite;
+        private InterfaceImage[] _deathImages = new InterfaceImage[SaveStateManager.SaveCount];
+
+        private DictAtlasEntry _shellSprite;
+        private InterfaceImage[] _shellImages = new InterfaceImage[SaveStateManager.SaveCount];
+
         private InterfaceLabel[] _deathLabels = new InterfaceLabel[SaveStateManager.SaveCount];
+        private InterfaceLabel[] _saveShells = new InterfaceLabel[SaveStateManager.SaveCount];
 
         private DictAtlasEntry[] _instrumentSprites = new DictAtlasEntry[8];
         private InterfaceElement[][] _instrumentImages = new InterfaceElement[SaveStateManager.SaveCount][];
@@ -51,6 +59,9 @@ namespace ProjectZ.InGame.Pages
         private InterfaceListLayout _menuBottomBar;
         private InterfaceListLayout _saveFileList;
 
+        private Color textGoldColor;
+        private float textGoldTimer;
+
         private string[] cloakColors = new string[SaveStateManager.SaveCount];
 
         private int _selectedSaveIndex;
@@ -66,6 +77,8 @@ namespace ProjectZ.InGame.Pages
             _heartSprite = Resources.GetSprite("heart menu");
             _rupeeSprite = Resources.GetSprite("ui ruby");
             _clockSprite = Resources.GetSprite("ui clock");
+            _deathSprite = Resources.GetSprite("ui skull");
+            _shellSprite = Resources.GetSprite("ui shell");
 
             for (int i = 0; i < 8; i++)
                 _instrumentSprites[i] = Resources.GetSprite($"instrument{i}");
@@ -87,25 +100,21 @@ namespace ProjectZ.InGame.Pages
 
                 // To make this much simpler to tweak, use fixed sizes for everything.
                 var numberWidth = 12;
-                var heartsWidth = 64;
-                var middleWidth = 50;
-                var instrumentsWidth = 75;
+                var heartsWidth = 60;
+                var middleWidth = 64;
+                var instrumentsWidth = 64;
 
-                var saveSlotNumber = new InterfaceLabel(null, new Point(numberWidth, 28), Point.Zero)
-                { Gravity = InterfaceElement.Gravities.Left };
+                var saveSlotNumber = new InterfaceLabel(null, new Point(numberWidth, 28), Point.Zero) { Gravity = InterfaceElement.Gravities.Left };
+
                 saveSlotNumber.SetText((i + 1).ToString());
                 _saveButtonLayouts[i].AddElement(saveSlotNumber);
 
                 var saveInfoLayout = new InterfaceListLayout { HorizontalMode = true, Size = new Point(saveButtonRec.X - numberWidth, saveButtonRec.Y), Gravity = InterfaceElement.Gravities.Right };
 
-                // Current Heart Count / Death Count
+                // Heart Count / Death Count / Shell Count
                 {
-                    var hearts = new InterfaceListLayout
-                    {
-                        Size = new Point(heartsWidth, 40)
-                    };
-
-                    // Heart Rows.
+                    // Heart Count
+                    var hearts = new InterfaceListLayout { Size = new Point(heartsWidth, 40) };
                     var rowOne = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Left };
                     var rowTwo = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Left };
 
@@ -119,19 +128,38 @@ namespace ProjectZ.InGame.Pages
                     }
                     hearts.AddElement(rowOne);
                     hearts.AddElement(rowTwo);
-
-                    // Spacer to push label down by 1 pixel.
                     hearts.AddElement(new InterfaceListLayout { Size = new Point(1, 1) });
 
                     // Death Count
-                    _deathLabels[i] = new InterfaceLabel(Resources.GameFont, "", new Point(heartsWidth - 6, 0), new Point(0, 0))
-                    {
-                        Margin = new Point(3, 5),
-                        TextAlignment = InterfaceElement.Gravities.Left
-                    };
-                    hearts.AddElement(_deathLabels[i]);
+                    var deathRow = new InterfaceListLayout { HorizontalMode = true, Size = new Point(heartsWidth / 2 - 2, 10), Margin = new Point(3, 5), ContentAlignment = InterfaceElement.Gravities.Left };
+
+                    _deathImages[i] = new InterfaceImage(_deathSprite.Texture, _deathSprite.SourceRectangle, Point.Zero, new Point(1, 1)) { Margin = new Point(0, 1) };
+                    _deathLabels[i] = new InterfaceLabel(null, new Point(heartsWidth / 2 - 12, 10), Point.Zero) { Margin = new Point(2, 0), TextAlignment = InterfaceElement.Gravities.Left };
+
+                    deathRow.AddElement(_deathImages[i]);
+                    deathRow.AddElement(_deathLabels[i]);
+
+                    // Shell Count
+                    var shellRow = new InterfaceListLayout { HorizontalMode = true, Size = new Point(heartsWidth - 6, 10), Margin = new Point(3, 0), ContentAlignment = InterfaceElement.Gravities.Left };
+                    var shellLabel = new InterfaceLabel(null, new Point(heartsWidth - 20, 10), Point.Zero) { Margin = new Point(2, 0), TextAlignment = InterfaceElement.Gravities.Left };
+
+                    _shellImages[i] = new InterfaceImage(_shellSprite.Texture, _shellSprite.SourceRectangle, Point.Zero, new Point(1, 1)) { Margin = new Point(0, 1) };
+
+                    shellRow.AddElement(_shellImages[i]);
+                    shellRow.AddElement(shellLabel);
+
+                    _saveShells ??= new InterfaceLabel[SaveStateManager.SaveCount];
+                    _saveShells[i] = shellLabel;
+
+                    // Add Death Count and Shell Count to a row below hearts.
+                    var statsRow = new InterfaceListLayout { HorizontalMode = true, Size = new Point(heartsWidth, 10), Margin = new Point(0, 0), ContentAlignment = InterfaceElement.Gravities.Left };
+
+                    statsRow.AddElement(deathRow);
+                    statsRow.AddElement(shellRow);
+                    hearts.AddElement(statsRow);
                     saveInfoLayout.AddElement(hearts);
                 }
+
                 // Name / Rupees / Playtime
                 {
                     // Name
@@ -349,6 +377,29 @@ namespace ProjectZ.InGame.Pages
                 else
                     _playerAnimation.Play("green");
             }
+            // Cycle the text to a gold color if certain criteria is met.
+            textGoldTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float cycle = 3.75f;
+            float speed = MathF.Tau / cycle;
+            float timer = (MathF.Sin(textGoldTimer * speed) + 1f) * 0.5f;
+            int blueval = (int)MathHelper.Lerp(100, 255, timer);
+            textGoldColor = new Color(255, 255, blueval);
+
+            // Cylcle the gold color if conditions are met.
+            for (var i = 0; i < SaveStateManager.SaveCount; i++)
+            {
+                bool goldNames = SaveStateManager.SaveStates[i].GameCleared && !SaveStateManager.SaveStates[i].Thief;
+                bool goldRupee = SaveStateManager.SaveStates[i].CurrentRupees >= 999;
+                bool goldDeath = SaveStateManager.SaveStates[i].Deaths == 0 && SaveStateManager.SaveStates[i].GameCleared;
+                bool goldShell = SaveStateManager.SaveStates[i].CurrentShells >= 26;
+                bool goldTimer = SaveStateManager.SaveStates[i].GameCleared;
+
+                _saveNames[i].TextColor    = goldNames ? textGoldColor : Color.White;
+                _saveRupees[i].TextColor   = goldRupee ? textGoldColor : Color.White;
+                _deathLabels[i].TextColor  = goldDeath ? textGoldColor : Color.White;
+                _saveShells[i].TextColor   = goldShell ? textGoldColor : Color.White;
+                _savePlaytime[i].TextColor = goldTimer ? textGoldColor : Color.White;
+            }
         }
 
         private void UpdatePlayerAnimation(float transitionSpeed = 0.25f)
@@ -434,6 +485,7 @@ namespace ProjectZ.InGame.Pages
         {
             for (var i = 0; i < SaveStateManager.SaveCount; i++)
             {
+                // Choose the layout based on save data being present or not.
                 if (SaveStateManager.SaveStates[i] == null)
                 {
                     _saveButtons[i].InsideElement = _newGameButtonLayout;
@@ -441,14 +493,6 @@ namespace ProjectZ.InGame.Pages
                 }
                 else
                     _saveButtons[i].InsideElement = _saveButtonLayouts[i];
-                
-                // Draw the player's name. If the player has stolen an item, replace it with the "Thief" name.
-                _saveNames[i].SetText(SaveStateManager.SaveStates[i].Thief 
-                    ? Game1.LanguageManager.GetString("savename_thief", "error") 
-                    : SaveStateManager.SaveStates[i].Name);
-
-                // Load the players rupee count.
-                _saveRupees[i].SetText(SaveStateManager.SaveStates[i].CurrentRupees.ToString());
 
                 // Does the player have: level 2 sword, mirror shield, colored tunic.
                 var sword = SaveStateManager.SaveStates[i].SwordLevel2;
@@ -468,6 +512,33 @@ namespace ProjectZ.InGame.Pages
                 // Player has the mirror shield so show it on Link's sprite.
                 cloakColors[i] = shield ? baseColor + "s" : baseColor;
 
+                // Load the player's hearts.
+                for (var j = 0; j < 14; j++)
+                {
+                    _heartImage[i][j].Hidden = SaveStateManager.SaveStates[i].MaxHearts <= j;
+                    var state = 4 - MathHelper.Clamp(SaveStateManager.SaveStates[i].CurrentHealth - (j * 4), 0, 4);
+                    ((InterfaceImage)_heartImage[i][j]).SourceRectangle = new Rectangle(
+                        _heartSprite.ScaledRectangle.X + (_heartSprite.ScaledRectangle.Width + _heartSprite.TextureScale) * state,
+                        _heartSprite.ScaledRectangle.Y,
+                        _heartSprite.ScaledRectangle.Width, _heartSprite.ScaledRectangle.Height);
+                }
+                // Load the player's death count.
+                int deaths = SaveStateManager.SaveStates[i].Deaths;
+                _deathLabels[i].SetText(deaths.ToString());
+
+                // Load the player's seashell count.
+                int shells = SaveStateManager.SaveStates[i].CurrentShells;
+                _saveShells[i].SetText(shells.ToString());
+
+                // Load the player's name. If the player has stolen replace it with the "Thief".
+                _saveNames[i].SetText(SaveStateManager.SaveStates[i].Thief 
+                    ? Game1.LanguageManager.GetString("savename_thief", "error") 
+                    : SaveStateManager.SaveStates[i].Name);
+
+                // Load the players rupee count.
+                int rupees = SaveStateManager.SaveStates[i].CurrentRupees;
+                _saveRupees[i].SetText(rupees.ToString());
+
                 // Playtime format displays as: HH:MM
                 var totalMinutes = SaveStateManager.SaveStates[i].TotalPlaytime;
                 var hours = (int)(totalMinutes / 60);
@@ -475,30 +546,9 @@ namespace ProjectZ.InGame.Pages
                 var playtimeText = $"{hours:D2}:{minutes:D2}";
                 _savePlaytime[i].SetText(playtimeText);
 
-                // Draw the player's hearts.
-                for (var j = 0; j < 14; j++)
-                {
-                    _heartImage[i][j].Hidden = SaveStateManager.SaveStates[i].MaxHearts <= j;
-
-                    var state = 4 - MathHelper.Clamp(SaveStateManager.SaveStates[i].CurrentHealth - (j * 4), 0, 4);
-
-                    ((InterfaceImage)_heartImage[i][j]).SourceRectangle = new Rectangle(
-                        _heartSprite.ScaledRectangle.X + (_heartSprite.ScaledRectangle.Width + _heartSprite.TextureScale) * state,
-                        _heartSprite.ScaledRectangle.Y,
-                        _heartSprite.ScaledRectangle.Width, _heartSprite.ScaledRectangle.Height);
-                }
-                // Draw the player's collected instruments.
+                // Load the player's collected instruments.
                 for (var j = 0; j < 8; j++)
                     _instrumentImages[i][j].Hidden = !SaveStateManager.SaveStates[i].Instruments[j];
-                
-                // Draw the player's death count.
-                if (SaveStateManager.SaveStates[i] != null)
-                {
-                    _deathLabels[i].Hidden = false;
-                    _deathLabels[i].SetText($"µ : {SaveStateManager.SaveStates[i].Deaths}");
-                }
-                else
-                    _deathLabels[i].Hidden = true;
             }
         }
     }

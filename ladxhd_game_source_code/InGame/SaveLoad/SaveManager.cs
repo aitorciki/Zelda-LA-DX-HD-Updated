@@ -16,10 +16,12 @@ namespace ProjectZ.InGame.SaveLoad
         private readonly Dictionary<string, float> _floatDictionary = new Dictionary<string, float>();
         private readonly Dictionary<string, string> _stringDictionary = new Dictionary<string, string>();
 
+        private int _shellCount;
         private bool _hasSwordLevel2;
         private bool _hasMirrorShield;
         private bool[] _hasInstruments;
 
+        public int ShellCount { get => _shellCount; }
         public bool HasSwordLevel2 { get => _hasSwordLevel2; }
         public bool HasMirrorShield { get => _hasMirrorShield; }
 
@@ -165,8 +167,16 @@ namespace ProjectZ.InGame.SaveLoad
                                 {
                                     if (strSplit[2] == "sword2:1")
                                         _hasSwordLevel2 = true;
+
                                     if (strSplit[2] == "mirrorShield:1")
                                         _hasMirrorShield = true;
+
+                                    if (strSplit[2].StartsWith("shell:"))
+                                    {
+                                        string count = strSplit[2].Split(':')[1];
+                                        _shellCount = Convert.ToInt32(count);
+                                    }                                       
+
                                     for (int j = 0; j < 8; j++) 
                                     {
                                         if (strSplit[2] == "instrument" + j + ":1")

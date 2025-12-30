@@ -145,21 +145,16 @@ namespace ProjectZ.InGame.Things
 
         public int DeathCount;
         public int KillCount;
-
         public int MaxHearts = 3;
         public int CurrentHealth = 4 * 3;
-
         public int SwordLevel;
         public int ShieldLevel;
         public int StoneGrabberLevel;
-
         public bool HasMagnifyingLens;
-
         public bool DebugMode;
+        public bool GameCleared;
 
-        // 0: marin
-        // 1: mambo
-        // 2: frog
+        // 0: Marin, 1: Manbo, 2: Mamu
         public int[] OcarinaSongs = new int[3];
         public int SelectedOcarinaSong = 0;
 
