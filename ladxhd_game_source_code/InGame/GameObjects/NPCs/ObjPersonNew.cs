@@ -31,10 +31,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private string _currentAnimation;
         private string _spawnCondition;
         private float _lookCounter;
-        private int _lookRange = 32;
+        private int _lookRange = 144;
         private bool _directionMode = true;
 
         private bool _isMoving;
+        private bool _binaryFacing;
         private Vector2 _targetPosition;
         private float _moveSpeed;
 
@@ -46,14 +47,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public ObjPersonNew() : base("person") { }
 
-        public ObjPersonNew(Map.Map map, int posX, int posY, string spawnCondition, string animationId, string dialogId, string animationName, Rectangle bodyRectangle) : base(map)
+        public ObjPersonNew(Map.Map map, int posX, int posY, string spawnCondition, string animationId, string dialogId, string animationName, Rectangle bodyRectangle, bool binaryFacing = false) : base(map)
         {
+            _binaryFacing = binaryFacing;
+
             if (string.IsNullOrEmpty(animationId))
             {
                 IsDead = true;
                 return;
             }
-
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height);
 
@@ -66,7 +68,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 IsDead = true;
                 return;
             }
-
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(Animator, _sprite, Vector2.Zero);
 
@@ -126,9 +127,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             JumpMode();
 
             _lookCounter -= Game1.DeltaTime;
+
             if (!_isMoving && _directionMode && _lookCounter < 0)
             {
-                _lookCounter += 750;
+                _lookCounter += 250;
                 UpdateLookAnimation();
             }
 
@@ -142,24 +144,48 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateLookAnimation()
         {
-            var playerDistance = new Vector2(
-                MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
-                MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
-
-            var dir = 3;
-
-            // rotate in the direction of the player
-            if (playerDistance.Length() < _lookRange)
-                dir = AnimationHelper.GetDirection(playerDistance);
-
-            // look at the player
-            if (_currentAnimation == null)
+            // If the NPC only has two facing directions, set "binaryFacing" on it's constructor.
+            if (_binaryFacing)
             {
-                var animationIndex = Animator.GetAnimationIndex("stand_" + dir);
-                if (animationIndex >= 0)
-                    Animator.Play(animationIndex);
-                else
-                    Animator.Play("stand_" + (playerDistance.Y < 0 ? "1" : "3"));
+                // Get the distance between Link and the NPC as a vector2.
+                var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var playerDistance = playerDirection.Length();
+
+                // Default facing left.
+                var direction = 0;
+
+                // If the player's X value is greater than the NPC's X value face right.
+                if (playerDistance < _lookRange)
+                    if (MapManager.ObjLink.EntityPosition.X > EntityPosition.X)
+                        direction = 2;
+
+                // Update the facing direction.
+                Animator.Play("stand_" + direction);
+            }
+            // If the NPC has four facing directions, use the vector2 method instead.
+            else
+            {
+                // Get the distance between Link and the NPC as a vector2.
+                var playerDistance = new Vector2(
+                    MapManager.ObjLink.EntityPosition.X - (EntityPosition.X), 
+                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
+
+                // Default facing down.
+                var dir = 3;
+
+                // Rotate in the direction of the player.
+                if (playerDistance.Length() < _lookRange)
+                    dir = AnimationHelper.GetDirection(playerDistance);
+
+                // Look at the player.
+                if (_currentAnimation == null)
+                {
+                    var animationIndex = Animator.GetAnimationIndex("stand_" + dir);
+                    if (animationIndex >= 0)
+                        Animator.Play(animationIndex);
+                    else
+                        Animator.Play("stand_" + (playerDistance.Y < 0 ? "1" : "3"));
+                }
             }
         }
 

@@ -605,9 +605,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
                     _sprites[spriteIndex].SpriteEffect = (_animator.CurrentFrame.Sprites[spriteIndex].MirroredV ? SpriteEffects.FlipVertically : 0) |
                                                          (_animator.CurrentFrame.Sprites[spriteIndex].MirroredH ? SpriteEffects.FlipHorizontally : 0);
-
                 }
-
                 _sprites[spriteIndex].Color = Color.White * _transparency;
                 _sprites[spriteIndex].Draw(spriteBatch);
             }

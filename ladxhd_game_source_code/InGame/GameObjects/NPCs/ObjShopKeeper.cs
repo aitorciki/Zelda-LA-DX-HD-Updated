@@ -48,6 +48,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 EntityPosition = new CPosition(posX + 8 - 39, posY + 16 - 32, 0);
                 _animator.Play("stand_3");
             }
+            else
+                _animator.Play("stand_0");
+
             var sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
