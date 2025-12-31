@@ -159,10 +159,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // start walking towards the player?
             var playerDirection = MapManager.ObjLink.EntityPosition.Position - _centerPosition;
             var playerDistance = playerDirection.Length();
+
             if (playerDistance < 56)
             {
                 if (playerDistance > 40)
+                {
                     _aiComponent.ChangeState("move");
+                    var direction = playerDirection.Y < 0 ? "1" : "3";
+                    _firstPerson.Animator.Play("stand_" + direction);
+                    _secondPerson.Animator.Play("stand_" + direction);
+                }
                 else
                     MoveEnd();
             }
@@ -180,12 +186,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _npcGroundCount = 200;
                 }
             }
+            var playerDirection = MapManager.ObjLink.EntityPosition.Position - _firstPerson.EntityPosition.Position;
+            var playerDistance = playerDirection.Length();
 
-            // look towards the player
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - _firstPerson.EntityPosition.Position;
-            if (playerDistance.Length() < 64)
+            if (playerDistance < 64)
             {
-                var direction = playerDistance.Y < 0 ? "1" : "3";
+                var direction = playerDirection.Y < 0 ? "1" : "3";
                 _firstPerson.Animator.Play("stand_" + direction);
                 _secondPerson.Animator.Play("stand_" + direction);
             }
