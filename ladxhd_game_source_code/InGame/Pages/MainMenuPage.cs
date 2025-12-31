@@ -297,7 +297,7 @@ namespace ProjectZ.InGame.Pages
             PageLayout.Deselect(false);
             PageLayout.Select(InterfaceElement.Directions.Top, false);
 
-            UpdatePlayerAnimation(25);
+            UpdatePlayerAnimation();
         }
 
         public override void OnReturn(Dictionary<string, object> intent)
@@ -338,6 +338,8 @@ namespace ProjectZ.InGame.Pages
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
+            base.Update(pressedButtons, gameTime);
+
             // Cycle through the instrument colors.
             ItemDrawHelper.Update();
 
@@ -361,9 +363,6 @@ namespace ProjectZ.InGame.Pages
                 // Load the save file slot.
                 LoadSave(LoadSlot);
             }
-
-            base.Update(pressedButtons, gameTime);
-
             // Update the Link animation on the menu.
             UpdatePlayerAnimation();
 
@@ -425,14 +424,14 @@ namespace ProjectZ.InGame.Pages
             }
         }
 
-        private void UpdatePlayerAnimation(float transitionSpeed = 0.25f)
+        private void UpdatePlayerAnimation()
         {
             // update the animation
             _playerAnimation.Update();
 
             for (var i = 0; i < SaveStateManager.SaveCount; i++)
             {
-                _playerSelectionState[i] = AnimationHelper.MoveToTarget(_playerSelectionState[i], _saveButtons[i].Selected ? 1 : 0, transitionSpeed * Game1.TimeMultiplier);
+                _playerSelectionState[i] = AnimationHelper.MoveToTarget(_playerSelectionState[i], _saveButtons[i].Selected ? 1 : 0, 1);
 
                 _playerImage[i].ImageColor = Color.Lerp(Color.Transparent, Color.White, _playerSelectionState[i]);
                 _playerImage[i].SourceRectangle = _playerAnimation.CurrentFrame.SourceRectangle;
