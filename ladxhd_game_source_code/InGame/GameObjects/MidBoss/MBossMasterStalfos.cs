@@ -361,6 +361,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _aiComponent.ChangeState("walk");
             else
                 _aiComponent.ChangeState("preJump");
+
+            _vulnerable = false;
         }
 
         private void InitPreJump()
