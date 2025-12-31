@@ -17,9 +17,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _colorIndex;
         private readonly string _spriteId;
 
-        private CBox _hardBox;
-        private CBox _softBox;
-        private CBox _dashBox;
+        private CBox _hardCollideBox;
+        private CBox _softCollideBox;
+        private CBox _softHittableBox;
 
         bool light_source = true;
         int light_size = 80;
@@ -55,15 +55,15 @@ namespace ProjectZ.InGame.GameObjects.Things
                 ? new Color(light_red_1, light_grn_1, light_blu_1) * light_bright_1
                 : new Color(light_red_2, light_grn_2, light_blu_2) * light_bright_2;
 
-            _hardBox = new CBox(posX, posY + 4, 0, 16, 12, 16);
-            _softBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
-            _dashBox = new CBox(posX - 2, posY , 8, 20, 18, 8);
+            _hardCollideBox = new CBox(posX, posY + 4, 0, 16, 12, 16);
+            _softCollideBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
+            _softHittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8);
 
             if (_isHardCrystal)
-                AddComponent(PushableComponent.Index, new PushableComponent(_hardBox, OnPush) { InertiaTime = 50 });
+                AddComponent(PushableComponent.Index, new PushableComponent(_hardCollideBox, OnPush) { InertiaTime = 50 });
 
-            AddComponent(HittableComponent.Index, new HittableComponent(_isHardCrystal ? _hardBox : _softBox, OnHit));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_isHardCrystal ? _hardBox : _softBox, Values.CollisionTypes.Normal));
+            AddComponent(HittableComponent.Index, new HittableComponent(_isHardCrystal ? _hardCollideBox : _softHittableBox, OnHit));
+            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_isHardCrystal ? _hardCollideBox : _softCollideBox, Values.CollisionTypes.Normal));
             AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(-8, -16), Values.LayerPlayer));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
