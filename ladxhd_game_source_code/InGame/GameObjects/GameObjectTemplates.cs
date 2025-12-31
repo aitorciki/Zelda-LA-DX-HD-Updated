@@ -527,6 +527,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("person", new GameObjectTemplate(typeof(ObjPerson), new object[] { null, new Rectangle(0, 0, 14, 10), Vector2.Zero, null }));
             ObjectTemplates.Add("personNew", new GameObjectTemplate(typeof(ObjPersonNew), new object[] { null, null, null, null, new Rectangle(0, 0, 14, 10), false }));
             ObjectTemplates.Add("letterBoy", new GameObjectTemplate(typeof(ObjLetterBoy), new object[] { null }));
+            ObjectTemplates.Add("letterGirl", new GameObjectTemplate(typeof(ObjLetterGirl), new object[] { null }));
             ObjectTemplates.Add("maria", new GameObjectTemplate(typeof(ObjMarin), new object[] { }));
             ObjectTemplates.Add("mariaDisabler", new GameObjectTemplate(typeof(ObjMarinDisabler), new object[] { }));
             ObjectTemplates.Add("grandmother", new GameObjectTemplate(typeof(ObjGrandmother), new object[] { null, null }));
