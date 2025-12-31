@@ -1169,11 +1169,7 @@ namespace ProjectZ.InGame.GameObjects
                 //  Draw the sword. Use offset of 6 instead of 7 when 2D Link is swimming and charging.
                 var swordXOffset = (Is2DMode && CurrentState == State.ChargeSwimming) ? 6 : 7;
 
-                AnimatorWeapons.Draw(
-                    spriteBatch,
-                    new Vector2(EntityPosition.X - swordXOffset, EntityPosition.Y - 16 - EntityPosition.Z),
-                    Color.White
-                );
+                AnimatorWeapons.Draw(spriteBatch, new Vector2(EntityPosition.X - swordXOffset, EntityPosition.Y - 16 - EntityPosition.Z), Color.White);
 
                 // Change the draw shader
                 if (changeColor)
