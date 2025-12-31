@@ -108,7 +108,7 @@ namespace ProjectZ.InGame.Pages
             {
                 PageLayout.Select(InterfaceElement.Directions.Top, false);
                 _contentLayout.Deselect(false);
-                _contentLayout.Select(1,true);
+                _contentLayout.Select(0,true);
             }
             else
             {
