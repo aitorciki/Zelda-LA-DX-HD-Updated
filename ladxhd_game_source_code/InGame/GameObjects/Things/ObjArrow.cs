@@ -71,6 +71,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IgnoreHeight = true,
                 IgnoresZ = true,
                 IgnoreInsideCollision = false,
+                IgnoreHoles = true,
                 Level = MapStates.GetLevel(MapManager.ObjLink._body.CurrentFieldState)
             };
 
