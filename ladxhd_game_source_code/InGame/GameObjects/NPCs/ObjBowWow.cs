@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -21,7 +20,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private readonly ObjChain _chain;
 
-        private readonly BodyComponent _body;
+        public readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
@@ -39,6 +38,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _followMode;
 
         public ObjBowWow() : base("bowwow") { }
+
+        private ObjBowWowWater _waterGraphic;
 
         public ObjBowWow(Map.Map map, int posX, int posY, string mode) : base(map)
         {
@@ -128,6 +129,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _currentDirectionOffset = AnimationHelper.DirectionOffset[_direction];
 
             SetFollowMode(_followMode);
+            _waterGraphic = new ObjBowWowWater(Map, posX, posY, this);
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
         }

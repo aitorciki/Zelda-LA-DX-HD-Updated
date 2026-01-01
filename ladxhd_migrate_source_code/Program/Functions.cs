@@ -33,6 +33,7 @@ namespace LADXHD_Migrater
         private static string[] musicTile  = new[] { "musicOverworldClassic.data" };
         private static string[] dungeon3M  = new[] { "dungeon3.map" };
         private static string[] dungeon3D  = new[] { "dungeon3.map.data" };
+        private static string[] animations = new[] { "bowwow_water.ani" };
 
         // THE "KEY" IS THE MASTER FILE THAT CREATES OTHER FILES FROM IT. THE "VALUE" IS THE STRING ARRAY THAT HOLDS THOSE FILES
 
@@ -52,8 +53,8 @@ namespace LADXHD_Migrater
             { "ui.png",               uiImages },
             { "musicOverworld.data", musicTile },
             { "dungeon3_1.map",      dungeon3M },
-            { "dungeon3_1.map.data", dungeon3D }
-
+            { "dungeon3_1.map.data", dungeon3D },
+            { "BowWow.ani",         animations }
         };
 
         // CREATE A REVERSE MAP OF THE DICTIONARY SO IT CAN EASILY BE SEARCHED IN EITHER DIRECTION
