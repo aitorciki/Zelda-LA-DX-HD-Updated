@@ -28,8 +28,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _despawnPercentage = 1;
         private int _dir;
         private bool _isFalling;
+        private bool _arrow2D;
 
         private Vector2[] _bombOffset = new Vector2[] { new Vector2(-4, 0), new Vector2(0, -4), new Vector2(4, 0), new Vector2(0, 6) };
+        private Vector2[] _bombOffset2D = new Vector2[] { new Vector2(-4, 4), new Vector2(0, 0), new Vector2(4, 4), new Vector2(0, 10) };
+
         private ObjBomb _objBomb;
         private bool _bombMode;
         private HitType _hitType = HitType.Bow;
@@ -37,7 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Vector2 _startPosition;
         private Point[] _collisionBoxSize = { new Point(2, 2), new Point(2, 2), new Point(2, 2), new Point(2, 2) };
 
-        public ObjArrow(Map.Map map, Vector3 position, int dir, float speed) : base(map)
+        public ObjArrow(Map.Map map, Vector3 position, int dir, float speed, bool arrow2D) : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-8, -12, 16, 16);
@@ -46,6 +49,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _dir = dir;
             var velocity = AnimationHelper.DirectionOffset[_dir] * speed;
+
+            _arrow2D = arrow2D;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Objects/spear");
             _animator.Play(dir.ToString());
@@ -209,7 +214,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             _objBomb = bomb;
             _body.CollisionTypesIgnore = Values.CollisionTypes.None;
 
-            EntityPosition.AddPositionListener(typeof(ObjBomb), (position) => bomb.EntityPosition.Set(position.Position + _bombOffset[_dir]));
+            var bombOffset = _bombOffset[_dir];
+
+            if (_arrow2D)
+                bombOffset = _bombOffset2D[_dir];
+
+            EntityPosition.AddPositionListener(typeof(ObjBomb), (position) => bomb.EntityPosition.Set(position.Position + bombOffset));
         }
     }
 }
