@@ -167,6 +167,21 @@ namespace ProjectZ.InGame.Overlay
         }
     }
 
+    class DialogActionGetCloak : DialogAction
+    {
+        private readonly string _compare;
+
+        public DialogActionGetCloak(string compare)
+        {
+            _compare = compare;
+        }
+        public override bool Execute()
+        {
+            Game1.GameManager.SaveManager.SetString(_compare, Game1.GameManager.CloakType.ToString());
+            return true;
+        }
+    }
+
     class DialogActionUpdateObjects : DialogAction
     {
         public override bool Execute()

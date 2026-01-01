@@ -766,9 +766,14 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     _cloakPercentage = 1;
 
-                    if (ShowItem.Name == "cloakBlue")
+                    if (ShowItem == null)
+                    {
+                        Game1.GameManager.StartDialog("cloak_green");
+                        Game1.GameManager.CloakType = GameManager.CloakGreen;
+                    }
+                    else if (ShowItem.Name == "cloakBlue")
                         Game1.GameManager.StartDialog("cloak_blue");
-                    if (ShowItem.Name == "cloakRed")
+                    else if (ShowItem.Name == "cloakRed")
                         Game1.GameManager.StartDialog("cloak_red");
 
                     CurrentState = State.CloakShow1;
@@ -1409,7 +1414,9 @@ namespace ProjectZ.InGame.GameObjects
             var texture = _sprite.SprTexture;
 
             var cloakColor = Game1.GameManager.CloakColor;
-            if (CurrentState == State.CloakShow0 && ShowItem != null && ShowItem.Name == "cloakBlue")
+            if (CurrentState == State.CloakShow0 && ShowItem == null)
+                cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[0], _cloakPercentage);
+            else if (CurrentState == State.CloakShow0 && ShowItem != null && ShowItem.Name == "cloakBlue")
                 cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[1], _cloakPercentage);
             else if (CurrentState == State.CloakShow0 && ShowItem != null && ShowItem.Name == "cloakRed")
                 cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[2], _cloakPercentage);
@@ -1524,11 +1531,18 @@ namespace ProjectZ.InGame.GameObjects
                 _cloakTransitionCounter = 0;
                 _cloakPercentage = 0;
                 _cloakTransitionOutCounter = 0;
-
                 Game1.GameManager.SaveManager.RemoveString(strCloak);
                 Game1.GameManager.SaveManager.SetString(strCloak, "0");
-
                 CurrentState = State.CloakShow0;
+            }
+            if (cloakTransition == "2")
+            {
+                _cloakTransitionCounter = 0;
+                _cloakPercentage = 0;
+                _cloakTransitionOutCounter = 0;
+                Game1.GameManager.SaveManager.RemoveString(strCloak);
+                Game1.GameManager.SaveManager.SetString(strCloak, "0");
+                CurrentState = State.CloakShow1;
             }
 
             // Movement was forced through "script.zScript".

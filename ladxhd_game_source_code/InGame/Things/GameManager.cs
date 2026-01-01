@@ -1364,7 +1364,6 @@ namespace ProjectZ.InGame.Things
                     baseItem = Game1.GameManager.ItemManager[item.Name];
                 }
             }
-
             if (itemCollected.Name == "cloakBlue")
                 CloakType = CloakBlue;
             else if (itemCollected.Name == "cloakRed")

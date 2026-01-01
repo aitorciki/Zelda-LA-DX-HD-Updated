@@ -109,6 +109,10 @@ namespace ProjectZ.InGame.SaveLoad
             {
                 path.Action.Add(new DialogActionGetVariable(stringSplit[1], stringSplit[2], stringSplit[3]));
             }
+            else if (stringSplit[0] == "cloak")
+            {
+                path.Action.Add(new DialogActionGetCloak(stringSplit[1]));
+            }
             else if (stringSplit[0] == "check_item")
             {
                 var itemCount = int.Parse(stringSplit[2]);
