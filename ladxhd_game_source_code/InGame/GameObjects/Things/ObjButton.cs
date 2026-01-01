@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _strKey = strKey;
 
-            _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, 3, 3, 10, 10, 2), Values.CollisionTypes.Normal);
+            _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, 5, 3, 6, 3, 2), Values.CollisionTypes.Normal);
             _sprite = new DrawSpriteComponent("button", EntityPosition, Vector2.Zero, Values.LayerBottom);
 
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX + 3, posY + 3, 10, 10), OnCollision));
