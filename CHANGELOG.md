@@ -1,6 +1,6 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
-## **v1.5.0 (Pre-Release)**
+## **v1.5.0**
 ### **The "Awakening From the Dream" Update**
 
 ### **General:**
@@ -37,6 +37,7 @@
   * Fix old save files to work with "Nothing is Missable" option which allows getting the followers back and other stuff.
   * Fix cuccos from being targetable during a "cucco swarm" after attacking one 35 times.
   * Fix a Raven from taking off during the ending cutscene causing the "wings flapping" sound to play.
+  * Fix the ending credits so that the final part of the music somewhat lines up when "THE END" pops up on the screen.
   * Fix the secret ending seagull chants to be evenly spaced apart like in the original game.
 
 ### **User Interface:**
@@ -48,6 +49,7 @@
   * Reverse the player's current hearts on the File Selection screen to go from left to right instead of right to left.
   * Added a new "Controls" page where control options are now located, remapping can be done, as well as a new "Dead Zone" option.
   * Separate analog input from directional pad input logic. This allows Dead Zone to not affect D-Pad but can disable analog.
+  * Replace the Cyrillic characters (Russian) in both the normal and variable width fonts with new, more fitting fonts.
   * Add a new Input Option called "Digital Analog" which forces the analog stick to move Link in 8 directions like the D-Pad.
   * Add "Game Type" option to the New Game menu. Options are: Use Settings, Modern, Classic, and Hybrid which mostly affect camera.
   * Rename option "Damage Screen Shake" to "Screen Shake Effects" and disable all screen shake effects when it toggled off.
@@ -60,8 +62,10 @@
   * Photo, picture, and painting sequences can now be skipped sooner by pressing the "Start" button.
   * Skipping a dialog with the Start button now rapidly scrolls the text and closes the box instead of just closing the box.
   * Block pressing "Start" to open the inventory screen during a number of events and cutscenes.
+  * Fix French font characters "œ" and "Œ" which were not showing up because they were using the wrong Unicode character.
   * Fix skipping text during "question" dialogs by pressing "Start" to not cut off the text when skipping.
   * Fix showing sepia photos after photo sequences when Redux option "Colored Photos" is disabled.
+  * Fix the Redux option "Variable Width Font" from moving the selection downward after toggling.
   * Fix the "space" character in the variable width font to take up less space. It now matches the ROM hack it was based on.
   * Fix the Trendy Game showing the correct buttons if they were remapped when giving the player instructions.
   * Fix several typos and missing text from the books found at the library. Also fix mistake in Papahl's dialog.
@@ -87,6 +91,7 @@
   * Fix shield appearing on Link when swallowed by a Like Like. It will now properly disappear and reappear depending on equipped status.
   * Fix firing Arrows and Magic Rod shots to make contact and damage enemies when jumping and the enemy & projectile sprites overlap.
   * Fix playing the "holding" animation when jumping onto the Level 2 sword sprite after turning in 20 shells in Seashell Mansion.
+  * Fix being able to use bombs while jumping in the air. This doesn't have any practical use but was like this in the original game.
   * Fix Piece of Power/Guardian Acorn status between map transitions. It is kept when current/next map are either a cave or a dungeon.
   * Fix being able to fire projectiles outside of several 2D maps (such as the "Bridge" map and "Seashell Mansion").
   * Fix hookshot from occasionally firing extremely fast if pressed at just the right time by adding a small cooldown of 75ms.
@@ -120,9 +125,11 @@
   * Fix enemy Bombite to bounce off the sword when held outward in a charge state without the sword being put away afterwards.
   * Fix enemy Cheep Cheep from launching the player if jumped on just right while slightly in the water.
   * Fix enemy Crows from being invincible while perched in a tree. Only the Crow near Kanalet Castle should be invincible on the tree.
+  * Fix enemy Darknut size and fix the spawn position when blowing up the walls they are imprisoned inside.
   * Fix enemy Gel to properly respawn when changing fields in classic camera instead of burning to death off screen.
   * Fix enemy Goomba to lose it's collision box when set on fire (does not affect Goombas on 3D maps, aka Level 7 dungeon).
   * Fix enemy Hardhat Beetle to be killable by Bow Wow or bombs. This also spawns a bomb after death. Also remove initial idle delay.
+  * Fix enemy Karakoro to be walkable when thrown into a hole. Also fix resetting their states during a Classic Camera field transition.
   * Fix enemy Keese to not be affected by conveyor belts. Dungeon 3 is about the only place this is relevant.
   * Fix enemy Leevers from spawning on the ledges above the cave in the desert where Link can't reach by adding collision.
   * Fix enemy Like Like taking damage from items when swallowed. Link now also takes damage from outside sources when trapped.
@@ -161,6 +168,7 @@
   * Play the secret sound in Richard's Villa when pushing the box to open the passage to the Slime Key.
   * Add a secret sound to the shortcut passageway near Level 4 dungeon when pushing the rock into the hole and creating a shortcut.
   * Update Bow Wow's teleportation behavior when jumping into a world teleporter. It's still not perfect but improved.
+  * Bow Wow now has water effects when in deep water. Includes a water effect around him and a splash is played when bouncing. 
   * In the cave passage to Tal Tal Mountain range, respawn the skull in the room with the large hookshot gap and chest.
   * Prevent players from jumping to Marin when stuck on the bridge by adding an invisible barrier, forcing hookshot usage.
   * Don't spawn the owl if Marin is saved on the bridge and Level 8 dungeon was completed before Level 7 dungeon.
@@ -213,6 +221,7 @@
   * Pull bridges found in dungeon 8 now reset on a field change when Classic Camera is enabled.
   * Barriers have been added to always animate lists which should fix all the issues people experienced with them over time.
   * Ice Blocks (found in underground maps in dungeon 8) respawn when changing fields when classic camera is active.
+  * It's now possible to return to the Great Fairy in the Color Dungeon to restore clothes back to green.
   * Fix the falling animation when being dropped into a 2D underground map: Link flips and faces north.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
   * Fix horse heads to not be able to clip through the wall if standing beside/parallel from the wall and throwing it.
@@ -223,6 +232,7 @@
   * Fix dungeon 1 to remove a crystal structure that did not exit in the original game. It could also get in the way of classic camera.
   * Fix dungeon 2 underground area that has a vase to be able to throw the vase while climbing a ladder.
   * Fix dungeon 3 bombable walls around the nightmare key room to not have cracks. This is how it was in the original game.
+  * Fix dungeon 4 button near the water so it's possible to walk onto the button from the water.
   * Fix dungeon 5 nightmare key room to be blacked out in normal camera. This room is supposed to be hidden from the player.
   * Fix dungeon 5 entrance so that there is enough space to stand and play the ocarina before entering the dungeon door.
   * Fix dungeon 5 missing leave button that resets block positions and push multiple buttons inward towards the room to reset sooner.
