@@ -3,12 +3,12 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Systems;
-using ProjectZ.InGame.GameObjects.NPCs;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.NPCs
 {
     internal class ObjBowWowWater : GameObject
     {
