@@ -1856,7 +1856,7 @@ namespace ProjectZ.InGame.Things
                     SaveManager.SetInt("posY", SavePositionY);
                 }
                 // Increment the save version.
-                SaveManager.SetString("save_version", SaveFileVersion);
+                SaveManager.SetString("save_version", "3");
             }
         }
 
