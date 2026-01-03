@@ -225,9 +225,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             // A smaller hitbox is used for sword attacks on bushes.
-            if (_hasCollider &&
-                (hitType & HitType.Sword) != 0 &&
-                gameObject is ObjLink player && !player.IsPoking)
+            if (_hasCollider && gameObject is ObjLink player && (player.IsPoking || (hitType & HitType.Sword) != 0))
             {
                 var collidingRec = player.SwordDamageBox.Rectangle().GetIntersection(_hittableBox.Box.Rectangle());
                 var collidingArea = collidingRec.Width * collidingRec.Height;

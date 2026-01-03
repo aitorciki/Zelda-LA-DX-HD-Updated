@@ -603,17 +603,13 @@ namespace ProjectZ.InGame.GameObjects
             };
 
             _sprite = new CSprite(EntityPosition);
-            // cant just change the offset value without changing the blocking rectangle
-            var animatorComponent = new AnimationComponent(Animation, _sprite, new Vector2(_animationOffsetX, _animationOffsetY));
-
-            // custom draw function
             _drawBody = new BodyDrawComponent(_body, DrawLink, Values.LayerPlayer);
             _bodyDrawFunction = _drawBody.Draw;
             _drawBody.Draw = Draw;
 
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(BaseAnimationComponent.Index, animatorComponent);
+            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(Animation, _sprite, new Vector2(_animationOffsetX, _animationOffsetY)));
             AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Player));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, _drawBody);
@@ -1171,7 +1167,7 @@ namespace ProjectZ.InGame.GameObjects
                     ObjectManager.SpriteBatchBegin(spriteBatch, Resources.DamageSpriteShader0);
                 }
 
-                //  Draw the sword. Use offset of 6 instead of 7 when 2D Link is swimming and charging.
+                // Draw the sword. Use offset of 6 instead of 7 when 2D Link is swimming and charging.
                 var swordXOffset = (Is2DMode && CurrentState == State.ChargeSwimming) ? 6 : 7;
 
                 AnimatorWeapons.Draw(spriteBatch, new Vector2(EntityPosition.X - swordXOffset, EntityPosition.Y - 16 - EntityPosition.Z), Color.White);
