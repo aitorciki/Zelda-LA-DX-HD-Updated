@@ -119,6 +119,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public ObjMarin() : base("marin") { }
 
+        private ObjPhotoMouse _photoMouse;
+
         public ObjMarin(Map.Map map, int posX, int posY) : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
@@ -670,36 +672,44 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             // ---------------------------------------------------------------------
             // PHOTO SEQUENCE: Everything below here is part of the photo sequence.
-
-            // Make sure that the player does not walk before Marin
-            // hits the ground he could potentially collect the heart.
-            if (_fountainMouse)
-                Link.FreezePlayer();
-
             if (!_fountainSeqInit && _fountainSequence)
             {
+                // Set Marin to the proper height.
                 _fountainSeqInit = true;
                 EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y - 8));
-            }
 
+                // If Link dodges Marin the PhotoMouse is already spawned, so set the facing animation
+                // pointing upward. Also disable interactions with the PhotoMouse while we are here.
+                var objects = Map.Objects.GetObjectsOfType(typeof(ObjPhotoMouse));
+                if (objects.Count > 0)
+                {
+                    var photoMouse = (ObjPhotoMouse)objects[0];
+                    photoMouse.DisableInteractions();
+                    photoMouse.PlayAnimation("stand_1");
+                }
+            }
+            // Marin has fallen and hit the ground.
             if (_fountainSequence && _body.IsGrounded)
             {
                 _fountainSequence = false;
                 _fountainMouse = false;
 
-                var playerDist = Link.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y + 4);
-                var fallenOnLink = playerDist.Length() < 8;
+                // Check the distance between Link and Marin when she lands to determine a collision.
+                var playerDist = Link.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y);
+                var fallenOnLink = playerDist.Length() < 5;
 
+                // Store whether Marin fell on Link or he dodged her.
                 Game1.GameManager.SaveManager.SetString("fallen_on_link", (fallenOnLink ? "1" : "0"));
                 Game1.GameManager.StartDialogPath("seq_fountain");
 
+                // Play a screen shake when falling on Link.
                 if (fallenOnLink)
                 {
                     Game1.GameManager.ShakeScreen(450, 0, 2, 0, 5);
                     Game1.GameManager.PlaySoundEffect("D360-11-0B");
                 }
             }
-
+            // ---------------------------------------------------------------------
             // Jump when Link jumps or when rail jumping.
             if (Link.IsJumpingState() && _body.IsGrounded && !inDeepWater &&
                 (Link.RailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
