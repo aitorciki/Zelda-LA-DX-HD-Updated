@@ -141,9 +141,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Pools
         public void DrawPool(SpriteBatch spriteBatch, int posX, int posY, int width, int height, int startLayer, int endLayer)
         {
             var left = posX / TileWidth;
-            var right = (posX + width) / TileWidth;
+            var right = (posX + width + TileWidth - 1) / TileWidth;
             var top = posY / TileHeight;
-            var bottom = (posY + height) / TileHeight;
+            var bottom = (posY + height + TileHeight - 1) / TileHeight;
 
             left = MathHelper.Clamp(left, 0, ComponentTiles.GetLength(0) - 1);
             right = MathHelper.Clamp(right, 0, ComponentTiles.GetLength(0) - 1);
