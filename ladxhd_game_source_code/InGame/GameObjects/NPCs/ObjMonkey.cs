@@ -34,6 +34,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _direction;
 
         private bool _initBusiness;
+        private bool _fightMode;
         private const int FadeTime = 150;
 
         private int _directionChangeCounter = 0;
@@ -47,14 +48,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
-            // already build the bridge?
             var value = Game1.GameManager.SaveManager.GetString("monkeyBusiness");
             if (value == "3")
             {
                 IsDead = true;
                 return;
             }
-
             _resetPosition = EntityPosition.Position;
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
@@ -68,7 +67,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Drag = 0.85f,
                 Gravity = -0.15f
             };
-
             var randomDir = (Game1.RandomNumber.Next(0, 50) / 50.0f) * MathF.PI * 2;
             _endPosition = new Vector2(EntityPosition.X + 8, EntityPosition.Y - 24) +
                            new Vector2(MathF.Sin(randomDir), MathF.Cos(randomDir)) * 150;
@@ -115,11 +113,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("leave", stateLeave);
             _aiComponent.States.Add("fade", stateFade);
 
-            // start by locking into a random direction
+            // Start by locking into a random direction.
             _direction = Game1.RandomNumber.Next(0, 2);
             _animator.Play("idle_" + _direction);
             _aiComponent.ChangeState("waiting");
-
             _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer);
 
             AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, OnInteract));
@@ -132,6 +129,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
 
+            if (Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1")
+            {
+                Tags = Values.GameObjectTag.Enemy;
+                _bowWow = (ObjBowWow)Map.Objects.GetObjectOfType((int)EntityPosition.X - 120, (int)EntityPosition.Y - 120, 240, 240, typeof(ObjBowWow));
+                _hitCooldown.State = true;
+            }
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
@@ -139,53 +142,48 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void KeyChanged()
         {
             var value = Game1.GameManager.SaveManager.GetString("monkeyBusiness");
-
             if (!_initBusiness && value == "1")
             {
                 _initBusiness = true;
                 ToBanana();
             }
             else if (_aiComponent.CurrentStateId != "leave" && _aiComponent.CurrentStateId != "fade" && value == "3")
-            {
                 ToLeave();
-            }
         }
 
         private bool OnInteract()
         {
             Game1.GameManager.StartDialogPath("castle_monkey");
-
             return true;
+        }
+
+        private void StartBowWowFight()
+        {
+            if (_fightMode)
+                return;
+
+            _fightMode = true;
+            _aiComponent.ChangeState("sit");
+            Game1.GameManager.StartDialogPath("castle_monkey");
+            Tags = Values.GameObjectTag.Enemy;
+            _bowWow = (ObjBowWow)Map.Objects.GetObjectOfType((int)EntityPosition.X - 80, (int)EntityPosition.Y - 40, 160, 160, typeof(ObjBowWow));
         }
 
         private void UpdateWaiting()
         {
             var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
-
             if (distance.Length() < 24)
             {
-                // start fighting with the bowwow
                 var bowWowState = Game1.GameManager.SaveManager.GetString("bowWow");
                 if (bowWowState == "2" || bowWowState == "3")
-                {
-                    _aiComponent.ChangeState("sit");
-                    Game1.GameManager.StartDialogPath("castle_monkey");
-                    Tags = Values.GameObjectTag.Enemy;
-
-                    // search the bowwow
-                    _bowWow = (ObjBowWow)Map.Objects.GetObjectOfType(
-                        (int)EntityPosition.X - 80, (int)EntityPosition.Y - 40, 160, 160, typeof(ObjBowWow));
-                }
+                    StartBowWowFight();
             }
         }
 
         private void ToSit()
         {
             _aiComponent.ChangeState("sit");
-
-            // stop and wait
             _body.Velocity = Vector3.Zero;
-
             _animator.Play("idle_" + _direction);
         }
 
@@ -197,10 +195,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void ToJump()
         {
             _aiComponent.ChangeState("jump");
-
             Vector2 direction;
 
-            // _bowWow should actually never be null...
             if (_bowWow != null)
             {
                 if (!_body.FieldRectangle.Contains(_bowWow.EntityPosition.Position))
@@ -208,23 +204,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _aiComponent.ChangeState("sit");
                     return;
                 }
-
-                // jump towards the bowwow
+                // Jump towards Bow Wow.
                 direction = _bowWow.EntityPosition.Position - EntityPosition.Position;
                 if (direction != Vector2.Zero)
                     direction.Normalize();
             }
             else
             {
-                // change the direction
+                // Change the direction.
                 var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
                 direction = new Vector2(
                     (float)Math.Sin(rotation),
                     (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
             }
-
             _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, 1.75f);
-
             _direction = direction.X < 0 ? 0 : 1;
             _animator.Play("jump_" + _direction);
         }
@@ -232,8 +225,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateJump()
         {
             DamageTick();
-
-            // finished jumping
             if (_body.IsGrounded)
                 ToSit();
         }
@@ -247,12 +238,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Tags = Values.GameObjectTag.None;
                 return;
             }
-
             _direction = EntityPosition.X < _resetPosition.X ? 1 : 0;
-            // jump up
             _body.Velocity = new Vector3(_direction == 0 ? -0.5f : 0.5f, -1, 2.0f);
             _animator.Play("jump_" + _direction);
-
             _body.CollisionTypes = Values.CollisionTypes.None;
         }
 
@@ -276,7 +264,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _currentLives = MaxLives;
                 EntityPosition.Set(_resetPosition);
                 _aiComponent.ChangeState("waiting");
-
                 _damageCounter = 0;
                 _body.CollisionTypes = Values.CollisionTypes.Normal |
                                        Values.CollisionTypes.NPCWall;
@@ -287,7 +274,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _animator.Play("jump_1");
             _aiComponent.ChangeState("banana");
-
             Game1.GameManager.PlaySoundEffect("D360-01-01");
         }
 
@@ -301,9 +287,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateBusiness()
         {
-            // freeze the player while the big business is happening
+            // Freeze the player while the bridge is being built.
             MapManager.ObjLink.FreezePlayer();
-
             Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
@@ -315,8 +300,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _direction = (_direction + 1) % 2;
                 _animator.Play("idle_" + _direction);
             }
-
-            // done to reset the direction change trigger
             _aiComponent.ChangeState("business");
         }
 
@@ -341,7 +324,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _direction = direction.X < 0 ? 0 : 1;
             _animator.Play("jump_" + _direction);
 
-            // start fading away
+            // Start fading out.
             if (distance < 48)
                 _aiComponent.ChangeState("fade");
         }
@@ -350,7 +333,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _sprite.Color = Color.White * (float)(time / FadeTime);
 
-            // delete the monkey after it is faded away
+            // Delete the monkey after it has faded out.
             if (time <= 0)
                 Map.Objects.DeleteObjects.Add(this);
         }
@@ -369,7 +352,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_aiComponent.CurrentStateId != "banana")
                 return;
 
-            // draw the banana
+            // Draw the banana sprite.
             var sourceRectangle = Game1.GameManager.ItemManager["trade3"].SourceRectangle;
             spriteBatch.Draw(Resources.SprItem, new Vector2(EntityPosition.X - 8, EntityPosition.Y - 30), sourceRectangle, Color.White);
         }
@@ -379,9 +362,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (!_hitCooldown.State || hitType != HitType.BowWow)
                 return Values.HitCollision.None;
 
+            if (hitType == HitType.BowWow)
+                StartBowWowFight();
+
             Game1.GameManager.PlaySoundEffect("D360-03-03");
 
-            // fighting with the great bowwow?
             _damageCounter = DamageTime;
 
             _currentLives--;
@@ -398,7 +383,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void OnCollision(Values.BodyCollision moveCollision)
         {
-            // finished jumping?
             if (_aiComponent.CurrentStateId == "leave" && moveCollision.HasFlag(Values.BodyCollision.Floor))
             {
                 _waitTimer.Reset();
@@ -410,26 +394,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 _body.Velocity = Vector3.Zero;
             }
-
             if (_aiComponent.CurrentStateId == "flee" && moveCollision.HasFlag(Values.BodyCollision.Floor))
                 _aiComponent.ChangeState("fleeSit");
 
             if (_aiComponent.CurrentStateId != "jump")
                 return;
 
-            // repel after wall collision
             if (moveCollision.HasFlag(Values.BodyCollision.Horizontal))
                 _body.Velocity.X *= -0.25f;
             else if (moveCollision.HasFlag(Values.BodyCollision.Vertical))
                 _body.Velocity.Y *= -0.25f;
-        }
-
-        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
-        {
-            if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction * 1.25f, _body.Velocity.Z);
-
-            return true;
         }
     }
 }
