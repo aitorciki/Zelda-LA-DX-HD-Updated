@@ -77,7 +77,8 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.SwGrabWorldItem = saveManager.GetBool("SwGrabWorldItem", GameSettings.SwGrabWorldItem);
             GameSettings.SwGrabFairy = saveManager.GetBool("SwGrabFairy", GameSettings.SwGrabFairy);
             GameSettings.SwGrabSmallKey = saveManager.GetBool("SwGrabSmallKey", GameSettings.SwGrabSmallKey);
-            GameSettings.SwItemSmack = saveManager.GetBool("SwItemSmack", GameSettings.SwItemSmack);
+            GameSettings.SwBoomerang = saveManager.GetBool("SwBoomerang", GameSettings.SwBoomerang);
+            GameSettings.SwSmackBombs = saveManager.GetBool("SwSmackBombs", GameSettings.SwSmackBombs);
             GameSettings.SwMissileBlock = saveManager.GetBool("SwMissileBlock", GameSettings.SwMissileBlock);
             GameSettings.SwBreakPots = saveManager.GetBool("SwBreakPots", GameSettings.SwBreakPots);
             GameSettings.SwBeamShrubs = saveManager.GetBool("SwBeamShrubs", GameSettings.SwBeamShrubs);
@@ -156,7 +157,8 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("SwGrabWorldItem", GameSettings.SwGrabWorldItem);
             saveManager.SetBool("SwGrabFairy", GameSettings.SwGrabFairy);
             saveManager.SetBool("SwGrabSmallKey", GameSettings.SwGrabSmallKey);
-            saveManager.SetBool("SwItemSmack", GameSettings.SwItemSmack);
+            saveManager.SetBool("SwBoomerang", GameSettings.SwBoomerang);
+            saveManager.SetBool("SwSmackBombs", GameSettings.SwSmackBombs);
             saveManager.SetBool("SwMissileBlock", GameSettings.SwMissileBlock);
             saveManager.SetBool("SwBreakPots", GameSettings.SwBreakPots);
             saveManager.SetBool("SwBeamShrubs", GameSettings.SwBeamShrubs);

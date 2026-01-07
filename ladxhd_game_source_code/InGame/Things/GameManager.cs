@@ -244,7 +244,6 @@ namespace ProjectZ.InGame.Things
             UpdateSoundEffects();
             UpdateMusic();
 
-
             ItemDrawHelper.Update();
 
             // Update the dialogs. "ForceDialogUpdate" is used in sequences where the dialog should be updated but the rest of the

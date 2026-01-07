@@ -311,7 +311,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return false;
 
             // push the bomb away
-            if (type == PushableComponent.PushType.Impact && GameSettings.SwItemSmack && _playerBomb)
+            if (type == PushableComponent.PushType.Impact && GameSettings.SwSmackBombs && _playerBomb)
             {
                 Body.Drag = 0.85f;
                 Body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, Body.Velocity.Z);
@@ -334,7 +334,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Block the sword from smacking it around unless the player enabled it.
             if ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0 || (hitType & HitType.SwordHold) != 0 || (hitType & HitType.SwordShot) != 0 || (hitType & HitType.ClassicSword) != 0 || (hitType & HitType.PegasusBootsSword) != 0)
-                if ((!enemy_interact && !_playerBomb) || !GameSettings.SwItemSmack)
+                if ((!enemy_interact && !_playerBomb) || !GameSettings.SwSmackBombs)
                     return Values.HitCollision.None;
 
             // Block other item interactions unless the player enabled it.

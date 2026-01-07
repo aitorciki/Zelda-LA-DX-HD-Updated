@@ -23,7 +23,7 @@ namespace ProjectZ.InGame.Pages
             _swordSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
-            var buttonHeight = 15;
+            var buttonHeight = 13;
 
             _swordSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_sword_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -53,11 +53,17 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.SwGrabSmallKey = newState; });
             _contentLayout.AddElement(toggleSwordGrabKeys);
 
-            // Button: Ricochet Items
-            var toggleRicochetItems = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_sword_itemsmack", GameSettings.SwItemSmack, 
-                newState => { GameSettings.SwItemSmack = newState; });
-            _contentLayout.AddElement(toggleRicochetItems);
+            // Button: Bounce Boomerang
+            var toggleBounceBoomerang = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_sword_boomerang", GameSettings.SwBoomerang, 
+                newState => { GameSettings.SwBoomerang = newState; });
+            _contentLayout.AddElement(toggleBounceBoomerang);
+
+            // Button: Bounce Bombs
+            var toggleBounceBombs = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_sword_bouncebombs", GameSettings.SwSmackBombs, 
+                newState => { GameSettings.SwSmackBombs = newState; });
+            _contentLayout.AddElement(toggleBounceBombs);
 
             // Button: Sword Block Projectiles
             var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
@@ -152,10 +158,11 @@ namespace ProjectZ.InGame.Pages
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_grabworlditem", "error"); break; }
                 case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_grabfairy", "error"); break; }
                 case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_grabsmallkeys", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_itemsmack", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_swordblock", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_breakpots", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_beamshrubs", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_boomerang", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_bouncebombs", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_swordblock", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_breakpots", "error"); break; }
+                case 8:  { tooltip = Game1.LanguageManager.GetString("tooltip_sword_beamshrubs", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

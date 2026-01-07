@@ -55,14 +55,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             _spawnCounter += Game1.DeltaTime;
 
-            // only start showing the sprite after the spawn time
             if (_spawnCounter > SpawnTime)
             {
                 if (_spawnCounter > DespawnTime)
-                    // fade out
                     _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - DespawnTime) / FadeOutTime, 0, 1));
                 else
-                    // fade in
                     _sprite.Color = Color.White * Math.Clamp((_spawnCounter - SpawnTime) / FadeInTime, 0, 1);
 
                 if (_spawnCounter > DespawnTime + FadeOutTime)

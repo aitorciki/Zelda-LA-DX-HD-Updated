@@ -65,7 +65,8 @@
         public static bool    SwGrabWorldItem =  false;
         public static bool    SwGrabFairy     =  false;
         public static bool    SwGrabSmallKey  =  false;
-        public static bool    SwItemSmack     =  false;
+        public static bool    SwBoomerang     =  false;
+        public static bool    SwSmackBombs    =  false;
         public static bool    SwMissileBlock  =  false;
         public static bool    SwBreakPots     =  false;
         public static bool    SwBeamShrubs    =  false;
