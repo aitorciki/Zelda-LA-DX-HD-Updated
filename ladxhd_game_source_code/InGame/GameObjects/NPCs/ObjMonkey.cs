@@ -128,6 +128,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             if (Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1")
             {
@@ -137,6 +138,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
             Map.Objects.RegisterAlwaysAnimateObject(this);
+        }
+
+        private void Update()
+        {
+            if (_body.IsGrounded)
+                _body.Velocity = Vector3.Zero;
         }
 
         private void Reset()

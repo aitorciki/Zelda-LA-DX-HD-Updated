@@ -414,7 +414,6 @@ namespace ProjectZ.InGame.Overlay
         public void ChoiceUpdate()
         {
             var newSelection = _currentChoiceSelection;
-
             var direction = ControlHandler.GetMoveVector2();
             var dir = AnimationHelper.GetDirection(direction);
 
