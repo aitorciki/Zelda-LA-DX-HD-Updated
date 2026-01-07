@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
@@ -25,8 +26,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public const int BlinkTime = 1000 / 60 * 4;
 
-        private const int ExplosionTime = 1500;
-
         private double _bombCounter;
         private double _explosionTime;
         private double _lastHitTime;
@@ -37,8 +36,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _exploded;
         private bool _arrowMode;
 
-        public ObjBomb(Map.Map map, float posX, float posY, bool playerBomb, bool floorExplode, int explosionTime = ExplosionTime) : base(map)
+        // Default values modifiable with "lahdmod".
+        private int fuse_timer = 1500;
+        private bool item_interact = false;
+        private bool enemy_interact = false;
+        private bool fire_detonates = false;
+        private bool arrow_pickup = false;
+
+        public ObjBomb(Map.Map map, float posX, float posY, bool playerBomb, bool floorExplode, int explosionTime = 1500) : base(map)
         {
+            string modFile = Path.Combine(Values.PathModFolder, "ObjBomb.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             // For some reason, getting the map from the parameter avoids a crash that *sometimes* happens when shooting a bomb arrow into the 
             // mouth of a Dodongo Snake. This was originally coded to use "Map" directly, but for reasons unknown it could end up being null!
             _map = map;
@@ -75,7 +86,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             _animator.OnAnimationFinished = FinishedAnimation;
             _animator.Play("idle");
 
-            _explosionTime = explosionTime;
+            if (fuse_timer != 1500)
+                _explosionTime = fuse_timer;
+            else
+                _explosionTime = explosionTime;
+
             _bombCounter = _explosionTime;
 
             var sprite = new CSprite(EntityPosition);
@@ -189,7 +204,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool CarryUpdate(Vector3 newPosition)
         {
-            _bombCounter = ExplosionTime;
+            _bombCounter = fuse_timer;
 
             EntityPosition.X = newPosition.X;
 
@@ -296,7 +311,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return false;
 
             // push the bomb away
-            if (GameSettings.SwItemSmack && type == PushableComponent.PushType.Impact)
+            if (type == PushableComponent.PushType.Impact && GameSettings.SwItemSmack && _playerBomb)
             {
                 Body.Drag = 0.85f;
                 Body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, Body.Velocity.Z);
@@ -307,22 +322,31 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            // If "Classic Sword" is enabled, do not let the sword interact.
-            if (!GameSettings.SwItemSmack && ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0  || (hitType & HitType.SwordHold) != 0 || 
-                (hitType & HitType.SwordShot) != 0 || (hitType & HitType.ClassicSword) != 0 || (hitType & HitType.PegasusBootsSword) != 0))
+            // Allow exploding bombs with the magic rod or magic powder.
+            if (fire_detonates && (hitType == HitType.MagicPowder || hitType == HitType.MagicRod))
             {
-                return Values.HitCollision.None;
+                _bombCounter = 0;
+                return Values.HitCollision.Blocking;
             }
-            // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
-            if (!_playerBomb || hitType == HitType.CrystalSmash || hitType == HitType.Boomerang || hitType == HitType.Bomb || 
-                hitType == HitType.MagicRod || hitType == HitType.Hookshot || hitType == HitType.MagicPowder || hitType == HitType.ThrownObject)
-            {
+            // If it's crystal smash do not do anything.
+            if (hitType == HitType.CrystalSmash)
                 return Values.HitCollision.None;
-            }
+
+            // Block the sword from smacking it around unless the player enabled it.
+            if ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0 || (hitType & HitType.SwordHold) != 0 || (hitType & HitType.SwordShot) != 0 || (hitType & HitType.ClassicSword) != 0 || (hitType & HitType.PegasusBootsSword) != 0)
+                if ((!enemy_interact && !_playerBomb) || !GameSettings.SwItemSmack)
+                    return Values.HitCollision.None;
+
+            // Block other item interactions unless the player enabled it.
+            if (hitType == HitType.Boomerang || hitType == HitType.Bomb || hitType == HitType.MagicRod || hitType == HitType.Hookshot || hitType == HitType.MagicPowder || hitType == HitType.ThrownObject)
+                if ((!enemy_interact && !_playerBomb) || !item_interact)
+                    return Values.HitCollision.None;
+
             // Combine with arrows to create a bomb-arrow.
-            if (_playerBomb && _bombCounter + 175 > _explosionTime && gameObject is ObjArrow objArrow)
+            if (_playerBomb && !_exploded && (_bombCounter + 175 > _explosionTime || arrow_pickup) && gameObject is ObjArrow objArrow)
             {
                 _arrowMode = true;
+                _bombCounter = fuse_timer;
                 Body.IgnoresZ = true;
                 Body.IgnoreHoles = true;
                 Body.Velocity = Vector3.Zero;
