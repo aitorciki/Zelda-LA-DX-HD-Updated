@@ -1,5 +1,8 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.5.2b**
+  * Fix a serious issue with the dialog path system that could break game logic when multiple actions happened at once.
+  
 ## **v1.5.2**
 ### The "Monkeying Around With Swords" Update
   * Add a sub-menu to "Modifiers" that expands "Extra Sword Interactions" and offers a ton of new sword options.
