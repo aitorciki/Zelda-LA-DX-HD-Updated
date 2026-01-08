@@ -399,8 +399,6 @@ namespace ProjectZ.InGame.Things
         public void StartDialogPath(string dialogKey)
         {
             CurrentDialogKey = dialogKey;
-
-            _dialogPathQueue.Clear();
             _dialogPathQueue.Enqueue(dialogKey);
         }
 
