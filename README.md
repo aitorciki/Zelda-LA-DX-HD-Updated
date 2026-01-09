@@ -26,6 +26,24 @@ If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Open the patcher. Press the "Patch" button.
 - When it is done, the patcher can be deleted.
 
+### Silent Mode (Automated Patching)
+
+The patcher supports silent mode for automated installations and scripts:
+
+```
+LADXHD.Patcher.exe --silent
+```
+
+| Option | Description |
+|--------|-------------|
+| `--silent`, `-s` | Run without GUI prompts |
+| `--help`, `-h` | Show help message |
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | Success |
+| 1 | Game executable not found |
+| 2 | Patching failed |
 ## Running on Linux with Proton
 
 Quick Start (Recommended) - Use the automated installer for a hassle-free setup:
