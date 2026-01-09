@@ -26,6 +26,25 @@ If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Open the patcher. Press the "Patch" button.
 - When it is done, the patcher can be deleted.
 
+### Silent Mode (Automated Patching)
+
+The patcher supports silent mode for automated installations and scripts:
+
+```
+LADXHD.Patcher.exe --silent
+```
+
+| Option | Description |
+|--------|-------------|
+| `--silent`, `-s` | Run without GUI prompts |
+| `--help`, `-h` | Show help message |
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | Success |
+| 1 | Game executable not found |
+| 2 | Patching failed |
+
 ## About This Repository
 
 A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
