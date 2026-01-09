@@ -44,6 +44,13 @@ LADXHD.Patcher.exe --silent
 | 0 | Success |
 | 1 | Game executable not found |
 | 2 | Patching failed |
+## Running on Linux with Proton
+
+Quick Start (Recommended) - Use the automated installer for a hassle-free setup:
+
+[zladxhd-installer](https://github.com/jslay88/zladxhd-installer)
+
+otherwise, follow the [Linux guide](./LINUX.md)
 
 ## About This Repository
 
