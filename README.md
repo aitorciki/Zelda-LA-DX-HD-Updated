@@ -26,6 +26,14 @@ If you wish to build the game yourself, see **Personal Build / Publishing**.
 - Open the patcher. Press the "Patch" button.
 - When it is done, the patcher can be deleted.
 
+## Running on Linux with Proton
+
+Quick Start (Recommended) - Use the automated installer for a hassle-free setup:
+
+[zladxhd-installer](https://github.com/jslay88/zladxhd-installer)
+
+otherwise, follow the [Linux guide](./LINUX.md)
+
 ## About This Repository
 
 A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
