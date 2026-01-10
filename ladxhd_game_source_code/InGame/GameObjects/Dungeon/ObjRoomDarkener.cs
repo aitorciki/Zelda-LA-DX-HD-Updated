@@ -37,7 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _sprite = Resources.GetSprite("room blur");
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = Values.LightLayer2 });
+            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = Values.LightLayer0 });
         }
 
         public override void Init()

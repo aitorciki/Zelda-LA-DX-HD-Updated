@@ -384,7 +384,7 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("upperLevel2", new GameObjectTemplate(typeof(ObjUpperLevel), new object[] { 2 }));
 
             ObjectTemplates.Add("dungeonBlackRoom", new GameObjectTemplate(typeof(ObjDungeonBlackRoom), new object[] { null, 160, 128 }));
-            ObjectTemplates.Add("roomDarkener", new GameObjectTemplate(typeof(ObjRoomDarkener), new object[] { 0.8f, 0.3f }));
+            ObjectTemplates.Add("roomDarkener", new GameObjectTemplate(typeof(ObjRoomDarkener), new object[] { 0.8f, 0.1f }));
             ObjectTemplates.Add("colorShift", new GameObjectTemplate(typeof(ObjColorShift), new object[] { 0, 16, 16 }));
             ObjectTemplates.Add("dungeonKeyhole", new GameObjectTemplate(typeof(ObjKeyhole), new object[] { null, null, null }));
             ObjectTemplates.Add("enemytrigger", new GameObjectTemplate(typeof(ObjEnemyTrigger), new object[] { null, false }));
@@ -453,29 +453,29 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("dungeon2dLight", new GameObjectTemplate(typeof(ObjLight), new object[] { 96, 255, 200, 200, 200, 0 }));
             ObjectTemplates.Add("spriteLight", new GameObjectTemplate(typeof(ObjLightSprite), new object[] { null, 255, 255, 255, 100, 0, 0 }));
 
-            ObjectTemplates.Add("lamp", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_floor", 0, true, false, null }));
-            ObjectTemplates.Add("lamp2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_torch", 0, false, false, null }));
-            ObjectTemplates.Add("torch_d2_2d", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_torch_blue", 0, false, false, null }));
-            ObjectTemplates.Add("torch_d4_2d", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d4_d4", 0, false, false, null }));
-            ObjectTemplates.Add("torch_d6_2d", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d6", 0, false, false, null }));
+            ObjectTemplates.Add("lamp", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_floor", 0, true, false, null, true }));
+            ObjectTemplates.Add("lamp2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_torch", 0, false, false, null, true }));
+            ObjectTemplates.Add("torch_d2_2d", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_torch_blue", 0, false, false, null, true }));
+            ObjectTemplates.Add("torch_d4_2d", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d4_d4", 0, false, false, null, true }));
+            ObjectTemplates.Add("torch_d6_2d", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d6", 0, false, false, null, true }));
 
-            ObjectTemplates.Add("lamp_wall_0", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 0, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_1", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 1, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 2, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_3", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 3, false, false, null }));
+            ObjectTemplates.Add("lamp_wall_0", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 0, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_1", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 1, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 2, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_3", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall", 3, false, false, null, true }));
 
-            ObjectTemplates.Add("lamp_wall_house_0", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 0, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_house_1", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 1, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_house_2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 2, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_house_3", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 3, false, false, null }));
+            ObjectTemplates.Add("lamp_wall_house_0", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 0, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_house_1", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 1, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_house_2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 2, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_house_3", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_1", 3, false, false, null, true }));
 
-            ObjectTemplates.Add("lamp_wall_dt_0", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 0, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_dt_1", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 1, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_dt_2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 2, false, false, null }));
-            ObjectTemplates.Add("lamp_wall_dt_3", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 3, false, false, null }));
+            ObjectTemplates.Add("lamp_wall_dt_0", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 0, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_dt_1", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 1, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_dt_2", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 2, false, false, null, true }));
+            ObjectTemplates.Add("lamp_wall_dt_3", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/lamp_wall_2", 3, false, false, null, true }));
 
-            ObjectTemplates.Add("torch_d4", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d4", 0, false, false, null }));
-            ObjectTemplates.Add("torch_d8", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d8", 0, false, false, null }));
+            ObjectTemplates.Add("torch_d4", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d4", 0, false, false, null, true }));
+            ObjectTemplates.Add("torch_d8", new GameObjectTemplate(typeof(ObjLamp), new object[] { "Objects/torch_d8", 0, false, false, null, true }));
 
             ObjectTemplates.Add("dungeonWall", new GameObjectTemplate(typeof(ObjDestroyableBarrier), new object[] { Resources.SourceRectangle("stone_wall_2"), "", 0, true, null }));
             ObjectTemplates.Add("dungeonWall3", new GameObjectTemplate(typeof(ObjDestroyableBarrier), new object[] { Resources.SourceRectangle("stone_wall_3"), "", 0, true, null }));

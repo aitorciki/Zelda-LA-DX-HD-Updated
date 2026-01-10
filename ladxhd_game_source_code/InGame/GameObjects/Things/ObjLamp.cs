@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _liveTime;
 
         private bool _lampKeyState = true;
+        private bool _emitsLight = true;
 
         int powder_time = 9000;
         bool light_source = true;
@@ -32,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         float light_bright = 1.00f;
         int light_size = 160;
 
-        public ObjLamp(Map.Map map, int posX, int posY, string animationName, int rotation, bool hasCollision, bool powderLamp, string lampKey) : base(map)
+        public ObjLamp(Map.Map map, int posX, int posY, string animationName, int rotation, bool hasCollision, bool powderLamp, string lampKey, bool emitslight) : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathModFolder, "ObjLamp.lahdmod");
@@ -76,8 +77,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var collisionBox = new CBox(posX, posY, 0, 16, 16, 16);
                 AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
             }
-
+            _emitsLight = emitslight;
             _powderLamp = powderLamp;
+
             if (_powderLamp)
             {
                 // the collision box is a little bit smaller so that we cant light up two lamps at the same time
@@ -104,7 +106,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, hasCollision ? Values.LayerPlayer : Values.LayerBottom));
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
+
+            if (emitslight)
+                AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
             // The lamps inside the egg must be always animated for classic camera.
             if (lampKey?.Contains("egg_lamps") == true)
