@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                AbsorbPercentage = 0.9f,
+                AbsorbPercentage = 0.85f,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
                                  Values.CollisionTypes.Enemy,

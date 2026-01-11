@@ -70,6 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY, 16),
                 Bounciness = 0.25f,
+                AbsorbPercentage = 0.75f,
                 Drag = 0.85f,
             };
 

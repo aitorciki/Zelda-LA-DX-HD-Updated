@@ -66,7 +66,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _fieldRectangle = map.GetField(posX, posY);
 
-            Body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
+            Body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |
@@ -76,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.NPCWall,
                 FieldRectangle = _fieldRectangle,
                 Bounciness = 0.25f,
-                AbsorbPercentage = 0.9f,
+                AbsorbPercentage = 0.75f,
                 Drag = 0.85f
             };
 

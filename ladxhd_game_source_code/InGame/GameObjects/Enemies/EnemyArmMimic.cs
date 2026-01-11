@@ -44,7 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var sprite = new CSprite(EntityPosition);
             var animatorComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
-            _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 4)
+            _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 4)
             {
                 FieldRectangle = map.GetField(posX, posY),
                 CollisionTypes = Values.CollisionTypes.Normal |
@@ -53,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 AvoidTypes =     Values.CollisionTypes.Hole | 
                                  Values.CollisionTypes.NPCWall,
                 IsSlider = true,
+                AbsorbPercentage = 0.75f,
                 MaxSlideDistance = 4.0f
             };
             var stateUpdate = new AiState(Update);

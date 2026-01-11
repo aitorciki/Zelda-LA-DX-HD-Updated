@@ -57,7 +57,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
                 Drag = 0.85f,
-                AbsorbPercentage = 0.8f
+                AbsorbPercentage = 0.75f
             };
 
             var stateMove = new AiState(UpdateMoving);

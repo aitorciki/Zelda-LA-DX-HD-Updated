@@ -60,6 +60,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.NPCWall,
                 FieldRectangle = fieldRectangle,
                 Bounciness = 0.25f,
+                AbsorbPercentage = 0.75f,
                 Drag = 0.85f,
                 IgnoreHeight = true,
             };

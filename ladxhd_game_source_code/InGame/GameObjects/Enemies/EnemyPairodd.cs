@@ -54,7 +54,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field,
-                FieldRectangle = map.GetField(posX, posY)
+                FieldRectangle = map.GetField(posX, posY),
+                AbsorbPercentage = 0.75f
             };
             var stateIdle = new AiState(UpdateIdle);
             stateIdle.Trigger.Add(_teleportCooldown = new AiTriggerTimer(300));

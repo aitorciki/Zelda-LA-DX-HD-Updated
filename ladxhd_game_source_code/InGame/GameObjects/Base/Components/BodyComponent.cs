@@ -53,7 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public float Bounciness = 0;
         public float Bounciness2D = 0;
         public float SpeedMultiply = 1;
-        public float AbsorbPercentage = 1.0f;
+        public float AbsorbPercentage = 0.85f;
         // not sure why this was changed from beeing zero
         public float AbsorbStop = 0.15f;
         public float MaxSlideDistance = 6.0f;

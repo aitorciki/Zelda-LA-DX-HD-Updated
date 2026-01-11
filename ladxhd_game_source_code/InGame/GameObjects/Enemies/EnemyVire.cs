@@ -65,7 +65,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Gravity = -0.125f,
                 DragAir = 0.975f,
                 Bounciness = 0.25f,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
+                AbsorbPercentage = 0.75f
             };
 
             _roomRectangle = Map.GetField(posX, posY);

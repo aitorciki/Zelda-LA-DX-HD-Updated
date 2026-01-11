@@ -49,7 +49,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Drag = 0.85f,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Player
+                                 Values.CollisionTypes.Player,
+                AbsorbPercentage = 0.75f
             };
             var sprite = new CSprite(EntityPosition);
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/sea urchin");

@@ -51,6 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                                  Values.CollisionTypes.Enemy,
                 AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
+                AbsorbPercentage = 0.75f,
                 Gravity = -0.15f,
                 Bounciness = 0.35f,
                 Drag = 0.8f,
