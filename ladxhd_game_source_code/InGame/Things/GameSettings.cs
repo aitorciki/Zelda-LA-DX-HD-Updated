@@ -9,6 +9,7 @@
         public static int     LastSavePos     =  0;
         public static bool    Autosave        =  true;
         public static bool    ItemsOnRight    =  false;
+        public static bool    EpilepsySafe    =  false;
 
         // Redux Settings
         public static bool    VarWidthFont    =  false;
@@ -33,9 +34,10 @@
         public static int     UiScale         =  11;
         public static bool    IsFullscreen    =  false;
         public static bool    ExFullscreen    =  false;
+        public static bool    GlobalLighting  =  false;
+        public static bool    ObjectLighting  =  false;
         public static bool    EnableShadows   =  true;
         public static bool    VerticalSync    =  true;
-        public static bool    EpilepsySafe    =  false;
 
         // Audio Settings
         private static int    _musicVolume    =  100;

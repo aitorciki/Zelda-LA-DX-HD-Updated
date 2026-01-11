@@ -7,6 +7,7 @@ using ProjectZ.Editor;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Bosses;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.GameObjects.MidBoss;
 using ProjectZ.InGame.GameObjects.NPCs;

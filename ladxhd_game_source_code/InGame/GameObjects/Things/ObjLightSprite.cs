@@ -43,11 +43,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IsDead = true;
                 return;
             }
-
             EntitySize = new Rectangle(0, 0, _sprite.SourceRectangle.Width, _sprite.SourceRectangle.Height);
 
             _position = new Vector2(EntityPosition.X + _sprite.Origin.X, EntityPosition.Y + _sprite.Origin.Y);
-
             _lightColor = new Color(colorR, colorG, colorB) * (colorA / 255f);
             _rotation = rotation * MathF.PI / 2;
 
@@ -56,9 +54,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
-            if (light_source)
+            if (light_source && GameSettings.ObjectLighting)
+            {
                 spriteBatch.Draw(_sprite.Texture, _position, _sprite.ScaledRectangle, 
                     _lightColor, _rotation, _sprite.ScaledOrigin, _sprite.Scale, SpriteEffects.None, 0);
+            }
         }
     }
 }

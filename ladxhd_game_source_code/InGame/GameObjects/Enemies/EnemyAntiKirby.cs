@@ -8,6 +8,7 @@ using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
+using ProjectZ.InGame.GameObjects.Effects;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {

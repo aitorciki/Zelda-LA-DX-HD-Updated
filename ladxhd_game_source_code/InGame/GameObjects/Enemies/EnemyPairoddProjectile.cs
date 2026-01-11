@@ -1,11 +1,14 @@
+using Assimp.Unmanaged;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
+using SharpDX.Direct3D9;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -79,9 +82,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Despawn()
         {
             // spawn despawn effect
-            var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/swordPoke", "run", true);
+            var animation = new ObjSparkingEffect(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0);
             Map.Objects.SpawnObject(animation);
-
             Map.Objects.DeleteObjects.Add(this);
         }
     }

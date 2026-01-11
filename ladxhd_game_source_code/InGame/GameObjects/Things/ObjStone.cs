@@ -4,6 +4,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 

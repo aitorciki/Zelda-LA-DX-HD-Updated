@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -27,7 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         bool _lastEpSafe;
 
-        bool  light_source = false;
+        bool  light_source = true;
         int   light_red = 255;
         int   light_grn = 255;
         int   light_blu = 255;
@@ -144,18 +143,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            if (light_source)
+            // No sense in constantly updating the value.
+            if (_lastEpSafe != GameSettings.EpilepsySafe)
             {
-                // No sense in constantly updating the value.
-                if (_lastEpSafe != GameSettings.EpilepsySafe)
-                {
-                    if (GameSettings.EpilepsySafe)
-                        _animator.SpeedMultiplier = 0.25f;
-                    else
-                        _animator.SpeedMultiplier = 1f;
+                if (GameSettings.EpilepsySafe)
+                    _animator.SpeedMultiplier = 0.25f;
+                else
+                    _animator.SpeedMultiplier = 1f;
 
-                    _lastEpSafe = GameSettings.EpilepsySafe;
-                }
+                _lastEpSafe = GameSettings.EpilepsySafe;
+            }
+
+            if (light_source && GameSettings.ObjectLighting)
+            {
                 Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size);
                 DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * light_bright);
             }

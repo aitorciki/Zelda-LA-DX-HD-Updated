@@ -6,6 +6,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -270,8 +271,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // hookshot repels from the colliding box
             Game1.GameManager.PlaySoundEffect("D360-07-07");
-
-            var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
+            var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
             animation.EntityPosition.Set(_hookshotPosition.Position);
             Map.Objects.SpawnObject(animation);
         }

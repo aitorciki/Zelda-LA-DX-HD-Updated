@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.Pages
             _gameSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var buttonHeight = 14;
 
             _gameSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_game_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -74,6 +74,12 @@ namespace ProjectZ.InGame.Pages
                 "settings_game_items_on_right", GameSettings.ItemsOnRight, 
                 newState => { GameSettings.ItemsOnRight = newState; });
             _contentLayout.AddElement(toggleItemSlotSide);
+
+            // Button: Epilepsy Safe
+            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_game_epilepsysafe", GameSettings.EpilepsySafe,
+                newState => { GameSettings.EpilepsySafe = newState; });
+            _contentLayout.AddElement(toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -173,13 +179,14 @@ namespace ProjectZ.InGame.Pages
             // Use the selected index to determine which tooltip to show.
             switch (index) 
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_language", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_menubricks", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicsword", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
+                case 0: { tooltip = Game1.LanguageManager.GetString("tooltip_game_language", "error"); break; }
+                case 1: { tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error"); break; }
+                case 2: { tooltip = Game1.LanguageManager.GetString("tooltip_game_menubricks", "error"); break; }
+                case 3: { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicsword", "error"); break; }
+                case 4: { tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error"); break; }
+                case 5: { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
+                case 6: { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
+                case 7: { tooltip = Game1.LanguageManager.GetString("tooltip_game_epilepsysafe", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

@@ -3,6 +3,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -233,7 +234,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Game1.GameManager.PlaySoundEffect("D360-07-07");
 
             // this is green in the original
-            var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
+            var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
+
             animation.EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y + 4));
             Map.Objects.SpawnObject(animation);
         }

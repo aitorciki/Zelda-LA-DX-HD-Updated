@@ -7,6 +7,7 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
@@ -386,7 +387,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Resources.SprLight, new Rectangle((int)EntityPosition.X - 22 - 32, (int)EntityPosition.Y - 18 - 16, 64, 64), _lightColor);
+            if (GameSettings.ObjectLighting)
+                spriteBatch.Draw(Resources.SprLight, new Rectangle((int)EntityPosition.X - 22 - 32, (int)EntityPosition.Y - 18 - 16, 64, 64), _lightColor);
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

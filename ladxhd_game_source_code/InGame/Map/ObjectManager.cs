@@ -740,7 +740,6 @@ namespace ProjectZ.InGame.Map
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
-            // draw the shadows
             _lightObjectList.Clear();
             _gameObjectPool.GetComponentList(_lightObjectList,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),

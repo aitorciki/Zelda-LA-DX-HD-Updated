@@ -7,6 +7,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -91,8 +92,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _swordBounce = true;
                 _startPosition = EntityPosition.Position;
                 _body.CollisionTypes = Values.CollisionTypes.Normal;
-                var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
-                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
+                var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
+                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0));
                 Map.Objects.SpawnObject(animation);
                 Game1.GameManager.PlaySoundEffect("D360-07-07");
             }
@@ -251,8 +252,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Draw the "sparking" effect and play the sound if set.
             if (particle)
             {
-                var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
-                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
+                var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
+                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0));
                 Map.Objects.SpawnObject(animation);
                 Game1.GameManager.PlaySoundEffect("D360-07-07");
             }

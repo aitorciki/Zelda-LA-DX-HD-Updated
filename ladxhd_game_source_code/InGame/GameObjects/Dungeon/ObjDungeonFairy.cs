@@ -51,6 +51,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool sword_collect = false;
         private int hearts_healed = 6;
 
+        bool  light_source = true;
+        int   light_red = 180;
+        int   light_grn = 180;
+        int   light_blu = 255;
+        float light_bright = 1.0f;
+        int   light_size = 32;
+
         public ObjDungeonFairy() : base("fairy") { }
 
         public ObjDungeonFairy(Map.Map map, int posX, int posY, int posZ, string carriedItem = null) : base(map)
@@ -107,6 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, _sprite));
+            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -234,6 +242,15 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             {
                 ItemDrawHelper.DrawItem(spriteBatch, _carriedItem, new Vector2(
                     EntityPosition.X - _carriedItemSourceRectangle.Width / 2, EntityPosition.Y - EntityPosition.Z - 1), Color.White, 1, true);
+            }
+        }
+
+        private void DrawLight(SpriteBatch spriteBatch)
+        {
+            if (light_source && GameSettings.ObjectLighting)
+            {
+                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z - 5, light_size, light_size);
+                DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * light_bright);
             }
         }
     }

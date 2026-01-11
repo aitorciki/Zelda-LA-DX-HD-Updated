@@ -55,10 +55,13 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            if (_fullScreen)
-                spriteBatch.Draw(Resources.SprWhite, MapManager.Camera.GetGameView(), Color.White * _percentage);
-            else
-                spriteBatch.Draw(Resources.SprWhite, _rectangle, Color.White * _percentage);
+            if (GameSettings.ObjectLighting)
+            {
+                if (_fullScreen)
+                    spriteBatch.Draw(Resources.SprWhite, MapManager.Camera.GetGameView(), Color.White * _percentage);
+                else
+                    spriteBatch.Draw(Resources.SprWhite, _rectangle, Color.White * _percentage);
+            }
         }
     }
 }

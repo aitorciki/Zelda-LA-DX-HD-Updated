@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
-using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
+using ProjectZ.InGame.GameObjects.Effects;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
 {
@@ -24,10 +24,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             EntityPosition = new CPosition(posX, posY, 0);
 
-            _animatorTop = new Things.ObjAnimator(map, posX, posY, Values.LayerBottom, "Objects/dOneWay", "idle2", false);
+            _animatorTop = new ObjAnimator(map, posX, posY, Values.LayerBottom, "Objects/dOneWay", "idle2", false);
             Map.Objects.SpawnObject(_animatorTop);
 
-            _animatorBottom = new Things.ObjAnimator(map, posX, posY + 16, Values.LayerBottom, "Objects/dOneWay", "idle", false);
+            _animatorBottom = new ObjAnimator(map, posX, posY + 16, Values.LayerBottom, "Objects/dOneWay", "idle", false);
             Map.Objects.SpawnObject(_animatorBottom);
 
             var pushBox = new CBox(posX + 6, posY + 16, 0, 4, 16, 16);

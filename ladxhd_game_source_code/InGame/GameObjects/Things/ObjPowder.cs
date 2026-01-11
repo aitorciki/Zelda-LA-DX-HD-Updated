@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
@@ -17,12 +18,26 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Vector3[] _velocity = new Vector3[3];
         private float[] _live = new float[3];
 
-        private float _gravity = -0.05f;
         private bool _damage;
         private Box _hitBox;
 
+        int   powder_damage = 2;
+        float powder_gravity = 5.00f;
+        bool  light_source = true;
+        int   light_red = 160;
+        int   light_grn = 160;
+        int   light_blu = 255;
+        float light_bright = 0.625f;
+        int   light_size = 24;
+
         public ObjPowder(Map.Map map, float posX, float posY, float posZ, bool playerPowder) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjPowder.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             EntityPosition = new CPosition(posX, posY, posZ);
             EntitySize = new Rectangle(-8, -16, 16, 16);
              
@@ -77,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     _damage = true;
                     _hitBox = GetPowderAttackBox();
-                    Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y), _hitBox, HitType.MagicPowder, 2, false, false);
+                    Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y), _hitBox, HitType.MagicPowder, powder_damage, false, false);
                 }
                 if (_points[i].Z <= 0)
                 {
@@ -87,7 +102,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 else
                 {
                     _points[i] += _velocity[i] * Game1.TimeMultiplier;
-                    _velocity[i].Z += _gravity * Game1.TimeMultiplier;
+                    _velocity[i].Z += powder_gravity / 100 * Game1.TimeMultiplier * -1;
                 }
                 if (_live[i] > 0)
                     finishedFalling = false;
@@ -114,9 +129,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             // var drawRect = _hitBox.Rectangle();
             // spriteBatch.Draw(Resources.SprWhite, new Vector2(drawRect.X, drawRect.Y), new Rectangle(0, 0, (int)drawRect.Width, (int)drawRect.Height), Color.Red * 1.00f);
 
-            // Draw shadows under the particles.
-            for (var i = 0; i < _points.Length; i++)
-                DrawHelper.DrawLight(spriteBatch, new Rectangle((int)_points[i].X - 12, (int)(_points[i].Y - _points[i].Z) - 2 - 12, 24, 24), new Color(255, 220, 220) * 0.125f * _live[i]);
+            // Draw the lighting effect.
+            if (light_source && GameSettings.ObjectLighting)
+            {
+                for (var i = 0; i < _points.Length; i++)
+                    DrawHelper.DrawLight(spriteBatch, new Rectangle((int)_points[i].X - light_size / 2, (int)(_points[i].Y - _points[i].Z) - 2 - light_size / 2, light_size, light_size), new Color(light_red, light_grn, light_blu) * light_bright * _live[i]);
+            }
         }
     }
 }

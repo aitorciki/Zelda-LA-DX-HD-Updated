@@ -118,15 +118,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void SpawnSplash()
         {
-            // left splash
             Map.Objects.SpawnObject(new EnemyPodobooSplash(Map, new Vector2(_startPosition.X, _startPosition.Y), new Vector2(-0.5f, -0.85f)));
-            // right splash
             Map.Objects.SpawnObject(new EnemyPodobooSplash(Map, new Vector2(_startPosition.X, _startPosition.Y), new Vector2(0.5f, -0.85f)));
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 32, (int)EntityPosition.Y - 32, 64, 64), new Color(255, 200, 200) * 0.75f);
+            if (GameSettings.ObjectLighting)
+                DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 32, (int)EntityPosition.Y - 32, 64, 64), new Color(255, 200, 200) * 0.75f);
         }
     }
 }

@@ -21,6 +21,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.LastSavePos = saveManager.GetInt("LastSavePos", GameSettings.LastSavePos);
             GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
+            GameSettings.EpilepsySafe = saveManager.GetBool("EpilepsySafe", GameSettings.EpilepsySafe);
 
             // Redux Settings
             GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
@@ -45,9 +46,10 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.UiScale = saveManager.GetInt("UIScale", GameSettings.UiScale);
             GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
             GameSettings.ExFullscreen = saveManager.GetBool("ExFullscreen", GameSettings.ExFullscreen);
+            GameSettings.GlobalLighting = saveManager.GetBool("GlobalLighting", GameSettings.GlobalLighting);
+            GameSettings.ObjectLighting = saveManager.GetBool("ObjectLighting", GameSettings.ObjectLighting);
             GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
-            GameSettings.EpilepsySafe = saveManager.GetBool("EpilepsySafe", GameSettings.EpilepsySafe);
 
             // Audio Settings
             GameSettings.MusicVolume = saveManager.GetInt("MusicVolume", GameSettings.MusicVolume);
@@ -100,6 +102,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("LastSavePos", GameSettings.LastSavePos);
             saveManager.SetBool("Autosave", GameSettings.Autosave);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
+            saveManager.SetBool("EpilepsySafe", GameSettings.EpilepsySafe);
 
             // Redux Settings
             saveManager.SetBool("VarWidthFont", GameSettings.VarWidthFont);
@@ -124,9 +127,10 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);
             saveManager.SetBool("ExFullscreen", GameSettings.ExFullscreen);
+            saveManager.SetBool("GlobalLighting", GameSettings.GlobalLighting);
+            saveManager.SetBool("ObjectLighting", GameSettings.ObjectLighting);
             saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
-            saveManager.SetBool("EpilepsySafe", GameSettings.EpilepsySafe);
 
             // Audio Settings
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);

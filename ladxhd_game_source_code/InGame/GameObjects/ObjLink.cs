@@ -14,6 +14,7 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Systems;
 using ProjectZ.InGame.GameObjects.Bosses;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Enemies;
 using ProjectZ.InGame.GameObjects.MidBoss;
 using ProjectZ.InGame.GameObjects.NPCs;
@@ -460,28 +461,15 @@ namespace ProjectZ.InGame.GameObjects
         //====================
         // Mod File Values
         //====================
-        // Sword Beam
-        bool sword1_beam = false;
-        bool always_beam = false;
-        bool cast2d_beam = false;
-        int length_beam = 600;
+        bool swordbeam_level1 = false;
+        bool swordbeam_always = false;
+        bool swordbeam_cast2d = false;
 
-        // Charge Time
         float sword_charge_time = 500;
         float boots_charge_time = 500;
 
-        // Roc's Feather Jump
         float feather_velocity = 2.35f;
 
-        // Arrows
-        float arrows_speed = 3;
-        bool cast2d_arrows = false;
-
-        // Magic Rod
-        float magicrod_speed = 3;
-        bool cast2d_magicrod = false;
-
-        // Link as a Light Source
         bool light_source = false;
         int light_red = 255;
         int light_grn = 255;
@@ -1479,7 +1467,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            if (light_source)
+            if (light_source && GameSettings.ObjectLighting)
             {
                 var _lightColor = new Color(light_red, light_grn, light_blu);
                 var _lightRectangle = new Rectangle((int)_body.Position.X - light_size / 2, (int)_body.Position.Y - light_size / 2 - 8, light_size, light_size);
@@ -3691,13 +3679,9 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("show2");
                     _showSwordLv2Counter = 500;
                     CurrentState = State.SwordShow1;
-
                     Game1.GameManager.PlaySoundEffect("D360-07-07");
-
-                    var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
-                    animation.EntityPosition.Set(new Vector2(
-                        BodyRectangle.X,
-                        EntityPosition.Y - EntityPosition.Z - 30));
+                    var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
+                    animation.EntityPosition.Set(new Vector2(BodyRectangle.X, EntityPosition.Y - EntityPosition.Z - 30));
                     Map.Objects.SpawnObject(animation);
                 }
                 else
@@ -4036,7 +4020,7 @@ namespace ProjectZ.InGame.GameObjects
                     if (destroyableWall)
                         Game1.GameManager.PlaySoundEffect("D378-23-17");
 
-                    var pokeParticle = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/swordPoke", "run", true);
+                    var pokeParticle = new ObjSparkingEffect(Map, 0, 0, 0, 0);
                     pokeParticle.EntityPosition.X = EntityPosition.X + _pokeAnimationOffset[Direction].X;
                     pokeParticle.EntityPosition.Y = EntityPosition.Y + _pokeAnimationOffset[Direction].Y;
                     Map.Objects.SpawnObject(pokeParticle);
@@ -4053,15 +4037,10 @@ namespace ProjectZ.InGame.GameObjects
                 beamDirection = _beamDirection;
 
             // Shoot the sword if the player has the Level 2 sword and full health.
-            if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || sword1_beam) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || always_beam) && AnimatorWeapons.CurrentFrameIndex == 2)
+            if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || swordbeam_level1) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || swordbeam_always) && AnimatorWeapons.CurrentFrameIndex == 2)
             {
                 _shotSword = true;
-                var spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y, EntityPosition.Z);
-
-                if (cast2d_beam)
-                    spawnPosition = new Vector3(EntityPosition.X + _shootSwordOffset[beamDirection].X, EntityPosition.Y + _shootSwordOffset[beamDirection].Y - EntityPosition.Z, 0);
-
-                var objSwordShot = new ObjSwordShot(Map, spawnPosition, Game1.GameManager.SwordLevel, beamDirection, length_beam);
+                var objSwordShot = new ObjSwordShot(Map, EntityPosition, _shootSwordOffset[beamDirection], Game1.GameManager.SwordLevel, beamDirection);
                 Map.Objects.SpawnObject(objSwordShot);
             }
 
@@ -4106,10 +4085,9 @@ namespace ProjectZ.InGame.GameObjects
             Game1.GameManager.PlaySoundEffect("D360-07-07");
 
             // Spawn the poke particle.
-            Map.Objects.SpawnObject(new ObjAnimator(Map,
-                (int)(EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2),
-                (int)(EntityPosition.Y - 15 + collisionRectangle.Y + collisionRectangle.Height / 2),
-                Values.LayerTop, "Particles/swordPoke", "run", true));
+            var posX = (int)(EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2);
+            var posY = (int)(EntityPosition.Y - 15 + collisionRectangle.Y + collisionRectangle.Height / 2);
+            var pokeParticle = new ObjSparkingEffect(Map, posX, posY, 0, 0);
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4202,11 +4180,9 @@ namespace ProjectZ.InGame.GameObjects
                 // Spawn the "poke" particle.
                 if (pushedRectangle.RepelParticle)
                 {
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)(pushedRectangle.PushableBox.Box.X + pushedRectangle.PushableBox.Box.Width / 2),
-                        (int)(pushedRectangle.PushableBox.Box.Y + pushedRectangle.PushableBox.Box.Height / 2),
-                        Values.LayerTop, "Particles/swordPoke", "run", true));
-
+                    var posX = (int)(pushedRectangle.PushableBox.Box.X + pushedRectangle.PushableBox.Box.Width / 2);
+                    var posY = (int)(pushedRectangle.PushableBox.Box.Y + pushedRectangle.PushableBox.Box.Height / 2);
+                    Map.Objects.SpawnObject(new ObjSparkingEffect(Map, posX, posY, 0, 0));
                     Game1.GameManager.PlaySoundEffect("D360-07-07");
                 }
                 // Play the "bumping" sound effect.
@@ -4490,12 +4466,7 @@ namespace ProjectZ.InGame.GameObjects
             if (!Game1.GameManager.RemoveItem("bow", 1))
                 return;
 
-            var spawnPosition = new Vector3(EntityPosition.X + _arrowOffset[Direction].X, EntityPosition.Y + _arrowOffset[Direction].Y + (Map.Is2dMap ? -4 : 0), EntityPosition.Z + (Map.Is2dMap ? 0 : 4));
-            
-            if (cast2d_arrows)
-                spawnPosition = new Vector3(EntityPosition.X + _arrowOffset[Direction].X, (EntityPosition.Y + _arrowOffset[Direction].Y + (Map.Is2dMap ? -4 : 0)) - (EntityPosition.Z + (Map.Is2dMap ? 0 : 4)), 0);
-
-            Map.Objects.SpawnObject(new ObjArrow(Map, spawnPosition, Direction, Game1.GameManager.PieceOfPowerIsActive ? (arrows_speed + 1) : arrows_speed, cast2d_arrows));
+            Map.Objects.SpawnObject(new ObjArrow(Map, EntityPosition, _arrowOffset[Direction], Direction));
 
             if (CurrentState != State.Jumping)
             {
@@ -4975,12 +4946,7 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState != State.Jumping || _railJump))
                 return;
 
-            var spawnPosition = new Vector3(EntityPosition.X + _magicRodOffset[Direction].X, EntityPosition.Y + _magicRodOffset[Direction].Y, EntityPosition.Z);
-
-            if (cast2d_magicrod)
-                spawnPosition = new Vector3(EntityPosition.X + _magicRodOffset[Direction].X, EntityPosition.Y + _magicRodOffset[Direction].Y - EntityPosition.Z, 0);
-
-            Map.Objects.SpawnObject(new ObjMagicRodShot(Map, spawnPosition, AnimationHelper.DirectionOffset[Direction] * (Game1.GameManager.PieceOfPowerIsActive ? magicrod_speed + 1 : magicrod_speed), Direction));
+            Map.Objects.SpawnObject(new ObjMagicRodShot(Map, EntityPosition, _magicRodOffset[Direction], Direction));
 
             CurrentState = State.MagicRod;
             _swordChargeCounter = sword_charge_time;

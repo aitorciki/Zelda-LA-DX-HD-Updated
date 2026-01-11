@@ -256,7 +256,8 @@ namespace ProjectZ.InGame.Map
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
-            Game1.Graphics.GraphicsDevice.Clear(CurrentMap.LightColor);
+            Color lighting = GameSettings.GlobalLighting ? CurrentMap.LightColor : new Color(255, 255, 255);
+            Game1.Graphics.GraphicsDevice.Clear(lighting);
             spriteBatch.Begin(SpriteSortMode.Deferred, LightBlendState, SamplerState.AnisotropicClamp, null, null, null, Camera.TransformMatrix);
             CurrentMap.Objects.DrawLight(spriteBatch);
             spriteBatch.End();
@@ -268,7 +269,6 @@ namespace ProjectZ.InGame.Map
             var tempTm = CurrentMap;
             CurrentMap = NextMap;
             NextMap = tempTm;
-
             NextMap.Objects.ReloadObjects();
             NextMap.Objects.SpawnObject(ObjLink);
 
@@ -287,14 +287,8 @@ namespace ProjectZ.InGame.Map
         public void FinishLoadingMap(Map map)
         {
             ObjLink.Map.Objects.RemoveObject(ObjLink);
-
-            // set the player to the correct position
             ObjLink.FinishLoadingMap(map);
-
-            // add the player to the map
             map.Objects.SpawnObject(ObjLink);
-
-            // call key change event for the newly added objects
             map.Objects.TriggerKeyChange();
         }
     }

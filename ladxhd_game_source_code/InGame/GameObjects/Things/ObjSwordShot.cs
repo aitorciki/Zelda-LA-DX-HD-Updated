@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -19,25 +21,45 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private int _damage = 2;
         private float _spawnCounter;
-        private int _despawnTime = 600;
 
         private const int SpawnTime = 10;
-
         private const int FadeInTime = 15;
         private const int FadeOutTime = 25;
 
-        private const float MoveSpeed = 4;
+        private float _lightState;
 
-        public ObjSwordShot(Map.Map map, Vector3 position, int damage, int direction, int duration) : base(map)
+        int swordbeam_damage = 0;
+        int swordbeam_duration = 600;
+        float swordbeam_speed = 4;
+        bool swordbeam_cast2d = false;
+
+        bool  light_source = true;
+        int   light_red = 255;
+        int   light_grn = 255;
+        int   light_blu = 255;
+        float light_bright = 1.0f;
+        int   light_size = 22;
+
+        public ObjSwordShot(Map.Map map, CPosition linkPos, Vector2 offsetpos, int damage, int direction) : base(map)
         {
-            EntityPosition = new CPosition(position);
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjSwordShot.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
+            var spawnPosition = new Vector3(linkPos.X + offsetpos.X, linkPos.Y + offsetpos.Y, linkPos.Z);
+
+            if (swordbeam_cast2d)
+                spawnPosition = new Vector3(linkPos.X + offsetpos.X, linkPos.Y + offsetpos.Y - linkPos.Z, 0);
+
+            EntityPosition = new CPosition(spawnPosition);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
-            _spawnPosition = new Vector3(position.X, position.Y, position.Z);
-            _damage = damage;
-            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8, true);
+            _spawnPosition = new Vector3(spawnPosition.X, spawnPosition.Y, spawnPosition.Z);
 
-            _despawnTime = duration;
+            _damage = (swordbeam_damage == 0) ? damage : swordbeam_damage;
+            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8, true);
 
             _sprite = new CSprite("swordShot", EntityPosition)
             {
@@ -48,9 +70,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // offset the body to not collide with the wall if the player is standing next to one
             var directionOffset = AnimationHelper.DirectionOffset[(direction + 1) % 4];
+
             _body = new BodyComponent(EntityPosition, -1 + (int)directionOffset.X * 2, -1 + (int)directionOffset.Y * 2, 2, 2, 8)
             {
-                VelocityTarget = AnimationHelper.DirectionOffset[direction] * MoveSpeed,
+                VelocityTarget = AnimationHelper.DirectionOffset[direction] * swordbeam_speed,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Instrument,
                 MoveCollision = OnCollision,
@@ -62,6 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
         public override void Init()
@@ -72,16 +96,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         public void Update()
         {
             _spawnCounter += Game1.DeltaTime;
+            _lightState = (int)(Math.Sin(_spawnCounter / 10f) + 1.5);
 
             // only start showing the sprite after the spawn time
             if (_spawnCounter > SpawnTime)
             {
-                if (_spawnCounter > _despawnTime)
-                    _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - _despawnTime) / FadeOutTime, 0, 1));
+                if (_spawnCounter > swordbeam_duration)
+                    _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - swordbeam_duration) / FadeOutTime, 0, 1));
                 else
                     _sprite.Color = Color.White * Math.Clamp((_spawnCounter - SpawnTime) / FadeInTime, 0, 1);
 
-                if (_spawnCounter > _despawnTime + FadeOutTime)
+                if (_spawnCounter > swordbeam_duration + FadeOutTime)
                 {
                     Map.Objects.DeleteObjects.Add(this);
                     return;
@@ -108,7 +133,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 var drawPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) + _sprite.DrawOffset - new Vector2(_body.VelocityTarget.X, _body.VelocityTarget.Y) * (trailCount - i) * distMult;
                 // make sure to not show the tail behind the actual spawn position
-                if (spawnDistance > ((trailCount - i) * MoveSpeed * distMult))
+                if (spawnDistance > ((trailCount - i) * swordbeam_speed * distMult))
                     spriteBatch.Draw(_sprite.SprTexture, drawPosition, _sprite.SourceRectangle, _sprite.Color * (0.20f + 0.30f * ((i + 1) / (float)trailCount)),
                         _sprite.Rotation, _sprite.Center * _sprite.Scale, new Vector2(_sprite.Scale), SpriteEffects.None, 0);
             }
@@ -131,10 +156,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnCollision(Values.BodyCollision collision)
         {
-            var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y - (int)EntityPosition.Z,
-                0, 0, Values.LayerTop, "Particles/swordShotDespawn", "run", true);
+            var animation = new ObjSparkingEffect(Map, (int)EntityPosition.X, (int)EntityPosition.Y - (int)EntityPosition.Z, 0, 0);
             Map.Objects.SpawnObject(animation);
             Map.Objects.DeleteObjects.Add(this);
+        }
+
+        private void DrawLight(SpriteBatch spriteBatch)
+        {
+            if (light_source && GameSettings.ObjectLighting)
+            {
+                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z, light_size, light_size);
+                DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * (0.125f + _lightState * light_bright));
+            }
         }
     }
 }

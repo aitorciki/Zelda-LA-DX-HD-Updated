@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -28,7 +29,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _despawnPercentage = 1;
         private int _dir;
         private bool _isFalling;
-        private bool _arrow2D;
 
         private Vector2[] _bombOffset = new Vector2[] { new Vector2(-4, 0), new Vector2(0, -4), new Vector2(4, 0), new Vector2(0, 6) };
         private Vector2[] _bombOffset2D = new Vector2[] { new Vector2(-4, 4), new Vector2(0, 0), new Vector2(4, 4), new Vector2(0, 10) };
@@ -40,27 +40,40 @@ namespace ProjectZ.InGame.GameObjects.Things
         private Vector2 _startPosition;
         private Point[] _collisionBoxSize = { new Point(2, 2), new Point(2, 2), new Point(2, 2), new Point(2, 2) };
 
-        public ObjArrow(Map.Map map, Vector3 position, int dir, float speed, bool arrow2D) : base(map)
+        int arrows_damage = 2;
+        int arrows_distance = 112;
+        float arrows_speed = 3.00f;
+        bool arrows_cast2d = false;
+
+        public ObjArrow(Map.Map map, CPosition linkPos, Vector2 offsetpos, int direction) : base(map)
         {
-            EntityPosition = new CPosition(position.X, position.Y, position.Z);
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjArrow.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
+            var spawnPosition = new Vector3(linkPos.X + offsetpos.X, linkPos.Y + offsetpos.Y + (Map.Is2dMap ? -4 : 0), linkPos.Z + (Map.Is2dMap ? 0 : 4));
+
+            if (arrows_cast2d)
+                spawnPosition = new Vector3(linkPos.X + offsetpos.X, (linkPos.Y + offsetpos.Y + (Map.Is2dMap ? -4 : 0)) - (linkPos.Z + (Map.Is2dMap ? 0 : 4)), 0);
+
+            EntityPosition = new CPosition(spawnPosition.X, spawnPosition.Y, spawnPosition.Z);
             EntitySize = new Rectangle(-8, -12, 16, 16);
 
-            _startPosition = new Vector2(position.X, position.Y);
+            _startPosition = new Vector2(spawnPosition.X, spawnPosition.Y);
 
-            _dir = dir;
-            var velocity = AnimationHelper.DirectionOffset[_dir] * speed;
-
-            _arrow2D = arrow2D;
+            _dir = direction;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Objects/spear");
-            _animator.Play(dir.ToString());
+            _animator.Play(direction.ToString());
 
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
 
             _body = new BodyComponent(EntityPosition,
-                -_collisionBoxSize[dir].X / 2, -_collisionBoxSize[dir].Y / 2,
-                _collisionBoxSize[dir].X, _collisionBoxSize[dir].Y, 8)
+                -_collisionBoxSize[direction].X / 2, -_collisionBoxSize[direction].Y / 2,
+                _collisionBoxSize[direction].X, _collisionBoxSize[direction].Y, 8)
             {
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Field |
@@ -68,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore,
                 MoveCollision = OnCollision,
-                VelocityTarget = velocity,
+                VelocityTarget = AnimationHelper.DirectionOffset[direction] * (Game1.GameManager.PieceOfPowerIsActive ? arrows_speed + 1 : arrows_speed),
                 Bounciness = 0.35f,
                 Drag = 0.75f,
                 DragAir = 0.95f,
@@ -81,8 +94,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             };
 
             _damageBox = new CBox(EntityPosition,
-                -_collisionBoxSize[dir].X / 2 - 1, -_collisionBoxSize[dir].Y - 1, 0,
-                _collisionBoxSize[dir].X + 2, _collisionBoxSize[dir].Y + 2, 8, true);
+                -_collisionBoxSize[direction].X / 2 - 1, -_collisionBoxSize[direction].Y - 1, 0,
+                _collisionBoxSize[direction].X + 2, _collisionBoxSize[direction].Y + 2, 8, true);
 
             var stateIdle = new AiState(UpdateIdle);
             var stateDespawn = new AiState() { Init = InitDespawn };
@@ -110,7 +123,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
             }
             var distance = _startPosition - EntityPosition.Position;
-            if (Math.Abs(distance.X) > 112 || Math.Abs(distance.Y) > 96)
+            if (Math.Abs(distance.X) > arrows_distance || Math.Abs(distance.Y) > arrows_distance)
             {
                 _isFalling = true;
                 _body.IgnoresZ = false;
@@ -183,7 +196,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_bombMode)
                 _hitType = HitType.Bomb;
 
-            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, _hitType, 2, false, false);
+            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, _hitType, arrows_damage, false, false);
+
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Enemy)) != 0)
             {
                 Map.Objects.DeleteObjects.Add(this);
@@ -216,7 +230,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var bombOffset = _bombOffset[_dir];
 
-            if (_arrow2D)
+            if (arrows_cast2d)
                 bombOffset = _bombOffset2D[_dir];
 
             EntityPosition.AddPositionListener(typeof(ObjBomb), (position) => bomb.EntityPosition.Set(position.Position + bombOffset));

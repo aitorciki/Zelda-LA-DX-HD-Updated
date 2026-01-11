@@ -1,12 +1,13 @@
-﻿using ProjectZ;
+﻿using Microsoft.Xna.Framework;
+using ProjectZ;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using Microsoft.Xna.Framework;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {

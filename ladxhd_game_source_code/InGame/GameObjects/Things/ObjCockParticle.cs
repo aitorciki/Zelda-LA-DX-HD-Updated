@@ -173,6 +173,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
+            if (!GameSettings.ObjectLighting)
+                return;
+
             for (int i = 0; i < _sprites.Length; i++)
             {
                 if (_positions[i].Position != Vector2.Zero)

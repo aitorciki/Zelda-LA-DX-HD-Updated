@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -14,17 +17,38 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly CBox _damageBox;
 
         private const int SpawnTime = 25;
-        // ~ time to move from the left side of a room to the right
-        private const int DespawnTime = 500;
         private const int FadeInTime = 25;
         private const int FadeOutTime = 50;
 
         private float _spawnCounter;
         private bool _dead;
 
-        public ObjMagicRodShot(Map.Map map, Vector3 position, Vector2 direction, int dir) : base(map)
+        int magicrod_damage = 2;
+        int magicrod_duration = 600;
+        float magicrod_speed = 3.00f;
+        bool magicrod_cast2d = false;
+
+        bool  light_source = true;
+        int   light_red = 255;
+        int   light_grn = 220;
+        int   light_blu = 160;
+        float light_bright = 0.8f;
+        int   light_size = 42;
+
+        public ObjMagicRodShot(Map.Map map, CPosition linkPos, Vector2 offsetpos, int direction) : base(map)
         {
-            EntityPosition = new CPosition(position.X, position.Y, position.Z);
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathModFolder, "ObjMagicRodShot.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
+            var spawnPosition = new Vector3(linkPos.X + offsetpos.X, linkPos.Y + offsetpos.Y, linkPos.Z);
+
+            if (magicrod_cast2d)
+                spawnPosition = new Vector3(linkPos.X + offsetpos.X, linkPos.Y + offsetpos.Y - linkPos.Z, 0);
+
+            EntityPosition = new CPosition(spawnPosition.X, spawnPosition.Y, spawnPosition.Z);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
             _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8, true);
@@ -34,9 +58,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Color = Color.Transparent
             };
 
-            var body = new BodyComponent(EntityPosition, -2 + (dir == 1 ? 2 : (dir == 3 ? -2 : 0)), -2, 4, 4, 8)
+            var body = new BodyComponent(EntityPosition, -2 + (direction == 1 ? 2 : (direction == 3 ? -2 : 0)), -2, 4, 4, 8)
             {
-                VelocityTarget = direction,
+                VelocityTarget = AnimationHelper.DirectionOffset[direction] * (Game1.GameManager.PieceOfPowerIsActive ? magicrod_speed + 1 : magicrod_speed),
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Instrument,
                 CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore,
@@ -49,6 +73,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BodyComponent.Index, body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
         private void Update()
@@ -57,12 +82,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (_spawnCounter > SpawnTime)
             {
-                if (_spawnCounter > DespawnTime)
-                    _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - DespawnTime) / FadeOutTime, 0, 1));
+                if (_spawnCounter > magicrod_duration)
+                    _sprite.Color = Color.White * (1 - Math.Clamp((_spawnCounter - magicrod_duration) / FadeOutTime, 0, 1));
                 else
                     _sprite.Color = Color.White * Math.Clamp((_spawnCounter - SpawnTime) / FadeInTime, 0, 1);
 
-                if (_spawnCounter > DespawnTime + FadeOutTime)
+                if (_spawnCounter > magicrod_duration + FadeOutTime)
                 {
                     _dead = true;
                     Map.Objects.DeleteObjects.Add(this);
@@ -74,7 +99,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 OnCollision(Values.BodyCollision.None);
                 return;
             }
-            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.MagicRod, 2, false);
+            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.MagicRod, magicrod_damage, false);
             if ((collision & (Values.HitCollision.Blocking | Values.HitCollision.Repelling | Values.HitCollision.Enemy)) != 0)
             {
                 _dead = true;
@@ -88,12 +113,19 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             Game1.GameManager.PlaySoundEffect("D378-18-12");
-
-            var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y - (int)EntityPosition.Z,
-                0, 0, Values.LayerPlayer, "Particles/flame", "idle", true);
+            var animation = new ObjBurningEffect(Map, (int)EntityPosition.X, (int)EntityPosition.Y - (int)EntityPosition.Z, 0, 0);
             Map.Objects.SpawnObject(animation);
             Map.Objects.RegisterAlwaysAnimateObject(animation);
             Map.Objects.DeleteObjects.Add(this);
+        }
+
+        private void DrawLight(SpriteBatch spriteBatch)
+        {
+            if (light_source && GameSettings.ObjectLighting)
+            {
+                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z, light_size, light_size);
+                DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * light_bright);
+            }
         }
     }
 }

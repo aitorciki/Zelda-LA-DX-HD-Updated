@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 {
@@ -333,11 +334,11 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private void InitBurning()
         {
             OnBurn?.Invoke();
-
             _body.VelocityTarget = Vector2.Zero;
 
             // Spawn the burning effect.
-            var burnAnimator = new ObjAnimator(_gameObject.Map, 0, 0, 0, 0, Values.LayerTop, "Particles/flame", "idle", false);
+            var burnAnimator = new ObjBurningEffect(_gameObject.Map, 0, 0, 0, 0);
+
             burnAnimator.EntityPosition.Set(_gameObject.EntityPosition.Position);
 
             // Move the animation with the game object.
@@ -346,17 +347,20 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                             (int)(_body.OffsetY + _body.Height) - 8 + FlameOffset.Y));
 
             // Remove the burning sprite if the ai state changes (e.g. by falling down a hole).
+            var prevFrameChange = burnAnimator.Animator.OnFrameChange;
             burnAnimator.Animator.OnFrameChange = () =>
             {
+                prevFrameChange?.Invoke();
                 burnAnimator.AnimationComponent.UpdateSprite();
                 if (_aiComponent.Owner.Map == null || _aiComponent.CurrentStateId != "burning")
                     burnAnimator.Map.Objects.DeleteObjects.Add(burnAnimator);
             };
             // Remove the burning sprite if the animation has finished.
+            var previousOnFinished = burnAnimator.Animator.OnAnimationFinished;
             burnAnimator.Animator.OnAnimationFinished = () =>
             {
+                previousOnFinished?.Invoke();
                 FinishBurning();
-                burnAnimator.Map.Objects.DeleteObjects.Add(burnAnimator);
             };
             Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(burnAnimator);
             Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(burnAnimator);

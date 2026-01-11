@@ -26,7 +26,8 @@ namespace ProjectZ.InGame.Pages
             _graphicSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var sliderHeight = 10;
+            var buttonHeight = 14;
 
             _graphicSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_graphics_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -34,47 +35,53 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Game Scale
             _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
-                buttonWidth, 11, new Point(1, 2), -3, Game1.MaxGameScale + 1, 1, GameSettings.GameScale, 
+                buttonWidth, sliderHeight, new Point(1, 2), -3, Game1.MaxGameScale + 1, 1, GameSettings.GameScale, 
                 number => { GameSettings.GameScale = number; Game1.ScaleChanged = true; })
                 { SetString = number => GameScaleSliderAdjustmentString(number) };
             _contentLayout.AddElement(_gameScaleSlider);
 
             // Slider: UI Scale
             _uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
-                buttonWidth, 11, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1, 
+                buttonWidth, sliderHeight, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1,
                 number => { GameSettings.UiScale = number; Game1.ScaleChanged = true; })
                 { SetString = number => UIScaleSliderAdjustmentString(number) };
             _contentLayout.AddElement(_uiScaleSlider);
 
             // Button: Fullscreen
             _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_graphics_fullscreen", GameSettings.IsFullscreen, 
+                "settings_graphics_fullscreen", GameSettings.IsFullscreen,
                 newState => { Game1.ToggleFullscreen(); Game1.ScaleChanged = true; });
             _contentLayout.AddElement(_toggleFullscreen);
 
             // Button: Exclusive Fullscreen
             _toggleExFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_graphics_exfullscreen", GameSettings.ExFullscreen, 
+                "settings_graphics_exfullscreen", GameSettings.ExFullscreen,
                 newState => { GameSettings.ExFullscreen = newState; });
             _contentLayout.AddElement(_toggleExFullscreen);
 
+            // Button: Disable Global Lighting
+            var disableGlobalLightingToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+               "settings_graphics_globallights", GameSettings.GlobalLighting,
+               newState => GameSettings.GlobalLighting = newState);
+             _contentLayout.AddElement(disableGlobalLightingToggle);
+
+            // Button: Disable Object Lighting
+            var disableObjectLightingToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+               "settings_graphics_objectlights", GameSettings.ObjectLighting,
+               newState => GameSettings.ObjectLighting = newState);
+             _contentLayout.AddElement(disableObjectLightingToggle);
+
             // Button: Dynamic Shadows
             var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-               "settings_graphics_shadow", GameSettings.EnableShadows, 
+               "settings_graphics_shadow", GameSettings.EnableShadows,
                newState => GameSettings.EnableShadows = newState);
              _contentLayout.AddElement(shadowToggle);
 
             // Button: Vertical Sync
             var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_graphics_fps_lock", GameSettings.VerticalSync, 
+                "settings_graphics_fps_lock", GameSettings.VerticalSync,
                 newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
             _contentLayout.AddElement(toggleFpsLock);
-
-            // Button: Epilepsy Safe
-            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_graphics_epilepsysafe", GameSettings.EpilepsySafe, 
-                newState => { GameSettings.EpilepsySafe = newState; });
-            _contentLayout.AddElement(toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -191,9 +198,10 @@ namespace ProjectZ.InGame.Pages
                 case 1: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_ui_scale", "error"); break; }
                 case 2: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_fullscreen", "error"); break; }
                 case 3: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_exfullscreen", "error"); break; }
-                case 4: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_shadow", "error"); break; }
-                case 5: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_fps_lock", "error"); break; }
-                case 6: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_epilepsysafe", "error"); break; }
+                case 4: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_nogloballights", "error"); break; }
+                case 5: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_noobjectlights", "error"); break; }
+                case 6: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_shadow", "error"); break; }
+                case 7: { tooltip = Game1.LanguageManager.GetString("tooltip_graphics_fps_lock", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

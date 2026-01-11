@@ -5,6 +5,7 @@ using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -24,6 +25,12 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly bool _playerBomb;
         private readonly bool _floorExplode;
 
+        enum DeathState { Alive, FadingLight, Dead }
+        private DeathState _deathState = DeathState.Alive;
+
+        private float _fadeTimer = 0f;
+        private float _startBrightness;
+
         public const int BlinkTime = 1000 / 60 * 4;
 
         private double _bombCounter;
@@ -42,6 +49,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool enemy_interact = false;
         private bool fire_detonates = false;
         private bool arrow_pickup = false;
+
+        bool  light_source = true;
+        int   light_red = 255;
+        int   light_grn = 255;
+        int   light_blu = 255;
+        float light_bright = 1.0f;
+        int   light_size = 160;
+        float light_fade = 0.60f;
 
         public ObjBomb(Map.Map map, float posX, float posY, bool playerBomb, bool floorExplode, int explosionTime = 1500) : base(map)
         {
@@ -109,6 +124,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _bodyShadow = new BodyDrawShadowComponent(Body, sprite));
+            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
             if (_playerBomb)
                 Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -134,8 +150,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                     }
                 }
                 // remove bomb if the animation is finished
-                if (!_animator.IsPlaying)
-                    _map.Objects.DeleteObjects.Add(this);
+                if (!_animator.IsPlaying && _deathState == DeathState.Alive)
+                    StartLightFade();
+                
             }
             else
             {
@@ -160,10 +177,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (_deepWaterCounter <= 0)
                 {
                     // spawn splash effect
-                    var fallAnimation = new ObjAnimator(_map,
-                        (int)(Body.Position.X + Body.OffsetX + Body.Width / 2.0f),
-                        (int)(Body.Position.Y + Body.OffsetY + Body.Height / 2.0f),
-                        Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                    var fallAnimation = new ObjAnimator(_map, (int)(Body.Position.X + Body.OffsetX + Body.Width / 2.0f), (int)(Body.Position.Y + Body.OffsetY + Body.Height / 2.0f), Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
                     _map.Objects.SpawnObject(fallAnimation);
                     _map.Objects.DeleteObjects.Add(this);
                 }
@@ -172,6 +186,21 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 _deepWaterCounter = 75;
             }
+
+            // Fade out the light created from explosion.
+            if (_deathState == DeathState.FadingLight)
+            {
+                _fadeTimer += Game1.DeltaTime / 1000f;
+                float t = _fadeTimer / light_fade;
+                t = MathHelper.Clamp(t, 0f, 1f);
+                light_bright = MathHelper.Lerp(_startBrightness, 0f, t);
+                if (t >= 1f)
+                    _deathState = DeathState.Dead;
+            }
+
+            // Remove the bomb completely.
+            if (_deathState == DeathState.Dead)
+                _map.Objects.DeleteObjects.Add(this);
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -375,6 +404,28 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Body.Velocity.Y = direction.Y * 2f;
             }
             return Values.HitCollision.Blocking;
+        }
+
+        private void StartLightFade()
+        {
+            _deathState = DeathState.FadingLight;
+
+            _fadeTimer = 0f;
+            _startBrightness = light_bright;
+
+            // Hide visuals / physics, but keep light alive
+            _drawComponent.IsActive = false;
+            _bodyShadow.IsActive = false;
+            Body.IsActive = false;
+        }
+
+        private void DrawLight(SpriteBatch spriteBatch)
+        {
+            if (!GameSettings.ObjectLighting || !light_source || !_exploded || _deathState == DeathState.Dead || light_bright <= 0f)
+                return;
+
+            Rectangle rect = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z, light_size, light_size);
+            DrawHelper.DrawLight(spriteBatch, rect, new Color(light_red, light_grn, light_blu) * light_bright);
         }
     }
 }
