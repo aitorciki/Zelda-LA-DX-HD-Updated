@@ -4,7 +4,7 @@
 ### The "Lighting the Way to a Brighter Future" Update
   * Add Graphics setting to toggle "Global Lighting" which is the full screen darkening effect for object lights.
   * Add Graphics setting to toggle "Object Lighting" which is lights casted by items, enemies, etc.
-  * Disabling thes settings gives a more "vanilla" experience and eliminates the need for "Fullbright" modpack.
+  * Disabling these settings gives a more "vanilla" experience and eliminates the need for "Fullbright" modpack.
   * Move "Epilepsy Safe" to Game Settings. I was out of space and this was the only generalized option left.
   * Dark rooms in dungeons are now fully neutralized by light emitters such as items, enemies, torches, etc.
   * Add more lighting effects to objects such as magic rod, sword beam, bomb explosions, fairies, and more.
