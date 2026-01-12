@@ -48,8 +48,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, 0));
 
-            _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8);
-
+            _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
+            {
+                CollisionTypes = Values.CollisionTypes.Normal |
+                                 Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.Field,
+            };
             var stateHidden = new AiState(UpdateHidden) { Init = InitHidden };
             // will be hidden for at lease x time
             stateHidden.Trigger.Add(_hiddenTimer = new AiTriggerTimer(1000));
