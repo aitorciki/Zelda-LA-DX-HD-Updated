@@ -62,6 +62,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Controls Settings
             GameSettings.DeadZone = saveManager.GetFloat("DeadZone", GameSettings.DeadZone);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
+            GameSettings.TriggersScale = saveManager.GetBool("TriggersScale", GameSettings.TriggersScale);
             GameSettings.SixButtons = saveManager.GetBool("SixButtons", GameSettings.SixButtons);
             GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
             GameSettings.OldMovement = saveManager.GetBool("OldMovement", GameSettings.OldMovement);
@@ -144,6 +145,7 @@ namespace ProjectZ.InGame.SaveLoad
             // Control Settings
             saveManager.SetFloat("DeadZone", GameSettings.DeadZone);
             saveManager.SetString("Controller", GameSettings.Controller);
+            saveManager.SetBool("TriggersScale", GameSettings.TriggersScale);
             saveManager.SetBool("SixButtons", GameSettings.SixButtons);
             saveManager.SetBool("SwapButtons", GameSettings.SwapButtons);
             saveManager.SetBool("OldMovement", GameSettings.OldMovement);

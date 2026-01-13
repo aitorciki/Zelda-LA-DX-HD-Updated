@@ -50,6 +50,7 @@
         // Control Settings
         public static float   DeadZone        =  0.10f;
         public static string  Controller      =  "XBox";
+        public static bool    TriggersScale   =  false;
         public static bool    SixButtons      =  false;
         public static bool    SwapButtons     =  false;
         public static bool    OldMovement     =  false;

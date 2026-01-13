@@ -169,8 +169,9 @@ namespace ProjectZ.InGame.Overlay
                 // Update the textbox overlay.
                 TextboxOverlay.Update();
 
-                // Update scale via button presses.
-                ButtonScaleChange();
+                // Scale with bumper/trigger presses if enabled by the user.
+                if (GameSettings.TriggersScale)
+                    ButtonScaleChange();
             }
             // The menu is currently so pause updating the game.
             else if (_currentMenuState == MenuState.Menu)

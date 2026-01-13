@@ -26,7 +26,7 @@ namespace ProjectZ.InGame.Pages
             _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var buttonHeight = 14;
 
             _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -46,6 +46,12 @@ namespace ProjectZ.InGame.Pages
             // Button: Remap Settings
             _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
                 "settings_controls_remap", element => { Game1.UiPageManager.ChangePage(typeof(ControlMappingPage)); }));
+
+            // Button: Triggers Scale Game
+            var toggleTriggersScale = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_controls_triggersscale", GameSettings.TriggersScale, 
+                newState => { GameSettings.TriggersScale = newState; });
+            _contentLayout.AddElement(toggleTriggersScale);
 
             // Button: Toggle Six Buttons
             var toggleSixButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
@@ -166,10 +172,11 @@ namespace ProjectZ.InGame.Pages
                 case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_deadzone", "error"); break; }
                 case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_gamepad", "error"); break; }
                 case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_remap", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_sixbuttons", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_swapconfirm", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_classicmove", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_digitalanalog", "error"); break; }
+                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_triggersscale", "error"); break; }
+                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_sixbuttons", "error"); break; }
+                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_swapconfirm", "error"); break; }
+                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_classicmove", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_digitalanalog", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;
