@@ -85,9 +85,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 16)
             {
+                IgnoreHoles = true,
                 MoveCollision = OnCollision,
                 Gravity = -0.175f,
-                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
+                FieldRectangle = map.GetField(posX, posY)
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/BowWow");
@@ -282,6 +284,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void ToAttack()
         {
+            // Refresh Bow Wow's field rectangle.
+            _body.FieldRectangle = Map.GetField((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y);
+
             // Reset the target each attack.
             _enemyTarget = null;
 
@@ -294,6 +299,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Type[] _dontEat = new Type[]{ typeof(EnemyGhini), typeof(EnemySeaUrchin), typeof(EnemyZombie) };
             _enemyList.RemoveAll(obj => ObjectManager.IsGameObjectType(obj, _dontEat));
 
+            // Make sure the enemy is currently within the field rectangle.
+            if (Camera.ClassicMode)
+                _enemyList.RemoveAll(obj => !_body.FieldRectangle.Contains(obj.EntityPosition.Position));
+            
             // Loop through the enemies in the list.
             foreach (var obj in _enemyList)
             {
@@ -404,9 +413,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             if (_body.VelocityTarget == Vector2.Zero)
-            {
                 ToIdle();
-            }
 
             UpdatePosition();
         }
