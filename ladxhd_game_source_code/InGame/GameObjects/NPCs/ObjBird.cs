@@ -40,6 +40,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
 
+            CanReset = true;
+            OnReset = Reset;
+
             _body = new BodyComponent(EntityPosition, -6, -8, 12, 8, 8)
             {
                 MoveCollision = OnCollision,
@@ -51,7 +54,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                                  Values.CollisionTypes.Field |
                                  Values.CollisionTypes.NPCWall |
                                  Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.Player,
             };
             _swarmSpawn = swarmSpawn;
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/bird");
@@ -98,6 +104,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
+            _hitCounter = 0;
         }
 
         public void InitAttackMode()

@@ -36,6 +36,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
+            CanReset = true;
+            OnReset = Reset;
+
             _body = new BodyComponent(EntityPosition, -6, -8, 12, 8, 8)
             {
                 MoveCollision = OnCollision,
@@ -46,7 +49,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                                  Values.CollisionTypes.Field |
                                  Values.CollisionTypes.NPCWall |
                                  Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole,
+                AvoidTypes =     Values.CollisionTypes.Hole |
+                                 Values.CollisionTypes.Field |
+                                 Values.CollisionTypes.NPCWall |
+                                 Values.CollisionTypes.Player,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/dog");
@@ -86,6 +92,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(InteractComponent.Index, _interactComponent = new InteractComponent(_body.BodyBox, Interact));
 
             new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+        }
+
+        private void Reset()
+        {
+            _aiComponent.ChangeState("idle");
         }
 
         private void OnKeyChange()
