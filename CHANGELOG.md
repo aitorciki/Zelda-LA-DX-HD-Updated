@@ -1,5 +1,22 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.5.4**
+### The "Opening the Path to Customs" Update
+  * Add preliminary custom texture replacement which can replace in-game sprites in a non-destructive manner.
+  * Graphics mods are added to "..\GameFolder\Mods\Graphics" and lahdmods to "..\GameFolder\Mods\LAHDMods".
+  * Restore default number of inventory buttons to four. Game scale is adjusted by the front two top buttons.
+  * Implement "Triggers Scale Game" which can toggle the bumpers/triggers having the ability to change game scale.
+  * Implement "Six Inventory Buttons" option in "Control Settings" which also moves game scale to the back two buttons.
+  * Change the lighting method of Witch's Hut and House by the Bay so that lighting the torches lights up the room.
+  * Rename the sword interaction modifier "Slice Enemy Missiles" to "Slice Enemy Projectiles".
+  * Extend support for the "HUDOverlay.lahdmod" file. It's now possible to use it to hide parts of the HUD.
+  * Despawn Link's projectiles and bombs during a field transition when Classic Camera is enabled.
+  * Fix Bow Wow being able to eat monsters that fall outside of the current field when Classic Camera is enabled.
+  * Fix enemy Wizzrobe collision types so that it remains in the current field when Classic Camera is enabled.
+  * Fix Mutts and Cuccos found around Mabe Village to properly reset during field transitions with Classic Camera.
+  * Fix all remaining "Settings" menu tooltip strings across multiple languages causing game crashes.
+  * Fix a small typo in the tooltip for the sword interaction "Ricochet Boomerang". 
+
 ## **v1.5.3**
 ### The "Lighting the Way to a Brighter Future" Update
   * Add Graphics setting to toggle "Global Lighting" which is the full screen darkening effect for object lights.
@@ -574,7 +591,7 @@
   * Fix projectiles to collide with the "just a kid" NPCs found around Mabe Village.
 
 ## **v1.3.8**
-### **Holes are not Cheat Codes Update**
+### **The "Holes are not Cheat Codes" Update**
   * Fix a bug where falling down a hole could make the player invincible, including overworld portals.
 
 ## **v1.3.7**
@@ -589,7 +606,7 @@
   * Fix a room in Dungeon 8 that should have been a dark room with torches but was fully lit up.
 
 ## **v1.3.6**
-### **The Perfect Shield Update**
+### **The "Perfect Shield" Update**
   * Add updated Spanish translations by [IPeluchito](https://github.com/IPeluchito).
   * Better command line support for loading save files: use the command "loadSave #" where # is 0-3 (for slots 1-4).
   * Rework the shield one more time. Bigger hitbox, direction never fails, no more false hits, and no more false blocks.
@@ -605,7 +622,7 @@
   * Fix the saving icon (disk bottom right) to always appear whenever the game is saved or an autosave takes place.
 
 ## **v1.3.5**
-### **The Controller Buttons Update**
+### **The "Controller Buttons" Update**
   * Trendy Game button textures now reflect the current controller and the "Swap Confirm/Cancel" setting.
   * When trading for the Boomerang, the item button the Goriya asks to trade for now reflects the current controller.
   * NPC/book dialog windows that reference buttons now reflect the currently selected controller.
@@ -825,7 +842,7 @@
   * Fix potential extremely rare crash with moblin-swords under the right conditions.
 
 ## **v1.2.0**
-### **The Redux Update:**
+### **The "Redux" Update:**
   * Fix final boss "Giant Zol" form to have the correct graphics.
   * Rename Miscellaneous options to "Redux" options on the Settings menu.
   * Add Redux option to use a variable width font as is used in the romhack.
@@ -838,7 +855,7 @@
   * Shoplifting photo has been updated to have the translated text from Redux romhack.
 
 ## **v1.1.9**
-### **The Endless Bug Fixes Update:**
+### **The "Endless Bug Fixes" Update:**
   * Fix Marin to teach the Ocarina song after being saved on the mountain.
   * Fix wrong enemy types in cave near pig moblins; from Buzz Blobs to Spiny Beetles in skulls.
   * Fix shield animation when charging while blocking when in 2D mode.
@@ -863,7 +880,7 @@
   * Dev: Fix map editor's ability to delete objects. Was broken with shovel hole changes.
 
 ## **v1.1.8**
-### **The Long-Standing Issues Fixed Update:**
+### **The "Long-Standing Issues Fixed" Update:**
   * Updated Spanish translation. Thanks to [IPeluchito](https://github.com/IPeluchito).
   * Low Heart Alarm was moved to the "Audio Settings" page.
   * When fishing, give the fish just a little bit more fight, especially the lunkers!
@@ -878,7 +895,7 @@
   * Make dungeon 2 boss Genie Bottle instant pickup without needing a direction pressed.
 
 ## **v1.1.7**
-### **The Sword Fixes Update:**
+### **The "Sword Fixes" Update:**
   * Modify attack sword hitboxes. Frame 1: hitbox added, 2: hitbox expanded, 3: hitbox reduced.
   * Modify the hitbox of bushes to match their sprite/tile size. This fixes wonky "cutting" with sword.
   * Allow collecting items with the sword when holding it out in charging state.
@@ -892,7 +909,7 @@
   * New Miscellaneous page. Currently only contains option to swap to old menu brick texture.
 
 ## **v1.1.6**
-### **A General Fixes Update:**
+### **A "General Fixes" Update:**
   * Expand size of most UI elements on settings pages to better fix non-english languages.
   * Translate "Controller" on controller selection button on Game Settings page.
   * Restore fisherman's line "You have to have more passion. Live a little." when exiting pond early.
