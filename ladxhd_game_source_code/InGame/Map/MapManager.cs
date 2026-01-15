@@ -29,6 +29,9 @@ namespace ProjectZ.InGame.Map
             NextMap = new Map();
             Camera = new Camera();
 
+            // Try to load a lahdmod file after the camera has been initialized.
+            Camera.LoadLAHDModFile();
+
             LightBlendState.ColorBlendFunction = BlendFunction.Add;
             LightBlendState.ColorDestinationBlend = Blend.InverseSourceAlpha;
             LightBlendState.ColorSourceBlend = Blend.One;

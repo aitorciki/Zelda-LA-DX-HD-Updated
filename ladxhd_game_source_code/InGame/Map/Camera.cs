@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Things;
@@ -50,6 +51,20 @@ namespace ProjectZ.InGame.Map
 
         public static bool ClassicMode => GameSettings.ClassicCamera && (!GameSettings.ClassicDungeon || MapManager.ObjLink?.Map?.DungeonMode == true || MapManager.ObjLink?.Map?.DungeonMapless == true || MapManager.ObjLink?.Map?.DungeonCastle == true);
 
+        // Classic Camera transition speed loaded via "lahdmod".
+        public float classic_transition_speed = 1.00f;
+
+        public void LoadLAHDModFile()
+        {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathLAHDMods, "Camera.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
+            System.Diagnostics.Debug.WriteLine("PEENUS");
+        }
+
         public void SetBounds(int viewportWidth, int viewportHeight)
         {
             _viewportWidth = viewportWidth;
@@ -92,10 +107,6 @@ namespace ProjectZ.InGame.Map
         {
             if (ClassicMode)
             {
-                // If SnapCamera was enabled and a timer started.
-                if (SnapCameraTimer > 0)
-                    SnapCameraTimer -= Game1.DeltaTime;
-
                 // Get the field rectangle and its center.
                 Vector2 rectCenter = GetFieldCenter();
 
@@ -117,7 +128,7 @@ namespace ProjectZ.InGame.Map
                     var speedMult = CameraFunction(distance / 3.5f);
 
                     direction.Normalize();
-                    var cameraSpeed = direction * speedMult * Scale * Game1.TimeMultiplier;
+                    var cameraSpeed = direction * speedMult * Scale * Game1.TimeMultiplier * classic_transition_speed ;
 
                     if (moveX)
                         Location.X += cameraSpeed.X;
