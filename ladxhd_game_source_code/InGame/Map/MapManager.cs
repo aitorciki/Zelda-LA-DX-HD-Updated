@@ -48,7 +48,7 @@ namespace ProjectZ.InGame.Map
 
         public void Update(bool frozen)
         {
-            // update the objects on the map
+            // Update the objects on the map.
             CurrentMap.Objects.Update(frozen);
             CurrentMap.UpdateMapUpdateState();
             UpdateCamera();

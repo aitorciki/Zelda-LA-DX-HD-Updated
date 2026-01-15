@@ -103,8 +103,8 @@ namespace ProjectZ.InGame.GameObjects.Base
             var normY = (int)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
 
             spriteBatch.Draw(SprTexture, new Vector2(
-                    normX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),
-                    normY + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y)), CurrentFrame.SourceRectangle,
+                normX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),
+                normY + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y)), CurrentFrame.SourceRectangle,
                 color, 0, Vector2.Zero, Vector2.One,
                 (CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
                 (CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);

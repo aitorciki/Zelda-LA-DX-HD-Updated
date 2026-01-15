@@ -61,8 +61,6 @@ namespace ProjectZ.InGame.Map
 
             if (File.Exists(modFile))
                 ModFile.Parse(modFile, this);
-
-            System.Diagnostics.Debug.WriteLine("PEENUS");
         }
 
         public void SetBounds(int viewportWidth, int viewportHeight)

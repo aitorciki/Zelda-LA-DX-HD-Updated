@@ -30,8 +30,6 @@ namespace ProjectZ.InGame.Map
         public string MapName;
         public string MapFileName;
 
-        // TODO_Opt: this is currently only set in dungeons
-        // this should probably be saved inside each mapfile
         public string LocationName;
         public string LocationFullName;
 
