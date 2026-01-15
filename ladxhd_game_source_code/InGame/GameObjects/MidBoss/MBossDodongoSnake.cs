@@ -373,7 +373,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y + 8, 0));
 
             // Shake the screen.
-            Game1.GameManager.ShakeScreen(225, 4, 1, 5, 2.5f);
+            if (GameSettings.ExScreenShake)
+                Game1.GameManager.ShakeScreen(225, 4, 1, 5, 2.5f);
 
             // Spawn the explosion effect.
             Map.Objects.SpawnObject(new ObjAnimator(Map,

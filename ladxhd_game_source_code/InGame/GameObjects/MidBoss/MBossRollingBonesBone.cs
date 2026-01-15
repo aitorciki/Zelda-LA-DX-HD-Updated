@@ -143,7 +143,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void OnCollision(Values.BodyCollision direction)
         {
             Game1.GameManager.PlaySoundEffect("D360-11-0B");
-            Game1.GameManager.ShakeScreen(800, 4, 1, 5, 5);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(800, 4, 1, 5, 5);
 
             _body.Velocity.X = -_body.Velocity.X;
             _hasCollided = true;

@@ -706,7 +706,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // Play a screen shake when falling on Link.
                 if (fallenOnLink)
                 {
-                    Game1.GameManager.ShakeScreen(450, 0, 2, 0, 5);
+                    if (GameSettings.ScreenShake)
+                        Game1.GameManager.ShakeScreen(450, 0, 2, 0, 5);
                     Game1.GameManager.PlaySoundEffect("D360-11-0B");
                 }
             }

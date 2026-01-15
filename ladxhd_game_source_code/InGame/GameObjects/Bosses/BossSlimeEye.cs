@@ -175,7 +175,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_body.IsGrounded)
             {
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
-                Game1.GameManager.ShakeScreen(500, 2, 4, 2.5f, 5.5f);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(500, 2, 4, 2.5f, 5.5f);
 
                 MapManager.ObjLink.GroundStun();
                 _aiComponent.ChangeState("stopped");

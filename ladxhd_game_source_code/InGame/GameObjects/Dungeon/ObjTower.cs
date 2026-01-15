@@ -115,7 +115,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (!_shakeScreen && _shakeCounter > 2000)
             {
                 _shakeScreen = true;
-                Game1.GameManager.ShakeScreen(2750, 1, 0, 5, 5);
+                if (GameSettings.ExScreenShake)
+                    Game1.GameManager.ShakeScreen(2750, 1, 0, 5, 5);
                 Game1.GameManager.PlaySoundEffect("D378-29-1D");
             }
 

@@ -40,6 +40,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
             GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
             GameSettings.ScreenShake = saveManager.GetBool("ScreenShake", GameSettings.ScreenShake);
+            GameSettings.ExScreenShake = saveManager.GetBool("ExScreenShake", GameSettings.ExScreenShake);
 
             // Video Settings
             GameSettings.GameScale = saveManager.GetInt("GameScale", GameSettings.GameScale);
@@ -123,6 +124,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("CameraLock", GameSettings.CameraLock);
             saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
             saveManager.SetBool("ScreenShake", GameSettings.ScreenShake);
+            saveManager.SetBool("ExScreenShake", GameSettings.ExScreenShake);
 
             // Video Settings
             saveManager.SetInt("GameScale", GameSettings.GameScale);

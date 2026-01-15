@@ -130,7 +130,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y + 32));
 
-            Game1.GameManager.ShakeScreen(4250, 2, 1, 5.0f, 2.25f);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(4250, 2, 1, 5.0f, 2.25f);
         }
 
         private void OnKeyChange()

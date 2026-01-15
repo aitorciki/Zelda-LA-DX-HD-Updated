@@ -359,7 +359,8 @@ namespace ProjectZ.InGame.Overlay
         }
         public override bool Execute()
         {
-            Game1.GameManager.ShakeScreen(_time, _maxX, _maxY, _shakeSpeedX, _shakeSpeedY);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(_time, _maxX, _maxY, _shakeSpeedX, _shakeSpeedY);
             return true;
         }
     }

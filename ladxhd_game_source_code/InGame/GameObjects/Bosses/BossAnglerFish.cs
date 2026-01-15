@@ -236,7 +236,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("shaking");
 
             Game1.GameManager.PlaySoundEffect("D378-12-0C");
-            Game1.GameManager.ShakeScreen(750, 2, 0, 5.0f, 0);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(750, 2, 0, 5.0f, 0);
 
             _body.VelocityTarget.X = 0;
 

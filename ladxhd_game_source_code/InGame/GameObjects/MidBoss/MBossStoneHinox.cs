@@ -158,7 +158,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
                 Game1.GameManager.PlaySoundEffect("D360-11-0B");
                 // shake the screen
-                Game1.GameManager.ShakeScreen(800, 1, 2, 2, 7.5f);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(800, 1, 2, 2, 7.5f);
 
                 MapManager.ObjLink.GroundStun(800);
 

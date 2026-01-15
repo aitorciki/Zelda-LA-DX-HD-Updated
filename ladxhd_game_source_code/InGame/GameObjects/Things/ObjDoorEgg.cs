@@ -125,7 +125,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 _shakeScreen = true;
 
-                Game1.GameManager.ShakeScreen(2500, 1, 0, 5.5f, 0);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(2500, 1, 0, 5.5f, 0);
                 MapManager.ObjLink.FreezeAnimationState();
             }
 

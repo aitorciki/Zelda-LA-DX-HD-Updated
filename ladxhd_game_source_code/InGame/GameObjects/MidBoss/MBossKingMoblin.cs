@@ -301,7 +301,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _bounceTime = Game1.TotalGameTime;
 
             // shake the screen
-            Game1.GameManager.ShakeScreen(800, 4, 1, 5, 5);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(800, 4, 1, 5, 5);
         }
 
         private void UpdateBound()

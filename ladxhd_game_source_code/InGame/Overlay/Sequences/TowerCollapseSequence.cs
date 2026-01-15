@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Overlay.Sequences
 {
@@ -28,17 +29,19 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
             var collapseTime = 800;
             var shakeTime = 600;
-            var shakePeriode = 4.5f;
+            var shakePeriod = 4.5f;
 
             if (_sequenceCounter > 250 && _state == 0)
             {
-                Game1.GameManager.ShakeScreen(2300, 0, 1, 0, shakePeriode);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(2300, 0, 1, 0, shakePeriod);
                 _state = 1;
             }
             else if (_sequenceCounter > 2500 && _state == 1)
             {
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
-                Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriode);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriod);
                 Sprites.Add(_aniDust = new SeqAnimation("Sequences/tower dust", "idle", new Vector2(56, 88), 1));
                 _sprTower.Position.Y += 8;
                 _state = 2;
@@ -46,21 +49,24 @@ namespace ProjectZ.InGame.Overlay.Sequences
             else if (_sequenceCounter > 2500 + collapseTime && _state == 2)
             {
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
-                Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriode);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriod);
                 _sprTower.Position.Y += 8;
                 _state = 3;
             }
             else if (_sequenceCounter > 2500 + collapseTime * 2 && _state == 3)
             {
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
-                Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriode);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriod);
                 _sprTower.Position.Y += 8;
                 _state = 4;
             }
             else if (_sequenceCounter > 2500 + collapseTime * 3 && _state == 4)
             {
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
-                Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriode);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriod);
                 _sprTower.Position.Y += 8;
                 _state = 5;
             }
@@ -73,8 +79,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
             {
                 Game1.GameManager.InGameOverlay.CloseOverlay();
             }
-
-            // @HACK
             Game1.GameManager.UpdateShake();
         }
     }

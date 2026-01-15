@@ -203,7 +203,8 @@ namespace ProjectZ.InGame.GameObjects
             CurrentState = State.Idle;
 
             Game1.GameManager.UseShockEffect = true;
-            Game1.GameManager.ShakeScreen(time, 4, 0, 8.5f, 0);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(time, 4, 0, 8.5f, 0);
             Game1.GameManager.InflictDamage(4);
         }
 

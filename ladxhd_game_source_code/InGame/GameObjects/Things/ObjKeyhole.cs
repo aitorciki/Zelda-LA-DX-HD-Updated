@@ -95,6 +95,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 //Game1.GameManager.PlaySoundEffect("D378-46-2E");
 
                 // shake the screen
+                if (GameSettings.ScreenShake)
                 Game1.GameManager.ShakeScreen(_shakeTime, 2, 1, 5.0f, 2.25f);
             }
 

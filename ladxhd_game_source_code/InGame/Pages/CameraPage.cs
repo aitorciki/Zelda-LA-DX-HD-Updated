@@ -32,7 +32,8 @@ namespace ProjectZ.InGame.Pages
             EnableTooltips = true;
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var buttonHeight = 14;
+            var sliderHeight = 10;
 
             // Camera Settings Layout
             _cameraOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -54,14 +55,14 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Camera Border
             _sliderCameraBorder = new InterfaceSlider(Resources.GameFont, "settings_camera_camborder",
-                buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
                 number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; }) 
                 { SetString = number => ClassicBorderAdjustment(number) };
             _contentLayout.AddElement(_sliderCameraBorder);
 
             // Slider: Blackout Amount
             _sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
-                buttonWidth, 11, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
                 number => { GameSettings.ClassicAlpha = (float)(number * 0.01); })
                 { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
             _contentLayout.AddElement(_sliderBorderOpacity);
@@ -83,6 +84,12 @@ namespace ProjectZ.InGame.Pages
                 "settings_camera_screenshake", GameSettings.ScreenShake, 
                 newState => { GameSettings.ScreenShake = newState; });
             _contentLayout.AddElement(toggleScreenShake);
+
+            // Button: Extra Screen-Shake
+            var toggleExScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_camera_exscreenshake", GameSettings.ExScreenShake, 
+                newState => { GameSettings.ExScreenShake = newState; });
+            _contentLayout.AddElement(toggleExScreenShake);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -183,6 +190,7 @@ namespace ProjectZ.InGame.Pages
                 case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_cameralock", "error"); break; }
                 case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_smoothcamera", "error"); break; }
                 case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_screenshake", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_exscreenshake", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

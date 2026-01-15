@@ -28,6 +28,7 @@
         public static bool    CameraLock      =  true;
         public static bool    SmoothCamera    =  true;
         public static bool    ScreenShake     =  true;
+        public static bool    ExScreenShake   =  false;
 
         // Video Settings
         public static int     GameScale       =  Game1.MaxGameScale + 1;

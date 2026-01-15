@@ -190,7 +190,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_spawnState == SpawnState.Init && _spawnCounter > 1000)
             {
                 _spawnState = SpawnState.Shake;
-                Game1.GameManager.ShakeScreen(endTime, 1, 2, 6.5f, 4.5f);
+                if (GameSettings.ScreenShake)
+                    Game1.GameManager.ShakeScreen(endTime, 1, 2, 6.5f, 4.5f);
             }
             else if (_spawnState == SpawnState.Shake && _spawnCounter > 2000)
             {

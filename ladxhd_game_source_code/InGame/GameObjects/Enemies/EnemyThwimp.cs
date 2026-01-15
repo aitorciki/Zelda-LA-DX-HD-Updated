@@ -105,7 +105,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
          
             Game1.GameManager.PlaySoundEffect("D360-09-09");
-            Game1.GameManager.ShakeScreen(75, 0, 1, 0, 500);
+            if (GameSettings.ExScreenShake)
+                Game1.GameManager.ShakeScreen(75, 0, 1, 0, 500);
         }
 
         private void InitReturn()

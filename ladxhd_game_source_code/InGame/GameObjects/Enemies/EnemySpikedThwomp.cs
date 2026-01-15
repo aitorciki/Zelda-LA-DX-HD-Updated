@@ -166,7 +166,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void HitGround()
         {
             // shake the screen
-            Game1.GameManager.ShakeScreen(750, 0, 2, 2f, 5.5f);
+            if (GameSettings.ScreenShake)
+                Game1.GameManager.ShakeScreen(750, 0, 2, 2f, 5.5f);
 
             Game1.GameManager.PlaySoundEffect("D378-12-0C");
 

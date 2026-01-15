@@ -23,7 +23,7 @@ namespace ProjectZ.InGame.Pages
 
             var buttonWidth = 320;
             var buttonHeight = 13;
-            var sliderHeight = 10;
+            var sliderHeight = 11;
 
             // Modifiers Settings Layout
             _modifiersLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };

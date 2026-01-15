@@ -181,7 +181,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     MapManager.ObjLink.GroundStun();
 
                     Game1.GameManager.PlaySoundEffect("D360-11-0B");
-                    Game1.GameManager.ShakeScreen(250, 1, 2, 2.5f, 5.5f);
+                    if (GameSettings.ScreenShake)
+                        Game1.GameManager.ShakeScreen(250, 1, 2, 2.5f, 5.5f);
                 }
             }
 

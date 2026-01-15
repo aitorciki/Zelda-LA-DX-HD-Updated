@@ -1919,7 +1919,8 @@ namespace ProjectZ.InGame.GameObjects
             var freezeTime = 67;
             var shakeMult = (100.0f / freezeTime) * MathF.PI;
             Game1.FreezeTime = Game1.TotalGameTime + freezeTime;
-            Game1.GameManager.ShakeScreen(freezeTime, (int)(direction.X * 2), (int)(direction.Y * 2), shakeMult, shakeMult);
+            if (GameSettings.ExScreenShake)
+                Game1.GameManager.ShakeScreen(freezeTime, (int)(direction.X * 2), (int)(direction.Y * 2), shakeMult, shakeMult);
             UpdateDamageShader();
 
             return true;
@@ -2162,14 +2163,16 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     var dirX = (collision & Values.BodyCollision.Left) != 0 ? -1 : 1;
                     _body.Velocity.X = -dirX;
-                    Game1.GameManager.ShakeScreen(750, 2, 1, 5.5f, 2.5f, dirX, 1);
+                    if (GameSettings.ScreenShake)
+                        Game1.GameManager.ShakeScreen(750, 2, 1, 5.5f, 2.5f, dirX, 1);
                     knockBack = true;
                 }
                 if ((collision & Values.BodyCollision.Vertical) != 0 && Direction % 2 != 0)
                 {
                     var dirY = (collision & Values.BodyCollision.Top) != 0 ? -1 : 1;
                     _body.Velocity.Y = -dirY;
-                    Game1.GameManager.ShakeScreen(750, 1, 2, 2.5f, 5.5f, 1, dirY);
+                    if (GameSettings.ScreenShake)
+                        Game1.GameManager.ShakeScreen(750, 1, 2, 2.5f, 5.5f, 1, dirY);
                     knockBack = true;
                 }
 
