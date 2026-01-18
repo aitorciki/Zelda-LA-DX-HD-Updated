@@ -243,10 +243,9 @@ namespace ProjectZ.InGame.Map
                     spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
                     spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
 
-
                     // Fill everything outside the border with black.
-                    var screenW = viewport.Width;
-                    var screenH = viewport.Height;
+                    var screenW = viewport.Width + 1;
+                    var screenH = viewport.Height + 1;
 
                     // Compute the rectangle's position on screen.
                     var rectScreenX = drawOffset.X + fieldX - Location.X;
