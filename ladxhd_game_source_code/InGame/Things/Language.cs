@@ -73,6 +73,8 @@ namespace ProjectZ.InGame.Things
             }
             string Select = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 8];
             string Start  = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 9];
+            string X = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 2];
+            string Y = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 3];
 
             // Inserts the players name.
             inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
@@ -108,6 +110,8 @@ namespace ProjectZ.InGame.Things
             inputString = inputString.Replace("[CANCEL]", Cancel);
             inputString = inputString.Replace("[START]", Start);
             inputString = inputString.Replace("[SELECT]", Select);
+            inputString = inputString.Replace("[X]", X);
+            inputString = inputString.Replace("[Y]", Y);
             return inputString;
         }
 

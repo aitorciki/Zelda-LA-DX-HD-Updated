@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
             GameSettings.PhotosColor = saveManager.GetBool("PhotosColor", GameSettings.PhotosColor);
             GameSettings.NoAnimalDamage = saveManager.GetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
+            GameSettings.DungeonTeleport = saveManager.GetBool("DungeonTeleport", GameSettings.DungeonTeleport);
 
             // Camera Settings
             GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
@@ -48,7 +49,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
             GameSettings.ExFullscreen = saveManager.GetBool("ExFullscreen", GameSettings.ExFullscreen);
             GameSettings.GlobalLights = saveManager.GetBool("GlobalLights", GameSettings.GlobalLights);
-            GameSettings.ObjectLights = saveManager.GetBool("ObjectLighting", GameSettings.ObjectLights);
+            GameSettings.ObjectLights = saveManager.GetBool("ObjectLights", GameSettings.ObjectLights);
             GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
 
@@ -115,6 +116,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("Unmissables", GameSettings.Unmissables);
             saveManager.SetBool("PhotosColor", GameSettings.PhotosColor);
             saveManager.SetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
+            saveManager.SetBool("DungeonTeleport", GameSettings.DungeonTeleport);
 
             // Camera Settings
             saveManager.SetBool("ClassicCamera", GameSettings.ClassicCamera);
@@ -131,7 +133,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);
             saveManager.SetBool("ExFullscreen", GameSettings.ExFullscreen);
-            saveManager.SetBool("GlobalLighting", GameSettings.GlobalLights);
+            saveManager.SetBool("GlobalLights", GameSettings.GlobalLights);
             saveManager.SetBool("ObjectLights", GameSettings.ObjectLights);
             saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);

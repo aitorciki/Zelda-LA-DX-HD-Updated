@@ -88,6 +88,19 @@ namespace ProjectZ.InGame.Overlay
         private float _scaleButtonTimer;
         private float _scaleButtonPeriod;
 
+        public Dictionary<Point, (int Level, Vector2 Teleport)> TeleportMap = new()
+        {
+            // Tile Position    = Level, Link Teleport Position
+            [new Point(3, 13)]  = (1, new Vector2(600, 1720)),  // Dungeon 1
+            [new Point(4, 2)]   = (2, new Vector2(736, 340)),   // Dungeon 2
+            [new Point(5, 11)]  = (3, new Vector2(920, 1472)),  // Dungeon 3
+            [new Point(11, 2)]  = (4, new Vector2(1848, 320)),  // Dungeon 4
+            [new Point(9, 13)]  = (5, new Vector2(1544, 1728)), // Dungeon 5
+            [new Point(12, 8)]  = (6, new Vector2(1992, 1120)), // Dungeon 6
+            [new Point(14, 0)]  = (7, new Vector2(2344, 96)),   // Dungeon 7
+            [new Point(0, 1)]   = (8, new Vector2(104, 192)),   // Dungeon 8
+        };
+
         public OverlayManager()
         {
             _blurRectangle = (UiRectangle)Game1.UiManager.AddElement(
@@ -387,17 +400,47 @@ namespace ProjectZ.InGame.Overlay
                 // Draw the inventory screen.
                 if (_currentMenuState == MenuState.Inventory)
                 {
-                    var selectStr = "";
-                    if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Start].Keys.Length > 0)
-                        selectStr = ControlHandler.ButtonDictionary[CButtons.Select].Keys[0].ToString();
-                    if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Start].Buttons.Length > 0)
-                        selectStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.Select].Buttons[0]);
+                    // Draw the map toggle button and label.
+                    var mapStart = "";
+                    if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Select].Keys.Length > 0)
+                        mapStart = ControlHandler.ButtonDictionary[CButtons.Select].Keys[0].ToString();
+                    if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Select].Buttons.Length > 0)
+                        mapStart = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.Select].Buttons[0]);
 
-                    var strType = Game1.LanguageManager.GetString((_updateInventory ? "overlay_map" : "overlay_inventory"), "error");
-                    var inputHelper = selectStr + ": " + strType;
+                    var mapString = mapStart + ": " + Game1.LanguageManager.GetString(_updateInventory ? "overlay_map" : "overlay_inventory", "error");
+                    var mapDrawPos =  new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale);
 
-                    spriteBatch.DrawString(Resources.GameFont, inputHelper,
-                        new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale), Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(Resources.GameFont, mapString, mapDrawPos, Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+
+                    // When navigating the map, get the currently selected map position.
+                    var nodeSelected = _mapOverlay.SelectionPosition;
+
+                    // If we're in map mode and one of the dungeons are selected.
+                    if (GameSettings.DungeonTeleport && !_updateInventory && TeleportMap.ContainsKey(nodeSelected))
+                    {
+                        // Get the selected dungeon and check if the instrument has been collected.
+                        int dungeonLevel = TeleportMap[nodeSelected].Level - 1;
+                        var hasInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
+
+                        // If instrument has not been collected don't draw the text.
+                        if (hasInstrument == null || hasInstrument.Count < 1)
+                            return;
+
+                        // Get the correct button to display next to the text.
+                        var teleStart = "";
+                        if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.X].Keys.Length > 0)
+                            teleStart = ControlHandler.ButtonDictionary[CButtons.X].Keys[0].ToString();
+                        if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.X].Buttons.Length > 0)
+                            teleStart = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.X].Buttons[0]);
+
+                        // Set up the string to display.
+                        var teleString = teleStart + ": " + Game1.LanguageManager.GetString("overlay_teleport", "error");
+                        var teleTextSize = Resources.GameFont.MeasureString(teleString);
+                        var teleDrawPos = new Vector2(Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale);
+
+                        // Draw the teleport button and label.
+                        spriteBatch.DrawString(Resources.GameFont, teleString, teleDrawPos, Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+                    }
                 }
             }
         }

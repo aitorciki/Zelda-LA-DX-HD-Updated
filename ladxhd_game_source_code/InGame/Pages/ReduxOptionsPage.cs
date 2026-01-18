@@ -22,7 +22,7 @@ namespace ProjectZ.InGame.Pages
             _content = content;
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var buttonHeight = 15;
 
             // Redux Settings Layout
             _reduxOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -71,6 +71,12 @@ namespace ProjectZ.InGame.Pages
                 "settings_redux_noanimaldmg", GameSettings.NoAnimalDamage, 
                 newState => { PressButtonNoAnimalDamage(newState); });
             _contentLayout.AddElement(toggleAnimalDamage);
+
+            // Dungeon Teleport
+            var toggleDungeonTeleport = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_redux_dungeonteleport", GameSettings.DungeonTeleport, 
+                newState => { PressButtonDungeonTeleport(newState); });
+            _contentLayout.AddElement(toggleDungeonTeleport);
 
             // Bottom Bar / Back Button:
             var bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -164,6 +170,11 @@ namespace ProjectZ.InGame.Pages
             GameSettings.NoAnimalDamage = newState;
         }
 
+        public void PressButtonDungeonTeleport(bool newState) 
+        {
+            GameSettings.DungeonTeleport = newState;
+        }
+
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
         {
             // Always draw the menu even when not showing tooltips.
@@ -197,6 +208,7 @@ namespace ProjectZ.InGame.Pages
                 case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_unmissables", "error"); break; }
                 case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_photoscolor", "error"); break; }
                 case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_noanimaldmg", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dungeonteleport", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

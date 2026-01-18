@@ -19,6 +19,7 @@
         public static bool    Unmissables     =  false;
         public static bool    PhotosColor     =  false;
         public static bool    NoAnimalDamage  =  false;
+        public static bool    DungeonTeleport =  false;
 
         // Camera Settings
         public static bool    ClassicCamera   =  false;

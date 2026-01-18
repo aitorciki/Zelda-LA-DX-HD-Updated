@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Effects;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -58,6 +60,8 @@ namespace ProjectZ.InGame.Overlay
 
         private bool _iconAnimationRunning;
         private bool _fullMap;
+
+        public Point SelectionPosition { get => _selectionPosition; }
 
         public MapOverlay(int width, int height, int margin, bool fullMap)
         {
@@ -167,7 +171,6 @@ namespace ProjectZ.InGame.Overlay
                 else
                     PlayStopAnimation();
             }
-
             // update the icon run animation
             if (_iconAnimationRunning)
             {
@@ -186,7 +189,6 @@ namespace ProjectZ.InGame.Overlay
 
                 _animationState = (float)Math.Sin(_animationCount);
             }
-
             if (!IsSelected)
                 return;
 
@@ -230,6 +232,40 @@ namespace ProjectZ.InGame.Overlay
                 if (0 <= _selectionPosition.X && _selectionPosition.X < _mapDialog.GetLength(1) &&
                     0 <= _selectionPosition.Y && _selectionPosition.Y < _mapDialog.GetLength(0))
                     Game1.GameManager.RunDialog(_mapDialog[_selectionPosition.Y, _selectionPosition.X]);
+            }
+
+            if (ControlHandler.ButtonPressed(CButtons.X))
+            {
+                // Get if we have a teleport position, the dungeon level, the teleport position, and the instrument collected state.
+                var validPosition = Game1.GameManager.InGameOverlay.TeleportMap.TryGetValue(_selectionPosition, out (int Level, Vector2 Teleport) teleportData);
+                var dungeonLevel = teleportData.Level - 1;
+                var teleportPos = teleportData.Teleport;
+                var hasInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
+
+                // If it's not a teleport position or the player doesn't have the instrument.
+                if (!GameSettings.DungeonTeleport || !validPosition || hasInstrument == null || hasInstrument.Count < 1)
+                    return;
+
+                // We'll need this to teleport Link later.
+                var body = MapManager.ObjLink._body;
+
+                // Snap the camera instantly.
+                Camera.SnapCameraTimer = 100f;
+
+                // Close the inventory just before the teleport.
+                Game1.GameManager.InGameOverlay.ToggleInventoryMap();
+                Game1.GameManager.InGameOverlay.CloseOverlay();
+
+                // Teleport Link to where we want him.
+                body.Position.Set(teleportPos);
+                body.Velocity = Vector3.Zero;
+                body.VelocityTarget = Vector2.Zero;
+                MapManager.ObjLink.Direction = 1;
+
+                // Play an animation and a sound effect.
+                var explosionAnimation = new ObjAnimator(MapManager.ObjLink.Map, (int)teleportPos.X, (int)teleportPos.Y - 8, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
+                MapManager.ObjLink.Map.Objects.SpawnObject(explosionAnimation);
+                Game1.GameManager.PlaySoundEffect("D360-27-1B");
             }
         }
 
