@@ -1,11 +1,12 @@
+using System.IO;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Base.Components.AI;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -19,10 +20,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Vector2 _startPosition;
 
+        bool  light_source = true;
+        int   light_red = 255;
+        int   light_grn = 200;
+        int   light_blu = 200;
+        float light_bright = 0.75f;
+        int   light_size = 64;
+
         public EnemyPodoboo() : base("podoboo") { }
 
         public EnemyPodoboo(Map.Map map, int posX, int posY, int timeOffset) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathLAHDMods, "EnemyPodoboo.lahdmod");
+
+            if (File.Exists(modFile))
+                ModFile.Parse(modFile, this);
+
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
@@ -124,8 +138,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            if (GameSettings.ObjectLights)
-                DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - 32, (int)EntityPosition.Y - 32, 64, 64), new Color(255, 200, 200) * 0.75f);
+            if (light_source && GameSettings.ObjectLights)
+                DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size), new Color(light_red, light_grn, light_blu) * light_bright);
         }
     }
 }

@@ -1,10 +1,10 @@
+using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.Things;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 
 namespace ProjectZ.InGame.GameObjects.Things
@@ -181,9 +181,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (_positions[i].Position != Vector2.Zero)
                 {
                     var sizeMult = i == 0 ? 1 : 0.75f;// (4 - i) / 4f;
-                    DrawHelper.DrawLight(spriteBatch,
-                        new Rectangle((int)(_positions[i].X - 16 * sizeMult), (int)(_positions[i].Y - 16 * sizeMult),
-                        (int)(32 * sizeMult), (int)(32 * sizeMult)), Color.White);
+                    DrawHelper.DrawLight(spriteBatch, new Rectangle((int)(_positions[i].X - 16 * sizeMult), (int)(_positions[i].Y - 16 * sizeMult), (int)(32 * sizeMult), (int)(32 * sizeMult)), Color.White);
                 }
             }
         }
