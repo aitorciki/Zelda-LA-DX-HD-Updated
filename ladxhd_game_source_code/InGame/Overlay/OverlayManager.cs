@@ -33,6 +33,8 @@ namespace ProjectZ.InGame.Overlay
         private MenuState _currentMenuState = MenuState.None;
         private MenuState _lastMenuState = MenuState.None;
 
+        public bool InventoryState { get => _currentMenuState == MenuState.Inventory; }
+
         public TextboxOverlay TextboxOverlay;
         public HudOverlay InGameHud;
 
@@ -416,7 +418,7 @@ namespace ProjectZ.InGame.Overlay
                     var nodeSelected = _mapOverlay.SelectionPosition;
 
                     // If we're in map mode and one of the dungeons are selected.
-                    if (GameSettings.DungeonTeleport && !_updateInventory && TeleportMap.ContainsKey(nodeSelected))
+                    if (GameSettings.DungeonTeleport && !_updateInventory && TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
                     {
                         // Get the selected dungeon and check if the instrument has been collected.
                         int dungeonLevel = TeleportMap[nodeSelected].Level - 1;

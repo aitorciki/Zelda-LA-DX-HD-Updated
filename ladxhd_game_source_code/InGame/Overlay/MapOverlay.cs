@@ -243,7 +243,8 @@ namespace ProjectZ.InGame.Overlay
                 var hasInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
 
                 // If it's not a teleport position or the player doesn't have the instrument.
-                if (!GameSettings.DungeonTeleport || !validPosition || hasInstrument == null || hasInstrument.Count < 1)
+                if (!GameSettings.DungeonTeleport || !validPosition || hasInstrument == null || hasInstrument.Count < 1 || 
+                    !Game1.GameManager.InGameOverlay.InventoryState || !MapManager.ObjLink.Map.IsOverworld)
                     return;
 
                 // We'll need this to teleport Link later.

@@ -141,7 +141,7 @@ namespace ProjectZ.InGame.Map
             }
             else
             {
-                if (!GameSettings.SmoothCamera)
+                if (!GameSettings.SmoothCamera || SnapCamera || SnapCameraTimer > 0)
                 {
                     Location = position;
                     return;
