@@ -327,10 +327,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                             // Check if forward movement is possible by stepping up the step height.
                             if (!Collision(body, posX, posY, direction, collisionTypes, ignoreField, ref testBox))
                             {
-                                // Suppress landing sound for this frame.
-                                if (body.Owner == MapManager.ObjLink)
-                                    MapManager.ObjLink.NoDropSound = true;
-
                                 body.Position.Y -= step;
                                 body.Position.X += offset.X;
                                 return Values.BodyCollision.None;

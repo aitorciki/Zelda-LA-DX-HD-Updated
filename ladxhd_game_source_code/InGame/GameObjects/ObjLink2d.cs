@@ -557,15 +557,21 @@ namespace ProjectZ.InGame.GameObjects
             {
                 if (EntityPosition.Y == _lastClimbY)
                 {
-                    NoDropSound = true;
-                    _isClimbing = false;
-                    _tryClimbing = false;
-
-                    _body.Velocity = Vector3.Zero;
-                    _moveVector2D = Vector2.Zero;
-
-                    CurrentState = State.Idle;
-                    Direction = 1;
+                    // Create a box to detect when the player touches the ground.
+                    var groundCheckBox = new Box(EntityPosition.X + _body.OffsetX, EntityPosition.Y + _body.OffsetY + 1, 0, _body.Width, _body.Height, _body.Depth);
+                    var refBox = Box.Empty;
+        
+                    // Detect collision between the box and the ground.
+                    if (Map.Objects.Collision(groundCheckBox, Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref refBox))
+                    {
+                        NoDropSound = true;
+                        _isClimbing = false;
+                        _tryClimbing = false;
+                        _body.Velocity = Vector3.Zero;
+                        _moveVector2D = Vector2.Zero;
+                        CurrentState = State.Idle;
+                        Direction = 1;
+                    }
                 }
             }
             // Track the last Y position to compare to next frame.
