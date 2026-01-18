@@ -100,6 +100,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
             _damageState.CurrentLives = ObjLives.BuzzBlob;
+            Game1.GameManager.UseShockEffect = false;
         }
 
         private void OnBurn()
@@ -206,7 +207,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             else if (!_stunnedState.IsStunned() && ((hitType & HitType.Sword) != 0 || hitType == HitType.PegasusBootsSword))
             {
-                StartShock();
+                if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+                    StartShock();
 
                 return Values.HitCollision.Enemy;
             }
