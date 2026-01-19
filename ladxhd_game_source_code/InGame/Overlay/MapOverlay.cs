@@ -373,7 +373,7 @@ namespace ProjectZ.InGame.Overlay
                 var mapRectangle = new Point(drawPosition.X + _margin, drawPosition.Y + _margin);
 
                 // Draw the dungeon icons if enabled.
-                if (GameSettings.DungeonTeleport && IsSelected)
+                if (GameSettings.DungeonTeleport && IsSelected && MapManager.ObjLink.Map.IsOverworld)
                 {
                     for (int i = 0; i < 8; i++)
                     {
