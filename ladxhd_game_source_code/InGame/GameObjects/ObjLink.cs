@@ -1045,9 +1045,8 @@ namespace ProjectZ.InGame.GameObjects
 
                 _hitVelocity -= hitNormal * slowDownAmount * Game1.TimeMultiplier;
 
-                foreach (var barrier in FieldBarrier)
-                    if (MapManager.ObjLink._body.BodyBox.Box.Intersects(barrier.CollisionBox))
-                        _hitVelocity = Vector2.Zero;
+                if (FieldBarrier?.Any(b => MapManager.ObjLink._body.BodyBox.Box.Intersects(b.CollisionBox)) == true)
+                    _hitVelocity = Vector2.Zero;
             }
             else
                 _hitVelocity = Vector2.Zero;
