@@ -24,6 +24,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _movePosition;
         private int _moveDir;
 
+        // How far the trap detects the player from it's center. The original game detected the player
+        // from 5 pixels away on each side. So we want the range to be 26 pixels (5 + 8 + 8 + 5 = 26 pixels).
+        const int TriggerHalfWidth = 13;
+
         public EnemyBladeTrap() : base("bladeTrap") { }
 
         public EnemyBladeTrap(Map.Map map, int posX, int posY, int left, int right, int top, int bottom) : base(map)
@@ -51,10 +55,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _maxPosition[2] = top * 16;
             _maxPosition[3] = bottom * 16;
 
-            _collisionRectangles[0] = new RectangleF(posX - left * 16 - 16, posY - padding, left * 16 + 16, height);
-            _collisionRectangles[1] = new RectangleF(posX + 16, posY - padding, right * 16 + 16, height);
-            _collisionRectangles[2] = new RectangleF(posX - padding, posY - top * 16 - 16, width, top * 16 + 16);
-            _collisionRectangles[3] = new RectangleF(posX - padding, posY + 16, width, bottom * 16 + 16);
+            _collisionRectangles[0] = new RectangleF(posX - left * 16 - 16, posY + 8 - TriggerHalfWidth, left * 16 + 16, TriggerHalfWidth * 2);
+            _collisionRectangles[1] = new RectangleF(posX + 16, posY + 8 - TriggerHalfWidth, right * 16 + 16, TriggerHalfWidth * 2);
+            _collisionRectangles[2] = new RectangleF(posX + 8 - TriggerHalfWidth, posY - top * 16 - 16, TriggerHalfWidth * 2, top * 16 + 16);
+            _collisionRectangles[3] = new RectangleF(posX + 8 - TriggerHalfWidth, posY + 16, TriggerHalfWidth * 2, bottom * 16 + 16);
 
             var stateWait = new AiState();
             stateWait.Trigger.Add(new AiTriggerCountdown(350, null, () => _aiComponent.ChangeState("back")));
