@@ -64,6 +64,7 @@ namespace ProjectZ.InGame.Pages
             AddPage(new ReduxOptionsPage(_width, _height, content));
             AddPage(new ModifiersPage(_width, _height));
             AddPage(new SwordInteractPage(_width, _height));
+            AddPage(new PresetOptionsPage(_width, _height));
             AddPage(new GameMenuPage(_width, _height));
             AddPage(new QuitGamePage(_width, _height));
             AddPage(new GameOverPage(_width, _height));

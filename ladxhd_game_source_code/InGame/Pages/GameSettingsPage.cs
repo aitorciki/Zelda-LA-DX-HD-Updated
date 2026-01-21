@@ -13,10 +13,24 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _gameSettingsList;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
-        private readonly InterfaceButton _controllerType;
-        private readonly InterfaceSlider _subLangSlider;
         private readonly ContentManager _content;
+
+        private readonly InterfaceSlider     _sliderSubLanguage;
+        private readonly InterfaceSlider     _sliderMenuBricks;
+        private readonly InterfaceListLayout _toggleClassicSword;
+        private readonly InterfaceListLayout _toggleSavePosition;
+        private readonly InterfaceListLayout _toggleAutosave;
+        private readonly InterfaceListLayout _toggleItemSlotSide;
+        private readonly InterfaceListLayout _toggleEpilepsySafe;
+
         private bool _showTooltip;
+
+        public void SetMenuBricks(int value) { ((InterfaceSlider)_sliderMenuBricks).CurrentStep = value; Resources.RefreshMenuBorderTexture(_content, value); }
+        public void SetClassicSword(bool state) => ((InterfaceToggle)_toggleClassicSword.Elements[1]).ToggleState = state;
+        public void SetSavePosition(bool state) => ((InterfaceToggle)_toggleSavePosition.Elements[1]).ToggleState = state;
+        public void SetAutoSave(bool state) => ((InterfaceToggle)_toggleAutosave.Elements[1]).ToggleState = state;
+        public void SetItemSlotRight(bool state) => ((InterfaceToggle)_toggleItemSlotSide.Elements[1]).ToggleState = state;
+        public void SetEpilepsySafe(bool state) => ((InterfaceToggle)_toggleEpilepsySafe.Elements[1]).ToggleState = state;
 
         public GameSettingsPage(int width, int height, ContentManager content)
         {
@@ -38,48 +52,48 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
 
             // Slider: Sub-Language
-            _subLangSlider = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
+            _sliderSubLanguage = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
                 buttonWidth, 11, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
                 number => { Game1.LanguageManager.CurrentSubLanguageIndex = number; })
                 { SetString = number => LangSliderAdjustment(number) };
-            _contentLayout.AddElement(_subLangSlider);
+            _contentLayout.AddElement(_sliderSubLanguage);
 
-            // Menu Border Slider:
-            var menuBricksSlider = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
+            // Slider: Menu Brick Border
+            _sliderMenuBricks = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
                 buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
                 number => { GameSettings.MenuBorder = number; })
                 { SetString = number => MenuBorderScaleSliderAdjustment(number) };
-            _contentLayout.AddElement(menuBricksSlider);
+            _contentLayout.AddElement(_sliderMenuBricks);
 
-            // Button: Classic Sword
-            var toggleClassicSword = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Classic Sword
+            _toggleClassicSword = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_game_classicsword", GameSettings.ClassicSword, 
                 newState => { GameSettings.ClassicSword = newState; });
-            _contentLayout.AddElement(toggleClassicSword);
+            _contentLayout.AddElement(_toggleClassicSword);
 
-            // Button: Save Position
-            var toggleSavePosition = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Save Position
+            _toggleSavePosition = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_game_saveposition", GameSettings.StoreSavePos, 
                 newState => { GameSettings.StoreSavePos = newState; });
-            _contentLayout.AddElement(toggleSavePosition);
+            _contentLayout.AddElement(_toggleSavePosition);
 
-            // Button: AutoSave
-            var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: AutoSave
+            _toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_game_autosave", GameSettings.Autosave, 
                 newState => { GameSettings.Autosave = newState; });
-            _contentLayout.AddElement(toggleAutosave);
+            _contentLayout.AddElement(_toggleAutosave);
 
-            // Button: Items on Right
-            var toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Items on Right
+            _toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_game_items_on_right", GameSettings.ItemsOnRight, 
                 newState => { GameSettings.ItemsOnRight = newState; });
-            _contentLayout.AddElement(toggleItemSlotSide);
+            _contentLayout.AddElement(_toggleItemSlotSide);
 
-            // Button: Epilepsy Safe
-            var toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Epilepsy Safe
+            _toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_game_epilepsysafe", GameSettings.EpilepsySafe,
                 newState => { GameSettings.EpilepsySafe = newState; });
-            _contentLayout.AddElement(toggleEpilepsySafe);
+            _contentLayout.AddElement(_toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };

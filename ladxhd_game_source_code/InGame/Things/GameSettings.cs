@@ -89,5 +89,80 @@
             set { _effectVolume = value; }
         }
 
+        public static void RestoreDefaults()
+        {
+            // Game Settings
+            MenuBorder      =  0;
+            ClassicSword    =  false;
+            StoreSavePos    =  false;
+            LastSavePos     =  0;
+            Autosave        =  true;
+            ItemsOnRight    =  false;
+            EpilepsySafe    =  false;
+
+            // Redux Settings
+            VarWidthFont    =  false;
+            NoHelperText    =  false;
+            DialogSkip      =  false;
+            Uncensored      =  false;
+            Unmissables     =  false;
+            PhotosColor     =  false;
+            NoAnimalDamage  =  false;
+            DungeonTeleport =  false;
+
+            // Camera Settings
+            ClassicCamera   =  false;
+            ClassicDungeon  =  false;
+            ClassicBorders  =  0;
+            ClassicAlpha    =  1.00f;
+            CameraLock      =  true;
+            SmoothCamera    =  true;
+            ScreenShake     =  true;
+            ExScreenShake   =  false;
+
+            // Video Settings
+            GameScale       =  Game1.MaxGameScale + 1;
+            UiScale         =  11;
+            IsFullscreen    =  false;
+            ExFullscreen    =  false;
+            GlobalLights    =  true;
+            ObjectLights    =  true;
+            EnableShadows   =  true;
+            VerticalSync    =  true;
+
+            // Audio Settings
+            ClassicMusic    =  false;
+            MuteInactive    =  true;
+            HeartBeep       =  true;
+            MutePowerups    =  false;
+
+            // Control Settings
+            DeadZone        =  0.10f;
+            Controller      =  "XBox";
+            TriggersScale   =  false;
+            SixButtons      =  false;
+            SwapButtons     =  false;
+            OldMovement     =  false;
+            DigitalAnalog   =  false;
+
+            // Modifiers Settings
+            EnemyBonusHP    =  0;
+            DamageFactor    =  4;
+            DmgCooldown     =  16;
+            MoveSpeedAdded  =  0;
+            NoHeartDrops    =  false;
+            NoDamageLaunch  =  false;
+
+            // Sword Collection
+            SwGrabNormal    =  true;
+            SwGrabWorldItem =  false;
+            SwGrabFairy     =  false;
+            SwGrabSmallKey  =  false;
+            SwBoomerang     =  false;
+            SwSmackBombs    =  false;
+            SwMissileBlock  =  false;
+            SwBreakPots     =  false;
+            SwBeamShrubs    =  false;
+        }
     }
 }

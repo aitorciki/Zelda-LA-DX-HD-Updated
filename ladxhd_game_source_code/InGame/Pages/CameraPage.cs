@@ -12,20 +12,26 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _cameraOptionsList;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+
         private readonly InterfaceListLayout _toggleClassicCamera;
         private readonly InterfaceListLayout _toggleClassicDungeon;
+        private readonly InterfaceSlider     _sliderCameraBorder;
+        private readonly InterfaceSlider     _sliderBorderOpacity;
         private readonly InterfaceListLayout _toggleCameraLock;
         private readonly InterfaceListLayout _toggleCameraSmooth;
-        private readonly InterfaceSlider _sliderCameraBorder;
-        private readonly InterfaceSlider _sliderBorderOpacity;
-        public static bool _reloadMenus;
+        private readonly InterfaceListLayout _toggleScreenShake;
+        private readonly InterfaceListLayout _toggleExScreenShake;
+
         private bool _showTooltip;
 
         public void SetClassicCamera(bool state) => ((InterfaceToggle)_toggleClassicCamera.Elements[1]).ToggleState = state;
         public void SetClassicDungeon(bool state) => ((InterfaceToggle)_toggleClassicDungeon.Elements[1]).ToggleState = state;
-        public void SetClassicBorder(int value) => _sliderCameraBorder.CurrentStep = value;
-        public void SetCameraLock(bool state) => ((InterfaceToggle)_toggleCameraLock.Elements[1]).ToggleState = state;
-        public void SetCameraSmooth(bool state) => ((InterfaceToggle)_toggleCameraSmooth.Elements[1]).ToggleState = state;
+        public void SetClassicCamBorder(int value) { ((InterfaceSlider)_sliderCameraBorder).CurrentStep = value; }
+        public void SetClassicBorderAlpha(int value) { ((InterfaceSlider)_sliderBorderOpacity).CurrentStep = value; }
+        public void SetCameraLock(bool state) => ((InterfaceToggle)_toggleCameraLock.Elements[1]).ToggleState = state; 
+        public void SetCameraSmoothCam(bool state) => ((InterfaceToggle)_toggleCameraSmooth.Elements[1]).ToggleState = state;
+        public void SetCameraScreenShake(bool state) => ((InterfaceToggle)_toggleScreenShake.Elements[1]).ToggleState = state;
+        public void SetCameraExScreenShake(bool state) => ((InterfaceToggle)_toggleExScreenShake.Elements[1]).ToggleState = state;
 
         public CameraSettingsPage(int width, int height)
         {
@@ -41,13 +47,13 @@ namespace ProjectZ.InGame.Pages
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Button: Classic Camera
+            // Toggle: Classic Camera
             _toggleClassicCamera = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_classiccam", GameSettings.ClassicCamera, 
                 newState => { GameSettings.ClassicCamera = newState; Game1.ScaleChanged = true; UpdateInterfaceColors(); });
             _contentLayout.AddElement(_toggleClassicCamera);
 
-            // Button: Dungeons Only
+            // Toggle: Dungeons Only
             _toggleClassicDungeon = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_classicdungeon", GameSettings.ClassicDungeon, 
                 newState => { GameSettings.ClassicDungeon = newState; Game1.ScaleChanged = true; });
@@ -64,32 +70,32 @@ namespace ProjectZ.InGame.Pages
             _sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
                 buttonWidth, sliderHeight, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
                 number => { GameSettings.ClassicAlpha = (float)(number * 0.01); })
-                { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
+                { SetString = number => SetClassicBorderOpacity(number) };
             _contentLayout.AddElement(_sliderBorderOpacity);
 
-            // Button: Camera Lock
+            // Toggle: Camera Lock
             _toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_cameralock", GameSettings.CameraLock, 
                 newState => { GameSettings.CameraLock = newState; });
             _contentLayout.AddElement(_toggleCameraLock);
 
-            // Button: Smooth Camera
+            // Toggle: Smooth Camera
             _toggleCameraSmooth = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_smoothcamera", GameSettings.SmoothCamera, 
                 newState => { GameSettings.SmoothCamera = newState; });
             _contentLayout.AddElement(_toggleCameraSmooth);
 
-            // Button: Screen-Shake
-            var toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Screen-Shake
+            _toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_screenshake", GameSettings.ScreenShake, 
                 newState => { GameSettings.ScreenShake = newState; });
-            _contentLayout.AddElement(toggleScreenShake);
+            _contentLayout.AddElement(_toggleScreenShake);
 
-            // Button: Extra Screen-Shake
-            var toggleExScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Extra Screen-Shake
+            _toggleExScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_exscreenshake", GameSettings.ExScreenShake, 
                 newState => { GameSettings.ExScreenShake = newState; });
-            _contentLayout.AddElement(toggleExScreenShake);
+            _contentLayout.AddElement(_toggleExScreenShake);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -142,11 +148,6 @@ namespace ProjectZ.InGame.Pages
             _toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);
         }
 
-        private string AddedMoveSpeedSliderAdjustment(int number)
-        {
-            return ": " + number + "%";
-        }
-
         private string ClassicBorderAdjustment(int number)
         {
             return ": " + number switch
@@ -155,6 +156,11 @@ namespace ProjectZ.InGame.Pages
                 1 => Game1.LanguageManager.GetString("tooltip_camera_camborderB", "error"),
                 2 => Game1.LanguageManager.GetString("tooltip_camera_camborderC", "error")
             };
+        }
+
+        private string SetClassicBorderOpacity(int number)
+        {
+            return ": " + number + "%";
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)

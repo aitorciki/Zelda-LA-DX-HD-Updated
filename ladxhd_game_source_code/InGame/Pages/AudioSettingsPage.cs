@@ -12,8 +12,22 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _audioSettingsLayout;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+
+        private readonly InterfaceSlider     _sliderMusicVolume;
+        private readonly InterfaceSlider     _sliderSoundVolume;
         private readonly InterfaceListLayout _toggleAudioClassic;
+        private readonly InterfaceListLayout _toggleMuteInactive;
+        private readonly InterfaceListLayout _toggleHealthAlarm;
+        private readonly InterfaceListLayout _togglePowerupMusic;
+
         private bool _showTooltip;
+
+        public void SetMusicVolume(int value) => ((InterfaceSlider)_sliderMusicVolume).CurrentStep = value;
+        public void SetSoundVolume(int value) => ((InterfaceSlider)_sliderSoundVolume).CurrentStep = value;
+        public void SetClassicAudio(bool state) => ((InterfaceToggle)_toggleAudioClassic.Elements[1]).ToggleState = state;
+        public void SetMuteInactive(bool state) => ((InterfaceToggle)_toggleMuteInactive.Elements[1]).ToggleState = state;
+        public void SetHealthAlarm(bool state) => ((InterfaceToggle)_toggleHealthAlarm.Elements[1]).ToggleState = state;
+        public void SetPowerupMusic(bool state) => ((InterfaceToggle)_togglePowerupMusic.Elements[1]).ToggleState = state;
 
         public AudioSettingsPage(int width, int height)
         {
@@ -27,44 +41,45 @@ namespace ProjectZ.InGame.Pages
 
             _audioSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_audio_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize - 12)), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Slider: Music Volume
-            _contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_music_volume",
+            _sliderMusicVolume = new InterfaceSlider(Resources.GameFont, "settings_audio_music_volume",
                 buttonWidth, 11, new Point(1, 2), 0, 100, 5, GameSettings.MusicVolume, 
                 number => { GameSettings.MusicVolume = number; })
-                { SetString = number => " " + number + "%" });
+                { SetString = number => " " + number + "%" };
+            _contentLayout.AddElement(_sliderMusicVolume);
 
             // Slider: Sound Effects Volume
-            _contentLayout.AddElement(new InterfaceSlider(Resources.GameFont, "settings_audio_effect_volume",
+            _sliderSoundVolume = new InterfaceSlider(Resources.GameFont, "settings_audio_effect_volume",
                 buttonWidth, 11, new Point(1, 2), 0, 100, 5, GameSettings.EffectVolume, 
                 number => { Game1.GameManager.UpdateSoundEffects(); GameSettings.EffectVolume = number; })
-                { SetString = number => " " + number + "%" });
+                { SetString = number => " " + number + "%" };
+            _contentLayout.AddElement(_sliderSoundVolume);
 
-            // Button: Classic Music Tile Cues
+            // Toggle: Classic Music Tile Cues
             _toggleAudioClassic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_audio_classic_music", GameSettings.ClassicMusic, 
                 newState => { GameSettings.ClassicMusic = newState; });
             _contentLayout.AddElement(_toggleAudioClassic);
 
-            // Button: Mute Inactive Window
-            var toggleAudioMute = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Mute Inactive Window
+            _toggleMuteInactive = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_audio_mute_inactive", GameSettings.MuteInactive, 
                 newState => { GameSettings.MuteInactive = newState; });
-            _contentLayout.AddElement(toggleAudioMute);
+            _contentLayout.AddElement(_toggleMuteInactive);
 
-            // Button: Low Hearts Alarm
-            var toggleHeartBeep = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Low Hearts Alarm
+            _toggleHealthAlarm = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_audio_heartbeep", GameSettings.HeartBeep, 
                 newState => { GameSettings.HeartBeep = newState; });
-            _contentLayout.AddElement(toggleHeartBeep);
+            _contentLayout.AddElement(_toggleHealthAlarm);
 
-            // Button: Mute Powerup Music
-            var toggleNoPowerupMusic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Mute Powerup Music
+            _togglePowerupMusic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_audio_mute_powerups", GameSettings.MutePowerups, 
                 newState => { GameSettings.MutePowerups = newState; });
-            _contentLayout.AddElement(toggleNoPowerupMusic);
+            _contentLayout.AddElement(_togglePowerupMusic);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -140,12 +155,6 @@ namespace ProjectZ.InGame.Pages
             }
             // Display the tooltip in the tooltip window.
             return tooltip;
-        }
-
-        public void SetClassicAudio(bool state)
-        {
-            var toggle = (InterfaceToggle)_toggleAudioClassic.Elements[1];
-            toggle.ToggleState = state;
         }
     }
 }

@@ -9,14 +9,27 @@ namespace ProjectZ.InGame.Pages
 {
     class GraphicSettingsPage : InterfacePage
     {
-        private readonly InterfaceSlider _uiScaleSlider;
-        private readonly InterfaceSlider _gameScaleSlider;
         private readonly InterfaceListLayout _graphicSettingsLayout;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+
+        private readonly InterfaceSlider     _sliderGameScale;
+        private readonly InterfaceSlider     _sliderUIScale;
         private readonly InterfaceListLayout _toggleFullscreen;
         private readonly InterfaceListLayout _toggleExFullscreen;
+        private readonly InterfaceListLayout _toggleGlobalLighting;
+        private readonly InterfaceListLayout _toggleObjectLighting;
+        private readonly InterfaceListLayout _toggleDynamicShadows;
+        private readonly InterfaceListLayout _toggleVerticalSync;
+
         private bool _showTooltip;
+
+        public void SetGameScaleValue(int value) { ((InterfaceSlider)_sliderGameScale).CurrentStep = value; }
+        public void SetUserInterfaceScale(int value) { ((InterfaceSlider)_sliderUIScale).CurrentStep = value; }
+        public void SetGlobalLighting(bool state) => ((InterfaceToggle)_toggleGlobalLighting.Elements[1]).ToggleState = state;
+        public void SetObjectLighting(bool state) => ((InterfaceToggle)_toggleObjectLighting.Elements[1]).ToggleState = state;
+        public void SetDynamicShadows(bool state) => ((InterfaceToggle)_toggleDynamicShadows.Elements[1]).ToggleState = state;
+        public void SetVerticalSync(bool state) { ((InterfaceToggle)_toggleVerticalSync.Elements[1]).ToggleState = state; Game1.FpsSettingChanged = true; }
 
         public GraphicSettingsPage(int width, int height)
         {
@@ -34,54 +47,54 @@ namespace ProjectZ.InGame.Pages
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Slider: Game Scale
-            _gameScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
+            _sliderGameScale = new InterfaceSlider(Resources.GameFont, "settings_graphics_game_scale",
                 buttonWidth, sliderHeight, new Point(1, 2), -3, Game1.MaxGameScale + 1, 1, GameSettings.GameScale, 
                 number => { GameSettings.GameScale = number; Game1.ScaleChanged = true; })
                 { SetString = number => GameScaleSliderAdjustmentString(number) };
-            _contentLayout.AddElement(_gameScaleSlider);
+            _contentLayout.AddElement(_sliderGameScale);
 
             // Slider: UI Scale
-            _uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
+            _sliderUIScale = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
                 buttonWidth, sliderHeight, new Point(1, 2), 1, 11, 1, GameSettings.UiScale-1,
                 number => { GameSettings.UiScale = number; Game1.ScaleChanged = true; })
                 { SetString = number => UIScaleSliderAdjustmentString(number) };
-            _contentLayout.AddElement(_uiScaleSlider);
+            _contentLayout.AddElement(_sliderUIScale);
 
-            // Button: Fullscreen
+            // Toggle: Fullscreen
             _toggleFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_fullscreen", GameSettings.IsFullscreen,
                 newState => { Game1.ToggleFullscreen(); Game1.ScaleChanged = true; });
             _contentLayout.AddElement(_toggleFullscreen);
 
-            // Button: Exclusive Fullscreen
+            // Toggle: Exclusive Fullscreen
             _toggleExFullscreen = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_exfullscreen", GameSettings.ExFullscreen,
                 newState => { GameSettings.ExFullscreen = newState; });
             _contentLayout.AddElement(_toggleExFullscreen);
 
-            // Button: Disable Global Lighting
-            var disableGlobalLightingToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Disable Global Lighting
+            _toggleGlobalLighting = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                "settings_graphics_globallights", GameSettings.GlobalLights,
                newState => GameSettings.GlobalLights = newState);
-             _contentLayout.AddElement(disableGlobalLightingToggle);
+             _contentLayout.AddElement(_toggleGlobalLighting);
 
-            // Button: Disable Object Lighting
-            var disableObjectLightingToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Disable Object Lighting
+            _toggleObjectLighting = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                "settings_graphics_objectlights", GameSettings.ObjectLights,
                newState => GameSettings.ObjectLights = newState);
-             _contentLayout.AddElement(disableObjectLightingToggle);
+             _contentLayout.AddElement(_toggleObjectLighting);
 
-            // Button: Dynamic Shadows
-            var shadowToggle = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Dynamic Shadows
+            _toggleDynamicShadows = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                "settings_graphics_shadow", GameSettings.EnableShadows,
                newState => GameSettings.EnableShadows = newState);
-             _contentLayout.AddElement(shadowToggle);
+             _contentLayout.AddElement(_toggleDynamicShadows);
 
-            // Button: Vertical Sync
-            var toggleFpsLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Vertical Sync
+            _toggleVerticalSync = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_fps_lock", GameSettings.VerticalSync,
                 newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
-            _contentLayout.AddElement(toggleFpsLock);
+            _contentLayout.AddElement(_toggleVerticalSync);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -165,7 +178,7 @@ namespace ProjectZ.InGame.Pages
         private void UpdateGameScaleSlider()
         {
             // The step starts at 0 and ends at max. Add the amount it goes negative.
-            _gameScaleSlider.CurrentStep = GameSettings.GameScale + 3;
+            _sliderGameScale.CurrentStep = GameSettings.GameScale + 3;
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)

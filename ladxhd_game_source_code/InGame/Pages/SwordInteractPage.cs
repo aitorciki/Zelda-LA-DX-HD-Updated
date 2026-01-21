@@ -13,6 +13,27 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _swordSettingsList;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+
+        private readonly InterfaceListLayout _toggleSwordGrabNormal;
+        private readonly InterfaceListLayout _toggleSwordGrabStatic;
+        private readonly InterfaceListLayout _toggleSwordGrabFairy;
+        private readonly InterfaceListLayout _toggleSwordGrabKeys;
+        private readonly InterfaceListLayout _toggleBounceBoomerang;
+        private readonly InterfaceListLayout _toggleBounceBombs;
+        private readonly InterfaceListLayout _toggleSwordBlock;
+        private readonly InterfaceListLayout _toggleSmashPots;
+        private readonly InterfaceListLayout _toggleBeamShrubs;
+
+        public void SetSwordCollectNormal(bool state) => ((InterfaceToggle)_toggleSwordGrabNormal.Elements[1]).ToggleState = state;
+        public void SetSwordCollectStatic(bool state) => ((InterfaceToggle)_toggleSwordGrabStatic.Elements[1]).ToggleState = state;
+        public void SetSwordCollectFairy(bool state) => ((InterfaceToggle)_toggleSwordGrabFairy.Elements[1]).ToggleState = state;
+        public void SetSwordCollectKeys(bool state) => ((InterfaceToggle)_toggleSwordGrabKeys.Elements[1]).ToggleState = state;
+        public void SetSwordBounceBoomerang(bool state) => ((InterfaceToggle)_toggleBounceBoomerang.Elements[1]).ToggleState = state;
+        public void SetSwordBounceBombs(bool state) => ((InterfaceToggle)_toggleBounceBombs.Elements[1]).ToggleState = state;
+        public void SetSwordBlockProjectile(bool state) => ((InterfaceToggle)_toggleSwordBlock.Elements[1]).ToggleState = state;
+        public void SetSwordSmashesPots(bool state) => ((InterfaceToggle)_toggleSmashPots.Elements[1]).ToggleState = state;
+        public void SetSwordBeamCutsShrubs(bool state) => ((InterfaceToggle)_toggleBeamShrubs.Elements[1]).ToggleState = state;
+
         private bool _showTooltip;
 
         public SwordInteractPage(int width, int height)
@@ -29,59 +50,59 @@ namespace ProjectZ.InGame.Pages
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Button: Collect Items
-            var toggleSwordGrabNormal = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Collect Items
+            _toggleSwordGrabNormal = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_grabnormal", GameSettings.SwGrabNormal, 
                 newState => { GameSettings.SwGrabNormal = newState; });
-            _contentLayout.AddElement(toggleSwordGrabNormal);
+            _contentLayout.AddElement(_toggleSwordGrabNormal);
 
-            // Button: Collect Static Items
-            var toggleSwordGrabStatic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Collect Static Items
+            _toggleSwordGrabStatic = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_grabworlditem", GameSettings.SwGrabWorldItem, 
                 newState => { GameSettings.SwGrabWorldItem = newState; });
-            _contentLayout.AddElement(toggleSwordGrabStatic);
+            _contentLayout.AddElement(_toggleSwordGrabStatic);
 
-            // Button: Collect Fairies
-            var toggleSwordGrabFairy = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Collect Fairies
+            _toggleSwordGrabFairy = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_grabfairy", GameSettings.SwGrabFairy, 
                 newState => { GameSettings.SwGrabFairy = newState; });
-            _contentLayout.AddElement(toggleSwordGrabFairy);
+            _contentLayout.AddElement(_toggleSwordGrabFairy);
 
-            // Button: Collect Small Keys
-            var toggleSwordGrabKeys = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Collect Small Keys
+            _toggleSwordGrabKeys = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_grabsmallkeys", GameSettings.SwGrabSmallKey, 
                 newState => { GameSettings.SwGrabSmallKey = newState; });
-            _contentLayout.AddElement(toggleSwordGrabKeys);
+            _contentLayout.AddElement(_toggleSwordGrabKeys);
 
-            // Button: Bounce Boomerang
-            var toggleBounceBoomerang = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Bounce Boomerang
+            _toggleBounceBoomerang = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_boomerang", GameSettings.SwBoomerang, 
                 newState => { GameSettings.SwBoomerang = newState; });
-            _contentLayout.AddElement(toggleBounceBoomerang);
+            _contentLayout.AddElement(_toggleBounceBoomerang);
 
-            // Button: Bounce Bombs
-            var toggleBounceBombs = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Bounce Bombs
+            _toggleBounceBombs = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_bouncebombs", GameSettings.SwSmackBombs, 
                 newState => { GameSettings.SwSmackBombs = newState; });
-            _contentLayout.AddElement(toggleBounceBombs);
+            _contentLayout.AddElement(_toggleBounceBombs);
 
-            // Button: Sword Block Projectiles
-            var toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Sword Block Projectiles
+            _toggleSwordBlock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_swordblock", GameSettings.SwMissileBlock, 
                 newState => { GameSettings.SwMissileBlock = newState; });
-            _contentLayout.AddElement(toggleSwordBlock);
+            _contentLayout.AddElement(_toggleSwordBlock);
 
-            // Button: Smash Pots & Skulls
-            var toggleSmashPots = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Smash Pots & Skulls
+            _toggleSmashPots = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_breakpots", GameSettings.SwBreakPots, 
                 newState => { GameSettings.SwBreakPots = newState; });
-            _contentLayout.AddElement(toggleSmashPots);
+            _contentLayout.AddElement(_toggleSmashPots);
 
-            // Button: Beam Cuts Grass & Bushes
-            var toggleBeamShrubs = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Beam Cuts Grass & Bushes
+            _toggleBeamShrubs = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_sword_beamshrubs", GameSettings.SwBeamShrubs, 
                 newState => { GameSettings.SwBeamShrubs = newState; });
-            _contentLayout.AddElement(toggleBeamShrubs);
+            _contentLayout.AddElement(_toggleBeamShrubs);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };

@@ -14,8 +14,22 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _modifiersLayout;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
-        public static bool _reloadMenus;
+
+        private readonly InterfaceSlider     _sliderEnemyHitPoints;
+        private readonly InterfaceSlider     _sliderDamageTaken;
+        private readonly InterfaceSlider     _sliderDamageCooldown;
+        private readonly InterfaceSlider     _sliderMovementSpeed;
+        private readonly InterfaceListLayout _toggleNoHeartDrops;
+        private readonly InterfaceListLayout _toggleNoDmgLaunch;
+
         private bool _showTooltip;
+
+        public void SetEnemyHitPoints(int value) { ((InterfaceSlider)_sliderEnemyHitPoints).CurrentStep = value; ObjLives.RestoreDefaultHP(); ObjLives.AddToEnemyHP(value); }
+        public void SetDamageTaken(int value) => ((InterfaceSlider)_sliderDamageTaken).CurrentStep = value;
+        public void SetDamageCooldown(int value) { ((InterfaceSlider)_sliderDamageCooldown).CurrentStep = value; ObjLink.CooldownTime = ObjLink.BlinkTime * GameSettings.DmgCooldown; }
+        public void SetMovementSpeed(int value) => ((InterfaceSlider)_sliderMovementSpeed).CurrentStep = value;
+        public void SetNoHeartDrops(bool state) => ((InterfaceToggle)_toggleNoHeartDrops.Elements[1]).ToggleState = state;
+        public void SetNoDamageLaunch(bool state) => ((InterfaceToggle)_toggleNoDmgLaunch.Elements[1]).ToggleState = state;
 
         public ModifiersPage(int width, int height)
         {
@@ -32,46 +46,46 @@ namespace ProjectZ.InGame.Pages
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Slider: Extra Enemy HP
-            var enemyHPSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_enemy_hp",
+            _sliderEnemyHitPoints = new InterfaceSlider(Resources.GameFont, "settings_mods_enemy_hp",
                 buttonWidth, sliderHeight, new Point(1, 1), 0, 30, 1, GameSettings.EnemyBonusHP,
                 number => { GameSettings.EnemyBonusHP = number; })
                 { SetString = number => EnemyHPSliderAdjustment(number) };
-            _contentLayout.AddElement(enemyHPSlider);
+            _contentLayout.AddElement(_sliderEnemyHitPoints);
 
             // Slider: Damage Taken Multiplier
-            var damageTakenSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damage",
+            _sliderDamageTaken = new InterfaceSlider(Resources.GameFont, "settings_mods_damage",
                 buttonWidth, sliderHeight, new Point(1, 1), 0, 40, 1, GameSettings.DamageFactor,
                 number => { GameSettings.DamageFactor = number; })
                 { SetString = number => DamageTakenSliderAdjustment(number) };
-            _contentLayout.AddElement(damageTakenSlider);
+            _contentLayout.AddElement(_sliderDamageTaken);
 
             // Slider: Damage Cooldown (Invincibility Frames)
-            var damageCooldownSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_damagecd",
+            _sliderDamageCooldown = new InterfaceSlider(Resources.GameFont, "settings_mods_damagecd",
                 buttonWidth, sliderHeight, new Point(1, 1), 0, 100, 1, GameSettings.DmgCooldown,
                 number => { GameSettings.DmgCooldown = number; })
                 { SetString = number => DamageCooldownSliderAdjustment(number) };
-            _contentLayout.AddElement(damageCooldownSlider);
+            _contentLayout.AddElement(_sliderDamageCooldown);
 
             // Slider: Movement Speed
-            var movementSlider = new InterfaceSlider(Resources.GameFont, "settings_mods_movespeed",
+            _sliderMovementSpeed = new InterfaceSlider(Resources.GameFont, "settings_mods_movespeed",
                 buttonWidth, sliderHeight, new Point(1, 1), 0, 10, 1, (int)(GameSettings.MoveSpeedAdded * 10),
                 number => { GameSettings.MoveSpeedAdded = number / 10f; })
                 { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
-            _contentLayout.AddElement(movementSlider);
+            _contentLayout.AddElement(_sliderMovementSpeed);
 
-            // Button: No Heart Drops
-            var toggleNoHearts = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: No Heart Drops
+            _toggleNoHeartDrops = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_mods_nohearts", GameSettings.NoHeartDrops, 
                 newState => { GameSettings.NoHeartDrops = newState; });
-            _contentLayout.AddElement(toggleNoHearts);
+            _contentLayout.AddElement(_toggleNoHeartDrops);
 
-            // Button: No Damage Launch
-            var toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: No Damage Launch
+            _toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, 
                 newState => { GameSettings.NoDamageLaunch = newState; });
-            _contentLayout.AddElement(toggleNoDmgLaunch);
+            _contentLayout.AddElement(_toggleNoDmgLaunch);
 
-            // Button: Extra Sword Interactions
+            // Toggle: Extra Sword Interactions
             _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
                 "settings_mods_swordinteract", element => { Game1.UiPageManager.ChangePage(typeof(SwordInteractPage)); }));
 

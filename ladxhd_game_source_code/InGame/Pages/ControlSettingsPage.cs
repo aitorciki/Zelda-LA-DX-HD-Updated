@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
@@ -14,9 +13,24 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _controlSettingsList;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
-        private readonly InterfaceButton _controllerType;
+
+        private readonly InterfaceSlider     _sliderDeadZone;
+        private readonly InterfaceButton     _controllerType;
+        private readonly InterfaceListLayout _toggleTriggersScale;
+        private readonly InterfaceListLayout _toggleSixButtons;
+        private readonly InterfaceListLayout _toggleSwapButtons;
+        private readonly InterfaceListLayout _toggleClassicMove;
+        private readonly InterfaceListLayout _toggleDigitalAnalog;
+
         private float _controlCooldown = 0f;
         private bool _showTooltip;
+
+        public void SetDeadZoneValue(int value) => ((InterfaceSlider)_sliderDeadZone).CurrentStep = value;
+        public void SetTriggerScale(bool state) => ((InterfaceToggle)_toggleTriggersScale.Elements[1]).ToggleState = state;
+        public void SetSixButtons(bool state) => ((InterfaceToggle)_toggleSixButtons.Elements[1]).ToggleState = state;
+        public void SetSwapButtons(bool state) { ((InterfaceToggle)_toggleSwapButtons.Elements[1]).ToggleState = state; ControlHandler.SetConfirmCancelButtons(); }
+        public void SetClassicMove(bool state) => ((InterfaceToggle)_toggleClassicMove.Elements[1]).ToggleState = state;
+        public void SetDigitalAnalog(bool state) => ((InterfaceToggle)_toggleDigitalAnalog.Elements[1]).ToggleState = state;
 
         public ControlSettingsPage(int width, int height)
         {
@@ -33,11 +47,11 @@ namespace ProjectZ.InGame.Pages
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
             // Slider: Deadzone
-            var sliderDeadzone = new InterfaceSlider(Resources.GameFont, "settings_controls_deadzone", 
+            _sliderDeadZone = new InterfaceSlider(Resources.GameFont, "settings_controls_deadzone", 
                 buttonWidth, 11, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
                 number => { GameSettings.DeadZone = (float)(number * 0.01); })
                 { SetString = number => ": " + number + "%" };
-            _contentLayout.AddElement(sliderDeadzone);
+            _contentLayout.AddElement(_sliderDeadZone);
 
             // Button: Controller Type
             _contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "", PressButtonSetController));
@@ -47,35 +61,35 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
                 "settings_controls_remap", element => { Game1.UiPageManager.ChangePage(typeof(ControlMappingPage)); }));
 
-            // Button: Triggers Scale Game
-            var toggleTriggersScale = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Triggers Scale Game
+            _toggleTriggersScale = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_triggersscale", GameSettings.TriggersScale, 
                 newState => { GameSettings.TriggersScale = newState; });
-            _contentLayout.AddElement(toggleTriggersScale);
+            _contentLayout.AddElement(_toggleTriggersScale);
 
-            // Button: Toggle Six Buttons
-            var toggleSixButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Toggle Six Buttons
+            _toggleSixButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_sixbuttons", GameSettings.SixButtons, 
                 newState => { UpdateSixButtonToggle(newState); });
-            _contentLayout.AddElement(toggleSixButtons);
+            _contentLayout.AddElement(_toggleSixButtons);
 
-            // Button: Swap Confirm & Cancel
-            var toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Swap Confirm & Cancel
+            _toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_swapbuttons", GameSettings.SwapButtons, 
                 newState => { _controlCooldown = 500f; GameSettings.SwapButtons = newState; ControlHandler.SetConfirmCancelButtons(); });
-            _contentLayout.AddElement(toggleSwapButtons);
+            _contentLayout.AddElement(_toggleSwapButtons);
 
-            // Button: Classic Movement
-            var toggleOldMovement = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Classic Movement
+            _toggleClassicMove = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_classicmove", GameSettings.OldMovement, 
                 newState => { GameSettings.OldMovement = newState; });
-            _contentLayout.AddElement(toggleOldMovement);
+            _contentLayout.AddElement(_toggleClassicMove);
 
-            // Button: Digital Analog
-            var toggleEightWay = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+            // Toggle: Digital Analog
+            _toggleDigitalAnalog = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_digitalanalog", GameSettings.DigitalAnalog, 
                 newState => { GameSettings.DigitalAnalog = newState; });
-            _contentLayout.AddElement(toggleEightWay);
+            _contentLayout.AddElement(_toggleDigitalAnalog);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };

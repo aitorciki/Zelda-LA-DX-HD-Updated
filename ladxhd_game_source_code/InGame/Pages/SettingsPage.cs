@@ -56,6 +56,9 @@ namespace ProjectZ.InGame.Pages
             // Button: Modifier Settings
             _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_mods", element => { Game1.UiPageManager.ChangePage(typeof(ModifiersPage)); }));
 
+            // Button: Modifier Settings
+            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_presets", element => { Game1.UiPageManager.ChangePage(typeof(PresetOptionsPage)); }));
+
             // Bottom Bar / Exit Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true };
             _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { ExitPage(); }));
@@ -116,6 +119,7 @@ namespace ProjectZ.InGame.Pages
                 PageTooltip.Draw(spriteBatch, tooltipText);
             }
         }
+
         private string GetOptionToolip()
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.

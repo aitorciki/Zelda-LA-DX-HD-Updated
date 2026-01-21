@@ -1620,9 +1620,9 @@ namespace ProjectZ.InGame.Things
                 var cameraPage = (CameraSettingsPage)camPage;
                 cameraPage.SetClassicCamera(GameSettings.ClassicCamera);
                 cameraPage.SetClassicDungeon(GameSettings.ClassicDungeon);
-                cameraPage.SetClassicBorder(GameSettings.ClassicBorders);
+                cameraPage.SetClassicCamBorder(GameSettings.ClassicBorders);
                 cameraPage.SetCameraLock(GameSettings.CameraLock);
-                cameraPage.SetCameraSmooth(GameSettings.SmoothCamera);
+                cameraPage.SetCameraSmoothCam(GameSettings.SmoothCamera);
             }
             // Force a scale change as switching from either camera to the other will require it.
             Game1.ScaleChanged = true;
