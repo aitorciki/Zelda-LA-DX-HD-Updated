@@ -103,6 +103,10 @@ namespace ProjectZ.InGame.Map
 
         public void Center(Vector2 position, bool moveX, bool moveY)
         {
+            // If SnapCamera was enabled and a timer started.
+            if (SnapCameraTimer > 0)
+                SnapCameraTimer -= Game1.DeltaTime;
+
             if (ClassicMode)
             {
                 // Get the field rectangle and its center.
@@ -141,7 +145,12 @@ namespace ProjectZ.InGame.Map
             }
             else
             {
-                if (!GameSettings.SmoothCamera || SnapCamera || SnapCameraTimer > 0)
+                if (SnapCamera || SnapCameraTimer > 0)
+                {
+                    Location = MapManager.GetCameraTargetLink();
+                    MoveLocation = MapManager.GetCameraTargetLink();
+                }
+                if (!GameSettings.SmoothCamera)
                 {
                     Location = position;
                     return;
