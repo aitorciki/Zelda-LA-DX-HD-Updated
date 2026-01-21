@@ -237,6 +237,107 @@ namespace ProjectZ.InGame.Interface
             return element;
         }
 
+        public InterfaceElement AddElement(int index, InterfaceElement element)
+        {
+            index = MathHelper.Clamp(index, 0, Elements.Count);
+
+            Elements.Insert(index, element);
+
+            if (Elements.Count == 1)
+                _selectionIndex = 0;
+            
+            else if (index <= _selectionIndex)
+                _selectionIndex++;
+
+            Recalculate = true;
+            return element;
+        }
+
+        public bool RemoveElement(InterfaceElement element)
+        {
+            int index = Elements.IndexOf(element);
+
+            if (index < 0)
+                return false;
+
+            bool wasSelected = (index == _selectionIndex);
+
+            if (wasSelected && Elements.Count > 1)
+                element.Deselect(false);
+
+            Elements.RemoveAt(index);
+
+            if (Elements.Count == 0)
+                _selectionIndex = 0;
+            
+            else
+            {
+                if (_selectionIndex >= Elements.Count)
+                    _selectionIndex = Elements.Count - 1;
+
+                if (wasSelected)
+                {
+                    int start = _selectionIndex;
+                    do
+                    {
+                        if (Elements[_selectionIndex].Selectable &&
+                            Elements[_selectionIndex].Visible)
+                        {
+                            Elements[_selectionIndex].Select(Directions.Top, false);
+                            break;
+                        }
+                        _selectionIndex++;
+                        if (_selectionIndex >= Elements.Count)
+                            _selectionIndex = 0;
+
+                    }
+                    while (_selectionIndex != start);
+                }
+            }
+            Recalculate = true;
+            return true;
+        }
+
+        public InterfaceElement ReplaceElement(InterfaceElement oldElement, InterfaceElement newElement)
+        {
+            int index = Elements.IndexOf(oldElement);
+
+            if (index < 0)
+                return null;
+
+            bool wasSelected = (_selectionIndex == index);
+
+            if (wasSelected)
+                oldElement.Deselect(false);
+
+            Elements[index] = newElement;
+
+            if (wasSelected && newElement.Selectable && newElement.Visible)
+                newElement.Select(Directions.Top, false);
+
+            Recalculate = true;
+            return newElement;
+        }
+
+        public InterfaceElement ReplaceElement(int index, InterfaceElement newElement)
+        {
+            if (index < 0 || index >= Elements.Count)
+                return null;
+
+            bool wasSelected = (_selectionIndex == index);
+
+            if (wasSelected)
+                Elements[index].Deselect(false);
+
+            Elements[index] = newElement;
+
+            if (wasSelected && newElement.Selectable && newElement.Visible)
+                newElement.Select(Directions.Top, false);
+
+            Recalculate = true;
+            return newElement;
+        }
+
         public override void CalculatePosition()
         {
             Recalculate = false;
