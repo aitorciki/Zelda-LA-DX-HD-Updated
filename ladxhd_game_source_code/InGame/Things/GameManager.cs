@@ -1045,7 +1045,6 @@ namespace ProjectZ.InGame.Things
 
                 // update the volume of the sound effects to match the current settings
                 soundEffect.Value.Instance.Volume = CurrentSoundEffects[soundEffect.Key].Volume * _curEffectVolume / 100 * Values.SoundEffectVolumeMult;
-
                 soundEffect.Value.Instance.IsLooped = false;
 
                 if (soundEffect.Value.EndTime != 0 &&
