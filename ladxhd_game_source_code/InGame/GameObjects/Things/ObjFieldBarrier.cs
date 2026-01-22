@@ -10,6 +10,7 @@ namespace ProjectZ.InGame.GameObjects.Things
     public class ObjFieldBarrier : GameObject
     {
         public Box CollisionBox;
+        public Rectangle Rect;
 
         private int _width;
         private int _height;
@@ -24,6 +25,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, _width, _height);
 
+            Rect = rectangle;
             CollisionBox = new Box(posX + rectangle.X, posY + rectangle.Y, 0, _width, _height, 16);
 
             AddComponent(CollisionComponent.Index, new CollisionComponent(DetectCollision) { CollisionType = type });
