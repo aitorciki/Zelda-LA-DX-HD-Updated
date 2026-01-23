@@ -472,8 +472,8 @@ namespace ProjectZ.InGame.GameObjects
         bool swordbeam_level1 = false;
         bool swordbeam_always = false;
 
-        float sword_charge_time = 500;
-        float boots_charge_time = 500;
+        float sword_charge_time = 670;
+        float boots_charge_time = 533;
 
         float feather_velocity = 2.35f;
 
