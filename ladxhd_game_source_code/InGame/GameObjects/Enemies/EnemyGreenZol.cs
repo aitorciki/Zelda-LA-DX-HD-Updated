@@ -299,7 +299,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!_pushable || type != PushableComponent.PushType.Impact)
                 return false;
 
-            _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
+            _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
             return true;
         }
 

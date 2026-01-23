@@ -275,7 +275,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (type == PushableComponent.PushType.Impact)
             {
-                _body.Velocity = new Vector3(direction.X * 1.75f, direction.Y * 1.75f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
 
                 if (_aiComponent.CurrentStateId != "damage" &&
                     _aiComponent.CurrentStateId != "waiting")

@@ -182,7 +182,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
+                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
             else if (_aiComponent.CurrentStateId == "idle")
                 _aiComponent.ChangeState("awaking");
 

@@ -107,7 +107,8 @@ namespace ProjectZ.InGame.GameObjects
             UpdateAnimation2D();
             UpdateSpikeDamage();
             UpdateDrowning2D();
-            UpdateHit2D();
+            UpdateMovement2D();
+            UpdateMovementPhysics();
             UpdateClimbing2D();
         }
 
@@ -127,22 +128,15 @@ namespace ProjectZ.InGame.GameObjects
         //  HIT PLAYER CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private void UpdateHit2D()
+        private void UpdateMovement2D()
         {
             // Check if the player took a hit.
             if (_hitCount > 0)
                 _hitVelocity *= (float)Math.Pow(0.9f, Game1.TimeMultiplier);
             else
                 _hitVelocity = Vector2.Zero;
-
-            // slows down the walk movement when the player is hit
-            var moveMultiplier = MathHelper.Clamp(1f - _hitVelocity.Length(), 0, 1);
-
-            // move the player
-            if (CurrentState != State.Hookshot)
-                _body.VelocityTarget = _moveVector2D * moveMultiplier + _hitVelocity;
         }
-        
+
         public void InflictSpikeDamage2D() => _spikeDamage = true;
 
         private void UpdateSpikeDamage()

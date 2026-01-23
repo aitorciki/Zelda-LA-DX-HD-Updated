@@ -67,8 +67,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (type == PushableComponent.PushType.Impact)
             {
-                _owner.Body.Velocity.X = direction.X * 1.5f;
-                _owner.Body.Velocity.Y = direction.Y * 1.5f;
+                _owner.Body.Velocity.X = direction.X * 2.5f;
+                _owner.Body.Velocity.Y = direction.Y * 2.5f;
             }
 
             return true;

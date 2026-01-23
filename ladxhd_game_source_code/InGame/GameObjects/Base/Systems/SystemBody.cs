@@ -88,7 +88,6 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 else
                     body.HoleAbsorption = Vector2.Zero;
             }
-
             var velocityTargetMult = 1f;
 
             // the speed gets limited by the velocity and the hole absorption vector

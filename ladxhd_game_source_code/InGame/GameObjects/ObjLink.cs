@@ -204,6 +204,11 @@ namespace ProjectZ.InGame.GameObjects
 
         public CBox DamageCollider;
         private Vector2 _hitVelocity;
+        private Vector2 _repelVelocity;
+        private Vector2 _shieldVelocity;
+
+        private float _baseRepelStrength = 2.45f;
+        private float _swimRepelStrength = 2.20f;
 
         public static int BlinkTime = 66;
         public static int CooldownTime = BlinkTime * GameSettings.DmgCooldown;
@@ -1000,125 +1005,24 @@ namespace ProjectZ.InGame.GameObjects
         private void Update3D()
         {
             UpdateNPCAvoidance();
-
             UpdateIntro();
-
             UpdateBedTransition();
-
             UpdateRafting();
-
             UpdateFlying();
-
             UpdateTeleporting();
-
             UpdateSwordSequence();
-
             UpdateInstrumentSequence();
-
             UpdateSwimmingPartOne();
-
             UpdateIgnoresZ();
-
             UpdateDrownResetPosition();
-
             UpdateWalking();
-
             UpdateSwimmingPartTwo();
-
-            // slows down the walk movement when the player is hit
-            var moveMultiplier = MathHelper.Clamp(1f - _hitVelocity.Length(), 0, 1);
-
-            // move the player
-            if (CurrentState != State.Hookshot)
-                _body.VelocityTarget = _moveVelocity * moveMultiplier + _hitVelocity;
-
-            LastMoveVector = _moveVelocity;
-            _moveVelocity = Vector2.Zero;
-
-            if (_hitCount > 0 && _hitVelocity.Length() > 0.05f * Game1.TimeMultiplier)
-            {
-                var hitNormal = _hitVelocity;
-                hitNormal.Normalize();
-
-                var slowDownAmount = 0.05f + MathHelper.Clamp(_hitVelocity.Length() / 25f, 0, 0.05f);
-
-                _hitVelocity -= hitNormal * slowDownAmount * Game1.TimeMultiplier;
-
-                if (FieldBarrier != null)
-                    foreach (var barrier in FieldBarrier)
-                        if (MapManager.ObjLink._body.BodyBox.Box.Intersects(barrier.CollisionBox))
-                        {
-                            _hitVelocity = Vector2.Zero;
-                            break;
-                        }
-            }
-            else
-                _hitVelocity = Vector2.Zero;
-
-            // update the jump logic
+            UpdateMovementPhysics();
             UpdateJump();
-
-            // hole falling logic
-            {
-                // update position used to reset the player if he falls into a hole
-                UpdateSavePosition();
-
-                // change the room?
-                if (_isFallingIntoHole)
-                {
-                    _holeFallCounter -= Game1.DeltaTime;
-
-                    if (_holeFallCounter <= 0)
-                    {
-                        _isFallingIntoHole = false;
-
-                        if (HoleResetRoom != null)
-                        {
-                            // append a map change
-                            ((MapTransitionSystem)Game1.GameManager.GameSystems[
-                                typeof(MapTransitionSystem)]).AppendMapChange(HoleResetRoom, HoleResetEntryId);
-                        }
-                        // teleport on hole fall?
-                        else if (HoleTeleporterId >= 0)
-                        {
-                            _holeTeleportCounter = 0;
-                            CurrentState = State.TeleporterUpWait;
-                        }
-                    }
-                }
-
-                HoleTeleporterId = -1;
-
-                // finished falling down the hole?
-                if (CurrentState == State.Falling && !Animation.IsPlaying)
-                    OnHoleReset();
-            }
-
-            // update links animation
+            UpdateSavePosition();
+            UpdateFallingIntoHole();
             UpdateAnimation();
-
             UpdateGhostSpawn();
-
-            _lastFieldState = _body.CurrentFieldState;
-
-            // If shadows is disabled then draw a sprite shadow.
-            if (!GameSettings.EnableShadows)
-            {
-                if (_spriteShadow == null)
-                {
-                    _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
-                }
-            }
-            // Remove the sprite shadow if shadows was enabled.
-            else
-            {
-                if (_spriteShadow != null)
-                {
-                    Map.Objects.RemoveObject(_spriteShadow);
-                    _spriteShadow = null;
-                }
-            }
-            // Update sprite shadow if normal shadows are disabled.
             UpdateSpriteShadow();
 
             // Stop pushing animation but store it for use in other places.
@@ -2312,6 +2216,135 @@ namespace ProjectZ.InGame.GameObjects
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //  MOVEMENT PHYSICS CODE
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private void PreventFieldKnockback()
+        {
+            // If it's null then Classic Camera is disabled.
+            if (FieldBarrier == null)
+                return;
+
+            // Loop through the field barriers.
+            foreach (var barrier in FieldBarrier)
+            {
+                // Create a new box that is slightly larger than the field barrier box.
+                int buffer = 2;
+                Box fieldBox = new Box(barrier.Position.X - buffer, barrier.Position.Y - buffer, 0, barrier.Width + buffer * 2, barrier.Height + buffer * 2, 16);
+
+                // If knocked into it then stop all velocities.
+                if (_body.BodyBox.Box.Intersects(fieldBox))
+                {
+                    _hitVelocity = Vector2.Zero;
+                    _repelVelocity = Vector2.Zero;
+                    _shieldVelocity = Vector2.Zero;
+                    _body.Velocity = Vector3.Zero;
+                    break;                            
+                }
+            }
+        }
+
+        private void UpdateMovementPhysics()
+        {
+            // Slows down walking movement when the player is hit.
+            var moveMultiplier = MathHelper.Clamp(1f - _hitVelocity.Length(), 0, 1);
+
+            // Calculate the movement velocity before being repelled.
+            Vector2 finalMove = _moveVelocity * moveMultiplier + _hitVelocity;
+
+            // If shield repelled, movement velocity is cancelled out.
+            if (_shieldVelocity.Length() > 0.01f)
+                finalMove = _shieldVelocity;
+
+            // If sword repelled, movement velocity is cancelled out.
+            if (_repelVelocity.Length() > 0.01f)
+                finalMove = _repelVelocity;
+
+            // Move the player by calculating the target velocity.
+            if (CurrentState != State.Hookshot)
+            {
+                if (!Map.Is2dMap)
+                    _body.VelocityTarget = finalMove;
+                else
+                    _body.VelocityTarget = _moveVector2D * moveMultiplier + _hitVelocity + _repelVelocity + _shieldVelocity;
+            }
+            // Store the current movement velocity and reset it.
+            LastMoveVector = _moveVelocity;
+            _moveVelocity = Vector2.Zero;
+
+            //-----------------------------------------------------------------------------------------------------
+            // Sword Repel Knockback: Overrides all other velocities.
+            //-----------------------------------------------------------------------------------------------------
+            // If the player is sword repelled then knock them back.
+            if (_repelVelocity.Length() > 0.01f)
+            {
+                // Normalize the sword repel velocity.
+                var repelNormal = _repelVelocity;
+                repelNormal.Normalize();
+
+                // Decelerate when velocity is still strong.
+                float slowDownAmount = 0.12f + (_repelVelocity.Length() * 0.015f);
+                _repelVelocity -= repelNormal * slowDownAmount * Game1.TimeMultiplier;
+
+                // Snap to zero when velocity reaches the threshold.
+                if (_repelVelocity.Length() < 0.35f)
+                    _repelVelocity = Vector2.Zero;
+
+                // If the repel crosses into the field barrier then cancel the velocity.
+                PreventFieldKnockback();
+            }
+            // Zero out sword repel velocity when it doesn't meet the thresholds.
+            else
+                _repelVelocity = Vector2.Zero;
+
+            //-----------------------------------------------------------------------------------------------------
+            // Shield Repel Knockback: Knockback from bumping enemy with shield. Overrides movement.
+            //-----------------------------------------------------------------------------------------------------
+            // If the player is shield repelled then knock them back.
+            if (_shieldVelocity.Length() > 0.01f)
+            {
+                // Normalize the shield repel velocity.
+                var shieldRepelNormal = _shieldVelocity;
+                shieldRepelNormal.Normalize();
+
+                // Decelerate when velocity is still strong.
+                float slowDownAmount = 0.12f + (_repelVelocity.Length() * 0.015f);
+                _shieldVelocity -= shieldRepelNormal * slowDownAmount * Game1.TimeMultiplier;
+
+                // Snap to zero when velocity reaches the threshold.
+                if (_shieldVelocity.Length() < 0.35f)
+                    _shieldVelocity = Vector2.Zero;
+
+                // If the repel crosses into the field barrier then cancel the velocity.
+                PreventFieldKnockback();
+            }
+            // Zero out shield repel velocity when it doesn't meet the thresholds.
+            else
+                _shieldVelocity = Vector2.Zero;
+
+            //-----------------------------------------------------------------------------------------------------
+            // Damage Hit Knockback: Knockback from taking damage. Movement can somewhat counter it.
+            //-----------------------------------------------------------------------------------------------------
+            // If the player is hit perform a knockback.
+            if (_hitCount > 0 && _hitVelocity.Length() > 0.05f * Game1.TimeMultiplier)
+            {
+                // Normalize the hit velocity.
+                var hitNormal = _hitVelocity;
+                hitNormal.Normalize();
+
+                // Apply slowdown over time.
+                var slowDownAmount = 0.05f + MathHelper.Clamp(_hitVelocity.Length() / 25f, 0, 0.05f);
+                _hitVelocity -= hitNormal * slowDownAmount * Game1.TimeMultiplier;
+
+                // If the hit crosses into the field barrier then cancel the velocity.
+                PreventFieldKnockback();
+            }
+            // Zero out hit velocity when it doesn't meet the thresholds.
+            else
+                _hitVelocity = Vector2.Zero;
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  RAIL JUMP CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2451,6 +2484,7 @@ namespace ProjectZ.InGame.GameObjects
                 EntityPosition.Z = 0;
                 _body.IsGrounded = true;
             }
+            _lastFieldState = _body.CurrentFieldState;
         }
 
         private void UpdateSwimmingPartTwo()
@@ -2704,6 +2738,23 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateSpriteShadow()
         {
+            // If shadows is disabled then draw a sprite shadow.
+            if (!GameSettings.EnableShadows)
+            {
+                if (_spriteShadow == null)
+                {
+                    _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
+                }
+            }
+            // Remove the sprite shadow if shadows was enabled.
+            else
+            {
+                if (_spriteShadow != null)
+                {
+                    Map.Objects.RemoveObject(_spriteShadow);
+                    _spriteShadow = null;
+                }
+            }
             // If the shadow is spawned.
             if (_spriteShadow != null)
             {
@@ -3030,6 +3081,38 @@ namespace ProjectZ.InGame.GameObjects
                     _holeResetPosition = newResetPosition;
                 }
             }
+        }
+
+        private void UpdateFallingIntoHole()
+        {
+            // change the room?
+            if (_isFallingIntoHole)
+            {
+                _holeFallCounter -= Game1.DeltaTime;
+
+                if (_holeFallCounter <= 0)
+                {
+                    _isFallingIntoHole = false;
+
+                    if (HoleResetRoom != null)
+                    {
+                        // append a map change
+                        ((MapTransitionSystem)Game1.GameManager.GameSystems[
+                            typeof(MapTransitionSystem)]).AppendMapChange(HoleResetRoom, HoleResetEntryId);
+                    }
+                    // teleport on hole fall?
+                    else if (HoleTeleporterId >= 0)
+                    {
+                        _holeTeleportCounter = 0;
+                        CurrentState = State.TeleporterUpWait;
+                    }
+                }
+            }
+            HoleTeleporterId = -1;
+
+            // finished falling down the hole?
+            if (CurrentState == State.Falling && !Animation.IsPlaying)
+                OnHoleReset();
         }
 
         private void SetHoleResetPosition(Vector3 position)
@@ -3835,10 +3918,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (hitCollision != Values.HitCollision.None &&
                     hitCollision != Values.HitCollision.NoneBlocking)
                 {
-                    var knockback = 6.5f;
-
-                    if (CurrentState == State.Swimming)
-                        knockback = 2.0f;
+                    var knockback = CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
 
                     // If it's repelling and the player is charging, don't interrupt the charge.
                     if (hitCollision == Values.HitCollision.RepellingParticle && IsChargingState())
@@ -4075,14 +4155,14 @@ namespace ProjectZ.InGame.GameObjects
                 _hitParticleTime = Game1.TotalGameTime;
                 SpawnRepelParticle(collisionRectangle);
             }
-            RepelPlayer(hitCollision, direction, 6.5f);
+            var knockback = CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
+            RepelPlayer(hitCollision, direction, knockback);
         }
 
         private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
         {
             // Repel the player.
-            if ((collisionType & Values.HitCollision.Repelling) != 0 &&
-                _hitRepelTime + 225 < Game1.TotalGameTime)
+            if ((collisionType & Values.HitCollision.Repelling) != 0 && _hitRepelTime + 225 < Game1.TotalGameTime)
             {
                 _hitRepelTime = Game1.TotalGameTime;
 
@@ -4098,10 +4178,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (_bootsRunning)
                     _bootsStop = true;
 
-                if (IsSwimmingState())
-                    multiplier = 1.10f;
-
-                _body.Velocity += new Vector3(-direction.X, -direction.Y, 0) * multiplier;
+                _repelVelocity = new Vector2(-direction.X, -direction.Y) * multiplier;
             }
         }
 
@@ -4198,9 +4275,9 @@ namespace ProjectZ.InGame.GameObjects
                 _bootsRunning = false;
                 _bootsCounter = 0;
 
-                _body.Velocity += new Vector3(
-                    -_walkDirection[Direction].X * pushedRectangle.RepelMultiplier,
-                    -_walkDirection[Direction].Y * pushedRectangle.RepelMultiplier, 0);
+                // Only apply velocity if it's already zero so it can properly decay over time.
+                if (_shieldVelocity == Vector2.Zero || Vector2.Dot(_shieldVelocity, -_walkDirection[Direction]) < 0f)
+                    _shieldVelocity = -_walkDirection[Direction] * pushedRectangle.RepelMultiplier;
 
                 // Spawn the "poke" particle.
                 if (pushedRectangle.RepelParticle)

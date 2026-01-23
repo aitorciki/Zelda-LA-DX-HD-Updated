@@ -207,7 +207,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _bodyComp.Velocity = new Vector3(direction.X * 1.75f, direction.Y * 1.75f, _bodyComp.Velocity.Z);
+                _bodyComp.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _bodyComp.Velocity.Z);
 
             return true;
         }

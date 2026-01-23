@@ -126,7 +126,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChang));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 5.5f });
+            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.15f });
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { PushMultiplier = 2.5f } );

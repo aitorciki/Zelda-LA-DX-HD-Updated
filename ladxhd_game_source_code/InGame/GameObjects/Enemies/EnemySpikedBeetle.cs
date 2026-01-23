@@ -265,7 +265,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 }
                 else
                 {
-                    _body.Velocity = new Vector3(direction.X * 1.0f, direction.Y * 1.0f, _body.Velocity.Z);
+                    _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
                 }
             }
 

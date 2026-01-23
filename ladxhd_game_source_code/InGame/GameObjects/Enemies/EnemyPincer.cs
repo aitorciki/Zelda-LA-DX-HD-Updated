@@ -121,8 +121,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (_aiComponent.CurrentStateId == "attacking")
                     _aiComponent.ChangeState("attackWait");
 
-                var mult = 1.5f;
-                _body.Velocity = new Vector3(direction.X * mult, direction.Y * mult, 0);
+                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, 0);
                 return true;
             }
 
