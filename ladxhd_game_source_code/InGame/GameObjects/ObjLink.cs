@@ -3928,18 +3928,26 @@ namespace ProjectZ.InGame.GameObjects
                     return;
                 }
                 // Start poking?
-                if (hitCollision != Values.HitCollision.None &&
-                    hitCollision != Values.HitCollision.NoneBlocking)
+                if (hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
                 {
                     var knockback = CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
 
                     // If it's repelling and the player is charging, don't interrupt the charge.
                     if ((hitCollision & Values.HitCollision.RepellingParticle) != 0 && IsChargingState())
                     {
+                        // Spawn a hit particle.
                         if (_hitParticleTime + 225 < Game1.TotalGameTime)
                         {
+                            // Use the direction to determine the offset.
+                            Point offset = Direction switch
+                            {
+                                0 => new Point(-8,0),
+                                1 => new Point(2,-11),
+                                2 => new Point(10,0),
+                                3 => new Point(0,5),
+                            };
                             _hitParticleTime = Game1.TotalGameTime;
-                            SpawnRepelParticle(collisionRectangle);
+                            SpawnRepelParticle(collisionRectangle, offset.X, offset.Y);
                         }
                         RepelPlayer(hitCollision, direction, knockback);
 
@@ -4217,13 +4225,13 @@ namespace ProjectZ.InGame.GameObjects
             PreventFieldKnockback();
         }
 
-        private void SpawnRepelParticle(RectangleF collisionRectangle)
+        private void SpawnRepelParticle(RectangleF collisionRectangle, int OffsetX = 0, int OffsetY = 0)
         {
             Game1.GameManager.PlaySoundEffect("D360-07-07");
 
             // Spawn the poke particle.
-            var posX = (int)(EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2);
-            var posY = (int)(EntityPosition.Y - 15 + collisionRectangle.Y + collisionRectangle.Height / 2);
+            var posX = (int)(EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2 + OffsetX);
+            var posY = (int)(EntityPosition.Y - 15 + collisionRectangle.Y + collisionRectangle.Height / 2 + OffsetY);
             var pokeParticle = new ObjSparkingEffect(Map, posX, posY, 0, 0);
             Map.Objects.SpawnObject(pokeParticle);
         }
