@@ -199,6 +199,9 @@ namespace ProjectZ.InGame.GameObjects
         private bool _pokeStart;
         private int _beamDirection;
 
+        private bool _pokeRepelFix;
+        private float _pokeRepelTimer;
+
         private Vector2[] _shootSwordOffset;
         private bool _shotSword;
 
@@ -3882,6 +3885,20 @@ namespace ProjectZ.InGame.GameObjects
             // stop charging
             if (_isHoldingSword)
             {
+                // A workaround when repelling against certain objects that forces
+                // poke animation and needs to return to the "stand" animation.
+                if (_pokeRepelFix)
+                {
+                    if (_pokeRepelTimer > 0)
+                        _pokeRepelTimer -= Game1.DeltaTime;
+
+                    if (_pokeRepelTimer <= 0)
+                    {
+                        _pokeRepelFix = false;
+                        Animation.Play("stand_" + Direction);
+                        AnimatorWeapons.Play("stand_" + Direction);
+                    }
+                }
                 // poke objects that walk into the sowrd
                 RectangleF collisionRectangle = AnimatorWeapons.CollisionRectangle;
                 var damageOrigin = BodyRectangle.Center;
@@ -3925,10 +3942,29 @@ namespace ProjectZ.InGame.GameObjects
                             SpawnRepelParticle(collisionRectangle);
                         }
                         RepelPlayer(hitCollision, direction, knockback);
+
+                        // When repelling against sworded enemies.
+                        if ((hitCollision & Values.HitCollision.Repelling2) != 0)
+                        {
+                            CurrentState = State.Attacking;
+
+                            // Play the poking animation when making contact.
+                            Animation.Play("poke_" + Direction);
+                            AnimatorWeapons.Play("poke_" + Direction);
+
+                            // Reset the sword charge counter.
+                            _swordChargeCounter = sword_charge_time;
+
+                            // A workaround when repelling against certain objects that forces
+                            // poke animation and needs to return to the "stand" animation.
+                            _pokeRepelFix = true;
+                            _pokeRepelTimer = 128;
+                        }
                     }
                     // If it's a standard sword attack or <other>?
                     else
                     {
+                        // Set the sword was poked and play the poke animation.
                         _swordPoked = true;
                         Animation.Play("poke_" + Direction);
                         AnimatorWeapons.Play("poke_" + Direction);
