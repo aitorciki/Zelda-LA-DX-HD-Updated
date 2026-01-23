@@ -3917,7 +3917,7 @@ namespace ProjectZ.InGame.GameObjects
                     var knockback = CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
 
                     // If it's repelling and the player is charging, don't interrupt the charge.
-                    if (hitCollision == Values.HitCollision.RepellingParticle && IsChargingState())
+                    if ((hitCollision & Values.HitCollision.RepellingParticle) != 0 && IsChargingState())
                     {
                         if (_hitParticleTime + 225 < Game1.TotalGameTime)
                         {
@@ -4168,6 +4168,8 @@ namespace ProjectZ.InGame.GameObjects
                     multiplier = 2.50f;
                 else if ((collisionType & Values.HitCollision.Repelling1) != 0)
                     multiplier = 2.00f;
+                else if ((collisionType & Values.HitCollision.Repelling2) != 0)
+                    multiplier = 1.50f;
                 else if (customMultiplier > 0f)
                     multiplier = customMultiplier;
 

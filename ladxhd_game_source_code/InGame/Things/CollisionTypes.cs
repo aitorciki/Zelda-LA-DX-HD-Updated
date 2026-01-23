@@ -58,6 +58,7 @@ namespace ProjectZ.InGame.Things
             RepellingParticle = 24,
             Repelling0 = 32,
             Repelling1 = 64,
+            Repelling2 = 128,
         }
 
         [Flags]

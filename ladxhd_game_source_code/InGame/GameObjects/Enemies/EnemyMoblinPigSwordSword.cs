@@ -85,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _owner.Body.Velocity.X = direction.X * 1.5f;
             _owner.Body.Velocity.Y = direction.Y * 1.5f;
 
-            return Values.HitCollision.RepellingParticle;
+            return Values.HitCollision.RepellingParticle | Values.HitCollision.Repelling2;
         }
     }
 }
