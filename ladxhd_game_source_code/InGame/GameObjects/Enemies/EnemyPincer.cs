@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -24,13 +25,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly PushableComponent _pushComponent;
         private readonly BodyComponent _body;
         private readonly AiStunnedState _stunnedState;
-
         private readonly Rectangle _tailRectangle = new Rectangle(184, 124, 8, 8);
 
         private readonly Vector2 _spawnPosition;
         private Vector2 _direction;
         private Vector2 _attackOffset;
         private Vector2 _retractStartPosition;
+
+        private ObjHole _hole;
+        private bool _overHole;
 
         private float _attackCounter;
         private int _dirIndex;
@@ -96,6 +99,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
         private void Reset()
@@ -109,6 +113,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("waiting");
             _aiComponent.ChangeState("waiting");
             _damageState.CurrentLives = ObjLives.Pincer;
+        }
+
+        private void Update()
+        {
+            // If we haven't found a hole yet.
+            if (_hole == null)
+            {
+                // Find the hole that the pincer is nearest to.
+                var holes = new List<GameObject>();
+                Map.Objects.GetGameObjectsWithTag(holes, Values.GameObjectTag.Hole, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, 16, 16);
+
+                if (holes.Count > 0)
+                    _hole = (ObjHole)holes[0];
+            }
+            // If we have the hole, then determine if it's currently over top of it.
+            else
+            {
+                // The hole rectangle is a bit too big, so resize it.
+                var holeRect = _hole.collisionBox.Box.Rectangle();
+                var overRect = new Rectangle((int)holeRect.X + 2, (int)holeRect.Y + 2, (int)holeRect.Width - 4, (int)holeRect.Height - 4);
+                _overHole = _hole.IsActive && overRect.Contains(EntityPosition.Position);
+            }
+            // If it's stunned and over the hole, make it fall.
+            if (_overHole && _stunnedState.IsStunned())
+                FakeHoleDeath();
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -252,6 +281,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play(_dirIndex.ToString());
         }
 
+        private void FakeHoleDeath()
+        {
+            // Play the "falling down hole" sound effect.
+            Game1.GameManager.PlaySoundEffect("D360-03-03");
+            Game1.GameManager.PlaySoundEffect("D360-24-18");
+
+            // Spawn the graphics for it.
+            var fallAnimation = new ObjAnimator(_aiComponent.Owner.Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
+            fallAnimation.EntityPosition.Set(new Vector2(
+                _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
+                _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
+            _aiComponent.Owner.Map.Objects.SpawnObject(fallAnimation);
+
+            // Remove the object from the map.
+            Map.Objects.DeleteObjects.Add(this);
+        }
+
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
@@ -259,23 +305,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return Values.HitCollision.None;
 
             // Simulate the enemy falling down the hole since it can't actually be absorbed by holes.
-            if (hitType == HitType.MagicPowder && _powderWindow)
-            {
-                // Play the "falling down hole" sound effect.
-                Game1.GameManager.PlaySoundEffect("D360-03-03");
-                Game1.GameManager.PlaySoundEffect("D360-24-18");
-
-                // Spawn the graphics for it.
-                var fallAnimation = new ObjAnimator(_aiComponent.Owner.Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
-                fallAnimation.EntityPosition.Set(new Vector2(
-                    _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
-                    _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
-                _aiComponent.Owner.Map.Objects.SpawnObject(fallAnimation);
-
-                // Remove the object from the map.
-                Map.Objects.DeleteObjects.Add(this);
-            }
-
+            if (hitType == HitType.MagicPowder && _powderWindow || _overHole && _damageState.CurrentLives <= 0)
+                FakeHoleDeath();
+            
             // can only attack while the enemy is attacking
             if (_aiComponent.CurrentStateId != "attacking" &&
                 _aiComponent.CurrentStateId != "attackWait" &&
