@@ -42,6 +42,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             get => _isActive;
         }
 
+        public int Direction => _direction;
+
         public EnemyStalfosKnight(Map.Map map, int posX, int posY) : base(map)
         {
             SprEditorImage = Resources.SprEnemies;

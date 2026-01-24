@@ -43,6 +43,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             get => _isActive;
         }
 
+        public int Direction => _direction;
+
         public EnemyMoblinSword() : base("moblin sword") { }
 
         public EnemyMoblinSword(Map.Map map, int posX, int posY) : base(map)

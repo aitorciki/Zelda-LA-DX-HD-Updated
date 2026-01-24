@@ -13,25 +13,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         public readonly CSprite Sprite;
         public readonly DamageFieldComponent _damageField;
         private readonly EnemyMoblinPigSword _owner;
+        private readonly CBox _damageBox;
         private readonly CBox _collisionBox;
 
         private double _lastHitTime;
+        private int _direction;
 
         public EnemyMoblinPigSwordSword(Map.Map map, EnemyMoblinPigSword owner) : base(map)
         {
             _owner = owner;
             _owner.EntityPosition.AddPositionListener(typeof(EnemyMoblinSwordSword), PositionChange);
 
+            _direction = _owner.Direction;
+
             EntityPosition = new CPosition(owner.EntityPosition.X, owner.EntityPosition.Y - 1, owner.EntityPosition.Z);
             EntitySize = new Rectangle(-22, -8 - 24, 44, 48);
+            CanReset = false;
 
             Animator = AnimatorSaveLoad.LoadAnimator("Enemies/moblinPig sword");
 
             Sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(Animator, Sprite, new Vector2(-8, -15));
 
+            _damageBox = new CBox(0, 0, 0, 0, 0, 4);
             _collisionBox = new CBox(0, 0, 0, 0, 0, 4);
-            UpdateCollisionBox();
+
+            UpdateBoxes();
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_collisionBox, HitType.Enemy, 2));
             AddComponent(HittableComponent.Index, new HittableComponent(_collisionBox, OnHit));
@@ -48,15 +55,36 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            UpdateCollisionBox();
+            // Get the facing direction of the Darknut.
+            _direction = _owner.Direction;
+
+            // Update the damage and collision boxes.
+            UpdateBoxes();
         }
 
-        private void UpdateCollisionBox()
+        private void UpdateBoxes()
         {
-            _collisionBox.Box.X = EntityPosition.X - 8 + Animator.CollisionRectangle.X;
-            _collisionBox.Box.Y = EntityPosition.Y - 15 + Animator.CollisionRectangle.Y;
-            _collisionBox.Box.Width = Animator.CollisionRectangle.Width;
-            _collisionBox.Box.Height = Animator.CollisionRectangle.Height;
+            _damageBox.Box.X = EntityPosition.X - 8 + Animator.CollisionRectangle.X;
+            _damageBox.Box.Y = EntityPosition.Y - 15 + Animator.CollisionRectangle.Y;
+            _damageBox.Box.Width = Animator.CollisionRectangle.Width;
+            _damageBox.Box.Height = Animator.CollisionRectangle.Height;
+
+            int collisionX = (int)_damageBox.Box.X;
+            int collisionY = (int)_damageBox.Box.Y;
+            int collisionW = (int)_damageBox.Box.Width;
+            int collisionH = (int)_damageBox.Box.Height;
+
+            switch (_direction)
+            {
+                case 0: { collisionW = (int)_damageBox.Box.Width * 5 / 6; collisionX += (int)_damageBox.Box.Width - collisionW; break; }
+                case 1: { collisionH = (int)_damageBox.Box.Height * 5 / 6; collisionY += (int)_damageBox.Box.Height - collisionH; break; }
+                case 2: { collisionW = (int)_damageBox.Box.Width * 5 / 6; break; }
+                case 3: { collisionH = (int)_damageBox.Box.Height * 5 / 6; break; }
+            }
+            _collisionBox.Box.X = collisionX;
+            _collisionBox.Box.Y = collisionY;
+            _collisionBox.Box.Width = collisionW;
+            _collisionBox.Box.Height = collisionH;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -66,7 +94,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _owner.Body.Velocity.X = direction.X * 2.5f;
                 _owner.Body.Velocity.Y = direction.Y * 2.5f;
             }
-
             return true;
         }
 

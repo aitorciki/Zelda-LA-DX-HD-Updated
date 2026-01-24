@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
@@ -38,6 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const string _leafSaveKey = "ow_goldLeafNut";
 
         private bool _isActive = true;
+
         public override bool IsActive
         {
             set
@@ -47,6 +48,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             get => _isActive;
         }
+
+        public int Direction => _direction;
 
         public EnemyDarknut() : base("darknut") { }
 

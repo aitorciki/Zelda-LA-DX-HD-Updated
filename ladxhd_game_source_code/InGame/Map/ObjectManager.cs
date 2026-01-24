@@ -698,7 +698,7 @@ namespace ProjectZ.InGame.Map
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, MapManager.Camera.TransformMatrix);
         }
 
-        private void DrawRectangle(SpriteBatch spriteBatch, RectangleF rectangle, Color color)
+        public void DrawRectangle(SpriteBatch spriteBatch, RectangleF rectangle, Color color)
         {
             spriteBatch.Draw(Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y),
