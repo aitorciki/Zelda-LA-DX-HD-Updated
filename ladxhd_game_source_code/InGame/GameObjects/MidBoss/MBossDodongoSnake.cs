@@ -153,8 +153,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // Gets the number of remaining Dodongo Snakes. Used to properly start/stop the music.
             List<GameObject> dodongoSnakes = new List<GameObject>();
-            Map.Objects.GetObjectsOfType(dodongoSnakes, typeof(MBossDodongoSnake),
-                (int)_body.FieldRectangle.X, (int)_body.FieldRectangle.Y, (int)_body.FieldRectangle.Width, (int)_body.FieldRectangle.Height);
+            Map.Objects.GetComponentList(dodongoSnakes, (int)EntityPosition.Position.X - 80, (int)EntityPosition.Position.Y - 64, 160, 128, BodyComponent.Mask);
+
+            for (int i = dodongoSnakes.Count - 1; i >= 0; i--)
+            {
+                if (dodongoSnakes[i] is not MBossDodongoSnake)
+                    dodongoSnakes.RemoveAt(i);
+            }
             return dodongoSnakes.Count;
         }
 
