@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _fieldPosX;
         private readonly int _fieldPosY;
 
+        private Rectangle _field;
         public bool NoRespawn;
         public bool _isThrown;
 
@@ -52,6 +53,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _drawLayer = drawLayer;
             _pickupKey = pickupKey;
 
+            _field = Map.GetField(posX, posY);
             _fieldPosX = posX / 16;
             _fieldPosY = posY / 16;
 
@@ -174,6 +176,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
+            if (Camera.ClassicMode && !_field.Contains(MapManager.ObjLink.EntityPosition.Position))
+                return Values.HitCollision.None;
+
             // If "Classic Sword" is enabled, only the tile that the bush/grass is on should "hit".
             if (MapManager.ObjLink.ClassicSword && (hitType & HitType.Sword) != 0 && !MapManager.ObjLink.IsPoking)
                 return Values.HitCollision.None;
