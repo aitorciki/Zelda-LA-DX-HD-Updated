@@ -20,6 +20,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private const int MovementStep = 2;
 
+        private Rectangle _field;
+        private float _cTimer;
+        private float _cReset = 225;
+
         private Vector2 _startPosition;
         private float _movePosition;
         private int _moveDir;
@@ -40,6 +44,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             CanReset = true;
             OnReset += Reset;
 
+            _cTimer = _cReset;
+
             var animator = AnimatorSaveLoad.LoadAnimator("Enemies/bladetrap");
             animator.Play("idle");
 
@@ -59,6 +65,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _collisionRectangles[1] = new RectangleF(posX + 16, posY + 8 - TriggerHalfWidth, right * 16 + 16, TriggerHalfWidth * 2);
             _collisionRectangles[2] = new RectangleF(posX + 8 - TriggerHalfWidth, posY - top * 16 - 16, TriggerHalfWidth * 2, top * 16 + 16);
             _collisionRectangles[3] = new RectangleF(posX + 8 - TriggerHalfWidth, posY + 16, TriggerHalfWidth * 2, bottom * 16 + 16);
+
+            _field = Map.GetField(posX, posY);
 
             var stateWait = new AiState();
             stateWait.Trigger.Add(new AiTriggerCountdown(350, null, () => _aiComponent.ChangeState("back")));
@@ -86,6 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
+            _cTimer = _cReset;
             _movePosition = 0;
             UpdatePosition();
             _aiComponent.ChangeState("idle");
@@ -128,6 +137,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
+            // Do not trigger unless on the same field as the trap.
+            if (Camera.ClassicMode)
+            {
+                if (!_field.Contains(MapManager.ObjLink.CenterPosition.Position))
+                    return;
+                else
+                    _cTimer -= Game1.DeltaTime;
+
+                if (_cTimer > 0)
+                    return;
+            }
             // Loop through the directions the trap can move.
             for (int i = 0; i < _directions.Length; i++)
             {
