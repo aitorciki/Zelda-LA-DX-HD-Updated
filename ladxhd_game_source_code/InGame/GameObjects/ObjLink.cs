@@ -3296,11 +3296,18 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateItem()
         {
+            // Track when the sword is spinning or not spinning.
+            var swordSpinning = AnimatorWeapons.AnimationID?.StartsWith("swing") == true;
+            var spinIsPlaying = AnimatorWeapons.IsPlaying;
+            _isSwordSpinning = swordSpinning && spinIsPlaying;
+
+            // When no longer blocking return to idle state.
             if (CurrentState == State.Blocking)
                 ReturnToIdle();
             else
                 _wasBlocking = false;
 
+            // When grabbing or pulling return to idle state.
             if (CurrentState == State.Grabbing || CurrentState == State.Pulling)
                 ReturnToIdle();
 
@@ -3379,7 +3386,6 @@ namespace ProjectZ.InGame.GameObjects
                     Vector2 vecMoved = ControlHandler.GetMoveVector2();
                     Direction = ToDirection(vecMoved);
                 }
-                _isSwordSpinning = false;
 
                 if (!_isHoldingSword || _swordPoked || _stopCharging)
                     ReturnToIdle();
@@ -3847,7 +3853,6 @@ namespace ProjectZ.InGame.GameObjects
             _stopCharging = false;
             _swordPoked = false;
             _shotSword = false;
-            _isSwordSpinning = false;
 
             _swordChargeCounter = sword_charge_time;
             _beamDirection = Direction;
@@ -4049,7 +4054,6 @@ namespace ProjectZ.InGame.GameObjects
             Game1.GameManager.PlaySoundEffect("D378-03-03");
 
             _swordChargeCounter = sword_charge_time;
-            _isSwordSpinning = true;
         }
 
         public bool ClassicSword { get => GameSettings.ClassicSword && !_isSwordSpinning; }
