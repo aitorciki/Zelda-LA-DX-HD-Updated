@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _damageField.IsActive = true;
 
             // Move when Link is in the same field as the Arm Mimic.
-            if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 if (_wasColliding)
                 {

@@ -208,7 +208,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             else if (!_stunnedState.IsStunned() && ((hitType & HitType.Sword) != 0 || hitType == HitType.PegasusBootsSword))
             {
-                if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+                if (_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                     StartShock();
 
                 return Values.HitCollision.Enemy;

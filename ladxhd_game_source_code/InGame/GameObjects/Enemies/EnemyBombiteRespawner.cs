@@ -52,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Modern camera: Respawn when player leaves the field.
             else
             {
-                if (!_field.Contains(MapManager.ObjLink.EntityPosition.Position))
+                if (!_field.Contains(MapManager.ObjLink.CenterPosition.Position))
                     SpawnBombite();
             }
         }

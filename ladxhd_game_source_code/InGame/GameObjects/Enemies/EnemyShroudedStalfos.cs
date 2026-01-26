@@ -137,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void ThrowSpear()
         {
             if (Game1.RandomNumber.Next(0, 2) == 0 ||
-                !_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+                !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return;
 
             // shoot if the player is in the range and in the right direction

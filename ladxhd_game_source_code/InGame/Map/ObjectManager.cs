@@ -218,7 +218,7 @@ namespace ProjectZ.InGame.Map
             if (Camera.ClassicMode)
             {
                 // The "UpdateField" is the real size of the field. The "Actual" field has an additional tile in each direction.
-                UpdateField = Owner.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
+                UpdateField = Owner.GetField(Link.CenterPosition.Position);
                 ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
 
                 // If a field change has happened, then reset the enemies on the previous field.
@@ -423,7 +423,7 @@ namespace ProjectZ.InGame.Map
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                var field = Owner.GetField((int)Link.EntityPosition.X, (int)Link.EntityPosition.Y);
+                var field = Owner.GetField(Link.CenterPosition.Position);
 
                 _gameObjectPool.GetComponentList(_damageFieldObjects, field.X, field.Y,
                     field.Width, field.Height, DamageFieldComponent.Mask);

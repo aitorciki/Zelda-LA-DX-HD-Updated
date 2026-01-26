@@ -42,7 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            if (!_isActive || !_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_isActive || !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return;
 
             _fireballCounter += Game1.DeltaTime;

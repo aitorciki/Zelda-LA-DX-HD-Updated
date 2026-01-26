@@ -141,7 +141,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
 
             // Start music when player enters room. Room boolean is used to not reset aiComponent state every loop iteration.
-            if (!_playerInRoom && currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_playerInRoom && currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 // Do not play music if it's already playing.
                 if (Game1.GameManager.GetCurrentMusic() != 79)
@@ -157,7 +157,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _hitComponent.IsActive = true;
             }
             // Stop the music when the player leaves the room.
-            else if (_playerInRoom && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            else if (_playerInRoom && !currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 Game1.GameManager.SetMusic(-1, 2);
                 _playerInRoom = false;

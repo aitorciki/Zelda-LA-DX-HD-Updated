@@ -76,7 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         public override void Init()
         {
-            var fieldRectangle = Map.GetField((int)EntityPosition.X, (int)EntityPosition.Y);
+            var fieldRectangle = Map.GetField(EntityPosition.Position);
             Map.Objects.GetObjectsOfType(_neighborSwitches, typeof(ObjDungeonColorSwitch),
                 fieldRectangle.X, fieldRectangle.Y, fieldRectangle.Width, fieldRectangle.Height);
         }

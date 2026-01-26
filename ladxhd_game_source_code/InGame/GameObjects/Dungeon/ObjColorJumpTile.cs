@@ -64,7 +64,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void Update()
         {
             // when the player leaves the room the tiles will get restored to there original state
-            if (_currentState != _startState && !_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_currentState != _startState && !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 _restoreMode = true;
             }

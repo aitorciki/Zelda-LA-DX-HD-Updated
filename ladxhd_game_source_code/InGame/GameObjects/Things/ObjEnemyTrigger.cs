@@ -59,7 +59,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     _recheckTimer = 0;
 
                     // A previous loop iteration will note if enemies are alive.
-                    if (_enemiesAlive & _triggerField.Contains(MapManager.ObjLink.EntityPosition.Position));
+                    if (_enemiesAlive & _triggerField.Contains(MapManager.ObjLink.CenterPosition.Position));
                         Game1.GameManager.SaveManager.SetString(_triggerKey, "0");
                 }
             }

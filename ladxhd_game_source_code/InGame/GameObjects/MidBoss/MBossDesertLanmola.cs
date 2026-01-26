@@ -147,7 +147,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
 
             // The player left the field.
-            if (!_playerLeft && !currentField.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_playerLeft && !currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 _playerLeft = true;
                 Game1.GameManager.SetMusic(-1, 2);

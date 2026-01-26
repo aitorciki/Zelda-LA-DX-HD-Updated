@@ -138,7 +138,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateHidden()
         {
             // start spawning
-            if (_hiddenTimer.State && _fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_hiddenTimer.State && _fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 _aiComponent.ChangeState("spawn");
         }
 

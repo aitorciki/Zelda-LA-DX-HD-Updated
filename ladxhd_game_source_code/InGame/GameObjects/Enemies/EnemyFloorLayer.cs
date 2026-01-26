@@ -111,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateDead()
         {
             // remove the floor when the player leaves the room and not all tiles where layed
-            if (!_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position) && _moveIndex != _minMoveCount + 1)
+            if (!_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position) && _moveIndex != _minMoveCount + 1)
                 Reactivate();
         }
 

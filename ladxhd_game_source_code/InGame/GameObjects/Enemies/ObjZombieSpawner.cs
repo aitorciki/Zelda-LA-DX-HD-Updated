@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         
         private void Update()
         {
-            bool inZombieField = _triggerField.Contains(MapManager.ObjLink.EntityPosition.Position);
+            bool inZombieField = _triggerField.Contains(MapManager.ObjLink.CenterPosition.Position);
 
             // Zombie spawner and Link share a field and the game is not currently frozen.
             if (inZombieField && !MapManager.ObjLink.FreezeWorldForEvents)

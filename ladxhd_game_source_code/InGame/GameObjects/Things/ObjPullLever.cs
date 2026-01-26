@@ -140,7 +140,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            var insideRoom = _field.Contains(MapManager.ObjLink.EntityPosition.Position);
+            var insideRoom = _field.Contains(MapManager.ObjLink.CenterPosition.Position);
             if (insideRoom)
                 _isOpening = false;
 

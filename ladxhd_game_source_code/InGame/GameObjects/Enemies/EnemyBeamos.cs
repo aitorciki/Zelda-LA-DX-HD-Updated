@@ -111,14 +111,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _shotOrigin = new Vector2(EntityPosition.X, EntityPosition.Y - 8) +
                            new Vector2(-MathF.Cos(_beamosRotation), -MathF.Sin(_beamosRotation)) * 4;
 
-            var playerPosition = MapManager.ObjLink.EntityPosition.Position;
-            var targetPosition = new Vector2(playerPosition.X, playerPosition.Y - 6);
+            var playerPosition = MapManager.ObjLink.CenterPosition.Position;
+            var targetPosition = new Vector2(playerPosition.X, playerPosition.Y - 2);
             var playerDirection = targetPosition - _shotOrigin;
 
             // if we normalize a zero vector we crash
             // it is really unlikely (probably impossible) but we need to be careful
             if (playerDirection != Vector2.Zero &&
-                (playerDirection.Length() < 72 || _fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position)))
+                (playerDirection.Length() < 72 || _fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)))
             {
                 playerDirection.Normalize();
 

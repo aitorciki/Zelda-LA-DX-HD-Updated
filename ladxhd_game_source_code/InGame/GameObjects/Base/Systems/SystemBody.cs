@@ -400,13 +400,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 return;
 
             // Get the position of Link and the current map objects.
-            var linkPos = MapManager.ObjLink.EntityPosition;
+            var linkPos = MapManager.ObjLink.CenterPosition.Position;
             var objects = Game1.GameManager.MapManager.CurrentMap.Objects;
             var onHole = false;
 
             // Find objects within the same tile as where Link hit the ground.
             _dropList.Clear();
-            objects.GetComponentList(_dropList, (int)linkPos.X - 4, (int)linkPos.Y - 4, 8, 8, CollisionComponent.Mask);
+            objects.GetComponentList(_dropList, (int)linkPos.X, (int)linkPos.Y, 8, 8, CollisionComponent.Mask);
 
             // We are only looking for when landing on a hole or world teleporter.
             foreach (var obj in _dropList)
@@ -415,7 +415,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 {
                     var holeRect = hole.collisionBox.Box.Rectangle();
                     var overRect = new Rectangle((int)holeRect.X + 2, (int)holeRect.Y + 3, (int)holeRect.Width - 4, (int)holeRect.Height - 5);
-                    var position = new Point((int)linkPos.X, (int)linkPos.Y - 3);
+                    var position = new Point((int)linkPos.X, (int)linkPos.Y);
 
                     if (hole.IsActive && overRect.Contains(position))
                     {
@@ -428,7 +428,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     var holeRect = teleporter.collisionBox.Box.Rectangle();
                     var overRect = new Rectangle((int)holeRect.X + 2, (int)holeRect.Y + 2, (int)holeRect.Width - 4, (int)holeRect.Height - 4);
 
-                    if (overRect.Contains(linkPos.Position))
+                    if (overRect.Contains(linkPos))
                     {
                         onHole = true;
                         break;

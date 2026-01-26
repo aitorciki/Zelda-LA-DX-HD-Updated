@@ -160,7 +160,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!_teleportCooldown.State)
                 return;
 
-            var playerDistance = _body.BodyBox.Box.Center - MapManager.ObjLink.BodyRectangle.Center;
+            var playerDistance = _body.BodyBox.Box.Center - MapManager.ObjLink.CenterPosition.Position;
 
             if (playerDistance.Length() < 36)
                 _aiComponent.ChangeState("preDespawn");
@@ -168,7 +168,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Shoot()
         {
-            if (!_fieldRectangle.Contains(MapManager.ObjLink.BodyRectangle.Center))
+            if (!_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return;
 
             var projectile = new EnemyPairoddProjectile(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 8), 1.5f);

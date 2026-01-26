@@ -258,6 +258,16 @@ namespace ProjectZ.InGame.Map
                 ((int)((y - MapOffsetY * Values.TileSize) / Values.FieldHeight) + 0.5f) * Values.FieldHeight + MapOffsetY * Values.TileSize);
         }
 
+        public Rectangle GetField(Vector2 vec)
+        {
+            return GetField((int)vec.X, (int)vec.Y, 0);
+        }
+
+        public Rectangle GetField(int x, int y)
+        {
+            return GetField(x, y, 0);
+        }
+
         public Rectangle GetField(int x, int y, int margin)
         {
             return new Rectangle(
@@ -266,9 +276,9 @@ namespace ProjectZ.InGame.Map
                 Values.FieldWidth - 2 * margin, Values.FieldHeight - 2 * margin);
         }
 
-        public Rectangle GetField(int x, int y)
+        public Box GetFieldBox(int x, int y, int height)
         {
-            return GetField(x, y, 0);
+            return GetFieldBox(x, y, height, 0);
         }
 
         public Box GetFieldBox(int x, int y, int height, int margin)
@@ -277,11 +287,6 @@ namespace ProjectZ.InGame.Map
                 (x - MapOffsetX * Values.TileSize) / Values.FieldWidth * Values.FieldWidth + margin + MapOffsetX * Values.TileSize,
                 (y - MapOffsetY * Values.TileSize) / Values.FieldHeight * Values.FieldHeight + margin + MapOffsetY * Values.TileSize, 0,
                 Values.FieldWidth - 2 * margin, Values.FieldHeight - 2 * margin, height);
-        }
-
-        public Box GetFieldBox(int x, int y, int height)
-        {
-            return GetFieldBox(x, y, height, 0);
         }
 
         public bool CanDig(Point position)

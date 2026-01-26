@@ -158,7 +158,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             // do not walk towards the player if he is not in the field
-            if (!_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return;
 
             // walk towards the player
@@ -234,7 +234,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                         if (_ballCounter >= 2)
                         {
                             _startThrowing = true;
-                            var playerDirection = MapManager.ObjLink.BodyRectangle.Center -
+                            var playerDirection = MapManager.ObjLink.CenterPosition.Position -
                                                   new Vector2(EntityPosition.X - 5, EntityPosition.Y - 15);
                             var playerAngle = MathF.Atan2(playerDirection.Y, playerDirection.X) + MathF.PI * 5 / 2;
                             if (playerAngle >= MathF.PI * 2)

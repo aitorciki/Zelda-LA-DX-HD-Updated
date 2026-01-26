@@ -39,7 +39,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_isTriggered)
             {
                 // player walked into the room?
-                if (_roomRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+                if (_roomRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 {
                     _isTriggered = true;
 

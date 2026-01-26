@@ -151,12 +151,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Play the music when Link enters the current field the fairy is in.
             bool _stateIdle = _aiComponent.CurrentStateId == "idle";
 
-            if (_stateIdle && !_musicPlaying && _body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_stateIdle && !_musicPlaying && _body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 Game1.GameManager.SetMusic(11, 2);
                 _musicPlaying = true;
             }
-            else if (_musicPlaying && !_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            else if (_musicPlaying && !_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 Game1.GameManager.SetMusic(-1, 2);
                 _musicPlaying = false;

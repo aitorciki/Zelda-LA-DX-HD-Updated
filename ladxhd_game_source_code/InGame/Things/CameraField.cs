@@ -27,7 +27,7 @@ namespace ProjectZ.InGame.Things
                 return;
             }
             // Get Link's position to determine the closest camera.
-            Vector2 playerPos = MapManager.ObjLink.EntityPosition.Position;
+            Vector2 playerPos = MapManager.ObjLink.CenterPosition.Position;
             ObjCameraField closestCam = null;
             float closestDist = float.MaxValue;
 
@@ -51,7 +51,7 @@ namespace ProjectZ.InGame.Things
         {
             // Grab objects with a certain range.
             GameObjectList.Clear();
-            GameObjectList = MapManager.ObjLink.Map.Objects.GetObjects((int)MapManager.ObjLink.EntityPosition.X - 160, (int)MapManager.ObjLink.EntityPosition.Y -100, 320, 200);
+            GameObjectList = MapManager.ObjLink.Map.Objects.GetObjects((int)MapManager.ObjLink.CenterPosition.X - 160, (int)MapManager.ObjLink.CenterPosition.Y -100, 320, 200);
 
             // Loop through the game objects.
             foreach (var gameObject in GameObjectList)

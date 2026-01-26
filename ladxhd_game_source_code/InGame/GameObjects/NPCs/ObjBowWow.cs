@@ -285,15 +285,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void ToAttack()
         {
             // Refresh Bow Wow's field rectangle.
-            _body.FieldRectangle = Map.GetField((int)MapManager.ObjLink.EntityPosition.X, (int)MapManager.ObjLink.EntityPosition.Y);
+            _body.FieldRectangle = Map.GetField(MapManager.ObjLink.CenterPosition.Position);
 
             // Reset the target each attack.
             _enemyTarget = null;
 
             // Get a list of enemies for Bow Wow to attack.
             Map.Objects.GetGameObjectsWithTag(_enemyList, Values.GameObjectTag.Enemy,
-                (int)MapManager.ObjLink.EntityPosition.Position.X - 50,
-                (int)MapManager.ObjLink.EntityPosition.Position.Y - 50, 100, 100);
+                (int)MapManager.ObjLink.CenterPosition.Position.X - 50,
+                (int)MapManager.ObjLink.CenterPosition.Position.Y - 50, 100, 100);
 
             // The types of enemies that Bow Wow shouldn't eat.
             Type[] _dontEat = new Type[]{ typeof(EnemyGhini), typeof(EnemySeaUrchin), typeof(EnemyZombie) };

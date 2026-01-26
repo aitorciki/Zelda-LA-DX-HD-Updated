@@ -65,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _animator.Update();
 
             // respawn when the player leaves the room
-            if (!_isActive && !_field.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_isActive && !_field.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 _respawnCounter -= Game1.DeltaTime;
 

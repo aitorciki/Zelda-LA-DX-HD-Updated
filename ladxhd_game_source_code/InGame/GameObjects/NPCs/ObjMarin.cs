@@ -360,7 +360,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             else if (_currentState == States.AnimalSinging)
             {
                 // Start/stop depending on the distance to the player.
-                var nearPlayer = _fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position);
+                var nearPlayer = _fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position);
 
                 if (!_isSingingWithSound && nearPlayer)
                 {
@@ -375,7 +375,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.Singing)
             {
-                if (!_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+                if (!_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 {
                     StopSinging();
                     _currentState = States.Idle;
@@ -422,7 +422,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _blockingField = new RectangleF(EntityPosition.X + 6, EntityPosition.Y - 15, 18, 50);
 
                     // Check to see if Link entered the blocking field.
-                    if (_blockingField.Contains(MapManager.ObjLink.EntityPosition.Position))
+                    if (_blockingField.Contains(MapManager.ObjLink.CenterPosition.Position))
                     {
                         // Throw the rooster if using it.
                         if (MapManager.ObjLink.IsFlying())

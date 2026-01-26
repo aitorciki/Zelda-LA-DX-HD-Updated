@@ -149,7 +149,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             var distance = direction.Length();
 
-            if (_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position) && distance < 56)
+            if (_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position) && distance < 56)
             {
                 if (distance < 24)
                     ToJumping();

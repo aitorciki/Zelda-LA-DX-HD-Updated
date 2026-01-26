@@ -132,7 +132,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateLeaveRoom()
         {
-            if (_isRotating && !_limitRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_isRotating && !_limitRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 EndRotation();
         }
 
@@ -148,7 +148,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void ToVacuum()
         {
             // is the player in the current room?
-            if (_fieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 _aiComponent.ChangeState("vacuum");
             else
                 _aiComponent.ChangeState("idle");

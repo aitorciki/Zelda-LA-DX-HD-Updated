@@ -144,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // player jumped on top?
             if ((!Map.Is2dMap && MapManager.ObjLink._body.Velocity.Z < 0 ||
-                 Map.Is2dMap && MapManager.ObjLink._body.Velocity.Y > 0 && MapManager.ObjLink.EntityPosition.Y + 4 < EntityPosition.Y) &&
+                 Map.Is2dMap && MapManager.ObjLink._body.Velocity.Y > 0 && MapManager.ObjLink.CenterPosition.Y < EntityPosition.Y) &&
                  _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
             {
                 JumpDeath();

@@ -94,6 +94,7 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
         // Link Position
+        public CPosition CenterPosition => new CPosition(EntityPosition.X, EntityPosition.Y - 4, EntityPosition.Z);
         public float PosX => EntityPosition.X;
         public float PosY => EntityPosition.Y;
         public float PosZ => EntityPosition.Z;
@@ -2841,7 +2842,7 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateCurrentField()
         {
             // Set the current field that Link is on.
-            CurrentField = Map.GetField((int)EntityPosition.X, (int)EntityPosition.Y);
+            CurrentField = Map.GetField(CenterPosition.Position);
 
             // We only use the field barrier when "Classic Camera" is active.
             if (Camera.ClassicMode)

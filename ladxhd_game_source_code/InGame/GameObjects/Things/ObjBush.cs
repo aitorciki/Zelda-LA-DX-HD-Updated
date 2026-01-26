@@ -176,7 +176,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
         {
-            if (Camera.ClassicMode && !_field.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (Camera.ClassicMode && !_field.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return Values.HitCollision.None;
 
             // If "Classic Sword" is enabled, only the tile that the bush/grass is on should "hit".

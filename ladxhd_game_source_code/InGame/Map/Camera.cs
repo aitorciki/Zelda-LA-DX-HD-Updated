@@ -98,12 +98,12 @@ namespace ProjectZ.InGame.Map
 
         public Vector2 GetFieldCenter()
         {
-            Vector2 fieldCoords = MapManager.ObjLink.EntityPosition.Position;
+            Vector2 fieldCoords = MapManager.ObjLink.CenterPosition.Position;
 
             if (Game1.ClassicCamera.CameraFieldCoords != Vector2.Zero && MapManager.ObjLink.Map.MapName != "overworld.map")
                 fieldCoords = Game1.ClassicCamera.CameraFieldCoords;
 
-            fieldRect = MapManager.ObjLink.Map.GetField((int)fieldCoords.X, (int)fieldCoords.Y);
+            fieldRect = MapManager.ObjLink.Map.GetField(fieldCoords);
 
             int rectCenterX = (fieldRect.X + fieldRect.Width / 2) * ScaleValue;
             int rectCenterY = (fieldRect.Y + fieldRect.Height / 2) * ScaleValue;

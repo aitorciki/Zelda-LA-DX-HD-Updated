@@ -89,7 +89,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            if (!_registered && _field.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_registered && _field.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 RegisterTeleporter();
                 UnlockTeleporter();

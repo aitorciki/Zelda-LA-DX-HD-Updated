@@ -189,7 +189,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void RandomAttack()
         {
-            if (!_roomRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_roomRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return;
 
             if (Game1.RandomNumber.Next(0, 3) == 0)

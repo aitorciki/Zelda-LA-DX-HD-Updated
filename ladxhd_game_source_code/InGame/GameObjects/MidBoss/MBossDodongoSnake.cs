@@ -247,7 +247,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _bossCount = GetDodongoSnakeCount();
 
             // Check if player is in the field rect.
-            if (_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
             {
                 // Track when the encounter has started so the music isn't altered unintentionally
                 _encountered = true;
@@ -257,7 +257,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     Game1.GameManager.SetMusic(79, 2);
             }
             // Check if the player left the room.
-            else if (!_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position) && _encountered)
+            else if (!_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position) && _encountered)
             {
                 // Disable the encounter.
                 _encountered = false;
