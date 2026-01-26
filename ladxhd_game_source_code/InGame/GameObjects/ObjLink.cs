@@ -3806,6 +3806,10 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseSword()
         {
+            // Prevent using the sword while it is spinning.
+            if (_isSwordSpinning)
+                return;
+
             // Workaround when charging sword and walking into an NPC.
             if (_npcCrossSword)
                 _npcCrossSword = false;
