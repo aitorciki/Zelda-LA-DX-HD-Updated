@@ -11,8 +11,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyStalfosKnight : GameObject
     {
-        public BodyComponent Body;
-
         private readonly EnemyStalfosKnightSword _sword;
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
@@ -22,27 +20,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
 
-        private Rectangle _fieldRectangle;
-
         private const float MoveSpeed = 0.5f;
         private const float AttackSpeed = 0.55f;
         private const int AttackRange = 60;
 
+        private Rectangle _fieldRectangle;
         private int _lives = ObjLives.StalfosKnight;
         private int _direction;
-
         private bool _isActive = true;
+
+        public BodyComponent Body;
+        public int Direction => _direction;
+        public string AiState { get => _aiComponent.CurrentStateId; }
+        public CBox HittableBox
+        {
+            get => _hitComponent.HittableBox;
+            set => _hitComponent.HittableBox = value;
+        }
         public override bool IsActive
         {
             set
             {
-                _sword.IsActive = value;
                 _isActive = value;
+                _sword.IsActive = value;
             }
             get => _isActive;
         }
-
-        public int Direction => _direction;
 
         public EnemyStalfosKnight(Map.Map map, int posX, int posY) : base(map)
         {

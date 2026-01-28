@@ -12,27 +12,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyMoblinSword : GameObject
     {
-        public BodyComponent Body;
-
-        private readonly CSprite _sprite;
         private readonly EnemyMoblinSwordSword _sword;
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
+        private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
-
-        private Rectangle _fieldRectangle;
 
         private const float MoveSpeed = 0.5f;
         private const float AttackMoveSpeed = 0.55f;
         private const int AttackRange = 60;
 
-        private int _direction;
+        private Rectangle _fieldRectangle;
         private int _lives = ObjLives.MoblinSword;
+        private int _direction;
         private bool _isActive = true;
 
+        public BodyComponent Body;
+        public int Direction => _direction;
+        public string AiState { get => _aiComponent.CurrentStateId; }
+        public CBox HittableBox
+        {
+            get => _hitComponent.HittableBox;
+            set => _hitComponent.HittableBox = value;
+        }
         public override bool IsActive
         {
             set
@@ -42,9 +47,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             get => _isActive;
         }
-
-        public int Direction => _direction;
-
         public EnemyMoblinSword() : base("moblin sword") { }
 
         public EnemyMoblinSword(Map.Map map, int posX, int posY) : base(map)
@@ -98,7 +100,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
 
             var damageBox = new CBox(EntityPosition, -8, -12, 0, 16, 12, 4);
-            var hittableBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
+            var hittableBox = new CBox(EntityPosition, -4, -14, 8, 12, 8);
             var pushableBox = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));

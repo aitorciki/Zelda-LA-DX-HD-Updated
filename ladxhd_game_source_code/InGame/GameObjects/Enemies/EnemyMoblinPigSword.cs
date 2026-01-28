@@ -14,28 +14,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyMoblinPigSword : GameObject
     {
         private readonly EnemyMoblinPigSwordSword _sword;
-
-        public BodyComponent Body;
-
-        private readonly CSprite _sprite;
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
         private readonly BodyDrawComponent _drawComponent;
+        private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
-
-        private Rectangle _fieldRectangle;
 
         private const float MoveSpeed = 0.5f;
         private const float AttackMoveSpeed = 0.55f;
         private const int AttackRange = 60;
 
-        private int _direction;
+        private Rectangle _fieldRectangle;
         private int _lives = ObjLives.MoblinPigSword;
-
+        private int _direction;
         private bool _isActive = true;
+
+        public BodyComponent Body;
+        public int Direction => _direction;
+        public string AiState { get => _aiComponent.CurrentStateId; }
+        public CBox HittableBox
+        {
+            get => _hitComponent.HittableBox;
+            set => _hitComponent.HittableBox = value;
+        }
         public override bool IsActive
         {
             set
@@ -45,8 +49,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
             get => _isActive;
         }
-
-        public int Direction => _direction;
 
         public EnemyMoblinPigSword() : base("moblinPigSword") { }
 

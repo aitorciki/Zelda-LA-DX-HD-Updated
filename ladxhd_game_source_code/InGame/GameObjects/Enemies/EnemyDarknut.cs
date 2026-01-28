@@ -12,44 +12,45 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyDarknut : GameObject
     {
-        public BodyComponent Body;
-
-        public bool FinishedSpawning = true;
-        public bool SpawnGoldLeaf;
-
-        private readonly CSprite _sprite;
         private readonly EnemyDarknutSword _sword;
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
         private readonly AiDamageState _damageState;
+        private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
 
-        private Rectangle _fieldRectangle;
-
+        private const string _leafSaveKey = "ow_goldLeafNut";
         private const float MoveSpeed = 0.5f;
         private const float AttackSpeed = 0.55f;
         private const int AttackRange = 60;
 
+        private Rectangle _fieldRectangle;
         private int _direction;
         private int _lives = ObjLives.Darknut;
-
-        private const string _leafSaveKey = "ow_goldLeafNut";
-
         private bool _isActive = true;
 
+        public bool FinishedSpawning = true;
+        public bool SpawnGoldLeaf;
+
+        public BodyComponent Body;
+        public int Direction => _direction;
+        public string AiState { get => _aiComponent.CurrentStateId; }
+        public CBox HittableBox
+        {
+            get => _hitComponent.HittableBox;
+            set => _hitComponent.HittableBox = value;
+        }
         public override bool IsActive
         {
             set
             {
-                _sword.IsActive = value;
                 _isActive = value;
+                _sword.IsActive = value;
             }
             get => _isActive;
         }
-
-        public int Direction => _direction;
 
         public EnemyDarknut() : base("darknut") { }
 
@@ -117,7 +118,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, _sprite, Values.LayerPlayer));
+            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             _sword = new EnemyDarknutSword(Map, this);
