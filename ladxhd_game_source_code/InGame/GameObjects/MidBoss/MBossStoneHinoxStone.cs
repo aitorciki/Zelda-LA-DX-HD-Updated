@@ -89,7 +89,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public void DestroyStone()
         {
-            var explosionAnimation = new ObjSpawningEffect(Map, (int)EntityPosition.X, (int)EntityPosition.Y, -8, -26);
+            var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X-8, (int)EntityPosition.Y-26, Values.LayerTop, "Particles/spawn", "run", true);
             Map.Objects.SpawnObject(explosionAnimation);
             Map.Objects.DeleteObjects.Add(this);
             _owner.HinoxStones.Remove(this);
