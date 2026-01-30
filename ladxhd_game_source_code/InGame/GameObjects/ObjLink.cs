@@ -2102,7 +2102,7 @@ namespace ProjectZ.InGame.GameObjects
                     knockBack = true;
 
                     if (GameSettings.ScreenShake)
-                        Game1.GameManager.ShakeScreen(750, 2, 1, 5.5f, 2.5f, dirX, 1);
+                        Game1.GameManager.ShakeScreen(600, 1.00f, 0.50f, 11.0f, 5.00f, dirX, 1);
                 }
                 if ((collision & Values.BodyCollision.Vertical) != 0 && Direction % 2 != 0)
                 {
@@ -2112,7 +2112,7 @@ namespace ProjectZ.InGame.GameObjects
                     knockBack = true;
 
                     if (GameSettings.ScreenShake)
-                        Game1.GameManager.ShakeScreen(750, 1, 2, 2.5f, 5.5f, 1, dirY);
+                        Game1.GameManager.ShakeScreen(600, 0.50f, 1.00f, 5.00f, 11.0f, 1, dirY);
                 }
                 if (knockBack)
                 {

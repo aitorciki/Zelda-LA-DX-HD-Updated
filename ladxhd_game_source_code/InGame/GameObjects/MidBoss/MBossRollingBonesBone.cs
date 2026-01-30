@@ -142,7 +142,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             Game1.GameManager.PlaySoundEffect("D360-11-0B");
             if (GameSettings.ScreenShake)
-                Game1.GameManager.ShakeScreen(800, 4, 1, 5, 5);
+                Game1.GameManager.ShakeScreen(650, 1.75f, 0.00f, 6.50f, 0.00f);
 
             _body.Velocity.X = -_body.Velocity.X;
             _hasCollided = true;

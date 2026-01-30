@@ -219,7 +219,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 MapManager.ObjLink.GroundStun(1000);
                 if (GameSettings.ScreenShake)
-                    Game1.GameManager.ShakeScreen(500, 1, 3, 2.5f, 5.5f);
+                    Game1.GameManager.ShakeScreen(500, 0.00f, 2.50f, 0.00f, 10.00f);
                 Game1.GameManager.PlaySoundEffect("D360-11-0B");
 
                 _aiComponent.ChangeState("attackFinished");

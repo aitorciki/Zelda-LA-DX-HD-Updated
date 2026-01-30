@@ -353,6 +353,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     var bomb = (ObjBomb)collidingObject;
                     if (bomb.Body.IsActive)
                     {
+                        MapManager.ObjLink.BombList.Remove(bomb);
                         bomb.IsActive = false;
                         bomb.Map.Objects.DeleteObjects.Add(bomb);
 
@@ -379,7 +380,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // Shake the screen.
             if (GameSettings.ExScreenShake)
-                Game1.GameManager.ShakeScreen(225, 4, 1, 5, 2.5f);
+                Game1.GameManager.ShakeScreen(200, 2.00f, 1.00f, 50.00f, 25.50f);
 
             // Spawn the explosion effect.
             Map.Objects.SpawnObject(new ObjAnimator(Map,

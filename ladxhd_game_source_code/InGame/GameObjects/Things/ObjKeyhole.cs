@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 // shake the screen
                 if (GameSettings.ScreenShake)
-                Game1.GameManager.ShakeScreen(_shakeTime, 2, 1, 5.0f, 2.25f);
+                Game1.GameManager.ShakeScreen(_shakeTime, 1.75f, 0.00f, 5.50f, 0.00f);
             }
 
             if (_counter <= _openTime)

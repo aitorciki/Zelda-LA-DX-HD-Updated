@@ -311,7 +311,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // shake the screen
             if (GameSettings.ExScreenShake)
-                Game1.GameManager.ShakeScreen(150, 8, 2, 5, 2.5f);
+                Game1.GameManager.ShakeScreen(200, 2.00f, 1.00f, 50.00f, 25.50f);
         }
 
         private void FinishedAnimation()

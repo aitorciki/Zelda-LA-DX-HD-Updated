@@ -182,7 +182,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
                     Game1.GameManager.PlaySoundEffect("D360-11-0B");
                     if (GameSettings.ScreenShake)
-                        Game1.GameManager.ShakeScreen(250, 1, 2, 2.5f, 5.5f);
+                        Game1.GameManager.ShakeScreen(500, 0.00f, 2.00f, 0.00f, 12.5f);
                 }
             }
 

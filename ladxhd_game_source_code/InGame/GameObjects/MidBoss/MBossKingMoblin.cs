@@ -302,7 +302,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // shake the screen
             if (GameSettings.ScreenShake)
-                Game1.GameManager.ShakeScreen(800, 4, 1, 5, 5);
+                Game1.GameManager.ShakeScreen(800, 1.25f, 0.75f, 8.00f, 5.00f);
         }
 
         private void UpdateBound()

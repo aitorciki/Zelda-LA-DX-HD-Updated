@@ -173,7 +173,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // shake the screen
             if (GameSettings.ScreenShake)
-                Game1.GameManager.ShakeScreen(750, 0, 2, 2f, 5.5f);
+                Game1.GameManager.ShakeScreen(350, 0.00f, 1.00f, 10.0f, 25.0f);
 
             Game1.GameManager.PlaySoundEffect("D378-12-0C");
 

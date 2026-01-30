@@ -131,8 +131,8 @@ namespace ProjectZ.InGame.Things
         private float _shakeCountY;
         private float _shakeSpeedX;
         private float _shakeSpeedY;
-        private int _maxOffsetX;
-        private int _maxOffsetY;
+        private float _maxOffsetX;
+        private float _maxOffsetY;
 
         public static int CloakGreen = 0;
         public static int CloakBlue = 1;
@@ -1151,7 +1151,7 @@ namespace ProjectZ.InGame.Things
             _shakeSpeedY = shakeSpeedY;
         }
 
-        public void ShakeScreen(int time, int maxX, int maxY, float shakeSpeedX, float shakeSpeedY, int startDirX = 1, int startDirY = 1)
+        public void ShakeScreen(int time, float maxX, float maxY, float shakeSpeedX, float shakeSpeedY, int startDirX = 1, int startDirY = 1)
         {
             _shakeCountX = time;
             _shakeCountY = time;
@@ -1187,8 +1187,7 @@ namespace ProjectZ.InGame.Things
             if (shakingX)
             {
                 _shakeCountX -= Game1.DeltaTime;
-                MapManager.Camera.ShakeOffsetX =
-                    (float)Math.Sin(_shakeCountX / 100f * _shakeSpeedX) * _maxOffsetX;
+                MapManager.Camera.ShakeOffsetX = (float)Math.Sin(_shakeCountX / 100f * _shakeSpeedX) * _maxOffsetX;
             }
             else
             {
@@ -1200,8 +1199,7 @@ namespace ProjectZ.InGame.Things
             if (shakingY)
             {
                 _shakeCountY -= Game1.DeltaTime;
-                MapManager.Camera.ShakeOffsetY =
-                    (float)Math.Sin(_shakeCountY / 100f * _shakeSpeedY) * _maxOffsetY;
+                MapManager.Camera.ShakeOffsetY = (float)Math.Sin(_shakeCountY / 100f * _shakeSpeedY) * _maxOffsetY;
             }
             else
             {

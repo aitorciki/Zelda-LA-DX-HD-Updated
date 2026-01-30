@@ -199,7 +199,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 _spawnState = SpawnState.Shake;
                 if (GameSettings.ScreenShake)
-                    Game1.GameManager.ShakeScreen(endTime, 1, 2, 6.5f, 4.5f);
+                    Game1.GameManager.ShakeScreen(2000, 0.00f, 2.00f, 0.00f, 12.50f);
             }
             else if (_spawnState == SpawnState.Shake && _spawnCounter > 2000)
             {
@@ -317,6 +317,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Map.Objects.SpawnObject(stone1);
             Map.Objects.SpawnObject(stone2);
             Map.Objects.SpawnObject(stone3);
+
+            if (GameSettings.ExScreenShake)
+                Game1.GameManager.ShakeScreen(250, 0.00f, 1.00f, 0.00f, 8.00f);
         }
 
         private void SpawnHoles()
