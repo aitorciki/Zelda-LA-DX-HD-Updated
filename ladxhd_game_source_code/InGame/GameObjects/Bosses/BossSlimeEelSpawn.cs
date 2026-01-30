@@ -182,8 +182,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _shakeSoundCounter -= Game1.DeltaTime;
                 if (_shakeSoundCounter < 0)
                 {
-                    _shakeSoundCounter += 150;
-                    Game1.GameManager.PlaySoundEffect("D378-61-3E", true);
+                    _shakeSoundCounter += 2000;
+
+                    if (_spawnState == SpawnState.Shake)
+                        Game1.GameManager.PlaySoundEffect("D378-29-1D", true);
+
+                    if (_spawnState == SpawnState.FloorBreak)
+                    {
+                        Game1.GameManager.StopSoundEffect("D378-29-1D");
+                        Game1.GameManager.PlaySoundEffect("D378-61-3E", true);
+                    }
                 }
             }
 
