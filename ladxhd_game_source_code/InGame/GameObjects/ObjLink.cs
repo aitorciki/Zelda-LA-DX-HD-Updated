@@ -237,6 +237,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _shownSwordLv2Dialog;
 
         // Prevents sword from colliding with NPCs.
+        private Vector2 _avoidanceStartPos;
         private int _avoidanceDirection;
         private bool _npcSwordCross;
         private bool _npcCrossSword;
@@ -2939,8 +2940,15 @@ namespace ProjectZ.InGame.GameObjects
             // Check if sword hitbox is within NPC hitbox.
             _npcSwordCross = CheckNPCAvoidance();
 
+            // Tracks how far the player traveled when triggering avoidance.
+            float travelDistance = 0;
+
+            // Update the distance if avoidance took place.
+            if (_npcCrossSword)
+                travelDistance = Vector2.Distance(_avoidanceStartPos, EntityPosition.Position);
+
             // When sword is no longer within NPC hitbox and Link is holding sword, restore charging state.
-            if (!_npcSwordCross && _isHoldingSword && _npcCrossSword && _avoidanceDirection != Direction)
+            if (!_npcSwordCross && _isHoldingSword && _npcCrossSword && (_avoidanceDirection != Direction || travelDistance > 22))
             {
                 _npcCrossSword = false;
                 Animation.Play("stand" + Direction);
@@ -2949,6 +2957,7 @@ namespace ProjectZ.InGame.GameObjects
                 _swordChargeCounter = sword_charge_time;
                 _isHoldingSword = false;
             }
+            // This probably isn't the best place for this but it's where it logically needs to happen.
             WasHoleReset = false;
         }
 
@@ -3986,6 +3995,7 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Idle;
                     _isHoldingSword = false;
                     _avoidanceDirection = Direction;
+                    _avoidanceStartPos = new Vector2(EntityPosition.X, EntityPosition.Y);
                     return;
                 }
                 // Start poking?
