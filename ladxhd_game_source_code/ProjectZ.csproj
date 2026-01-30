@@ -12,9 +12,6 @@
     <OutputPath></OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup>
-      <MonoGameExtendedPipelineReferencePath>$(MSBuildThisFileDirectory)pipeline-references</MonoGameExtendedPipelineReferencePath>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Content\bin\**" />
     <Compile Remove="Content\obj\**" />
@@ -34,6 +31,7 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MonoGame.Extended" Version="5.3.1" />
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="5.3.1" />
     <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
