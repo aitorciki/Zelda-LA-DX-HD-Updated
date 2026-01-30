@@ -74,6 +74,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             triggerCount.OnInit();
             _body.VelocityTarget.X = dir * MovementSpeed;
+            Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
