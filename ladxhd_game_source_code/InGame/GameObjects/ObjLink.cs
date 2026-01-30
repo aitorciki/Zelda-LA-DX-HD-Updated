@@ -4127,6 +4127,13 @@ namespace ProjectZ.InGame.GameObjects
             float centerX = box.X + box.Width  * 0.5f;
             float centerY = box.Y + box.Height * 0.5f;
 
+            // Offset the center when facing up or down.
+            if (MapManager.ObjLink.Direction == 1)
+                centerX += 3;
+            else if (MapManager.ObjLink.Direction == 3)
+                centerX -= 3;
+
+            // Get the tile position.
             int tileX = (int)Math.Floor(centerX / TileSize);
             int tiley = (int)Math.Floor(centerY / TileSize);
 
