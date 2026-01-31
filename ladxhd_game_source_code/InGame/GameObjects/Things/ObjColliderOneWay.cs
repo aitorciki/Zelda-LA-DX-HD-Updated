@@ -33,22 +33,32 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool CollisionCheck(Box box, int dir, int level, ref Box collidingBox)
         {
+            // Store some of Link's properties.
+            var Link = MapManager.ObjLink;
+            var Body = Link._body;
+
+            // We can't compare the box parameter directly with Link's body box, so compare the dimensions.
+            if (box.Width != Body.BodyBox.Box.Width || box.Height != Body.BodyBox.Box.Height)
+                return false;
+
+            // The direction of incoming collision must match the parameter set in the constructor and the boxes must be colliding.
             if (dir != _direction || !_collisionBox.Intersects(box))
                 return false;
 
+            // The collider type is a "pusher" set by the parameter in the constructor.
             if (_isPusher)
             {
-                var Link = MapManager.ObjLink;
-                var Body = Link._body;
-
+                // When used on 3D maps, it acts as collision in a single direction.
                 if (!Link.Is2DMode || Link.EntityPosition.Y <= _collisionBox.Y || Body.Velocity.Y <= 0)
                 {
                     collidingBox = _collisionBox;
                     return true;
                 }
+                // On 2D Maps, when Link is below the top, "teleport" him to the top of the collision.
                 if (Math.Abs(Link.EntityPosition.Y - _collisionBox.Y) > 0.1f)
                     Link.SetPosition(new Vector2(Link.EntityPosition.X, _collisionBox.Y - 1));
 
+                // Force Link into the walking state from the jumping state after the teleport.
                 if (Link.CurrentState == ObjLink.State.Jumping)
                     Link.Animation.Play("walk_" + Link.Direction);
             }
