@@ -89,7 +89,7 @@ namespace ProjectZ.InGame.Map
 
         private void UpdateOffsetCoords()
         {
-            if (GameSettings.CameraLock)
+            if (GameSettings.CameraLock || Camera.ClassicMode)
             {
                 CameraOffset = Vector2.Zero;
                 return;
