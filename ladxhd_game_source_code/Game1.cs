@@ -134,6 +134,7 @@ namespace ProjectZ
 
             // Use max game scale set by lahdmod file or default value set above.
             MaxGameScale = max_game_scale;
+            GameSettings.GameScale = max_game_scale + 1;
 
             // Enable editor via lahdmod file or through the command line option.
             EditorMode = editorMode || editor_mode;
