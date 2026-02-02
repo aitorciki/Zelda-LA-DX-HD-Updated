@@ -128,7 +128,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _sword.Animator.Continue();
             _sword._damageField.IsActive = true;
+            _sword._hitComponent.IsActive = true;
+            _sword._pushComponent.IsActive = true;
 
+            InitIdle();
             _animator.Continue();
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;
@@ -143,6 +146,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Pause();
             _sword.Animator.Pause();
             _sword._damageField.IsActive = false;
+            _sword._hitComponent.IsActive = false;
+            _sword._pushComponent.IsActive = false;
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
             _pushComponent.IsActive = false;

@@ -14,6 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         public readonly Animator Animator;
         public readonly CSprite Sprite;
         public readonly DamageFieldComponent _damageField;
+        public readonly HittableComponent _hitComponent;
+        public readonly PushableComponent _pushComponent;
         private readonly EnemyDarknut _owner;
         private readonly CBox _damageBox;
         private readonly CBox _collisionBox;
@@ -44,8 +46,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             UpdateBoxes();
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, new HittableComponent(_collisionBox, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(_damageBox, OnPush) { RepelParticle = true });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_collisionBox, OnHit));
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_damageBox, OnPush) { RepelParticle = true });
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
