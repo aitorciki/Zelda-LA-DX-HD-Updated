@@ -1784,11 +1784,12 @@ namespace ProjectZ.InGame.GameObjects
             if (vecDirection.LengthSquared() > 0.000001f)
                 vecDirection.Normalize();
 
-            // If the direction was passed use that. Otherwise calculate it.
+            // If the direction was passed use that. Otherwise calculate it. This
+            // is used solely to determine if a block succeeds based on direction.
             if (missileDir >= 0)
                 intDirection = missileDir;
             else
-                intDirection = ToDirection(vecDirection);
+                intDirection = ReverseDirection(ToDirection(vecDirection));
 
             // Check if it's a projectile that was successfully blocked.
             bool blocked = WasBlocked(box, boxRect, boxCenter, bodyCenter, intDirection);
