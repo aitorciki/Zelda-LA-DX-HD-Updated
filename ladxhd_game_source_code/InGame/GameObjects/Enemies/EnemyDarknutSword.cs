@@ -45,7 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
             AddComponent(HittableComponent.Index, new HittableComponent(_collisionBox, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(_collisionBox, OnPush));
+            AddComponent(PushableComponent.Index, new PushableComponent(_damageBox, OnPush) { RepelParticle = true });
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
