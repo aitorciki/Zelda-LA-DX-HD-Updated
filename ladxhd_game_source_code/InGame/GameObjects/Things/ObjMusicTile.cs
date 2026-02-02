@@ -31,9 +31,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            // Offset the Y position by 4 pixels to match Link's body box center.
             var position = new Point(
                 (int)(MapManager.ObjLink.PosX - Map.MapOffsetX * Values.TileSize) / 16,
-                (int)(MapManager.ObjLink.PosY - Map.MapOffsetY * Values.TileSize) / 16);
+                (int)(MapManager.ObjLink.PosY - 4 - Map.MapOffsetY * Values.TileSize) / 16);
 
             if (0 <= position.X && position.X < _musicData.GetLength(0) &&
                 0 <= position.Y && position.Y < _musicData.GetLength(1))
