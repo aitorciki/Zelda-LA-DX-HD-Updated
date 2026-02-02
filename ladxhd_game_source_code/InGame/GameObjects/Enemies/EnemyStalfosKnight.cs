@@ -22,7 +22,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private const float MoveSpeed = 0.5f;
         private const float AttackSpeed = 0.55f;
-        private const int AttackRange = 60;
+        private const int AttackRange = 50;
+        private const int FollowRange = 65;
 
         private Rectangle _fieldRectangle;
         private int _lives = ObjLives.StalfosKnight;
@@ -186,7 +187,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var direction = (MapManager.ObjLink.EntityPosition.Position + AnimationHelper.DirectionOffset[_direction] * 3) - EntityPosition.Position;
 
-            if (!_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) || direction.Length() > AttackRange)
+            if (!_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) || direction.Length() > FollowRange)
             {
                 _aiComponent.ChangeState("idle");
                 return;
