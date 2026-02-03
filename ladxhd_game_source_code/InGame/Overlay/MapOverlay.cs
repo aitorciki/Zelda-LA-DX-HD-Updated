@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
+using ProjectZ.InGame.GameObjects;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
@@ -63,6 +64,9 @@ namespace ProjectZ.InGame.Overlay
 
         Animator[] animDungeons = new Animator[8];
         Point[] animPosition = new Point[8];
+
+        Animator _manboPond = new Animator();
+        Point _manboPosition = new Point(5, 4);
 
         public Point SelectionPosition { get => _selectionPosition; }
 
@@ -163,6 +167,9 @@ namespace ProjectZ.InGame.Overlay
                 animDungeons[i] = AnimatorSaveLoad.LoadAnimator("mapDungeon");
                 animDungeons[i].Play("idle");
             }
+            // Load the icon for Manbo's Pond.
+            _manboPond = AnimatorSaveLoad.LoadAnimator("mapManboPond");
+            _manboPond.Play("idle");
         }
 
         public void UpdateRenderTarget()
@@ -178,9 +185,12 @@ namespace ProjectZ.InGame.Overlay
             _animationSelection.Update();
 
             // Update dungeon icons if enabled.
-            if (GameSettings.DungeonTeleport)
+            if (GameSettings.MapTeleport > 0)
                 for (int i = 0; i < 8; i++)
                     animDungeons[i].Update();
+
+            // Update the manbo's pond icon.
+            _manboPond.Update();
 
             var mapIcon = _mapIcons[_selectionPosition.X, _selectionPosition.Y];
 
@@ -258,15 +268,19 @@ namespace ProjectZ.InGame.Overlay
 
             if (ControlHandler.ButtonPressed(CButtons.X))
             {
-                // Get if we have a teleport position, the dungeon level, the teleport position, and the instrument collected state.
+                // Get various states to determine if the user will be teleported or not.
+                var validOptions  = GameSettings.MapTeleport != 0 && (GameSettings.MapTeleport != 2 || MapManager.ObjLink.ManboTeleport);
+                var validMapState = Game1.GameManager.InGameOverlay.InventoryState || _fullMap; 
                 var validPosition = Game1.GameManager.InGameOverlay.TeleportMap.TryGetValue(_selectionPosition, out (int Level, Vector2 Teleport) teleportData);
-                var dungeonLevel = teleportData.Level - 1;
-                var teleportPos = teleportData.Teleport;
-                var hasInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
+                var dungeonLevel  = teleportData.Level - 1;
+                var teleportPoint = teleportData.Teleport;
+                var theInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
+                var hasInstrument = theInstrument != null && theInstrument.Count > 0;
+                var isManbosPond  = dungeonLevel < 0 && MapManager.ObjLink.ManboTeleport && GameSettings.MapTeleport >= 2;
+                var mapOverworld  = MapManager.ObjLink.Map.IsOverworld;
 
-                // If it's not a teleport position or the player doesn't have the instrument.
-                if (!GameSettings.DungeonTeleport || !validPosition || hasInstrument == null || hasInstrument.Count < 1 || 
-                    (!Game1.GameManager.InGameOverlay.InventoryState && !_fullMap) || !MapManager.ObjLink.Map.IsOverworld)
+                // Check the various conditions to see if the teleport should not go through.
+                if (!validOptions || !validMapState || !validPosition || !mapOverworld || (!hasInstrument && !isManbosPond))
                     return;
 
                 // We'll need this to teleport Link later.
@@ -280,15 +294,16 @@ namespace ProjectZ.InGame.Overlay
                 Game1.GameManager.InGameOverlay.CloseOverlay();
 
                 // Teleport Link to where we want him.
-                body.Position.Set(teleportPos);
+                body.Position.Set(teleportPoint);
                 body.Velocity = Vector3.Zero;
                 body.VelocityTarget = Vector2.Zero;
                 MapManager.ObjLink.Direction = 3;
 
                 // Play an animation and a sound effect.
-                var explosionAnimation = new ObjAnimator(MapManager.ObjLink.Map, (int)teleportPos.X, (int)teleportPos.Y - 8, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
+                var explosionAnimation = new ObjAnimator(MapManager.ObjLink.Map, (int)teleportPoint.X, (int)teleportPoint.Y - 8, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
                 MapManager.ObjLink.Map.Objects.SpawnObject(explosionAnimation);
                 Game1.GameManager.PlaySoundEffect("D360-27-1B");
+                MapManager.ObjLink.ManboTeleport = false;
             }
         }
 
@@ -373,7 +388,7 @@ namespace ProjectZ.InGame.Overlay
                 var mapRectangle = new Point(drawPosition.X + _margin, drawPosition.Y + _margin);
 
                 // Draw the dungeon icons if enabled.
-                if (GameSettings.DungeonTeleport && IsSelected && MapManager.ObjLink.Map.IsOverworld)
+                if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && IsSelected && MapManager.ObjLink.Map.IsOverworld)
                 {
                     for (int i = 0; i < 8; i++)
                     {
@@ -386,6 +401,14 @@ namespace ProjectZ.InGame.Overlay
                             mapRectangle.Y + (8 + animPosition[i].Y * 8 + 1) * Game1.UiScale);
                         animDungeons[i].DrawBasic(spriteBatch, animLocation, color, Game1.UiScale);
                     }
+                }
+                // Draw the icon for Manbo's Pond / Crazy Tracy's Health Spa.
+                if (GameSettings.MapTeleport >= 2 && MapManager.ObjLink.ManboTeleport)
+                {
+                    Vector2 manboLocation = new Vector2(
+                            mapRectangle.X + (8 + _manboPosition.X * 8 + 1) * Game1.UiScale,
+                            mapRectangle.Y + (8 + _manboPosition.Y * 8 + 1) * Game1.UiScale);
+                    _manboPond.DrawBasic(spriteBatch, manboLocation, color, Game1.UiScale);
                 }
                 // Draw the player icon.
                 var position = new Vector2(

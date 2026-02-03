@@ -19,7 +19,7 @@
         public static bool    Unmissables     =  false;
         public static bool    PhotosColor     =  false;
         public static bool    NoAnimalDamage  =  false;
-        public static bool    DungeonTeleport =  false;
+        public static int     MapTeleport     =  0;
 
         // Camera Settings
         public static bool    ClassicCamera   =  false;
@@ -109,7 +109,7 @@
             Unmissables     =  false;
             PhotosColor     =  false;
             NoAnimalDamage  =  false;
-            DungeonTeleport =  false;
+            MapTeleport     =  0;
 
             // Camera Settings
             ClassicCamera   =  false;

@@ -340,6 +340,7 @@ namespace ProjectZ.InGame.GameObjects
         private float _ocarinaCounter;
         private int _ocarinaNoteIndex;
         private int _ocarinaSong;
+        public bool ManboTeleport;
 
         // Power Bracelet
         private RectangleF GrabRectangle;
@@ -5389,12 +5390,16 @@ namespace ProjectZ.InGame.GameObjects
             // Manbo's Mambo was played.
             if (_ocarinaSong == 1)
             {
-                // if (GameSettings.DungeonTeleport)
-                // {
-                //    Game1.GameManager.InGameOverlay.StartSequence("map");
-                //    Game1.GbsPlayer.Play();
-                // }
-
+                // The value for MapTeleport must be 2 or 3 to use the map to warp with Manbo's song.
+                if (GameSettings.MapTeleport >= 2)
+                {
+                    // Open a new instance of the map overlay and set the flag 'ManboTeleport' that signifies it was an ocarina warp.
+                    ManboTeleport = true;
+                    Game1.GameManager.InGameOverlay.StartSequence("map");
+                    Game1.GbsPlayer.Play();
+                    ReturnToIdle();
+                    return;
+                }
                 // Freeze the game during the transition.
                 FreezeAnimations(true);
 

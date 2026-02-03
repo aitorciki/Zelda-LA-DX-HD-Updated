@@ -36,7 +36,10 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
             // Overlay can be closed if dialog box is not visible.
             if (ControlHandler.ButtonPressed(ControlHandler.CancelButton) && !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
+            {
                 Game1.GameManager.InGameOverlay.CloseOverlay();
+                MapManager.ObjLink.ManboTeleport = false;
+            }
         }
 
         public override void DrawRT(SpriteBatch spriteBatch)
@@ -79,14 +82,17 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var nodeSelected = _mapOverlay.SelectionPosition;
 
             // If we're in map mode and one of the dungeons are selected.
-            if (GameSettings.DungeonTeleport && Game1.GameManager.InGameOverlay.TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
+
+            if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && Game1.GameManager.InGameOverlay.TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
             {
                 // Get the selected dungeon and check if the instrument has been collected.
                 int dungeonLevel = Game1.GameManager.InGameOverlay.TeleportMap[nodeSelected].Level - 1;
-                var hasInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
+                var instrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
+                var hasInstrument = instrument != null && instrument.Count > 0;
+                var isManboPond = dungeonLevel < 0 && MapManager.ObjLink.ManboTeleport;
 
                 // If instrument has not been collected don't draw the text.
-                if (hasInstrument == null || hasInstrument.Count < 1)
+                if (!hasInstrument && !isManboPond)
                     return;
 
                 // Get the correct button to display next to the text.

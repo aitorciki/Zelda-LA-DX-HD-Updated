@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
             GameSettings.PhotosColor = saveManager.GetBool("PhotosColor", GameSettings.PhotosColor);
             GameSettings.NoAnimalDamage = saveManager.GetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
-            GameSettings.DungeonTeleport = saveManager.GetBool("DungeonTeleport", GameSettings.DungeonTeleport);
+            GameSettings.MapTeleport = saveManager.GetInt("MapTeleport", GameSettings.MapTeleport);
 
             // Camera Settings
             GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
@@ -117,7 +117,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("Unmissables", GameSettings.Unmissables);
             saveManager.SetBool("PhotosColor", GameSettings.PhotosColor);
             saveManager.SetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
-            saveManager.SetBool("DungeonTeleport", GameSettings.DungeonTeleport);
+            saveManager.SetInt("MapTeleport", GameSettings.MapTeleport);
 
             // Camera Settings
             saveManager.SetBool("ClassicCamera", GameSettings.ClassicCamera);

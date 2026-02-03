@@ -92,6 +92,7 @@ namespace ProjectZ.InGame.Overlay
         public Dictionary<Point, (int Level, Vector2 Teleport)> TeleportMap = new()
         {
             // Tile Position    = Level, Link Teleport Position
+            [new Point(5, 4)]   = (0, new Vector2(872, 606)),   // Manbo's Pond
             [new Point(3, 13)]  = (1, new Vector2(600, 1720)),  // Dungeon 1
             [new Point(4, 2)]   = (2, new Vector2(736, 340)),   // Dungeon 2
             [new Point(5, 11)]  = (3, new Vector2(920, 1472)),  // Dungeon 3
@@ -99,7 +100,7 @@ namespace ProjectZ.InGame.Overlay
             [new Point(9, 13)]  = (5, new Vector2(1544, 1728)), // Dungeon 5
             [new Point(12, 8)]  = (6, new Vector2(1992, 1120)), // Dungeon 6
             [new Point(14, 0)]  = (7, new Vector2(2344, 96)),   // Dungeon 7
-            [new Point(0, 1)]   = (8, new Vector2(104, 192)),   // Dungeon 8
+            [new Point(0, 1)]   = (8, new Vector2(104, 192))    // Dungeon 8
         };
 
         public OverlayManager()
@@ -417,7 +418,7 @@ namespace ProjectZ.InGame.Overlay
                     var nodeSelected = _mapOverlay.SelectionPosition;
 
                     // If we're in map mode and one of the dungeons are selected.
-                    if (GameSettings.DungeonTeleport && !_updateInventory && TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
+                    if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && !_updateInventory && TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
                     {
                         // Get the selected dungeon and check if the instrument has been collected.
                         int dungeonLevel = TeleportMap[nodeSelected].Level - 1;

@@ -59,7 +59,7 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(_sliderSubLanguage);
 
             // Slider: Menu Brick Border
-            _sliderMenuBricks = new InterfaceSlider(Resources.GameFont, "settings_redux_menubricks",
+            _sliderMenuBricks = new InterfaceSlider(Resources.GameFont, "settings_game_menubricks",
                 buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
                 number => { GameSettings.MenuBorder = number; })
                 { SetString = number => MenuBorderScaleSliderAdjustment(number) };
@@ -161,9 +161,9 @@ namespace ProjectZ.InGame.Pages
 
             return ": " + number switch
             {
-                0 => Game1.LanguageManager.GetString("settings_redux_menubricksA", "error"),
-                1 => Game1.LanguageManager.GetString("settings_redux_menubricksB", "error"),
-                2 => Game1.LanguageManager.GetString("settings_redux_menubricksC", "error")
+                0 => Game1.LanguageManager.GetString("settings_game_menubricksA", "error"),
+                1 => Game1.LanguageManager.GetString("settings_game_menubricksB", "error"),
+                2 => Game1.LanguageManager.GetString("settings_game_menubricksC", "error")
             };
         }
 

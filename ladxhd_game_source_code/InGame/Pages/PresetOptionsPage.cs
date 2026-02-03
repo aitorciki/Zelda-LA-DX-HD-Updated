@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.VarWidthFont = true;
             GameSettings.Unmissables = true;
             GameSettings.PhotosColor = true;
-            GameSettings.DungeonTeleport = true;
+            GameSettings.MapTeleport = 1;
             GameSettings.ClassicCamera = false;
             GameSettings.ModernOverworld = false;
             GameSettings.ClassicDungeon = false;
@@ -149,7 +149,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicSword = false;
             GameSettings.Unmissables = true;
             GameSettings.PhotosColor = false;
-            GameSettings.DungeonTeleport = false;
+            GameSettings.MapTeleport = 0;
             GameSettings.ClassicCamera = true;
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorders = 1;
@@ -185,7 +185,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicSword = false;
             GameSettings.Unmissables = true;
             GameSettings.PhotosColor = true;
-            GameSettings.DungeonTeleport = true;
+            GameSettings.MapTeleport = 1;
             GameSettings.ClassicCamera = true;
             GameSettings.ModernOverworld = true;
             GameSettings.ClassicDungeon = true;
@@ -226,7 +226,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.DialogSkip = false;
             GameSettings.Unmissables = false;
             GameSettings.PhotosColor = false;
-            GameSettings.DungeonTeleport = false;
+            GameSettings.MapTeleport = 0;
             GameSettings.ClassicCamera = true;
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorders = 1;
@@ -280,7 +280,7 @@ namespace ProjectZ.InGame.Pages
                 ReduxSettingsPage.SetEnableUnmissables(GameSettings.Unmissables);
                 ReduxSettingsPage.SetColoredPhotographs(GameSettings.PhotosColor);
                 ReduxSettingsPage.SetNoAnimalDamage(GameSettings.NoAnimalDamage);
-                ReduxSettingsPage.SetDungeonTeleport(GameSettings.DungeonTeleport);
+                ReduxSettingsPage.SetMapTeleportValue(GameSettings.MapTeleport);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
             {
