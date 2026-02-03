@@ -20,7 +20,10 @@ namespace ProjectZ.InGame.Things
         public void Load()
         {
             // go through the .lng files and fill the _languageStrings dictionary array
-            var files = Directory.GetFiles(Values.PathLanguageFolder);
+            var files = Directory.EnumerateFiles(Values.PathLanguageFolder, "*.lng", SearchOption.AllDirectories)
+                .Concat(Directory.EnumerateFiles(Values.PathMods, "*.lng", SearchOption.AllDirectories))
+                .ToArray();
+
             var languageStrings = new Dictionary<string, Dictionary<string, string>>();
 
             // the default (first) entry is english
@@ -28,31 +31,27 @@ namespace ProjectZ.InGame.Things
 
             for (var i = 0; i < files.Length; i++)
             {
-                var extension = Path.GetExtension(files[i]);
-                if (extension == ".lng")
+                var fileName = Path.GetFileNameWithoutExtension(files[i]);
+                var split = fileName.Split('_');
+                var lngName = "";
+
+                // eng.lng
+                if (split.Length == 1)
+                    lngName = split[0];
+                // dialog_eng.lng
+                if (split.Length == 2)
+                    lngName = split[1];
+
+                languageStrings.TryGetValue(lngName, out Dictionary<string, string> dict);
+
+                if (dict == null)
                 {
-                    var fileName = Path.GetFileNameWithoutExtension(files[i]);
-                    var split = fileName.Split('_');
-                    var lngName = "";
-
-                    // eng.lng
-                    if (split.Length == 1)
-                        lngName = split[0];
-                    // dialog_eng.lng
-                    if (split.Length == 2)
-                        lngName = split[1];
-
-                    languageStrings.TryGetValue(lngName, out Dictionary<string, string> dict);
-
-                    if (dict == null)
-                    {
-                        dict = new Dictionary<string, string>();
-                        languageStrings.Add(lngName, dict);
-                    }
-
-                    if (split.Length == 1 || (split.Length == 2 && split[0] == "dialog"))
-                        LoadFile(dict, files[i]);
+                    dict = new Dictionary<string, string>();
+                    languageStrings.Add(lngName, dict);
                 }
+
+                if (split.Length == 1 || (split.Length == 2 && split[0] == "dialog"))
+                    LoadFile(dict, files[i]);
             }
             LanguageCode = new List<string> { "eng" };
             LanguageCode.AddRange(languageStrings.Keys.Where(k => k != "eng"));
@@ -137,7 +136,7 @@ namespace ProjectZ.InGame.Things
                 }
                 var strValue = strLine.Substring(spacePosition + 1);
 
-                dictionary.Add(strKey, strValue);
+                dictionary[strKey] = strValue;
             }
             reader.Close();
         }
