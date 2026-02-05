@@ -82,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects
 
         // Link Sprite
         private CSprite _sprite;
-        private float _spriteTransparency;
+        public float SpriteTransparency;
         private bool _isVisible;
         public bool IsVisible
         {
@@ -870,7 +870,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 // fade in
                 var percentage = MathHelper.Clamp(1 - ((float)_holeTeleportCounter - (time - 100)) / 100, 0, 1);
-                _spriteTransparency = percentage;
+                SpriteTransparency = percentage;
                 _shadowComponent.Transparency = percentage;
 
                 if (_holeTeleportCounter > time)
@@ -918,7 +918,7 @@ namespace ProjectZ.InGame.GameObjects
                     }
                     Camera.SnapCamera = false;
                 }
-                _spriteTransparency = percentage;
+                SpriteTransparency = percentage;
                 _shadowComponent.Transparency = percentage;
             }
 
@@ -1340,11 +1340,11 @@ namespace ProjectZ.InGame.GameObjects
             else if (CurrentState == State.CloakShow0 && ShowItem != null && ShowItem.Name == "cloakRed")
                 cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[2], _cloakPercentage);
 
-            _sprite.Color = cloakColor * _spriteTransparency;
+            _sprite.Color = cloakColor * SpriteTransparency;
             _sprite.SprTexture = Resources.SprLinkCloak;
             _sprite.Draw(spriteBatch);
 
-            _sprite.Color = Color.White * _spriteTransparency;
+            _sprite.Color = Color.White * SpriteTransparency;
             _sprite.SprTexture = texture;
         }
 
@@ -5858,7 +5858,7 @@ namespace ProjectZ.InGame.GameObjects
         public void InitGame()
         {
             Animation.Play((CarryShield ? "stands_" : "stand_") + Direction);
-            _spriteTransparency = 1;
+            SpriteTransparency = 1;
 
             NextMapFallStart = false;
             NextMapFallRotateStart = false;

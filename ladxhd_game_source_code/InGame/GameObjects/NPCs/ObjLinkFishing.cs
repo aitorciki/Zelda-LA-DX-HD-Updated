@@ -224,14 +224,27 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _sprite.Draw(spriteBatch);
 
+            // Draw the colored tunic.
+            var texture = _sprite.SprTexture;
+            var cloakColor = Game1.GameManager.CloakColor;
+
+            _sprite.Color = cloakColor * MapManager.ObjLink.SpriteTransparency;
+            _sprite.SprTexture = Resources.SprLinkCloak;
+            _sprite.Draw(spriteBatch);
+
+            _sprite.Color = Color.White * MapManager.ObjLink.SpriteTransparency;
+            _sprite.SprTexture = texture;
+
             if (_pulledOut)
                 return;
 
             var source = _hookSource;
-            // hock is up/down
+
+            // "Hook is up/down?" was the original comment. Not sure what this means yet.
             if (_hookVelocity.Y >= 0)
                 source.Y += 16;
-            // rotate color
+
+            // "Rotate color?" was the original comment. Not sure what this means yet either.
             else if (_isFishing && HookPosition.Y >= 28)
                 source.X += 16 * (Game1.TotalGameTime % 200 < 100 ? 1 : 0);
 
@@ -239,8 +252,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 spriteBatch.Draw(Resources.SprLink, HookPosition - new Vector2(9, 6), source, Color.White);
             else
                 spriteBatch.Draw(Resources.SprLink, HookPosition - new Vector2(4, 6), _hookSourceHooked, Color.White);
-
-            //spriteBatch.Draw(Resources.SprWhite, new Vector2(HookPosition.X - 2, HookPosition.Y - 2), new Rectangle(0, 0, 4, 4), Color.Yellow * 0.5f);
         }
 
         private void PulledInHook()
