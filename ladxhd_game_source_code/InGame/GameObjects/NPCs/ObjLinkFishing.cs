@@ -97,8 +97,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // set the hook position to the animation
                 if (_animator.IsPlaying && _animator.CurrentAnimation.Id == "throw" && _animator.CurrentFrameIndex <= 5)
                 {
-                    HookPosition = EntityPosition.Position + new Vector2(-18, -16) + new Vector2(
-                                       _animator.CollisionRectangle.X, _animator.CollisionRectangle.Y);
+                    HookPosition = EntityPosition.Position + new Vector2(-18, -16) + new Vector2(_animator.CollisionRectangle.X, _animator.CollisionRectangle.Y);
                 }
 
                 // throw hook
@@ -166,6 +165,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     {
                         _hookVelocity *= (float)Math.Pow(0.99, Game1.TimeMultiplier);
                         _hookVelocity.Y += 0.035f * Game1.TimeMultiplier;
+
+                        if (ControlHandler.ButtonDown(CButtons.Right) && _hookVelocity.X < 0)
+                            _hookVelocity.X += 0.05f * Game1.TimeMultiplier;
                     }
                     else
                     {
