@@ -3147,7 +3147,11 @@ namespace ProjectZ.InGame.GameObjects
                 EndPickup();
 
                 ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                    "overworld.map", $"d{_instrumentIndex + 1}Finished", false, true, Color.White, true);
+                    "overworld.map", $"d{_instrumentIndex+1}Finished", false, true, Color.White, true);
+
+                // Set the key-value pair to open the instrument door.
+                var openDoor = $"d{_instrumentIndex+1}_cleared";
+                Game1.GameManager.SaveManager.SetString(openDoor, "1");
             }
         }
 
