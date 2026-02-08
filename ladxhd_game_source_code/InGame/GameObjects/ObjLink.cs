@@ -21,6 +21,7 @@ using ProjectZ.InGame.GameObjects.NPCs;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.GameSystems;
 using ProjectZ.InGame.Map;
+using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -6361,11 +6362,27 @@ namespace ProjectZ.InGame.GameObjects
             // Kind of a hacky solution: "ObjFinalBackground" object sets "IsFinalMap" via "Game1.GameManager.SetFinalMap();".
             if (Map.IsFinalMap && !Game1.StoredCameraSet)
             {
-                // Store the classic camera setting. It is restored after the ending is finished.
-                Game1.StoredClassicCam = GameSettings.ClassicCamera;
+                // Store the camera settings. They are restored after the ending is finished.
+                Game1.StoredClassicCamera = GameSettings.ClassicCamera;
+                Game1.StoredModernOverworld = GameSettings.ModernOverworld;
+                Game1.StoredClassicDungeon = GameSettings.ClassicDungeon;
+
+                // Update current camera settings for the ending sequence.
+                GameSettings.ClassicCamera = false;
+                GameSettings.ModernOverworld = false;
+                GameSettings.ClassicDungeon = false;
+
+                // Apply the camera settings to the Camera Settings page.
+                if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
+                {
+                    var CameraSettingsPage = (CameraSettingsPage)camPage;
+                    CameraSettingsPage.SetCameraMode(GameSettings.ClassicCamera);
+                    CameraSettingsPage.SetModernOverworld(GameSettings.ModernOverworld);
+                    CameraSettingsPage.SetClassicDungeon(GameSettings.ClassicDungeon);
+                }
+                // Signal a scale change and don't let this code block run again.
                 Game1.ScaleChanged = true;
                 Game1.StoredCameraSet = true;
-                GameSettings.ClassicCamera = false;
             }
             // Check if the transition state is "state 0".
             if (state == 0)

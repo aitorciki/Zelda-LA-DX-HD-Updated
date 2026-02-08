@@ -107,7 +107,9 @@ namespace ProjectZ
         
         // Stores classic cam setting for ending.
         static public bool StoredCameraSet = false;
-        static public bool StoredClassicCam = false;
+        static public bool StoredClassicCamera = false;
+        static public bool StoredModernOverworld = false;
+        static public bool StoredClassicDungeon = false;
 
         public static bool FinishedLoading => _finishedLoading;
 
