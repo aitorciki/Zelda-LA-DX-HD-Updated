@@ -48,6 +48,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         // type 1 sets the key directly on push and resets it on spawn
         // used for the gravestone
+
         private int _type;
 
         public ObjMoveStone(Map.Map map, int posX, int posY, int moveDirections, string strKey, string spriteId, Rectangle collisionRectangle, int layer, int type, bool freezePlayer, string resetKey) : base(map, spriteId)
@@ -248,6 +249,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // set the key
             if (_type == 0 && !string.IsNullOrEmpty(_strKey))
                 Game1.GameManager.SaveManager.SetString(_strKey, "1");
+
             // set the direction key
             if (_type == 0 && !string.IsNullOrEmpty(_strKeyDir))
                 Game1.GameManager.SaveManager.SetString(_strKeyDir, _moveDirection.ToString());
@@ -256,10 +258,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 _isResetting = false;
                 _aiComponent.ChangeState("idle");
+                if (_type == 0 && !string.IsNullOrEmpty(_strKeyDir))
+                    Game1.GameManager.SaveManager.SetString(_strKeyDir, "-1");
             }
             else
+            {
                 _aiComponent.ChangeState("moved");
-
+                if (_type == 0 && !string.IsNullOrEmpty(_strKeyDir))
+                    Game1.GameManager.SaveManager.SetString(_strKeyDir, _moveDirection.ToString());
+            }
             // Get any dungeon barriers nearby.
             _groupOfBarrier.Clear();
             Map.Objects.GetComponentList(_groupOfBarrier,

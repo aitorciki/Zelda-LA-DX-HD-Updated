@@ -343,7 +343,6 @@ namespace ProjectZ.InGame.GameObjects
             ObjectTemplates.Add("moveStone", new GameObjectTemplate(typeof(ObjMoveStone), new object[] { 15, null, "movestone_0", new Rectangle(0, -16, 16, 16), Values.LayerBottom, 0, false, null }));
             ObjectTemplates.Add("moveStoneCave", new GameObjectTemplate(typeof(ObjMoveStone), new object[] { 15, null, "movestone_1", new Rectangle(0, -16, 16, 16), Values.LayerBottom, 0, false, null }));
             ObjectTemplates.Add("moveStoneFrogHouse", new GameObjectTemplate(typeof(ObjMoveStone), new object[] { 15, null, "movestone_2", new Rectangle(0, -16, 16, 16), Values.LayerBottom, 0, false, null }));
-            // why was the height 14???
             ObjectTemplates.Add("moveStoneD3", new GameObjectTemplate(typeof(ObjMoveStone), new object[] { 15, null, "movestone_3", new Rectangle(0, -16, 16, 16), Values.LayerBottom, 0, false, null }));
 
             ObjectTemplates.Add("leverStone", new GameObjectTemplate(typeof(ObjLeverStone), new object[] { 0 }));
