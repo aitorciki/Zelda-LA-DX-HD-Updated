@@ -91,7 +91,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
             AddComponent(InteractComponent.Index, _interactComponent = new InteractComponent(_body.BodyBox, Interact));
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private void Reset()

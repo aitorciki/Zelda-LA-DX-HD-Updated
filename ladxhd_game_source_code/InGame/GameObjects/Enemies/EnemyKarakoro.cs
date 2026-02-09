@@ -155,7 +155,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(_body, DrawSprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite) { Height = 1.0f, Rotation = 0.1f, ShadowWidth = 10, ShadowHeight = 5 });
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private void Reset()

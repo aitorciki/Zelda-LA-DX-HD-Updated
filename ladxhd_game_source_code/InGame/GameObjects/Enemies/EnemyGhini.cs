@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private void Reset()

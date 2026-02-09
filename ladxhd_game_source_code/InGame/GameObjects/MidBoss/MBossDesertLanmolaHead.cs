@@ -44,7 +44,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

@@ -100,7 +100,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateSpriteShadow()
         {
             if (_spriteShadow == null)
-                _spriteShadow = new ObjSpriteShadow("sprshadowm", Values.LayerPlayer, _monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, Map);
+                _spriteShadow = new ObjSpriteShadow(Map, _monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, Values.LayerPlayer, "sprshadowm");
 
             _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows);
 

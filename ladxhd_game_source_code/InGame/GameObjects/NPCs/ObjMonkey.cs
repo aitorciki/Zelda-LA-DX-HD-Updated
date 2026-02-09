@@ -136,7 +136,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _bowWow = (ObjBowWow)Map.Objects.GetObjectOfType((int)EntityPosition.X - 120, (int)EntityPosition.Y - 120, 240, 240, typeof(ObjBowWow));
                 _hitCooldown.State = true;
             }
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 

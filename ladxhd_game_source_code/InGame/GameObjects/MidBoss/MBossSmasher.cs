@@ -119,7 +119,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _ball = new MBossSmasherBall(map, new Vector2(EntityPosition.X + 56, EntityPosition.Y + 16));
             map.Objects.SpawnObject(_ball);
 
-            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
         private void Update()

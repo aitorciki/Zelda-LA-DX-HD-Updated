@@ -100,8 +100,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8);
                 AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(collisionBox, OnHit));
             }
-
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public bool MakeFlyingStone()

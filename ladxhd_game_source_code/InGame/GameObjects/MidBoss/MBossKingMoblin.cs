@@ -122,7 +122,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 });
 
-            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
         private void KeyChanged()

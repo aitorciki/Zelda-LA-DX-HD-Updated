@@ -107,7 +107,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _gel0.SetOtherGel(_gel1, false, ZolRespawnPos);
             _gel1.SetOtherGel(_gel0, true, ZolRespawnPos);
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private void Reset()

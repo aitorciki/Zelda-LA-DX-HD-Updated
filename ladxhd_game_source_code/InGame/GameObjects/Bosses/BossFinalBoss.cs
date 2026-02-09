@@ -491,7 +491,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _animator.Play("slime_spawn");
 
             if (_spriteShadow == null)
-                _spriteShadow = new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, -8, -7, Map);
+                _spriteShadow = new ObjSpriteShadow(Map, this, -8, -7, Values.LayerPlayer, "sprshadowl");
         }
 
         private void UpdateGiantZolSpawn()

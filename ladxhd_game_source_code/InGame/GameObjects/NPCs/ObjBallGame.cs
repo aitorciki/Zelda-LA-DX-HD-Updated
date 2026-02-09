@@ -81,9 +81,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _shadowComponent.Height = 4;
             AddComponent(DrawShadowComponent.Index, _shadowComponent);
 
-            new ObjSpriteShadow("sprshadows", this, Values.LayerPlayer, map);
-            new ObjSpriteShadow("sprshadowm", _firstPerson, Values.LayerPlayer, map);
-            new ObjSpriteShadow("sprshadowm", _secondPerson, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
+            new ObjSpriteShadow(map, _firstPerson, Values.LayerPlayer, "sprshadowm");
+            new ObjSpriteShadow(map, _secondPerson, Values.LayerPlayer, "sprshadowm");
         }
 
         private void UpdateJump()

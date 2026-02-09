@@ -116,7 +116,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, _sprite));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 

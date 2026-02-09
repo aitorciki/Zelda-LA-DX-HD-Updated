@@ -84,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         public override void Init()
         {
             _shadowComponent.IsActive = !Map.Is2dMap;
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
+            new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public void StartFollowing()

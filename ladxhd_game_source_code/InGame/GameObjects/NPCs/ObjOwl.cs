@@ -144,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateSpriteShadow()
         {
             if (_spriteShadow == null)
-                _spriteShadow = new ObjSpriteShadow("sprshadowm", Values.LayerPlayer, _owlPosition.Position.X-8, _owlPosition.Position.Y-14, Map);
+                _spriteShadow = new ObjSpriteShadow(Map, _owlPosition.Position.X-8, _owlPosition.Position.Y-14, Values.LayerPlayer, "sprshadowm");
 
             _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows && IsVisible);
 

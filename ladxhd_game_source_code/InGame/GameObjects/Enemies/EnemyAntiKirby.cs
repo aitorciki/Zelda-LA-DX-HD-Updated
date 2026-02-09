@@ -109,7 +109,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.ChangeState("idle");
 
-            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
         private void Reset()

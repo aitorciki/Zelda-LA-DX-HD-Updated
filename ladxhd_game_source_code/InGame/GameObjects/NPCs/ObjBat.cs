@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             Game1.GameManager.SaveManager.SetString("npcBatThunder", "0");
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private void OnKeyChange()

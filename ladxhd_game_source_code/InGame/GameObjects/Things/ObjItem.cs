@@ -137,8 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     // needed because at the first frame the value is still true
                     _body.IsGrounded = false;
                     _body.RestAdditionalMovement = true;
-
-                    new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+                    new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
                 }
                 // fly
                 else if (strType == "w")
@@ -147,7 +146,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     EntityPosition.Z = 10;
                     Collectable = true;
                     _isFlying = true;
-                    new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+                    new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
                 }
                 // item is in the water
                 else if (strType == "s")
@@ -183,6 +182,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _aiComponent.ChangeState("idle");
 
             // Use the size of the rectangle for the height unless it exceeds 12 pixels.
+            var width  = _sourceRectangle.Width + 2;
             var height = Math.Min(_sourceRectangle.Height, 12);
 
             // Guardian acorn and rupees are two special cases where we want height to
@@ -192,7 +192,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             else if (_item.Name == "ruby")
                 height = 14;
 
-            Rectangle collectRect = new Rectangle(-_sourceRectangle.Width / 2 - 1, -height, _sourceRectangle.Width + 2, height);
+            Rectangle collectRect = new Rectangle(-_sourceRectangle.Width / 2 - 1, -height, width, height);
             _collectionRectangle = new CRectangle(EntityPosition, collectRect);
 
             var box = new CBox(EntityPosition, -_sourceRectangle.Width / 2, -height, _sourceRectangle.Width, height, 16);
@@ -233,9 +233,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _bodyDrawComponent.Layer = Values.LayerBottom;
 
             if (shadowListSmall.Contains(itemName))
-                new ObjSpriteShadow("sprshadows", this, Values.LayerPlayer, map);
+                new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
             if (shadowListMedium.Contains(itemName))
-                new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+                new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public override void Init()

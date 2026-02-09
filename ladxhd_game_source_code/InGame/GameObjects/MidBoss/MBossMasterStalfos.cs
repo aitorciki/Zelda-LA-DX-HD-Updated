@@ -220,7 +220,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 if (encounterState == "4" && _encounterNumber == 3)
                     SpawnHookshot();
             }
-            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, Map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
             // TODO: need to find a way to draw shadow for this
             //AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }

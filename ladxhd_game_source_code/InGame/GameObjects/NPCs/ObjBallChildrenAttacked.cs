@@ -86,8 +86,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
-            new ObjSpriteShadow("sprshadowm", _firstPerson, Values.LayerPlayer, map);
-            new ObjSpriteShadow("sprshadowm", _secondPerson, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, _firstPerson, Values.LayerPlayer, "sprshadowm");
+            new ObjSpriteShadow(map, _secondPerson, Values.LayerPlayer, "sprshadowm");
         }
 
         private void Update()

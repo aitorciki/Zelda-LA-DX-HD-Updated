@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
-            _spriteShadow = new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+            _spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
         private void KeyChanged()

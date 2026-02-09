@@ -183,7 +183,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 {
                     IsVisible = _resurrected;
                     _map = Map;
-                    _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
+                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 }
             }
         }

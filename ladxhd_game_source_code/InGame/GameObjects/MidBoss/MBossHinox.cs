@@ -121,7 +121,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
-            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
         private void Reset()

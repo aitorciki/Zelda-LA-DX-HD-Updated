@@ -2900,7 +2900,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 if (_spriteShadow == null)
                 {
-                    _spriteShadow = new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, Map);
+                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 }
             }
             // Remove the sprite shadow if shadows was enabled.

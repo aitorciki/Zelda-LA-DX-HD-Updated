@@ -22,7 +22,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public ObjSpriteShadow(string spriteName) : base(spriteName) { }
 
-        public ObjSpriteShadow(string spriteName, int layer, float posX, float posY, Map.Map map) : base(map)
+        public ObjSpriteShadow(Map.Map map, float posX, float posY, int layer, string spriteName) : base(map)
         {
             _currentMap = map;
             map.Objects.SpawnObject(this);
@@ -36,14 +36,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             UpdateVisibility(!GameSettings.EnableShadows);
         }
 
-        public ObjSpriteShadow(string spriteName, GameObject host, int layer, float offsetX, float offsetY, Map.Map map) : this(spriteName, host, layer, map)
+        public ObjSpriteShadow(Map.Map map, GameObject host, float offsetX, float offsetY, int layer, string spriteName) : this(map, host, layer, spriteName)
         {
             _currentMap = map;
             _offset = new Vector2(offsetX, offsetY);
             _drawComponent.IsActive = !GameSettings.EnableShadows;
         }
 
-        public ObjSpriteShadow(string spriteName, GameObject host, int layer, Map.Map map) : base(map)
+        public ObjSpriteShadow(Map.Map map, GameObject host, int layer, string spriteName) : base(map)
         {
             _currentMap = map;
 
@@ -73,16 +73,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_host is IHasVisibility hostVisbility)
                 _sprite.IsVisible = hostVisbility.IsVisible;
 
-            if (_host.Map == null)
-                Destroy();
-
-            if (!_host.IsActive)
+            if (_host.Map == null || !_host.IsActive)
                 Destroy();
         }
 
         private void UpdatePosition()
         {
-            _position = new CPosition(_host.EntityPosition.Position.X + _offset.X, _host.EntityPosition.Position.Y + _offset.Y, 0);
+            var newPostion = _host.EntityPosition.Position + _offset;
+            _position = new CPosition(newPostion.X, newPostion.Y, 0);
             EntityPosition.Set(_position.Position);
         }
 

@@ -133,7 +133,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             SetFollowMode(_followMode);
             _waterGraphic = new ObjBowWowWater(Map, posX, posY, this);
 
-            new ObjSpriteShadow("sprshadowm", this, Values.LayerPlayer, map);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

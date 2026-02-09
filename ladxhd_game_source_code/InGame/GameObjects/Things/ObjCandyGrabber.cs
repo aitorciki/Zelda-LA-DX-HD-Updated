@@ -75,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, shadowComponent);
 
-            new ObjSpriteShadow("sprshadowl", this, Values.LayerPlayer, 0, -14, map);
+            new ObjSpriteShadow(Map, this, 0, -14, Values.LayerPlayer, "sprshadowl");
 
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
