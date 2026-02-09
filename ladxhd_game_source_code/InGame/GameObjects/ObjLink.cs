@@ -2381,11 +2381,6 @@ namespace ProjectZ.InGame.GameObjects
                     float slowDownAmount = 0.12f + (_shieldVelocity.Length() * 0.015f);
                     _shieldVelocity -= shieldRepelNormal * slowDownAmount * Game1.TimeMultiplier;
                 }
-                // Snap to zero when velocity reaches the threshold.
-                if (_shieldVelocity.Length() < 0.25f)
-                {
-                    _shieldVelocity = Vector2.Zero;
-                }
                 // Also reduce velocity while in the air but only up to a certain point.
                 else
                 {
@@ -2394,6 +2389,11 @@ namespace ProjectZ.InGame.GameObjects
                         float slowDownAmount = 0.12f + (_shieldVelocity.Length() * 0.015f);
                         _shieldVelocity -= shieldRepelNormal * slowDownAmount * Game1.TimeMultiplier;
                     }
+                }
+                // Snap to zero when velocity reaches the threshold.
+                if (_shieldVelocity.Length() < 0.25f)
+                {
+                    _shieldVelocity = Vector2.Zero;
                 }
                 // If the repel crosses into the field barrier then cancel the velocity.
                 PreventFieldKnockback();
