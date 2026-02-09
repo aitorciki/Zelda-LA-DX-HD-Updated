@@ -24,6 +24,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly BodyComponent _body;
         private readonly CBox _box;
 
+        private static ObjMoveStone _activePushStone;
+
         private Vector2 _startPosition;
         private Vector2 _goalPosition;
 
@@ -42,7 +44,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _moveDirection;
         private bool _freezePlayer;
         private bool _isResetting;
-        private bool _respawn;
 
         public bool NoRespawn;
 
@@ -174,25 +175,40 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // If it's score is not higher than the previous stone then don't push it.
                 if (stoneScoreB < stoneScoreA)
                     return false;
+
+                // In the case of a tie we need a tie breaker event.
+                if (stoneScoreB == stoneScoreA)
+                    if (otherStone.GetHashCode() < GetHashCode())
+                        return false;
             }
             return true;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
-            // Must be closest stone, no other stone is moving, impact push type, in idle state, and not heavy without power bracelet.
-            if (!IsClosestStone(direction) || type == PushableComponent.PushType.Impact || _aiComponent.CurrentStateId != "idle" || (_type == 1 && Game1.GameManager.StoneGrabberLevel <= 0))
-                return false;
-
-            // Link must be pushing and his facing direction must match with the push direction.
-            if (!MapManager.ObjLink.WasPushing || AnimationHelper.GetDirection(direction) != MapManager.ObjLink.Direction)
-                return false;
-
-            // Get the direction the stone should move.
+            // Set Link to a variable to shorten the references and get the direction the stone should move.
+            var Link = MapManager.ObjLink;
             _moveDirection = AnimationHelper.GetDirection(direction);
 
-            // Make sure the stone can move into the direction pushed.
-            if (_allowedDirections != -1 && (_allowedDirections & (0x01 << _moveDirection)) == 0)
+            // Assemble the list of conditions to check if the stone should move.
+            bool linkNotPushing = !Link.WasPushing;                                            // Link was pushing the stone last frame update.
+            bool dirNotMatching = _moveDirection != Link.Direction;                            // Direction of Link matches direction of push.
+            bool stateIsNotIdle = _aiComponent.CurrentStateId != "idle";                       // Current state of stone must be "Idle".
+            bool pushTypeImpact = type == PushableComponent.PushType.Impact;                   // Push type must not be "Impact" type.
+            bool singlePushOnly = _activePushStone != null && _activePushStone != this;        // Only allow a single stone to move at once.
+            bool pushStoneGrave = _type == 1 && Game1.GameManager.StoneGrabberLevel <= 0;      // Gravestones require the power bracelet.
+
+            // These conditions are combined into a single condition for readability.
+            bool directionExist = _allowedDirections != -1;                                    // Stone has valid pushable directions set.
+            bool directionFails = (_allowedDirections & (0x01 << _moveDirection)) == 0;        // Pushed direction must match a pushable direction.
+            bool blockDirection = directionExist && directionFails;
+
+            // If any of the conditions pass, then fail pushing the stone.
+            if (linkNotPushing || dirNotMatching || stateIsNotIdle || pushTypeImpact || singlePushOnly || pushStoneGrave || blockDirection)
+                return false;
+
+            // Must be the closest stone to Link. Separated out as it's the most expensive check.
+            if (!IsClosestStone(direction))
                 return false;
 
             // Only move if there is nothing blocking the way.
@@ -200,24 +216,29 @@ namespace ProjectZ.InGame.GameObjects.Things
             var collidingRectangle = Box.Empty;
             var collisionBox = new Box(EntityPosition.X + pushVector.X * 16, EntityPosition.Y + pushVector.Y * 16 - 16, 0, 16, 16, 16);
 
+            // Collision blocks movement, but the push is valid. Return true so the push is consumed and not retried elsewhere.
             if (Map.Objects.Collision(collisionBox, Box.Empty, Values.CollisionTypes.Normal | Values.CollisionTypes.Passageway, 0, 0, ref collidingRectangle))
                 return true;
 
+            // Set the stone's starting and finishing position before being pushed.
             _startPosition = EntityPosition.Position;
+            _goalPosition = new Vector2(_startPosition.X + pushVector.X * 16, _startPosition.Y + pushVector.Y * 16);
 
-            _goalPosition = new Vector2(
-                _startPosition.X + pushVector.X * 16,
-                _startPosition.Y + pushVector.Y * 16);
+            // Set this stone as the active stone being pushed before moving it.
+            _activePushStone = this;
 
+            // Start moving the stone.
             ToMoving();
 
+            // If a reset key exists then set it to zero.
             if (!string.IsNullOrEmpty(_strResetKey))
                 Game1.GameManager.SaveManager.SetString(_strResetKey, "0");
 
-            // set the key
+            // Set the key assigned to the stone.
             if (_type == 1 && !string.IsNullOrEmpty(_strKey))
                 Game1.GameManager.SaveManager.SetString(_strKey, "1");
 
+            // Set the key that stores the direction the stone was pushed.
             if (_type == 1 && !string.IsNullOrEmpty(_strKeyDir))
                 Game1.GameManager.SaveManager.SetString(_strKeyDir, _moveDirection.ToString());
 
@@ -285,6 +306,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                     break;
                 }
             }
+            // Now that the move is finished, clear the active stone.
+            _activePushStone = null;
+
             // Can fall into holes after finishing the movement animation.
             _body.IgnoreHoles = false;
         }
