@@ -222,7 +222,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Set the stone's starting and finishing position before being pushed.
             _startPosition = EntityPosition.Position;
-            _goalPosition = new Vector2(_startPosition.X + pushVector.X * 16, _startPosition.Y + pushVector.Y * 16);
+            _goalPosition = _startPosition + pushVector * 16;
 
             // Set this stone as the active stone being pushed before moving it.
             _activePushStone = this;
