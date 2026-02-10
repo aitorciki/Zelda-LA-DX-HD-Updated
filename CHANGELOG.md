@@ -1,5 +1,15 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.0**
+### The "Ultimate Version" Update
+  * Slightly reduce the hitbox of the Mini Moldorm enemy. It was slightly larger than its sprite.
+  * Rework sprite shadow objects slightly and update the sprites to be slightly more accurate to original game.
+  * Fix knockback velocities not decaying while swimming underwater in 2D. This was a game breaking bug.
+  * Fix being able to push two stones simultaneously. One stone will always win even when perfectly centered.
+  * Fix invisible Tarin near the Honeycomb tree before finishing Level 3 dungeon that shows an error message.
+  * Fix offsets of items "Piece of Heart" and "Yoshi Doll" to be more accurate to the original game.
+  * Fix all collectable item "collection boxes" to match their sprites. This fixes collecting items between gaps.
+  
 ## **v1.5.9**
 ### The "Squashing the Eldest Bugs" Update
   * Patcher: Add progress bar and fix an issue where it could fail to delete the temp folder for some users.
@@ -18,7 +28,7 @@
   * Fix ending sequence properly setting "modern" camera depending on which options were enabled when starting.
 
 ## **v1.5.8** 
-### "Tying up Some Loose Ends" Update
+### The "Tying up Some Loose Ends" Update
   * It's now possible to replace text with a custom ".lng" file in the Mods folder (see wiki for more info).
   * The Redux option "Dungeon Teleport" has been transformed into a new option named "Map Teleport".
   * Redux option "Map Teleport" allows teleporting to cleared dungeons via map, Manbo's song, or both.
