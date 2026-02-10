@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -35,6 +36,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
             Map.Objects.RegisterAlwaysAnimateObject(this);
+            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public void ThrowFireball(Vector3 velocity)
