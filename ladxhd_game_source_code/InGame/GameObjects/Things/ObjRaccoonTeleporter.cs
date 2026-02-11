@@ -14,32 +14,26 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private float _teleportTime;
         private float _teleportCount;
-
         private float _fadeTime;
 
+        private bool _isTeleporting;
         private int _direction;
         private int _mode;
-        private bool _isTeleporting;
+        private int _extraYOffset;
 
         public ObjRaccoonTeleporter() : base("editor teleporter")
         {
             EditorColor = Color.Green * 0.5f;
         }
 
-        // mode 0: racoon
-        // mode 1: dungeon 6
+        // Mode 0: Raccoon Teleport
+        // Mode 1: Dungeon 6 Teleport
+
         public ObjRaccoonTeleporter(Map.Map map, int posX, int posY, int offsetX, int offsetY, int width, int height, int mode) : base(map)
         {
-            // TODO_End: the object lights up the scene so we cant set the EntitySize
-            //EntityPosition = new CPosition(posX, posY, 0);
-            //EntitySize = new Rectangle(0, 0, width, height);
-
             _offsetX = offsetX;
             _offsetY = offsetY;
             _mode = mode;
-
-            _teleportTime = _mode == 0 ? 300 : 300;
-            _fadeTime = mode == 0 ? 200 : 250;
 
             AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX, posY, width, height), OnCollision));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -47,51 +41,51 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            int extraYOffset = 0;
-
+            // If a teleport is not taking place then skip the update.
             if (!_isTeleporting)
                 return;
 
-            // Classic camera tries to "fake" a screen transition.
+            // Modern Camera: Freeze the player until the teleport finishes.
             if (!Camera.ClassicMode)
                 MapManager.ObjLink.FreezePlayer();
 
-            // Snap the camera when classic camera is active.
-            if (Camera.ClassicMode)
-            {
+            // Classic Camera: Set the snap camera timer to make the teleport instant.
+            else
                 Camera.SnapCameraTimer = 10f;
-                _teleportTime -= 250;
-                extraYOffset = 9;
-            }
-            else if (!Camera.ClassicMode)
-            {
-                _teleportTime = 300;
-            }
-            // Teleport after the timer expires.
+
+            // Increment the teleport count. Multiply by direction to flip to negative when timer is satisfied.
             _teleportCount += Game1.DeltaTime * _direction;
+
+            // The timer has reached its end.
             if (_teleportCount >= _teleportTime)
             {
+                // Match the count to the total time and flip the direction.
                 _teleportCount = _teleportTime;
                 _direction = -1;
 
-                // Teleport the colliding player to the new position.
-                MapManager.ObjLink.SetPosition(new Vector2(
-                    MapManager.ObjLink.PosX + (_offsetX * Values.TileSize),
-                    MapManager.ObjLink.PosY + (_offsetY * Values.TileSize) - extraYOffset));
+                // Teleport Link to the new position.
+                var LinkPosX = MapManager.ObjLink.PosX + (_offsetX * Values.TileSize);
+                var LinkPosY = MapManager.ObjLink.PosY + (_offsetY * Values.TileSize) - _extraYOffset;
+                var newPosition = new Vector2(LinkPosX, LinkPosY);
+                MapManager.ObjLink.SetPosition(newPosition);
 
-                var goalPosition = Game1.GameManager.MapManager.GetCameraTarget();
-                MapManager.Camera.SoftUpdate(goalPosition);
+                // Update the camera position.
+                var camPosition = Game1.GameManager.MapManager.GetCameraTarget();
+                MapManager.Camera.SoftUpdate(camPosition);
             }
-            // Teleport is finished.
+            // If the direction and the count flipped to negative.
             if (_direction < 0 && _teleportCount <= 0)
             {
+                // End the teleport and set the count to zero for the effect.
                 _isTeleporting = false;
+                _teleportCount = 0;
 
-                // Give Link a slight push to force a screen transition.
+                // Classic Camera: Give Link a slight push so the screen always scrolls.
                 if (Camera.ClassicMode)
-                    MapManager.ObjLink._body.Velocity.Y += -0.35f;
+                    MapManager.ObjLink._body.Velocity.Y += -0.85f;
             }
-            // Smooth out the transition for raccoon teleport or Level 6 when in normal camera mode.
+
+            // Modern Camera: Smooth out the transition effect during teleport.
             if (!Camera.ClassicMode)
             {
                 var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
@@ -101,12 +95,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnCollision(GameObject gameObject)
         {
+            // If the teleport is already taking effect then exit.
             if (_isTeleporting)
                 return;
 
+            // Set the initial values.
+            _extraYOffset = Camera.ClassicMode ? 4 : 0;
+            _teleportTime = Camera.ClassicMode ? 0 : 300;
+            _fadeTime = (_mode == 0) ? 200 : 250;
             _direction = 1;
             _isTeleporting = true;
 
+            // For the raccoon teleport, play a sound effect and reset the warning message.
             if (_mode == 0)
             {
                 Game1.GameManager.PlaySoundEffect("D360-30-1E");
