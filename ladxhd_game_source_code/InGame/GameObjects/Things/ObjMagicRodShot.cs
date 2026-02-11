@@ -103,7 +103,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                     return;
                 }
             }
-            if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
+            // When Modern Camera is enabled, use the camera's current bounds to determine when object collides with screen's edge. 
+            if (!Camera.ClassicMode && !MapManager.Camera.GetGameView().Contains(EntityPosition.Position))
+            {
+                OnCollision(Values.BodyCollision.None);
+                return;
+            }
+            // When Classic Camera is enabled, use current field to determine when object collides with screen's edge. 
+            else if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(EntityPosition.Position))
             {
                 OnCollision(Values.BodyCollision.None);
                 return;

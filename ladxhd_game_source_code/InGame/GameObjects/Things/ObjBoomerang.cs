@@ -124,14 +124,20 @@ namespace ProjectZ.InGame.GameObjects.Things
                 float speed = 3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
                 _body.VelocityTarget = _direction * speed;
 
-                // Only enforce field boundaries when ClassicCamera mode is active.
-                if (Camera.ClassicMode && !Link.CurrentField.Contains(EntityPosition.Position))
+                // When Modern Camera is enabled, use the camera's current bounds to determine when object collides with screen's edge. 
+                if (!Camera.ClassicMode && !MapManager.Camera.GetGameView().Contains(EntityPosition.Position))
+                {
+                    ComeBack(true);
+                    return;
+                }
+                // When Classic Camera is enabled, use current field to determine when object collides with screen's edge. 
+                else if (Camera.ClassicMode && !Link.CurrentField.Contains(EntityPosition.Position))
                 {
                     ComeBack(true);
                     return;
                 }
                 // The distance from Link that the boomerang travels.
-                if (distance >= 80)
+                else if (distance >= 80)
                     ComeBack();
             }
             // The boomerang is making its return trip.
