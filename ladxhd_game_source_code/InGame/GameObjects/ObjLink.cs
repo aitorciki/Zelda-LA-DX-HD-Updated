@@ -4402,6 +4402,7 @@ namespace ProjectZ.InGame.GameObjects
                 _shotSword = true;
                 var objSwordShot = new ObjSwordShot(Map, EntityPosition, _shootSwordOffset[beamDirection], Game1.GameManager.SwordLevel, beamDirection);
                 Map.Objects.SpawnObject(objSwordShot);
+                Map.Objects.RegisterAlwaysAnimateObject(objSwordShot);
             }
 
             // Spawn hit particle?
@@ -4823,7 +4824,9 @@ namespace ProjectZ.InGame.GameObjects
             if (!Game1.GameManager.RemoveItem("bow", 1))
                 return;
 
-            Map.Objects.SpawnObject(new ObjArrow(Map, EntityPosition, _arrowOffset[Direction], Direction));
+            var arrow = new ObjArrow(Map, EntityPosition, _arrowOffset[Direction], Direction);
+            Map.Objects.SpawnObject(arrow);
+            Map.Objects.RegisterAlwaysAnimateObject(arrow);
 
             if (CurrentState != State.Jumping)
             {
@@ -5164,6 +5167,7 @@ namespace ProjectZ.InGame.GameObjects
                 EntityPosition.Y + _hookshotOffset[hookshotDirection].Y, EntityPosition.Z);
             Hookshot.Start(Map, spawnPosition, AnimationHelper.DirectionOffset[hookshotDirection]);
             Map.Objects.SpawnObject(Hookshot);
+            Map.Objects.RegisterAlwaysAnimateObject(Hookshot);
 
             // Set the current state and reset values.
             CurrentState = State.Hookshot;
@@ -5302,7 +5306,9 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState != State.Jumping || _railJump))
                 return;
 
-            Map.Objects.SpawnObject(new ObjMagicRodShot(Map, EntityPosition, _magicRodOffset[Direction], Direction));
+            var magicShot = new ObjMagicRodShot(Map, EntityPosition, _magicRodOffset[Direction], Direction);
+            Map.Objects.SpawnObject(magicShot);
+            Map.Objects.RegisterAlwaysAnimateObject(magicShot);
 
             CurrentState = State.MagicRod;
             _swordChargeCounter = sword_charge_time;
