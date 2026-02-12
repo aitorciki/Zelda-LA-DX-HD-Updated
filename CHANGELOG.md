@@ -1,5 +1,33 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.1**
+### The "Shadows From the Past" Update
+  * Modify sprite shadows to only be shown when the shadow caster is in the air like the original game.
+  * Allow force drawing sprite shadows, force draw on Trendy Game crane, and add shadows to Trendy items.
+  * While unlikely Link's sprite shadow would ever vanish, it has been added to the "always animate" list.
+  * Add sprite shadows to bombs. This includes both player bombs and bombs dropped by enemy "Bomber".
+  * Bombs dropped by the player can also be picked up via the Power Bracelet so make it an instant pickup.
+  * Do not add a carriable component to bombs dropped by enemies. This prevents picking up enemy bombs.
+  * Link's projectiles no longer get stuck and instead collide with the edge of the screen with Modern Camera.
+  * Projectiles from Link are also added to the "always animate" list to prevent them ever getting stuck.
+  * Add more enemy colliders to all dungeons to keep enemies out of places like doorways and between rooms.
+  * Increase the offset of ladder entry to 2D maps by 4 pixels to prevent accidentally leaving when entering.
+  * Fix sword spin attack occasionally not dealing 2x damage, usually near the start of the attack.
+  * Fix adding sprite shadows to items dropped by enemies. This includes: rupees, hearts, and powerups.
+  * Fix Marin and the rooster's sprite shadows. They could sometimes disappear at random or not spawn at all.
+  * Fix directional collision detection for enemy damage launch from Piece of Power and the Red Tunic.
+  * Fix Classic Camera transition effect during the raccoon teleport or the teleport in level 6 dungeon.
+  * Fix offsets of item "Heart Container" dropped from bosses to be more accurate to the original game.
+  * Fix a cave on Tal Tal Mountain Range which contained a Spiny Beetle with an improper "type" set.
+  * Fix enemy Flying Tile sprite shadow to be slightly more offset downward to appear higher in the air.
+  * Fix enemy Spark flashing lights to be disabled when the option "Epilepsy Safe" is enabled.
+  * Fix enemy Piranha damage state to not activate until its jump animation plays so it doesn't die as a fin.
+  * Fix miniboss Giant Buzz Blob shots getting stuck on the screen edge by adding to "always animate" list.
+  * Fix dungeon 3 "push buttons" in the room with the 3 green bombites and two green Zols to be more accurate.
+  * Fix dungeon 7 "ball" used to destroy pillars to bounce off the screen edge when classic camera is active.
+  * Fix the offset of all instruments in all dungeons to match their exact positions from the original game.
+  * Fix cave shortcut near level 4 to exit passageway with Link walking down instead of left.
+
 ## **v1.6.0**
 ### The "Ultimate Version" Update
   * Slightly reduce the hitbox of the Mini Moldorm enemy. It was slightly larger than its sprite.
