@@ -159,11 +159,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // Marin will crash the game when playing the intro without this since it's not a map.
             if (Map != null)
-            {
-                _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 Map.Objects.RegisterAlwaysAnimateObject(this);
-                Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
-            }
         }
 
         public override void Init()
@@ -308,12 +304,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Marin is jumping on the bridge waiting to be saved.
             else if (mariaState == "5")
             {
+                IsVisible = true;
                 _currentState = States.Jumping;
                 _animator.Play("land");
                 ((BodyCollisionComponent)Components[BodyCollisionComponent.Index]).IsActive = false;
-
-                // Force the sprite shadow to draw since her jump doesn't count as "Z" height.
-                _spriteShadow.ForceDraw = true;
             }
         }
 
@@ -407,8 +401,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             else
                 _noteCount = _noteEndTime;
 
-            // Detect a map change.
-            if (Map != _map)
+            // If sprite shadow is null, the map has changed, and Marin is active.
+            if ((_spriteShadow == null || Map != _map) && IsActive)
             {
                 // Update the map to the new map.
                 _map = Map;
@@ -418,7 +412,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     Map.Objects.DeleteObjects.Add(_spriteShadow);
 
                 // Spawn a new sprite shadow on this map and always animate it.
-                _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm") { ForceDraw = true };
+                _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
             }
         }

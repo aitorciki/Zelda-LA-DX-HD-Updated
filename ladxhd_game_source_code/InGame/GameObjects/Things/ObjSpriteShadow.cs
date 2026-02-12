@@ -67,6 +67,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            // If the host map is null then destroy the sprite shadow.
+            if (_host.Map == null || _host == null)
+                Destroy();
+
             // Disable sprite shadows when "Dynamic Shadows" is enabled.
             _drawComponent.IsActive = !GameSettings.EnableShadows;
 
@@ -78,10 +82,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             bool posZcheck = _host.EntityPosition.Z > 0;
             bool hostCheck = !(_host is IHasVisibility hostVisibility) || hostVisibility.IsVisible;
             _sprite.IsVisible = ForceDraw || (posZcheck && hostCheck && _host.IsActive);
-
-            // If the host map is null then destroy the sprite shadow.
-            if (_host.Map == null)
-                Destroy();
         }
 
         private void UpdatePosition()
