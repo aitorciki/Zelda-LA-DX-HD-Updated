@@ -15,7 +15,6 @@ namespace ProjectZ.InGame.GameObjects.Things
     class ObjCandyGrabber : GameObject
     {
         private readonly Rectangle _recTop;
-
         private readonly Rectangle _recGrabberLeft;
         private readonly Rectangle _recGrabberRight;
         private readonly Rectangle _recGrabberLeftClosed;
@@ -76,27 +75,34 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawShadowComponent.Index, shadowComponent);
 
             new ObjSpriteShadow(Map, this, 0, -14, Values.LayerPlayer, "sprshadowl") { ForceDraw = true };
-
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
-        private void AlwaysAnimateTrendyItems()
+        private void AddAnimateAndShadowsToObjects()
         {
+            // Get all objects with the "Utility" game tag.
             var objectList = new List<GameObject>();
-
             Map.Objects.GetGameObjectsWithTag(objectList, Values.GameObjectTag.Item | Values.GameObjectTag.Utility,
                 _fieldRectangle.X, _fieldRectangle.Y, _fieldRectangle.Width, _fieldRectangle.Height);
 
+            // Loop through the list of objects.
             foreach (var obj in objectList) 
+            {
+                // Always animate both the items and roll bands.
                 if (obj is ObjItem or ObjRollBand)
                     Map.Objects.RegisterAlwaysAnimateObject(obj);
+                // Add sprite shadows to the items.
+                if (obj is ObjItem)
+                    new ObjSpriteShadow(Map, obj, Values.LayerPlayer, "sprshadowm");
+            }
         }
 
         private void Update()
         {
+            // Always animate items and roll bands and add shadows to items.
             if (!_alwaysAnimate)
             {
-                AlwaysAnimateTrendyItems();
+                AddAnimateAndShadowsToObjects();
                 _alwaysAnimate = true;
             }
             _blinkCount = (_blinkCount + Game1.DeltaTime) % 500;
