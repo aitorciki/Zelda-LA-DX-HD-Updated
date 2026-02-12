@@ -2918,7 +2918,6 @@ namespace ProjectZ.InGame.GameObjects
                 Map.Objects.RemoveObject(_spriteShadow);
 
                 // Spawn the shadow.
-                _spriteShadow.Map = Map;
                 Map.Objects.SpawnObject(_spriteShadow);
                 Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
             }
