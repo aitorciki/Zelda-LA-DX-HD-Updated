@@ -125,9 +125,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // can not push away the bombs from enemies; would probably be fun
             if (playerBomb)
+            {
                 AddComponent(PushableComponent.Index, new PushableComponent(Body.BodyBox, OnPush) { RepelMultiplier = 0.5f });
-
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
+                AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
+            }
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _bodyShadow = new BodyDrawShadowComponent(Body, sprite));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
@@ -144,6 +145,12 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             if (!_carried)
                 RemoveBomb();
+        }
+
+        private void SetCarriableActive(bool active)
+        {
+            if (_carriableComponent != null)
+                _carriableComponent.IsActive = active;
         }
 
         private void Update()
@@ -289,7 +296,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Body.CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore;
 
             _carried = false;
-            _carriableComponent.IsActive = false;
+            SetCarriableActive(false);
         }
 
         public void Explode()
@@ -298,7 +305,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Body.Velocity = Vector3.Zero;
             Body.IsActive = false;
             _bodyShadow.IsActive = false;
-            _carriableComponent.IsActive = false;
+            SetCarriableActive(false);
 
             // deals damage to the player or to the enemies
             if (_playerBomb || DamageEnemies)
@@ -344,7 +351,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if ((collision & Values.BodyCollision.Bottom) != 0 && Body.Velocity.Y < -0.075f)
                 {
                     Body.DragAir *= 0.975f;
-                    _carriableComponent.IsActive = true;
+                    SetCarriableActive(true);
                     Game1.GameManager.PlaySoundEffect("D360-09-09");
                 }
             }
@@ -356,7 +363,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 //Body.Level = 0;
                 Body.Drag *= 0.8f;
-                _carriableComponent.IsActive = true;
+                SetCarriableActive(true);
 
                 if (_floorExplode && Body.Velocity.Z <= 0)
                     Explode();
