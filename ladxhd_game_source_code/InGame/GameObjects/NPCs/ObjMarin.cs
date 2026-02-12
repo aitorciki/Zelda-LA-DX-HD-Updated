@@ -63,7 +63,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _holeAbsorb;
         private bool _wasInDeepWater;
         private bool _fountainSequence;
-        private bool _fountainMouse;
         private bool _fountainSeqInit;
 
         private float _returnCounter;
@@ -118,9 +117,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public bool IsVisible { get; internal set; }
 
-        public ObjMarin() : base("marin") { }
+        private ObjSpriteShadow _spriteShadow;
 
-        private ObjPhotoMouse _photoMouse;
+        public ObjMarin() : base("marin") { }
 
         public ObjMarin(Map.Map map, int posX, int posY) : base(map)
         {
@@ -158,10 +157,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
             AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
 
-            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
-
+            // Marin will crash the game when playing the intro without this since it's not a map.
             if (Map != null)
+            {
+                _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 Map.Objects.RegisterAlwaysAnimateObject(this);
+                Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
+            }
         }
 
         public override void Init()
@@ -180,9 +182,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.Velocity.Z = 0.5f;
                 _body.IsGrounded = false;
                 _fountainSequence = true;
-                _fountainMouse =
-                    Game1.GameManager.SaveManager.GetString("photoMouseActive", "0") == "1" &&
-                    Game1.GameManager.SaveManager.GetString("photo_sequence_fountain", "0") == "0";
                 _fountainSeqInit = false;
 
                 _followVelocity = Vector2.Zero;
@@ -253,6 +252,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             var mariaState = Game1.GameManager.SaveManager.GetString("maria_state");
 
+            // Marin is following the player.
             if (mariaState == "3" || mariaState == "8")
             {
                 if (Components[CollisionComponent.Index] != null)
@@ -286,6 +286,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _animator.Play("walk_" + _walkDirection);
                 }
             }
+            // Marin is singing in Animal Village.
             else if (mariaState == "4")
             {
                 var animal0 = new ObjPersonNew(Map, (int)EntityPosition.X + 8, (int)EntityPosition.Y - 32, null, "animal_rabbit", "animals_absorbed", "dance_3", new Rectangle(0, 0, 12, 12));
@@ -304,11 +305,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 StartSinging();
             }
+            // Marin is jumping on the bridge waiting to be saved.
             else if (mariaState == "5")
             {
                 _currentState = States.Jumping;
                 _animator.Play("land");
                 ((BodyCollisionComponent)Components[BodyCollisionComponent.Index]).IsActive = false;
+
+                // Force the sprite shadow to draw since her jump doesn't count as "Z" height.
+                _spriteShadow.ForceDraw = true;
             }
         }
 
@@ -401,6 +406,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _noteCount += Game1.DeltaTime;
             else
                 _noteCount = _noteEndTime;
+
+            // Detect a map change.
+            if (Map != _map)
+            {
+                // Update the map to the new map.
+                _map = Map;
+
+                // If a sprite shadow already exists remove it.
+                if (_spriteShadow != null)
+                    Map.Objects.DeleteObjects.Add(_spriteShadow);
+
+                // Spawn a new sprite shadow on this map and always animate it.
+                _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm") { ForceDraw = true };
+                Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
+            }
         }
 
         private void UpdateMountainSequence()
@@ -672,7 +692,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
             }
             // ---------------------------------------------------------------------
-            // PHOTO SEQUENCE: Everything below here is part of the photo sequence.
+            // PHOTO SEQUENCE: Everything below here is part of the photo sequence where Link and Marin jump down the well.
             if (!_fountainSeqInit && _fountainSequence)
             {
                 // Set Marin to the proper height.
@@ -681,7 +701,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 // Build a list of the map objects.
                 var objects = new List<GameObject>();
-                Map.Objects.GetComponentList(objects, 0, 0, 160, 128, BodyComponent.Mask );
+                Map.Objects.GetComponentList(objects, 0, 0, 160, 128, BodyComponent.Mask);
 
                 // Loop through that list.
                 for (int i = 0; i < objects.Count; i++)
@@ -700,7 +720,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_fountainSequence && _body.IsGrounded)
             {
                 _fountainSequence = false;
-                _fountainMouse = false;
 
                 // Check the distance between Link and Marin when she lands to determine a collision.
                 var playerDist = Link.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y);
