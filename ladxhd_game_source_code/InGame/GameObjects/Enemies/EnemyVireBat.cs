@@ -72,8 +72,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
-            new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
+            var spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
+            Map.Objects.RegisterAlwaysAnimateObject(spriteShadow);
         }
 
         private void InitAttack()
