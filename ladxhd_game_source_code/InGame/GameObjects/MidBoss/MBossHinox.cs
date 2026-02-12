@@ -323,6 +323,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             bomb.Body.Bounciness = 0.25f;
             bomb.Body.DragAir = 1.0f;
             Map.Objects.SpawnObject(bomb);
+            new ObjSpriteShadow(Map, bomb, Values.LayerPlayer, "sprshadowm");
 
             Game1.GameManager.PlaySoundEffect("D360-08-08");
 
