@@ -16,6 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _layer;
         private Map.Map _currentMap;
 
+        public bool ForceDraw;
+
         private Vector2 _offset = new Vector2(-8, -14);
 
         public ObjSpriteShadow() : this("sprshadows") { }
@@ -75,7 +77,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // The sprite shadow should only be visible if above ground and if the host state is visible.
             bool posZcheck = _host.EntityPosition.Z > 0;
             bool hostCheck = !(_host is IHasVisibility hostVisibility) || hostVisibility.IsVisible;
-            _sprite.IsVisible = posZcheck && hostCheck && _host.IsActive;
+            _sprite.IsVisible = ForceDraw || (posZcheck && hostCheck && _host.IsActive);
 
             // If the host map is null then destroy the sprite shadow.
             if (_host.Map == null)

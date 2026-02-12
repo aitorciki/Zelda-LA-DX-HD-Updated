@@ -55,8 +55,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         public bool IsVisible { get; internal set; }
         private bool _despawn;
 
-        string[] shadowListSmall  = { "heart", "ruby" };
-        string[] shadowListMedium = { "pieceOfPower", "guardianAcorn" };
+        private string[] _shadowListSmall  = { "heart" };
+        private string[] _shadowListMedium = { "ruby", "pieceOfPower", "guardianAcorn" };
+
+        private ObjSpriteShadow _spriteShadow;
 
         public ObjItem() : base("item") { }
 
@@ -174,10 +176,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _bodyDrawComponent.Layer = Values.LayerBottom;
 
             // Create the sprite shadows.
-            if (shadowListSmall.Contains(itemName))
-                new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
-            if (shadowListMedium.Contains(itemName))
-                new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
+            if (_shadowListSmall.Contains(itemName))
+                _spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
+            if (_shadowListMedium.Contains(itemName))
+                _spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public override void Init()
@@ -243,7 +245,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                     _body.IsGrounded = false;
                     _body.RestAdditionalMovement = true;
-                    new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
+                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 }
                 // Flying Item
                 else if (strType == "w")
@@ -252,7 +254,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     EntityPosition.Z = 10;
                     Collectable = true;
                     _isFlying = true;
-                    new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
+                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
                 }
                 // Underwater Item
                 else if (strType == "s")
@@ -339,6 +341,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void ToFading()
         {
+            _spriteShadow.ForceDraw = true;
             _body.IgnoresZ = true;
             _aiComponent.ChangeState("fading");
         }
