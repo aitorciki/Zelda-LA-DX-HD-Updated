@@ -137,6 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Map.Objects.RegisterAlwaysAnimateObject(this);
                 MapManager.ObjLink.BombList.Add(this);
             }
+            new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public void Reset()

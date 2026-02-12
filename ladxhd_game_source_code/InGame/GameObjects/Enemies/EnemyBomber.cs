@@ -143,6 +143,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _objBomb.Body.DragAir = 1.0f;
                 _objBomb.Body.Bounciness = 0.5f;
                 Map.Objects.SpawnObject(_objBomb);
+                new ObjSpriteShadow(Map, _objBomb, Values.LayerPlayer, "sprshadowm");
             }
         }
 
