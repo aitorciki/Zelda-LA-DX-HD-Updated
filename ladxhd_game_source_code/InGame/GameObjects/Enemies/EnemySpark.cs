@@ -179,7 +179,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Update()
         {
             _lightCount += Game1.DeltaTime;
-            _lightState = (int)(Math.Sin(_lightCount / 10f) + 1.5);
+            _lightState = GameSettings.EpilepsySafe ? 2 : (int)(Math.Sin(_lightCount / 10f) + 1.5);
 
             // if the body is not sliding on the wall anymore change the direction
             var positionChange = (EntityPosition.Position - _lastPosition) * AnimationHelper.DirectionOffset[(_moveDir + 1) % 4];
@@ -204,11 +204,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Slow down animations for epilepsy mode.
             if (_lastEpSafe != GameSettings.EpilepsySafe)
             {
-                if (GameSettings.EpilepsySafe)
-                    _animator.SpeedMultiplier = 0.10f;
-                else
-                    _animator.SpeedMultiplier = 1f;
-
+                _animator.SpeedMultiplier = GameSettings.EpilepsySafe ? 0.10f : 1f;
                 _lastEpSafe = GameSettings.EpilepsySafe;
             }
 
