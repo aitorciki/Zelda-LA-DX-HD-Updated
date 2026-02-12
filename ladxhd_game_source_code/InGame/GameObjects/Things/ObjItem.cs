@@ -86,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(-9, -16, 18, 18);
 
             // The heart container piece needs additional offset on the Y axis.
-            if (_itemName == "heartMeter")
+            if (_itemName == "heartMeter" || _itemName == "heartMeterFull")
                 EntityPosition.Y += 5;
             if (_item.TradeItem)
                 EntityPosition.Y += 3;
