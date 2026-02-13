@@ -53,19 +53,24 @@ namespace ProjectZ.InGame.Map
             new List<KeyChangeListenerComponent.KeyChangeTemplate>();
 
         // Temporary lists. Probably don't need all these, one list could do it all?
-        private readonly List<GameObject> _updateGameObject = new List<GameObject>();
+        private readonly List<GameObject> _updateGameObjects = new List<GameObject>();
         private readonly List<GameObject> _damageFieldObjects = new List<GameObject>();
         private readonly List<GameObject> _drawShadowObjects = new List<GameObject>();
         private readonly List<GameObject> _depthObjectList = new List<GameObject>();
         private readonly List<GameObject> _objectTypeList = new List<GameObject>();
         private readonly List<GameObject> _objectTagAllList = new List<GameObject>();
-        private readonly List<GameObject> _collisionObjectList = new List<GameObject>();
-        private readonly List<GameObject> _collidingObjectList = new List<GameObject>();
+        private readonly List<GameObject> _collisionObjects = new List<GameObject>();
+        private readonly List<GameObject> _collidingObjects = new List<GameObject>();
         private readonly List<GameObject> _lightObjectList = new List<GameObject>();
         private readonly List<GameObject> _carriableObjectList = new List<GameObject>();
         private readonly List<GameObject> _hittableObjectList = new List<GameObject>();
         private readonly List<GameObject> _pushableObjectList = new List<GameObject>();
         private readonly List<GameObject> _interactableObjectList = new List<GameObject>();
+
+        // Use hash sets to prevent double adding to lists which is faster than "List.Contains()".
+        private readonly HashSet<GameObject> _updateGameObjectsSet = new();
+        private readonly HashSet<GameObject> _collidingObjectsSet = new();
+        private readonly HashSet<GameObject> _damageFieldObjectsSet = new();
 
         // Debug lists. Only relevant for debugging.
         private readonly List<GameObject> db_damageList = new List<GameObject>();
@@ -305,14 +310,16 @@ namespace ProjectZ.InGame.Map
         {
             // When changing fields with Classic Camera enemy positions are reset on the previous field.
             var Link = MapManager.ObjLink;
-            _updateGameObject.Clear();
+
+            // Clear the list.
+            _updateGameObjects.Clear();
 
             // Get all objects on the previous field with a DrawComponent. Add 4 additional pixels to the
             // bottom of the field to get objects that potentially fall outside the range of the field.
-            _gameObjectPool.GetComponentList(_updateGameObject, Link.PreviousField.X, Link.PreviousField.Y, 
+            _gameObjectPool.GetComponentList(_updateGameObjects, Link.PreviousField.X, Link.PreviousField.Y, 
                 Link.PreviousField.Width, Link.PreviousField.Height + 4, DrawComponent.Mask);
 
-            foreach (var gameObject in _updateGameObject)
+            foreach (var gameObject in _updateGameObjects)
             {
                 // Reset the enemy position and invoke their "OnReset" method if available.
                 if (gameObject != null && gameObject.CanReset)
@@ -323,37 +330,65 @@ namespace ProjectZ.InGame.Map
             }
         }
 
+        public static void FilterObjectsInField(List<GameObject> gameObjectList, RectangleF actualField)
+        {
+            int writeIndex = 0;
+
+            // Loop through the object list to find objects not in the current field.
+            for (int readIndex = 0; readIndex < gameObjectList.Count; readIndex++)
+            {
+                // Get the current loop object and it's current entity position if it exists.
+                var obj = gameObjectList[readIndex];
+                var entityPos = obj?.EntityPosition;
+
+                // Remove when entity position exists and object is outside current field.
+                if (entityPos != null && !actualField.Contains(entityPos.Position))
+                    continue;
+  
+                gameObjectList[writeIndex++] = obj;
+            }
+            if (writeIndex < gameObjectList.Count)
+                gameObjectList.RemoveRange(writeIndex, gameObjectList.Count - writeIndex);
+        }
+
         private void UpdateGameObjects()
         {
-            var Link = MapManager.ObjLink;
-            _updateGameObject.Clear();
+            // Clear the lists before rebuilding them.
+            _updateGameObjects.Clear();
+            _updateGameObjectsSet.Clear();
 
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                _gameObjectPool.GetComponentList(_updateGameObject, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
-                _updateGameObject.RemoveAll(o => o?.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
+                _gameObjectPool.GetComponentList(_updateGameObjects, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
+                FilterObjectsInField(_updateGameObjects, ActualField);
+                _updateGameObjectsSet.UnionWith(_updateGameObjects);
             }
             // Normal Camera: Update objects that are within the viewport.
             else
             {
                 var updateFieldSize = new Vector2(Game1.RenderWidth, Game1.RenderHeight);
-                _gameObjectPool.GetComponentList(_updateGameObject,
+                _gameObjectPool.GetComponentList(_updateGameObjects,
                    (int)((MapManager.Camera.X - updateFieldSize.X / 2) / MapManager.Camera.Scale),
                    (int)((MapManager.Camera.Y - updateFieldSize.Y / 2) / MapManager.Camera.Scale),
                    (int)(updateFieldSize.X / MapManager.Camera.Scale),
                    (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
+                _updateGameObjectsSet.UnionWith(_updateGameObjects);
             }
             // Always update certain objects that are flagged as "always animate".
-            foreach (var gameObject in AlwaysAnimateObjectsTemp)
+            for (int i = 0; i < AlwaysAnimateObjectsTemp.Count; i++)
             {
-                if (gameObject != null && !gameObject.IsDead && !_updateGameObject.Contains(gameObject))
-                    _updateGameObject.Add(gameObject);
+                var gameObject = AlwaysAnimateObjectsTemp[i];
+                if (gameObject != null && !gameObject.IsDead && _updateGameObjectsSet.Add(gameObject))
+                    _updateGameObjects.Add(gameObject);
             }
             // Update all game object update components in the list.
-            foreach (var gameObject in _updateGameObject)
+            for (int i = 0; i < _updateGameObjects.Count; i++)
             {
-                if (!gameObject.IsActive) { continue; }
+                var gameObject = _updateGameObjects[i];
+                if (!gameObject.IsActive)
+                    continue;
+
                 if (gameObject.Components[UpdateComponent.Index] is UpdateComponent updateComponent && updateComponent.IsActive)
                     updateComponent.UpdateFunction?.Invoke();
             }
@@ -378,30 +413,39 @@ namespace ProjectZ.InGame.Map
 
         private void UpdatePlayerCollision()
         {
+            // Link is referenced quite a bit.
             var Link = MapManager.ObjLink;
-            _collidingObjectList.Clear();
+
+            // Clear the lists before rebuilding them.
+            _collidingObjects.Clear();
+            _collidingObjectsSet.Clear();
 
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                _gameObjectPool.GetComponentList(_collidingObjectList, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
-                _collidingObjectList.RemoveAll(o => o?.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
+                _gameObjectPool.GetComponentList(_collidingObjects, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
+                FilterObjectsInField(_collidingObjects, ActualField);
+                _collidingObjectsSet.UnionWith(_collidingObjects);
             }
             // Normal Camera: Update objects that are within the player's body rectangle.
             else
             {
-                _gameObjectPool.GetComponentList(_collidingObjectList, (int)Link.BodyRectangle.X, (int)Link.BodyRectangle.Y,
+                _gameObjectPool.GetComponentList(_collidingObjects, (int)Link.BodyRectangle.X, (int)Link.BodyRectangle.Y,
                     (int)Link.BodyRectangle.Width, (int)Link.BodyRectangle.Height, ObjectCollisionComponent.Mask);
+                _collidingObjectsSet.UnionWith(_collidingObjects);
             }
             // Always include certain objects that are flagged as "always animate".
-            foreach (var gameObject in AlwaysAnimateObjectsTemp)
+            for (int i = 0; i < AlwaysAnimateObjectsTemp.Count; i++)
             {
-                if (gameObject != null && !gameObject.IsDead && !_collidingObjectList.Contains(gameObject))
-                    _collidingObjectList.Add(gameObject);
+                var gameObject = AlwaysAnimateObjectsTemp[i];
+                if (gameObject != null && !gameObject.IsDead && _collidingObjectsSet.Add(gameObject))
+                    _collidingObjects.Add(gameObject);
             }
             // Update all game object collision components in the list.
-            foreach (var gameObject in _collidingObjectList)
+            for (int i = 0; i < _collidingObjects.Count; i++)
             {
+                var gameObject = _collidingObjects[i];
+
                 if (!gameObject.IsActive) { continue; }
 
                 if (gameObject.Components[ObjectCollisionComponent.Index] is ObjectCollisionComponent component)
@@ -416,37 +460,33 @@ namespace ProjectZ.InGame.Map
 
         private void UpdateDamageFields()
         {
-            var Link = MapManager.ObjLink;
-            var playerDamageBox = Link.DamageCollider.Box;
+            // Get link's damage box.
+            var LinkHitBox = MapManager.ObjLink.DamageCollider.Box;
+
+            // Clear the lists before rebuilding them.
             _damageFieldObjects.Clear();
+            _damageFieldObjectsSet.Clear();
 
-            // Classic Camera: Only update objects within the current field.
-            if (Camera.ClassicMode)
-            {
-                var field = Owner.GetField(Link.CenterPosition.Position);
+            // Classic Camera: Only update objects that collide with Link.
+            _gameObjectPool.GetComponentList(_damageFieldObjects, (int)LinkHitBox.X, (int)LinkHitBox.Y, (int)LinkHitBox.Width,(int)LinkHitBox.Height, DamageFieldComponent.Mask);
+            _damageFieldObjectsSet.UnionWith(_damageFieldObjects);
 
-                _gameObjectPool.GetComponentList(_damageFieldObjects, field.X, field.Y,
-                    field.Width, field.Height, DamageFieldComponent.Mask);
-                _damageFieldObjects.RemoveAll(o => o?.EntityPosition != null && !ActualField.Contains(o.EntityPosition.Position));
-            }
-            // Normal Camera: Update objects that are within the viewport.
-            else
-            {
-                _gameObjectPool.GetComponentList(_damageFieldObjects, (int)playerDamageBox.X, (int)playerDamageBox.Y,
-                    (int)playerDamageBox.Width,(int)playerDamageBox.Height, DamageFieldComponent.Mask);
-            }
             // Always include certain objects that are flagged as "always animate".
-            foreach (var gameObject in AlwaysAnimateObjectsTemp)
+            for (int i = 0; i < AlwaysAnimateObjectsTemp.Count; i++)
             {
-                if (gameObject != null && !gameObject.IsDead && !_damageFieldObjects.Contains(gameObject))
+                var gameObject = AlwaysAnimateObjectsTemp[i];
+                if (gameObject != null && !gameObject.IsDead && _damageFieldObjectsSet.Add(gameObject))
                     _damageFieldObjects.Add(gameObject);
             }
             // Update all game object damage field components in the list.
-            foreach (var gameObject in _damageFieldObjects)
+            for (int i = 0; i < _damageFieldObjects.Count; i++)
             {
+                var gameObject = _damageFieldObjects[i];
+
                 if (!gameObject.IsActive) { continue; }
+
                 if (gameObject.Components[DamageFieldComponent.Index] is DamageFieldComponent damageField)
-                    if (damageField.IsActive && damageField.CollisionBox.Box.Intersects(playerDamageBox))
+                    if (damageField.IsActive && damageField.CollisionBox.Box.Intersects(LinkHitBox))
                         damageField.OnDamage?.Invoke();
             }
         }
@@ -974,12 +1014,15 @@ namespace ProjectZ.InGame.Map
 
         public bool Collision(Box box, Box oldBox, Values.CollisionTypes collisionTypes, Values.CollisionTypes ignoreTypes, int dir, int level, ref Box collidingBox)
         {
-            // get all the near objects of the rectangle
-            _collisionObjectList.Clear();
-            _gameObjectPool.GetComponentList(_collisionObjectList, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, CollisionComponent.Mask);
+            // Get objects that are found within the collision box.
+            _collisionObjects.Clear();
+            _gameObjectPool.GetComponentList(_collisionObjects, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, CollisionComponent.Mask);
 
-            foreach (var gameObject in _collisionObjectList)
+            // Check each object to see if it is colliding.
+            for (int i = 0; i < _collisionObjects.Count; i++)
             {
+                var gameObject = _collisionObjects[i];
+
                 if (!gameObject.IsActive)
                     continue;
 
@@ -990,7 +1033,6 @@ namespace ProjectZ.InGame.Map
                     (oldBox == Box.Empty || !collisionObject.Collision(oldBox, dir, level, ref collidingBox)))
                     return true;
             }
-
             return false;
         }
 

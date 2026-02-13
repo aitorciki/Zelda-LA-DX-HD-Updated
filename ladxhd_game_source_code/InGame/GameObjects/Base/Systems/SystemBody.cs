@@ -16,6 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
     {
         public ComponentPool Pool;
         private readonly List<GameObject> _objectList = new List<GameObject>();
+        private readonly HashSet<GameObject> _objectListSet = new();
         private readonly List<GameObject> _holeList = new List<GameObject>();
         private readonly List<GameObject> _dropList = new List<GameObject>();
         private readonly ObjectManager _objectManager;
@@ -30,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
         {
             if (Game1.TimeMultiplier <= 0) { return; }
 
-            var Link = MapManager.ObjLink;
+            // Clear the lists before rebuilding them.
             _objectList.Clear();
+            _objectListSet.Clear();
 
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
                 Pool.GetComponentList(_objectList, ObjectManager.UpdateField.X, ObjectManager.UpdateField.Y, ObjectManager.UpdateField.Width, ObjectManager.UpdateField.Height, BodyComponent.Mask);
-                _objectList.RemoveAll(o => o?.EntityPosition != null && !ObjectManager.ActualField.Contains(o.EntityPosition.Position));
+                ObjectManager.FilterObjectsInField(_objectList, ObjectManager.ActualField);
+                _objectListSet.UnionWith(_objectList);
             }
             // Normal Camera: Update objects that are within the viewport.
             else
@@ -46,17 +49,21 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                     (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale), 
                     (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                     (int)(Game1.RenderWidth / MapManager.Camera.Scale), 
-                    (int)(Game1.RenderHeight / MapManager.Camera.Scale), BodyComponent.Mask);
+                    (int)(Game1.RenderHeight / MapManager.Camera.Scale), 
+                    BodyComponent.Mask);
+                _objectListSet.UnionWith(_objectList);
             }
             // Always include certain objects that are flagged as "always animate".
-            foreach (var gameObject in _objectManager.AlwaysAnimateObjectsTemp)
+            for (int i = 0; i < _objectManager.AlwaysAnimateObjectsTemp.Count; i++)
             {
-                if (gameObject != null && !gameObject.IsDead && !_objectList.Contains(gameObject))
+                var gameObject = _objectManager.AlwaysAnimateObjectsTemp[i];
+                if (gameObject != null && !gameObject.IsDead && _objectListSet.Add(gameObject))
                     _objectList.Add(gameObject);
             }
             // Update all game object body components in the list.
-            foreach (var gameObject in _objectList)
+            for (int i = 0; i < _objectList.Count; i++)
             {
+                var gameObject = _objectList[i];
                 bool skipObject = freezePersistTypes == null
                     ? !gameObject.IsActive
                     : !gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, freezePersistTypes);
@@ -544,7 +551,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             var noneCollisionCoM = bodyBoxCenter;
             var noneCollisionArea = bodyArea;
 
-            // Find all holes in range of the player's hitbox.
+            // Find all holes in range of the body box.
             _holeList.Clear();
             Game1.GameManager.MapManager.CurrentMap.Objects.GetComponentList(
                 _holeList, (int)bodyBox.X, (int)bodyBox.Y, (int)bodyBox.Width, (int)bodyBox.Height, CollisionComponent.Mask);
