@@ -45,6 +45,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageBox = new CBox(0, 0, 0, 0, 0, 4);
             _collisionBox = new CBox(0, 0, 0, 0, 0, 4);
 
+            UpdateBoxes();
+
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_collisionBox, OnHit));
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_damageBox, OnPush) { RepelParticle = true });
