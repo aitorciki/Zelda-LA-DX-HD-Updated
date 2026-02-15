@@ -114,11 +114,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Reset()
         {
-            _animator.Play("idle_0");
+            _body.IgnoresZ = false;
+            _animator.Play("idle");
             _aiComponent.ChangeState("idle");
             _aiComponent.ChangeState("idle");
             _hitComponent.IsActive = true;
+            _damageField.IsActive = false;
             _damageState.CurrentLives = ObjLives.AntiKirby;
+            _suckParticles.Animator.Play("hidden");
         }
 
         private void InitSuck()
