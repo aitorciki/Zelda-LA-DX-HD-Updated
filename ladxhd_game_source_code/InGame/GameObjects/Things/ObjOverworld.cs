@@ -17,6 +17,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             map.IsOverworld = true;
             _offset = new Vector2(posX, posY);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+
+            // When loading the overworld, if the signpost game was not complete then reset the state of the signs.
+            if (Game1.GameManager.SaveManager.GetString("shieldGameStairs", "0") != "1")
+                Game1.GameManager.SaveManager.SetString("sgame", "0");
         }
 
         public void Update()
