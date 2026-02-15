@@ -453,7 +453,6 @@ namespace ProjectZ.InGame.GameObjects
         public float PreventResetTimer;
 
         // Prevent Damage Hits (No Collision)
-        private bool PreventDamage;
         private float PreventDamageTimer;
 
         // Miscellaneous
@@ -674,12 +673,12 @@ namespace ProjectZ.InGame.GameObjects
             UpdateCurrentField();
 
             // Variable that prevents "HitPlayer" method from firing.
-            if (PreventDamage)
+            if (PreventDamageTimer > 0)
             {
                 // Timer must be active for it to remain true.
                 PreventDamageTimer -= Game1.DeltaTime;
                 if (PreventDamageTimer <= 0)
-                    PreventDamage = false;
+                    PreventDamageTimer = 0;
             }
             // Update falling into a map transition (I think).
             if (CurrentState == State.FallRotateEntry)
@@ -1759,7 +1758,7 @@ namespace ProjectZ.InGame.GameObjects
         public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
         {
             // Prevent hits when playing the ocarina.
-            if (PreventDamage)
+            if (PreventDamageTimer > 0)
                 return false;
 
             // Get the box as a floats rectangle.
@@ -5364,7 +5363,6 @@ namespace ProjectZ.InGame.GameObjects
             Animation.Play("ocarina");
 
             // Prevent Link from taking hits during this time.
-            PreventDamage = true;
             PreventDamageTimer = 8000;
 
             // Freeze the game world while the song is played.
@@ -5383,7 +5381,6 @@ namespace ProjectZ.InGame.GameObjects
             Game1.GbsPlayer.Play();
 
             // This will not become some kind of exploit.
-            PreventDamage = false;
             PreventDamageTimer = 0;
 
             // Return to idle state.
@@ -6030,7 +6027,6 @@ namespace ProjectZ.InGame.GameObjects
             _diveCounter = 0;
             _swimVelocity = Vector2.Zero;
 
-            PreventDamage = false;
             PreventDamageTimer = 0;
 
             if (NextMapFallStart)
@@ -6349,6 +6345,9 @@ namespace ProjectZ.InGame.GameObjects
             _isWalking = true;
             _bootsRunning = false;
 
+            // The player shouldn't take damage while transitioning.
+            PreventDamageTimer = 3000;
+
             // stole item?
             if (StoreItem != null)
                 StealItem();
@@ -6517,6 +6516,9 @@ namespace ProjectZ.InGame.GameObjects
             _body.HoleAbsorption = Vector2.Zero;
 
             IsTransitioning = false;
+
+            // The player can take damage again.
+            PreventDamageTimer = 0;
 
             // If using Manbo's song in a dungeon, force the player to face north.
             if (OcarinaDungeonTeleport)
