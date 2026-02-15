@@ -3,7 +3,6 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Effects;
-using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -15,8 +14,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly CSprite _sprite;
         private readonly BodyComponent _body;
         private readonly DamageFieldComponent _damageField;
+        private readonly HittableComponent _hitComponent;
+        private readonly PushableComponent _pushComponent;
+        private readonly CBox _damageBox;
         private readonly Rectangle _fieldRectangle;
+
         private double _liveTime = 2250;
+        private bool _reflected;
 
         public EnemyFireball(Map.Map map, int posX, int posY, float speed, bool hittable = true) : base(map)
         {
@@ -47,15 +51,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 playerDirection.Normalize();
             _body.VelocityTarget = playerDirection * speed;
 
-            var damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4);
+            _damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4);
             var hittableBox = new CBox(EntityPosition, -4, -4, 0, 8, 8, 8);
 
             AddComponent(BodyComponent.Index, _body);
             if (hittable)
             {
-                AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-                AddComponent(PushableComponent.Index, new PushableComponent(damageBox, OnPush));
-                AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+                AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
+                AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+                AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_damageBox, OnPush));
             }
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
@@ -87,6 +91,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_liveTime < 0)
                 Delete();
+
+            // If the shot was reflected, try to hit an enemy.
+            if (_reflected)
+            {
+                // Probably the closest parallel to player damage types is the Bow.
+                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageBox.Box, HitType.Bow, 2, false, false);
+                if ((collision & Values.HitCollision.Enemy) != 0)
+                    Map.Objects.DeleteObjects.Add(this);
+            }
         }
 
         private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
@@ -107,10 +120,48 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
+            // Check if the incoming push type is from the shield.
             if (type == PushableComponent.PushType.Impact)
-                OnDeath();
-
+            {
+                // We only want a single interaction so check if it's been reflected.
+                if (!_reflected)
+                {
+                    // If the shield is able to reflect the shot.
+                    if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2)
+                    {
+                        Reflect(direction);
+                        return false;
+                    }
+                    // Otherwise kill it.
+                    else
+                        OnDeath();
+                }
+            }
+            // The shot was not reflected so perform the knockback.
             return true;
+        }
+
+        private void Reflect(Vector2 shieldDirection)
+        {
+            // Play the deflection sound.
+            Game1.GameManager.PlaySoundEffect("D360-22-16");
+
+            // Don't let the spear reflect more than once.
+            _reflected = true;
+
+            // It should not damage Link from this point on.
+            _hitComponent.IsActive = false;
+            _damageField.IsActive = false;
+            _pushComponent.IsActive = false;
+            _liveTime = 2250;
+
+            // Use the incoming direction and the shield reflect direction to determine new direction.
+            shieldDirection.Normalize();
+            var incoming = _body.VelocityTarget;
+            var reflected = (incoming - 2 * Vector2.Dot(incoming, shieldDirection) * shieldDirection) * 1.75f;
+
+            // Reverse the movement of the spear.
+            _body.VelocityTarget = reflected;
         }
 
         private void OnDeath()

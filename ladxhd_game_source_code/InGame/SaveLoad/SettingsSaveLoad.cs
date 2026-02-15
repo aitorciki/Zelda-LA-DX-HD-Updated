@@ -78,6 +78,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             GameSettings.NoHeartDrops = saveManager.GetBool("NoHeartDrops", GameSettings.NoHeartDrops);
             GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
+            GameSettings.MirrorReflects = saveManager.GetBool("MirrorReflects", GameSettings.MirrorReflects);
 
             // Sword Interact Settings
             GameSettings.SwGrabNormal = saveManager.GetBool("SwGrabNormal", GameSettings.SwGrabNormal);
@@ -165,6 +166,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
             saveManager.SetBool("NoHeartDrops", GameSettings.NoHeartDrops);
             saveManager.SetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
+            saveManager.SetBool("MirrorReflects", GameSettings.MirrorReflects);
 
             // Sword Interact Settings
             saveManager.SetBool("SwGrabNormal", GameSettings.SwGrabNormal);

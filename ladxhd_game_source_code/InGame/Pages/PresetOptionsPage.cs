@@ -130,8 +130,9 @@ namespace ProjectZ.InGame.Pages
             GameSettings.DamageFactor = 4;
             GameSettings.DmgCooldown = 16;
             GameSettings.MoveSpeedAdded = 0;
-            GameSettings.NoHeartDrops =  false;
-            GameSettings.NoDamageLaunch =  false;
+            GameSettings.NoHeartDrops = false;
+            GameSettings.NoDamageLaunch = false;
+            GameSettings.MirrorReflects = true;
             GameSettings.SwGrabNormal = true;
             GameSettings.SwGrabWorldItem = false;
             GameSettings.SwGrabFairy = true;
@@ -166,8 +167,9 @@ namespace ProjectZ.InGame.Pages
             GameSettings.DamageFactor = 4;
             GameSettings.DmgCooldown = 16;
             GameSettings.MoveSpeedAdded = 0;
-            GameSettings.NoHeartDrops =  false;
-            GameSettings.NoDamageLaunch =  false;
+            GameSettings.NoHeartDrops = false;
+            GameSettings.NoDamageLaunch = false;
+            GameSettings.MirrorReflects = false;
             GameSettings.SwGrabNormal = true;
             GameSettings.SwGrabWorldItem = false;
             GameSettings.SwGrabFairy = false;
@@ -205,7 +207,8 @@ namespace ProjectZ.InGame.Pages
             GameSettings.DmgCooldown = 16;
             GameSettings.MoveSpeedAdded = 0;
             GameSettings.NoHeartDrops = false;
-            GameSettings.NoDamageLaunch =  false;
+            GameSettings.NoDamageLaunch = false;
+            GameSettings.MirrorReflects = true;
             GameSettings.SwGrabNormal = true;
             GameSettings.SwGrabWorldItem = false;
             GameSettings.SwGrabFairy = true;
@@ -246,6 +249,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.MoveSpeedAdded = 0;
             GameSettings.NoHeartDrops = false;
             GameSettings.NoDamageLaunch = false;
+            GameSettings.MirrorReflects = false;
             GameSettings.SwGrabNormal = true;
             GameSettings.SwGrabWorldItem = false;
             GameSettings.SwGrabFairy = false;
@@ -334,6 +338,7 @@ namespace ProjectZ.InGame.Pages
                 ModifiersPage.SetMovementSpeed((int)(GameSettings.MoveSpeedAdded * 10));
                 ModifiersPage.SetNoHeartDrops(GameSettings.NoHeartDrops);
                 ModifiersPage.SetNoDamageLaunch(GameSettings.NoDamageLaunch);
+                ModifiersPage.SetMirrorReflects(GameSettings.MirrorReflects);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(SwordInteractPage), out var swordPage))
             {

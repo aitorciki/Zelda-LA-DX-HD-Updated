@@ -3,6 +3,7 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Effects;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
@@ -10,11 +11,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyBeamosProjectile : GameObject
     {
         private readonly DamageFieldComponent _damageField;
+        private readonly PushableComponent _pushComponent;
         private readonly BodyComponent _body;
         private readonly CSprite _sprite;
+        private readonly CBox _damageCollider;
+
         private EnemyBeamos _host;
 
         private bool _isFirstProjectile;
+        private bool _reflected;
 
         public EnemyBeamosProjectile(Map.Map map, EnemyBeamos host, Vector2 position, Vector2 velocityTarget, bool isFirstProjectile) : base(map)
         {
@@ -32,36 +37,30 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                // can go over some colliders
                 Level = 1,
-                // the reason for the simple movement is to not align the body
-                // with the colliding object and spawn the particle at an offset position
                 SimpleMovement = true,
                 VelocityTarget = velocityTarget,
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal
             };
+            _damageCollider = new CBox(EntityPosition, -2, -2, 0, 4, 4, 4);
 
-            var damageCollider = new CBox(EntityPosition, -2, -2, 0, 4, 4, 4);
-            _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
-            {
-                OnDamage = OnDamage
-            };
-
-            AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
-            AddComponent(DamageFieldComponent.Index, _damageField);
+            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_damageCollider, OnPush));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Enemy, 4) { OnDamage = OnDamage });;
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
-
-        private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
+        private void Update()
         {
-            if (pushType == PushableComponent.PushType.Impact)
-                DeleteProjectile(true);
-
-            return false;
+            // If the shot was reflected, try to hit an enemy.
+            if (_reflected)
+            {
+                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bomb, 4, false, false);
+                if ((collision & Values.HitCollision.Enemy) != 0)
+                    DeleteProjectile(false);
+            }
         }
-
         private bool OnDamage()
         {
             // Don't show the spark if it hits Link falling down a hole.
@@ -81,14 +80,59 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sprite.IsVisible = false;
         }
 
+        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        {
+            // Check if the incoming push type is from the shield.
+            if (type == PushableComponent.PushType.Impact)
+            {
+                // We only want a single interaction so check if it's been reflected.
+                if (!_reflected)
+                {
+                    // If the shield is able to reflect the shot.
+                    if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2)
+                    {
+                        Reflect(direction);
+                        return false;
+                    }
+                    // Otherwise kill it.
+                    else
+                        DeleteProjectile(true);
+                }
+            }
+            // The shot was not reflected so perform the knockback.
+            return true;
+        }
+
+        private void Reflect(Vector2 shieldDirection)
+        {
+            // Play the deflection sound.
+            Game1.GameManager.PlaySoundEffect("D360-22-16");
+
+            // Don't let the spear reflect more than once.
+            _reflected = true;
+
+            // It should not damage Link from this point on.
+            _damageField.IsActive = false;
+            _pushComponent.IsActive = false;
+
+            // Use the incoming direction and the shield reflect direction to determine new direction.
+            shieldDirection.Normalize();
+            var incoming = _body.VelocityTarget;
+            var reflected = (incoming - 2 * Vector2.Dot(incoming, shieldDirection) * shieldDirection) * 1.75f;
+
+            // Reverse the movement of the spear.
+            _body.VelocityTarget = reflected;
+        }
+
         public void DeleteProjectile(bool showParticle)
         {
+            // Remove the projectile from the liast and from the game.
             _host._projectiles.Remove(this);
             Map.Objects.DeleteObjects.Add(this);
 
+            // Spawn particles unless link is falling down a hole. Only spawn it on the first projectile.
             if (_isFirstProjectile)
             {
-                // Spawn particles unless link is falling down a hole.
                 if (showParticle)
                 {
                     var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/despawnParticle", "idle", true);

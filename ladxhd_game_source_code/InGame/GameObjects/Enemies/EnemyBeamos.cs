@@ -197,42 +197,41 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _shotCounter = 0;
             _shotsFired = 0;
-
             _animator.Pause();
             _aiComponent.ChangeState("preShoot");
         }
 
         private void UpdateShot()
         {
-            // 16 projectiles
-            // ~4 pixels/frame
-            // 60 projectiles/second
+            // 16 projectiles ; ~4 pixels/frame ; 60 projectiles/second
             _shotCounter += Game1.DeltaTime;
+ 
+            // Spawn projectiles at a rate of about 16.66 ms.
+            var projectileInterval = 1000f / 60f;
 
-            // spawn projectiles
-            // this is a little complicated because the game can run at different framerates
-            var projectileInterval = 1 / 60f * 1000;
-
-            while (_shotCounter > projectileInterval * _shotsFired)
+            // Loop until all shots are fired.
+            while (_shotCounter > projectileInterval)
             {
+                // Reduce the counter by the interval.
+                _shotCounter -= projectileInterval;
+                _shotsFired++;
+
+                // If the shot is interrupted prematurely.
                 if (_reset)
                 {
                     _reset = false;
                     break;
                 }
+                // Get the position the shot will spawn at.
                 _shotOrigin = GetOrigin();
-                // we calculate the position of the first projectile
-                var spawnPosition = _shotOrigin + _shotDirection * (4 + _shotCounter / 1000f * 60 * 4);
-                // now we go back in the opposite direction to find the exact position of the current projectile
-                spawnPosition -= _shotDirection * _shotsFired * 4;
 
-                // spawn the projectile
+                // Calculate the position of the shot and spawn it.
+                var spawnPosition = _shotOrigin;
                 var newProjectile = new EnemyBeamosProjectile(Map, this, spawnPosition, _shotDirection * 4, _shotsFired == 0);
                 Map.Objects.SpawnObject(newProjectile);
                 _projectiles.Add(newProjectile);
 
-                _shotsFired++;
-
+                // If 16 shots were fired then go back to idle state.
                 if (_shotsFired >= 16)
                 {
                     _animator.Continue();

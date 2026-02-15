@@ -21,15 +21,17 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceSlider     _sliderMovementSpeed;
         private readonly InterfaceListLayout _toggleNoHeartDrops;
         private readonly InterfaceListLayout _toggleNoDmgLaunch;
+        private readonly InterfaceListLayout _toggleMirrorReflects;
 
         private bool _showTooltip;
 
-        public void SetEnemyHitPoints(int value) { ((InterfaceSlider)_sliderEnemyHitPoints).CurrentStep = value; ObjLives.RestoreDefaultHP(); ObjLives.AddToEnemyHP(value); }
+        public void SetEnemyHitPoints(int value) { ((InterfaceSlider)_sliderEnemyHitPoints).CurrentStep = value; EnemyLives.RestoreDefaultHP(); EnemyLives.AddToEnemyHP(value); }
         public void SetDamageTaken(int value) => ((InterfaceSlider)_sliderDamageTaken).CurrentStep = value;
         public void SetDamageCooldown(int value) { ((InterfaceSlider)_sliderDamageCooldown).CurrentStep = value; ObjLink.CooldownTime = ObjLink.BlinkTime * GameSettings.DmgCooldown; }
         public void SetMovementSpeed(int value) => ((InterfaceSlider)_sliderMovementSpeed).CurrentStep = value;
         public void SetNoHeartDrops(bool state) => ((InterfaceToggle)_toggleNoHeartDrops.Elements[1]).ToggleState = state;
         public void SetNoDamageLaunch(bool state) => ((InterfaceToggle)_toggleNoDmgLaunch.Elements[1]).ToggleState = state;
+        public void SetMirrorReflects(bool state) => ((InterfaceToggle)_toggleMirrorReflects.Elements[1]).ToggleState = state;
 
         public ModifiersPage(int width, int height)
         {
@@ -85,9 +87,15 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.NoDamageLaunch = newState; });
             _contentLayout.AddElement(_toggleNoDmgLaunch);
 
-            // Toggle: Extra Sword Interactions
+            // Button: Extra Sword Interactions
             _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
                 "settings_mods_swordinteract", element => { Game1.UiPageManager.ChangePage(typeof(SwordInteractPage)); }));
+
+            // Toggle: Mirror Shield Reflects
+            _toggleMirrorReflects = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_mods_mirrorreflect", GameSettings.MirrorReflects, 
+                newState => { GameSettings.MirrorReflects = newState; });
+            _contentLayout.AddElement(_toggleMirrorReflects);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -191,6 +199,7 @@ namespace ProjectZ.InGame.Pages
                 case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error"); break; }
                 case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error"); break; }
                 case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_swordinteract", "error"); break; }
+                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_mirrorreflect", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

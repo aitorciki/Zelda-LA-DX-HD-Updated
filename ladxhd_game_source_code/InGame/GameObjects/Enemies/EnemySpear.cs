@@ -14,11 +14,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly Animator _animator;
         private readonly AiComponent _aiComponent;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly BodyComponent _body;
         private readonly CSprite _drawComponent;
         private readonly BodyDrawComponent _bodyDrawComponent;
         private readonly ShadowBodyDrawComponent _shadowBody;
+        private readonly CBox _damageCollider;
 
         private Vector2 _startPosition;
 
@@ -26,6 +28,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _despawnTime = 500;
         private int dir;
         private bool _playSound = true;
+        private bool _reflected;
 
         private Point[] _collisionBoxSize = { new Point(12, 4), new Point(4, 12), new Point(12, 4), new Point(4, 12) };
 
@@ -60,8 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoreHeight = true,
                 IgnoresZ = true,
             };
-            var damageCollider = new CBox(EntityPosition, -5, -5, 0, 10, 10, 4, true);
-
+            _damageCollider = new CBox(EntityPosition, -5, -5, 0, 10, 10, 4, true);
             var stateDespawn = new AiState() { Init = InitDespawn };
             stateDespawn.Trigger.Add(new AiTriggerCountdown(_despawnTime, TickDespawn, () => TickDespawn(0)));
 
@@ -70,8 +72,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.ChangeState("idle");
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });
             AddComponent(AiComponent.Index, _aiComponent);
@@ -108,10 +110,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     return;
                 }
             }
-            // start falling down?
+            // After travelling a certain distance, begin the spear's descent.
             var distance = _startPosition - EntityPosition.Position;
             if (MathF.Abs(distance.X) > 112 || Math.Abs(distance.Y) > 96)
                 _body.IgnoresZ = false;
+
+            // If the shot was reflected, try to hit an enemy.
+            if (_reflected)
+            {
+                // Probably the closest parallel to player damage types is the Bow.
+                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bow, 2, false, false);
+                if ((collision & Values.HitCollision.Enemy) != 0)
+                    Map.Objects.DeleteObjects.Add(this);
+            }
         }
 
         private void InitDespawn()
@@ -142,15 +153,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool OnDamage()
         {
+            // Don't play the "tink" sound if it hit Link or his shield.
             _playSound = false;
 
+            // Get whether or not the player recieved damage.
             bool damaged = _damageField.DamagePlayer();
 
+            // If player was damaged, delete the object.
             if (damaged)
                 Map.Objects.DeleteObjects.Add(this);
+
+            // If player was not damaged, it was blocked.
             else
-                OnCollision(Values.BodyCollision.None);
-            
+            {
+                // Mirror shield reflects the shot while normal shield just collides.
+                if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2 && !_reflected)
+                    Reflect();
+                else
+                    OnCollision(Values.BodyCollision.None);
+            }
+            // Return the damage state for the damage field component.
             return damaged;
         }
 
@@ -194,18 +216,43 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return Values.HitCollision.Enemy;
         }
 
+        private void Reflect()
+        {
+            // Don't let the spear reflect more than once.
+            _reflected = true;
+
+            // It should not damage Link from this point on.
+            _hitComponent.IsActive = false;
+            _damageField.IsActive = false;
+
+            // Reverse direction and set the start position to Link's position.
+            var newVelocity = -_body.VelocityTarget * 1.35f;
+            _startPosition = MapManager.ObjLink.EntityPosition.Position;
+
+            // Update travel direction + animation.
+            dir = AnimationHelper.GetDirection(newVelocity);
+            _animator.Play(dir.ToString());
+
+            // Reverse the movement of the spear.
+            _body.VelocityTarget = newVelocity;
+        }
+
         private void OnCollision(Values.BodyCollision direction)
         {
+            // Return if it's already despawning.
             if (_aiComponent.CurrentStateId == "despawn")
                 return;
 
+            // Despawn the spear on impact.
             _aiComponent.ChangeState("despawn");
-
+            
+            // Play the deflected animation.
             if ((direction & Values.BodyCollision.Floor) != 0)
                 _body.Velocity = new Vector3(_body.VelocityTarget.X * 0.75f, _body.VelocityTarget.Y * 0.75f, 1.5f);
             else
                 _body.Velocity = new Vector3(-_body.VelocityTarget.X * 0.25f, -_body.VelocityTarget.Y * 0.25f, 1.5f);
 
+            // Stop future velocity completely.
             _body.VelocityTarget = Vector2.Zero;
         }
     }

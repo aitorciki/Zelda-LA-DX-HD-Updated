@@ -5,6 +5,7 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Things;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -14,16 +15,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly AiComponent _aiComponent;
         private readonly ShadowBodyDrawComponent _shadowBody;
+        private readonly HittableComponent _hitComponent;
         private readonly DamageFieldComponent _damageField;
         private readonly CSprite _drawComponent;
         private readonly BodyComponent _body;
         private readonly PushableComponent _pushableComponent;
+        private readonly CBox _damageCollider;
 
         private float _lifeCounter = 950;
         private float _despawnPercentage = 1;
         private int _despawnTime = 750;
         private bool _repelledPlayer;
         private bool _playSound;
+        private bool _reflected;
 
         public EnemyOctorokShot(Map.Map map, float posX, float posY, Vector2 velocity, int direction) : base(map)
         {
@@ -70,10 +74,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.ChangeState("idle");
 
-            var damageCollider = new CBox(EntityPosition, -5, -10, 0, 10, 10, 4);
+            _damageCollider = new CBox(EntityPosition, -5, -10, 0, 10, 10, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
+            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, _pushableComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });
             AddComponent(AiComponent.Index, _aiComponent);
@@ -109,6 +113,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.VelocityTarget = Vector2.Zero;
                 _aiComponent.ChangeState("despawn");
             }
+            // If the shot was reflected, try to hit an enemy.
+            if (_reflected)
+            {
+                // Probably the closest parallel to player damage types is the Bow.
+                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bow, 2, false, false);
+                if ((collision & Values.HitCollision.Enemy) != 0)
+                    Map.Objects.DeleteObjects.Add(this);
+            }
         }
 
         private void Despawn(double time)
@@ -126,11 +138,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool OnDamage()
         {
-            _aiComponent.ChangeState("despawn");
-            _body.Velocity = new Vector3(-_body.VelocityTarget.X * 0.25f, -_body.VelocityTarget.Y * 0.25f, 1.5f);
-            _body.VelocityTarget = Vector2.Zero;
+            // Get whether or not the player recieved damage.
+            bool damaged = _damageField.DamagePlayer();
 
-            return _damageField.DamagePlayer();
+            // If player was damaged, delete the object.
+            if (damaged)
+            {
+                _aiComponent.ChangeState("despawn");
+                _body.Velocity = new Vector3(-_body.VelocityTarget.X * 0.25f, -_body.VelocityTarget.Y * 0.25f, 1.5f);
+                _body.VelocityTarget = Vector2.Zero;
+            }
+            // If player was not damaged, it was blocked.
+            else if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2 && !_reflected)
+                Reflect();
+
+            // Return the damage state for the damage field component.
+            return damaged;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -175,6 +198,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = Vector2.Zero;
 
             return Values.HitCollision.None;
+        }
+
+        private void Reflect()
+        {
+            // Don't let the spear reflect more than once.
+            _reflected = true;
+
+            // It should not damage Link from this point on.
+            _hitComponent.IsActive = false;
+            _damageField.IsActive = false;
+
+            // Reverse direction and reset the shots lifespan.
+            var newVelocity = -_body.VelocityTarget * 1.35f;
+            _lifeCounter = 950;
+
+            // Reverse the movement of the spear.
+            _body.VelocityTarget = newVelocity;
         }
 
         private void OnCollision(Values.BodyCollision direction)

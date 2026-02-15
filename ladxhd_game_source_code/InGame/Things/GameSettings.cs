@@ -66,6 +66,7 @@
         public static float   MoveSpeedAdded  =  0;
         public static bool    NoHeartDrops    =  false;
         public static bool    NoDamageLaunch  =  false;
+        public static bool    MirrorReflects  =  false;
 
         // Sword Collection
         public static bool    SwGrabNormal    =  true;
