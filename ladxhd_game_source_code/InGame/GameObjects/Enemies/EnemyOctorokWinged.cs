@@ -174,6 +174,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var vecDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
             vecDirection.Normalize();
 
+            _pushComponent.IsActive = false;
             _body.VelocityTarget = vecDirection;
             _body.Velocity.Z = 1.25f;
             _body.AvoidTypes = Values.CollisionTypes.NPCWall;
@@ -191,6 +192,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_body.IsGrounded && _body.Velocity.Z <= 0)
             {
+                _pushComponent.IsActive = true;
                 _shotCooldown = 0;
                 _flyCounter = 0;
                 _aiComponent.ChangeState("idle");
