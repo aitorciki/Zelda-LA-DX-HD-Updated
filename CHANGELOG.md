@@ -1,7 +1,5 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
-## **v1.6.2**
-
 ## **v1.6.1**
 ### The "Shadows From the Past" Update
   * Modify sprite shadows to only be shown when the shadow caster is in the air like the original game.
