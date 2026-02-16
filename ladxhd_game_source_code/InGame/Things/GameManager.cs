@@ -1563,7 +1563,7 @@ namespace ProjectZ.InGame.Things
             UpdateEquipment();
         }
 
-        private void UpdateEquipment()
+        public void UpdateEquipment()
         {
             Link.CarrySword = false;
             Link.CarryShield = false;

@@ -454,7 +454,9 @@ namespace ProjectZ.InGame.Overlay
                 ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[itemIndex], new Point(drawPosition.X, drawPosition.Y + offsetY + 1), slotRectangle, 1, Color.White);
             }
 
-            // draw the ocarina face selection
+            // TODO: A CRASH CAN HAPPEN HERE (SEE GITHUB ISSUE #641: https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/issues/641).
+            // The crash seems rare and is hard to replicate. The only thing I can think of is "_itemSlots"
+            // was null or "_itemSlots.Length" was zero for a short period for some reason. This could be a race condition.
             var selectedItem = Game1.GameManager.Equipment[_itemSlots.Length + _selectedItemSlot];
             if (selectedItem != null && selectedItem.Name == "ocarina")
             {
