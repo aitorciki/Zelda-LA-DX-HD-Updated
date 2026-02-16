@@ -65,8 +65,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
-            // Load the directions that were set at the start of the game.
-            var eggDirections = Game1.GameManager.SaveManager.GetString("eggDirections", "0");
+            // Check to see if the player read the book that has the directions.
+            var book_read = Game1.GameManager.SaveManager.GetString("egg_book_read");
+
+            // If the player never read the book, it will default to path "0".
+            var eggDirections = "0";
+
+            // If the player read the book, then load the directions assigned at the start of the game.
+            if (!string.IsNullOrEmpty(book_read) && book_read == "1")
+                eggDirections = Game1.GameManager.SaveManager.GetString("eggDirections");
+
+            // Set the target path based on the directions that were assigned.
             _targetPath = eggDirections switch
             {
                 "0" => new int[] { 0, 0, 1, 2, 2, 1, 0 },
