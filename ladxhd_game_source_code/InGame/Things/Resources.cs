@@ -60,13 +60,9 @@ namespace ProjectZ.InGame.Things
         {
             get
             {
-                // Get the language code so we can check if "Chinese" language has been selected.
-                var langList = Game1.LanguageManager.LanguageCode;
-                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
-
                 // Chinese font uses a special font added by the patcher already compiled into XNB. It also doesn't
                 // have any variants so we can just load it directly without worrying about variants.
-                if (langList[idx] == "chn")
+                if (Game1.LanguageManager.CurrentLanguageCode == "chn")
                     return smallFont_chn;
 
                 // Other languages use the "normal" fonts provided. Depending on certain settings there is variations.
@@ -114,12 +110,7 @@ namespace ProjectZ.InGame.Things
         {
             get
             {
-                var langList = Game1.LanguageManager.LanguageCode;
-                if (langList.Count == 0) 
-                    return SprObjectsEng;
-
-                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
-                return langList[idx] switch
+                return (Game1.LanguageManager.CurrentLanguageCode) switch
                 {
                     "chn" => SprObjectsChn,
                     "deu" => SprObjectsDeu,
@@ -139,14 +130,7 @@ namespace ProjectZ.InGame.Things
         {
             get
             {
-                var langList = Game1.LanguageManager.LanguageCode;
-                if (langList.Count == 0) 
-                    return SprMiniMapEng;
-
-                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
-                string lang = langList[idx];
-
-                return lang switch
+                return (Game1.LanguageManager.CurrentLanguageCode) switch
                 {
                     "chn" => SprMiniMapChn,
                     "deu" => SprMiniMapDeu,
@@ -167,14 +151,7 @@ namespace ProjectZ.InGame.Things
         {
             get
             {
-                var langList = Game1.LanguageManager.LanguageCode;
-                if (langList.Count == 0)
-                    return GameSettings.Uncensored ? SprItemEngRedux : SprItemEng;
-
-                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
-                string lang = langList[idx];
-
-                return (lang, GameSettings.Uncensored) switch
+                return (Game1.LanguageManager.CurrentLanguageCode, GameSettings.Uncensored) switch
                 {
                     ("chn", false) => SprItemChn,
                     ("deu", false) => SprItemDeu,
@@ -622,8 +599,7 @@ namespace ProjectZ.InGame.Things
         {
             // All sprites use the current langage to search for variations, most sprites will also use "GameSettings.Uncensored" to determine if
             // there is a "redux" uncensored version, and the photograph sprites will use "GameSettings.PhotosColor" to get the colored versions.
-            int index = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, Game1.LanguageManager.LanguageCode.Count - 1);
-            string lang = Game1.LanguageManager.LanguageCode[index];
+            string lang = Game1.LanguageManager.CurrentLanguageCode;
 
             // All "search" chains in the switch below should end with "SpriteAtlas" as it will always contains an entry.
             var atlases = (lang, variation) switch

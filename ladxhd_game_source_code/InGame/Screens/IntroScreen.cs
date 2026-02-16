@@ -22,14 +22,7 @@ namespace ProjectZ.InGame.Screens
         {
             get
             {
-                var langList = Game1.LanguageManager.LanguageCode;
-                if (langList.Count == 0)
-                    return _sprIntro_eng;
-
-                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
-                string lang = langList[idx];
-
-                return lang switch
+                return (Game1.LanguageManager.CurrentLanguageCode) switch
                 {
                     "chn" => _sprIntro_chn,
                     "deu" => _sprIntro_deu,

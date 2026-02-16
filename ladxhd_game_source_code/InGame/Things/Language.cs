@@ -8,14 +8,14 @@ namespace ProjectZ.InGame.Things
 {
     public class Language
     {
-        public Dictionary<string, string> Strings => _languageStrings[CurrentLanguageIndex];
-
         private Dictionary<string, string>[] _languageStrings;
+
+        public Dictionary<string, string> Strings => _languageStrings[CurrentLanguageIndex];
+        public List<string> LanguageCode { get; private set; } = new List<string> { "eng" };
 
         public int CurrentLanguageIndex = 0;
         public int CurrentSubLanguageIndex = 0;
-
-        public List<string> LanguageCode { get; private set; } = new List<string> { "eng" };
+        public string CurrentLanguageCode = "eng";
 
         public void Load()
         {
@@ -63,6 +63,7 @@ namespace ProjectZ.InGame.Things
 
             _languageStrings = LanguageCode.Select(k => languageStrings[k]).ToArray();
             CurrentLanguageIndex = Math.Clamp(CurrentLanguageIndex, 0, _languageStrings.Length - 1);
+            CurrentLanguageCode = LanguageCode[CurrentLanguageIndex];
         }
 
         public void LoadFile(Dictionary<string, string> dictionary, string fileName)
@@ -109,7 +110,9 @@ namespace ProjectZ.InGame.Things
 
         public void ToggleLanguage()
         {
+            // Update the currently selected language.
             CurrentLanguageIndex = (CurrentLanguageIndex + 1) % _languageStrings.Length;
+            CurrentLanguageCode = LanguageCode[CurrentLanguageIndex];
         }
 
         public string ReplacePlaceholderTag(string inputString)
