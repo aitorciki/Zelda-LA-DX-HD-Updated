@@ -227,7 +227,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 // Calculate the position of the shot and spawn it.
                 var spawnPosition = _shotOrigin;
-                var newProjectile = new EnemyBeamosProjectile(Map, this, spawnPosition, _shotDirection * 4, _shotsFired == 0);
+                var newProjectile = new EnemyBeamosProjectile(Map, this, spawnPosition, _shotDirection * 4, _shotsFired == 1);
                 Map.Objects.SpawnObject(newProjectile);
                 _projectiles.Add(newProjectile);
 

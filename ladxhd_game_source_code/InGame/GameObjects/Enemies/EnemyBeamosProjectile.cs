@@ -82,25 +82,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
+            // Store whether or not the player has the Mirror Shield.
+            bool hasMirrorShield = Game1.GameManager.ShieldLevel == 2;
+
             // Check if the incoming push type is from the shield.
-            if (type == PushableComponent.PushType.Impact)
+            if (type == PushableComponent.PushType.Impact && hasMirrorShield)
             {
                 // We only want a single interaction so check if it's been reflected.
                 if (!_reflected)
                 {
                     // If the shield is able to reflect the shot.
-                    if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2)
+                    if (GameSettings.MirrorReflects)
                     {
                         Reflect(direction);
-                        return false;
                     }
-                    // Otherwise kill it.
+                    // Otherwise kill it and show the sparking effect if Mirror Shield.
                     else
-                        DeleteProjectile(true);
+                        DeleteProjectile(hasMirrorShield);
                 }
             }
-            // The shot was not reflected so perform the knockback.
-            return true;
+            // Always return false. Whether it's reflected or deflected the beam is deleted.
+            return false;
         }
 
         private void Reflect(Vector2 shieldDirection)
@@ -126,10 +128,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public void DeleteProjectile(bool showParticle)
         {
-            // Remove the projectile from the liast and from the game.
-            _host._projectiles.Remove(this);
-            Map.Objects.DeleteObjects.Add(this);
-
             // Spawn particles unless link is falling down a hole. Only spawn it on the first projectile.
             if (_isFirstProjectile)
             {
@@ -140,6 +138,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     Map.Objects.SpawnObject(animation);
                 }
             }
+            // Remove the projectile from the projectile list and from the game.
+            _host._projectiles.Remove(this);
+            Map.Objects.DeleteObjects.Add(this);
         }
     }
 }
