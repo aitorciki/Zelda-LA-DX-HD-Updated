@@ -54,12 +54,22 @@ namespace ProjectZ.InGame.Things
         public static SpriteFont EditorFont, EditorFontMonoSpace, EditorFontSmallMonoSpace;
         public static SpriteFont GameHeaderFont;
         public static SpriteFont FontCredits, FontCreditsHeader;
-        public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux;
+        public static SpriteFont smallFont, smallFont_redux, smallFont_vwf, smallFont_vwf_redux, smallFont_chn;
 
         public static SpriteFont GameFont 
         {
             get
             {
+                // Get the language code so we can check if "Chinese" language has been selected.
+                var langList = Game1.LanguageManager.LanguageCode;
+                int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
+
+                // Chinese font uses a special font added by the patcher already compiled into XNB. It also doesn't
+                // have any variants so we can just load it directly without worrying about variants.
+                if (langList[idx] == "chn")
+                    return smallFont_chn;
+
+                // Other languages use the "normal" fonts provided. Depending on certain settings there is variations.
                 return (GameSettings.VarWidthFont, GameSettings.Uncensored) switch
                 {
                     (true,  true)  => smallFont_vwf_redux,
@@ -95,10 +105,10 @@ namespace ProjectZ.InGame.Things
         public static int EditorFontHeight;
 
         // Fields from this point on are affected by language and/or redux options.
-        public static Texture2D SprPhotosEng, SprPhotosDeu, SprPhotosEsp, SprPhotosFre, SprPhotosInd, SprPhotosIta, SprPhotosPor, SprPhotosRus;
-        public static Texture2D SprPhotosEngRedux, SprPhotosDeuRedux, SprPhotosEspRedux, SprPhotosFreRedux, SprPhotosIndRedux, SprPhotosItaRedux, SprPhotosPorRedux, SprPhotosRusRedux;
+        public static Texture2D SprPhotosEng, SprPhotosChn, SprPhotosDeu, SprPhotosEsp, SprPhotosFre, SprPhotosInd, SprPhotosIta, SprPhotosPor, SprPhotosRus;
+        public static Texture2D SprPhotosEngRedux, SprPhotosChnRedux, SprPhotosDeuRedux, SprPhotosEspRedux, SprPhotosFreRedux, SprPhotosIndRedux, SprPhotosItaRedux, SprPhotosPorRedux, SprPhotosRusRedux;
 
-        public static Texture2D SprObjectsEng, SprObjectsDeu, SprObjectsEsp, SprObjectsFre, SprObjectsInd, SprObjectsIta, SprObjectsPor, SprObjectsRus;
+        public static Texture2D SprObjectsEng, SprObjectsChn, SprObjectsDeu, SprObjectsEsp, SprObjectsFre, SprObjectsInd, SprObjectsIta, SprObjectsPor, SprObjectsRus;
 
         public static Texture2D SprObjects
         {
@@ -111,6 +121,7 @@ namespace ProjectZ.InGame.Things
                 int idx = Math.Clamp(Game1.LanguageManager.CurrentLanguageIndex, 0, langList.Count - 1);
                 return langList[idx] switch
                 {
+                    "chn" => SprObjectsChn,
                     "deu" => SprObjectsDeu,
                     "esp" => SprObjectsEsp,
                     "fre" => SprObjectsFre,
@@ -123,7 +134,7 @@ namespace ProjectZ.InGame.Things
             }
         }
 
-        public static Texture2D SprMiniMapEng, SprMiniMapDeu, SprMiniMapEsp, SprMiniMapFre, SprMiniMapInd, SprMiniMapIta, SprMiniMapPor, SprMiniMapRus;
+        public static Texture2D SprMiniMapEng, SprMiniMapChn, SprMiniMapDeu, SprMiniMapEsp, SprMiniMapFre, SprMiniMapInd, SprMiniMapIta, SprMiniMapPor, SprMiniMapRus;
         public static Texture2D SprMiniMap
         {
             get
@@ -137,6 +148,7 @@ namespace ProjectZ.InGame.Things
 
                 return lang switch
                 {
+                    "chn" => SprMiniMapChn,
                     "deu" => SprMiniMapDeu,
                     "esp" => SprMiniMapEsp,
                     "fre" => SprMiniMapFre,
@@ -149,8 +161,8 @@ namespace ProjectZ.InGame.Things
             }
         }
 
-        public static Texture2D SprItemEng, SprItemDeu, SprItemEsp, SprItemFre, SprItemInd, SprItemIta, SprItemPor, SprItemRus;
-        public static Texture2D SprItemEngRedux, SprItemDeuRedux, SprItemEspRedux, SprItemFreRedux, SprItemIndRedux, SprItemItaRedux, SprItemPorRedux, SprItemRusRedux;
+        public static Texture2D SprItemEng, SprItemChn, SprItemDeu, SprItemEsp, SprItemFre, SprItemInd, SprItemIta, SprItemPor, SprItemRus;
+        public static Texture2D SprItemEngRedux, SprItemChnRedux, SprItemDeuRedux, SprItemEspRedux, SprItemFreRedux, SprItemIndRedux, SprItemItaRedux, SprItemPorRedux, SprItemRusRedux;
         public static Texture2D SprItem
         {
             get
@@ -164,6 +176,7 @@ namespace ProjectZ.InGame.Things
 
                 return (lang, GameSettings.Uncensored) switch
                 {
+                    ("chn", false) => SprItemChn,
                     ("deu", false) => SprItemDeu,
                     ("esp", false) => SprItemEsp,
                     ("fre", false) => SprItemFre,
@@ -173,6 +186,7 @@ namespace ProjectZ.InGame.Things
                     ("rus", false) => SprItemRus,
                     (_, false)     => SprItemEng,
 
+                    ("chn", true)  => SprItemChnRedux,
                     ("deu", true)  => SprItemDeuRedux,
                     ("esp", true)  => SprItemEspRedux,
                     ("fre", true)  => SprItemFreRedux,
@@ -186,6 +200,7 @@ namespace ProjectZ.InGame.Things
         }
 
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasChn = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeu = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasEsp = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasFre = new();
@@ -195,6 +210,7 @@ namespace ProjectZ.InGame.Things
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasRus = new();
 
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasRedux = new();
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasChnRedux = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeuRedux = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasEspRedux = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasFreRedux = new();
@@ -203,7 +219,7 @@ namespace ProjectZ.InGame.Things
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasPorRedux = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasRusRedux = new();
 
-        public enum AtlasLanguage { English, German, Spanish, French, Indonesian, Italian, Portuguese, Russian }
+        public enum AtlasLanguage { English, Chinese, German, Spanish, French, Indonesian, Italian, Portuguese, Russian }
         public enum AtlasVariant { Default, Redux }
 
         private static (AtlasLanguage, AtlasVariant) ParseAtlasTags(string filePath)
@@ -213,7 +229,8 @@ namespace ProjectZ.InGame.Things
                 .Split('_');
 
             AtlasLanguage lang = AtlasLanguage.English;
-            if (parts.Contains("deu")) lang = AtlasLanguage.German;
+            if (parts.Contains("chn")) lang = AtlasLanguage.Chinese;
+            else if (parts.Contains("deu")) lang = AtlasLanguage.German;
             else if (parts.Contains("esp")) lang = AtlasLanguage.Spanish;
             else if (parts.Contains("fre")) lang = AtlasLanguage.French;
             else if (parts.Contains("ind")) lang = AtlasLanguage.Indonesian;
@@ -232,6 +249,8 @@ namespace ProjectZ.InGame.Things
         {
             {(AtlasLanguage.English,    AtlasVariant.Default), SpriteAtlas},
             {(AtlasLanguage.English,    AtlasVariant.Redux),   SpriteAtlasRedux},
+            {(AtlasLanguage.Chinese,    AtlasVariant.Default), SpriteAtlasChn},
+            {(AtlasLanguage.Chinese,    AtlasVariant.Redux),   SpriteAtlasChnRedux},
             {(AtlasLanguage.German,     AtlasVariant.Default), SpriteAtlasDeu},
             {(AtlasLanguage.German,     AtlasVariant.Redux),   SpriteAtlasDeuRedux},
             {(AtlasLanguage.Spanish,    AtlasVariant.Default), SpriteAtlasEsp},
@@ -295,6 +314,7 @@ namespace ProjectZ.InGame.Things
             LoadTexture(out SprGameSequencesFinal, Path.Combine(Values.PathContentFolder, "Sequences", "end sequence.png"));
 
             LoadTexture(out SprPhotosEng, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos.png"));
+            TryLoadTextures(SprPhotosChn, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_chn.png"));
             TryLoadTextures(SprPhotosDeu, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_deu.png"));
             TryLoadTextures(SprPhotosEsp, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_esp.png"));
             TryLoadTextures(SprPhotosFre, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_fre.png"));
@@ -304,6 +324,7 @@ namespace ProjectZ.InGame.Things
             TryLoadTextures(SprPhotosRus, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_rus.png"));
 
             LoadTexture(out SprPhotosEngRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux.png"));
+            TryLoadTextures(SprPhotosChnRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_chn.png"));
             TryLoadTextures(SprPhotosDeuRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_deu.png"));
             TryLoadTextures(SprPhotosEspRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_esp.png"));
             TryLoadTextures(SprPhotosFreRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_fre.png"));
@@ -315,6 +336,7 @@ namespace ProjectZ.InGame.Things
             LoadTexture(out _, Path.Combine(Values.PathContentFolder, "Editor", "editorIcons4x.png"));
 
             LoadTexture(out _, Path.Combine(Values.PathContentFolder, "ui.png"));
+            TryLoadTextures(null, Path.Combine(Values.PathContentFolder, "ui_chn.png"));
             TryLoadTextures(null, Path.Combine(Values.PathContentFolder, "ui_deu.png"));
             TryLoadTextures(null, Path.Combine(Values.PathContentFolder, "ui_esp.png"));
             TryLoadTextures(null, Path.Combine(Values.PathContentFolder, "ui_fre.png"));
@@ -344,6 +366,7 @@ namespace ProjectZ.InGame.Things
             SprNpCs = GetTexture("npcs.png");
             SprNpCsRedux = GetTexture("npcs_redux.png");
             SprObjectsEng = GetTexture("objects.png");
+            SprObjectsChn = GetTexture("objects_chn.png");
             SprObjectsDeu = GetTexture("objects_deu.png");
             SprObjectsEsp = GetTexture("objects_esp.png");
             SprObjectsFre = GetTexture("objects_fre.png");
@@ -352,6 +375,7 @@ namespace ProjectZ.InGame.Things
             SprObjectsPor = GetTexture("objects_por.png");
             SprObjectsRus = GetTexture("objects_rus.png");
             SprMiniMapEng = GetTexture("minimap.png");
+            SprMiniMapChn = GetTexture("minimap_chn.png");
             SprMiniMapDeu = GetTexture("minimap_deu.png");
             SprMiniMapEsp = GetTexture("minimap_esp.png");
             SprMiniMapFre = GetTexture("minimap_fre.png");
@@ -360,6 +384,7 @@ namespace ProjectZ.InGame.Things
             SprMiniMapPor = GetTexture("minimap_por.png");
             SprMiniMapRus = GetTexture("minimap_rus.png");
             SprItemEng = GetTexture("items.png");
+            SprItemChn = GetTexture("items_chn.png");
             SprItemDeu = GetTexture("items_deu.png");
             SprItemEsp = GetTexture("items_esp.png");
             SprItemFre = GetTexture("items_fre.png");
@@ -368,6 +393,7 @@ namespace ProjectZ.InGame.Things
             SprItemPor = GetTexture("items_por.png");
             SprItemRus = GetTexture("items_rus.png");
             SprItemEngRedux = GetTexture("items_redux.png");
+            SprItemChnRedux = GetTexture("items_redux_chn.png");
             SprItemDeuRedux = GetTexture("items_redux_deu.png");
             SprItemEspRedux = GetTexture("items_redux_esp.png");
             SprItemFreRedux = GetTexture("items_redux_fre.png");
@@ -388,6 +414,7 @@ namespace ProjectZ.InGame.Things
             smallFont_redux = content.Load<SpriteFont>("Fonts/smallFont_redux");
             smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
             smallFont_vwf_redux = content.Load<SpriteFont>("Fonts/smallFont_vwf_redux");
+            smallFont_chn = content.Load<SpriteFont>("Fonts/smallFont_chn");
 
             // load textures
             SprTiledBlock = new Texture2D(graphics, 2, 2);
@@ -543,7 +570,7 @@ namespace ProjectZ.InGame.Things
                 return match.SprTexture;
 
             // Remove language tags and try again.
-            string[] langs = { "deu", "esp", "fre", "ind", "ita", "por", "rus" };
+            string[] langs = { "chn", "deu", "esp", "fre", "ind", "ita", "por", "rus" };
             string[] parts = Path.GetFileNameWithoutExtension(name).Split('_');
 
             // Rebuild filename skipping language parts.
@@ -554,7 +581,7 @@ namespace ProjectZ.InGame.Things
 
         public static string FindAtlasFile(string textureName)
         {
-            string[] langs = { "deu", "esp", "fre", "ind", "ita", "por", "rus" };
+            string[] langs = { "chn", "deu", "esp", "fre", "ind", "ita", "por", "rus" };
 
             var parts = textureName
                 .Replace(".png", "")
@@ -601,6 +628,7 @@ namespace ProjectZ.InGame.Things
             // All "search" chains in the switch below should end with "SpriteAtlas" as it will always contains an entry.
             var atlases = (lang, variation) switch
             {
+                ("chn", false) => new[] { SpriteAtlasChn, SpriteAtlas },
                 ("deu", false) => new[] { SpriteAtlasDeu, SpriteAtlas },
                 ("esp", false) => new[] { SpriteAtlasEsp, SpriteAtlas },
                 ("fre", false) => new[] { SpriteAtlasFre, SpriteAtlas },
@@ -610,6 +638,7 @@ namespace ProjectZ.InGame.Things
                 ("rus", false) => new[] { SpriteAtlasRus, SpriteAtlas },
                 (_, false)     => new[] { SpriteAtlas },
 
+                ("chn", true) => new[] { SpriteAtlasChnRedux, SpriteAtlasChn, SpriteAtlas },
                 ("deu", true) => new[] { SpriteAtlasDeuRedux, SpriteAtlasDeu, SpriteAtlas },
                 ("esp", true) => new[] { SpriteAtlasEspRedux, SpriteAtlasEsp, SpriteAtlas },
                 ("fre", true) => new[] { SpriteAtlasFreRedux, SpriteAtlasFre, SpriteAtlas },

@@ -14,7 +14,8 @@ namespace ProjectZ.InGame.Interface
         public delegate string StringFunction(int number);
         public StringFunction SetString;
 
-        public SpriteFont Font;
+        private SpriteFont Font => Resources.GameFont;
+
         public Color TextColor = Color.White;
 
         public string Text { get; set; }
@@ -63,7 +64,6 @@ namespace ProjectZ.InGame.Interface
 
         public InterfaceSlider(SpriteFont font, string key, int width, int baseHeight, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
         {
-            Font = font;
             Size = new Point(width, baseHeight + _sliderSize.Y * 4);
             Margin = margin;
 

@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.Screens
         private Texture2D _sprRain;
         private Texture2D _sprWaves;
         private Texture2D _sprCloud;
-        public static Texture2D _sprIntro_eng, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ind, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
+        public static Texture2D _sprIntro_eng, _sprIntro_chn, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ind, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
 
         public static Texture2D _sprIntro
         {
@@ -31,6 +31,7 @@ namespace ProjectZ.InGame.Screens
 
                 return lang switch
                 {
+                    "chn" => _sprIntro_chn,
                     "deu" => _sprIntro_deu,
                     "esp" => _sprIntro_esp,
                     "fre" => _sprIntro_fre,
@@ -52,22 +53,13 @@ namespace ProjectZ.InGame.Screens
         private Vector2[] _thunderPositions = new Vector2[2];
         private float[] _thunderCounts = { 1000, 2000 };
 
-        private enum States
-        {
-            OceanCamera,
-            OceanPicture,
-            OceanThunder,
-            StrandFading,
-            StrandCamera,
-            StrandMarin,
-            StrandPanning,
-            StrandLogo
-        };
+        private enum States { OceanCamera, OceanPicture, OceanThunder, StrandFading, StrandCamera, StrandMarin, StrandPanning, StrandLogo };
 
         private States _currentState;
 
         private int _scale = 1;
         private Vector2 _cameraCenter;
+
         private Matrix TransformMatrix =>
                                 Matrix.CreateTranslation(new Vector3(
                                     -(float)(Math.Round(_cameraCenter.X * _scale) / _scale),
@@ -79,16 +71,7 @@ namespace ProjectZ.InGame.Screens
         private Vector2 _cameraStart;
         private Vector2 _cameraTarget;
 
-        private enum MarinState
-        {
-            WalkSlow,
-            Walk,
-            Run,
-            Stand,
-            Hold,
-            Push,
-            End
-        };
+        private enum MarinState { WalkSlow, Walk, Run, Stand, Hold, Push, End };
 
         private MarinState marinState;
 
@@ -102,11 +85,7 @@ namespace ProjectZ.InGame.Screens
             2000, 500, 2100, 200, 400, 200, 250, 750 // push hold times
         };
 
-        private Vector2[] _marinGoalPositions =
-        {
-            new Vector2(-150, 219), new Vector2(-94, 219), new Vector2(-72, 219), new Vector2(-64, 219),
-            new Vector2(-18, 219)
-        };
+        private Vector2[] _marinGoalPositions = { new Vector2(-150, 219), new Vector2(-94, 219), new Vector2(-72, 219), new Vector2(-64, 219), new Vector2(-18, 219) };
 
         private float _marinStateCounter;
         private int _marinIndex;
@@ -292,6 +271,7 @@ namespace ProjectZ.InGame.Screens
             _sprRain = Resources.GetTexture("rain.png");
 
             _sprIntro_eng = Resources.GetTexture("intro.png");
+            _sprIntro_chn = Resources.GetTexture("intro_chn.png");
             _sprIntro_deu = Resources.GetTexture("intro_deu.png");
             _sprIntro_esp = Resources.GetTexture("intro_esp.png");
             _sprIntro_fre = Resources.GetTexture("intro_fre.png");

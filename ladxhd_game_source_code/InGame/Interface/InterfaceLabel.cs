@@ -6,7 +6,7 @@ namespace ProjectZ.InGame.Interface
 {
     public class InterfaceLabel : InterfaceElement
     {
-        public SpriteFont Font;
+        private SpriteFont Font => Resources.GameFont;
 
         public Gravities TextAlignment
         {
@@ -37,7 +37,6 @@ namespace ProjectZ.InGame.Interface
 
         public InterfaceLabel(SpriteFont font, string key, Point size, Point margin)
         {
-            Font = font;
             Size = size;
             Margin = margin;
 
@@ -98,6 +97,7 @@ namespace ProjectZ.InGame.Interface
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 
+            // This is expensive and runs every frame. It should be removed and replaced with "language changed" event.
             if (OverrideText != "" || (Translate && _textKey != null && Game1.LanguageManager.GetString(_textKey, "error") != Text))
                 UpdateLanguageText();
 
