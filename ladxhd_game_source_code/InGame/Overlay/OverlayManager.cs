@@ -553,6 +553,12 @@ namespace ProjectZ.InGame.Overlay
             spriteBatch.End();
         }
 
+        public void UpdateInventoryButtons(bool sixButtons)
+        {
+            // Updates the number of equippable buttons between 4 and 6 buttons.
+            _inventoryOverlay.UpdateButtonLayout(sixButtons);
+        }
+
         public void ResolutionChanged()
         {
             TextboxOverlay.ResolutionChange();

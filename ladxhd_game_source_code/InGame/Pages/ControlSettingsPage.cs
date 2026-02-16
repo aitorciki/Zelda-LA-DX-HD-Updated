@@ -156,6 +156,9 @@ namespace ProjectZ.InGame.Pages
             // The number of inventory slots needs to be upated now so the game knows to enable/disable the top front buttons immediately.
             Values.HandItemSlots = newState ? 6 : 4;
 
+            // Update the number of equippable buttons.
+            Game1.GameManager.InGameOverlay.UpdateInventoryButtons(newState);
+
             // If currently in-game then update equipment. Fixes sword/shield remaining or not being equipped if equipped to L/R buttons.
             if (Game1.InProgress)
                 Game1.GameManager.UpdateEquipment();

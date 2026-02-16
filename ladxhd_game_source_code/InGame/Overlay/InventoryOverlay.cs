@@ -96,17 +96,14 @@ namespace ProjectZ.InGame.Overlay
             _ocarinaFaces[1] = Resources.GetSprite("ocarina2");
             _ocarinaFaces[2] = Resources.GetSprite("ocarina3");
 
-            UpdateButtonLayout();
+            // Set the initial button layout which creates 4 or 6 equippable buttons.
+            UpdateButtonLayout(GameSettings.SixButtons);
         }
 
-        private void UpdateButtonLayout()
+        public void UpdateButtonLayout(bool sixButtons)
         {
-            // Don't need to update if the setting hasn't changed.
-            if (_lastSixButtonsState == GameSettings.SixButtons)
-                return;
-            _lastSixButtonsState = GameSettings.SixButtons;
-
-            if (GameSettings.SixButtons)
+            // If the setting was set to use six buttons.
+            if (sixButtons)
             {
                 var pos = new Point(8,2);
                 _itemSlots = new Rectangle[] 
@@ -130,6 +127,7 @@ namespace ProjectZ.InGame.Overlay
                 _itemRectangleSize = new Point(36, 26);
                 _equipmentPosition = new Point(6, 124);
             }
+            // The setting was set to use four buttons.
             else
             {
                 var pos = new Point(8,5);
@@ -150,6 +148,7 @@ namespace ProjectZ.InGame.Overlay
                 _itemRectangleSize = new Point(27, 26);
                 _equipmentPosition = new Point(6, 123);
             }
+            // Update the number of equippable items.
             _itemSlotString = new string[_itemSlots.Length];
             Values.HandItemSlots = _itemSlots.Length;
         }
@@ -260,8 +259,6 @@ namespace ProjectZ.InGame.Overlay
 
         public void DrawRT(SpriteBatch spriteBatch)
         {
-            UpdateButtonLayout();
-
             var device = Game1.Graphics.GraphicsDevice;
             device.SetRenderTarget(_renderTarget);
             device.Clear(Color.Transparent);
@@ -454,10 +451,8 @@ namespace ProjectZ.InGame.Overlay
                 ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[itemIndex], new Point(drawPosition.X, drawPosition.Y + offsetY + 1), slotRectangle, 1, Color.White);
             }
 
-            // TODO: A CRASH CAN HAPPEN HERE (SEE GITHUB ISSUE #641: https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/issues/641).
-            // The crash seems rare and is hard to replicate. The only thing I can think of is "_itemSlots"
-            // was null or "_itemSlots.Length" was zero for a short period for some reason. This could be a race condition.
-            var selectedItem = Game1.GameManager.Equipment[_itemSlots.Length + _selectedItemSlot];
+            // Draw the selected ocarina song.
+            var selectedItem = Game1.GameManager.Equipment[Values.HandItemSlots + _selectedItemSlot];
             if (selectedItem != null && selectedItem.Name == "ocarina")
             {
                 var selectedSong = Game1.GameManager.SelectedOcarinaSong;
