@@ -1793,7 +1793,7 @@ namespace ProjectZ.InGame.GameObjects
             if (missileDir >= 0)
                 intDirection = missileDir;
             else
-                intDirection = ReverseDirection(ToDirection(vecDirection));
+                intDirection = ToDirection(vecDirection);
 
             // Check if it's a projectile that was successfully blocked.
             bool blocked = WasBlocked(box, boxRect, boxCenter, bodyCenter, intDirection);
