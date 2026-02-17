@@ -51,10 +51,19 @@ namespace ProjectZ.InGame.Interface
             // Word-wrap text and apply padding.
             var wrappedLines = WrapText(Font, text, boxWidth - paddingX * 2);
             float lineHeight = Font.LineSpacing * Game1.UiScale;
-            float textBlockHeight = wrappedLines.Count * lineHeight;
 
             // Different scales make padding look different.
-            var extraPadding = Game1.UiScale == 1 ? paddingY : paddingY * 2;
+            float extraPadding = Game1.UiScale == 1 ? paddingY : paddingY * 2;
+            float reduceYPadding = 0;
+
+            // If Chinese is selected, we need slightly more spacing between the lines.
+            if (Game1.LanguageManager.CurrentLanguageCode == "chn")
+            {
+                lineHeight *= 1.25f;
+                reduceYPadding = -(4 * Game1.UiScale);
+            }
+            // Set the height of the text block.
+            float textBlockHeight = wrappedLines.Count * lineHeight;
 
             // Dynamically scale the height of the tooltip.
             float boxHeight = textBlockHeight + paddingY + borderThickness * 2;
@@ -78,7 +87,7 @@ namespace ProjectZ.InGame.Interface
             spriteBatch.Draw(Resources.SprWhite, boxRect, backgroundColor * backgroundAlpha);
 
             // Starting Y position vertically centered with top/bottom padding/
-            float startY = boxRect.Y + paddingY + (boxRect.Height - paddingY * 2 - textBlockHeight) / 2f;
+            float startY = boxRect.Y + paddingY + (boxRect.Height - paddingY * 2 - reduceYPadding - textBlockHeight) / 2f;
 
             foreach (var line in wrappedLines)
             {
@@ -107,39 +116,71 @@ namespace ProjectZ.InGame.Interface
 
         private static List<string> WrapText(SpriteFont font, string text, float maxLineWidth)
         {
-            // Split text into words, store into a temporary line, and test
-            // if it fits in textbox. Compiled results are stored in a list.
-            var words = text.Split(' ');
-            var lines = new List<string>();
-            string currentLine = "";
-
             // Debug function to find characters in the tooltip that crash.
             // FindCrashChars(font, text);
 
-            // Loop through each word and decide if it fits in the current line.
-            foreach (var word in words)
+            // A list to hold the lines and a reference to the current line.
+            List<string> lines = new List<string>();
+            string currentLine = "";
+
+            // Check if the current language is Chinese which splits on "characters".
+            if (Game1.LanguageManager.CurrentLanguageCode == "chn")
             {
-                // Test what the line would look like if added and measure it.
-                string testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
-                float lineWidth = font.MeasureString(testLine).X * Game1.UiScale;
-
-                // If the line with the added word is too wide for the textbox
-                // add the line to the list and start a new line.
-                if (lineWidth > maxLineWidth)
+                // Wrap character by character for Chinese font.
+                foreach (char c in text)
                 {
+                    // Test what the line would look like if added and measure it.
+                    string testLine = currentLine + c;
+                    float lineWidth = font.MeasureString(testLine).X * Game1.UiScale;
 
-                    if (!string.IsNullOrEmpty(currentLine))
-                        lines.Add(currentLine);
-                    currentLine = word;
+                    // If the line with the added character is too wide for the textbox
+                    // add the line to the list and start a new line.
+                    if (lineWidth > maxLineWidth)
+                    {
+                        if (!string.IsNullOrEmpty(currentLine))
+                            lines.Add(currentLine);
+
+                        currentLine = c.ToString();
+                    }
+                    // If the character fits add it to the current line.
+                    else
+                    {
+                        currentLine = testLine;
+                    }
                 }
-                // If the word fits add it to the current line.
-                else
-                    currentLine = testLine;
+            }
+            // For all other languages we use the code below which splits on "spaces".
+            else
+            {
+                // Split text into words.
+                string[] words = text.Split(' ');
+
+                // Loop through each word and decide if it fits in the current line.
+                foreach (string word in words)
+                {
+                    // Test what the line would look like if added and measure it.
+                    string testLine = string.IsNullOrEmpty(currentLine) ? word : currentLine + " " + word;
+                    float lineWidth = font.MeasureString(testLine).X * Game1.UiScale;
+
+                    // If the line with the added word is too wide for the textbox
+                    // add the line to the list and start a new line.
+                    if (lineWidth > maxLineWidth)
+                    {
+                        if (!string.IsNullOrEmpty(currentLine))
+                            lines.Add(currentLine);
+
+                        currentLine = word;
+                    }
+                    // If the word fits add it to the current line.
+                    else
+                        currentLine = testLine;
+                }
             }
             // Add remaining text to the final line.
             if (!string.IsNullOrEmpty(currentLine))
                 lines.Add(currentLine);
 
+            // Return the list of lines to display on the tooltip.
             return lines;
         }
     }
