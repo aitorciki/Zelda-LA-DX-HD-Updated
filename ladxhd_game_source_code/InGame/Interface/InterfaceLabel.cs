@@ -6,7 +6,10 @@ namespace ProjectZ.InGame.Interface
 {
     public class InterfaceLabel : InterfaceElement
     {
+        // A cached version of the font if fed to the parameter (used for header text).
         private SpriteFont _font;
+        
+        // Try to use the cached font if available. If not use the current GameFont.
         private SpriteFont Font => _font ?? Resources.GameFont;
 
         public Gravities TextAlignment
@@ -54,6 +57,7 @@ namespace ProjectZ.InGame.Interface
         {
             Size = new Point((int)_textSize.X, (int)_textSize.Y);
         }
+
         public void SetText(string strText)
         {
             // Debug: If the text crashes, this will let us know which line crashed.
@@ -82,16 +86,18 @@ namespace ProjectZ.InGame.Interface
 
         public void UpdateLanguageText()
         {
-            if (OverrideText == "")
+            // If override text was not set then use the text fed into the parameter.
+            if (string.IsNullOrEmpty(OverrideText))
             {
+                // The text is a "key" to pull up the "value" from the language dictionary. Compare the
+                // text found in the "value" against placeholder tags and replace ones that are found.
                 string setText = Game1.LanguageManager.GetString(_textKey, "error");
                 setText = Game1.LanguageManager.ReplacePlaceholderTag(setText);
                 SetText(setText);
             }
+            // If override text was used, then use it directly without using it as a "key".
             else
-            {
                 SetText(OverrideText);
-            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
@@ -102,10 +108,11 @@ namespace ProjectZ.InGame.Interface
             if (OverrideText != "" || (Translate && _textKey != null && Game1.LanguageManager.GetString(_textKey, "error") != Text))
                 UpdateLanguageText();
 
+            // If there is no text then don't try to draw any.
             if (Text == null)
                 return;
 
-            // draw the text
+            // Draw the text on the label.
             spriteBatch.DrawString(Font, Text,
                 new Vector2(
                     (int)(drawPosition.X + _drawOffset.X * scale),

@@ -56,9 +56,7 @@ namespace ProjectZ.InGame.Interface
         public InterfaceSlider()
         {
             Selectable = true;
-
             SelectionColor = Values.MenuButtonColorSelected;
-
             ColorSlider = Values.MenuButtonColorSlider;
         }
 

@@ -19,7 +19,7 @@ namespace ProjectZ.InGame.Things
 
         public void Load()
         {
-            // go through the .lng files and fill the _languageStrings dictionary array
+            // Go through the ".lng" files and fill the "_languageStrings" dictionary array. Searches both language and mods folders.
             var files = (Directory.Exists(Values.PathLanguageFolder)
                             ? Directory.EnumerateFiles(Values.PathLanguageFolder, "*.lng", SearchOption.AllDirectories)
                             : Enumerable.Empty<string>())
@@ -29,21 +29,23 @@ namespace ProjectZ.InGame.Things
                         .OrderBy(f => f)
                         .ToArray();
 
+            // Create the dictionary to store available languages. The default (first) entry is English.
             var languageStrings = new Dictionary<string, Dictionary<string, string>>();
-
-            // the default (first) entry is english
             languageStrings.Add("eng", new Dictionary<string, string>());
 
+            // Loop through all the language files that have been found.
             for (var i = 0; i < files.Length; i++)
             {
+                // Get the filename and split on underscores to determine type of language file.
                 var fileName = Path.GetFileNameWithoutExtension(files[i]);
                 var split = fileName.Split('_');
                 var lngName = "";
 
-                // eng.lng
+                // Adds the language file for menu elements (Example: "eng.lng").
                 if (split.Length == 1)
                     lngName = split[0];
-                // dialog_eng.lng
+
+                // Adds the language file for NPC dialogs (Example: "dialog_eng.lng").
                 if (split.Length == 2)
                     lngName = split[1];
 

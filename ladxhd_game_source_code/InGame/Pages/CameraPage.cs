@@ -24,6 +24,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleExScreenShake;
 
         private string _cameraName => GameSettings.ClassicCamera ? "Classic Camera" : "Modern Camera";
+
         private bool _showTooltip;
 
         public void SetCameraMode(bool state) => ToggleCameraModes(state);
