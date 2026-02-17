@@ -5810,7 +5810,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             var dungeonEntryPosition = new Vector2(1840, 272);
-            var distance = MapManager.ObjLink.Position - dungeonEntryPosition;
+            var distance = Position - dungeonEntryPosition;
             if (MathF.Abs(distance.X) > 512 || MathF.Abs(distance.Y) > 256)
             {
                 _spawnGhost = false;

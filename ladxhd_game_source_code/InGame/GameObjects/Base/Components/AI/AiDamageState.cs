@@ -58,6 +58,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private bool _damageBlink;
         private bool _returnState;
         private readonly bool _hasBurnState;
+        private bool _isDead;
 
         public const int BlinkTime = 66;
         public const int CooldownTime = BlinkTime * 6;
@@ -328,21 +329,20 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             // If both collisions happened or the counter has reached 5 iterations.
             if ((collision && _pieceOfPowerDeathCount > 1) || (_pieceOfPowerDeathCount > 5))
             {
-                _pieceOfPower = false;
-                _body.Drag = _bodyDrag;
-                _body.DragAir = _bodyDragAir;
-
+                // The hit killed the enemy.
                 if (CurrentLives <= 0)
                 {
                     _body.Velocity.X = 0;
                     _body.Velocity.Y = 0;
+                    _deathCountdown.Stop();
                     OnDeath(true);
-                    _gameObject.Map.Objects.RegisterAlwaysAnimateObject(_gameObject);
+                    return;
                 }
-                else
-                {
-                    _aiComponent.ChangeState(_aiComponent.LastStateId, true);
-                }
+                // The enemy survived the hit.
+                _pieceOfPower = false;
+                _body.Drag = _bodyDrag;
+                _body.DragAir = _bodyDragAir;
+                _aiComponent.ChangeState(_aiComponent.LastStateId, true);
             }
         }
 
@@ -477,9 +477,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
         public void BaseOnDeath(bool pieceOfPower)
         {
-            if (_gameObject.Map == null)
+            // If the object is already gone then return.
+            if (_isDead || _gameObject.Map == null)
                 return;
 
+            // Prevent stacking deaths.
+            _isDead = true;
+
+            // Delete the object.
             _gameObject.Map.Objects.DeleteObjects.Add(_gameObject);
 
             // Play piece of power sound effect.
