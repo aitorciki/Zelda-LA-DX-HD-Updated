@@ -156,7 +156,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateSit()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - _owlPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - _owlPosition.Position;
             if (playerDirection.Length() < 64 && MapManager.ObjLink.IsGrounded())
             {
                 // start playing owl music
@@ -282,7 +282,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // player looks at the owl
             if (_airCount > _enterTime - 1000)
             {
-                var playerDir = _owlPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+                var playerDir = _owlPosition.Position - MapManager.ObjLink.Position;
                 MapManager.ObjLink.Direction = AnimationHelper.GetDirection(playerDir);
             }
 

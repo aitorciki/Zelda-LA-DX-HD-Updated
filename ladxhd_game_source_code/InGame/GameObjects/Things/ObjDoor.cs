@@ -143,31 +143,31 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (Map.Is2dMap)
                 {
                     if (_direction == 0)
-                        transitionEnd = MapManager.ObjLink.EntityPosition.Position + new Vector2(8, 0);
+                        transitionEnd = MapManager.ObjLink.Position + new Vector2(8, 0);
                     else if (_direction == 2)
-                        transitionEnd = MapManager.ObjLink.EntityPosition.Position + new Vector2(-8, 0);
+                        transitionEnd = MapManager.ObjLink.Position + new Vector2(-8, 0);
                     else if (_direction == 3)
-                        transitionEnd = MapManager.ObjLink.EntityPosition.Position + new Vector2(MapManager.ObjLink.GetSwimVelocity().X * 8, -8);
+                        transitionEnd = MapManager.ObjLink.Position + new Vector2(MapManager.ObjLink.GetSwimVelocity().X * 8, -8);
 
                     // look at the camera
                     MapManager.ObjLink.Direction = 3;
                 }
                 else
                     // do not move while transitioning out
-                    transitionEnd = MapManager.ObjLink.EntityPosition.Position;
+                    transitionEnd = MapManager.ObjLink.Position;
             }
             else if (_mode == 5)
             {
-                transitionEnd = MapManager.ObjLink.EntityPosition.Position + MapManager.ObjLink._body.VelocityTarget * 60 * (MapTransitionSystem.ChangeMapTime / 1000f);
+                transitionEnd = MapManager.ObjLink.Position + MapManager.ObjLink._body.VelocityTarget * 60 * (MapTransitionSystem.ChangeMapTime / 1000f);
                 color = Color.White;
                 colorMode = true;
             }
             // Play the stairs sound effect.
             Game1.GameManager.PlaySoundEffect("D378-06-06");
 
-            MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
+            MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.Position;
             MapManager.ObjLink.MapTransitionEnd = transitionEnd;
-            MapManager.ObjLink.TransitionOutWalking = MapManager.ObjLink.EntityPosition.Position != transitionEnd;
+            MapManager.ObjLink.TransitionOutWalking = MapManager.ObjLink.Position != transitionEnd;
 
             // Append a map change.
             var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];

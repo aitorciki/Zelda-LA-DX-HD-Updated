@@ -299,7 +299,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _updateCarry = false;
             }
             // Import properties from Link to apply to rooster.
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var distance = playerDirection.Length();
             var playerSpeed = MapManager.ObjLink.LastMoveVector.Length();
 

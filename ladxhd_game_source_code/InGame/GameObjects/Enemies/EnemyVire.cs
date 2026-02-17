@@ -241,7 +241,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // get repelled by the player
             var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) -
-                MapManager.ObjLink.EntityPosition.Position;
+                MapManager.ObjLink.Position;
             if (playerDirection != Vector2.Zero && playerDirection.Length() < 64)
             {
                 playerDirection.Normalize();
@@ -276,7 +276,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Play("fly");
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
+            var playerDirection = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();
@@ -301,7 +301,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitAttack()
         {
             var startPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8);
-            var direction = MapManager.ObjLink.EntityPosition.Position - startPosition;
+            var direction = MapManager.ObjLink.Position - startPosition;
             var radiant = MathF.Atan2(direction.Y, direction.X);
 
             var dist = 0.125f;
@@ -323,7 +323,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitFlying()
         {
-            var playerDirection = _roomCenter - MapManager.ObjLink.EntityPosition.Position;
+            var playerDirection = _roomCenter - MapManager.ObjLink.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 
@@ -376,7 +376,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateCircling()
         {
             var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) -
-                MapManager.ObjLink.EntityPosition.Position;
+                MapManager.ObjLink.Position;
             if (playerDirection.Length() < 40)
             {
                 _aiComponent.ChangeState("repelled");

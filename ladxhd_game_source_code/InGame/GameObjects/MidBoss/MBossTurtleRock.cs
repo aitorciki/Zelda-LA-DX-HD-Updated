@@ -269,7 +269,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitAttack()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var angle = MathF.Atan2(playerDirection.Y, playerDirection.X);
             angle = MathHelper.Clamp(angle, 0, MathF.PI);
 

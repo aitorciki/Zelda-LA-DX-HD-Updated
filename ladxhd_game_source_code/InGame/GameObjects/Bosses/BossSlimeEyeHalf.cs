@@ -113,7 +113,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _aiComponent.ChangeState("jumping");
 
-            var direction = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var direction = EntityPosition.Position - MapManager.ObjLink.Position;
             if (direction != Vector2.Zero)
                 direction.Normalize();
 
@@ -137,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("jumping");
 
             // random direction
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
 
             float radius;
 
@@ -214,7 +214,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("jumping");
 
             // clamp the position to land inside the room
-            var newPosition = MapManager.ObjLink.EntityPosition.Position;
+            var newPosition = MapManager.ObjLink.Position;
             newPosition.X = MathHelper.Clamp(newPosition.X,
                 _fieldRectangle.X + _body.Width / 2, _fieldRectangle.Right - _body.Width / 2);
             newPosition.Y = MathHelper.Clamp(newPosition.Y + 8,

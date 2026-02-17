@@ -291,7 +291,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Game1.GameManager.PlaySoundEffect("D360-32-20");
 
             // follow the player
-            var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
+            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
             if (direction != Vector2.Zero)
             {
                 direction.Normalize();

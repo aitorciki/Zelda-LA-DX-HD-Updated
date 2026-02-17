@@ -73,7 +73,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiFallState = new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
             _body.HoleAbsorb = OnHoleAbsorb;
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             playerDirection.Normalize();
             _body.VelocityTarget = playerDirection * _walkSpeed;
 

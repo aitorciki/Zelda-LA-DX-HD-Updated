@@ -86,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitFlying()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
             _body.VelocityTarget = playerDirection * 1.75f;

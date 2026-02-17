@@ -154,7 +154,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // suck in the player
-            var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z + 4) - MapManager.ObjLink.EntityPosition.Position;
+            var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z + 4) - MapManager.ObjLink.Position;
             var playerDir = EntityPosition.X > MapManager.ObjLink.EntityPosition.X ? 0 : 1;
 
             // trap the player if he is close enough
@@ -274,7 +274,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 if (_endMove)
                 {
-                    var playerDirection = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+                    var playerDirection = EntityPosition.Position - MapManager.ObjLink.Position;
                     var playerDir = EntityPosition.X > MapManager.ObjLink.EntityPosition.X ? 0 : 1;
 
                     if (Math.Abs(playerDirection.Y) < 32 && Math.Abs(playerDirection.X) < 48 && playerDir == _direction)

@@ -114,7 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitThrow()
         {
             // is the player close enough?
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
             if (direction.Y < -32 || Math.Abs(direction.X) > 64 || direction.Length() > 128)
             {
                 _aiComponent.ChangeState("idle");
@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (_body.IsGrounded)
             {
-                var direction = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+                var direction = EntityPosition.Position - MapManager.ObjLink.Position;
                 if (direction != Vector2.Zero)
                     direction.Normalize();
 

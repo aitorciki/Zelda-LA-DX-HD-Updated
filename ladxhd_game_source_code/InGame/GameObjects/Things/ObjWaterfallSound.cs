@@ -26,7 +26,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            var distance = (EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position).Length();
+            var distance = (EntityPosition.Position - MapManager.ObjLink.Position).Length();
             if (distance < _maxDistance)
             {
                 _maxDistance = distance;

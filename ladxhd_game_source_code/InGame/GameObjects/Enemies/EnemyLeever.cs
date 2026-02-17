@@ -148,7 +148,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _fieldPosition.Y + Game1.RandomNumber.Next(0, 8) * 16);
 
             // make sure to not spawn directly at the player
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - new Vector2(newPosition.X + 8, newPosition.Y + 16);
+            var playerDistance = MapManager.ObjLink.Position - new Vector2(newPosition.X + 8, newPosition.Y + 16);
             if (playerDistance.Length() < 24)
                 return;
 
@@ -195,7 +195,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateMoving()
         {
             // move in the direction of the player
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
             direction.Normalize();
             _body.VelocityTarget = direction * MoveSpeed;
         }

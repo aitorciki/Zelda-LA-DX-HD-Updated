@@ -70,8 +70,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _isTransitioning = true;
 
-            MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
-            MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position;
+            MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.Position;
+            MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.Position;
             MapManager.ObjLink.TransitionOutWalking = false;
 
             // append a map change

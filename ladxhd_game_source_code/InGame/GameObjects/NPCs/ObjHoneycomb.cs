@@ -129,7 +129,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // look at tarin
             if (_spawnBees && _spawnCounter > 2350)
             {
-                var playerDirection = new Vector2(_objFollowerTarget.EntityPosition.X, _objFollowerTarget.EntityPosition.Y + 16) - MapManager.ObjLink.EntityPosition.Position;
+                var playerDirection = new Vector2(_objFollowerTarget.EntityPosition.X, _objFollowerTarget.EntityPosition.Y + 16) - MapManager.ObjLink.Position;
                 if (playerDirection != Vector2.Zero)
                     playerDirection.Normalize();
 

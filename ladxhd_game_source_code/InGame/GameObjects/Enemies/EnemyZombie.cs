@@ -116,7 +116,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk");
 
             // start walking towards the player
-            var walkDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var walkDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             if (walkDirection != Vector2.Zero)
                 walkDirection.Normalize();

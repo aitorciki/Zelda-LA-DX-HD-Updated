@@ -79,7 +79,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitAttack()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position -
+            var playerDirection = MapManager.ObjLink.Position -
                 new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             if (playerDirection != Vector2.Zero)
             {

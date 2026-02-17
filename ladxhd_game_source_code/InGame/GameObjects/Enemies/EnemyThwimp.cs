@@ -85,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateIdle()
         {
             // trigger trap
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distance = EntityPosition.Position - MapManager.ObjLink.Position;
             var distanceH = Math.Abs(distance.X);
 
             var angry = distanceH < 40;

@@ -145,7 +145,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateFlying()
         {
-            var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             var directionRadius = Math.Atan2(direction.Y, direction.X);
             var distance = direction.Length();
 

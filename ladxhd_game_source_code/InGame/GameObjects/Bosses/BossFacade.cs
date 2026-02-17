@@ -236,7 +236,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 return;
             }
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position -
+            var playerDirection = MapManager.ObjLink.Position -
                                   new Vector2(objPot.EntityPosition.X, objPot.EntityPosition.Y - objPot.EntityPosition.Z + 2);
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();

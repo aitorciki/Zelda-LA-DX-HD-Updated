@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (!_dialog && _moveCounter > 2000)
             {
-                var playerDistance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+                var playerDistance = EntityPosition.Position - MapManager.ObjLink.Position;
                 if (playerDistance.Length() < 80)
                 {
                     _dialog = true;

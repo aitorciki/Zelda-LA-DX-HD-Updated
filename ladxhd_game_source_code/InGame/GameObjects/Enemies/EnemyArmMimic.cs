@@ -117,7 +117,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (_wasColliding)
                 {
                     var moveVelocity = -MapManager.ObjLink.LastMoveVector;
-                    var diff = (MapManager.ObjLink.EntityPosition.Position - _lastPosition) / Game1.TimeMultiplier;
+                    var diff = (MapManager.ObjLink.Position - _lastPosition) / Game1.TimeMultiplier;
 
                     // Stops the enemy if the player runs into an obstacle.
                     moveVelocity = new Vector2(
@@ -142,7 +142,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     }
                 }
                 _wasColliding = true;
-                _lastPosition = MapManager.ObjLink.EntityPosition.Position;
+                _lastPosition = MapManager.ObjLink.Position;
             }
             else
             {

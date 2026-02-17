@@ -200,9 +200,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void EndIdle()
         {
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distance = EntityPosition.Position - MapManager.ObjLink.Position;
 
-            if (_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) && distance.Length() < AttackRange)
+            if (_fieldRectangle.Contains(MapManager.ObjLink.Position) && distance.Length() < AttackRange)
                 _aiComponent.ChangeState("attack");
             else
                 _aiComponent.ChangeState("walking");
@@ -215,9 +215,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void StateAttack()
         {
-            var direction = (MapManager.ObjLink.EntityPosition.Position + AnimationHelper.DirectionOffset[_direction] * 3) - EntityPosition.Position;
+            var direction = (MapManager.ObjLink.Position + AnimationHelper.DirectionOffset[_direction] * 3) - EntityPosition.Position;
 
-            if (!_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) || direction.Length() > FollowRange)
+            if (!_fieldRectangle.Contains(MapManager.ObjLink.Position) || direction.Length() > FollowRange)
             {
                 _aiComponent.ChangeState("idle");
                 return;
@@ -255,7 +255,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!SpawnGoldLeaf)
                 return;
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
             playerDirection *= 1.75f;

@@ -180,7 +180,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_bombThrowCounter > 0)
                 return;
 
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDistance.Length() > 64)
                 return;
 

@@ -73,7 +73,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _lookUpdateCounter = 0;
 
                 // look at the player
-                var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
                 if (Math.Abs(playerDirection.X) > Math.Abs(playerDirection.Y))
                 {
                     if (playerDirection.X < 0)

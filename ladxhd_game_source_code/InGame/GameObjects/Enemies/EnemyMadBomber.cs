@@ -111,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnDeath(bool pieceofpower)
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
             playerDirection *= 2.25f;
@@ -135,7 +135,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateHidden()
         {
             // only spawn if the player is close enough
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - new Vector2(_spawnPosition.X, _spawnPosition.Y - 15);
+            var playerDirection = MapManager.ObjLink.Position - new Vector2(_spawnPosition.X, _spawnPosition.Y - 15);
             if (playerDirection.Length() < 64)
                 ToComing();
 
@@ -154,7 +154,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 var holePosition = _spawnPosition + _holeOffsets[randomNum] * 16;
 
                 // check the distance to not spawn next to the player
-                var direction = MapManager.ObjLink.EntityPosition.Position - holePosition;
+                var direction = MapManager.ObjLink.Position - holePosition;
                 if (direction.Length() > 48)
                 {
                     _aiComponent.ChangeState("coming");
@@ -197,7 +197,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void ThrowBomb()
         {
-            var throwDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var throwDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (throwDirection != Vector2.Zero)
                 throwDirection.Normalize();
             throwDirection *= 0.8f;

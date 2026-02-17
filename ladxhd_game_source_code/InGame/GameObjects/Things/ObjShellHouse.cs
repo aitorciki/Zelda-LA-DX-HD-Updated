@@ -95,7 +95,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Update()
         {
             // Check for the player hitting the trigger point and start the count.
-            var playerDistance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var playerDistance = EntityPosition.Position - MapManager.ObjLink.Position;
             if (!_triggerEntryDialog && playerDistance.X < 105)
             {
                 _triggerEntryDialog = true;

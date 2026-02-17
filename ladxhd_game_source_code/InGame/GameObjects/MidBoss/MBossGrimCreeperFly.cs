@@ -201,7 +201,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _hittableComponent.IsActive = true;
 
             // fly towards the player
-            var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
+            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
             if (direction != Vector2.Zero)
             {
                 direction.Normalize();

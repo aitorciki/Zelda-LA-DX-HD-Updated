@@ -139,7 +139,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // start attacking the player?
             if (_animator.CurrentAnimation.Id == "idle")
             {
-                var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
                 if (playerDistance.Length() < 128)
                 {
                     _animator.Play("pre_attack");

@@ -263,7 +263,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void InitRun()
         {
             // run towards the player
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
             if (direction != Vector2.Zero)
                 direction.Normalize();
             _body.VelocityTarget = direction * 1.5f;
@@ -304,7 +304,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             var handOffset = _animator.CurrentFrameIndex == 0 ? 8 : -8;
             var spawnPosition = new Vector2(EntityPosition.X + handOffset, EntityPosition.Y);
-            var throwDirection = MapManager.ObjLink.EntityPosition.Position - spawnPosition;
+            var throwDirection = MapManager.ObjLink.Position - spawnPosition;
             var maxRange = 48f;
             var mult = 1.5f;
             if (throwDirection.Length() > maxRange)

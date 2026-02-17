@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             // start by flying away from the player
             _startDistance = Game1.RandomNumber.Next(25, 50);
-            var playerDirection = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var playerDirection = EntityPosition.Position - MapManager.ObjLink.Position;
             _currentRotation = MathF.Atan2(playerDirection.Y, playerDirection.X);
             _flyTime = 500;
             _flyCounter = _flyTime;
@@ -154,7 +154,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 var randomDirection = ((Game1.RandomNumber.Next(0, 20) - 10) / 6f) * ((float)Math.PI / (60 * (_flyCounter / 1000f)));
 
                 // direction back to the base
-                var startDifference = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+                var startDifference = EntityPosition.Position - MapManager.ObjLink.Position;
                 var targetRotation = Math.Atan2(startDifference.Y, startDifference.X);
                 var rotationDifference = (float)targetRotation - _currentRotation;
                 while (rotationDifference < 0)

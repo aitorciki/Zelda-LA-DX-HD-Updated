@@ -178,7 +178,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateIdle()
         {
-            var distance = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y + 1);
+            var distance = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y + 1);
 
             // Use a zone large enough players can't clip off the raft or jump over it.
             var isColliding = Math.Abs(distance.X) <= 12 && Math.Abs(distance.Y) <= 3;

@@ -65,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitForward()
         {
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
             if (direction != Vector2.Zero)
             {
                 direction.Normalize();

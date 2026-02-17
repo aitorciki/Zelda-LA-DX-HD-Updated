@@ -139,7 +139,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = new Vector2(0, 0);
 
             // shoot if the player is in the range and in the right direction
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Length() < 80)
             {
                 if (playerDirection != Vector2.Zero)
@@ -171,7 +171,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitFlying()
         {
             // fly towards the player
-            var vecDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var vecDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             vecDirection.Normalize();
 
             _pushComponent.IsActive = false;
@@ -186,7 +186,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _flyCounter += Game1.DeltaTime;
 
             // face the player
-            var vecDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var vecDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             _direction = AnimationHelper.GetDirection(vecDirection);
             _animator.Play("walk_" + _direction);
 
@@ -259,7 +259,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // Fly over the player if the octorok is facing Link.
             var playerDirection = AnimationHelper.GetDirection(
-                MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position);
+                MapManager.ObjLink.Position - EntityPosition.Position);
 
             if (_direction != (playerDirection + 2) % 4 && _damageSwitch.State &&
                 (_aiComponent.CurrentStateId == "walking" || _aiComponent.CurrentStateId == "idle") &&

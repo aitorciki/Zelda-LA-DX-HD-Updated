@@ -148,7 +148,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void ToAttacking()
         {
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distance = EntityPosition.Position - MapManager.ObjLink.Position;
             if (distance.Length() > 90)
             {
                 ToDespawning();

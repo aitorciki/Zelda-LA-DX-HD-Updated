@@ -144,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitStand()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             _direction = AnimationHelper.GetDirection(playerDirection);
 

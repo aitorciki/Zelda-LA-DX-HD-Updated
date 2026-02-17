@@ -95,6 +95,7 @@ namespace ProjectZ.InGame.GameObjects
             }
         }
         // Link Position
+        public Vector2 Position => EntityPosition.Position;
         public CPosition CenterPosition => new CPosition(EntityPosition.X, EntityPosition.Y - 4, EntityPosition.Z);
         public float PosX => EntityPosition.X;
         public float PosY => EntityPosition.Y;
@@ -5809,7 +5810,7 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             var dungeonEntryPosition = new Vector2(1840, 272);
-            var distance = MapManager.ObjLink.EntityPosition.Position - dungeonEntryPosition;
+            var distance = MapManager.ObjLink.Position - dungeonEntryPosition;
             if (MathF.Abs(distance.X) > 512 || MathF.Abs(distance.Y) > 256)
             {
                 _spawnGhost = false;

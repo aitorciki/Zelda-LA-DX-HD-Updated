@@ -309,7 +309,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _jumpCount++;
 
                 // jump toward the player
-                var ballDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var ballDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
                 if (ballDirection.Length() > 5)
                 {
@@ -333,7 +333,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity = new Vector3(0, 0, 1.75f);
 
             // throw towards the player; scale the throw speed depending on the distance of the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var playerDistance = playerDirection.Length();
             if (playerDistance > 0)
                 playerDirection.Normalize();

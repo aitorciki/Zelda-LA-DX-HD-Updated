@@ -138,7 +138,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = new Vector2(0, 0);
 
             // shoot if the player is in the range and in the right direction
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Length() < 80)
             {
                 if (playerDirection != Vector2.Zero)

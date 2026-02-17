@@ -136,7 +136,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
-            var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var distance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (distance.Length() < 36 && _body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
                 _aiComponent.ChangeState("move");
         }
@@ -144,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitMove()
         {
             // move towards the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();

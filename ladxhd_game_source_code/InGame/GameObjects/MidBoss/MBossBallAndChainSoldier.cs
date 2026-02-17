@@ -115,7 +115,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void KillBoss()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
             playerDirection *= 1.75f;
@@ -150,7 +150,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (!_walkTimer.State)
                 return;
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Length() < 48)
             {
                 ToSwing();

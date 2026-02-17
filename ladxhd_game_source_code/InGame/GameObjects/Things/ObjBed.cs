@@ -78,8 +78,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 _startTransition = true;
 
-                MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
-                MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position;
+                MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.Position;
+                MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.Position;
 
                 var transitionSystem = ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]);
                 transitionSystem.AppendMapChange(_nextMap, "bed");

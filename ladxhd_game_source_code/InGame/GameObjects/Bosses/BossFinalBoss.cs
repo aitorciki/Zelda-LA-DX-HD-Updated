@@ -512,7 +512,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _animator.Play("slime_jump");
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 
@@ -657,7 +657,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateManPreAttack()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             _direction = AnimationHelper.GetDirection(playerDirection);
 
             if (_agahnimInit)
@@ -692,7 +692,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateManAttack()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var newDirection = AnimationHelper.GetDirection(playerDirection);
 
             if (newDirection != _direction)
@@ -1058,7 +1058,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             // move towards the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y + 4);
+            var playerDirection = MapManager.ObjLink.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y + 4);
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();
@@ -1106,7 +1106,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateGanonWait()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var dir = playerDirection.X < 0 ? -1 : 1;
 
             _animator.Play("ganon_" + dir);
@@ -1117,7 +1117,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _drawGanonWeapon = true;
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var dir = playerDirection.X < 0 ? -1 : 1;
 
             _animator.Play("ganon_weapon_spawn_" + dir);
@@ -1183,7 +1183,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateDirection()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             _direction = playerDirection.X < 0 ? -1 : 1;
         }
 
@@ -1232,7 +1232,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _damageField.CollisionBox = new CBox(EntityPosition, -12, 7 - 24, 24, 24, 8);
             _hittableComponent.HittableBox = new CBox(EntityPosition, -12, 7 - 24, 24, 24, 8);
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var dir = playerDirection.X < 0 ? -1 : 1;
 
             Game1.GameManager.PlaySoundEffect("D370-35-23");
@@ -1248,7 +1248,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateGanonPreSpawnWeapon()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var dir = playerDirection.X < 0 ? -1 : 1;
 
             _animator.Play("ganon_weapon_" + dir);
@@ -1258,7 +1258,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _drawGanonWeapon = true;
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var dir = playerDirection.X < 0 ? -1 : 1;
 
             Game1.GameManager.PlaySoundEffect("D360-57-39");
@@ -1279,7 +1279,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateGanon()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var dir = playerDirection.X < 0 ? -1 : 1;
 
             _animator.Play("ganon_" + dir);

@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // calculate the goal position based on the offset, object position and the player position
             var playerBody = MapManager.ObjLink._body;
             var pushDir = AnimationHelper.GetDirection(direction);
-            var goalPosition = MapManager.ObjLink.EntityPosition.Position;
+            var goalPosition = MapManager.ObjLink.Position;
 
             if (pushDir != _direction)
                 return false;

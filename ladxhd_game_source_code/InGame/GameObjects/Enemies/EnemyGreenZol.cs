@@ -174,7 +174,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateNotSpawned()
         {
-            var distVec = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distVec = EntityPosition.Position - MapManager.ObjLink.Position;
 
             // spawn?
             if (distVec.Length() < 32)
@@ -239,7 +239,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             Game1.GameManager.PlaySoundEffect("D360-36-24");
 
-            var vecDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var vecDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (vecDirection != Vector2.Zero)
                 vecDirection.Normalize();
             vecDirection *= 0.75f;

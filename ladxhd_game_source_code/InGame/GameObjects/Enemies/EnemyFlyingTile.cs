@@ -212,7 +212,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitFlying()
         {
             // start flying towards the player
-            var velocity = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
+            var velocity = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
             if (velocity != Vector2.Zero)
                 velocity.Normalize();
 

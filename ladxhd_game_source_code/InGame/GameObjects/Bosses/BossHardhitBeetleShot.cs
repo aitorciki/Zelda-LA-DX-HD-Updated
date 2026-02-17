@@ -39,7 +39,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             };
 
             // move towards the player
-            var velocity = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var velocity = MapManager.ObjLink.Position - EntityPosition.Position;
             if (velocity != Vector2.Zero)
                 velocity.Normalize();
             _body.VelocityTarget = velocity * speed;

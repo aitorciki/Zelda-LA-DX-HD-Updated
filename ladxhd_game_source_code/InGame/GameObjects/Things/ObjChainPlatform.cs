@@ -185,7 +185,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         // is also standing on a ledge and is not really pushing down on the platform
         private bool PlayerIsMovable()
         {
-            var lastPosition = MapManager.ObjLink.EntityPosition.Position;
+            var lastPosition = MapManager.ObjLink.Position;
 
             _cBoxCollision.IsActive = false;
             SystemBody.MoveBody(MapManager.ObjLink._body, new Vector2(0, 1), Values.CollisionTypes.Normal, false, false, false);

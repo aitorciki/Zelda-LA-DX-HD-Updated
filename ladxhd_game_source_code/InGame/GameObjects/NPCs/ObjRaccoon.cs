@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             // look at the raccoon
-            var playerDirection = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var playerDirection = EntityPosition.Position - MapManager.ObjLink.Position;
             var playerDir = AnimationHelper.GetDirection(playerDirection);
             MapManager.ObjLink.SetWalkingDirection(playerDir);
 

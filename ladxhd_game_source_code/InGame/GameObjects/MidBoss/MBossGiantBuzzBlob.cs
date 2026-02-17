@@ -275,7 +275,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity.Z = 2.5f;
 
             // move towards the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
             _body.VelocityTarget = playerDirection * JumpSpeed;

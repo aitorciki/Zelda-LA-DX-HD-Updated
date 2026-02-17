@@ -52,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _fireballCounter -= FireballTime;
 
             // spawn a fireball?
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distance = EntityPosition.Position - MapManager.ObjLink.Position;
             if (distance.Length() < 106)
                 Map.Objects.SpawnObject(new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 1.25f));
         }

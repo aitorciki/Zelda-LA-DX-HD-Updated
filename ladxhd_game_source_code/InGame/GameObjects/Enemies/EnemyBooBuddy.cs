@@ -155,7 +155,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_rangeBox.Contains(MapManager.ObjLink.BodyRectangle))
             {
                 // move towards the player
-                var playerDirection = MapManager.ObjLink.EntityPosition.Position + _targetPositionOffset - EntityPosition.Position;
+                var playerDirection = MapManager.ObjLink.Position + _targetPositionOffset - EntityPosition.Position;
                 if (playerDirection != Vector2.Zero)
                     playerDirection.Normalize();
 
@@ -241,7 +241,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateFleeing()
         {
             // move away from the player
-            var playerDirection = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var playerDirection = EntityPosition.Position - MapManager.ObjLink.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 

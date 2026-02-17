@@ -227,7 +227,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // Reverse direction and set the start position to Link's position.
             var newVelocity = -_body.VelocityTarget * 1.35f;
-            _startPosition = MapManager.ObjLink.EntityPosition.Position;
+            _startPosition = MapManager.ObjLink.Position;
 
             // Update travel direction + animation.
             dir = AnimationHelper.GetDirection(newVelocity);

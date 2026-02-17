@@ -192,7 +192,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateWaiting()
         {
-            var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var distance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (distance.Length() < 24)
             {
                 var bowWowState = Game1.GameManager.SaveManager.GetString("bowWow");
@@ -277,7 +277,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateReset()
         {
-            var distance = MapManager.ObjLink.EntityPosition.Position - ResetPosition.Position;
+            var distance = MapManager.ObjLink.Position - ResetPosition.Position;
 
             // come back to the start position?
             if (distance.Length() > 128 || MapManager.ObjLink.FieldChange)

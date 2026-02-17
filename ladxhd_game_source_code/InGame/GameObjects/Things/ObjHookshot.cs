@@ -80,7 +80,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map = map;
 
             _hookshotPosition.Set(position);
-            _startPositionOffset = new Vector2(position.X, position.Y) - MapManager.ObjLink.EntityPosition.Position;
+            _startPositionOffset = new Vector2(position.X, position.Y) - MapManager.ObjLink.Position;
 
             _body.VelocityTarget = direction * Speed;
             _body.CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot;
@@ -114,7 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
             }
 
-            var direction = MapManager.ObjLink.EntityPosition.Position + _startPositionOffset - _hookshotPosition.Position;
+            var direction = MapManager.ObjLink.Position + _startPositionOffset - _hookshotPosition.Position;
             var distance = direction.Length();
 
             _hookshotPosition.Z = MapManager.ObjLink.EntityPosition.Z;

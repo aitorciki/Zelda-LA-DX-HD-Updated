@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
 
             if (playerDistance.Length() < 40)
                 _spawnCounter -= Game1.DeltaTime;

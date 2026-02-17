@@ -265,8 +265,8 @@ namespace ProjectZ.InGame.GameObjects
 
             CurrentState = State.Knockout;
 
-            MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
-            MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position + direction * 80;
+            MapTransitionStart = MapManager.ObjLink.Position;
+            MapTransitionEnd = MapManager.ObjLink.Position + direction * 80;
             TransitionOutWalking = false;
 
             var transitionSystem = ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]);

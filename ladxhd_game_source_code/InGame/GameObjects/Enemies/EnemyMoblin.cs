@@ -142,7 +142,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return;
 
             // Calculate distance between Moblin and Link.
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             // Throw a spear if the player is in range and in the facing direction.
             if (playerDirection.Length() < 128)

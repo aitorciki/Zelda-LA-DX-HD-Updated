@@ -138,7 +138,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateWalk()
         {
             // is the player on the same line horizontally or vertically?
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Length() < 64 &&
                 (Math.Abs(playerDirection.X) < 4 || Math.Abs(playerDirection.Y) < 4))
             {

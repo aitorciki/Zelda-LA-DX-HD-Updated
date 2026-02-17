@@ -67,7 +67,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 Game1.GameManager.PlaySoundEffect("D378-06-06");
 
-                MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
+                MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.Position;
                 MapManager.ObjLink.MapTransitionEnd = _transitionPosition;
                 MapManager.ObjLink.TransitionOutWalking = true;
                 MapManager.ObjLink.Direction = 1;

@@ -125,7 +125,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateFollowPlayer()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var playerDistance = playerDirection.Length();
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();

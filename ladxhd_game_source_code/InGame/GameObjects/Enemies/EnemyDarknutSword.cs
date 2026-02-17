@@ -63,7 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Update()
         {
             // Optimization: Skip the update function if Link is not in the same rect as the enemy.
-            if (!_fieldRect.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_fieldRect.Contains(MapManager.ObjLink.Position))
                 return;
 
             // Get the difference between the X and Y positions between Link and the Darknut.

@@ -143,7 +143,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 }
 
                 // move towards the player
-                var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var direction = MapManager.ObjLink.Position - EntityPosition.Position;
                 var distance = direction.Length();
                 if (direction != Vector2.Zero)
                     direction.Normalize();

@@ -370,7 +370,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _featherCounter = 0;
 
                 var startPosition = new Vector2(EntityPosition.X - _direction * 4, EntityPosition.Y + 10);
-                var direction = MapManager.ObjLink.EntityPosition.Position - startPosition;
+                var direction = MapManager.ObjLink.Position - startPosition;
                 if (direction != Vector2.Zero)
                     direction.Normalize();
 

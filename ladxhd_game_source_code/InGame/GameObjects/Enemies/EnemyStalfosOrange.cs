@@ -162,7 +162,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // jump away when the player is pressing the use key
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distance = EntityPosition.Position - MapManager.ObjLink.Position;
             if (_jumpSwitch.State && distance.Length() < 48)
                 for (var i = 0; i < 4; i++)
                     if (ControlHandler.ButtonPressed((CButtons)((int)CButtons.A * Math.Pow(2, i))))
@@ -185,7 +185,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("jumping");
 
             // jump away from the player
-            var vecDirection = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var vecDirection = EntityPosition.Position - MapManager.ObjLink.Position;
             vecDirection.Normalize();
             _body.Velocity = new Vector3(0, 0, _acceleration);
             _body.VelocityTarget = new Vector2(vecDirection.X, vecDirection.Y);

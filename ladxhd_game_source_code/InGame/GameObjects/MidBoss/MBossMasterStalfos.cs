@@ -314,7 +314,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 var damageBox = new Box(EntityPosition.X - 16 + (_direction == -1 ? -6 : 6), EntityPosition.Y - 22, 0, 32, 38, 8);
                 if (damageBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
                 {
-                    var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                    var direction = MapManager.ObjLink.Position - EntityPosition.Position;
                     if (direction != Vector2.Zero)
                         direction.Normalize();
 
@@ -331,7 +331,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _body.VelocityTarget = Vector2.Zero;
             // look at the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             _direction = playerDirection.X < 0 ? -1 : 1;
             _animator.Play("stand" + _direction);
             _vulnerable = true;
@@ -352,7 +352,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 Game1.GameManager.StartDialogPath(_encounterNumber == 3 ? "master_stalfos_2" : "master_stalfos_1");
             }
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             // player is standing in front of the boss? => attack
             if (Math.Abs(playerDirection.X) < 24 && 0 < playerDirection.Y && playerDirection.Y < 18)
@@ -367,7 +367,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void InitPreJump()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             _direction = playerDirection.X < 0 ? -1 : 1;
             _animator.Play("preJump" + _direction);
         }
@@ -378,7 +378,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _animator.Play("stand" + _direction);
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
             {
                 // try to jump at a spot where the player can be easily hit
@@ -409,7 +409,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void InitWalk()
         {
             // look at the player while moving
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             _direction = playerDirection.X < 0 ? -1 : 1;
             _animator.Play("walk" + _direction);
 
@@ -423,7 +423,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void UpdateWalking()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             // attack if we are close enough
             if (Math.Abs(playerDirection.X) < 24 && 0 < playerDirection.Y && playerDirection.Y < 18)

@@ -152,7 +152,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateTrap()
         {
-            var linkPos = MapManager.ObjLink.EntityPosition.Position;
+            var linkPos = MapManager.ObjLink.Position;
             var likePos = new Vector2(EntityPosition.Position.X, EntityPosition.Y - 1);
 
             if (!MapManager.ObjLink.IsTrapped())

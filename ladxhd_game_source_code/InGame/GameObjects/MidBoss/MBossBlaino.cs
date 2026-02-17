@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (!_body.IsGrounded)
                 return;
 
-            var playerPosition = MapManager.ObjLink.EntityPosition.Position;
+            var playerPosition = MapManager.ObjLink.Position;
 
             // jump infront of the player
             var verticalDistance = Math.Abs(EntityPosition.Y - MapManager.ObjLink.EntityPosition.Y) / 2;

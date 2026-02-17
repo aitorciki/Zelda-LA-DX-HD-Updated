@@ -307,8 +307,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _isTransitioning = true;
 
-            MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.EntityPosition.Position;
-            MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.EntityPosition.Position;
+            MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.Position;
+            MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.Position;
 
             // append a map change
             ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange("overworld.map", "pond");

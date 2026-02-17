@@ -163,7 +163,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // 25% chance to start walking
             var changeState = Game1.RandomNumber.Next(0, 4) < 3 &&
-                              MapManager.ObjLink.EntityPosition.Position.Y < EntityPosition.Position.Y + 40;
+                              MapManager.ObjLink.Position.Y < EntityPosition.Position.Y + 40;
 
             if (changeState)
             {
@@ -258,7 +258,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animationComponent.SpriteOffset.X = 0;
 
             // attack or start running depending on if the player is standing above the boss
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Y < 0)
                 _aiComponent.ChangeState("run");
             else
@@ -271,7 +271,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // 45 if the top is the last one alive
             _attackTargetPosition = EntityPosition.Position + new Vector2(0, _bossState == 1 ? 45 : 25);
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             var offset = 44;
             // make sure to not leave the room

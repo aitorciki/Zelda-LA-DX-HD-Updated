@@ -174,7 +174,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateFlying()
         {
-            var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             var directionRadius = Math.Atan2(direction.Y, direction.X);
             var distance = direction.Length();
 
@@ -262,7 +262,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnDeath(bool pieceofpower)
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
             playerDirection *= 2.25f;
@@ -279,7 +279,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateLookDirection()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Length() > 96)
                 return;
 

@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _waitTimer += Game1.DeltaTime;
                 return;
             }
-            _direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 4);
+            _direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 4);
             if (_direction.Length() < 32)
             {
                 _aiComponent.ChangeState("spawning");
@@ -269,7 +269,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void GetAttackDirection()
         {
-            _direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            _direction = MapManager.ObjLink.Position - EntityPosition.Position;
 
             if (_direction != Vector2.Zero)
                 _direction.Normalize();

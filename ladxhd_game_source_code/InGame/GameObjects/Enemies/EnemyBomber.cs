@@ -115,7 +115,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _body.VelocityTarget = Vector2.Zero;
 
-            var positionLink = MapManager.ObjLink.EntityPosition.Position;
+            var positionLink = MapManager.ObjLink.Position;
             var playerDistance = positionLink - EntityPosition.Position;
             var distance = playerDistance.Length();
 

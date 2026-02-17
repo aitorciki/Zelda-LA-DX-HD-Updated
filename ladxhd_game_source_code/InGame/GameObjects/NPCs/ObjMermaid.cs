@@ -102,7 +102,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateSitHidden()
         {
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDistance.Length() < 64)
                 _aiComponent.ChangeState("sitJump");
         }
@@ -137,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateSit()
         {
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDistance.Length() < 64)
             {
                 if (MapManager.ObjLink.EntityPosition.X < EntityPosition.X - _sitDirection * 4)
@@ -208,7 +208,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateIdle()
         {
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
             var distance = playerDistance.Length();
             if (distance < 128)
             {

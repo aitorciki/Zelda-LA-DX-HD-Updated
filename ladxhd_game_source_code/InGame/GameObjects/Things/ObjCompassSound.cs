@@ -52,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // reset when the player is far enough away
             else
             {
-                var distance = _position - MapManager.ObjLink.EntityPosition.Position;
+                var distance = _position - MapManager.ObjLink.Position;
                 if (MathF.Abs(distance.X) > Values.FieldWidth * 0.8f ||
                     MathF.Abs(distance.Y) > 128 * 0.8f)
                     _isTriggered = false;

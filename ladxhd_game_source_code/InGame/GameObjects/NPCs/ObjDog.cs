@@ -195,7 +195,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void InitAttack()
         {
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 

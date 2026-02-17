@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void UpdateIdle()
         {
             // look at the player
-            var lookDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var lookDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             var radiant = MathF.Atan2(lookDirection.X, -lookDirection.Y);
 

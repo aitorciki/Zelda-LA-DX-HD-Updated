@@ -456,7 +456,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
             }
             // Get player position, direction, and distance from Marin.
-            var playerPosition = MapManager.ObjLink.EntityPosition.Position;
+            var playerPosition = MapManager.ObjLink.Position;
             var playerDirection = EntityPosition.Position - playerPosition;
             var distance = playerDirection.Length();
 

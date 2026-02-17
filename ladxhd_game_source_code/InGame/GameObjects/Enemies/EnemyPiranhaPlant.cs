@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void ToIdle()
         {
             // check if the player is standing next to the plant -> stay hidden
-            var distance = EntityPosition.Position.X - MapManager.ObjLink.EntityPosition.Position.X;
+            var distance = EntityPosition.Position.X - MapManager.ObjLink.Position.X;
             if (Math.Abs(distance) < 16)
             {
                 _aiComponent.ChangeState("hidden");

@@ -137,7 +137,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return;
 
             // shoot if the player is in the range and in the right direction
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDirection.Length() < 128)
             {
                 if (playerDirection != Vector2.Zero)

@@ -146,7 +146,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk");
 
             // jump away when the player is pressing the use key
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
             var distance = direction.Length();
 
             if (_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position) && distance < 56)
@@ -194,7 +194,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // move towards the player
             if (_jumpMoving)
             {
-                var vecDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var vecDirection = MapManager.ObjLink.Position - EntityPosition.Position;
                 if (vecDirection.Length() < 2)
                 {
                     _jumpMoving = false;

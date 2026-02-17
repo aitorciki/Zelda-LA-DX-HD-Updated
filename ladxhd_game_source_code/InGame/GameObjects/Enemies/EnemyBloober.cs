@@ -83,11 +83,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void ToMoveUp()
         {
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
 
             // move towards the start position or the player depending on the distance to the player
             if (playerDistance.Length() < 80)
-                MoveTowardPosition(MapManager.ObjLink.EntityPosition.Position, 0.45f);
+                MoveTowardPosition(MapManager.ObjLink.Position, 0.45f);
             else
                 MoveTowardPosition(_startPosition, 0.25f);
         }

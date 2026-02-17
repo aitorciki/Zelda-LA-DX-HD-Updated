@@ -122,7 +122,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) ||
                 !_fieldRectangle.Contains(EntityPosition.X, EntityPosition.Y))
             {
-                vecDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                vecDirection = MapManager.ObjLink.Position - EntityPosition.Position;
                 vecDirection.Normalize();
                 vecDirection *= 1.25f;
             }

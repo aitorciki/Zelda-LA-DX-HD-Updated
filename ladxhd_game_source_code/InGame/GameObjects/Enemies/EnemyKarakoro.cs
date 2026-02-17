@@ -204,7 +204,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void EndIdle()
         {
-            var playerDistance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDistance = MapManager.ObjLink.Position - EntityPosition.Position;
 
             if (playerDistance.Length() < 38)
                 _aiComponent.ChangeState("rotate");
@@ -234,7 +234,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _animator.SetFrame(directionFrame * 2 + lastFrame);
             }
 
-            var direction = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var direction = MapManager.ObjLink.Position - EntityPosition.Position;
             if (direction != Vector2.Zero)
                 direction.Normalize();
             _body.VelocityTarget = direction * RotateSpeed;

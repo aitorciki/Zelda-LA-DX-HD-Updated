@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             if (!Camera.ClassicMode) { return; }
 
-            var pos = MapManager.ObjLink.EntityPosition.Position;
+            var pos = MapManager.ObjLink.Position;
             var dir = AnimationHelper.GetDirection(MapManager.ObjLink.LastMoveVector);
 
             if ((roomY == 1) && (pos.Y > 240) && (pos.Y < 256) && (dir == 3))

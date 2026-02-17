@@ -39,7 +39,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 MoveCollision = OnCollision
             };
 
-            var velocity = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var velocity = MapManager.ObjLink.Position - EntityPosition.Position;
             if (velocity != Vector2.Zero)
                 velocity.Normalize();
             body.VelocityTarget = velocity * speed;

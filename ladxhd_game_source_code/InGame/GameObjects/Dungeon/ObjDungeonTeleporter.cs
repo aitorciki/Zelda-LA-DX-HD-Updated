@@ -97,7 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void Update()
         {
             // Check if the player is close enough to the teleporter.
-            var distance = TeleportPosition - MapManager.ObjLink.EntityPosition.Position;
+            var distance = TeleportPosition - MapManager.ObjLink.Position;
             if (distance.Length() < teleport_range)
                 OnCollision();
 

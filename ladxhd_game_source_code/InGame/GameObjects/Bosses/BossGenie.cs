@@ -263,7 +263,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateFollow()
         {
             // fly towards the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8);
+            var playerDirection = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8);
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();

@@ -233,7 +233,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_followMode)
             {
                 // the farther away the enemy is from the origin the more likely it becomes that he will move towards the center position
-                var origin = MapManager.ObjLink.EntityPosition.Position - new Vector2(0, 4);
+                var origin = MapManager.ObjLink.Position - new Vector2(0, 4);
                 var directionToStart = origin - EntityPosition.Position;
                 var radiusToCenter = MathF.Atan2(directionToStart.Y, directionToStart.X);
 
@@ -436,7 +436,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdatePosition()
         {
             if (_followMode)
-                _origin = MapManager.ObjLink.EntityPosition.Position - new Vector2(0, 4);
+                _origin = MapManager.ObjLink.Position - new Vector2(0, 4);
 
             // limit the position
             var distance = (EntityPosition.Position +

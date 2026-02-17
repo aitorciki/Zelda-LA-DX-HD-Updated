@@ -120,8 +120,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void InitMove()
         {
-            _moveDirection0 = MapManager.ObjLink.EntityPosition.Position - _firstPerson.EntityPosition.Position;
-            _moveDirection1 = MapManager.ObjLink.EntityPosition.Position - _secondPerson.EntityPosition.Position;
+            _moveDirection0 = MapManager.ObjLink.Position - _firstPerson.EntityPosition.Position;
+            _moveDirection1 = MapManager.ObjLink.Position - _secondPerson.EntityPosition.Position;
 
             if (_moveDirection0 != Vector2.Zero)
                 _moveDirection0.Normalize();
@@ -157,7 +157,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             UpdateJumping();
 
             // start walking towards the player?
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - _centerPosition;
+            var playerDirection = MapManager.ObjLink.Position - _centerPosition;
             var playerDistance = playerDirection.Length();
 
             if (playerDistance < 56)
@@ -186,7 +186,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _npcGroundCount = 200;
                 }
             }
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - _firstPerson.EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - _firstPerson.EntityPosition.Position;
             var playerDistance = playerDirection.Length();
 
             if (playerDistance < 64)

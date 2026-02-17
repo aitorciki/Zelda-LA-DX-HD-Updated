@@ -115,7 +115,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void UpdateIdle()
         {
             // awake if the player is close enough
-            var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var distance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (distance.Length() < 42)
                 _aiComponent.ChangeState("awake");
         }
@@ -158,7 +158,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             if (_body.IsGrounded && _aiDamageState.CurrentLives > 0)
             {
-                var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var distance = MapManager.ObjLink.Position - EntityPosition.Position;
 
                 if (_jumpCount >= 4)
                 {
@@ -188,7 +188,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             Game1.GameManager.PlaySoundEffect("D360-36-24");
 
-            var distance = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var distance = MapManager.ObjLink.Position - EntityPosition.Position;
             if (distance != Vector2.Zero)
             {
                 distance.Normalize();

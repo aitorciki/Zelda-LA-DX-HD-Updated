@@ -46,13 +46,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Update()
         {
-            if (!_body.FieldRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (!_body.FieldRectangle.Contains(MapManager.ObjLink.Position))
                 return;
 
             if (_eating)
                 return;
 
-            var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
             var playerDistance = playerDirection.Length();
 
             if (playerDistance < 32)

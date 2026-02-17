@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _dialogCounter -= Game1.DeltaTime;
             else
             {
-                var playerDirection = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+                var playerDirection = EntityPosition.Position - MapManager.ObjLink.Position;
                 if (playerDirection.Length() < 24)
                 {
                     Game1.GameManager.StartDialogPath(_dialogId);

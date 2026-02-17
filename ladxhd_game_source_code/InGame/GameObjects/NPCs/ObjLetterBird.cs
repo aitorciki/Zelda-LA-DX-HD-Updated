@@ -124,7 +124,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return Values.HitCollision.None;
 
             // flee from the player
-            var playerDir = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var playerDir = EntityPosition.Position - MapManager.ObjLink.Position;
             if (playerDir != Vector2.Zero)
                 playerDir.Normalize();
 

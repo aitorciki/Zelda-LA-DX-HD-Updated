@@ -117,7 +117,7 @@ namespace ProjectZ.Editor
             if (InputHandler.KeyPressed(Game1.DebugSaveKey))
             {
                 MapManager.ObjLink.SaveMap = Game1.GameManager.MapManager.CurrentMap.MapName;
-                MapManager.ObjLink.SavePosition = MapManager.ObjLink.EntityPosition.Position;
+                MapManager.ObjLink.SavePosition = MapManager.ObjLink.Position;
                 MapManager.ObjLink.SaveDirection = MapManager.ObjLink.Direction;
 
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, true);

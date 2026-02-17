@@ -175,7 +175,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private int PlayerDirection()
         {
-            var distance = MapManager.ObjLink.EntityPosition.Position - (EntityPosition.Position + new Vector2(0, 9));
+            var distance = MapManager.ObjLink.Position - (EntityPosition.Position + new Vector2(0, 9));
 
             if (_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY))
             {

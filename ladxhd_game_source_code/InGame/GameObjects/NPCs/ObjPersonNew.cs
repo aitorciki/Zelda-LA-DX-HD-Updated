@@ -149,7 +149,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_binaryFacing)
             {
                 // Get the distance between Link and the NPC as a vector2.
-                var playerDirection = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+                var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
                 var playerDistance = playerDirection.Length();
 
                 // Default facing left.

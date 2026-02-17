@@ -125,13 +125,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var radiant = Game1.RandomNumber.Next(0, 628) / 100f;
             var offset = new Vector2(MathF.Sin(radiant), MathF.Cos(radiant));
 
-            var spawnPosition = MapManager.ObjLink.EntityPosition.Position + new Vector2(0, 24) + offset * 80;
+            var spawnPosition = MapManager.ObjLink.Position + new Vector2(0, 24) + offset * 80;
             EntityPosition.Set(spawnPosition);
             EntityPosition.Z = 16;
 
             _damageField.IsActive = true;
 
-            var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 16);
+            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 16);
             if (direction != Vector2.Zero)
                 direction.Normalize();
             _body.VelocityTarget = direction * 1.5f;
@@ -163,7 +163,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (!_attackMode)
                 return;
 
-            var playerDir = MapManager.ObjLink.EntityPosition.Position - EntityPosition.Position;
+            var playerDir = MapManager.ObjLink.Position - EntityPosition.Position;
             if (playerDir.Length() > 120 || MapManager.ObjLink.FieldChange)
             {
                 _attackMode = false;
@@ -228,7 +228,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             SpawnBirds();
 
             // start fleeing from the player
-            var distance = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var distance = EntityPosition.Position - MapManager.ObjLink.Position;
             if (distance.Length() < 32)
                 _aiComponent.ChangeState("fleeing");
         }
@@ -238,7 +238,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             SpawnBirds();
 
             // flee from the player
-            var playerDir = EntityPosition.Position - MapManager.ObjLink.EntityPosition.Position;
+            var playerDir = EntityPosition.Position - MapManager.ObjLink.Position;
 
             // stop fleeing
             if (playerDir.Length() > 48)
