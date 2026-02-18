@@ -58,17 +58,22 @@ namespace ProjectZ.Base
         private static GamePadState _lastGamePadState;
         private static float _gamePadAccuracy = 0.2f;
 
+        private static string _textInputBuffer = "";
+        private static bool _textInputEnabled;
+
         #region Constructor Region
 
         public InputHandler(Game game)
             : base(game)
         {
-            _keyboardState = Keyboard.GetState();
-            _mouseState = Mouse.GetState();
+            // Rather than using a predefined alphabet which limits which characters the user is
+            // allowed to type for a name, we capture the input and filter out invalid chars later.
+            game.Window.TextInput += OnTextInput;
 
-            _alphabet = new List<InputCharacter>();
+            // Create an array of the valid alphabet characters.
+/*          _alphabet = new List<InputCharacter>();
 
-            /* Alphabet. */
+             //Alphabet
             _alphabet.Add(new InputCharacter("A", "a", "ª", Keys.A));
             _alphabet.Add(new InputCharacter("B", "b", Keys.B));
             _alphabet.Add(new InputCharacter("C", "c", "¢", Keys.C));
@@ -96,7 +101,7 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("Y", "y", Keys.Y));
             _alphabet.Add(new InputCharacter("Z", "z", Keys.Z));
 
-            /* Decimal numbers. */
+            // Decimal numbers.
             _alphabet.Add(new InputCharacter("~", "`", Keys.OemTilde));
             _alphabet.Add(new InputCharacter("!", "1", "¹", Keys.D1, Keys.NumPad1));
             _alphabet.Add(new InputCharacter("@", "2", "²", Keys.D2, Keys.NumPad2));
@@ -109,14 +114,14 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("(", "9", Keys.D9, Keys.NumPad9));
             _alphabet.Add(new InputCharacter(")", "0", "º", Keys.D0, Keys.NumPad0));
 
-            /* Numpad Specific. */
+            // Numpad Specific
             _alphabet.Add(new InputCharacter("/", "/", Keys.Divide));
             _alphabet.Add(new InputCharacter("*", "*", Keys.Multiply));
             _alphabet.Add(new InputCharacter("-", "-", Keys.Subtract));
             _alphabet.Add(new InputCharacter("+", "+", Keys.Add));
             _alphabet.Add(new InputCharacter(".", ".", Keys.Decimal));
 
-            /* Punctuation. */
+            // Punctuation.
             _alphabet.Add(new InputCharacter("_", "-", "°", Keys.OemMinus));
             _alphabet.Add(new InputCharacter("+", "=", "±", Keys.OemPlus));
             _alphabet.Add(new InputCharacter("{", "[", Keys.OemOpenBrackets));
@@ -126,7 +131,7 @@ namespace ProjectZ.Base
             _alphabet.Add(new InputCharacter("\"", "'", "¸", Keys.OemQuotes));
             _alphabet.Add(new InputCharacter("<", ",", "«", Keys.OemComma));
             _alphabet.Add(new InputCharacter(">", ".", "»", Keys.OemPeriod));
-            _alphabet.Add(new InputCharacter("?", "/", "¿", Keys.OemQuestion));
+            _alphabet.Add(new InputCharacter("?", "/", "¿", Keys.OemQuestion));  */
         }
 
         #endregion
@@ -342,23 +347,34 @@ namespace ProjectZ.Base
         /// only returns one key at a time
         /// </summary>
         /// <returns></returns>
-        public static string ReturnCharacter()
+        /// 
+        public static void EnableTextInput()
         {
-            var shiftDown = _keyboardState.IsKeyDown(Keys.LeftShift) || _keyboardState.IsKeyDown(Keys.RightShift);
-            var altDown = _keyboardState.IsKeyDown(Keys.LeftAlt) || _keyboardState.IsKeyDown(Keys.RightAlt);
-
-            foreach (var character in _alphabet)
-            {
-                foreach (var key in character.ReturnKeys())
-                {
-                    if (KeyPressed(key))
-                        return character.ReturnCharacter(shiftDown, altDown);
-                }
-            }
-
-            return "";
+            _textInputEnabled = true;
+            _textInputBuffer = "";
         }
 
+        public static void DisableTextInput()
+        {
+            _textInputEnabled = false;
+            _textInputBuffer = "";
+        }
+
+        private static void OnTextInput(object sender, TextInputEventArgs e)
+        {
+            if (!_textInputEnabled)
+                return;
+
+            if (!char.IsControl(e.Character))
+                _textInputBuffer += e.Character;
+        }
+
+        public static string ReturnCharacter()
+        {
+            var result = _textInputBuffer;
+            _textInputBuffer = "";
+            return result;
+        }
 
         /// <summary>
         /// returns pressed number from d0-d9 and numpad0-numpad9

@@ -58,25 +58,47 @@ namespace ProjectZ.InGame.Interface
             Size = new Point((int)_textSize.X, (int)_textSize.Y);
         }
 
+        private string FilterUnsupportedCharacters(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            var supported = Font.Characters;
+            var result = new System.Text.StringBuilder(input.Length);
+
+            foreach (var c in input)
+            {
+                if (supported.Contains(c))
+                    result.Append(c);
+                else
+                    result.Append('?');
+            }
+            return result.ToString();
+        }
+
         public void SetText(string strText)
         {
-            // Debug: If the text crashes, this will let us know which line crashed.
-            // System.Diagnostics.Debug.WriteLine(Text);
+            Text = FilterUnsupportedCharacters(strText);
 
-            Text = strText;
-            _textSize = Font.MeasureString(Text);
+            try
+            {
+                _textSize = Font.MeasureString(Text);
+            }
+            catch
+            {
+                Text = "";
+                _textSize = Vector2.Zero;
+            }
 
             if (Size != Point.Zero)
             {
                 _drawOffset = new Vector2(Size.X / 2 - _textSize.X / 2, Size.Y / 2 - _textSize.Y / 2);
 
-                // left/right
                 if ((TextAlignment & Gravities.Left) != 0)
                     _drawOffset.X = 0;
                 else if ((TextAlignment & Gravities.Right) != 0)
                     _drawOffset.X = Size.X - _textSize.X;
 
-                // top/bottom
                 if ((TextAlignment & Gravities.Top) != 0)
                     _drawOffset.Y = 0;
                 else if ((TextAlignment & Gravities.Bottom) != 0)

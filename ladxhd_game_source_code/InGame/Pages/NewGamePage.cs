@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProjectZ.Base;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
-using ProjectZ.Base;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZ.InGame.Pages
 {
@@ -128,6 +129,9 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
+            // Capture input text.
+            InputHandler.EnableTextInput();
+
             // Get the selected save slot number from the intent.
             _selectedSaveSlot = (int)intent["SelectedSaveSlot"];
 
@@ -143,6 +147,12 @@ namespace ProjectZ.InGame.Pages
             PageLayout.Select(InterfaceElement.Directions.Top, false);
 
             base.OnLoad(intent);
+        }
+
+        public override void OnPop(Dictionary<string, object> intent)
+        {
+            // Stop capturing input text.
+            InputHandler.DisableTextInput();
         }
 
         private string GameTypeScaleSliderAdjustment(int number)
@@ -194,7 +204,7 @@ namespace ProjectZ.InGame.Pages
                 // The "Back" button was pressed on controller only.
                 if (ControlHandler.ButtonPressed(ControlHandler.CancelButton, true))
                     Game1.UiPageManager.PopPage();
-
+                
                 // When pressing/holding the "Delete" key.
                 else if (InputHandler.KeyDown(Keys.Back))
                 {
@@ -279,8 +289,16 @@ namespace ProjectZ.InGame.Pages
 
         private void RemoveCharacter()
         {
-            if (_strNameInput.Length > 0)
-                _strNameInput = _strNameInput.Remove(_strNameInput.Length - 1);
+            if (string.IsNullOrEmpty(_strNameInput))
+                return;
+
+            var textEnum = StringInfo.GetTextElementEnumerator(_strNameInput);
+            int lastIndex = 0;
+
+            while (textEnum.MoveNext())
+                lastIndex = textEnum.ElementIndex;
+
+            _strNameInput = _strNameInput.Substring(0, lastIndex);
         }
 
         private void AddCharacters(string letter)

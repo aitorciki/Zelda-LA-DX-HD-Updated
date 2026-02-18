@@ -90,13 +90,14 @@ namespace ProjectZ.Editor
                     Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation &&
                     Game1.ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor)
                 {
+                    InputHandler.EnableTextInput();
                     Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
-
                     _lastGameScreen = Game1.ScreenManager.CurrentScreenId;
                     Game1.ScreenManager.ChangeScreen(_lastEditorScreen);
                 }
                 else
                 {
+                    InputHandler.DisableTextInput();
                     _lastEditorScreen = Game1.ScreenManager.CurrentScreenId;
                     Game1.ScreenManager.ChangeScreen(_lastGameScreen);
 
