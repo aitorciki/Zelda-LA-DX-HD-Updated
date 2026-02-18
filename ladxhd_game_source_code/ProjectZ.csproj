@@ -91,4 +91,13 @@
     <Delete Files="$(PublishDir)/PVRTexLibWrapper.dll" />
   </Target>
 
+  <Target Name="CreateOutputFolders" AfterTargets="Build">
+    <PropertyGroup>
+      <OutputContentFolder>$(OutputPath)</OutputContentFolder>
+    </PropertyGroup>
+    <MakeDir Directories="$(OutputContentFolder)Mods" />
+    <MakeDir Directories="$(OutputContentFolder)Mods\Graphics" />
+    <MakeDir Directories="$(OutputContentFolder)Mods\LAHDMods" />
+  </Target>
+	
 </Project>
