@@ -136,7 +136,11 @@ namespace ProjectZ.InGame.Pages
             _selectedSaveSlot = (int)intent["SelectedSaveSlot"];
 
             // Reset the name of the save slot.
-            _strNameInput = "Link";
+            if (Game1.LanguageManager.CurrentLanguageCode == "chn")
+                _strNameInput = "林克";
+            else
+                _strNameInput = "Link";
+
             _labelNameInput.SetText(_strNameInput + " ");
             _gameTypeSlider.CurrentStep = 0;
 
