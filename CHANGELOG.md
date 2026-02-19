@@ -1,5 +1,10 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.3**
+### The "Very Quick Maintenance" Update
+  * Fix some maps not automatically scaling correctly when the camera option "Modern Overworld" is enabled.
+  * Fix Link's animation speed returning to normal when using "Pegasus Boots" into a map transition.
+
 ## **v1.6.2**
 ### The "Lunar New Year" Update
   * Implement Chinese Language. Thanks to [Darth-Koopa](https://github.com/Darth-Koopa) (creator).
