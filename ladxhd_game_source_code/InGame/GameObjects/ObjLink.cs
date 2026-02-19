@@ -6337,41 +6337,41 @@ namespace ProjectZ.InGame.GameObjects
 
         public void StartTransitioning()
         {
-            _previousMap = Map;
-
+            // Store that a transition is taking place.
             IsTransitioning = true;
 
+            // Set the previous map and draw Link over everything.
+            _previousMap = Map;
             _drawBody.Layer = Values.LayerTop;
 
-            // if the transitioning starts from a jump the player would have no animation otherwise
-            //_moved = true;
+            // Force walking and stop boots running.
             _isWalking = true;
             _bootsRunning = false;
 
             // The player shouldn't take damage while transitioning.
             PreventDamageTimer = 3000;
 
-            // stole item?
+            // If the player stole an item.
             if (StoreItem != null)
                 StealItem();
 
+            // Drop any items if being carried.
             ReleaseCarriedObject();
 
-            // release the cock if link is flying
+            // If Link is flying with the rooster then stop flying.
             if (MapManager.ObjLink.IsFlying())
                 MapManager.ObjLink.StopFlying(Vector2.Zero);
 
-            // make sure the player walks
-            if (MapTransitionStart.HasValue &&
-                MapTransitionEnd.HasValue &&
-                !IsSwimmingState() &&
-                CurrentState != State.BedTransition &&
-                CurrentState != State.Knockout &&
-                CurrentState != State.OcarinaTeleport)
+            // Restore current state to "Idle".
+            if (MapTransitionStart.HasValue && MapTransitionEnd.HasValue && !IsSwimmingState() && 
+                CurrentState != State.BedTransition && CurrentState != State.Knockout && CurrentState != State.OcarinaTeleport) 
+            {   
                 CurrentState = State.Idle;
-
+            }
+            // Remove the player's velocity.
             _body.VelocityTarget = Vector2.Zero;
 
+            // If it's a 2D map set up additional parameters.
             if (Map.Is2dMap)
             {
                 if (_ladderCollision)
@@ -6390,17 +6390,19 @@ namespace ProjectZ.InGame.GameObjects
 
         public void UpdateMapTransitionOut(float state)
         {
+            // Move Link to the new position on the map.
             if (MapTransitionStart.HasValue && MapTransitionEnd.HasValue)
             {
                 var newPosition = Vector2.Lerp(MapTransitionStart.Value, MapTransitionEnd.Value, state);
-
                 SetPosition(newPosition);
-
-                // Recalculate scale when classic dungeons is enabled.
-                if ((GameSettings.ClassicCamera && GameSettings.ClassicDungeon) ||
-                    (!GameSettings.ClassicCamera && GameSettings.ModernOverworld))
-                    Game1.ScaleChanged = true;
             }
+            // Recalculate scale when certain camera options are enabled.
+            bool classicDungeon = GameSettings.ClassicCamera && GameSettings.ClassicDungeon;
+            bool modernOverworld = !GameSettings.ClassicCamera && GameSettings.ModernOverworld;
+
+            // Apply the scaling change to the camera.
+            if (classicDungeon || modernOverworld)
+                Game1.ScaleChanged = true;
 
             // Lock the camera while transitioning.
             if (!Map.Is2dMap || Direction == 1)
@@ -6415,12 +6417,14 @@ namespace ProjectZ.InGame.GameObjects
             if (Map.Is2dMap && _isClimbing)
                 Direction = 1;
 
+            // Disable hole falling logic.
+            HoleFalling = false;
+
+            // Force animation updates since Link is being moved incrementally.
             if (Is2DMode)
                 UpdateAnimation2D();
             else
                 UpdateAnimation();
-
-            HoleFalling = false;
         }
 
         public void SetFollowerMapState()
@@ -6497,8 +6501,6 @@ namespace ProjectZ.InGame.GameObjects
             if (!Map.Is2dMap || Direction == 1)
                 Game1.GameManager.MapManager.UpdateCameraY = NextMapPositionStart == NextMapPositionEnd;
 
-            _isWalking = TransitionInWalking;
-
             // Set the hole and water reset position to be at the transition entrance.
             _holeResetPosition = EntityPosition.ToVector3();
             _drownResetPosition = EntityPosition.Position;
@@ -6515,10 +6517,14 @@ namespace ProjectZ.InGame.GameObjects
 
         public void EndTransitioning()
         {
-            _blockButton = false;
-            _body.HoleAbsorption = Vector2.Zero;
-
+            // Transition is over.
             IsTransitioning = false;
+
+            // Force block button released.
+            _blockButton = false;
+
+            // I'm not sure why this is set to zero but here it is.
+            _body.HoleAbsorption = Vector2.Zero;
 
             // The player can take damage again.
             PreventDamageTimer = 0;
