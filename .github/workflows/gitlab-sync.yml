@@ -19,4 +19,5 @@ jobs:
       - name: Push to GitLab
         run: |
           git remote add gitlab https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@gitlab.com/bighead.0-group/Zelda-LA-DX-HD-Updated.git
-          git push gitlab --mirror
+          git push gitlab --all
+          git push gitlab --tags
