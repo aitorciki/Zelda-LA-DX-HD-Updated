@@ -19,6 +19,7 @@ Some assets have been updated, but I have created tooling to make migration easi
 
 To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. 
 If you wish to build the game yourself, see **Personal Build / Publishing**.
+- This game requires .NET 8.0 runtime. [Download it here](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.23-windows-x64-installer?cid=getdotnetcore).
 - Find the v1.0.0 release originally from itch.io.
 - If you can not find it, you can search for an "archive" of it.
 - It's a good idea to keep a <ins>backup</ins> of v1.0.0.
