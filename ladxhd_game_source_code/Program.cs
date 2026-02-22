@@ -1,5 +1,7 @@
 ﻿using System;
+#if WINDOWS
 using System.Windows.Forms;
+#endif
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ
@@ -9,7 +11,12 @@ namespace ProjectZ
         [STAThread]
         static void Main(string[] args)
         {
+#if !WINDOWS
+            Environment.SetEnvironmentVariable("MONOGAME_SDL_VIDEO_ALLOW_HIGHDPI", "1");
+#endif
             var editorMode = false;
+
+
             var loadSave = false;
             var saveSlot = 0;
 
@@ -45,7 +52,12 @@ namespace ProjectZ
 
             catch (Exception exception)
             {
+#if WINDOWS
                 MessageBox.Show(exception.StackTrace, exception.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+#else
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.StackTrace);
+#endif
                 throw;
             }
         }

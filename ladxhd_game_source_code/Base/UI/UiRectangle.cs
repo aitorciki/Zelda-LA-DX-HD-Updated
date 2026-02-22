@@ -25,6 +25,8 @@ namespace ProjectZ.Base.UI
             Resources.RoundedCornerBlurEffect.Parameters["radius"].SetValue(Radius);
             Resources.RoundedCornerBlurEffect.Parameters["width"].SetValue(Rectangle.Width / Game1.UiScale);
             Resources.RoundedCornerBlurEffect.Parameters["height"].SetValue(Rectangle.Height / Game1.UiScale);
+            Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(Game1.WindowWidth);
+            Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(Game1.WindowHeight);
 
             // draw the blur texture
             spriteBatch.Draw(Resources.SprWhite, Rectangle, BackgroundColor);

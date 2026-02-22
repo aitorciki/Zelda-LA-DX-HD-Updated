@@ -40,7 +40,7 @@ namespace ProjectZ.InGame.Things
         public static Color[] SkirtColors = { new Color(16, 168, 64), new Color(0, 38, 255), new Color(255, 0, 0) };
 
         public static string WorkingDirectory = AppContext.BaseDirectory;
-        public static string AppDataFolder = Environment.ExpandEnvironmentVariables("%LocalAppData%");
+        public static string AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         public static string PathSaveFolder = SaveManager.GetSaveFilePath();
 
         public static string PathContentFolder = "Data";

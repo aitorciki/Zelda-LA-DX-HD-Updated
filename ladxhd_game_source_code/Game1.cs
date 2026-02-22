@@ -113,9 +113,13 @@ namespace ProjectZ
 
         public static bool FinishedLoading => _finishedLoading;
 
+#if WINDOWS
         public static Matrix GetMatrix => Matrix.CreateScale(new Vector3(
             (float)Graphics.PreferredBackBufferWidth / WindowWidth,
             (float)Graphics.PreferredBackBufferHeight / WindowHeight, 0));
+#else
+        public static Matrix GetMatrix => Matrix.Identity;
+#endif
 
         #if WINDOWS
             private static Forms.Form _windowForm;
@@ -408,9 +412,16 @@ namespace ProjectZ
             {
                 Graphics.GraphicsDevice.SetRenderTarget(null);
 
+#if !WINDOWS
+                // Set the viewport to the safe area (excludes notch on macOS)
+                Graphics.GraphicsDevice.Viewport = new Viewport(0, 0, WindowWidth, WindowHeight);
+#endif
+
+                GraphicsDevice.Clear(Color.Black);
+
                 SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap);
 
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, MainRenderTarget.Width, MainRenderTarget.Height), Color.White);
+                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, WindowWidth, WindowHeight), Color.White);
 
                 SpriteBatch.End();
             }
@@ -419,9 +430,14 @@ namespace ProjectZ
                 if (_renderTarget2 != null)
                 {
                     Resources.BlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
+                    Resources.BlurEffect.Parameters["width"].SetValue(WindowWidth);
+                    Resources.BlurEffect.Parameters["height"].SetValue(WindowHeight);
                     Resources.RoundedCornerBlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
+                    Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(WindowWidth);
+                    Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(WindowHeight);
                 }
-                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
+                // Use LinearClamp to prevent "band swapping" or tiling
+                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.LinearClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
 
                 // blurred ui parts
                 UiManager.DrawBlur(SpriteBatch);
@@ -522,6 +538,7 @@ namespace ProjectZ
             {
                 // Set fullscreen mode to true.
                 FullScreen = GameSettings.IsFullscreen = true;
+#if WINDOWS
                 var screenBounds = Forms.Screen.GetBounds(_windowForm);
 
                 // Save current window state for restoration.
@@ -529,21 +546,41 @@ namespace ProjectZ
                 _lastWindowBounds = _windowForm.Bounds;
                 _lastWindowWidth = Graphics.PreferredBackBufferWidth;
                 _lastWindowHeight = Graphics.PreferredBackBufferHeight;
+#else
+                var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+
+                _lastWindowWidth = Graphics.PreferredBackBufferWidth;
+                _lastWindowHeight = Graphics.PreferredBackBufferHeight;
+#endif
 
                 // Exclusive fullscreen mode.
                 if (GameSettings.ExFullscreen)
                 {
+#if WINDOWS
                     Graphics.PreferredBackBufferWidth = screenBounds.Width;
                     Graphics.PreferredBackBufferHeight = screenBounds.Height;
+#else
+                    Graphics.PreferredBackBufferWidth = displayMode.Width;
+                    Graphics.PreferredBackBufferHeight = displayMode.Height;
+                    Graphics.HardwareModeSwitch = true;
+#endif
                     Graphics.ToggleFullScreen();
                     WasExclusive = true;
                 }
                 // Borderless fullscreen mode.
                 else
                 {
+#if WINDOWS
                     _windowForm.FormBorderStyle = Forms.FormBorderStyle.None;
                     _windowForm.WindowState = Forms.FormWindowState.Normal;
                     _windowForm.Bounds = screenBounds;
+#else
+                    Graphics.PreferredBackBufferWidth = displayMode.Width;
+                    Graphics.PreferredBackBufferHeight = displayMode.Height;
+                    Graphics.HardwareModeSwitch = false;
+                    Graphics.IsFullScreen = true;
+                    Graphics.ApplyChanges();
+#endif
                 }
             }
             // Switch to windowed mode.
@@ -556,13 +593,24 @@ namespace ProjectZ
                 if ((GameSettings.ExFullscreen || WasExclusive) && Graphics.IsFullScreen)
                 {
                     Graphics.ToggleFullScreen();
+#if WINDOWS
                     Graphics.PreferredBackBufferWidth = _lastWindowWidth;
                     Graphics.PreferredBackBufferHeight = _lastWindowHeight;
+#else
+                    Graphics.PreferredBackBufferWidth = _lastWindowWidth;
+                    Graphics.PreferredBackBufferHeight = _lastWindowHeight;
+#endif
                 }
+#if WINDOWS
                 // Restore the windowed settings.
                 _windowForm.FormBorderStyle = Forms.FormBorderStyle.Sizable;
                 _windowForm.WindowState = _lastWindowState;
                 _windowForm.Bounds = _lastWindowBounds;
+#else
+                Graphics.PreferredBackBufferWidth = _lastWindowWidth;
+                Graphics.PreferredBackBufferHeight = _lastWindowHeight;
+                Graphics.IsFullScreen = false;
+#endif
 
                 // Apply the graphics changes.
                 Graphics.ApplyChanges();
@@ -703,8 +751,8 @@ namespace ProjectZ
             {
                 Resources.BlurEffect.Parameters["width"].SetValue(width);
                 Resources.BlurEffect.Parameters["height"].SetValue(height);
-                Resources.RoundedCornerBlurEffect.Parameters["textureWidth"].SetValue(width);
-                Resources.RoundedCornerBlurEffect.Parameters["textureHeight"].SetValue(height);
+                Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(width);
+                Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(height);
             }
             var blurScale = MathHelper.Clamp(MapManager.Camera.Scale / 2, 1, 10);
             var blurRtWidth = Math.Max(1, (int)(width / blurScale));

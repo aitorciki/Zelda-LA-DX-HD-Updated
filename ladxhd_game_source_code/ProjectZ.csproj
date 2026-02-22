@@ -1,18 +1,32 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <TargetFrameworks>net9.0-windows;net9.0</TargetFrameworks>
+    <RuntimeIdentifiers>win-x64;osx-arm64</RuntimeIdentifiers>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
-    <UseWindowsForms>true</UseWindowsForms>
+    <Version>1.6.3</Version>
+    <StartupObject>ProjectZ.Program</StartupObject>
+    <AssemblyName>Link's Awakening DX HD</AssemblyName>
+    <PublishSingleFile>true</PublishSingleFile>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+    <ApplicationManifest Condition="'$(TargetFramework)' == 'net9.0-windows'">app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
     <MonoGamePlatform>Windows</MonoGamePlatform>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <MonoGamePlatform>DesktopGL</MonoGamePlatform>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath></OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -51,8 +65,15 @@
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="5.3.1" />
     <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,15 +81,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <PropertyGroup>
-    <StartupObject>ProjectZ.Program</StartupObject>
-    <AssemblyName>Link's Awakening DX HD</AssemblyName>
-    <PublishSingleFile>true</PublishSingleFile>
-    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.6.3</Version>
-  </PropertyGroup>
 
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

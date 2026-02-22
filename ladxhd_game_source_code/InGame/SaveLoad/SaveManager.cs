@@ -34,18 +34,20 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static string GetSaveFilePath()
         {
-            string portable = Path.Combine(Values.WorkingDirectory,"portable.txt");
+            string portable = Path.Combine(Values.WorkingDirectory, "portable.txt");
             if (File.Exists(portable))
-                return "SaveFiles\\";
-            return Path.Combine(Values.AppDataFolder,"Zelda_LA","SaveFiles");
+                return Path.Combine(Values.WorkingDirectory, "SaveFiles");
+
+            return Path.Combine(Values.AppDataFolder, "Zelda_LA", "SaveFiles");
         }
 
         public static string GetSettingsFile()
         {
-            string portable = Path.Combine(Values.WorkingDirectory,"portable.txt");
+            string portable = Path.Combine(Values.WorkingDirectory, "portable.txt");
             if (File.Exists(portable))
-                return "settings";
-            return Path.Combine(Values.AppDataFolder,"Zelda_LA","settings");
+                return Path.Combine(Values.WorkingDirectory, "settings");
+
+            return Path.Combine(Values.AppDataFolder, "Zelda_LA", "settings");
         }
 
         struct HistoryFrame
