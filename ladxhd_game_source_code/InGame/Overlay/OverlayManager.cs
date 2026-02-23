@@ -561,10 +561,10 @@ namespace ProjectZ.InGame.Overlay
 
         public void ResolutionChanged()
         {
-            TextboxOverlay.ResolutionChange();
-            InGameHud.ResolutionChange();
-            _inventoryOverlay.ResolutionChanged();
-            _dungeonOverlay.ResolutionChanged();
+            TextboxOverlay?.ResolutionChange();
+            InGameHud?.ResolutionChange();
+            _inventoryOverlay?.ResolutionChanged();
+            _dungeonOverlay?.ResolutionChanged();
 
             _blurRectangle.Rectangle.Width = Game1.WindowWidth;
             _blurRectangle.Rectangle.Height = Game1.WindowHeight;

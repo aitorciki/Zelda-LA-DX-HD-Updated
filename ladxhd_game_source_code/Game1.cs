@@ -20,6 +20,7 @@ namespace ProjectZ
 {
     public class Game1 : Game
     {
+        public static Game1 Instance;
         public static GraphicsDeviceManager Graphics;
         public static SpriteBatch SpriteBatch;
         public static UiManager UiManager = new UiManager();
@@ -161,6 +162,9 @@ namespace ProjectZ
 
         protected override void Initialize()
         {
+            // Store an instance so it can be referenced.
+            Instance = this;
+
             // Initialize the editor.
             EditorManager = new EditorManager(this);
             base.Initialize();
@@ -652,6 +656,32 @@ namespace ProjectZ
             ScaleChanged = true;
         }
 
+        public void ForceRecalculateScaling()
+        {
+            // Don’t run until loading is finished to avoid crashes.
+            if (!_finishedLoading)
+                return;
+
+            // Pull the current actual client size.
+            int w = Window.ClientBounds.Width;
+            int h = Window.ClientBounds.Height;
+            if (w <= 0 || h <= 0)
+                return;
+
+            // Update the current window dimensions.
+            WindowWidth = w;
+            WindowHeight = h;
+
+            // Force rescale to correct the size of render targets. 
+            ScaleChanged = true;
+            UpdateScale();
+
+            // Force the render target resize as well.
+            WindowWidthEnd = 0;
+            WindowHeightEnd = 0;
+            UpdateRenderTargets();
+        }
+
         private void UpdateScale()
         {
             if (Camera.ClassicMode)
@@ -712,7 +742,8 @@ namespace ProjectZ
                     : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
 
             // Call all of the "OnResize" methods to recalculate render targets.
-            GameManager?.OnResize();
+            if (_finishedLoading)
+                GameManager?.OnResize();
             UiManager?.OnResize();
             ScreenManager?.OnResize(WindowWidth, WindowHeight);
             UiPageManager?.OnResize(WindowWidth, WindowHeight);
@@ -732,7 +763,9 @@ namespace ProjectZ
             UpdateRenderTargetSizes(WindowWidth, WindowHeight);
 
             ScreenManager.OnResizeEnd(WindowWidth, WindowHeight);
-            GameManager?.OnResizeEnd();
+
+            if (_finishedLoading)
+                GameManager?.OnResizeEnd();
         }
 
         private void UpdateRenderTargetSizes(int width, int height)

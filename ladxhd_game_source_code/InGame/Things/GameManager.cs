@@ -231,6 +231,11 @@ namespace ProjectZ.InGame.Things
             foreach (var gameSystem in GameSystems)
                 gameSystem.Value.OnLoad();
 
+            // Force recalculating the render targets and force a rescal event just before the game loads. This ensures that the game
+            // field is rendered at the correct scale. This fixes a scaling issue when starting in one screen mode and setting to another.
+            Game1.GameManager?.UpdateRenderTargets();
+            Game1.Instance?.ForceRecalculateScaling();
+
             // Ensure render targets are available now that we're entering gameplay
             UpdateRenderTargets();
         }
@@ -1911,7 +1916,7 @@ namespace ProjectZ.InGame.Things
             SaveGameSaveLoad.ClearSaveState();
             SaveManager.DisableHistory();
 
-            // this was done to support DialogActionCooldown working after loading a new save
+            // This was done to support DialogActionCooldown working after loading a new save.
             Game1.TotalGameTime = 0;
             Game1.TotalGameTimeLast = 0;
             Game1.FreezeTime = 0;

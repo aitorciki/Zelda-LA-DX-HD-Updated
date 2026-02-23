@@ -57,7 +57,7 @@ namespace ProjectZ.InGame.Pages
                 SettingsSaveLoad.SaveSettings();
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
             }
-            Program.game.Exit();
+            Game1.Instance.Exit();
         }
     }
 }
