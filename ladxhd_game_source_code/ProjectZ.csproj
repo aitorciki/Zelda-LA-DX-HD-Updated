@@ -10,9 +10,6 @@
         <AssemblyName>Link's Awakening DX HD</AssemblyName>
         <PublishSingleFile>true</PublishSingleFile>
         <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
-        <ApplicationManifest Condition="'$(TargetFramework)' == 'net9.0-windows'"
-            >app.manifest</ApplicationManifest
-        >
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-windows'">
@@ -20,6 +17,7 @@
         <UseWindowsForms>true</UseWindowsForms>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <DefineConstants>TRACE;WINDOWS</DefineConstants>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
