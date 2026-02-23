@@ -20,16 +20,34 @@ namespace ProjectZ.Base.UI
 
         public override void DrawBlur(SpriteBatch spriteBatch)
         {
-            Resources.RoundedCornerBlurEffect.Parameters["scale"].SetValue(Game1.UiScale);
-            Resources.RoundedCornerBlurEffect.Parameters["blurColor"].SetValue(BlurColor.ToVector4());
-            Resources.RoundedCornerBlurEffect.Parameters["radius"].SetValue(Radius);
-            Resources.RoundedCornerBlurEffect.Parameters["width"].SetValue(Rectangle.Width / Game1.UiScale);
-            Resources.RoundedCornerBlurEffect.Parameters["height"].SetValue(Rectangle.Height / Game1.UiScale);
-            Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(Game1.WindowWidth);
-            Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(Game1.WindowHeight);
+            SetParameter("scale", Game1.UiScale);
+            SetParameter("blurColor", BlurColor.ToVector4());
+            SetParameter("radius", Radius);
+            SetParameter("width", Rectangle.Width / Game1.UiScale);
+            SetParameter("height", Rectangle.Height / Game1.UiScale);
+            SetParameter("screenWidth", (float)Game1.WindowWidth);
+            SetParameter("screenHeight", (float)Game1.WindowHeight);
 
             // draw the blur texture
             spriteBatch.Draw(Resources.SprWhite, Rectangle, BackgroundColor);
+        }
+
+        private void SetParameter(string name, float value)
+        {
+            if (Resources.RoundedCornerBlurEffect.Parameters[name] != null)
+                Resources.RoundedCornerBlurEffect.Parameters[name].SetValue(value);
+        }
+
+        private void SetParameter(string name, Vector4 value)
+        {
+            if (Resources.RoundedCornerBlurEffect.Parameters[name] != null)
+                Resources.RoundedCornerBlurEffect.Parameters[name].SetValue(value);
+        }
+
+        private void SetParameter(string name, int value)
+        {
+            if (Resources.RoundedCornerBlurEffect.Parameters[name] != null)
+                Resources.RoundedCornerBlurEffect.Parameters[name].SetValue(value);
         }
     }
 }

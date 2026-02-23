@@ -430,11 +430,11 @@ namespace ProjectZ
                 if (_renderTarget2 != null)
                 {
                     Resources.BlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
-                    Resources.BlurEffect.Parameters["width"].SetValue(WindowWidth);
-                    Resources.BlurEffect.Parameters["height"].SetValue(WindowHeight);
+                    SetParameter(Resources.BlurEffect, "width", WindowWidth);
+                    SetParameter(Resources.BlurEffect, "height", WindowHeight);
                     Resources.RoundedCornerBlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
-                    Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(WindowWidth);
-                    Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(WindowHeight);
+                    SetParameter(Resources.RoundedCornerBlurEffect, "screenWidth", (float)WindowWidth);
+                    SetParameter(Resources.RoundedCornerBlurEffect, "screenHeight", (float)WindowHeight);
                 }
                 // Use LinearClamp to prevent "band swapping" or tiling
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.LinearClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
@@ -729,6 +729,18 @@ namespace ProjectZ
             ScaleChanged = false;
         }
 
+        private void SetParameter(Effect effect, string name, int value)
+        {
+            if (effect != null && effect.Parameters[name] != null)
+                effect.Parameters[name].SetValue(value);
+        }
+
+        private void SetParameter(Effect effect, string name, float value)
+        {
+            if (effect != null && effect.Parameters[name] != null)
+                effect.Parameters[name].SetValue(value);
+        }
+
         private void UpdateRenderTargets()
         {
             if (WindowWidthEnd == WindowWidth && WindowHeightEnd == WindowHeight)
@@ -749,10 +761,10 @@ namespace ProjectZ
 
             if (_finishedLoading)
             {
-                Resources.BlurEffect.Parameters["width"].SetValue(width);
-                Resources.BlurEffect.Parameters["height"].SetValue(height);
-                Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(width);
-                Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(height);
+                SetParameter(Resources.BlurEffect, "width", width);
+                SetParameter(Resources.BlurEffect, "height", height);
+                SetParameter(Resources.RoundedCornerBlurEffect, "screenWidth", (float)width);
+                SetParameter(Resources.RoundedCornerBlurEffect, "screenHeight", (float)height);
             }
             var blurScale = MathHelper.Clamp(MapManager.Camera.Scale / 2, 1, 10);
             var blurRtWidth = Math.Max(1, (int)(width / blurScale));
