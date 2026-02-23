@@ -1,7 +1,4 @@
 ﻿using System;
-#if WINDOWS
-using System.Windows.Forms;
-#endif
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ
@@ -52,12 +49,7 @@ namespace ProjectZ
 
             catch (Exception exception)
             {
-#if WINDOWS
-                MessageBox.Show(exception.StackTrace, exception.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
-#else
-                Console.WriteLine(exception.Message);
-                Console.WriteLine(exception.StackTrace);
-#endif
+                NativeDialogs.ShowError(exception.Message, exception.StackTrace);
                 throw;
             }
         }

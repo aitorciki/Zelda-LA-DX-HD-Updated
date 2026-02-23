@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using ProjectZ.InGame.Things;
 using System.Globalization;
-#if WINDOWS
-using System.Windows.Forms;
-#endif
 
 namespace ProjectZ.InGame.SaveLoad
 {
@@ -87,9 +84,7 @@ namespace ProjectZ.InGame.SaveLoad
                 catch (Exception) { }
             }
 
-#if WINDOWS
-            MessageBox.Show("Error while saving", "Saving Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-#endif
+            NativeDialogs.ShowError("Saving Failed", "Error while saving");
         }
 
         private void Save(string filePath)

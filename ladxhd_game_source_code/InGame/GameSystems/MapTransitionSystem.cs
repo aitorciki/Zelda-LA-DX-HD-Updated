@@ -8,9 +8,6 @@ using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 using ProjectZ.InGame.GameObjects;
 
-#if WINDOWS
-using System.Windows.Forms;
-#endif
 
 namespace ProjectZ.InGame.GameSystems
 {
@@ -433,10 +430,7 @@ namespace ProjectZ.InGame.GameSystems
             }
             catch (Exception exception)
             {
-#if WINDOWS
-                // show the error message instead of just crashing the game
-                MessageBox.Show(exception.StackTrace, exception.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
-#endif
+                NativeDialogs.ShowError(exception.Message, exception.StackTrace);
                 throw;
             }
         }
