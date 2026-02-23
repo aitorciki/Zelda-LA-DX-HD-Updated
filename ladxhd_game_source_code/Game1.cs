@@ -187,7 +187,7 @@ namespace ProjectZ
             base.Initialize();
         }
 
-        protected override void OnExiting(object sender, EventArgs args)
+        protected override void OnExiting(object sender, ExitingEventArgs args)
         {
             // Close out the GBS Player before exiting.
             GbsPlayer.OnExit();
