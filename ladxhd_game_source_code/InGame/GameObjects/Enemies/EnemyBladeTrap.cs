@@ -15,7 +15,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
 
         private readonly RectangleF[] _collisionRectangles = new RectangleF[4];
-        private readonly Vector2[] _directions = { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+        private readonly Vector2[] _directions =
+        {
+            new Vector2(-1, 0),
+            new Vector2(1, 0),
+            new Vector2(0, -1),
+            new Vector2(0, 1),
+        };
         private readonly int[] _maxPosition = new int[4];
 
         private const int MovementStep = 2;
@@ -25,7 +31,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _cReset = 225;
 
         // In Level 2 dungeon, the room left from the dark room has traps that stop just before the doorway. After a condition
-        // is met, they then travel the full distance. I'm not sure what that condition is, but in this port it's when they 
+        // is met, they then travel the full distance. I'm not sure what that condition is, but in this port it's when they
         // manage to return to their original position at least once. This only affects classic camera.
         private int _top;
         private int _bottom;
@@ -40,14 +46,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         // from 5 pixels away on each side. So we want the range to be 26 pixels (5 + 8 + 8 + 5 = 26 pixels).
         const int TriggerHalfWidth = 13;
 
-        public EnemyBladeTrap() : base("bladeTrap") { }
+        public EnemyBladeTrap()
+            : base("bladeTrap") { }
 
-        public EnemyBladeTrap(Map.Map map, int posX, int posY, int left, int right, int top, int bottom, bool warning) : base(map)
+        public EnemyBladeTrap(
+            Map.Map map,
+            int posX,
+            int posY,
+            int left,
+            int right,
+            int top,
+            int bottom,
+            bool warning
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX, posY, 0);
-            ResetPosition  = new CPosition(posX, posY, 0);
+            ResetPosition = new CPosition(posX, posY, 0);
             _startPosition = new Vector2(posX, posY);
             CanReset = true;
             OnReset += Reset;
@@ -74,23 +91,47 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // Used to limit movement for warning shot.
             int extra = 0;
-            if (Camera.ClassicMode && warning) 
+            if (Camera.ClassicMode && warning)
                 extra = 8;
 
             _maxPosition[2] = top * 16 - extra;
             _maxPosition[3] = bottom * 16 - extra;
 
-            _collisionRectangles[0] = new RectangleF(posX - left * 16 - 16, posY + 8 - TriggerHalfWidth, left * 16 + 16, TriggerHalfWidth * 2);
-            _collisionRectangles[1] = new RectangleF(posX + 16, posY + 8 - TriggerHalfWidth, right * 16 + 16, TriggerHalfWidth * 2);
-            _collisionRectangles[2] = new RectangleF(posX + 8 - TriggerHalfWidth, posY - top * 16 - 16, TriggerHalfWidth * 2, top * 16 + 16);
-            _collisionRectangles[3] = new RectangleF(posX + 8 - TriggerHalfWidth, posY + 16, TriggerHalfWidth * 2, bottom * 16 + 16);
+            _collisionRectangles[0] = new RectangleF(
+                posX - left * 16 - 16,
+                posY + 8 - TriggerHalfWidth,
+                left * 16 + 16,
+                TriggerHalfWidth * 2
+            );
+            _collisionRectangles[1] = new RectangleF(
+                posX + 16,
+                posY + 8 - TriggerHalfWidth,
+                right * 16 + 16,
+                TriggerHalfWidth * 2
+            );
+            _collisionRectangles[2] = new RectangleF(
+                posX + 8 - TriggerHalfWidth,
+                posY - top * 16 - 16,
+                TriggerHalfWidth * 2,
+                top * 16 + 16
+            );
+            _collisionRectangles[3] = new RectangleF(
+                posX + 8 - TriggerHalfWidth,
+                posY + 16,
+                TriggerHalfWidth * 2,
+                bottom * 16 + 16
+            );
 
             _field = Map.GetField(posX, posY);
 
             var stateWait = new AiState();
-            stateWait.Trigger.Add(new AiTriggerCountdown(350, null, () => _aiComponent.ChangeState("back")));
+            stateWait.Trigger.Add(
+                new AiTriggerCountdown(350, null, () => _aiComponent.ChangeState("back"))
+            );
             var stateCooldown = new AiState();
-            stateCooldown.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("idle")));
+            stateCooldown.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("idle"))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState(UpdateIdle));
@@ -101,10 +142,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
 
             var bodyBox = new CBox(EntityPosition, 0, 0, 0, 16, 16, 4);
-            var damageBox =  new CBox(EntityPosition, 3, 3, 0, 10, 10, 4);
+            var damageBox = new CBox(EntityPosition, 3, 3, 0, 10, 10, 4);
 
             AddComponent(PushableComponent.Index, new PushableComponent(bodyBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(bodyBox, OnHit));
@@ -124,7 +168,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -148,7 +198,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // Check collision at this position
                 Box block = Box.Empty;
                 Box box = new Box(x, y, 0, 16, 16, 4);
-                if (Map.Objects.Collision(box, Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref block))
+                if (
+                    Map.Objects.Collision(
+                        box,
+                        Box.Empty,
+                        Values.CollisionTypes.Normal,
+                        0,
+                        0,
+                        ref block
+                    )
+                )
                     return dist;
             }
             return max;
@@ -213,7 +272,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Move the trap back into it's original position.
             if (_movePosition > 0)
                 _movePosition -= 0.5f * Game1.TimeMultiplier;
-
             // When it reaches it's destination, snap it into place.
             else
             {

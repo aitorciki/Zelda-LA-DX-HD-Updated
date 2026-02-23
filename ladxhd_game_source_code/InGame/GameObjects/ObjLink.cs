@@ -31,47 +31,95 @@ namespace ProjectZ.InGame.GameObjects
     {
         public enum State
         {
-            Idle, Pushing, Grabbing, Pulling, PreCarrying, Carrying, Throwing, CarryingItem, PickingUp, Falling,
-            Attacking, Blocking, AttackBlocking, Charging, ChargeBlocking, Jumping, AttackJumping, ChargeJumping,
-            Ocarina, OcarinaTeleport, Rafting, Pushed,
+            Idle,
+            Pushing,
+            Grabbing,
+            Pulling,
+            PreCarrying,
+            Carrying,
+            Throwing,
+            CarryingItem,
+            PickingUp,
+            Falling,
+            Attacking,
+            Blocking,
+            AttackBlocking,
+            Charging,
+            ChargeBlocking,
+            Jumping,
+            AttackJumping,
+            ChargeJumping,
+            Ocarina,
+            OcarinaTeleport,
+            Rafting,
+            Pushed,
             FallRotateEntry,
-            Drowning, Drowned, Swimming, AttackSwimming, ChargeSwimming,
-            Teleporting, MagicRod, Hookshot, Bombing, Powdering, Digging, BootKnockback,
-            TeleporterUpWait, TeleporterUp, TeleportFallWait, TeleportFall,
-            Dying, InitStunned, Stunned, Knockout,
-            SwordShow0, SwordShow1, SwordShowLv2,
-            ShowInstrumentPart0, ShowInstrumentPart1, ShowInstrumentPart2, ShowInstrumentPart3,
+            Drowning,
+            Drowned,
+            Swimming,
+            AttackSwimming,
+            ChargeSwimming,
+            Teleporting,
+            MagicRod,
+            Hookshot,
+            Bombing,
+            Powdering,
+            Digging,
+            BootKnockback,
+            TeleporterUpWait,
+            TeleporterUp,
+            TeleportFallWait,
+            TeleportFall,
+            Dying,
+            InitStunned,
+            Stunned,
+            Knockout,
+            SwordShow0,
+            SwordShow1,
+            SwordShowLv2,
+            ShowInstrumentPart0,
+            ShowInstrumentPart1,
+            ShowInstrumentPart2,
+            ShowInstrumentPart3,
             ShowToadstool,
-            CloakShow0, CloakShow1,
-            Intro, BedTransition,
-            Sequence, FinalInstruments,
-            Frozen
+            CloakShow0,
+            CloakShow1,
+            Intro,
+            BedTransition,
+            Sequence,
+            FinalInstruments,
+            Frozen,
         }
+
         public State CurrentState;
 
         // State tracking functions: check multiple state types at once by category.
         public bool IsAttackingState() =>
-            CurrentState == State.Attacking ||
-            CurrentState == State.AttackBlocking ||
-            CurrentState == State.AttackJumping ||
-            CurrentState == State.AttackSwimming;
+            CurrentState == State.Attacking
+            || CurrentState == State.AttackBlocking
+            || CurrentState == State.AttackJumping
+            || CurrentState == State.AttackSwimming;
+
         public bool IsChargingState() =>
-            CurrentState == State.Charging ||
-            CurrentState == State.ChargeBlocking ||
-            CurrentState == State.ChargeJumping ||
-            CurrentState == State.ChargeSwimming;
+            CurrentState == State.Charging
+            || CurrentState == State.ChargeBlocking
+            || CurrentState == State.ChargeJumping
+            || CurrentState == State.ChargeSwimming;
+
         public bool IsBlockingState() =>
-            CurrentState == State.Blocking ||
-            CurrentState == State.AttackBlocking ||
-            CurrentState == State.ChargeBlocking;
+            CurrentState == State.Blocking
+            || CurrentState == State.AttackBlocking
+            || CurrentState == State.ChargeBlocking;
+
         public bool IsSwimmingState() =>
-            CurrentState == State.Swimming ||
-            CurrentState == State.AttackSwimming ||
-            CurrentState == State.ChargeSwimming;
+            CurrentState == State.Swimming
+            || CurrentState == State.AttackSwimming
+            || CurrentState == State.ChargeSwimming;
+
         public bool IsJumpingState() =>
-            CurrentState == State.Jumping ||
-            CurrentState == State.AttackJumping ||
-            CurrentState == State.ChargeJumping;
+            CurrentState == State.Jumping
+            || CurrentState == State.AttackJumping
+            || CurrentState == State.ChargeJumping;
 
         // Link Animator
         public readonly Animator Animation;
@@ -94,9 +142,11 @@ namespace ProjectZ.InGame.GameObjects
                 _sprite.IsVisible = value;
             }
         }
+
         // Link Position
         public Vector2 Position => EntityPosition.Position;
-        public CPosition CenterPosition => new CPosition(EntityPosition.X, EntityPosition.Y - 4, EntityPosition.Z);
+        public CPosition CenterPosition =>
+            new CPosition(EntityPosition.X, EntityPosition.Y - 4, EntityPosition.Z);
         public float PosX => EntityPosition.X;
         public float PosY => EntityPosition.Y;
         public float PosZ => EntityPosition.Z;
@@ -120,8 +170,17 @@ namespace ProjectZ.InGame.GameObjects
 
         // Link Direction
         public int Direction;
-        private readonly Vector2[] _walkDirection = { new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1) };
-        public Vector2 ForwardVector { get => _walkDirection[Direction]; }
+        private readonly Vector2[] _walkDirection =
+        {
+            new Vector2(-1, 0),
+            new Vector2(0, -1),
+            new Vector2(1, 0),
+            new Vector2(0, 1),
+        };
+        public Vector2 ForwardVector
+        {
+            get => _walkDirection[Direction];
+        }
 
         // Link Body
         public BodyComponent _body;
@@ -193,7 +252,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _isTrapped;
         private bool _trappedDisableItems;
 
-        // Sword 
+        // Sword
         public bool IsPoking;
         public Box SwordDamageBox;
         private bool _pickingUpSword;
@@ -266,6 +325,7 @@ namespace ProjectZ.InGame.GameObjects
         {
             get { return _savedPreItemPickup; }
         }
+
         // Items: Disable
         public bool DisableItems;
         public float DisableItemCounter;
@@ -401,10 +461,22 @@ namespace ProjectZ.InGame.GameObjects
         private bool _pickingUpInstrument;
         private const int dist0 = 30;
         private const int dist1 = 15;
-        private readonly Vector2[] _showInstrumentOffset = {
-            new Vector2(-dist1, -dist0), new Vector2(dist1, -dist0), new Vector2(dist0, dist1), new Vector2(dist0, -dist1),
-            new Vector2(dist1, dist0),new Vector2(-dist1, dist0),new Vector2(-dist0, -dist1),new Vector2(-dist0, dist1) };
-        private Rectangle[] _noteSourceRectangles = { new Rectangle(145, 97, 10, 12), new Rectangle(156, 97, 6, 12) };
+        private readonly Vector2[] _showInstrumentOffset =
+        {
+            new Vector2(-dist1, -dist0),
+            new Vector2(dist1, -dist0),
+            new Vector2(dist0, dist1),
+            new Vector2(dist0, -dist1),
+            new Vector2(dist1, dist0),
+            new Vector2(-dist1, dist0),
+            new Vector2(-dist0, -dist1),
+            new Vector2(-dist0, dist1),
+        };
+        private Rectangle[] _noteSourceRectangles =
+        {
+            new Rectangle(145, 97, 10, 12),
+            new Rectangle(156, 97, 6, 12),
+        };
         private readonly int[] _instrumentMusicIndex = { 31, 39, 40, 41, 42, 43, 44, 45 };
 
         // Raft
@@ -423,7 +495,7 @@ namespace ProjectZ.InGame.GameObjects
         private bool _wasRotating;
         public int _rotateDirection;
 
-        // Stunned 
+        // Stunned
         private float _stunnedCounter;
         private bool _stunnedParticles;
 
@@ -495,7 +567,7 @@ namespace ProjectZ.InGame.GameObjects
 
         float dmg_shader_color1_red = 255;
         float dmg_shader_color1_grn = 181;
-        float dmg_shader_color1_blu =  49;
+        float dmg_shader_color1_blu = 49;
 
         float dmg_shader_color2_red = 222;
         float dmg_shader_color2_grn = 0;
@@ -505,7 +577,8 @@ namespace ProjectZ.InGame.GameObjects
         float dmg_shader_color3_grn = 0;
         float dmg_shader_color3_blu = 0;
 
-        public ObjLink() : base((Map.Map)null)
+        public ObjLink()
+            : base((Map.Map)null)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjLink.lahdmod");
@@ -513,9 +586,24 @@ namespace ProjectZ.InGame.GameObjects
             if (File.Exists(modFile))
             {
                 ModFile.Parse(modFile, this);
-                Resources.DamageSpriteShader0["Color0"] = new Vector4(dmg_shader_color1_red/255f, dmg_shader_color1_grn/255f, dmg_shader_color1_blu/255f, 1.0f);
-                Resources.DamageSpriteShader0["Color1"] = new Vector4(dmg_shader_color2_red/255f, dmg_shader_color2_grn/255f, dmg_shader_color2_blu/255f, 1.0f);
-                Resources.DamageSpriteShader0["Color2"] = new Vector4(dmg_shader_color3_red/255f, dmg_shader_color3_grn/255f, dmg_shader_color3_blu/255f, 1.0f);
+                Resources.DamageSpriteShader0["Color0"] = new Vector4(
+                    dmg_shader_color1_red / 255f,
+                    dmg_shader_color1_grn / 255f,
+                    dmg_shader_color1_blu / 255f,
+                    1.0f
+                );
+                Resources.DamageSpriteShader0["Color1"] = new Vector4(
+                    dmg_shader_color2_red / 255f,
+                    dmg_shader_color2_grn / 255f,
+                    dmg_shader_color2_blu / 255f,
+                    1.0f
+                );
+                Resources.DamageSpriteShader0["Color2"] = new Vector4(
+                    dmg_shader_color3_red / 255f,
+                    dmg_shader_color3_grn / 255f,
+                    dmg_shader_color3_blu / 255f,
+                    1.0f
+                );
             }
             EntityPosition = new CPosition(0, 0, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -542,10 +630,11 @@ namespace ProjectZ.InGame.GameObjects
                 HoleOnPull = OnHolePull,
                 HoleAbsorb = OnHoleAbsorb,
                 MoveCollision = OnMoveCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.PlayerItem |
-                                 Values.CollisionTypes.LadderTop,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.PlayerItem
+                    | Values.CollisionTypes.LadderTop,
             };
 
             DamageCollider = new CBox(EntityPosition, -5, -10, 10, 10, 8);
@@ -553,25 +642,25 @@ namespace ProjectZ.InGame.GameObjects
             _powderOffset = new[]
             {
                 new Vector2(-12, 0),
-                new Vector2(-2, -CollisionBoxSize.Y -5),
+                new Vector2(-2, -CollisionBoxSize.Y - 5),
                 new Vector2(12, 0),
-                new Vector2(2, 10)
+                new Vector2(2, 10),
             };
 
             _boomerangOffset = new[]
             {
                 new Vector2(-10, -3),
-                new Vector2(-2, -CollisionBoxSize.Y -1),
+                new Vector2(-2, -CollisionBoxSize.Y - 1),
                 new Vector2(10, -3),
-                new Vector2(2, 6)
+                new Vector2(2, 6),
             };
 
             _arrowOffset = new[]
             {
                 new Vector2(-6, -2),
-                new Vector2(-2, -CollisionBoxSize.Y -1),
+                new Vector2(-2, -CollisionBoxSize.Y - 1),
                 new Vector2(6, -2),
-                new Vector2(2, 2)
+                new Vector2(2, 2),
             };
 
             _magicRodOffset = new[]
@@ -579,7 +668,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-10, -4),
                 new Vector2(-4, -CollisionBoxSize.Y - 4),
                 new Vector2(10, -4),
-                new Vector2(3, 2)
+                new Vector2(3, 2),
             };
 
             _shootSwordOffset = new[]
@@ -587,7 +676,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-6, -4),
                 new Vector2(-5, -CollisionBoxSize.Y - 3),
                 new Vector2(6, -4),
-                new Vector2(4, 2)
+                new Vector2(4, 2),
             };
 
             _hookshotOffset = new[]
@@ -595,7 +684,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-5, -4),
                 new Vector2(-3, -CollisionBoxSize.Y - 2),
                 new Vector2(5, -4),
-                new Vector2(3, 0)
+                new Vector2(3, 0),
             };
 
             _shovelOffset = new[]
@@ -603,7 +692,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-9, -1),
                 new Vector2(0, -14),
                 new Vector2(9, -1),
-                new Vector2(0, 1)
+                new Vector2(0, 1),
             };
 
             _bombOffset = new[]
@@ -611,7 +700,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Vector2(-10, 0),
                 new Vector2(0, -CollisionBoxSize.Y - 2),
                 new Vector2(10, 0),
-                new Vector2(0, 8)
+                new Vector2(0, 8),
             };
 
             _pokeAnimationOffset = new[]
@@ -619,7 +708,7 @@ namespace ProjectZ.InGame.GameObjects
                 new Point(-16, -4),
                 new Point(-4, -CollisionBoxSize.Y - 16),
                 new Point(16, -4),
-                new Point(5, 12)
+                new Point(5, 12),
             };
 
             _sprite = new CSprite(EntityPosition);
@@ -627,16 +716,35 @@ namespace ProjectZ.InGame.GameObjects
             _bodyDrawFunction = _drawBody.Draw;
             _drawBody.Draw = Draw;
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(Animation, _sprite, new Vector2(_animationOffsetX, _animationOffsetY)));
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Player));
+            AddComponent(
+                BaseAnimationComponent.Index,
+                new AnimationComponent(
+                    Animation,
+                    _sprite,
+                    new Vector2(_animationOffsetX, _animationOffsetY)
+                )
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(_body, Values.CollisionTypes.Player)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, _drawBody);
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, _sprite)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
-            EntityPosition.AddPositionListener(typeof(CarriableComponent), UpdatePositionCarriedObject);
+            EntityPosition.AddPositionListener(
+                typeof(CarriableComponent),
+                UpdatePositionCarriedObject
+            );
 
             // Set the move speed value the user chose.
             AlterMoveSpeed(GameSettings.MoveSpeedAdded);
@@ -649,7 +757,9 @@ namespace ProjectZ.InGame.GameObjects
                     if (_isHoldingSword)
                     {
                         string shieldString = CarryShield
-                            ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_"
+                            ? Game1.GameManager.ShieldLevel == 2
+                                ? "ms_"
+                                : "s_"
                             : "_";
 
                         CurrentState = State.ChargeJumping;
@@ -769,7 +879,9 @@ namespace ProjectZ.InGame.GameObjects
                 else if (_finalIndex == 1)
                 {
                     if (_finalSeqCounter <= 0)
-                        ((MapShowSystem)Game1.GameManager.GameSystems[typeof(MapShowSystem)]).StartEnding();
+                        (
+                            (MapShowSystem)Game1.GameManager.GameSystems[typeof(MapShowSystem)]
+                        ).StartEnding();
                 }
                 return;
             }
@@ -808,8 +920,12 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _cloakTransitionOutCounter += Game1.DeltaTime;
 
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
-                transitionSystem.SetColorMode(Color.White, MathHelper.Clamp(_cloakTransitionOutCounter / 1000f, 0, 1));
+                var transitionSystem = (MapTransitionSystem)
+                    Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.SetColorMode(
+                    Color.White,
+                    MathHelper.Clamp(_cloakTransitionOutCounter / 1000f, 0, 1)
+                );
 
                 if (_cloakTransitionOutCounter > CloakTransitionOutTime)
                 {
@@ -821,8 +937,10 @@ namespace ProjectZ.InGame.GameObjects
                     TransitionOutWalking = false;
 
                     // append a map change
-                    ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                        "overworld.map", "cloakOut", false, true, Color.White, true);
+                    (
+                        (MapTransitionSystem)
+                            Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+                    ).AppendMapChange("overworld.map", "cloakOut", false, true, Color.White, true);
                 }
             }
             else if (CurrentState == State.ShowToadstool)
@@ -846,7 +964,12 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.Idle;
                 }
             }
-            else if (CurrentState == State.PickingUp && !_pickingUpInstrument && !_pickingUpSword && !_pickingUpAnglerKey)
+            else if (
+                CurrentState == State.PickingUp
+                && !_pickingUpInstrument
+                && !_pickingUpSword
+                && !_pickingUpAnglerKey
+            )
             {
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
                 FreezeWorldAroundPlayer = true;
@@ -873,7 +996,11 @@ namespace ProjectZ.InGame.GameObjects
                 Direction = (int)(_holeTeleportCounter / 64) % 4;
 
                 // fade in
-                var percentage = MathHelper.Clamp(1 - ((float)_holeTeleportCounter - (time - 100)) / 100, 0, 1);
+                var percentage = MathHelper.Clamp(
+                    1 - ((float)_holeTeleportCounter - (time - 100)) / 100,
+                    0,
+                    1
+                );
                 SpriteTransparency = percentage;
                 _shadowComponent.Transparency = percentage;
 
@@ -881,7 +1008,12 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     _holeTeleportCounter -= time;
 
-                    if (ObjOverworldTeleporter.TeleporterDictionary.TryGetValue(HoleTeleporterId, out var teleporter))
+                    if (
+                        ObjOverworldTeleporter.TeleporterDictionary.TryGetValue(
+                            HoleTeleporterId,
+                            out var teleporter
+                        )
+                    )
                         teleporter.SetNextTeleporterPosition();
                     else
                         CurrentState = State.Idle;
@@ -965,7 +1097,10 @@ namespace ProjectZ.InGame.GameObjects
             UpdateDamageShader();
             _hitCount -= Game1.DeltaTime;
 
-            if (_savedPreItemPickup && (CurrentState == State.Idle || CurrentState == State.Swimming))
+            if (
+                _savedPreItemPickup
+                && (CurrentState == State.Idle || CurrentState == State.Swimming)
+            )
                 EndPickup();
 
             // die?
@@ -1002,7 +1137,12 @@ namespace ProjectZ.InGame.GameObjects
             DisableInput = false;
 
             // Clear the sword damage box if none of the below is true.
-            if (!IsAttackingState() && !IsChargingState() && !AnimatorWeapons.IsPlaying && !_bootsRunning)
+            if (
+                !IsAttackingState()
+                && !IsChargingState()
+                && !AnimatorWeapons.IsPlaying
+                && !_bootsRunning
+            )
                 SwordDamageBox = Box.Empty;
 
             // Clear the shield box if it's not being utilized.
@@ -1056,12 +1196,18 @@ namespace ProjectZ.InGame.GameObjects
             if (_drawInstrumentEffect)
                 _drawBody.Layer = Values.LayerTop;
             else
-                _drawBody.Layer = (CurrentState == State.Swimming && _diveCounter > 0) ? Values.LayerBottom : Values.LayerPlayer;
+                _drawBody.Layer =
+                    (CurrentState == State.Swimming && _diveCounter > 0)
+                        ? Values.LayerBottom
+                        : Values.LayerPlayer;
 
-            if ((CurrentState == State.Swimming && _diveCounter > 0) ||
-                CurrentState == State.Drowning ||
-                CurrentState == State.Drowned ||
-                CurrentState == State.BedTransition || _isTrapped)
+            if (
+                (CurrentState == State.Swimming && _diveCounter > 0)
+                || CurrentState == State.Drowning
+                || CurrentState == State.Drowned
+                || CurrentState == State.BedTransition
+                || _isTrapped
+            )
                 _shadowComponent.IsActive = false;
             else
                 _shadowComponent.IsActive = true;
@@ -1077,15 +1223,18 @@ namespace ProjectZ.InGame.GameObjects
                 _bodyDrawFunction(spriteBatch);
 
             // draw the sword/magic rod
-            if (IsAttackingState() ||
-                IsChargingState() ||
-                CurrentState == State.SwordShow0 ||
-                CurrentState == State.MagicRod ||
-                (_bootsRunning && CarrySword))
+            if (
+                IsAttackingState()
+                || IsChargingState()
+                || CurrentState == State.SwordShow0
+                || CurrentState == State.MagicRod
+                || (_bootsRunning && CarrySword)
+            )
             {
-                var changeColor = _swordChargeCounter <= 0 &&
-                            Game1.TotalGameTime % (8 / 0.06) >= 4 / 0.06 &&
-                            ObjectManager.CurrentEffect != Resources.DamageSpriteShader0.Effect;
+                var changeColor =
+                    _swordChargeCounter <= 0
+                    && Game1.TotalGameTime % (8 / 0.06) >= 4 / 0.06
+                    && ObjectManager.CurrentEffect != Resources.DamageSpriteShader0.Effect;
 
                 // Change the draw shader
                 if (changeColor)
@@ -1097,7 +1246,14 @@ namespace ProjectZ.InGame.GameObjects
                 // Draw the sword. Use offset of 6 instead of 7 when 2D Link is swimming and charging.
                 var swordXOffset = (Is2DMode && CurrentState == State.ChargeSwimming) ? 6 : 7;
 
-                AnimatorWeapons.Draw(spriteBatch, new Vector2(EntityPosition.X - swordXOffset, EntityPosition.Y - 16 - EntityPosition.Z), Color.White);
+                AnimatorWeapons.Draw(
+                    spriteBatch,
+                    new Vector2(
+                        EntityPosition.X - swordXOffset,
+                        EntityPosition.Y - 16 - EntityPosition.Z
+                    ),
+                    Color.White
+                );
 
                 // Change the draw shader
                 if (changeColor)
@@ -1113,7 +1269,9 @@ namespace ProjectZ.InGame.GameObjects
                 var itemSword = Game1.GameManager.ItemManager["sword1"];
                 var position = new Vector2(
                     BodyRectangle.X - itemSword.SourceRectangle.Value.Width / 2f,
-                    (EntityPosition.Y - EntityPosition.Z - 15) - itemSword.SourceRectangle.Value.Height);
+                    (EntityPosition.Y - EntityPosition.Z - 15)
+                        - itemSword.SourceRectangle.Value.Height
+                );
 
                 ItemDrawHelper.DrawItem(spriteBatch, itemSword, position, Color.White, 1, true);
             }
@@ -1124,7 +1282,9 @@ namespace ProjectZ.InGame.GameObjects
                 var itemToadstool = Game1.GameManager.ItemManager["toadstool"];
                 var position = new Vector2(
                     BodyRectangle.X - itemToadstool.SourceRectangle.Value.Width / 2f,
-                    (EntityPosition.Y - EntityPosition.Z - 15) - itemToadstool.SourceRectangle.Value.Height);
+                    (EntityPosition.Y - EntityPosition.Z - 15)
+                        - itemToadstool.SourceRectangle.Value.Height
+                );
 
                 ItemDrawHelper.DrawItem(spriteBatch, itemToadstool, position, Color.White, 1);
             }
@@ -1138,7 +1298,14 @@ namespace ProjectZ.InGame.GameObjects
 
             // draw the picked up store item
             if (StoreItem != null)
-                ItemDrawHelper.DrawItem(spriteBatch, StoreItem, _storePickupPosition, Color.White, 1, true);
+                ItemDrawHelper.DrawItem(
+                    spriteBatch,
+                    StoreItem,
+                    _storePickupPosition,
+                    Color.White,
+                    1,
+                    true
+                );
 
             // draw the shown item
             if (ShowItem != null)
@@ -1148,15 +1315,36 @@ namespace ProjectZ.InGame.GameObjects
 
                 if (CurrentState == State.CloakShow0)
                 {
-                    ItemDrawHelper.DrawItem(spriteBatch, ShowItem, itemPosition, Color.White * (1 - _cloakPercentage), 1, true);
+                    ItemDrawHelper.DrawItem(
+                        spriteBatch,
+                        ShowItem,
+                        itemPosition,
+                        Color.White * (1 - _cloakPercentage),
+                        1,
+                        true
+                    );
                 }
                 else if (ShowItem.Name == "sword2")
                 {
                     var swordImage = Resources.GetSprite("sword2Show");
-                    DrawHelper.DrawNormalized(spriteBatch, swordImage.Texture, itemPosition, swordImage.ScaledRectangle, Color.White, swordImage.Scale);
+                    DrawHelper.DrawNormalized(
+                        spriteBatch,
+                        swordImage.Texture,
+                        itemPosition,
+                        swordImage.ScaledRectangle,
+                        Color.White,
+                        swordImage.Scale
+                    );
                 }
                 else
-                    ItemDrawHelper.DrawItem(spriteBatch, ShowItem, itemPosition, Color.White, 1, true);
+                    ItemDrawHelper.DrawItem(
+                        spriteBatch,
+                        ShowItem,
+                        itemPosition,
+                        Color.White,
+                        1,
+                        true
+                    );
             }
 
             // draw the object the player is carrying
@@ -1172,12 +1360,25 @@ namespace ProjectZ.InGame.GameObjects
             {
                 var rotation = (float)(Game1.TotalGameTime / 1200) * MathF.PI * 2;
                 var offset0 = new Vector2(MathF.Cos(rotation) * 8 - 2, MathF.Sin(rotation) * 3 - 2);
-                DrawHelper.DrawNormalized(spriteBatch, _stunnedParticleSprite,
-                    offset0 + new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 18), Color.White);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    _stunnedParticleSprite,
+                    offset0
+                        + new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 18),
+                    Color.White
+                );
 
-                var offset1 = new Vector2(MathF.Cos(rotation + MathF.PI) * 8 - 2, MathF.Sin(rotation + MathF.PI) * 3 - 2);
-                DrawHelper.DrawNormalized(spriteBatch, _stunnedParticleSprite,
-                    offset1 + new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 18), Color.White);
+                var offset1 = new Vector2(
+                    MathF.Cos(rotation + MathF.PI) * 8 - 2,
+                    MathF.Sin(rotation + MathF.PI) * 3 - 2
+                );
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    _stunnedParticleSprite,
+                    offset1
+                        + new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 18),
+                    Color.White
+                );
             }
 
             if (CurrentState == State.SwordShowLv2)
@@ -1199,41 +1400,64 @@ namespace ProjectZ.InGame.GameObjects
             if (Game1.DebugMode)
             {
                 // Draw the save hole position.
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Vector2(_holeResetPosition.X - 5, _holeResetPosition.Y - 5), new Rectangle(0, 0,
-                       10, 10), Color.HotPink * 0.65f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Vector2(_holeResetPosition.X - 5, _holeResetPosition.Y - 5),
+                    new Rectangle(0, 0, 10, 10),
+                    Color.HotPink * 0.65f
+                );
 
                 // Draw weapon damage rectangle.
                 var swordRectangle = SwordDamageBox.Rectangle();
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Vector2(swordRectangle.X, swordRectangle.Y), new Rectangle(0, 0,
-                        (int)swordRectangle.Width, (int)swordRectangle.Height), Color.Blue * 0.75f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Vector2(swordRectangle.X, swordRectangle.Y),
+                    new Rectangle(0, 0, (int)swordRectangle.Width, (int)swordRectangle.Height),
+                    Color.Blue * 0.75f
+                );
 
                 // Draw shield rectangle.
                 var shieldRectangle = ShieldBlockBox.Rectangle();
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Vector2(shieldRectangle.X, shieldRectangle.Y), new Rectangle(0, 0,
-                        (int)shieldRectangle.Width, (int)shieldRectangle.Height), Color.Green * 0.75f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Vector2(shieldRectangle.X, shieldRectangle.Y),
+                    new Rectangle(0, 0, (int)shieldRectangle.Width, (int)shieldRectangle.Height),
+                    Color.Green * 0.75f
+                );
 
                 // Draw dash smash rectangle.
                 var dashRectangle = _crystalSmashBox.Rectangle();
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Vector2(dashRectangle.X, dashRectangle.Y), new Rectangle(0, 0,
-                        (int)dashRectangle.Width, (int)dashRectangle.Height), Color.Red * 0.75f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Vector2(dashRectangle.X, dashRectangle.Y),
+                    new Rectangle(0, 0, (int)dashRectangle.Width, (int)dashRectangle.Height),
+                    Color.Red * 0.75f
+                );
 
                 // Draw grab rectangle.
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Vector2(GrabRectangle.X, GrabRectangle.Y), new Rectangle(0, 0,
-                        (int)GrabRectangle.Width, (int)GrabRectangle.Height), Color.Yellow * 0.75f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Vector2(GrabRectangle.X, GrabRectangle.Y),
+                    new Rectangle(0, 0, (int)GrabRectangle.Width, (int)GrabRectangle.Height),
+                    Color.Yellow * 0.75f
+                );
 
                 // Draw the field barrier.
                 if (FieldBarrier != null)
                 {
                     foreach (var barrier in FieldBarrier)
                     {
-                        spriteBatch.Draw(Resources.SprWhite,
-                            new Vector2(barrier.CollisionBox.X, barrier.CollisionBox.Y), new Rectangle(0, 0,
-                            (int)barrier.CollisionBox.Width, (int)barrier.CollisionBox.Height), Color.Blue * 0.75f);
+                        spriteBatch.Draw(
+                            Resources.SprWhite,
+                            new Vector2(barrier.CollisionBox.X, barrier.CollisionBox.Y),
+                            new Rectangle(
+                                0,
+                                0,
+                                (int)barrier.CollisionBox.Width,
+                                (int)barrier.CollisionBox.Height
+                            ),
+                            Color.Blue * 0.75f
+                        );
                     }
                 }
             }
@@ -1241,26 +1465,138 @@ namespace ProjectZ.InGame.GameObjects
 
         private void DrawSwordL2Particles(SpriteBatch spriteBatch)
         {
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(-32, -16), -125, 300, 200, 0);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(-32, -16), -125 - 250, 300, 200, 0);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(-32, -16),
+                -125,
+                300,
+                200,
+                0
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(-32, -16),
+                -125 - 250,
+                300,
+                200,
+                0
+            );
 
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(-32, -32), 0, 300, 200, 1);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(-32, -32), -250, 300, 200, 1);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(-32, -32),
+                0,
+                300,
+                200,
+                1
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(-32, -32),
+                -250,
+                300,
+                200,
+                1
+            );
 
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(-24, -52), -50, 450, 50, 2);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(-24, -52), -50 - 250, 450, 50, 2);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(-24, -52),
+                -50,
+                450,
+                50,
+                2
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(-24, -52),
+                -50 - 250,
+                450,
+                50,
+                2
+            );
 
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(0, -64), -75, 450, 50, 3);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(0, -64), -75 - 250, 450, 50, 3);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(0, -64),
+                -75,
+                450,
+                50,
+                3
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(0, -64),
+                -75 - 250,
+                450,
+                50,
+                3
+            );
 
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(24, -52), -50, 450, 50, 4);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(24, -52), -50 - 250, 450, 50, 4);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(24, -52),
+                -50,
+                450,
+                50,
+                4
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(24, -52),
+                -50 - 250,
+                450,
+                50,
+                4
+            );
 
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(32, -32), 0, 300, 200, 5);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(32, -32), -250, 300, 200, 5);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(32, -32),
+                0,
+                300,
+                200,
+                5
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(32, -32),
+                -250,
+                300,
+                200,
+                5
+            );
 
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(32, -16), -125, 300, 200, 6);
-            DrawSwordParticle(spriteBatch, new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22), new Vector2(32, -16), -125 - 250, 300, 200, 6);
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(32, -16),
+                -125,
+                300,
+                200,
+                6
+            );
+            DrawSwordParticle(
+                spriteBatch,
+                new Vector2(EntityPosition.X - 4, EntityPosition.Y - 22),
+                new Vector2(32, -16),
+                -125 - 250,
+                300,
+                200,
+                6
+            );
         }
 
         private void DrawInstrumentEffect(SpriteBatch spriteBatch)
@@ -1273,43 +1609,70 @@ namespace ProjectZ.InGame.GameObjects
                 var time = (float)(Game1.TotalGameTime % speed);
                 var state = MathF.Sin((time / speed) * MathF.PI * 0.475f);
                 var distance = 32 - 20 * state;
-                var transparency = MathHelper.Clamp(time / fadeTime, 0, 1) *
-                                   MathHelper.Clamp((speed - time) / fadeTime, 0, 1);
-                var sourceRectangle = time < (speed / 1.65f) ? new Rectangle(194, 114, 12, 12) : new Rectangle(194, 98, 12, 12);
+                var transparency =
+                    MathHelper.Clamp(time / fadeTime, 0, 1)
+                    * MathHelper.Clamp((speed - time) / fadeTime, 0, 1);
+                var sourceRectangle =
+                    time < (speed / 1.65f)
+                        ? new Rectangle(194, 114, 12, 12)
+                        : new Rectangle(194, 98, 12, 12);
 
                 for (var y = 0; y < 2; y++)
-                    for (var x = 0; x < 2; x++)
-                    {
-                        var position = new Vector2(
-                            center.X - 6 + (x * 2 - 1) * distance,
-                            center.Y - 6 + (y * 2 - 1) * distance);
-                        spriteBatch.Draw(Resources.SprItem, position, sourceRectangle,
-                            Color.White * transparency, 0, Vector2.Zero, Vector2.One,
-                            (x == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None) |
-                            (y == 0 ? SpriteEffects.FlipVertically : SpriteEffects.None), 0);
-                    }
+                for (var x = 0; x < 2; x++)
+                {
+                    var position = new Vector2(
+                        center.X - 6 + (x * 2 - 1) * distance,
+                        center.Y - 6 + (y * 2 - 1) * distance
+                    );
+                    spriteBatch.Draw(
+                        Resources.SprItem,
+                        position,
+                        sourceRectangle,
+                        Color.White * transparency,
+                        0,
+                        Vector2.Zero,
+                        Vector2.One,
+                        (x == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None)
+                            | (y == 0 ? SpriteEffects.FlipVertically : SpriteEffects.None),
+                        0
+                    );
+                }
             }
 
             {
                 var time = (float)((Game1.TotalGameTime + speed / 2) % speed);
                 var state = MathF.Sin((time / speed) * MathF.PI * 0.475f);
                 var distance = 40 - 34 * state;
-                var transparency = MathHelper.Clamp(time / fadeTime, 0, 1) *
-                                   MathHelper.Clamp((speed - time) / fadeTime, 0, 1);
-                var sourceRectangle = time < (speed / 1.65f) ? new Rectangle(176, 116, 16, 8) : new Rectangle(176, 100, 16, 8);
+                var transparency =
+                    MathHelper.Clamp(time / fadeTime, 0, 1)
+                    * MathHelper.Clamp((speed - time) / fadeTime, 0, 1);
+                var sourceRectangle =
+                    time < (speed / 1.65f)
+                        ? new Rectangle(176, 116, 16, 8)
+                        : new Rectangle(176, 100, 16, 8);
 
                 for (var y = 0; y < 2; y++)
-                    for (var x = 0; x < 2; x++)
-                    {
-                        var rotation = (float)((x * 2 + y) * Math.PI / 2);
+                for (var x = 0; x < 2; x++)
+                {
+                    var rotation = (float)((x * 2 + y) * Math.PI / 2);
 
-                        var position = new Vector2(
-                            center.X + (y == 0 ? (x * 2 - 1) * distance : 0),
-                            center.Y + (y == 0 ? 0 : (x * 2 - 1) * distance));
+                    var position = new Vector2(
+                        center.X + (y == 0 ? (x * 2 - 1) * distance : 0),
+                        center.Y + (y == 0 ? 0 : (x * 2 - 1) * distance)
+                    );
 
-                        spriteBatch.Draw(Resources.SprItem, position, sourceRectangle,
-                            Color.White * transparency, rotation, new Vector2(16, 4), Vector2.One, SpriteEffects.None, 0);
-                    }
+                    spriteBatch.Draw(
+                        Resources.SprItem,
+                        position,
+                        sourceRectangle,
+                        Color.White * transparency,
+                        rotation,
+                        new Vector2(16, 4),
+                        Vector2.One,
+                        SpriteEffects.None,
+                        0
+                    );
+                }
             }
         }
 
@@ -1318,14 +1681,24 @@ namespace ProjectZ.InGame.GameObjects
             if (_finalIndex != 1)
                 return;
 
-            var percentage = 0.25f + Math.Clamp((float)(2500 - _finalSeqCounter) / 2000, 0, 1) * 0.75f;
+            var percentage =
+                0.25f + Math.Clamp((float)(2500 - _finalSeqCounter) / 2000, 0, 1) * 0.75f;
 
             // draw the instruments
             for (var i = 0; i < 8; i++)
             {
                 var itemInstrument = Game1.GameManager.ItemManager["instrument" + i];
-                var position = new Vector2(EntityPosition.X - 8, EntityPosition.Y - 60) + _showInstrumentOffset[i] * percentage;
-                ItemDrawHelper.DrawItem(spriteBatch, itemInstrument, position, Color.White, 1, true);
+                var position =
+                    new Vector2(EntityPosition.X - 8, EntityPosition.Y - 60)
+                    + _showInstrumentOffset[i] * percentage;
+                ItemDrawHelper.DrawItem(
+                    spriteBatch,
+                    itemInstrument,
+                    position,
+                    Color.White,
+                    1,
+                    true
+                );
             }
         }
 
@@ -1338,11 +1711,31 @@ namespace ProjectZ.InGame.GameObjects
 
             var cloakColor = Game1.GameManager.CloakColor;
             if (CurrentState == State.CloakShow0 && ShowItem == null)
-                cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[0], _cloakPercentage);
-            else if (CurrentState == State.CloakShow0 && ShowItem != null && ShowItem.Name == "cloakBlue")
-                cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[1], _cloakPercentage);
-            else if (CurrentState == State.CloakShow0 && ShowItem != null && ShowItem.Name == "cloakRed")
-                cloakColor = Color.Lerp(cloakColor, ItemDrawHelper.CloakColors[2], _cloakPercentage);
+                cloakColor = Color.Lerp(
+                    cloakColor,
+                    ItemDrawHelper.CloakColors[0],
+                    _cloakPercentage
+                );
+            else if (
+                CurrentState == State.CloakShow0
+                && ShowItem != null
+                && ShowItem.Name == "cloakBlue"
+            )
+                cloakColor = Color.Lerp(
+                    cloakColor,
+                    ItemDrawHelper.CloakColors[1],
+                    _cloakPercentage
+                );
+            else if (
+                CurrentState == State.CloakShow0
+                && ShowItem != null
+                && ShowItem.Name == "cloakRed"
+            )
+                cloakColor = Color.Lerp(
+                    cloakColor,
+                    ItemDrawHelper.CloakColors[2],
+                    _cloakPercentage
+                );
 
             _sprite.Color = cloakColor * SpriteTransparency;
             _sprite.SprTexture = Resources.SprLinkCloak;
@@ -1352,13 +1745,23 @@ namespace ProjectZ.InGame.GameObjects
             _sprite.SprTexture = texture;
         }
 
-        private void DrawNote(SpriteBatch spriteBatch, Vector2 position, Vector2 direction, int noteIndex)
+        private void DrawNote(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            Vector2 direction,
+            int noteIndex
+        )
         {
             var timeOffset = noteIndex * _instrumentCycleTime / 2;
 
-            if (_instrumentCounter < timeOffset ||
-                (CurrentState != State.ShowInstrumentPart1 || _drawInstrumentEffect) &&
-                ((_instrumentCounter - timeOffset) / _instrumentCycleTime + 1) * _instrumentCycleTime + timeOffset > 0)
+            if (
+                _instrumentCounter < timeOffset
+                || (CurrentState != State.ShowInstrumentPart1 || _drawInstrumentEffect)
+                    && ((_instrumentCounter - timeOffset) / _instrumentCycleTime + 1)
+                        * _instrumentCycleTime
+                        + timeOffset
+                        > 0
+            )
                 return;
 
             var time = (_instrumentCounter + timeOffset) % _instrumentCycleTime;
@@ -1377,31 +1780,54 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     _noteInit[noteIndex] = true;
                     _noteSpriteIndex[noteIndex] = Game1.RandomNumber.Next(0, 2);
-
                 }
                 transparency = time / 100;
             }
-            position += direction * time * 0.02f + new Vector2(-direction.X, direction.Y) * (float)Math.Sin(time * 0.015) * 0.75f;
+            position +=
+                direction * time * 0.02f
+                + new Vector2(-direction.X, direction.Y) * (float)Math.Sin(time * 0.015) * 0.75f;
             position += new Vector2(
                 -_noteSourceRectangles[_noteSpriteIndex[noteIndex]].Width / 2f,
-                -_noteSourceRectangles[_noteSpriteIndex[noteIndex]].Height);
+                -_noteSourceRectangles[_noteSpriteIndex[noteIndex]].Height
+            );
 
-            spriteBatch.Draw(Resources.SprItem, position,
-                _noteSourceRectangles[_noteSpriteIndex[noteIndex]], Color.White * transparency);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
+                _noteSourceRectangles[_noteSpriteIndex[noteIndex]],
+                Color.White * transparency
+            );
         }
 
-        private void DrawSwordParticle(SpriteBatch spriteBatch, Vector2 position, Vector2 direction, int timeOffset, int fullTime, int timeDelay, int index)
+        private void DrawSwordParticle(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            Vector2 direction,
+            int timeOffset,
+            int fullTime,
+            int timeDelay,
+            int index
+        )
         {
             var fadeTime = 50;
             var particleTime = (_showSwordL2ParticleCounter + timeOffset) % (fullTime + timeDelay);
             var percentage = particleTime / fullTime;
-            var colorTransparency = Math.Min((fullTime - particleTime) / fadeTime, particleTime / fadeTime);
+            var colorTransparency = Math.Min(
+                (fullTime - particleTime) / fadeTime,
+                particleTime / fadeTime
+            );
             var particlePosition = position + percentage * direction;
             var spriteParticle = Resources.GetSprite("sword_particle_" + index);
 
             if (0 < particleTime && particleTime < fullTime)
-                DrawHelper.DrawNormalized(spriteBatch, spriteParticle.Texture,
-                    particlePosition - spriteParticle.Origin, spriteParticle.ScaledRectangle, Color.White * colorTransparency, spriteParticle.Scale);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    spriteParticle.Texture,
+                    particlePosition - spriteParticle.Origin,
+                    spriteParticle.ScaledRectangle,
+                    Color.White * colorTransparency,
+                    spriteParticle.Scale
+                );
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
@@ -1409,7 +1835,12 @@ namespace ProjectZ.InGame.GameObjects
             if (light_source && GameSettings.ObjectLights)
             {
                 var _lightColor = new Color(light_red, light_grn, light_blu);
-                var _lightRectangle = new Rectangle((int)_body.Position.X - light_size / 2, (int)_body.Position.Y - (int)_body.Position.Z - light_size / 2 - 6, light_size, light_size);
+                var _lightRectangle = new Rectangle(
+                    (int)_body.Position.X - light_size / 2,
+                    (int)_body.Position.Y - (int)_body.Position.Z - light_size / 2 - 6,
+                    light_size,
+                    light_size
+                );
                 spriteBatch.Draw(Resources.SprLight, _lightRectangle, _lightColor * light_bright);
             }
         }
@@ -1624,13 +2055,20 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("boomerang_trade");
                 int index = GameSettings.SwapButtons ? 0 : 1;
 
-                if (Game1.GameManager.Equipment[index] != null &&
-                    (Game1.GameManager.Equipment[index].Name == "shovel" ||
-                     Game1.GameManager.Equipment[index].Name == "feather" ||
-                     Game1.GameManager.Equipment[index].Name == "magicRod" ||
-                     Game1.GameManager.Equipment[index].Name == "hookshot"))
+                if (
+                    Game1.GameManager.Equipment[index] != null
+                    && (
+                        Game1.GameManager.Equipment[index].Name == "shovel"
+                        || Game1.GameManager.Equipment[index].Name == "feather"
+                        || Game1.GameManager.Equipment[index].Name == "magicRod"
+                        || Game1.GameManager.Equipment[index].Name == "hookshot"
+                    )
+                )
                 {
-                    Game1.GameManager.SaveManager.SetString("tradded_item", Game1.GameManager.Equipment[index].Name);
+                    Game1.GameManager.SaveManager.SetString(
+                        "tradded_item",
+                        Game1.GameManager.Equipment[index].Name
+                    );
                     Game1.GameManager.Equipment[index] = null;
                     Game1.GameManager.StartDialogPath("npc_hidden_boomerang");
                 }
@@ -1641,7 +2079,9 @@ namespace ProjectZ.InGame.GameObjects
             }
 
             // Boomerang Return: Hidden Goriya
-            var boomerangReturnValue = Game1.GameManager.SaveManager.GetString("boomerang_trade_return");
+            var boomerangReturnValue = Game1.GameManager.SaveManager.GetString(
+                "boomerang_trade_return"
+            );
             if (!string.IsNullOrEmpty(boomerangReturnValue))
             {
                 Game1.GameManager.SaveManager.RemoveString("boomerang_trade_return");
@@ -1683,10 +2123,12 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
                 var itemRooster = new GameItemCollected("rooster") { Count = 1 };
                 PickUpItem(itemRooster, false, false, true);
-                _objFollower = _objRooster = new ObjCock(Map,
+                _objFollower = _objRooster = new ObjCock(
+                    Map,
                     (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X),
                     (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X),
-                    "borrow_rooster");
+                    "borrow_rooster"
+                );
                 Map.Objects.SpawnObject(_objRooster);
                 Map.Objects.RegisterAlwaysAnimateObject(_objFollower);
                 _objRooster.BorrowRooster();
@@ -1740,7 +2182,13 @@ namespace ProjectZ.InGame.GameObjects
         //  HIT PLAYER CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private bool WasBlocked(Box box, RectangleF boxRect, Vector2 boxCenter, Vector2 bodyCenter, int direction)
+        private bool WasBlocked(
+            Box box,
+            RectangleF boxRect,
+            Vector2 boxCenter,
+            Vector2 bodyCenter,
+            int direction
+        )
         {
             // Get the difference between the centers.
             Vector2 delta = bodyCenter - boxCenter;
@@ -1758,7 +2206,13 @@ namespace ProjectZ.InGame.GameObjects
             return (!inside || box.Intersects(ShieldBlockBox)) && facingDir;
         }
 
-        public bool HitPlayer(Box box, HitType type, int damage, float pushMultiplier = 1.75f, int missileDir = -1)
+        public bool HitPlayer(
+            Box box,
+            HitType type,
+            int damage,
+            float pushMultiplier = 1.75f,
+            int missileDir = -1
+        )
         {
             // Prevent hits when playing the ocarina.
             if (PreventDamageTimer > 0)
@@ -1768,7 +2222,11 @@ namespace ProjectZ.InGame.GameObjects
             RectangleF boxRect = box.Rectangle();
 
             // Get the centers of the rectangles.
-            Vector2 boxCenter = new Vector2(boxRect.X + boxRect.Width / 2f, boxRect.Y + boxRect.Height / 2f); ;
+            Vector2 boxCenter = new Vector2(
+                boxRect.X + boxRect.Width / 2f,
+                boxRect.Y + boxRect.Height / 2f
+            );
+            ;
             Vector2 bodyCenter = BodyRectangle.Center;
             Vector2 boxDir = bodyCenter - boxCenter;
             Vector2 vecDirection;
@@ -1782,7 +2240,10 @@ namespace ProjectZ.InGame.GameObjects
                 vecDirection = boxDir;
             else
             {
-                Vector2 interCenter = new Vector2(intersection.X + intersection.Width / 2f, intersection.Y + intersection.Height / 2f);
+                Vector2 interCenter = new Vector2(
+                    intersection.X + intersection.Width / 2f,
+                    intersection.Y + intersection.Height / 2f
+                );
                 vecDirection = bodyCenter - interCenter;
             }
             // Normalize the direction vector.
@@ -1803,12 +2264,27 @@ namespace ProjectZ.InGame.GameObjects
             return HitPlayer(vecDirection * pushMultiplier, type, damage, blocked);
         }
 
-        public bool HitPlayer(Vector2 direction, HitType type, int damage, bool blocked, int damageCooldown = 0)
+        public bool HitPlayer(
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool blocked,
+            int damageCooldown = 0
+        )
         {
             // Check conditions where the player wouldn't take damage.
-            if (_hitCount > 0 || CurrentState == State.Dying || CurrentState == State.PickingUp ||
-                CurrentState == State.Drowning || CurrentState == State.Drowned || CurrentState == State.Knockout ||
-                IsDiving() || Game1.GameManager.UseShockEffect || !UpdatePlayer || Hookshot.IsMoving)
+            if (
+                _hitCount > 0
+                || CurrentState == State.Dying
+                || CurrentState == State.PickingUp
+                || CurrentState == State.Drowning
+                || CurrentState == State.Drowned
+                || CurrentState == State.Knockout
+                || IsDiving()
+                || Game1.GameManager.UseShockEffect
+                || !UpdatePlayer
+                || Hookshot.IsMoving
+            )
             {
                 return false;
             }
@@ -1859,7 +2335,13 @@ namespace ProjectZ.InGame.GameObjects
             var shakeMult = (100.0f / freezeTime) * MathF.PI;
             Game1.FreezeTime = Game1.TotalGameTime + freezeTime;
             if (GameSettings.ExScreenShake)
-                Game1.GameManager.ShakeScreen(freezeTime, (int)(direction.X * 2), (int)(direction.Y * 2), shakeMult, shakeMult);
+                Game1.GameManager.ShakeScreen(
+                    freezeTime,
+                    (int)(direction.X * 2),
+                    (int)(direction.Y * 2),
+                    shakeMult,
+                    shakeMult
+                );
             UpdateDamageShader();
 
             return true;
@@ -1912,7 +2394,9 @@ namespace ProjectZ.InGame.GameObjects
 
             // Begin the game over sequence.
             if (!shopFinish)
-                ((GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]).StartDeath();
+                (
+                    (GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]
+                ).StartDeath();
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1921,10 +2405,15 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateIgnoresZ()
         {
-            if (CurrentState == State.Swimming ||
-                CurrentState == State.Hookshot ||
-                CurrentState == State.TeleporterUp ||
-                CurrentState == State.TeleportFallWait || _isFlying || _isGrabbed || _isClimbing)
+            if (
+                CurrentState == State.Swimming
+                || CurrentState == State.Hookshot
+                || CurrentState == State.TeleporterUp
+                || CurrentState == State.TeleportFallWait
+                || _isFlying
+                || _isGrabbed
+                || _isClimbing
+            )
                 _body.IgnoresZ = true;
             else
                 _body.IgnoresZ = false;
@@ -1932,21 +2421,26 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateWalking()
         {
-            if (DisableInput) return;
+            if (DisableInput)
+                return;
 
-            if (CurrentState != State.Idle &&
-                !IsAttackingState() &&
-                !IsChargingState() &&
-                !IsBlockingState() &&
-                !IsSwimmingState() &&
-                CurrentState != State.CarryingItem &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Powdering &&
-                CurrentState != State.Bombing &&
-                CurrentState != State.MagicRod &&
-                CurrentState != State.Throwing &&
-                (CurrentState != State.Carrying || _isFlying) &&
-                (!IsJumpingState() || _railJump) || !CanWalk || _isRafting)
+            if (
+                CurrentState != State.Idle
+                    && !IsAttackingState()
+                    && !IsChargingState()
+                    && !IsBlockingState()
+                    && !IsSwimmingState()
+                    && CurrentState != State.CarryingItem
+                    && CurrentState != State.Pushing
+                    && CurrentState != State.Powdering
+                    && CurrentState != State.Bombing
+                    && CurrentState != State.MagicRod
+                    && CurrentState != State.Throwing
+                    && (CurrentState != State.Carrying || _isFlying)
+                    && (!IsJumpingState() || _railJump)
+                || !CanWalk
+                || _isRafting
+            )
                 return;
 
             var walkVelocity = Vector2.Zero;
@@ -1960,7 +2454,10 @@ namespace ProjectZ.InGame.GameObjects
 
             var vectorDirection = ToDirection(walkVelocity);
 
-            if (_bootsRunning && (walkVelLength < 0 || vectorDirection != ReverseDirection(Direction)))
+            if (
+                _bootsRunning
+                && (walkVelLength < 0 || vectorDirection != ReverseDirection(Direction))
+            )
             {
                 if (_bootsLastDirection != Direction)
                     _bootsStop = true;
@@ -1984,11 +2481,15 @@ namespace ProjectZ.InGame.GameObjects
             else if (walkVelLength > 0)
             {
                 // slow down in the grass
-                if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.IsGrounded)
+                if (
+                    _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.IsGrounded
+                )
                     _currentWalkSpeed *= 0.8f;
 
                 // slow down in the water
-                if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water) && _body.IsGrounded)
+                if (
+                    _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water) && _body.IsGrounded
+                )
                 {
                     _currentWalkSpeed *= 0.8f;
 
@@ -2024,8 +2525,12 @@ namespace ProjectZ.InGame.GameObjects
             else
             {
                 Vector2 vecMoved = ControlHandler.GetMoveVector2();
-                if ((CurrentState == State.Attacking || CurrentState == State.AttackBlocking) &&
-                    !_isHoldingSword && vecMoved != Vector2.Zero && _body.IsGrounded)
+                if (
+                    (CurrentState == State.Attacking || CurrentState == State.AttackBlocking)
+                    && !_isHoldingSword
+                    && vecMoved != Vector2.Zero
+                    && _body.IsGrounded
+                )
                     Direction = ToDirection(vecMoved);
             }
             _lastBaseMoveVelocity = _moveVelocity;
@@ -2057,7 +2562,11 @@ namespace ProjectZ.InGame.GameObjects
                     bool lockX = Math.Abs(_lastMoveVelocity.X) >= Math.Abs(_lastMoveVelocity.Y);
 
                     // Compute perpendicular Lerp as usual
-                    Vector2 newMoveVelocity = Vector2.Lerp(_lastMoveVelocity, targetVelocity, lerpAmount);
+                    Vector2 newMoveVelocity = Vector2.Lerp(
+                        _lastMoveVelocity,
+                        targetVelocity,
+                        lerpAmount
+                    );
 
                     if (_bootsRunJump)
                     {
@@ -2065,9 +2574,14 @@ namespace ProjectZ.InGame.GameObjects
                         float lockedAxis = lockX ? _lastMoveVelocity.X : _lastMoveVelocity.Y;
                         float inputAxis = lockX ? walkVelocity.X : walkVelocity.Y;
 
-                        lockedAxis = (Math.Sign(inputAxis) != Math.Sign(lockedAxis) && inputAxis != 0)
-                            ? MathHelper.Lerp(lockedAxis, inputAxis * _currentWalkSpeed, lerpAmount)
-                            : Math.Sign(lockedAxis) * _bootsMaxSpeed;
+                        lockedAxis =
+                            (Math.Sign(inputAxis) != Math.Sign(lockedAxis) && inputAxis != 0)
+                                ? MathHelper.Lerp(
+                                    lockedAxis,
+                                    inputAxis * _currentWalkSpeed,
+                                    lerpAmount
+                                )
+                                : Math.Sign(lockedAxis) * _bootsMaxSpeed;
 
                         // Recombine axes
                         _lastMoveVelocity = lockX
@@ -2087,7 +2601,15 @@ namespace ProjectZ.InGame.GameObjects
         private void OnMoveCollision(Values.BodyCollision collision)
         {
             // Detect hitting crystals made by the smash box created when dashing with Pegasus Boots.
-            var dashSmashHit = Map.Objects.Hit(this, _crystalSmashBox.Center, _crystalSmashBox, HitType.CrystalSmash, 0, false, false);
+            var dashSmashHit = Map.Objects.Hit(
+                this,
+                _crystalSmashBox.Center,
+                _crystalSmashBox,
+                HitType.CrystalSmash,
+                0,
+                false,
+                false
+            );
 
             if (dashSmashHit == Values.HitCollision.Blocking)
                 return;
@@ -2134,7 +2656,14 @@ namespace ProjectZ.InGame.GameObjects
 
                     Game1.GameManager.PlaySoundEffect("D360-11-0B");
 
-                    Map.Objects.Hit(this, damageOrigin, damageBox, HitType.PegasusBootsPush, 0, false);
+                    Map.Objects.Hit(
+                        this,
+                        damageOrigin,
+                        damageBox,
+                        HitType.PegasusBootsPush,
+                        0,
+                        false
+                    );
                 }
             }
 
@@ -2145,8 +2674,10 @@ namespace ProjectZ.InGame.GameObjects
                 _lastBaseMoveVelocity = _moveVelocity;
             }
 
-            if (CurrentState == State.BootKnockback &&
-                (collision & Values.BodyCollision.Floor) != 0)
+            if (
+                CurrentState == State.BootKnockback
+                && (collision & Values.BodyCollision.Floor) != 0
+            )
             {
                 CurrentState = State.Idle;
                 _body.Velocity.Z = 0;
@@ -2160,10 +2691,17 @@ namespace ProjectZ.InGame.GameObjects
                     return;
 
                 // colliding horizontally or vertically? -> start pushing
-                if (CurrentState == State.Idle &&
-                    _body.IsGrounded && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero) &&
-                    ((collision & Values.BodyCollision.Horizontal) != 0 && (Direction == 0 || Direction == 2) ||
-                    (collision & Values.BodyCollision.Vertical) != 0 && (Direction == 1 || Direction == 3)))
+                if (
+                    CurrentState == State.Idle
+                    && _body.IsGrounded
+                    && (_body.Velocity != Vector3.Zero || _body.VelocityTarget != Vector2.Zero)
+                    && (
+                        (collision & Values.BodyCollision.Horizontal) != 0
+                            && (Direction == 0 || Direction == 2)
+                        || (collision & Values.BodyCollision.Vertical) != 0
+                            && (Direction == 1 || Direction == 3)
+                    )
+                )
                 {
                     var box = _body.BodyBox.Box;
 
@@ -2175,7 +2713,17 @@ namespace ProjectZ.InGame.GameObjects
 
                     // check if the object we are walking into is actually an object where the push animation should be played
                     if (ControlHandler.GetMoveVector2() != Vector2.Zero)
-                        if (Map.Objects.Collision(box, cBox, _body.CollisionTypes, Values.CollisionTypes.PushIgnore, Direction, _body.Level, ref outBox))
+                        if (
+                            Map.Objects.Collision(
+                                box,
+                                cBox,
+                                _body.CollisionTypes,
+                                Values.CollisionTypes.PushIgnore,
+                                Direction,
+                                _body.Level,
+                                ref outBox
+                            )
+                        )
                             CurrentState = State.Pushing;
                 }
 
@@ -2192,16 +2740,23 @@ namespace ProjectZ.InGame.GameObjects
 
                 // stop the hit velocity if the are colliding with a wall
                 // this was done because the player pushes into the hitVelocity direction
-                if ((collision & Values.BodyCollision.Horizontal) != 0 && _body.VelocityTarget.X == 0)
+                if (
+                    (collision & Values.BodyCollision.Horizontal) != 0
+                    && _body.VelocityTarget.X == 0
+                )
                     _hitVelocity.X = 0;
                 if ((collision & Values.BodyCollision.Vertical) != 0 && _body.VelocityTarget.Y == 0)
                     _hitVelocity.Y = 0;
 
-                if (IsChargingState() &&
-                    ((collision & Values.BodyCollision.Left) != 0 && Direction == 0 ||
-                    (collision & Values.BodyCollision.Top) != 0 && Direction == 1 ||
-                    (collision & Values.BodyCollision.Right) != 0 && Direction == 2 ||
-                    (collision & Values.BodyCollision.Bottom) != 0 && Direction == 3))
+                if (
+                    IsChargingState()
+                    && (
+                        (collision & Values.BodyCollision.Left) != 0 && Direction == 0
+                        || (collision & Values.BodyCollision.Top) != 0 && Direction == 1
+                        || (collision & Values.BodyCollision.Right) != 0 && Direction == 2
+                        || (collision & Values.BodyCollision.Bottom) != 0 && Direction == 3
+                    )
+                )
                 {
                     if (_swordPokeCounter <= 0)
                     {
@@ -2239,13 +2794,13 @@ namespace ProjectZ.InGame.GameObjects
         private static int BarrierToFacingDirection(int fieldBarrierIndex)
         {
             // The field barrier vs. the direction Link needs to be facing
-            // to be knocked back into the nearby field. 
+            // to be knocked back into the nearby field.
             return fieldBarrierIndex switch
             {
-                0 => 3,  // - Top field, facing Down.
-                1 => 1,  // - Bottom field, facing Up.
-                2 => 2,  // - Left field, facing Right.
-                3 => 0,  // - Right field, facing Left.
+                0 => 3, // - Top field, facing Down.
+                1 => 1, // - Bottom field, facing Up.
+                2 => 2, // - Left field, facing Right.
+                3 => 0, // - Right field, facing Left.
             };
         }
 
@@ -2285,7 +2840,14 @@ namespace ProjectZ.InGame.GameObjects
             {
                 // Create a new box that is slightly larger than the field barrier box.
                 int buffer = 2;
-                Box fieldBox = new Box(FieldBarrier[i].Position.X - buffer, FieldBarrier[i].Position.Y - buffer, 0, FieldBarrier[i].Width + buffer * 2, FieldBarrier[i].Height + buffer * 2, 16);
+                Box fieldBox = new Box(
+                    FieldBarrier[i].Position.X - buffer,
+                    FieldBarrier[i].Position.Y - buffer,
+                    0,
+                    FieldBarrier[i].Width + buffer * 2,
+                    FieldBarrier[i].Height + buffer * 2,
+                    16
+                );
 
                 // If knocked into it then stop all velocities.
                 if (_body.BodyBox.Box.Intersects(fieldBox))
@@ -2296,7 +2858,7 @@ namespace ProjectZ.InGame.GameObjects
                         CancelRepelVelocities();
                     else
                         CancelBootsVelocity(i);
-                    return;  
+                    return;
                 }
             }
         }
@@ -2325,7 +2887,11 @@ namespace ProjectZ.InGame.GameObjects
                 else if (!Map.Is2dMap)
                     _body.VelocityTarget = finalMove;
                 else
-                    _body.VelocityTarget = _moveVector2D * moveMultiplier + _hitVelocity + _repelVelocity + _shieldVelocity;
+                    _body.VelocityTarget =
+                        _moveVector2D * moveMultiplier
+                        + _hitVelocity
+                        + _repelVelocity
+                        + _shieldVelocity;
             }
             // Store the current movement velocity and reset it.
             LastMoveVector = _moveVelocity;
@@ -2390,7 +2956,8 @@ namespace ProjectZ.InGame.GameObjects
                     if (_shieldVelocity.Length() > 1.20)
                     {
                         float slowDownAmount = 0.12f + (_shieldVelocity.Length() * 0.015f);
-                        _shieldVelocity -= shieldRepelNormal * slowDownAmount * Game1.TimeMultiplier;
+                        _shieldVelocity -=
+                            shieldRepelNormal * slowDownAmount * Game1.TimeMultiplier;
                     }
                 }
                 // Snap to zero when velocity reaches the threshold.
@@ -2418,7 +2985,8 @@ namespace ProjectZ.InGame.GameObjects
                 // Reduce velocity gradually while on the ground or while swimming.
                 if (_body.IsGrounded || CurrentState == State.Swimming)
                 {
-                    var slowDownAmount = 0.05f + MathHelper.Clamp(_hitVelocity.Length() / 25f, 0, 0.05f);
+                    var slowDownAmount =
+                        0.05f + MathHelper.Clamp(_hitVelocity.Length() / 25f, 0, 0.05f);
                     _hitVelocity -= hitNormal * slowDownAmount * Game1.TimeMultiplier;
                 }
                 // Also reduce velocity while in the air but only up to a certain point.
@@ -2486,11 +3054,19 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         public Vector2 RailJumpTarget() => _railJumpTargetPosition;
+
         public float RailJumpSpeed() => _railJumpSpeed;
+
         public float RailJumpHeight() => _railJumpHeight;
+
         public float RailJumpAmount() => _railJump ? _railJumpPercentage : 0f;
 
-        public void StartRailJump(Vector2 goalPosition, float jumpHeightMultiply, float jumpSpeedMultiply, float goalPositionZ = 0)
+        public void StartRailJump(
+            Vector2 goalPosition,
+            float jumpHeightMultiply,
+            float jumpSpeedMultiply,
+            float goalPositionZ = 0
+        )
         {
             if (_isRafting)
                 return;
@@ -2537,7 +3113,12 @@ namespace ProjectZ.InGame.GameObjects
             var fieldState = SystemBody.GetFieldState(_body);
 
             // start/stop swimming or drowning
-            if (!_isRafting && !_isFlying && fieldState.HasFlag(MapStates.FieldStates.DeepWater) && CurrentState != State.Dying)
+            if (
+                !_isRafting
+                && !_isFlying
+                && fieldState.HasFlag(MapStates.FieldStates.DeepWater)
+                && CurrentState != State.Dying
+            )
             {
                 if (!IsJumpingState() && CurrentState != State.PickingUp && _body.IsGrounded)
                 {
@@ -2546,9 +3127,21 @@ namespace ProjectZ.InGame.GameObjects
 
                     if (HasFlippers && !inLava && CurrentState != State.Swimming)
                     {
-                        if (Map.Is2dMap && (CurrentState == State.Attacking || CurrentState == State.AttackSwimming))
+                        if (
+                            Map.Is2dMap
+                            && (
+                                CurrentState == State.Attacking
+                                || CurrentState == State.AttackSwimming
+                            )
+                        )
                             CurrentState = State.AttackSwimming;
-                        else if (Map.Is2dMap && (CurrentState == State.Charging || CurrentState == State.ChargeSwimming))
+                        else if (
+                            Map.Is2dMap
+                            && (
+                                CurrentState == State.Charging
+                                || CurrentState == State.ChargeSwimming
+                            )
+                        )
                             CurrentState = State.ChargeSwimming;
                         else
                             CurrentState = State.Swimming;
@@ -2558,13 +3151,32 @@ namespace ProjectZ.InGame.GameObjects
 
                         // Only push the player if he walks into the water and does not jump. Jumping is handled in another location.
                         if (!_lastFieldState.HasFlag(fieldState))
-                            _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.35f;
+                            _body.Velocity =
+                                new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0)
+                                * 0.35f;
 
                         // splash effect
-                        var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
-                        splashAnimator.EntityPosition.Set(new Vector2(
-                            _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                            _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 6));
+                        var splashAnimator = new ObjAnimator(
+                            Map,
+                            0,
+                            0,
+                            0,
+                            3,
+                            Values.LayerPlayer,
+                            "Particles/splash",
+                            "idle",
+                            true
+                        );
+                        splashAnimator.EntityPosition.Set(
+                            new Vector2(
+                                _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                                _body.Position.Y
+                                    + _body.OffsetY
+                                    + _body.Height
+                                    - _body.Position.Z
+                                    - 6
+                            )
+                        );
                         Map.Objects.SpawnObject(splashAnimator);
 
                         Game1.GameManager.PlaySoundEffect("D360-14-0E");
@@ -2588,18 +3200,41 @@ namespace ProjectZ.InGame.GameObjects
                                     Vector2 offset = move * 5.5f;
 
                                     // The Y axis needs a lesser nudge when going down and a huge nudge going up.
-                                    if (offset.Y < -5f) { offset = new Vector2(offset.X, -2f); }
-                                    if (offset.Y > 5f) { offset = new Vector2(offset.X, 9f); }
+                                    if (offset.Y < -5f)
+                                    {
+                                        offset = new Vector2(offset.X, -2f);
+                                    }
+                                    if (offset.Y > 5f)
+                                    {
+                                        offset = new Vector2(offset.X, 9f);
+                                    }
 
                                     // Move Link to the offset position.
                                     EntityPosition.Set(EntityPosition.Position + offset);
                                 }
                             }
                             // Spawn in the splash effect.
-                            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
-                            splashAnimator.EntityPosition.Set(new Vector2(
-                                _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                                _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 6));
+                            var splashAnimator = new ObjAnimator(
+                                Map,
+                                0,
+                                0,
+                                0,
+                                3,
+                                Values.LayerPlayer,
+                                "Particles/splash",
+                                "idle",
+                                true
+                            );
+                            splashAnimator.EntityPosition.Set(
+                                new Vector2(
+                                    _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                                    _body.Position.Y
+                                        + _body.OffsetY
+                                        + _body.Height
+                                        - _body.Position.Z
+                                        - 6
+                                )
+                            );
                             Map.Objects.SpawnObject(splashAnimator);
 
                             Game1.GameManager.PlaySoundEffect("D370-03-03");
@@ -2632,8 +3267,9 @@ namespace ProjectZ.InGame.GameObjects
                 if (Animation.CurrentFrameIndex < 2)
                 {
                     _body.Velocity = Vector3.Zero;
-                    EntityPosition.Set(new Vector2(
-                        MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
+                    EntityPosition.Set(
+                        new Vector2(MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y))
+                    );
                 }
                 if (Animation.CurrentFrameIndex == 2)
                 {
@@ -2656,7 +3292,8 @@ namespace ProjectZ.InGame.GameObjects
 
                     if (_drownedInLava)
                     {
-                        Game1.GameManager.CurrentHealth -= (int)MathF.Ceiling(2 * (GameSettings.DamageFactor * 0.25f));
+                        Game1.GameManager.CurrentHealth -= (int)
+                            MathF.Ceiling(2 * (GameSettings.DamageFactor * 0.25f));
                         _drownedInLava = false;
                     }
                     _body.CurrentFieldState = MapStates.FieldStates.None;
@@ -2674,14 +3311,12 @@ namespace ProjectZ.InGame.GameObjects
                     if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                         _diveCounter = 0;
                 }
-
                 // Start diving.
                 else if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                     StartDiving(1500);
 
                 if (_swimBoostCount > -300)
                     _swimBoostCount -= Game1.DeltaTime;
-
                 else if (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
                 {
                     _swimBoostCount = 300;
@@ -2701,7 +3336,8 @@ namespace ProjectZ.InGame.GameObjects
                 if (length < 0.045f)
                     _swimVelocity = _moveVelocity;
                 else
-                    _swimVelocity += distance * (_swimBoostCount > 0 ? 0.06f : 0.045f) * Game1.TimeMultiplier;
+                    _swimVelocity +=
+                        distance * (_swimBoostCount > 0 ? 0.06f : 0.045f) * Game1.TimeMultiplier;
 
                 _moveVelocity = _swimVelocity;
             }
@@ -2714,10 +3350,23 @@ namespace ProjectZ.InGame.GameObjects
         private void StartDiving(int diveTime)
         {
             // splash effect
-            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerTop, "Particles/splash", "idle", true);
-            splashAnimator.EntityPosition.Set(new Vector2(
-                _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 3));
+            var splashAnimator = new ObjAnimator(
+                Map,
+                0,
+                0,
+                0,
+                0,
+                Values.LayerTop,
+                "Particles/splash",
+                "idle",
+                true
+            );
+            splashAnimator.EntityPosition.Set(
+                new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                    _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 3
+                )
+            );
             Map.Objects.SpawnObject(splashAnimator);
 
             Game1.GameManager.PlaySoundEffect("D360-14-0E");
@@ -2733,13 +3382,19 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateDrownResetPosition()
         {
             // save the last position the player is grounded to use for the reset position if the player drowns
-            if (!IsJumpingState() &&
-                CurrentState != State.Drowning &&
-                CurrentState != State.Drowned && _body.IsGrounded)
+            if (
+                !IsJumpingState()
+                && CurrentState != State.Drowning
+                && CurrentState != State.Drowned
+                && _body.IsGrounded
+            )
             {
                 // center the position
                 // can lead to the position being inside something
-                var bodyCenter = new Vector2(EntityPosition.X, EntityPosition.Y - _body.Height / 2f);
+                var bodyCenter = new Vector2(
+                    EntityPosition.X,
+                    EntityPosition.Y - _body.Height / 2f
+                );
                 bodyCenter.X = (int)(bodyCenter.X / 16) * 16 + 8;
                 bodyCenter.Y = (int)(bodyCenter.Y / 16) * 16 + 8 + _body.Height / 2f;
 
@@ -2748,11 +3403,25 @@ namespace ProjectZ.InGame.GameObjects
                 {
                     var bodyBox = new Box(
                         bodyCenter.X + _body.OffsetX,
-                        bodyCenter.Y + _body.OffsetY, 0, _body.Width, _body.Height, _body.Depth);
+                        bodyCenter.Y + _body.OffsetY,
+                        0,
+                        _body.Width,
+                        _body.Height,
+                        _body.Depth
+                    );
                     var cBox = Box.Empty;
 
                     // check it the player is not standing inside something
-                    if (!Map.Objects.Collision(bodyBox, Box.Empty, _body.CollisionTypes | Values.CollisionTypes.DrownExclude, 0, 0, ref cBox))
+                    if (
+                        !Map.Objects.Collision(
+                            bodyBox,
+                            Box.Empty,
+                            _body.CollisionTypes | Values.CollisionTypes.DrownExclude,
+                            0,
+                            0,
+                            ref cBox
+                        )
+                    )
                         _drownResetPosition = bodyCenter;
                 }
             }
@@ -2761,8 +3430,12 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  ANIMATION / GRAPHICS CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        
-        private void PlayWalkAndBlockAnimations(string shieldString, int animDirection, bool isBlocking)
+
+        private void PlayWalkAndBlockAnimations(
+            string shieldString,
+            int animDirection,
+            bool isBlocking
+        )
         {
             // Default to standard walking animation.
             string targetAnimation = "walk" + shieldString + animDirection;
@@ -2790,16 +3463,16 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateAnimation()
         {
             // If under the effects of a vacuum, use the rotational direction.
-            var animDirection = _isRotating
-                ? _rotateDirection
-                : Direction;
+            var animDirection = _isRotating ? _rotateDirection : Direction;
 
             if (Game1.GameManager.UseShockEffect)
                 return;
 
             // Include the shield in the animation string if available ("s_" for shield, "ms_" for mirror shield).
             string shieldString = CarryShield
-                ? Game1.GameManager.ShieldLevel == 2 ? "ms_" : "s_"
+                ? Game1.GameManager.ShieldLevel == 2
+                    ? "ms_"
+                    : "s_"
                 : "_";
 
             // Pegasus boots running animation.
@@ -2832,40 +3505,54 @@ namespace ProjectZ.InGame.GameObjects
             Animation.SpeedMultiplier = 1.0f;
 
             // Play animation based on Link's current state and other factors.
-            if ((CurrentState == State.Idle && !_isWalking && _body.IsGrounded) ||
-                (CurrentState == State.Charging && !_isWalking) ||
-                (CurrentState == State.Rafting && !_isWalking) ||
-                CurrentState == State.Teleporting ||
-                CurrentState == State.ShowInstrumentPart3 ||
-                CurrentState == State.TeleportFall ||
-                CurrentState == State.TeleporterUp ||
-                CurrentState == State.FallRotateEntry)
+            if (
+                (CurrentState == State.Idle && !_isWalking && _body.IsGrounded)
+                || (CurrentState == State.Charging && !_isWalking)
+                || (CurrentState == State.Rafting && !_isWalking)
+                || CurrentState == State.Teleporting
+                || CurrentState == State.ShowInstrumentPart3
+                || CurrentState == State.TeleportFall
+                || CurrentState == State.TeleporterUp
+                || CurrentState == State.FallRotateEntry
+            )
                 Animation.Play("stand" + shieldString + animDirection);
             // The "jump-land" hack plays the "stand" animation briefly.
-            else if (_jumpEndTimer > 0 &&
-                !IsAttackingState() &&
-                CurrentState != State.Dying &&
-                CurrentState != State.ShowToadstool &&
-                CurrentState != State.PickingUp &&
-                CurrentState != State.Powdering &&
-                CurrentState != State.Digging &&
-                CurrentState != State.Bombing &&
-                CurrentState != State.Hookshot &&
-                CurrentState != State.Ocarina &&
-                CurrentState != State.MagicRod &&
-                CurrentState != State.BedTransition &&
-                !(!IsChargingState() && (Direction == 1 || Direction == 3)) &&
-                !IsTransitioning && !HoleFalling && !IsPoking)
+            else if (
+                _jumpEndTimer > 0
+                && !IsAttackingState()
+                && CurrentState != State.Dying
+                && CurrentState != State.ShowToadstool
+                && CurrentState != State.PickingUp
+                && CurrentState != State.Powdering
+                && CurrentState != State.Digging
+                && CurrentState != State.Bombing
+                && CurrentState != State.Hookshot
+                && CurrentState != State.Ocarina
+                && CurrentState != State.MagicRod
+                && CurrentState != State.BedTransition
+                && !(!IsChargingState() && (Direction == 1 || Direction == 3))
+                && !IsTransitioning
+                && !HoleFalling
+                && !IsPoking
+            )
             {
                 Animation.Play("stand" + shieldString + animDirection);
             }
             else if (CurrentState == State.ChargeJumping)
                 Animation.Play("cjump" + shieldString + animDirection);
-            else if ((CurrentState == State.Idle || CurrentState == State.Charging || CurrentState == State.Rafting) && _isWalking)
+            else if (
+                (
+                    CurrentState == State.Idle
+                    || CurrentState == State.Charging
+                    || CurrentState == State.Rafting
+                ) && _isWalking
+            )
                 PlayWalkAndBlockAnimations(shieldString, animDirection, false);
             else if (CurrentState == State.Blocking || CurrentState == State.ChargeBlocking)
                 PlayWalkAndBlockAnimations(shieldString, animDirection, true);
-            else if ((CurrentState == State.Carrying || CurrentState == State.CarryingItem) && !_isFlying)
+            else if (
+                (CurrentState == State.Carrying || CurrentState == State.CarryingItem) && !_isFlying
+            )
                 Animation.Play((!_isWalking ? "standc_" : "walkc_") + animDirection);
             else if (IsFlying())
                 Animation.Play("flying_" + animDirection);
@@ -2891,7 +3578,10 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateDamageShader()
         {
             if (_hitCount > 0)
-                _sprite.SpriteShader = (CooldownTime - _hitCount) % (BlinkTime * 2) < BlinkTime ? Resources.DamageSpriteShader0 : null;
+                _sprite.SpriteShader =
+                    (CooldownTime - _hitCount) % (BlinkTime * 2) < BlinkTime
+                        ? Resources.DamageSpriteShader0
+                        : null;
             else
                 _sprite.SpriteShader = null;
         }
@@ -2903,7 +3593,12 @@ namespace ProjectZ.InGame.GameObjects
             {
                 if (_spriteShadow == null)
                 {
-                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
+                    _spriteShadow = new ObjSpriteShadow(
+                        Map,
+                        this,
+                        Values.LayerPlayer,
+                        "sprshadowm"
+                    );
                     Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
                 }
             }
@@ -2932,7 +3627,8 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateHeartWarningSound()
         {
             // Don't play the beep if the user disabled it.
-            if (!GameSettings.HeartBeep || !_enableHealthBeep) return;
+            if (!GameSettings.HeartBeep || !_enableHealthBeep)
+                return;
 
             // Calculate the pecentage of heart's remaining.
             double currentHP = Game1.GameManager.CurrentHealth;
@@ -2959,10 +3655,34 @@ namespace ProjectZ.InGame.GameObjects
         {
             // Create the field barrier colliders.
             FieldBarrier = new ObjFieldBarrier[4];
-            FieldBarrier[0] = new ObjFieldBarrier(Map, CurrentField.X - 16, CurrentField.Y - 16, Values.CollisionTypes.Field, new Rectangle(0, 0, 192, 16));
-            FieldBarrier[1] = new ObjFieldBarrier(Map, CurrentField.X - 16, CurrentField.Y + 128, Values.CollisionTypes.Field, new Rectangle(0, 0, 192, 16));
-            FieldBarrier[2] = new ObjFieldBarrier(Map, CurrentField.X - 16, CurrentField.Y, Values.CollisionTypes.Field, new Rectangle(0, 0, 16, 128));
-            FieldBarrier[3] = new ObjFieldBarrier(Map, CurrentField.X + 160, CurrentField.Y, Values.CollisionTypes.Field, new Rectangle(0, 0, 16, 128));
+            FieldBarrier[0] = new ObjFieldBarrier(
+                Map,
+                CurrentField.X - 16,
+                CurrentField.Y - 16,
+                Values.CollisionTypes.Field,
+                new Rectangle(0, 0, 192, 16)
+            );
+            FieldBarrier[1] = new ObjFieldBarrier(
+                Map,
+                CurrentField.X - 16,
+                CurrentField.Y + 128,
+                Values.CollisionTypes.Field,
+                new Rectangle(0, 0, 192, 16)
+            );
+            FieldBarrier[2] = new ObjFieldBarrier(
+                Map,
+                CurrentField.X - 16,
+                CurrentField.Y,
+                Values.CollisionTypes.Field,
+                new Rectangle(0, 0, 16, 128)
+            );
+            FieldBarrier[3] = new ObjFieldBarrier(
+                Map,
+                CurrentField.X + 160,
+                CurrentField.Y,
+                Values.CollisionTypes.Field,
+                new Rectangle(0, 0, 16, 128)
+            );
 
             // Spawn in the field barrier colliders.
             Map.Objects.SpawnObject(FieldBarrier[0]);
@@ -2974,7 +3694,8 @@ namespace ProjectZ.InGame.GameObjects
         private void UpdateFieldBarrier()
         {
             // Don't update unless the field has changed.
-            if (CurrentField == ContrastField) return;
+            if (CurrentField == ContrastField)
+                return;
 
             // Spawn in the field barrier rectangles.
             FieldBarrier[0].SetPosition(CurrentField.X - 16, CurrentField.Y - 16);
@@ -2986,7 +3707,8 @@ namespace ProjectZ.InGame.GameObjects
         private void DestroyFieldBarrier()
         {
             // Nobody likes crashes so verify it's null.
-            if (FieldBarrier == null) return;
+            if (FieldBarrier == null)
+                return;
 
             // Destroy the current field barrier and nullify it.
             foreach (var fBarrier in FieldBarrier)
@@ -3051,7 +3773,12 @@ namespace ProjectZ.InGame.GameObjects
                 travelDistance = Vector2.Distance(_avoidanceStartPos, EntityPosition.Position);
 
             // When sword is no longer within NPC hitbox and Link is holding sword, restore charging state.
-            if (!_npcSwordCross && _isHoldingSword && _npcCrossSword && (_avoidanceDirection != Direction || travelDistance > 22))
+            if (
+                !_npcSwordCross
+                && _isHoldingSword
+                && _npcCrossSword
+                && (_avoidanceDirection != Direction || travelDistance > 22)
+            )
             {
                 _npcCrossSword = false;
                 Animation.Play("stand" + Direction);
@@ -3069,20 +3796,30 @@ namespace ProjectZ.InGame.GameObjects
             // Get a list of NPCs to check if sword crosses their hitbox.
             List<GameObject> npcList = new List<GameObject>();
 
-            Map.Objects.GetComponentList(npcList,
-                (int)SwordDamageBox.X, (int)SwordDamageBox.Y,
-                (int)SwordDamageBox.Width, (int)SwordDamageBox.Height,
-                CollisionComponent.Mask);
+            Map.Objects.GetComponentList(
+                npcList,
+                (int)SwordDamageBox.X,
+                (int)SwordDamageBox.Y,
+                (int)SwordDamageBox.Width,
+                (int)SwordDamageBox.Height,
+                CollisionComponent.Mask
+            );
 
             // Loop through the NPCs checking for collision.
             foreach (var npc in npcList)
             {
                 if (npc.IsActive)
                 {
-                    var collisionObject = npc.Components[CollisionComponent.Index] as CollisionComponent;
-                    var collisionBody = npc.Components[CollisionComponent.Index] as BodyCollisionComponent;
-                    if (collisionObject != null && collisionBody != null && collisionBody.IsActive &&
-                        (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0)
+                    var collisionObject =
+                        npc.Components[CollisionComponent.Index] as CollisionComponent;
+                    var collisionBody =
+                        npc.Components[CollisionComponent.Index] as BodyCollisionComponent;
+                    if (
+                        collisionObject != null
+                        && collisionBody != null
+                        && collisionBody.IsActive
+                        && (collisionObject.CollisionType & Values.CollisionTypes.NPC) != 0
+                    )
                     {
                         // If the sword box and body box intersect return true.
                         var bodyObject = npc.Components[BodyComponent.Index] as BodyComponent;
@@ -3118,11 +3855,13 @@ namespace ProjectZ.InGame.GameObjects
         {
             // We need to prevent overlays from being opened because they
             // do not stop the music and it would run out of sync.
-            if ((ShowItem != null && ShowItem.Name.StartsWith("instrument")) ||
-                CurrentState == State.ShowInstrumentPart0 ||
-                CurrentState == State.ShowInstrumentPart1 ||
-                CurrentState == State.ShowInstrumentPart2 ||
-                CurrentState == State.ShowInstrumentPart3)
+            if (
+                (ShowItem != null && ShowItem.Name.StartsWith("instrument"))
+                || CurrentState == State.ShowInstrumentPart0
+                || CurrentState == State.ShowInstrumentPart1
+                || CurrentState == State.ShowInstrumentPart2
+                || CurrentState == State.ShowInstrumentPart3
+            )
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             if (CurrentState == State.ShowInstrumentPart0)
@@ -3157,13 +3896,17 @@ namespace ProjectZ.InGame.GameObjects
             }
             else if (CurrentState == State.ShowInstrumentPart2)
             {
-                // Some update caused music to continue playing after instrument screen goes white so don't let this happen. 
+                // Some update caused music to continue playing after instrument screen goes white so don't let this happen.
                 Game1.GameManager.StopMusic(true);
 
                 _instrumentCounter += Game1.DeltaTime;
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                var transitionSystem = (MapTransitionSystem)
+                    Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
                 transitionSystem.ResetTransition();
-                transitionSystem.SetColorMode(Color.White, MathHelper.Clamp(_instrumentCounter / 500f, 0, 1));
+                transitionSystem.SetColorMode(
+                    Color.White,
+                    MathHelper.Clamp(_instrumentCounter / 500f, 0, 1)
+                );
 
                 if (_instrumentCounter > 2500)
                 {
@@ -3185,11 +3928,19 @@ namespace ProjectZ.InGame.GameObjects
 
                 EndPickup();
 
-                ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                    "overworld.map", $"d{_instrumentIndex+1}Finished", false, true, Color.White, true);
+                (
+                    (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+                ).AppendMapChange(
+                    "overworld.map",
+                    $"d{_instrumentIndex + 1}Finished",
+                    false,
+                    true,
+                    Color.White,
+                    true
+                );
 
                 // Set the key-value pair to open the instrument door.
-                var openDoor = $"d{_instrumentIndex+1}_cleared";
+                var openDoor = $"d{_instrumentIndex + 1}_cleared";
                 Game1.GameManager.SaveManager.SetString(openDoor, "1");
             }
         }
@@ -3202,7 +3953,10 @@ namespace ProjectZ.InGame.GameObjects
         {
             Vector2 bodyCenter = _body.BodyBox.Box.Center;
             Vector3 newResetPosition = _holeResetPosition;
-            Point currentTilePosition = new Point(((int)bodyCenter.X - Map.MapOffsetX * 16) / 160, ((int)bodyCenter.Y - Map.MapOffsetY * 16) / 128);
+            Point currentTilePosition = new Point(
+                ((int)bodyCenter.X - Map.MapOffsetX * 16) / 160,
+                ((int)bodyCenter.Y - Map.MapOffsetY * 16) / 128
+            );
             Point tileDiff = currentTilePosition - _lastTilePosition;
             _lastTilePosition = currentTilePosition;
 
@@ -3215,35 +3969,53 @@ namespace ProjectZ.InGame.GameObjects
                 _altHoleResetPosition = Vector3.Zero;
 
                 // For X and Y check if the room has changed since last check.
-                newResetPosition.X = (tileDiff.X == 0)
-                    ? EntityPosition.X
-                    : (int)(bodyCenter.X / tileSize + (tileDiff.X > 0 ? 0 : 1)) * tileSize;
+                newResetPosition.X =
+                    (tileDiff.X == 0)
+                        ? EntityPosition.X
+                        : (int)(bodyCenter.X / tileSize + (tileDiff.X > 0 ? 0 : 1)) * tileSize;
 
-                newResetPosition.Y = (tileDiff.Y == 0)
-                    ? EntityPosition.Y
-                    : (int)(bodyCenter.Y / tileSize + (tileDiff.Y > 0 ? 0 : 1)) * tileSize;
+                newResetPosition.Y =
+                    (tileDiff.Y == 0)
+                        ? EntityPosition.Y
+                        : (int)(bodyCenter.Y / tileSize + (tileDiff.Y > 0 ? 0 : 1)) * tileSize;
 
                 // Add buffer to push player inward into the field. The direction determines the size of the pixel buffer
                 // due to the fact that Link's body box is not perfectly centered on his sprite and has a downward bias.
-                if (tileDiff.X > 0) newResetPosition.X += 8;  // Came from left → push right
-                if (tileDiff.X < 0) newResetPosition.X -= 8;  // Came from right → push left
-                if (tileDiff.Y > 0) newResetPosition.Y += 16; // Came from top → push down
-                if (tileDiff.Y < 0) newResetPosition.Y -= 2;  // Came from bottom → push up
+                if (tileDiff.X > 0)
+                    newResetPosition.X += 8; // Came from left → push right
+                if (tileDiff.X < 0)
+                    newResetPosition.X -= 8; // Came from right → push left
+                if (tileDiff.Y > 0)
+                    newResetPosition.Y += 16; // Came from top → push down
+                if (tileDiff.Y < 0)
+                    newResetPosition.Y -= 2; // Came from bottom → push up
 
                 // For Z check if jumping. If on ground set Z to current Z but if in air set Z to what it was before jump.
-                newResetPosition.Z = _body.IsGrounded
-                    ? EntityPosition.Z
-                    : _jumpStartZPos;
+                newResetPosition.Z = _body.IsGrounded ? EntityPosition.Z : _jumpStartZPos;
 
-                newResetPosition.Z = _isFlying
-                    ? _flyStartZPos
-                    : newResetPosition.Z;
+                newResetPosition.Z = _isFlying ? _flyStartZPos : newResetPosition.Z;
 
                 // Check if there is no hole at the new position.
-                var bodyBox = new Box(newResetPosition.X + _body.BodyBox.OffsetX, newResetPosition.Y + _body.BodyBox.OffsetY, 0, _body.Width, _body.Height, 8);
+                var bodyBox = new Box(
+                    newResetPosition.X + _body.BodyBox.OffsetX,
+                    newResetPosition.Y + _body.BodyBox.OffsetY,
+                    0,
+                    _body.Width,
+                    _body.Height,
+                    8
+                );
                 var outBox = Box.Empty;
 
-                if (!Map.Objects.Collision(bodyBox, Box.Empty, Values.CollisionTypes.Hole, 0, 0, ref outBox))
+                if (
+                    !Map.Objects.Collision(
+                        bodyBox,
+                        Box.Empty,
+                        Values.CollisionTypes.Hole,
+                        0,
+                        0,
+                        ref outBox
+                    )
+                )
                 {
                     _holeResetPosition = newResetPosition;
                 }
@@ -3264,8 +4036,10 @@ namespace ProjectZ.InGame.GameObjects
                     if (HoleResetRoom != null)
                     {
                         // append a map change
-                        ((MapTransitionSystem)Game1.GameManager.GameSystems[
-                            typeof(MapTransitionSystem)]).AppendMapChange(HoleResetRoom, HoleResetEntryId);
+                        (
+                            (MapTransitionSystem)
+                                Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+                        ).AppendMapChange(HoleResetRoom, HoleResetEntryId);
                     }
                     // teleport on hole fall?
                     else if (HoleTeleporterId >= 0)
@@ -3288,7 +4062,10 @@ namespace ProjectZ.InGame.GameObjects
             _holeResetPosition = position;
 
             var offset = Map != null ? new Point(Map.MapOffsetX, Map.MapOffsetY) : Point.Zero;
-            _lastTilePosition = new Point(((int)position.X - offset.X * 16) / 160, ((int)position.Y - offset.Y * 16) / 128);
+            _lastTilePosition = new Point(
+                ((int)position.X - offset.X * 16) / 160,
+                ((int)position.Y - offset.Y * 16) / 128
+            );
         }
 
         public void SetHoleResetPosition(Vector3 position, int direction)
@@ -3299,13 +4076,21 @@ namespace ProjectZ.InGame.GameObjects
             // Sets an "alternate" reset point when walking over a "ObjHoleResetPoint".
             _altHoleResetPosition = direction switch
             {
-                0 => new Vector3(position.X + MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ),
+                0 => new Vector3(
+                    position.X + MathF.Ceiling(_body.Width / 2f),
+                    position.Y + 8 + MathF.Ceiling(_body.Height / 2f),
+                    positionZ
+                ),
                 1 => new Vector3(position.X + 8, position.Y + _body.Height + 1, positionZ),
-                2 => new Vector3(position.X + 16 - MathF.Ceiling(_body.Width / 2f), position.Y + 8 + MathF.Ceiling(_body.Height / 2f), positionZ),
+                2 => new Vector3(
+                    position.X + 16 - MathF.Ceiling(_body.Width / 2f),
+                    position.Y + 8 + MathF.Ceiling(_body.Height / 2f),
+                    positionZ
+                ),
                 3 => new Vector3(position.X + 8, position.Y + 16, positionZ),
-                _ => Vector3.Zero
+                _ => Vector3.Zero,
             };
-            // Also used for the drown reset point. Instead of opening up the can of worms of converting the drown 
+            // Also used for the drown reset point. Instead of opening up the can of worms of converting the drown
             // reset point to a Vector3 just use the X and Y coordinates from the _altHoleResetPosition.
             _drownResetPosition = new Vector2(_altHoleResetPosition.X, _altHoleResetPosition.Y);
         }
@@ -3318,11 +4103,13 @@ namespace ProjectZ.InGame.GameObjects
 
         private void OnHoleAbsorb()
         {
-            if (CurrentState == State.Falling ||
-                CurrentState == State.TeleporterUpWait ||
-                CurrentState == State.TeleporterUp ||
-                CurrentState == State.PickingUp ||
-                CurrentState == State.Dying)
+            if (
+                CurrentState == State.Falling
+                || CurrentState == State.TeleporterUpWait
+                || CurrentState == State.TeleporterUp
+                || CurrentState == State.PickingUp
+                || CurrentState == State.Dying
+            )
                 return;
 
             CurrentState = State.Falling;
@@ -3365,8 +4152,17 @@ namespace ProjectZ.InGame.GameObjects
 
             // Alternative reset point.
             var cBox = Box.Empty;
-            if (_altHoleResetPosition != Vector3.Zero &&
-                Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, _body.CollisionTypes, 0, 0, ref cBox))
+            if (
+                _altHoleResetPosition != Vector3.Zero
+                && Map.Objects.Collision(
+                    _body.BodyBox.Box,
+                    Box.Empty,
+                    _body.CollisionTypes,
+                    0,
+                    0,
+                    ref cBox
+                )
+            )
             {
                 resetPosition = _altHoleResetPosition;
                 EntityPosition.Set(resetPosition);
@@ -3395,7 +4191,14 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateRafting()
         {
-            if (_isRafting && (CurrentState == State.Rafting || CurrentState == State.Charging || CurrentState == State.ChargeBlocking))
+            if (
+                _isRafting
+                && (
+                    CurrentState == State.Rafting
+                    || CurrentState == State.Charging
+                    || CurrentState == State.ChargeBlocking
+                )
+            )
             {
                 var moveVelocity = ControlHandler.GetMoveVector2();
 
@@ -3484,17 +4287,30 @@ namespace ProjectZ.InGame.GameObjects
             if (!_isLocked)
             {
                 // interact with object
-                if ((CurrentState == State.Idle || CurrentState == State.Pushing || CurrentState == State.Swimming || CurrentState == State.CarryingItem) &&
-                    ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) && InteractWithObject())
+                if (
+                    (
+                        CurrentState == State.Idle
+                        || CurrentState == State.Pushing
+                        || CurrentState == State.Swimming
+                        || CurrentState == State.CarryingItem
+                    )
+                    && ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)
+                    && InteractWithObject()
+                )
                 {
                     InputHandler.ResetInputState();
                     return;
                 }
-                if (_isTrapped && !_trappedDisableItems &&
-                    (ControlHandler.ButtonPressed(CButtons.A) ||
-                     ControlHandler.ButtonPressed(CButtons.B) ||
-                     ControlHandler.ButtonPressed(CButtons.X) ||
-                     ControlHandler.ButtonPressed(CButtons.Y)))
+                if (
+                    _isTrapped
+                    && !_trappedDisableItems
+                    && (
+                        ControlHandler.ButtonPressed(CButtons.A)
+                        || ControlHandler.ButtonPressed(CButtons.B)
+                        || ControlHandler.ButtonPressed(CButtons.X)
+                        || ControlHandler.ButtonPressed(CButtons.Y)
+                    )
+                )
                 {
                     _trapInteractionCount--;
                     if (_trapInteractionCount <= 0)
@@ -3505,26 +4321,43 @@ namespace ProjectZ.InGame.GameObjects
                 if (!DisableItems && (!_isTrapped || !_trappedDisableItems))
                 {
                     // HACK FIX: This fixes a crash if an item is used immediately after loading a save file.
-                    if (Direction < 0) { Direction = 0; }
+                    if (Direction < 0)
+                    {
+                        Direction = 0;
+                    }
 
                     for (var i = 0; i < Values.HandItemSlots; i++)
                     {
-                        if (Game1.GameManager.Equipment[i] != null &&
-                            ControlHandler.ButtonPressed((CButtons)((int)CButtons.A * Math.Pow(2, i))))
+                        if (
+                            Game1.GameManager.Equipment[i] != null
+                            && ControlHandler.ButtonPressed(
+                                (CButtons)((int)CButtons.A * Math.Pow(2, i))
+                            )
+                        )
                             UseItem(Game1.GameManager.Equipment[i]);
 
-                        if (Game1.GameManager.Equipment[i] != null &&
-                            ControlHandler.ButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))))
+                        if (
+                            Game1.GameManager.Equipment[i] != null
+                            && ControlHandler.ButtonDown(
+                                (CButtons)((int)CButtons.A * Math.Pow(2, i))
+                            )
+                        )
                             HoldItem(Game1.GameManager.Equipment[i]);
 
-                        if (Game1.GameManager.Equipment[i] != null &&
-                            ControlHandler.ButtonReleased((CButtons)((int)CButtons.A * Math.Pow(2, i))))
+                        if (
+                            Game1.GameManager.Equipment[i] != null
+                            && ControlHandler.ButtonReleased(
+                                (CButtons)((int)CButtons.A * Math.Pow(2, i))
+                            )
+                        )
                             ReleaseItem(Game1.GameManager.Equipment[i]);
                     }
                 }
                 // If an "instant pickup" object was grabbed, force power bracelent pick up until the loop ends.
-                if (_instantPickup) { HoldBracelet(); }
-
+                if (_instantPickup)
+                {
+                    HoldBracelet();
+                }
             }
             UpdatePegasusBoots();
 
@@ -3567,7 +4400,7 @@ namespace ProjectZ.InGame.GameObjects
                         State.Jumping => State.ChargeJumping,
                         State.AttackJumping => State.ChargeJumping,
                         State.AttackSwimming => State.ChargeSwimming,
-                        _ => State.Charging
+                        _ => State.Charging,
                     };
                     // Play animation and add to charge counter.
                     AnimatorWeapons.Play("stand_" + Direction);
@@ -3577,13 +4410,25 @@ namespace ProjectZ.InGame.GameObjects
             if (IsChargingState())
                 UpdateCharging();
 
-            if (IsAttackingState() || CurrentState == State.SwordShow0 || _bootsRunning && CarrySword)
+            if (
+                IsAttackingState()
+                || CurrentState == State.SwordShow0
+                || _bootsRunning && CarrySword
+            )
                 UpdateAttacking();
 
             if (CurrentState == State.PickingUp)
                 UpdatePickup();
 
-            if (!Animation.IsPlaying && (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
+            if (
+                !Animation.IsPlaying
+                && (
+                    CurrentState == State.Powdering
+                    || CurrentState == State.Bombing
+                    || CurrentState == State.MagicRod
+                    || CurrentState == State.Throwing
+                )
+            )
                 ReturnToIdle();
 
             UpdateHookshot();
@@ -3598,9 +4443,17 @@ namespace ProjectZ.InGame.GameObjects
         {
             var boxSize = 6;
             var interactionBox = new Box(
-                EntityPosition.X + _walkDirection[Direction].X * (BodyRectangle.Width / 2 + boxSize / 2) - boxSize / 2,
-                BodyRectangle.Center.Y + _walkDirection[Direction].Y * (BodyRectangle.Height / 2 + boxSize / 2) - boxSize / 2, 0,
-                boxSize, boxSize, 16);
+                EntityPosition.X
+                    + _walkDirection[Direction].X * (BodyRectangle.Width / 2 + boxSize / 2)
+                    - boxSize / 2,
+                BodyRectangle.Center.Y
+                    + _walkDirection[Direction].Y * (BodyRectangle.Height / 2 + boxSize / 2)
+                    - boxSize / 2,
+                0,
+                boxSize,
+                boxSize,
+                16
+            );
 
             return Map.Objects.InteractWithObject(interactionBox);
         }
@@ -3609,22 +4462,22 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? useItem = item.Name switch
             {
-                "sword1"        => UseSword,
-                "sword2"        => UseSword,
-                "feather"       => UseFeather,
-                "toadstool"     => UseToadstool,
-                "powder"        => UsePowder,
-                "bomb"          => UseBomb,
-                "bow"           => UseArrow,
-                "shovel"        => UseShovel,
-                "stonelifter"   => UseBracelet,
-                "stonelifter2"  => UseBracelet,
-                "hookshot"      => UseHookshot,
-                "boomerang"     => UseBoomerang,
-                "magicRod"      => UseMagicRod,
-                "ocarina"       => UseOcarina,
-                "pegasusBoots"  => UsePegasusBoots,
-                _               => null
+                "sword1" => UseSword,
+                "sword2" => UseSword,
+                "feather" => UseFeather,
+                "toadstool" => UseToadstool,
+                "powder" => UsePowder,
+                "bomb" => UseBomb,
+                "bow" => UseArrow,
+                "shovel" => UseShovel,
+                "stonelifter" => UseBracelet,
+                "stonelifter2" => UseBracelet,
+                "hookshot" => UseHookshot,
+                "boomerang" => UseBoomerang,
+                "magicRod" => UseMagicRod,
+                "ocarina" => UseOcarina,
+                "pegasusBoots" => UsePegasusBoots,
+                _ => null,
             };
             useItem?.Invoke();
         }
@@ -3633,15 +4486,15 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? holdItem = item.Name switch
             {
-                "sword1"        => HoldSword,
-                "sword2"        => HoldSword,
-                "feather"       => HoldFeather,
-                "shield"        => HoldShield,
-                "mirrorShield"  => HoldShield,
-                "stonelifter"   => HoldBracelet,
-                "stonelifter2"  => HoldBracelet,
-                "pegasusBoots"  => HoldPegasusBoots,
-                _               => null
+                "sword1" => HoldSword,
+                "sword2" => HoldSword,
+                "feather" => HoldFeather,
+                "shield" => HoldShield,
+                "mirrorShield" => HoldShield,
+                "stonelifter" => HoldBracelet,
+                "stonelifter2" => HoldBracelet,
+                "pegasusBoots" => HoldPegasusBoots,
+                _ => null,
             };
             holdItem?.Invoke();
         }
@@ -3650,15 +4503,20 @@ namespace ProjectZ.InGame.GameObjects
         {
             Action? releaseItem = item.Name switch
             {
-                "shield"        => ReleaseShield,
-                "mirrorShield"  => ReleaseShield,
-                "feather"       => ReleaseFeather,
-                _               => null
+                "shield" => ReleaseShield,
+                "mirrorShield" => ReleaseShield,
+                "feather" => ReleaseFeather,
+                _ => null,
             };
             releaseItem?.Invoke();
         }
 
-        public void PickUpItem(GameItemCollected itemCollected, bool showItem, bool showDialog = true, bool playSound = true)
+        public void PickUpItem(
+            GameItemCollected itemCollected,
+            bool showItem,
+            bool showDialog = true,
+            bool playSound = true
+        )
         {
             if (itemCollected == null)
                 return;
@@ -3693,7 +4551,6 @@ namespace ProjectZ.InGame.GameObjects
                 // Freeze the game. The "sword1Collected:0" event in "scripts.zScript" will unfreeze after a time.
                 FreezeAnimations(true);
             }
-
             // Level 2 Sword was collected from Seashell Mansion.
             else if (item.Name == "sword2")
             {
@@ -3702,14 +4559,12 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.CollectItem(itemCollected, equipmentPosition);
                 Game1.GameManager.SetMusic(14, 2);
             }
-
             // The Angler Key (level 3 dungeon) was collected.
             else if (item.Name == "dkey3")
             {
                 // Don't temporarily freeze the desert quicksand when picking up the key.
                 _pickingUpAnglerKey = true;
             }
-            
             // A Shield was collected.
             else if (baseItem.Name == "shield")
             {
@@ -3717,11 +4572,16 @@ namespace ProjectZ.InGame.GameObjects
                 var mirrorShield = Game1.GameManager.GetItem("mirrorShield");
                 if (mirrorShield != null)
                 {
-                    Game1.GameManager.PlaySoundEffect(item.SoundEffectName, true, 1, 0, item.TurnDownMusic);
+                    Game1.GameManager.PlaySoundEffect(
+                        item.SoundEffectName,
+                        true,
+                        1,
+                        0,
+                        item.TurnDownMusic
+                    );
                     return;
                 }
             }
-
             // The Mirror Shield was collected.
             else if (item.Name == "mirrorShield")
             {
@@ -3730,7 +4590,6 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.RemoveItem("shield", 99);
                 Game1.GameManager.CollectItem(itemCollected, equipmentPosition);
             }
-
             // The level 2 Power Bracelet was collected.
             else if (itemCollected.Name == "stonelifter2")
             {
@@ -3738,16 +4597,14 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.RemoveItem("stonelifter", 99);
                 Game1.GameManager.CollectItem(itemCollected, equipmentPosition);
             }
-
             // A Piece of Heart was collected.
             else if (itemCollected.Name == "heartMeter")
             {
-                // Check if a full heart container is finished and start "heartMeterFilled" path in "script.zScript". 
+                // Check if a full heart container is finished and start "heartMeterFilled" path in "script.zScript".
                 var heart = Game1.GameManager.GetItem("heartMeter");
                 if (heart?.Count == 3 && !GameSettings.NoHelperText)
                     _additionalPickupDialog = "heartMeterFilled";
             }
-
             // A full Heart Container was collected.
             else if (itemCollected.Name == "heartMeterFull")
             {
@@ -3756,19 +4613,24 @@ namespace ProjectZ.InGame.GameObjects
                 // music without the sound effect. This allows the music to play more quickly after the heart pickup, as there is a delay after the sound in track 36.
                 Game1.GameManager.SetMusic(36, 2);
             }
-
             // A Seashell present at the mansion was collected.
             else if (itemCollected.Name == "shellPresent")
             {
                 // Get the number of shell presents the player has collected.
-                var currentShellPresents = Game1.GameManager.SaveManager.GetString("shell_presents", "0");
+                var currentShellPresents = Game1.GameManager.SaveManager.GetString(
+                    "shell_presents",
+                    "0"
+                );
 
                 // Add to the total number of shell presents that have been collected so far. These are tracked for "Nothing is Missable" options so that the player can
                 // collect the shell presents even if the number of shells exceeds the number required at Seashell Mansion (for example: 7 shells spawns 5 shell present).
                 if (int.TryParse(currentShellPresents, out int shellPresents))
                 {
                     shellPresents++;
-                    Game1.GameManager.SaveManager.SetString("shell_presents", shellPresents.ToString());
+                    Game1.GameManager.SaveManager.SetString(
+                        "shell_presents",
+                        shellPresents.ToString()
+                    );
                 }
             }
 
@@ -3786,7 +4648,6 @@ namespace ProjectZ.InGame.GameObjects
                 if (Game1.GameManager.CurrentHealth > Game1.GameManager.MaxHearts * 4)
                     Game1.GameManager.CurrentHealth = Game1.GameManager.MaxHearts * 4;
             }
-
             // The item picked up is an accessory.
             else if ((item.ShowAnimation == 1 || item.ShowAnimation == 2) && showItem)
             {
@@ -3834,8 +4695,16 @@ namespace ProjectZ.InGame.GameObjects
 
                 // spawn pickup animation
                 if (item.ShowEffect)
-                    Map.Objects.SpawnObject(new ObjPickupAnimation(Map,
-                        EntityPosition.X + _showItemOffset.X, EntityPosition.Y - EntityPosition.Z + _showItemOffset.Y - sourceRectangle.Height / 2));
+                    Map.Objects.SpawnObject(
+                        new ObjPickupAnimation(
+                            Map,
+                            EntityPosition.X + _showItemOffset.X,
+                            EntityPosition.Y
+                                - EntityPosition.Z
+                                + _showItemOffset.Y
+                                - sourceRectangle.Height / 2
+                        )
+                    );
 
                 _showItemOffset -= new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height);
 
@@ -3884,7 +4753,13 @@ namespace ProjectZ.InGame.GameObjects
 
             // play sound
             if (playSound && item.SoundEffectName != null)
-                Game1.GameManager.PlaySoundEffect(item.SoundEffectName, true, 1, 0, item.TurnDownMusic);
+                Game1.GameManager.PlaySoundEffect(
+                    item.SoundEffectName,
+                    true,
+                    1,
+                    0,
+                    item.TurnDownMusic
+                );
             if (item.MusicName >= 0)
                 Game1.GameManager.SetMusic(item.MusicName, 1);
         }
@@ -3993,7 +4868,9 @@ namespace ProjectZ.InGame.GameObjects
                     CurrentState = State.SwordShow1;
                     Game1.GameManager.PlaySoundEffect("D360-07-07");
                     var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
-                    animation.EntityPosition.Set(new Vector2(BodyRectangle.X, EntityPosition.Y - EntityPosition.Z - 30));
+                    animation.EntityPosition.Set(
+                        new Vector2(BodyRectangle.X, EntityPosition.Y - EntityPosition.Z - 30)
+                    );
                     Map.Objects.SpawnObject(animation);
                 }
                 else
@@ -4025,13 +4902,15 @@ namespace ProjectZ.InGame.GameObjects
                     Direction = input.X > 0 ? 2 : 0;
             }
             // Skip sword if any of the below is happening.
-            if (!IsAttackingState() &&
-                !IsBlockingState() &&
-                CurrentState != State.Idle &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Rafting &&
-                (CurrentState != State.Jumping || _railJump) &&
-                (CurrentState != State.Swimming || !Map.Is2dMap))
+            if (
+                !IsAttackingState()
+                && !IsBlockingState()
+                && CurrentState != State.Idle
+                && CurrentState != State.Pushing
+                && CurrentState != State.Rafting
+                && (CurrentState != State.Jumping || _railJump)
+                && (CurrentState != State.Swimming || !Map.Is2dMap)
+            )
                 return;
 
             // Play a random sword slash sound effect.
@@ -4064,7 +4943,7 @@ namespace ProjectZ.InGame.GameObjects
                 State.Blocking => State.AttackBlocking,
                 State.Swimming => State.AttackSwimming,
                 State.Jumping => State.AttackJumping,
-                _ => State.Attacking
+                _ => State.Attacking,
             };
             // Reset the jump hack timer.
             _jumpEndTimer = 0;
@@ -4077,12 +4956,15 @@ namespace ProjectZ.InGame.GameObjects
             _isHoldingSword = true;
         }
 
-        private Box GetSwordDamageBox(RectangleF collisionRectangle) => 
+        private Box GetSwordDamageBox(RectangleF collisionRectangle) =>
             new Box(
                 collisionRectangle.X + EntityPosition.X + _animationOffsetX,
-                collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, -8,
+                collisionRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY,
+                -8,
                 collisionRectangle.Width,
-                collisionRectangle.Height, 16);
+                collisionRectangle.Height,
+                16
+            );
 
         private void UpdateCharging()
         {
@@ -4123,8 +5005,19 @@ namespace ProjectZ.InGame.GameObjects
                 if (Game1.GameManager.PieceOfPowerIsActive)
                     damage *= 2;
 
-                var pieceOfPower = Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.CloakType == GameManager.CloakRed;
-                var hitCollision = Map.Objects.Hit(this, damageOrigin, SwordDamageBox, hitType | HitType.SwordHold, damage, pieceOfPower, out var direction, true);
+                var pieceOfPower =
+                    Game1.GameManager.PieceOfPowerIsActive
+                    || Game1.GameManager.CloakType == GameManager.CloakRed;
+                var hitCollision = Map.Objects.Hit(
+                    this,
+                    damageOrigin,
+                    SwordDamageBox,
+                    hitType | HitType.SwordHold,
+                    damage,
+                    pieceOfPower,
+                    out var direction,
+                    true
+                );
 
                 // If the sword is pointed at an NPC.
                 if (_npcSwordCross)
@@ -4138,12 +5031,19 @@ namespace ProjectZ.InGame.GameObjects
                     return;
                 }
                 // Start poking?
-                if (hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
+                if (
+                    hitCollision != Values.HitCollision.None
+                    && hitCollision != Values.HitCollision.NoneBlocking
+                )
                 {
-                    var knockback = CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
+                    var knockback =
+                        CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
 
                     // If it's repelling and the player is charging, don't interrupt the charge.
-                    if ((hitCollision & Values.HitCollision.RepellingParticle) != 0 && IsChargingState())
+                    if (
+                        (hitCollision & Values.HitCollision.RepellingParticle) != 0
+                        && IsChargingState()
+                    )
                     {
                         // Spawn a hit particle.
                         if (_hitParticleTime + 225 < Game1.TotalGameTime)
@@ -4151,10 +5051,10 @@ namespace ProjectZ.InGame.GameObjects
                             // Use the direction to determine the offset.
                             Point offset = Direction switch
                             {
-                                0 => new Point(-8,0),
-                                1 => new Point(2,-11),
-                                2 => new Point(10,0),
-                                3 => new Point(0,5),
+                                0 => new Point(-8, 0),
+                                1 => new Point(2, -11),
+                                2 => new Point(10, 0),
+                                3 => new Point(0, 5),
                             };
                             _hitParticleTime = Game1.TotalGameTime;
                             SpawnRepelParticle(collisionRectangle, offset.X, offset.Y);
@@ -4213,7 +5113,7 @@ namespace ProjectZ.InGame.GameObjects
                 else
                 {
                     // If cancelling a charge in the air, resume jumping animation. This
-                    // method of charge cancelling works for both 2D and 3D maps. 
+                    // method of charge cancelling works for both 2D and 3D maps.
                     if (!_railJump && !_body.IsGrounded)
                     {
                         CurrentState = State.Jumping;
@@ -4230,14 +5130,14 @@ namespace ProjectZ.InGame.GameObjects
             {
                 < 0 => _lastSwimDirection = 0,
                 > 0 => _lastSwimDirection = 2,
-                _   => _lastSwimDirection
+                _ => _lastSwimDirection,
             };
             if (CurrentState == State.ChargeSwimming && moveDirX % 2 == 0)
                 AnimatorWeapons.Play("stand_" + moveDirX);
         }
 
         private void StartSwordSpin()
-        { 
+        {
             // If in an accompanying state -> switch to a merged state.
             if (IsSwimmingState())
                 CurrentState = State.AttackSwimming;
@@ -4257,14 +5157,17 @@ namespace ProjectZ.InGame.GameObjects
             _isSwordSpinAttack = true;
         }
 
-        public bool ClassicSword { get => GameSettings.ClassicSword && !_isSwordSpinning; }
+        public bool ClassicSword
+        {
+            get => GameSettings.ClassicSword && !_isSwordSpinning;
+        }
 
         private static Box GetSwordClassicTile(Box box)
         {
             const int TileSize = 16;
 
             // Use center point of the box.
-            float centerX = box.X + box.Width  * 0.5f;
+            float centerX = box.X + box.Width * 0.5f;
             float centerY = box.Y + box.Height * 0.5f;
 
             // Offset the center when facing up or down.
@@ -4277,7 +5180,14 @@ namespace ProjectZ.InGame.GameObjects
             int tileX = (int)Math.Floor(centerX / TileSize);
             int tiley = (int)Math.Floor(centerY / TileSize);
 
-            return new Box(tileX * TileSize, tiley * TileSize, box.Z, TileSize, TileSize, box.Depth);
+            return new Box(
+                tileX * TileSize,
+                tiley * TileSize,
+                box.Z,
+                TileSize,
+                TileSize,
+                box.Depth
+            );
         }
 
         private void UpdateAttacking()
@@ -4299,11 +5209,10 @@ namespace ProjectZ.InGame.GameObjects
                 damageOrigin.Y -= 4;
 
             // Get the base damage type of hit to try to hit enemies with.
-            var hitType = _bootsRunning 
-                ? HitType.PegasusBootsSword 
-                : Game1.GameManager.SwordLevel == 1 
-                    ? HitType.Sword1 
-                    : HitType.Sword2;
+            var hitType =
+                _bootsRunning ? HitType.PegasusBootsSword
+                : Game1.GameManager.SwordLevel == 1 ? HitType.Sword1
+                : HitType.Sword2;
 
             // Get the base damage depending on the sword's level.
             var damage = Game1.GameManager.SwordLevel == 1 ? 1 : 2;
@@ -4327,7 +5236,9 @@ namespace ProjectZ.InGame.GameObjects
                 damage *= 2;
 
             // Track if a "Piece of Power" is active or if the red tunic is equipped. This is used for the "damage launch" effect.
-            var pieceOfPower = Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.CloakType == GameManager.CloakRed;
+            var pieceOfPower =
+                Game1.GameManager.PieceOfPowerIsActive
+                || Game1.GameManager.CloakType == GameManager.CloakRed;
 
             // Get the sword's damage box using the sprite's animation rectangle.
             RectangleF collisionRectangle = AnimatorWeapons.CollisionRectangle;
@@ -4345,24 +5256,66 @@ namespace ProjectZ.InGame.GameObjects
                 }
             }
             // For the "normal" hit lerp the collision box between the three frames of the attack.
-            if (AnimatorWeapons.CurrentAnimation.Frames.Length > AnimatorWeapons.CurrentFrameIndex + 1)
+            if (
+                AnimatorWeapons.CurrentAnimation.Frames.Length
+                > AnimatorWeapons.CurrentFrameIndex + 1
+            )
             {
-                var frameState = (float)(AnimatorWeapons.FrameCounter / AnimatorWeapons.CurrentFrame.FrameTime);
-                var collisionRectangleNextFrame = AnimatorWeapons.GetCollisionBox(AnimatorWeapons.CurrentAnimation.Frames[AnimatorWeapons.CurrentFrameIndex + 1]);
+                var frameState = (float)(
+                    AnimatorWeapons.FrameCounter / AnimatorWeapons.CurrentFrame.FrameTime
+                );
+                var collisionRectangleNextFrame = AnimatorWeapons.GetCollisionBox(
+                    AnimatorWeapons.CurrentAnimation.Frames[AnimatorWeapons.CurrentFrameIndex + 1]
+                );
 
                 collisionRectangle = new RectangleF(
-                    MathHelper.Lerp(collisionRectangle.X, collisionRectangleNextFrame.X, frameState),
-                    MathHelper.Lerp(collisionRectangle.Y, collisionRectangleNextFrame.Y, frameState),
-                    MathHelper.Lerp(collisionRectangle.Width, collisionRectangleNextFrame.Width, frameState),
-                    MathHelper.Lerp(collisionRectangle.Height, collisionRectangleNextFrame.Height, frameState));
+                    MathHelper.Lerp(
+                        collisionRectangle.X,
+                        collisionRectangleNextFrame.X,
+                        frameState
+                    ),
+                    MathHelper.Lerp(
+                        collisionRectangle.Y,
+                        collisionRectangleNextFrame.Y,
+                        frameState
+                    ),
+                    MathHelper.Lerp(
+                        collisionRectangle.Width,
+                        collisionRectangleNextFrame.Width,
+                        frameState
+                    ),
+                    MathHelper.Lerp(
+                        collisionRectangle.Height,
+                        collisionRectangleNextFrame.Height,
+                        frameState
+                    )
+                );
             }
             // Try to hit enemies with the "normal" hit. This fires whether "Classic Sword" is enabled or not.
-            var hitCollision = Map.Objects.Hit(this, damageOrigin, SwordDamageBox, hitType, damage, pieceOfPower, out var direction, true);
+            var hitCollision = Map.Objects.Hit(
+                this,
+                damageOrigin,
+                SwordDamageBox,
+                hitType,
+                damage,
+                pieceOfPower,
+                out var direction,
+                true
+            );
 
             // If "Classic Sword" is enabled, also hit with "ClassicSword" damage type. This will only try to
             // hit bushes, grass, and crystals. Bombs will also not react to this or the sword hit type if enabled.
             if (ClassicSword && !ClassicBox.IsEmpty)
-                Map.Objects.Hit(this, damageOrigin, ClassicBox, HitType.ClassicSword, damage, pieceOfPower, out var directionB, true);
+                Map.Objects.Hit(
+                    this,
+                    damageOrigin,
+                    ClassicBox,
+                    HitType.ClassicSword,
+                    damage,
+                    pieceOfPower,
+                    out var directionB,
+                    true
+                );
 
             // If the player is poking with the sword.
             if (_pokeStart)
@@ -4374,8 +5327,12 @@ namespace ProjectZ.InGame.GameObjects
                     var swordRectangle = AnimatorWeapons.CollisionRectangle;
                     var swordBox = new Box(
                         swordRectangle.X + EntityPosition.X + _animationOffsetX,
-                        swordRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY, 0,
-                        swordRectangle.Width, swordRectangle.Height, 4);
+                        swordRectangle.Y + EntityPosition.Y - EntityPosition.Z + _animationOffsetY,
+                        0,
+                        swordRectangle.Width,
+                        swordRectangle.Height,
+                        4
+                    );
                     var destroyableWall = DestroyableWall(swordBox);
                     Game1.GameManager.PlaySoundEffect("D360-07-07");
 
@@ -4383,12 +5340,17 @@ namespace ProjectZ.InGame.GameObjects
                         Game1.GameManager.PlaySoundEffect("D378-23-17");
 
                     var pokeParticle = new ObjSparkingEffect(Map, 0, 0, 0, 0);
-                    pokeParticle.EntityPosition.X = EntityPosition.X + _pokeAnimationOffset[Direction].X;
-                    pokeParticle.EntityPosition.Y = EntityPosition.Y + _pokeAnimationOffset[Direction].Y;
+                    pokeParticle.EntityPosition.X =
+                        EntityPosition.X + _pokeAnimationOffset[Direction].X;
+                    pokeParticle.EntityPosition.Y =
+                        EntityPosition.Y + _pokeAnimationOffset[Direction].Y;
                     Map.Objects.SpawnObject(pokeParticle);
                 }
             }
-            if (hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
+            if (
+                hitCollision != Values.HitCollision.None
+                && hitCollision != Values.HitCollision.NoneBlocking
+            )
                 _stopCharging = true;
 
             // Default beam direction to current direction.
@@ -4399,28 +5361,53 @@ namespace ProjectZ.InGame.GameObjects
                 beamDirection = _beamDirection;
 
             // Shoot the sword if the player has the Level 2 sword and full health.
-            if (!_shotSword && (Game1.GameManager.SwordLevel == 2 || swordbeam_level1) && (Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4 || swordbeam_always) && AnimatorWeapons.CurrentFrameIndex == 2)
+            if (
+                !_shotSword
+                && (Game1.GameManager.SwordLevel == 2 || swordbeam_level1)
+                && (
+                    Game1.GameManager.CurrentHealth >= Game1.GameManager.MaxHearts * 4
+                    || swordbeam_always
+                )
+                && AnimatorWeapons.CurrentFrameIndex == 2
+            )
             {
                 _shotSword = true;
-                var objSwordShot = new ObjSwordShot(Map, EntityPosition, _shootSwordOffset[beamDirection], Game1.GameManager.SwordLevel, beamDirection);
+                var objSwordShot = new ObjSwordShot(
+                    Map,
+                    EntityPosition,
+                    _shootSwordOffset[beamDirection],
+                    Game1.GameManager.SwordLevel,
+                    beamDirection
+                );
                 Map.Objects.SpawnObject(objSwordShot);
                 Map.Objects.RegisterAlwaysAnimateObject(objSwordShot);
             }
 
             // Spawn hit particle?
-            if ((hitCollision & Values.HitCollision.Particle) != 0 && _hitParticleTime + 225 < Game1.TotalGameTime)
+            if (
+                (hitCollision & Values.HitCollision.Particle) != 0
+                && _hitParticleTime + 225 < Game1.TotalGameTime
+            )
             {
                 _hitParticleTime = Game1.TotalGameTime;
                 SpawnRepelParticle(collisionRectangle);
             }
-            var knockback = CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
+            var knockback =
+                CurrentState == State.Swimming ? _swimRepelStrength : _baseRepelStrength;
             RepelPlayer(hitCollision, direction, knockback);
         }
 
-        private void RepelPlayer(Values.HitCollision collisionType, Vector2 direction, float customMultiplier = 0f)
+        private void RepelPlayer(
+            Values.HitCollision collisionType,
+            Vector2 direction,
+            float customMultiplier = 0f
+        )
         {
             // Repel the player.
-            if ((collisionType & Values.HitCollision.Repelling) != 0 && _hitRepelTime + 225 < Game1.TotalGameTime)
+            if (
+                (collisionType & Values.HitCollision.Repelling) != 0
+                && _hitRepelTime + 225 < Game1.TotalGameTime
+            )
             {
                 _hitRepelTime = Game1.TotalGameTime;
 
@@ -4443,13 +5430,25 @@ namespace ProjectZ.InGame.GameObjects
             PreventFieldKnockback();
         }
 
-        private void SpawnRepelParticle(RectangleF collisionRectangle, int OffsetX = 0, int OffsetY = 0)
+        private void SpawnRepelParticle(
+            RectangleF collisionRectangle,
+            int OffsetX = 0,
+            int OffsetY = 0
+        )
         {
             Game1.GameManager.PlaySoundEffect("D360-07-07");
 
             // Spawn the poke particle.
-            var posX = (int)(EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2 + OffsetX);
-            var posY = (int)(EntityPosition.Y - 15 + collisionRectangle.Y + collisionRectangle.Height / 2 + OffsetY);
+            var posX = (int)(
+                EntityPosition.X - 8 + collisionRectangle.X + collisionRectangle.Width / 2 + OffsetX
+            );
+            var posY = (int)(
+                EntityPosition.Y
+                - 15
+                + collisionRectangle.Y
+                + collisionRectangle.Height / 2
+                + OffsetY
+            );
             var pokeParticle = new ObjSparkingEffect(Map, posX, posY, 0, 0);
             Map.Objects.SpawnObject(pokeParticle);
         }
@@ -4457,14 +5456,16 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  SHIELD CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         private void HoldShield()
         {
-            if (CurrentState != State.Idle &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Attacking &&
-                CurrentState != State.Rafting &&
-                CurrentState != State.Charging)
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Pushing
+                && CurrentState != State.Attacking
+                && CurrentState != State.Rafting
+                && CurrentState != State.Charging
+            )
                 return;
 
             if (!_wasBlocking & !_blockButton)
@@ -4504,11 +5505,11 @@ namespace ProjectZ.InGame.GameObjects
 
             var offsets = key switch
             {
-                (1, _)     => ( -9, -18, +4, +2), // Up
-                (2, _)     => (-11, -16, +4, +2), // Right
-                (3, true)  => ( -8, -18, +4, +3), // Down (Mirror Shield)
-                (3, false) => ( -9, -18, +4, +3), // Down
-                (_, _)     => ( -7, -16, +4, +2), // Left
+                (1, _) => (-9, -18, +4, +2), // Up
+                (2, _) => (-11, -16, +4, +2), // Right
+                (3, true) => (-8, -18, +4, +3), // Down (Mirror Shield)
+                (3, false) => (-9, -18, +4, +3), // Down
+                (_, _) => (-7, -16, +4, +2), // Left
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
@@ -4516,9 +5517,12 @@ namespace ProjectZ.InGame.GameObjects
             // Return the proper shield box based on direction.
             return new Box(
                 EntityPosition.X + rect.X + xOff,
-                EntityPosition.Y + rect.Y + yOff, 0,
+                EntityPosition.Y + rect.Y + yOff,
+                0,
                 rect.Width + wOff,
-                rect.Height + hOff, 12);
+                rect.Height + hOff,
+                12
+            );
         }
 
         private void UpdateShieldPush()
@@ -4529,7 +5533,11 @@ namespace ProjectZ.InGame.GameObjects
 
             // Get the shield rectangle.
             ShieldBlockBox = GetShieldBox();
-            var pushedRectangle = Map.Objects.PushObject(ShieldBlockBox, _walkDirection[Direction] + _body.VelocityTarget * 0.5f, PushableComponent.PushType.Impact);
+            var pushedRectangle = Map.Objects.PushObject(
+                ShieldBlockBox,
+                _walkDirection[Direction] + _body.VelocityTarget * 0.5f,
+                PushableComponent.PushType.Impact
+            );
 
             // Push the object and get repelled from the pushed object.
             if (pushedRectangle != null)
@@ -4538,14 +5546,23 @@ namespace ProjectZ.InGame.GameObjects
                 _bootsCounter = 0;
 
                 // Only apply velocity if it's already zero so it can properly decay over time.
-                if (_shieldVelocity == Vector2.Zero || Vector2.Dot(_shieldVelocity, -_walkDirection[Direction]) < 0f)
+                if (
+                    _shieldVelocity == Vector2.Zero
+                    || Vector2.Dot(_shieldVelocity, -_walkDirection[Direction]) < 0f
+                )
                     _shieldVelocity = -_walkDirection[Direction] * pushedRectangle.RepelMultiplier;
 
                 // Spawn the "poke" particle.
                 if (pushedRectangle.RepelParticle)
                 {
-                    var posX = (int)(pushedRectangle.PushableBox.Box.X + pushedRectangle.PushableBox.Box.Width / 2);
-                    var posY = (int)(pushedRectangle.PushableBox.Box.Y + pushedRectangle.PushableBox.Box.Height / 2);
+                    var posX = (int)(
+                        pushedRectangle.PushableBox.Box.X
+                        + pushedRectangle.PushableBox.Box.Width / 2
+                    );
+                    var posY = (int)(
+                        pushedRectangle.PushableBox.Box.Y
+                        + pushedRectangle.PushableBox.Box.Height / 2
+                    );
                     Map.Objects.SpawnObject(new ObjSparkingEffect(Map, posX, posY, 0, 0));
                     Game1.GameManager.PlaySoundEffect("D360-07-07");
                 }
@@ -4583,17 +5600,24 @@ namespace ProjectZ.InGame.GameObjects
 
         private bool Jump(bool force = false, bool playSoundEffect = true)
         {
-            if ((!force && (
-                CurrentState != State.Idle &&
-                CurrentState != State.Idle &&
-                CurrentState != State.Attacking &&
-                CurrentState != State.AttackBlocking &&
-                CurrentState != State.Charging &&
-                CurrentState != State.ChargeBlocking &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Blocking &&
-                CurrentState != State.Rafting)) ||
-                _isTrapped || !_canJump)
+            if (
+                (
+                    !force
+                    && (
+                        CurrentState != State.Idle
+                        && CurrentState != State.Idle
+                        && CurrentState != State.Attacking
+                        && CurrentState != State.AttackBlocking
+                        && CurrentState != State.Charging
+                        && CurrentState != State.ChargeBlocking
+                        && CurrentState != State.Pushing
+                        && CurrentState != State.Blocking
+                        && CurrentState != State.Rafting
+                    )
+                )
+                || _isTrapped
+                || !_canJump
+            )
             {
                 if (_isTrapped && playSoundEffect)
                     Game1.GameManager.PlaySoundEffect("D360-13-0D");
@@ -4661,20 +5685,29 @@ namespace ProjectZ.InGame.GameObjects
             }
 
             // If not in a jumping state return early.
-            if (CurrentState != State.Jumping &&
-                CurrentState != State.AttackJumping &&
-                CurrentState != State.ChargeJumping)
+            if (
+                CurrentState != State.Jumping
+                && CurrentState != State.AttackJumping
+                && CurrentState != State.ChargeJumping
+            )
                 return;
 
             // Handle when rail jumping.
             if (_railJump)
             {
                 _railJumpPercentage += Game1.TimeMultiplier * _railJumpSpeed;
-                var amount = MathF.Sin(_railJumpPercentage * (MathF.PI * 0.3f)) / MathF.Sin(MathF.PI * 0.3f);
-                var newPosition = Vector2.Lerp(_railJumpStartPosition, _railJumpTargetPosition, amount);
+                var amount =
+                    MathF.Sin(_railJumpPercentage * (MathF.PI * 0.3f)) / MathF.Sin(MathF.PI * 0.3f);
+                var newPosition = Vector2.Lerp(
+                    _railJumpStartPosition,
+                    _railJumpTargetPosition,
+                    amount
+                );
                 EntityPosition.Set(newPosition);
 
-                EntityPosition.Z = MathF.Sin(_railJumpPercentage * MathF.PI) * _railJumpHeight + _railJumpPercentage * _railJumpPositionZ;
+                EntityPosition.Z =
+                    MathF.Sin(_railJumpPercentage * MathF.PI) * _railJumpHeight
+                    + _railJumpPercentage * _railJumpPositionZ;
 
                 if (_railJumpPercentage >= 1)
                 {
@@ -4694,7 +5727,8 @@ namespace ProjectZ.InGame.GameObjects
                 // Only push the player if he jumps into the water and does not walk. Walking is handled in another location.
                 if (SystemBody.GetFieldState(_body).HasFlag(MapStates.FieldStates.DeepWater))
                 {
-                    _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.5f;
+                    _body.Velocity =
+                        new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, 0) * 0.5f;
                 }
                 // HACK: Jumping then just before landing plays the same frame of animation as the first
                 // frame in walking. This timer forces "stand" animation for a few frames.
@@ -4731,19 +5765,24 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UsePowder()
         {
-            if (CurrentState != State.Idle &&
-                CurrentState != State.Jumping &&
-                CurrentState != State.Rafting &&
-                CurrentState != State.Pushing &&
-                (CurrentState != State.Swimming || !Map.Is2dMap))
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Jumping
+                && CurrentState != State.Rafting
+                && CurrentState != State.Pushing
+                && (CurrentState != State.Swimming || !Map.Is2dMap)
+            )
                 return;
 
             // remove one powder from the inventory
             if (!Game1.GameManager.RemoveItem("powder", 1))
                 return;
 
-            var spawnPosition = new Vector2(EntityPosition.X, EntityPosition.Y) + _powderOffset[Direction];
-            Map.Objects.SpawnObject(new ObjPowder(Map, spawnPosition.X, spawnPosition.Y, EntityPosition.Z, true));
+            var spawnPosition =
+                new Vector2(EntityPosition.X, EntityPosition.Y) + _powderOffset[Direction];
+            Map.Objects.SpawnObject(
+                new ObjPowder(Map, spawnPosition.X, spawnPosition.Y, EntityPosition.Z, true)
+            );
 
             if (CurrentState != State.Jumping)
             {
@@ -4767,24 +5806,35 @@ namespace ProjectZ.InGame.GameObjects
                 return;
             }
             // Return if not in any of the current states.
-            if (CurrentState != State.Idle &&
-                CurrentState != State.Rafting &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Jumping &&
-                (CurrentState != State.Swimming || !Map.Is2dMap))
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Rafting
+                && CurrentState != State.Pushing
+                && CurrentState != State.Jumping
+                && (CurrentState != State.Swimming || !Map.Is2dMap)
+            )
                 return;
 
             // Pick up the bomb if there is one infront of the player.
             var _bombGrabRectangle = new RectangleF(
                 EntityPosition.X + _walkDirection[Direction].X * (_body.Width / 2) - 4,
-                EntityPosition.Y - _body.Height / 2 + _walkDirection[Direction].Y * (_body.Height / 2) - 4, 8, 8);
+                EntityPosition.Y
+                    - _body.Height / 2
+                    + _walkDirection[Direction].Y * (_body.Height / 2)
+                    - 4,
+                8,
+                8
+            );
 
             // Pick up the first bomb found.
             foreach (var objBomb in BombList)
             {
-                var carriableComponent = objBomb.Components[CarriableComponent.Index] as CarriableComponent;
-                if (!carriableComponent.IsActive ||
-                    !carriableComponent.Rectangle.Rectangle.Intersects(_bombGrabRectangle))
+                var carriableComponent =
+                    objBomb.Components[CarriableComponent.Index] as CarriableComponent;
+                if (
+                    !carriableComponent.IsActive
+                    || !carriableComponent.Rectangle.Rectangle.Intersects(_bombGrabRectangle)
+                )
                     continue;
 
                 carriableComponent?.StartGrabbing?.Invoke();
@@ -4799,9 +5849,12 @@ namespace ProjectZ.InGame.GameObjects
             if (!Game1.GameManager.RemoveItem("bomb", 1))
                 return;
 
-            var spawnPosition = new Vector2(EntityPosition.X, EntityPosition.Y) + _bombOffset[Direction];
-            Map.Objects.SpawnObject(new ObjBomb(Map, spawnPosition.X, spawnPosition.Y, true, false, 2000));
-            
+            var spawnPosition =
+                new Vector2(EntityPosition.X, EntityPosition.Y) + _bombOffset[Direction];
+            Map.Objects.SpawnObject(
+                new ObjBomb(Map, spawnPosition.X, spawnPosition.Y, true, false, 2000)
+            );
+
             CurrentState = State.Bombing;
 
             // play animation
@@ -4811,15 +5864,17 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  BOW & ARROWS CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         private void UseArrow()
         {
-            if (CurrentState != State.Idle &&
-                CurrentState != State.Jumping &&
-                CurrentState != State.Rafting &&
-                CurrentState != State.Bombing &&
-                CurrentState != State.Pushing &&
-                (CurrentState != State.Swimming || !Map.Is2dMap))
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Jumping
+                && CurrentState != State.Rafting
+                && CurrentState != State.Bombing
+                && CurrentState != State.Pushing
+                && (CurrentState != State.Swimming || !Map.Is2dMap)
+            )
                 return;
 
             // Remove one powder from the inventory,
@@ -4858,7 +5913,8 @@ namespace ProjectZ.InGame.GameObjects
 
             _digPosition = new Point(
                 (int)((EntityPosition.X + _shovelOffset[Direction].X) / Values.TileSize),
-                (int)((EntityPosition.Y + _shovelOffset[Direction].Y) / Values.TileSize));
+                (int)((EntityPosition.Y + _shovelOffset[Direction].Y) / Values.TileSize)
+            );
 
             _canDig = Map.CanDig(_digPosition);
 
@@ -4895,15 +5951,25 @@ namespace ProjectZ.InGame.GameObjects
         private RectangleF GetGrabRectangle(int dir, float size)
         {
             float bias = 0.16f;
-            float recX = EntityPosition.X + _walkDirection[dir].X * (_body.Width / 2) - 1 - (bias / 2);
-            float recY = EntityPosition.Y - _body.Height / 2 + _walkDirection[dir].Y * (_body.Height / 2) - 1 - (bias / 2);
+            float recX =
+                EntityPosition.X + _walkDirection[dir].X * (_body.Width / 2) - 1 - (bias / 2);
+            float recY =
+                EntityPosition.Y
+                - _body.Height / 2
+                + _walkDirection[dir].Y * (_body.Height / 2)
+                - 1
+                - (bias / 2);
             return new RectangleF(recX, recY, size + bias, size + bias);
         }
 
         private void HoldBracelet()
         {
             // Part One: Grabbing the object. State must be idle, pushing, or swimming (for Flying Rooster) to continue.
-            if (CurrentState != State.Idle && CurrentState != State.Pushing && CurrentState != State.Swimming)
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Pushing
+                && CurrentState != State.Swimming
+            )
                 return;
 
             // Stores the grabbed object.
@@ -4922,7 +5988,8 @@ namespace ProjectZ.InGame.GameObjects
                 if (grabbedObject != null)
                 {
                     // Get the carry component of the grabbable object.
-                    var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
+                    var carriableComponent =
+                        grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
 
                     // Don't grab the rooster if it's too high in the air.
                     if (grabbedObject is ObjCock cock)
@@ -4936,7 +6003,8 @@ namespace ProjectZ.InGame.GameObjects
                         // Allow picking up the rooster in the water. Otherwise don't try to lift.
                         if (CurrentState == State.Swimming)
                         {
-                            if (grabbedObject is not ObjCock) return;
+                            if (grabbedObject is not ObjCock)
+                                return;
                             _swimRoosterPickup = true;
                         }
                         // Grabbing state is used to determine part two.
@@ -4964,19 +6032,35 @@ namespace ProjectZ.InGame.GameObjects
                 if (!_instantPickup)
                 {
                     // Object is an "instant pickup" type.
-                    Type[] instantPickupTypes = { typeof(ObjCock), typeof(MBossSmasherBall), typeof(BossGenieBottle), typeof(EnemyKarakoro), typeof(ObjDungeonHorseHead), typeof(ObjBall), typeof(ObjBird) };
-                    bool isSpinyBeetle = grabbedObject is ObjBush bush && bush.NoRespawn || grabbedObject is ObjStone stone && stone.NoRespawn;
+                    Type[] instantPickupTypes =
+                    {
+                        typeof(ObjCock),
+                        typeof(MBossSmasherBall),
+                        typeof(BossGenieBottle),
+                        typeof(EnemyKarakoro),
+                        typeof(ObjDungeonHorseHead),
+                        typeof(ObjBall),
+                        typeof(ObjBird),
+                    };
+                    bool isSpinyBeetle =
+                        grabbedObject is ObjBush bush && bush.NoRespawn
+                        || grabbedObject is ObjStone stone && stone.NoRespawn;
                     bool isPlayerBomb = grabbedObject is ObjBomb bomb && BombList.Contains(bomb);
 
                     // If it's an instant pickup type, remember it and store the object type.
-                    if (isSpinyBeetle || isPlayerBomb || ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes))
+                    if (
+                        isSpinyBeetle
+                        || isPlayerBomb
+                        || ObjectManager.IsGameObjectType(grabbedObject, instantPickupTypes)
+                    )
                     {
                         _instantPickupObject = grabbedObject;
                         _instantPickup = true;
                     }
                 }
                 // Gets the carriable component from the object found above.
-                var carriableComponent = grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
+                var carriableComponent =
+                    grabbedObject.Components[CarriableComponent.Index] as CarriableComponent;
 
                 // Get the direction of the analog stick.
                 var moveVec = ControlHandler.GetMoveVector2();
@@ -4985,9 +6069,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (carriableComponent?.Pull != null)
                 {
                     // If being pulled get the vector. If not then reset it.
-                    Vector2 pullVector = _pullCounter > 0
-                        ? moveVec
-                        : Vector2.Zero;
+                    Vector2 pullVector = _pullCounter > 0 ? moveVec : Vector2.Zero;
 
                     // If the pull has failed and the pull counter is below zero, reset the pull counter.
                     // PullResetTime is (-133). During this time the animation is not played.
@@ -5037,7 +6119,11 @@ namespace ProjectZ.InGame.GameObjects
             if (_carriedComponent == null)
                 return;
 
-            var targetPosition = new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z + _carriedComponent.CarryHeight);
+            var targetPosition = new Vector3(
+                EntityPosition.X,
+                EntityPosition.Y,
+                EntityPosition.Z + _carriedComponent.CarryHeight
+            );
 
             if (CurrentState == State.PreCarrying)
             {
@@ -5052,11 +6138,19 @@ namespace ProjectZ.InGame.GameObjects
                 var carryPositionXY = Vector2.Lerp(
                     new Vector2(_carryStartPosition.X, _carryStartPosition.Y),
                     new Vector2(targetPosition.X, targetPosition.Y),
-                    1 - MathF.Cos(pickupTime * (MathF.PI / 2)));
-                var carryPositionZ = MathHelper.Lerp(_carryStartPosition.Z, targetPosition.Z,
-                    MathF.Sin(pickupTime * (MathF.PI / 2)));
+                    1 - MathF.Cos(pickupTime * (MathF.PI / 2))
+                );
+                var carryPositionZ = MathHelper.Lerp(
+                    _carryStartPosition.Z,
+                    targetPosition.Z,
+                    MathF.Sin(pickupTime * (MathF.PI / 2))
+                );
 
-                if (!_carriedComponent.UpdatePosition(new Vector3(carryPositionXY.X, carryPositionXY.Y, carryPositionZ)))
+                if (
+                    !_carriedComponent.UpdatePosition(
+                        new Vector3(carryPositionXY.X, carryPositionXY.Y, carryPositionZ)
+                    )
+                )
                 {
                     CurrentState = State.Idle;
                     ReleaseCarriedObject();
@@ -5105,7 +6199,8 @@ namespace ProjectZ.InGame.GameObjects
             _preCarryCounter = 0;
 
             _carriedGameObject = carriableComponent.Owner;
-            _carriedObjDrawComp = carriableComponent.Owner.Components[DrawComponent.Index] as DrawComponent;
+            _carriedObjDrawComp =
+                carriableComponent.Owner.Components[DrawComponent.Index] as DrawComponent;
             if (_carriedObjDrawComp != null)
                 _carriedObjDrawComp.IsActive = false;
         }
@@ -5144,11 +6239,13 @@ namespace ProjectZ.InGame.GameObjects
                 return;
 
             // Only run if idle or using hookshot for the forced return.
-            if (CurrentState != State.Idle &&
-                CurrentState != State.Rafting &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Hookshot &&
-                (!Map.Is2dMap || CurrentState != State.Swimming))
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Rafting
+                && CurrentState != State.Pushing
+                && CurrentState != State.Hookshot
+                && (!Map.Is2dMap || CurrentState != State.Swimming)
+            )
                 return;
 
             // If hookshot is in progress force a comeback.
@@ -5167,7 +6264,9 @@ namespace ProjectZ.InGame.GameObjects
             // Spawn in the hookshot object and track it via "Hookshot" variable.
             var spawnPosition = new Vector3(
                 EntityPosition.X + _hookshotOffset[hookshotDirection].X,
-                EntityPosition.Y + _hookshotOffset[hookshotDirection].Y, EntityPosition.Z);
+                EntityPosition.Y + _hookshotOffset[hookshotDirection].Y,
+                EntityPosition.Z
+            );
             Hookshot.Start(Map, spawnPosition, AnimationHelper.DirectionOffset[hookshotDirection]);
             Map.Objects.SpawnObject(Hookshot);
             Map.Objects.RegisterAlwaysAnimateObject(Hookshot);
@@ -5244,9 +6343,17 @@ namespace ProjectZ.InGame.GameObjects
             var pullVector = AnimationHelper.DirectionOffset[Direction];
 
             // Reached the end of the hook or collided with an object before.
-            if (distance.Length() < (distance + pullVector).Length() ||
-                (_body.LastVelocityCollision != Values.BodyCollision.None && (_body.SlideOffset == Vector2.Zero || _body.BodyBox.Box.Contains(Hookshot.HookshotPosition.Position))) ||
-                CurrentState == State.Dying)
+            if (
+                distance.Length() < (distance + pullVector).Length()
+                || (
+                    _body.LastVelocityCollision != Values.BodyCollision.None
+                    && (
+                        _body.SlideOffset == Vector2.Zero
+                        || _body.BodyBox.Box.Contains(Hookshot.HookshotPosition.Position)
+                    )
+                )
+                || CurrentState == State.Dying
+            )
             {
                 _hookshotPull = false;
                 _body.IgnoresZ = false;
@@ -5265,14 +6372,22 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseBoomerang()
         {
-            if ((CurrentState != State.Idle &&
-                CurrentState != State.Jumping &&
-                CurrentState != State.Pushing &&
-                CurrentState != State.Rafting &&
-                (CurrentState != State.Swimming || !Map.Is2dMap)) || !Boomerang.IsReady)
+            if (
+                (
+                    CurrentState != State.Idle
+                    && CurrentState != State.Jumping
+                    && CurrentState != State.Pushing
+                    && CurrentState != State.Rafting
+                    && (CurrentState != State.Swimming || !Map.Is2dMap)
+                ) || !Boomerang.IsReady
+            )
                 return;
 
-            var spawnPosition = new Vector3(EntityPosition.X + _boomerangOffset[Direction].X, EntityPosition.Y + _boomerangOffset[Direction].Y, EntityPosition.Z);
+            var spawnPosition = new Vector3(
+                EntityPosition.X + _boomerangOffset[Direction].X,
+                EntityPosition.Y + _boomerangOffset[Direction].Y,
+                EntityPosition.Z
+            );
 
             // can throw into multiple directions
             var boomerangVector = ControlHandler.GetMoveVector2();
@@ -5289,8 +6404,7 @@ namespace ProjectZ.InGame.GameObjects
             Map.Objects.SpawnObject(Boomerang);
             Map.Objects.RegisterAlwaysAnimateObject(Boomerang);
 
-            if (CurrentState != State.Jumping &&
-                CurrentState != State.ChargeJumping)
+            if (CurrentState != State.Jumping && CurrentState != State.ChargeJumping)
             {
                 CurrentState = State.Powdering;
                 Animation.Play("powder_" + Direction);
@@ -5302,14 +6416,21 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         private void UseMagicRod()
         {
-            if (CurrentState != State.Idle &&
-                CurrentState != State.Rafting &&
-                CurrentState != State.Pushing &&
-                (CurrentState != State.Swimming || !Map.Is2dMap) &&
-                (CurrentState != State.Jumping || _railJump))
+            if (
+                CurrentState != State.Idle
+                && CurrentState != State.Rafting
+                && CurrentState != State.Pushing
+                && (CurrentState != State.Swimming || !Map.Is2dMap)
+                && (CurrentState != State.Jumping || _railJump)
+            )
                 return;
 
-            var magicShot = new ObjMagicRodShot(Map, EntityPosition, _magicRodOffset[Direction], Direction);
+            var magicShot = new ObjMagicRodShot(
+                Map,
+                EntityPosition,
+                _magicRodOffset[Direction],
+                Direction
+            );
             Map.Objects.SpawnObject(magicShot);
             Map.Objects.RegisterAlwaysAnimateObject(magicShot);
 
@@ -5330,7 +6451,13 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseOcarina()
         {
-            if ((CurrentState != State.Idle && CurrentState != State.Pushing && CurrentState != State.Ocarina) || _isClimbing)
+            if (
+                (
+                    CurrentState != State.Idle
+                    && CurrentState != State.Pushing
+                    && CurrentState != State.Ocarina
+                ) || _isClimbing
+            )
                 return;
 
             // Cancel playing the ocarina if pressed again.
@@ -5352,10 +6479,10 @@ namespace ProjectZ.InGame.GameObjects
             // Get the song that has been selected.
             string ocarinaSong = _ocarinaSong switch
             {
-                0 => "D370-09-09",  // Ballad of the Windfish
-                1 => "D370-11-0B",  // Manbo's Mambo
-                2 => "D370-10-0A",  // Frog's Song of Soul
-                _ => "D370-21-15"   // Bad Playing
+                0 => "D370-09-09", // Ballad of the Windfish
+                1 => "D370-11-0B", // Manbo's Mambo
+                2 => "D370-10-0A", // Frog's Song of Soul
+                _ => "D370-21-15", // Bad Playing
             };
             // Play the selected song.
             Game1.GameManager.PlaySoundEffect(ocarinaSong);
@@ -5444,7 +6571,11 @@ namespace ProjectZ.InGame.GameObjects
                 _ocarinaNoteIndex++;
 
                 var dir = _ocarinaNoteIndex % 2 == 1 ? -1 : 1;
-                var objNote = new ObjNote(Map, new Vector2(EntityPosition.X + dir * 7, EntityPosition.Y), dir);
+                var objNote = new ObjNote(
+                    Map,
+                    new Vector2(EntityPosition.X + dir * 7, EntityPosition.Y),
+                    dir
+                );
                 Map.Objects.SpawnObject(objNote);
             }
         }
@@ -5492,7 +6623,8 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.PlaySoundEffect("D360-44-2C");
 
                 // load the map
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                var transitionSystem = (MapTransitionSystem)
+                    Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
                 transitionSystem.ResetTransition();
 
                 if (Map.DungeonMode || Map.DungeonMapless)
@@ -5506,13 +6638,27 @@ namespace ProjectZ.InGame.GameObjects
                     }
                     // Respawn at the dungeon entrance.
                     SetNextMapPosition(SavePosition);
-                    transitionSystem.AppendMapChange(SaveMap, null, false, false, Color.White, true);
+                    transitionSystem.AppendMapChange(
+                        SaveMap,
+                        null,
+                        false,
+                        false,
+                        Color.White,
+                        true
+                    );
                     OcarinaDungeonTeleport = true;
                 }
                 else
                 {
                     // Append a map change.
-                    transitionSystem.AppendMapChange("overworld.map", "ocarina_entry", false, false, Color.White, true);
+                    transitionSystem.AppendMapChange(
+                        "overworld.map",
+                        "ocarina_entry",
+                        false,
+                        false,
+                        Color.White,
+                        true
+                    );
                 }
                 transitionSystem.StartTeleportTransition = true;
                 return;
@@ -5520,28 +6666,44 @@ namespace ProjectZ.InGame.GameObjects
             ReturnToIdle();
 
             // Update Ocarina Listeners.
-            var recDetection = new RectangleF(EntityPosition.X - 100, EntityPosition.Y - 100, 200, 200);
+            var recDetection = new RectangleF(
+                EntityPosition.X - 100,
+                EntityPosition.Y - 100,
+                200,
+                200
+            );
 
             // Get objects around Link to see if they have ocarina listeners.
             _ocarinaList.Clear();
-            Map.Objects.GetComponentList(_ocarinaList, (int)recDetection.X, (int)recDetection.Y, (int)recDetection.Width, (int)recDetection.Height, OcarinaListenerComponent.Mask);
+            Map.Objects.GetComponentList(
+                _ocarinaList,
+                (int)recDetection.X,
+                (int)recDetection.Y,
+                (int)recDetection.Width,
+                (int)recDetection.Height,
+                OcarinaListenerComponent.Mask
+            );
 
             // Loop through all objects found.
             foreach (var objOcarinaListener in _ocarinaList)
             {
-                var ocarinaComponent = (OcarinaListenerComponent)objOcarinaListener.Components[OcarinaListenerComponent.Index];
+                var ocarinaComponent = (OcarinaListenerComponent)
+                    objOcarinaListener.Components[OcarinaListenerComponent.Index];
 
                 // Compute the world-space rectangle for this listener's interaction zone.
                 var recInteraction = new RectangleF(
                     objOcarinaListener.EntityPosition.X + ocarinaComponent.InteractRect.X,
                     objOcarinaListener.EntityPosition.Y + ocarinaComponent.InteractRect.Y,
                     ocarinaComponent.InteractRect.Width,
-                    ocarinaComponent.InteractRect.Height);
+                    ocarinaComponent.InteractRect.Height
+                );
 
                 // Check if player is inside the interaction rectangle.
                 if (recInteraction.Contains(EntityPosition.Position))
                 {
-                    ocarinaComponent.OcarinaPlayedFunction?.Invoke(Game1.GameManager.SelectedOcarinaSong);
+                    ocarinaComponent.OcarinaPlayedFunction?.Invoke(
+                        Game1.GameManager.SelectedOcarinaSong
+                    );
                 }
             }
         }
@@ -5571,19 +6733,16 @@ namespace ProjectZ.InGame.GameObjects
             var key = Direction;
             var offsets = key switch
             {
-                1 => (  -7, -16, +14,  +5),
-                2 => (  +5, -12,  +5, +14),
-                3 => (  -7,  +1, +14,  +5),
-                _ => ( -10, -12,  +5, +14)
+                1 => (-7, -16, +14, +5),
+                2 => (+5, -12, +5, +14),
+                3 => (-7, +1, +14, +5),
+                _ => (-10, -12, +5, +14),
             };
             // Assign the results of the switch.
             var (xOff, yOff, wOff, hOff) = offsets;
 
             // Return the box used to smash crystals with.
-            return new Box(
-                EntityPosition.X + xOff,
-                EntityPosition.Y + yOff, 4,
-                wOff, hOff, 4);
+            return new Box(EntityPosition.X + xOff, EntityPosition.Y + yOff, 4, wOff, hOff, 4);
         }
 
         private void UpdatePegasusBoots()
@@ -5603,11 +6762,10 @@ namespace ProjectZ.InGame.GameObjects
                 _bootsRunning = false;
 
                 // Over/equals 500 = subtract 300. Above zero = halve it. At 0 = use value.
-                _bootsCounter = boots_charge_time >= 500
-                    ? boots_charge_time - 300
-                    : boots_charge_time > 0
-                        ? boots_charge_time / 2
-                        : boots_charge_time;
+                _bootsCounter =
+                    boots_charge_time >= 500 ? boots_charge_time - 300
+                    : boots_charge_time > 0 ? boots_charge_time / 2
+                    : boots_charge_time;
             }
             if (_bootsHolding || _bootsRunning)
             {
@@ -5622,10 +6780,27 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         Game1.GameManager.PlaySoundEffect("D360-14-0E");
 
-                        var splashAnimator = new ObjAnimator(_body.Owner.Map, 0, 0, 0, 3, 1, "Particles/splash", "idle", true);
-                        splashAnimator.EntityPosition.Set(new Vector2(
-                            _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                            _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 3));
+                        var splashAnimator = new ObjAnimator(
+                            _body.Owner.Map,
+                            0,
+                            0,
+                            0,
+                            3,
+                            1,
+                            "Particles/splash",
+                            "idle",
+                            true
+                        );
+                        splashAnimator.EntityPosition.Set(
+                            new Vector2(
+                                _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                                _body.Position.Y
+                                    + _body.OffsetY
+                                    + _body.Height
+                                    - _body.Position.Z
+                                    - 3
+                            )
+                        );
                         Map.Objects.SpawnObject(splashAnimator);
                     }
                     // Ground dust particles.
@@ -5633,8 +6808,17 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         Game1.GameManager.PlaySoundEffect("D378-07-07");
 
-                        var animator = new ObjAnimator(Map, (int)EntityPosition.X, (int)(EntityPosition.Y + 1),
-                            0, -1 - (int)EntityPosition.Z, Values.LayerPlayer, "Particles/run", "spawn", true);
+                        var animator = new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X,
+                            (int)(EntityPosition.Y + 1),
+                            0,
+                            -1 - (int)EntityPosition.Z,
+                            Values.LayerPlayer,
+                            "Particles/run",
+                            "spawn",
+                            true
+                        );
                         Map.Objects.SpawnObject(animator);
                     }
                 }
@@ -5708,10 +6892,7 @@ namespace ProjectZ.InGame.GameObjects
             var strItem = Game1.GameManager.SaveManager.GetString("itemShopItem");
             var strCount = Game1.GameManager.SaveManager.GetString("itemShopCount");
 
-            var item = new GameItemCollected(strItem)
-            {
-                Count = int.Parse(strCount)
-            };
+            var item = new GameItemCollected(strItem) { Count = int.Parse(strCount) };
             // gets picked up
             PickUpItem(item, false, false);
 
@@ -5788,7 +6969,7 @@ namespace ProjectZ.InGame.GameObjects
                 1 => new Vector2(0, distance),
                 2 => new Vector2(-distance, 0),
                 3 => new Vector2(0, -distance),
-                _ => Vector2.Zero
+                _ => Vector2.Zero,
             };
         }
 
@@ -5852,7 +7033,7 @@ namespace ProjectZ.InGame.GameObjects
             // Player is currently carrying the rooster around.
             if (IsFlying())
             {
-                // The hit velocity is added to the movement (*3) for the flame trap knockback on the way 
+                // The hit velocity is added to the movement (*3) for the flame trap knockback on the way
                 // to level 8 as the normal value sent back is not strong enough to knock it back.
                 var moveVelocity = ControlHandler.GetMoveVector2() + (_hitVelocity * 3);
 
@@ -5922,8 +7103,11 @@ namespace ProjectZ.InGame.GameObjects
 
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
-                if (Animation.CurrentAnimation.Id == "intro_sit" &&
-                    !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen && walkVelocity.Length() > 0)
+                if (
+                    Animation.CurrentAnimation.Id == "intro_sit"
+                    && !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen
+                    && walkVelocity.Length() > 0
+                )
                 {
                     CurrentState = State.Idle;
                     Direction = 2;
@@ -5973,8 +7157,7 @@ namespace ProjectZ.InGame.GameObjects
 
         public void MapInit()
         {
-            if (!IsSwimmingState() &&
-                CurrentState != State.OcarinaTeleport)
+            if (!IsSwimmingState() && CurrentState != State.OcarinaTeleport)
                 CurrentState = State.Idle;
 
             Boomerang.Reset();
@@ -6059,7 +7242,9 @@ namespace ProjectZ.InGame.GameObjects
             }
 
             if (NextMapPositionEnd.HasValue)
-                SetHoleResetPosition(new Vector3(NextMapPositionEnd.Value.X, NextMapPositionEnd.Value.Y, 0));
+                SetHoleResetPosition(
+                    new Vector3(NextMapPositionEnd.Value.X, NextMapPositionEnd.Value.Y, 0)
+                );
 
             if (Is2DMode)
                 MapInit2D();
@@ -6067,9 +7252,13 @@ namespace ProjectZ.InGame.GameObjects
             // Stop Guardian Acorn and Piece of Power during certain transitions.
             if (Map != null && _previousMap != null)
             {
-                bool isOverworld = Map.MapName == "overworld.map" || _previousMap.MapName == "overworld.map";
-                bool mapIsCave = !string.IsNullOrEmpty(Map.MapName) && Map.MapName.StartsWith("cave");
-                bool prevIsCave = !string.IsNullOrEmpty(_previousMap.MapName) && _previousMap.MapName.StartsWith("cave");
+                bool isOverworld =
+                    Map.MapName == "overworld.map" || _previousMap.MapName == "overworld.map";
+                bool mapIsCave =
+                    !string.IsNullOrEmpty(Map.MapName) && Map.MapName.StartsWith("cave");
+                bool prevIsCave =
+                    !string.IsNullOrEmpty(_previousMap.MapName)
+                    && _previousMap.MapName.StartsWith("cave");
                 bool mapsNotCave = !mapIsCave && !prevIsCave;
                 bool notDungeon = !Map.DungeonMode && !Map.DungeonMapless && !Map.DungeonCastle;
 
@@ -6081,7 +7270,10 @@ namespace ProjectZ.InGame.GameObjects
             }
             // The BowWow object is designed to automatically set to "_objBowWow" so it needs to be
             // terminated when it is not supposed to be in use or we get an invisible BowWow following.
-            if ((Map != null && Map.DungeonMode) || Game1.GameManager.SaveManager.GetString("has_bowWow", "0") != "1")
+            if (
+                (Map != null && Map.DungeonMode)
+                || Game1.GameManager.SaveManager.GetString("has_bowWow", "0") != "1"
+            )
                 _objBowWow = null;
 
             Game1.GameManager.UseShockEffect = false;
@@ -6149,8 +7341,7 @@ namespace ProjectZ.InGame.GameObjects
                 // make sure to fall down when jumping into a game sequence
                 _body.Velocity.X = 0;
                 _body.Velocity.Y = 0;
-                if (IsJumpingState() ||
-                    CurrentState == State.Powdering)
+                if (IsJumpingState() || CurrentState == State.Powdering)
                     CurrentState = State.Idle;
             }
             _body.VelocityTarget = Vector2.Zero;
@@ -6180,14 +7371,16 @@ namespace ProjectZ.InGame.GameObjects
                     _teleportCounter += Game1.DeltaTime;
 
                 _teleportCounterFull += Game1.DeltaTime;
-                var rotationSpeed = 150 - (float)Math.Sin((_teleportCounterFull / 2000f) * Math.PI) * 50;
+                var rotationSpeed =
+                    150 - (float)Math.Sin((_teleportCounterFull / 2000f) * Math.PI) * 50;
                 if (_teleportCounter > rotationSpeed)
                 {
                     _teleportCounter -= rotationSpeed;
                     Direction = (Direction + 1) % 4;
                     UpdateAnimation();
                 }
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                var transitionSystem = (MapTransitionSystem)
+                    Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
                 transitionSystem.ResetTransition();
 
                 if (_teleportState == 0 && _teleportCounterFull >= 1250)
@@ -6208,7 +7401,14 @@ namespace ProjectZ.InGame.GameObjects
                         MapTransitionEnd = EntityPosition.Position;
                         TransitionOutWalking = false;
 
-                        transitionSystem.AppendMapChange(_teleportMap, _teleporterId, false, true, Color.White, true);
+                        transitionSystem.AppendMapChange(
+                            _teleportMap,
+                            _teleporterId,
+                            false,
+                            true,
+                            Color.White,
+                            true
+                        );
                     }
                     transitionSystem.SetColorMode(Color.White, 1);
                 }
@@ -6222,9 +7422,16 @@ namespace ProjectZ.InGame.GameObjects
                     transitionSystem.SetColorMode(Color.White, (_teleportCounterFull - 750) / 500f);
                 }
                 // Teleport fade out.
-                else if (_teleportState == 1 && _teleportCounterFull >= fadeoutStart && _teleportCounterFull < fadeoutEnd)
+                else if (
+                    _teleportState == 1
+                    && _teleportCounterFull >= fadeoutStart
+                    && _teleportCounterFull < fadeoutEnd
+                )
                 {
-                    transitionSystem.SetColorMode(Color.White, 1 - (_teleportCounterFull - fadeoutStart) / fadeOutTime);
+                    transitionSystem.SetColorMode(
+                        Color.White,
+                        1 - (_teleportCounterFull - fadeoutStart) / fadeOutTime
+                    );
                 }
                 // Teleport has finished.
                 else if (_teleportState == 1 && _teleportCounterFull >= fadeoutEnd)
@@ -6363,9 +7570,15 @@ namespace ProjectZ.InGame.GameObjects
                 MapManager.ObjLink.StopFlying(Vector2.Zero);
 
             // Restore current state to "Idle".
-            if (MapTransitionStart.HasValue && MapTransitionEnd.HasValue && !IsSwimmingState() && 
-                CurrentState != State.BedTransition && CurrentState != State.Knockout && CurrentState != State.OcarinaTeleport) 
-            {   
+            if (
+                MapTransitionStart.HasValue
+                && MapTransitionEnd.HasValue
+                && !IsSwimmingState()
+                && CurrentState != State.BedTransition
+                && CurrentState != State.Knockout
+                && CurrentState != State.OcarinaTeleport
+            )
+            {
                 CurrentState = State.Idle;
             }
             // Remove the player's velocity.
@@ -6393,7 +7606,11 @@ namespace ProjectZ.InGame.GameObjects
             // Move Link to the new position on the map.
             if (MapTransitionStart.HasValue && MapTransitionEnd.HasValue)
             {
-                var newPosition = Vector2.Lerp(MapTransitionStart.Value, MapTransitionEnd.Value, state);
+                var newPosition = Vector2.Lerp(
+                    MapTransitionStart.Value,
+                    MapTransitionEnd.Value,
+                    state
+                );
                 SetPosition(newPosition);
             }
             // Recalculate scale when certain camera options are enabled.
@@ -6432,11 +7649,9 @@ namespace ProjectZ.InGame.GameObjects
             // Disable followers on maps that contain the "NoFollowers" map object.
             if (Map.NoFollowers || Map.Is2dMap)
                 _objFollower.IsActive = false;
-
             // Marin has her own method of respawning. Not doing it this way breaks her dungeon transition.
-            else
-                if (_objFollower != _objMaria)
-                    _objFollower.IsActive = true;
+            else if (_objFollower != _objMaria)
+                _objFollower.IsActive = true;
         }
 
         public void UpdateMapTransitionIn(float state)
@@ -6455,7 +7670,12 @@ namespace ProjectZ.InGame.GameObjects
                 GameSettings.ClassicDungeon = false;
 
                 // Apply the camera settings to the Camera Settings page.
-                if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
+                if (
+                    Game1.UiPageManager.InsideElement.TryGetValue(
+                        typeof(CameraSettingsPage),
+                        out var camPage
+                    )
+                )
                 {
                     var CameraSettingsPage = (CameraSettingsPage)camPage;
                     CameraSettingsPage.SetCameraMode(GameSettings.ClassicCamera);
@@ -6486,20 +7706,29 @@ namespace ProjectZ.InGame.GameObjects
             // Make sure the transition has both a start and end position.
             if (NextMapPositionStart.HasValue && NextMapPositionEnd.HasValue)
             {
-                var newPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state);
+                var newPosition = Vector2.Lerp(
+                    NextMapPositionStart.Value,
+                    NextMapPositionEnd.Value,
+                    state
+                );
                 SetPosition(newPosition);
 
                 // Transition the follower out of the map. I'm not sure why this check existed, but the commented off code used to be part of the check.
                 if (_objFollower != null) // && NextMapPositionStart.Value != NextMapPositionEnd.Value)
                 {
-                    var followerPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state * 0.5f);
+                    var followerPosition = Vector2.Lerp(
+                        NextMapPositionStart.Value,
+                        NextMapPositionEnd.Value,
+                        state * 0.5f
+                    );
                     _objFollower.SetPosition(followerPosition);
                     SetFollowerMapState();
                 }
             }
             // Lock the camera while transitioning.
             if (!Map.Is2dMap || Direction == 1)
-                Game1.GameManager.MapManager.UpdateCameraY = NextMapPositionStart == NextMapPositionEnd;
+                Game1.GameManager.MapManager.UpdateCameraY =
+                    NextMapPositionStart == NextMapPositionEnd;
 
             // Set the hole and water reset position to be at the transition entrance.
             _holeResetPosition = EntityPosition.ToVector3();
@@ -6542,7 +7771,11 @@ namespace ProjectZ.InGame.GameObjects
                 _body.Velocity.Y = 0;
             }
             // This is because the water is deeper than 0.
-            if ((SystemBody.GetFieldState(_body) & MapStates.FieldStates.DeepWater) == 0 && CurrentState != State.Swimming && !_isClimbing)
+            if (
+                (SystemBody.GetFieldState(_body) & MapStates.FieldStates.DeepWater) == 0
+                && CurrentState != State.Swimming
+                && !_isClimbing
+            )
                 _body.IgnoresZ = false;
 
             // Restore the player's draw layer.
@@ -6558,7 +7791,13 @@ namespace ProjectZ.InGame.GameObjects
                 Game1.GameManager.StartDialogPath("shopkeeper_steal");
             }
             // Restart the music.
-            if (!GameSettings.MutePowerups && (Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive))
+            if (
+                !GameSettings.MutePowerups
+                && (
+                    Game1.GameManager.PieceOfPowerIsActive
+                    || Game1.GameManager.GuardianAcornIsActive
+                )
+            )
                 Game1.GameManager.StartPieceOfPowerMusic(1);
 
             // Destroy the field barrier after a transition so it can be recreated.
@@ -6567,7 +7806,7 @@ namespace ProjectZ.InGame.GameObjects
             // Manbo's song transition can freeze the game so unfreeze it now.
             FreezeAnimations(false);
 
-            // When classic camera is enabled don't reset objects immediately after transition. 
+            // When classic camera is enabled don't reset objects immediately after transition.
             if (Camera.ClassicMode)
             {
                 PreventReset = true;

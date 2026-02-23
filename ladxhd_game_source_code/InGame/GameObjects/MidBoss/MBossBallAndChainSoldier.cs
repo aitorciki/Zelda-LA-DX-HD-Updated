@@ -41,9 +41,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _distance;
         private bool _wasBlocked;
 
-        public MBossBallAndChainSoldier() : base("ballAndChain") { }
+        public MBossBallAndChainSoldier()
+            : base("ballAndChain") { }
 
-        public MBossBallAndChainSoldier(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public MBossBallAndChainSoldier(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -54,7 +56,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _fieldRectangle.X += 16;
 
             // was already defeated?
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
             {
                 IsDead = true;
 
@@ -92,15 +97,24 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var damageCollider = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8);
             AddComponent(AnimationComponent.Index, _animatorComponent);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
             _damageState = new AiDamageState(this, _body, _ai, _sprite, _lives, false)
             {
-                OnDeath = OnDeath
+                OnDeath = OnDeath,
             };
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, _damageState.OnHit));
+            AddComponent(
+                HittableComponent.Index,
+                new HittableComponent(_body.BodyBox, _damageState.OnHit)
+            );
             AddComponent(AiComponent.Index, _ai);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             _ballAndChain = new MBossBallAndChain(map, this);
@@ -124,7 +138,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var objLeaf = new ObjItem(Map, 0, 0, null, _leafSaveKey, "goldLeaf", null);
             if (!objLeaf.IsDead)
             {
-                objLeaf.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z));
+                objLeaf.EntityPosition.Set(
+                    new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z)
+                );
                 objLeaf.SetVelocity(new Vector3(playerDirection.X, playerDirection.Y, 1.0f));
                 objLeaf.Collectable = false;
                 Map.Objects.SpawnObject(objLeaf);
@@ -173,10 +189,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _ballCounter = 0;
         }
 
-        private void UpdateSwing()
-        {
-
-        }
+        private void UpdateSwing() { }
 
         private void ToThrow()
         {
@@ -186,10 +199,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _ballAndChain.Activate();
         }
 
-        private void UpdateThrow()
-        {
-
-        }
+        private void UpdateThrow() { }
 
         private void UpdateBall()
         {
@@ -213,7 +223,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 var isSwinging = _ai.CurrentStateId == "swing";
 
                 var target = isSwinging ? 300.0f : 500.0f;
-                _currentBallSpeed = AnimationHelper.MoveToTarget(_currentBallSpeed, target, target * 0.1f * Game1.TimeMultiplier);
+                _currentBallSpeed = AnimationHelper.MoveToTarget(
+                    _currentBallSpeed,
+                    target,
+                    target * 0.1f * Game1.TimeMultiplier
+                );
 
                 // 2 times per second or 4 if he is swinging fast
                 _ballState += Game1.DeltaTime / _currentBallSpeed * MathF.PI * 2;
@@ -222,7 +236,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 {
                     _currentBallSpeed = 500.0f;
                     ToThrow();
-                    _ballState = _throwDirection + ((_ballState - _throwDirection) / 1000.0f) * MathF.PI;
+                    _ballState =
+                        _throwDirection + ((_ballState - _throwDirection) / 1000.0f) * MathF.PI;
                 }
                 else if (_ballState >= MathF.PI * 2)
                 {
@@ -234,9 +249,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                         if (_ballCounter >= 2)
                         {
                             _startThrowing = true;
-                            var playerDirection = MapManager.ObjLink.CenterPosition.Position -
-                                                  new Vector2(EntityPosition.X - 5, EntityPosition.Y - 15);
-                            var playerAngle = MathF.Atan2(playerDirection.Y, playerDirection.X) + MathF.PI * 5 / 2;
+                            var playerDirection =
+                                MapManager.ObjLink.CenterPosition.Position
+                                - new Vector2(EntityPosition.X - 5, EntityPosition.Y - 15);
+                            var playerAngle =
+                                MathF.Atan2(playerDirection.Y, playerDirection.X)
+                                + MathF.PI * 5 / 2;
                             if (playerAngle >= MathF.PI * 2)
                                 playerAngle -= MathF.PI * 2;
                             _throwDirection = playerAngle;
@@ -250,7 +268,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // calculate the ball offset
             if (!_isThrowing)
             {
-                ballOffset = new Vector2(-MathF.Cos(_ballState), -MathF.Sin(_ballState)) * BallDistance;
+                ballOffset =
+                    new Vector2(-MathF.Cos(_ballState), -MathF.Sin(_ballState)) * BallDistance;
             }
             else
             {
@@ -261,21 +280,28 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     else
                         _distance = BallDistance;
 
-                    ballOffset = new Vector2(-MathF.Cos(_ballState), -MathF.Sin(_ballState)) * _distance;
+                    ballOffset =
+                        new Vector2(-MathF.Cos(_ballState), -MathF.Sin(_ballState)) * _distance;
                 }
                 else
                 {
                     var throwState = MathF.Sin(_ballState - _throwDirection);
                     _distance = MathHelper.Lerp(BallDistance, BallDistanceThrow, throwState);
 
-                    var tan = MathF.Tan((((_ballState - _throwDirection) / MathF.PI) * 2 - 1) * MathF.Atan(10)) / 10;
+                    var tan =
+                        MathF.Tan(
+                            (((_ballState - _throwDirection) / MathF.PI) * 2 - 1) * MathF.Atan(10)
+                        ) / 10;
                     _ballRadiant = _throwDirection + (tan * 0.5f + 0.5f) * MathF.PI;
 
-                    ballOffset = new Vector2(-MathF.Cos(_ballRadiant), -MathF.Sin(_ballRadiant)) * _distance;
+                    ballOffset =
+                        new Vector2(-MathF.Cos(_ballRadiant), -MathF.Sin(_ballRadiant)) * _distance;
                 }
             }
 
-            _ballAndChain.EntityPosition.Set(new Vector2(EntityPosition.X - 5, EntityPosition.Y - 7) + ballOffset);
+            _ballAndChain.EntityPosition.Set(
+                new Vector2(EntityPosition.X - 5, EntityPosition.Y - 7) + ballOffset
+            );
         }
 
         public void BlockBall()

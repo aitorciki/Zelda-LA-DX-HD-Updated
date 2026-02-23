@@ -29,9 +29,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _absorbed;
         private bool _hasMoved;
 
-        public ObjBall() : base("ball") { }
+        public ObjBall()
+            : base("ball") { }
 
-        public ObjBall(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public ObjBall(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
@@ -76,15 +78,34 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 14, true);
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CarriableComponent.Index, new CarriableComponent(
-                new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)), CarryInit, CarryUpdate, CarryThrow));
+            AddComponent(
+                CarriableComponent.Index,
+                new CarriableComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)),
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+            );
             AddComponent(PushableComponent.Index, new PushableComponent(bodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(bodyBox, OnHit));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.ThrownObject, 2) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageBox, HitType.ThrownObject, 2)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(cSprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, cSprite));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawCSpriteComponent(cSprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, cSprite)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -117,10 +138,21 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             // play sound effect
             Game1.GameManager.PlaySoundEffect("D360-24-18");
 
-            var fallAnimation = new ObjAnimator(Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
-            fallAnimation.EntityPosition.Set(new Vector2(
-                _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
-                _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
+            var fallAnimation = new ObjAnimator(
+                Map,
+                0,
+                0,
+                Values.LayerBottom,
+                "Particles/fall",
+                "idle",
+                true
+            );
+            fallAnimation.EntityPosition.Set(
+                new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
+                    _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5
+                )
+            );
             Map.Objects.SpawnObject(fallAnimation);
 
             ToWait();
@@ -152,7 +184,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             if (_hitEnemies)
             {
-                var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.ThrownObject, 2, false);
+                var collision = Map.Objects.Hit(
+                    this,
+                    EntityPosition.Position,
+                    _damageBox.Box,
+                    HitType.ThrownObject,
+                    2,
+                    false
+                );
                 if (collision != Values.HitCollision.None)
                 {
                     _body.Velocity.X = -_body.Velocity.X * 0.45f;
@@ -161,7 +200,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // do not get hit by itself
             if (originObject == this)

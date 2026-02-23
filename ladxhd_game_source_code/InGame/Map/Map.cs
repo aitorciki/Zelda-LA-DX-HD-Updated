@@ -104,29 +104,45 @@ namespace ProjectZ.InGame.Map
 
         public void SetFieldState(int posX, int posY, MapStates.FieldStates newState)
         {
-            if (0 <= posX && posX < StateMap.GetLength(0) &&
-                0 <= posY && posY < StateMap.GetLength(1))
+            if (
+                0 <= posX
+                && posX < StateMap.GetLength(0)
+                && 0 <= posY
+                && posY < StateMap.GetLength(1)
+            )
                 StateMap[posX, posY] = newState;
         }
 
         public void AddFieldState(int posX, int posY, MapStates.FieldStates addState)
         {
-            if (0 <= posX && posX < StateMap.GetLength(0) &&
-                0 <= posY && posY < StateMap.GetLength(1))
+            if (
+                0 <= posX
+                && posX < StateMap.GetLength(0)
+                && 0 <= posY
+                && posY < StateMap.GetLength(1)
+            )
                 StateMap[posX, posY] |= addState;
         }
 
         public void RemoveFieldState(int posX, int posY, MapStates.FieldStates removeState)
         {
-            if (0 <= posX && posX < StateMap.GetLength(0) &&
-                0 <= posY && posY < StateMap.GetLength(1))
+            if (
+                0 <= posX
+                && posX < StateMap.GetLength(0)
+                && 0 <= posY
+                && posY < StateMap.GetLength(1)
+            )
                 StateMap[posX, posY] &= ~removeState;
         }
 
         public MapStates.FieldStates GetFieldState(int posX, int posY)
         {
-            if (0 <= posX && posX < StateMap.GetLength(0) &&
-                0 <= posY && posY < StateMap.GetLength(1))
+            if (
+                0 <= posX
+                && posX < StateMap.GetLength(0)
+                && 0 <= posY
+                && posY < StateMap.GetLength(1)
+            )
                 return StateMap[posX, posY];
 
             return MapStates.FieldStates.None;
@@ -151,8 +167,12 @@ namespace ProjectZ.InGame.Map
 
         public int GetUpdateState(int posX, int posY)
         {
-            if (0 <= posX && posX < UpdateMap.GetLength(0) &&
-                0 <= posY && posY < UpdateMap.GetLength(1))
+            if (
+                0 <= posX
+                && posX < UpdateMap.GetLength(0)
+                && 0 <= posY
+                && posY < UpdateMap.GetLength(1)
+            )
                 return UpdateMap[posX, posY];
 
             return 0;
@@ -160,8 +180,12 @@ namespace ProjectZ.InGame.Map
 
         public void ChangeUpdateState(int posX, int posY, int addition)
         {
-            if (0 <= posX && posX < UpdateMap.GetLength(0) &&
-                0 <= posY && posY < UpdateMap.GetLength(1))
+            if (
+                0 <= posX
+                && posX < UpdateMap.GetLength(0)
+                && 0 <= posY
+                && posY < UpdateMap.GetLength(1)
+            )
                 UpdateMap[posX, posY] += addition;
         }
 
@@ -170,19 +194,19 @@ namespace ProjectZ.InGame.Map
             var cameraPosition = new Vector2(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY - 4);
             var fieldPosition = new Point(
                 (int)(cameraPosition.X - MapOffsetX * Values.TileSize) / Values.FieldWidth,
-                (int)(cameraPosition.Y - MapOffsetY * Values.TileSize) / Values.FieldHeight);
+                (int)(cameraPosition.Y - MapOffsetY * Values.TileSize) / Values.FieldHeight
+            );
 
             // increment the update counter for the fields the player left
             for (var y = _lastFieldPosition.Y - 2; y <= _lastFieldPosition.Y + 2; y++)
-                for (var x = _lastFieldPosition.X - 2; x <= _lastFieldPosition.X + 2; x++)
+            for (var x = _lastFieldPosition.X - 2; x <= _lastFieldPosition.X + 2; x++)
+            {
+                if (Math.Abs(x - fieldPosition.X) > 2 || Math.Abs(y - fieldPosition.Y) > 2)
                 {
-                    if (Math.Abs(x - fieldPosition.X) > 2 ||
-                        Math.Abs(y - fieldPosition.Y) > 2)
-                    {
-                        ChangeUpdateState(x, y, 1);
-                        ClearHoleMap(x, y);
-                    }
+                    ChangeUpdateState(x, y, 1);
+                    ClearHoleMap(x, y);
                 }
+            }
 
             _lastFieldPosition = fieldPosition;
         }
@@ -192,15 +216,19 @@ namespace ProjectZ.InGame.Map
             if (HoleMap.ArrayTileMap == null)
                 return;
 
-            if (posX < 0 || HoleMap.ArrayTileMap.GetLength(0) < (posX + 1) * 10 ||
-                posY < 0 || HoleMap.ArrayTileMap.GetLength(1) < (posY + 1) * 8)
+            if (
+                posX < 0
+                || HoleMap.ArrayTileMap.GetLength(0) < (posX + 1) * 10
+                || posY < 0
+                || HoleMap.ArrayTileMap.GetLength(1) < (posY + 1) * 8
+            )
                 return;
 
             for (var y = 0; y < 8; y++)
-                for (var x = 0; x < 10; x++)
-                {
-                    HoleMap.ArrayTileMap[posX * 10 + x, posY * 8 + y, 0] = -1;
-                }
+            for (var x = 0; x < 10; x++)
+            {
+                HoleMap.ArrayTileMap[posX * 10 + x, posY * 8 + y, 0] = -1;
+            }
         }
 
         public void ResizeMap(int newWidth, int newHeight, int posX, int posY)
@@ -213,9 +241,9 @@ namespace ProjectZ.InGame.Map
             newTileMap.ArrayTileMap = new int[newWidth, newHeight, depth];
 
             for (var z = 0; z < newTileMap.ArrayTileMap.GetLength(2); z++)
-                for (var y = 0; y < newTileMap.ArrayTileMap.GetLength(1); y++)
-                    for (var x = 0; x < newTileMap.ArrayTileMap.GetLength(0); x++)
-                        newTileMap.ArrayTileMap[x, y, z] = -1;
+            for (var y = 0; y < newTileMap.ArrayTileMap.GetLength(1); y++)
+            for (var x = 0; x < newTileMap.ArrayTileMap.GetLength(0); x++)
+                newTileMap.ArrayTileMap[x, y, z] = -1;
 
             for (var z = 0; z < TileMap.ArrayTileMap.GetLength(2); z++)
             {
@@ -223,10 +251,19 @@ namespace ProjectZ.InGame.Map
                 {
                     for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
                     {
-                        if (0 <= posX + x && posX + x < newWidth &&
-                            0 <= posY + y && posY + y < newHeight &&
-                            0 <= z && z < depth)
-                            newTileMap.ArrayTileMap[posX + x, posY + y, z] = TileMap.ArrayTileMap[x, y, z];
+                        if (
+                            0 <= posX + x
+                            && posX + x < newWidth
+                            && 0 <= posY + y
+                            && posY + y < newHeight
+                            && 0 <= z
+                            && z < depth
+                        )
+                            newTileMap.ArrayTileMap[posX + x, posY + y, z] = TileMap.ArrayTileMap[
+                                x,
+                                y,
+                                z
+                            ];
                     }
                 }
             }
@@ -245,12 +282,11 @@ namespace ProjectZ.InGame.Map
             var newDigMap = new string[newWidth, newHeight];
 
             for (var y = 0; y < DigMap.GetLength(1); y++)
-                for (var x = 0; x < DigMap.GetLength(0); x++)
-                {
-                    if (0 <= posX + x && posX + x < newWidth &&
-                        0 <= posY + y && posY + y < newHeight)
-                        newDigMap[posX + x, posY + y] = DigMap[x, y];
-                }
+            for (var x = 0; x < DigMap.GetLength(0); x++)
+            {
+                if (0 <= posX + x && posX + x < newWidth && 0 <= posY + y && posY + y < newHeight)
+                    newDigMap[posX + x, posY + y] = DigMap[x, y];
+            }
 
             DigMap = newDigMap;
         }
@@ -258,8 +294,13 @@ namespace ProjectZ.InGame.Map
         public Vector2 GetRoomCenter(float x, float y)
         {
             return new Vector2(
-                ((int)((x - MapOffsetX * Values.TileSize) / Values.FieldWidth) + 0.5f) * Values.FieldWidth + MapOffsetX * Values.TileSize,
-                ((int)((y - MapOffsetY * Values.TileSize) / Values.FieldHeight) + 0.5f) * Values.FieldHeight + MapOffsetY * Values.TileSize);
+                ((int)((x - MapOffsetX * Values.TileSize) / Values.FieldWidth) + 0.5f)
+                    * Values.FieldWidth
+                    + MapOffsetX * Values.TileSize,
+                ((int)((y - MapOffsetY * Values.TileSize) / Values.FieldHeight) + 0.5f)
+                    * Values.FieldHeight
+                    + MapOffsetY * Values.TileSize
+            );
         }
 
         public Rectangle GetField(Vector2 vec)
@@ -275,9 +316,15 @@ namespace ProjectZ.InGame.Map
         public Rectangle GetField(int x, int y, int margin)
         {
             return new Rectangle(
-                (x - MapOffsetX * Values.TileSize) / Values.FieldWidth * Values.FieldWidth + margin + MapOffsetX * Values.TileSize,
-                (y - MapOffsetY * Values.TileSize) / Values.FieldHeight * Values.FieldHeight + margin + MapOffsetY * Values.TileSize,
-                Values.FieldWidth - 2 * margin, Values.FieldHeight - 2 * margin);
+                (x - MapOffsetX * Values.TileSize) / Values.FieldWidth * Values.FieldWidth
+                    + margin
+                    + MapOffsetX * Values.TileSize,
+                (y - MapOffsetY * Values.TileSize) / Values.FieldHeight * Values.FieldHeight
+                    + margin
+                    + MapOffsetY * Values.TileSize,
+                Values.FieldWidth - 2 * margin,
+                Values.FieldHeight - 2 * margin
+            );
         }
 
         public Box GetFieldBox(int x, int y, int height)
@@ -288,21 +335,34 @@ namespace ProjectZ.InGame.Map
         public Box GetFieldBox(int x, int y, int height, int margin)
         {
             return new Box(
-                (x - MapOffsetX * Values.TileSize) / Values.FieldWidth * Values.FieldWidth + margin + MapOffsetX * Values.TileSize,
-                (y - MapOffsetY * Values.TileSize) / Values.FieldHeight * Values.FieldHeight + margin + MapOffsetY * Values.TileSize, 0,
-                Values.FieldWidth - 2 * margin, Values.FieldHeight - 2 * margin, height);
+                (x - MapOffsetX * Values.TileSize) / Values.FieldWidth * Values.FieldWidth
+                    + margin
+                    + MapOffsetX * Values.TileSize,
+                (y - MapOffsetY * Values.TileSize) / Values.FieldHeight * Values.FieldHeight
+                    + margin
+                    + MapOffsetY * Values.TileSize,
+                0,
+                Values.FieldWidth - 2 * margin,
+                Values.FieldHeight - 2 * margin,
+                height
+            );
         }
 
         public bool CanDig(Point position)
         {
             // no grass or water? can dig? was already dug?
-            if (0 > position.X || position.X >= HoleMap.ArrayTileMap.GetLength(0) ||
-                0 > position.Y || position.Y >= HoleMap.ArrayTileMap.GetLength(1) ||
-                (StateMap[position.X, position.Y] | MapStates.FieldStates.UpperLevel) != MapStates.FieldStates.UpperLevel ||
-                HoleMap.ArrayTileMap[position.X, position.Y, 0] >= 0 ||
-                position.X < DigMap.GetLength(0) &&
-                position.Y < DigMap.GetLength(1) &&
-                string.IsNullOrEmpty(DigMap[position.X, position.Y]))
+            if (
+                0 > position.X
+                || position.X >= HoleMap.ArrayTileMap.GetLength(0)
+                || 0 > position.Y
+                || position.Y >= HoleMap.ArrayTileMap.GetLength(1)
+                || (StateMap[position.X, position.Y] | MapStates.FieldStates.UpperLevel)
+                    != MapStates.FieldStates.UpperLevel
+                || HoleMap.ArrayTileMap[position.X, position.Y, 0] >= 0
+                || position.X < DigMap.GetLength(0)
+                    && position.Y < DigMap.GetLength(1)
+                    && string.IsNullOrEmpty(DigMap[position.X, position.Y])
+            )
             {
                 return false;
             }
@@ -311,14 +371,27 @@ namespace ProjectZ.InGame.Map
                 // check if there is something blocking the digging
                 _digList.Clear();
                 var digBox = new Box(position.X * 16 + 2, position.Y * 16 + 2, 0, 12, 12, 8);
-                Objects.GetComponentList(_digList, (int)digBox.X, (int)digBox.Y, 12, 12, CollisionComponent.Mask);
+                Objects.GetComponentList(
+                    _digList,
+                    (int)digBox.X,
+                    (int)digBox.Y,
+                    12,
+                    12,
+                    CollisionComponent.Mask
+                );
                 var collidingBox = Box.Empty;
                 foreach (var gameObject in _digList)
                 {
-                    var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
-                    if (collisionObject.Owner.IsActive &&
-                        (collisionObject.CollisionType & (Values.CollisionTypes.Normal | Values.CollisionTypes.Hole)) != 0 &&
-                        collisionObject.Collision(digBox, 0, 0, ref collidingBox))
+                    var collisionObject =
+                        gameObject.Components[CollisionComponent.Index] as CollisionComponent;
+                    if (
+                        collisionObject.Owner.IsActive
+                        && (
+                            collisionObject.CollisionType
+                            & (Values.CollisionTypes.Normal | Values.CollisionTypes.Hole)
+                        ) != 0
+                        && collisionObject.Collision(digBox, 0, 0, ref collidingBox)
+                    )
                     {
                         return false;
                     }
@@ -363,7 +436,10 @@ namespace ProjectZ.InGame.Map
             if (strObject != null)
             {
                 // calculate the item hop direction
-                var itemPosition = new Vector2(position.X * Values.TileSize + 8, position.Y * Values.TileSize + 12);
+                var itemPosition = new Vector2(
+                    position.X * Values.TileSize + 8,
+                    position.Y * Values.TileSize + 12
+                );
                 var direction = itemPosition - diggerPosition;
                 if (direction != Vector2.Zero)
                     direction.Normalize();
@@ -383,7 +459,7 @@ namespace ProjectZ.InGame.Map
 
         public async Task ResetCurrentFieldHoleMap()
         {
-            // Delay the hole reset so it mostly goes unnoticed. 
+            // Delay the hole reset so it mostly goes unnoticed.
             await Task.Delay(250);
             ResetHoleTimer();
         }
@@ -391,7 +467,10 @@ namespace ProjectZ.InGame.Map
         private void ResetHoleTimer()
         {
             // Make sure the hole map is not null.
-            if (HoleMap == null || HoleMap.ArrayTileMap == null) { return; }
+            if (HoleMap == null || HoleMap.ArrayTileMap == null)
+            {
+                return;
+            }
 
             // Get the maximum sizes of the array.
             int sizeX = HoleMap.ArrayTileMap.GetLength(0);
@@ -402,8 +481,8 @@ namespace ProjectZ.InGame.Map
             var newArray = new int[sizeX, sizeY, sizeZ];
 
             for (int x = 0; x < sizeX; x++)
-                for (int y = 0; y < sizeY; y++)
-                    newArray[x, y, 0] = -1;
+            for (int y = 0; y < sizeY; y++)
+                newArray[x, y, 0] = -1;
 
             // Replace the hole map with the temporary array.
             HoleMap.ArrayTileMap = newArray;

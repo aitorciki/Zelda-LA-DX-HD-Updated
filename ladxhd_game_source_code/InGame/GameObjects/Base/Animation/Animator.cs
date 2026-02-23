@@ -39,8 +39,10 @@ namespace ProjectZ.InGame.GameObjects.Base
 
         public double FrameCounter => _frameCounter;
 
-        public int FrameWidth => Animations[_currentAnimation].Frames[CurrentFrameIndex].SourceRectangle.Width;
-        public int FrameHeight => Animations[_currentAnimation].Frames[CurrentFrameIndex].SourceRectangle.Height;
+        public int FrameWidth =>
+            Animations[_currentAnimation].Frames[CurrentFrameIndex].SourceRectangle.Width;
+        public int FrameHeight =>
+            Animations[_currentAnimation].Frames[CurrentFrameIndex].SourceRectangle.Height;
 
         private double _frameCounter;
 
@@ -57,15 +59,22 @@ namespace ProjectZ.InGame.GameObjects.Base
             {
                 _frameCounter += Game1.DeltaTime * SpeedMultiplier;
 
-                while (_frameCounter > Animations[_currentAnimation].Frames[CurrentFrameIndex].FrameTime)
+                while (
+                    _frameCounter
+                    > Animations[_currentAnimation].Frames[CurrentFrameIndex].FrameTime
+                )
                 {
-                    _frameCounter -= Animations[_currentAnimation].Frames[CurrentFrameIndex].FrameTime;
+                    _frameCounter -= Animations[_currentAnimation]
+                        .Frames[CurrentFrameIndex]
+                        .FrameTime;
 
                     if (CurrentFrameIndex + 1 >= Animations[_currentAnimation].Frames.Length)
                     {
                         // stop playing
-                        if (Animations[_currentAnimation].LoopCount >= 0 &&
-                            Animations[_currentAnimation].LoopCount <= _currentLoop)
+                        if (
+                            Animations[_currentAnimation].LoopCount >= 0
+                            && Animations[_currentAnimation].LoopCount <= _currentLoop
+                        )
                         {
                             IsPlaying = false;
                             stoppedPlaying = true;
@@ -90,7 +99,9 @@ namespace ProjectZ.InGame.GameObjects.Base
             }
 
             // start the following animation
-            if (stoppedPlaying && !string.IsNullOrEmpty(Animations[_currentAnimation].NextAnimation))
+            if (
+                stoppedPlaying && !string.IsNullOrEmpty(Animations[_currentAnimation].NextAnimation)
+            )
                 Play(Animations[_currentAnimation].NextAnimation);
 
             CollisionRectangle = GetCollisionBox(CurrentFrame);
@@ -99,34 +110,83 @@ namespace ProjectZ.InGame.GameObjects.Base
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color)
         {
             // needed so that the objects don't wiggle around while the camera is moving
-            var normX = (int)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
-            var normY = (int)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normX =
+                (int)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normY =
+                (int)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
 
-            spriteBatch.Draw(SprTexture, new Vector2(
-                normX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),
-                normY + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y)), CurrentFrame.SourceRectangle,
-                color, 0, Vector2.Zero, Vector2.One,
-                (CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
-                (CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
+            spriteBatch.Draw(
+                SprTexture,
+                new Vector2(
+                    normX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),
+                    normY + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y)
+                ),
+                CurrentFrame.SourceRectangle,
+                color,
+                0,
+                Vector2.Zero,
+                Vector2.One,
+                (CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None)
+                    | (
+                        CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None
+                    ),
+                0
+            );
 
             // draw the collision rectangle
             if (Game1.DebugMode)
             {
-                spriteBatch.Draw(Resources.SprWhite, new Vector2(
-                    position.X + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X + CurrentFrame.CollisionRectangle.X),
-                    position.Y + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y + CurrentFrame.CollisionRectangle.Y)),
-                    new Rectangle(0, 0, CurrentFrame.CollisionRectangle.Width, CurrentFrame.CollisionRectangle.Height), Color.Green * 0.5f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Vector2(
+                        position.X
+                            + (
+                                CurrentAnimation.Offset.X
+                                + CurrentFrame.Offset.X
+                                + CurrentFrame.CollisionRectangle.X
+                            ),
+                        position.Y
+                            + (
+                                CurrentAnimation.Offset.Y
+                                + CurrentFrame.Offset.Y
+                                + CurrentFrame.CollisionRectangle.Y
+                            )
+                    ),
+                    new Rectangle(
+                        0,
+                        0,
+                        CurrentFrame.CollisionRectangle.Width,
+                        CurrentFrame.CollisionRectangle.Height
+                    ),
+                    Color.Green * 0.5f
+                );
             }
         }
 
-        public void DrawBasic(SpriteBatch spriteBatch, Vector2 position, Color color, float scale = 1)
+        public void DrawBasic(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            Color color,
+            float scale = 1
+        )
         {
-            spriteBatch.Draw(SprTexture, new Vector2(
+            spriteBatch.Draw(
+                SprTexture,
+                new Vector2(
                     position.X + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X) * scale,
-                    position.Y + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y) * scale), CurrentFrame.SourceRectangle,
-                color, 0, Vector2.Zero, new Vector2(scale),
-                (CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
-                (CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
+                    position.Y + (CurrentAnimation.Offset.Y + CurrentFrame.Offset.Y) * scale
+                ),
+                CurrentFrame.SourceRectangle,
+                color,
+                0,
+                Vector2.Zero,
+                new Vector2(scale),
+                (CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None)
+                    | (
+                        CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None
+                    ),
+                0
+            );
         }
 
         public void ResetFrameCounter()
@@ -265,13 +325,25 @@ namespace ProjectZ.InGame.GameObjects.Base
             if (Animations[animationIndex].AnimationTop > newFrame.Offset.Y)
                 Animations[animationIndex].AnimationTop = newFrame.Offset.Y;
 
-            if (Animations[animationIndex].AnimationRight < newFrame.Offset.X + newFrame.SourceRectangle.Width)
-                Animations[animationIndex].AnimationRight = newFrame.Offset.X + newFrame.SourceRectangle.Width;
-            if (Animations[animationIndex].AnimationBottom < newFrame.Offset.Y + newFrame.SourceRectangle.Height)
-                Animations[animationIndex].AnimationBottom = newFrame.Offset.Y + newFrame.SourceRectangle.Height;
+            if (
+                Animations[animationIndex].AnimationRight
+                < newFrame.Offset.X + newFrame.SourceRectangle.Width
+            )
+                Animations[animationIndex].AnimationRight =
+                    newFrame.Offset.X + newFrame.SourceRectangle.Width;
+            if (
+                Animations[animationIndex].AnimationBottom
+                < newFrame.Offset.Y + newFrame.SourceRectangle.Height
+            )
+                Animations[animationIndex].AnimationBottom =
+                    newFrame.Offset.Y + newFrame.SourceRectangle.Height;
 
-            Animations[animationIndex].AnimationWidth = Animations[animationIndex].AnimationRight - Animations[animationIndex].AnimationLeft;
-            Animations[animationIndex].AnimationHeight = Animations[animationIndex].AnimationBottom - Animations[animationIndex].AnimationTop;
+            Animations[animationIndex].AnimationWidth =
+                Animations[animationIndex].AnimationRight
+                - Animations[animationIndex].AnimationLeft;
+            Animations[animationIndex].AnimationHeight =
+                Animations[animationIndex].AnimationBottom
+                - Animations[animationIndex].AnimationTop;
         }
 
         public void RecalculateAnimationSize(int animationIndex)
@@ -305,17 +377,25 @@ namespace ProjectZ.InGame.GameObjects.Base
                 var collisionRectangle = new Rectangle(
                     CurrentAnimation.Offset.X + frame.Offset.X,
                     CurrentAnimation.Offset.Y + frame.Offset.Y,
-                    frame.CollisionRectangle.Width, frame.CollisionRectangle.Height);
+                    frame.CollisionRectangle.Width,
+                    frame.CollisionRectangle.Height
+                );
 
                 if (!frame.MirroredH)
                     collisionRectangle.X += frame.CollisionRectangle.X;
                 else
-                    collisionRectangle.X += frame.SourceRectangle.Width - frame.CollisionRectangle.Width - frame.CollisionRectangle.X;
+                    collisionRectangle.X +=
+                        frame.SourceRectangle.Width
+                        - frame.CollisionRectangle.Width
+                        - frame.CollisionRectangle.X;
 
                 if (!frame.MirroredV)
                     collisionRectangle.Y += frame.CollisionRectangle.Y;
                 else
-                    collisionRectangle.Y += frame.SourceRectangle.Height - frame.CollisionRectangle.Height - frame.CollisionRectangle.Y;
+                    collisionRectangle.Y +=
+                        frame.SourceRectangle.Height
+                        - frame.CollisionRectangle.Height
+                        - frame.CollisionRectangle.Y;
 
                 return collisionRectangle;
             }

@@ -1,6 +1,7 @@
-﻿﻿using System;
-﻿using System.IO;
+using System;
+using System.IO;
 using System.Threading;
+using GBSPlayer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,8 +15,6 @@ using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Screens;
 using ProjectZ.InGame.Things;
-using GBSPlayer;
-
 #if WINDOWS
 using Forms = System.Windows.Forms;
 #endif
@@ -37,7 +36,7 @@ namespace ProjectZ
         public static Random RandomNumber = new Random();
         public static CameraField ClassicCamera = new CameraField();
         public static EditorManager EditorManager;
-  
+
         public static int WindowWidth;
         public static int WindowHeight;
         public static int WindowWidthEnd;
@@ -106,30 +105,35 @@ namespace ProjectZ
 
         // True when in-game after selecting save file. False at main menu and intro.
         public static bool InProgress;
-        
+
         // Stores classic cam setting for ending.
-        static public bool StoredCameraSet = false;
-        static public bool StoredClassicCamera = false;
-        static public bool StoredModernOverworld = false;
-        static public bool StoredClassicDungeon = false;
+        public static bool StoredCameraSet = false;
+        public static bool StoredClassicCamera = false;
+        public static bool StoredModernOverworld = false;
+        public static bool StoredClassicDungeon = false;
 
         public static bool FinishedLoading => _finishedLoading;
 
 #if WINDOWS
-        public static Matrix GetMatrix => Matrix.CreateScale(new Vector3(
-            (float)Graphics.PreferredBackBufferWidth / WindowWidth,
-            (float)Graphics.PreferredBackBufferHeight / WindowHeight, 0));
+        public static Matrix GetMatrix =>
+            Matrix.CreateScale(
+                new Vector3(
+                    (float)Graphics.PreferredBackBufferWidth / WindowWidth,
+                    (float)Graphics.PreferredBackBufferHeight / WindowHeight,
+                    0
+                )
+            );
 #else
         public static Matrix GetMatrix => Matrix.Identity;
 #endif
 
-        #if WINDOWS
-            private static Forms.Form _windowForm;
-            private static Forms.FormWindowState _lastWindowState;
-        #endif
+#if WINDOWS
+        private static Forms.Form _windowForm;
+        private static Forms.FormWindowState _lastWindowState;
+#endif
 
         // lahdmod values
-        private int  max_game_scale = 20;
+        private int max_game_scale = 20;
         private bool editor_mode = false;
 
         public Game1(bool editorMode, bool loadSave, int loadSlot)
@@ -149,18 +153,21 @@ namespace ProjectZ
             // Enable editor via lahdmod file or through the command line option.
             EditorMode = editorMode || editor_mode;
 
-            #if WINDOWS
-                // Get the form handle and set the icon of the window.
-                _windowForm = (Forms.Form)Forms.Control.FromHandle(Window.Handle);
-                _windowForm.Icon = Properties.Resources.Icon;
+#if WINDOWS
+            // Get the form handle and set the icon of the window.
+            _windowForm = (Forms.Form)Forms.Control.FromHandle(Window.Handle);
+            _windowForm.Icon = Properties.Resources.Icon;
 
-                // Calculate the extra pixels taken up by the title bar and window border.
-                var deltaWidth = _windowForm.Width - _windowForm.ClientSize.Width;
-                var deltaHeight = _windowForm.Height - _windowForm.ClientSize.Height;
+            // Calculate the extra pixels taken up by the title bar and window border.
+            var deltaWidth = _windowForm.Width - _windowForm.ClientSize.Width;
+            var deltaHeight = _windowForm.Height - _windowForm.ClientSize.Height;
 
-                // Set the minimum window size including the extra pixels.
-                _windowForm.MinimumSize = new System.Drawing.Size(Values.MinWidth + deltaWidth, Values.MinHeight + deltaHeight);
-            #endif
+            // Set the minimum window size including the extra pixels.
+            _windowForm.MinimumSize = new System.Drawing.Size(
+                Values.MinWidth + deltaWidth,
+                Values.MinHeight + deltaHeight
+            );
+#endif
 
             // Create the graphics device and set the back buffer width/height.
             Graphics = new GraphicsDeviceManager(this);
@@ -290,13 +297,16 @@ namespace ProjectZ
             _fpsCounter.Update(gameTime);
 
             // Toggles fullscreen mode.
-            if ((InputHandler.KeyDown(Keys.LeftAlt) || InputHandler.KeyDown(Keys.RightAlt)) && InputHandler.KeyPressed(Keys.Enter))
+            if (
+                (InputHandler.KeyDown(Keys.LeftAlt) || InputHandler.KeyDown(Keys.RightAlt))
+                && InputHandler.KeyPressed(Keys.Enter)
+            )
             {
                 ToggleFullscreen();
                 InputHandler.ResetInputState();
                 SettingsSaveLoad.SaveSettings();
             }
-            // Initialize render targets if thread is finished loading resources and they have not been initialized yet. 
+            // Initialize render targets if thread is finished loading resources and they have not been initialized yet.
             if (_finishedLoading && !_initRenderTargets)
             {
                 _initRenderTargets = true;
@@ -304,7 +314,10 @@ namespace ProjectZ
                 WindowHeightEnd = 0;
             }
             // If the window size has changed then trigger a resize event.
-            if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
+            if (
+                (WindowWidth != Window.ClientBounds.Width)
+                || (WindowHeight != Window.ClientBounds.Height)
+            )
                 OnResize();
 
             // Update the scale if it has been changed.
@@ -363,7 +376,8 @@ namespace ProjectZ
                     DeltaTime = (float)gameTime.ElapsedGameTime.TotalMilliseconds * DebugTimeScale;
                     TotalTime += gameTime.ElapsedGameTime.TotalMilliseconds * DebugTimeScale;
                     if (UpdateGame)
-                        TotalGameTime += gameTime.ElapsedGameTime.TotalMilliseconds * DebugTimeScale;
+                        TotalGameTime +=
+                            gameTime.ElapsedGameTime.TotalMilliseconds * DebugTimeScale;
                 }
             }
             // update the screen manager
@@ -378,10 +392,11 @@ namespace ProjectZ
 
                 _avgTotalMs.AddValue(gameTime.ElapsedGameTime.TotalMilliseconds);
                 _avgTimeMult.AddValue(TimeMultiplier);
-                DebugText += $"\ntotal ms:      {_avgTotalMs.Average,6:N3}" +
-                             $"\ntime mult:     {_avgTimeMult.Average,6:N3}" +
-                             $"\ntime scale:    {DebugTimeScale}" +
-                             $"\ntime:          {TotalGameTime}";
+                DebugText +=
+                    $"\ntotal ms:      {_avgTotalMs.Average, 6:N3}"
+                    + $"\ntime mult:     {_avgTimeMult.Average, 6:N3}"
+                    + $"\ntime scale:    {DebugTimeScale}"
+                    + $"\ntime:          {TotalGameTime}";
 
                 DebugText += "\nHistory Enabled: " + GameManager.SaveManager.HistoryEnabled + "\n";
             }
@@ -425,7 +440,11 @@ namespace ProjectZ
 
                 SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap);
 
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, WindowWidth, WindowHeight), Color.White);
+                SpriteBatch.Draw(
+                    MainRenderTarget,
+                    new Rectangle(0, 0, WindowWidth, WindowHeight),
+                    Color.White
+                );
 
                 SpriteBatch.End();
             }
@@ -436,12 +455,30 @@ namespace ProjectZ
                     Resources.BlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
                     SetParameter(Resources.BlurEffect, "width", WindowWidth);
                     SetParameter(Resources.BlurEffect, "height", WindowHeight);
-                    Resources.RoundedCornerBlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
-                    SetParameter(Resources.RoundedCornerBlurEffect, "screenWidth", (float)WindowWidth);
-                    SetParameter(Resources.RoundedCornerBlurEffect, "screenHeight", (float)WindowHeight);
+                    Resources
+                        .RoundedCornerBlurEffect.Parameters["sprBlur"]
+                        .SetValue(_renderTarget2);
+                    SetParameter(
+                        Resources.RoundedCornerBlurEffect,
+                        "screenWidth",
+                        (float)WindowWidth
+                    );
+                    SetParameter(
+                        Resources.RoundedCornerBlurEffect,
+                        "screenHeight",
+                        (float)WindowHeight
+                    );
                 }
                 // Use LinearClamp to prevent "band swapping" or tiling
-                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.LinearClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
+                SpriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.LinearClamp,
+                    null,
+                    null,
+                    Resources.RoundedCornerBlurEffect,
+                    GetMatrix
+                );
 
                 // blurred ui parts
                 UiManager.DrawBlur(SpriteBatch);
@@ -457,7 +494,15 @@ namespace ProjectZ
 
             {
                 // draw the top part
-                SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, GetMatrix);
+                SpriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    null,
+                    GetMatrix
+                );
 
                 // draw the ui part
                 UiManager.Draw(SpriteBatch);
@@ -472,10 +517,14 @@ namespace ProjectZ
                 DrawDebugText();
                 DebugText = "";
 
-                #if DEBUG
-                    if (GameManager.SaveManager.HistoryEnabled)
-                        SpriteBatch.Draw(Resources.SprWhite, new Rectangle(0, WindowHeight - 6, WindowWidth, 6), Color.Red);
-                #endif
+#if DEBUG
+                if (GameManager.SaveManager.HistoryEnabled)
+                    SpriteBatch.Draw(
+                        Resources.SprWhite,
+                        new Rectangle(0, WindowHeight - 6, WindowWidth, 6),
+                        Color.Red
+                    );
+#endif
 
                 SpriteBatch.End();
             }
@@ -500,21 +549,49 @@ namespace ProjectZ
             Resources.BlurEffectV.Parameters["mult1"].SetValue(mult1);
 
             Graphics.GraphicsDevice.SetRenderTarget(_renderTarget2);
-            SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, null, null);
-            SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, _renderTarget2.Width, _renderTarget2.Height), Color.White);
+            SpriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                null,
+                SamplerState.AnisotropicClamp,
+                null,
+                null,
+                null,
+                null
+            );
+            SpriteBatch.Draw(
+                MainRenderTarget,
+                new Rectangle(0, 0, _renderTarget2.Width, _renderTarget2.Height),
+                Color.White
+            );
             SpriteBatch.End();
 
             for (var i = 0; i < 2; i++)
             {
                 // v blur
                 Graphics.GraphicsDevice.SetRenderTarget(_renderTarget1);
-                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BlurEffectV, null);
+                SpriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.BlurEffectV,
+                    null
+                );
                 SpriteBatch.Draw(_renderTarget2, Vector2.Zero, Color.White);
                 SpriteBatch.End();
 
                 // h blur
                 Graphics.GraphicsDevice.SetRenderTarget(_renderTarget2);
-                SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BlurEffectH, null);
+                SpriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.BlurEffectH,
+                    null
+                );
                 SpriteBatch.Draw(_renderTarget1, Vector2.Zero, Color.White);
                 SpriteBatch.End();
             }
@@ -568,7 +645,12 @@ namespace ProjectZ
 #if WINDOWS
                     _windowForm.FormBorderStyle = Forms.FormBorderStyle.None;
                     _windowForm.WindowState = Forms.FormWindowState.Normal;
-                    _windowForm.Bounds = new System.Drawing.Rectangle(0, 0, displayMode.Width, displayMode.Height);
+                    _windowForm.Bounds = new System.Drawing.Rectangle(
+                        0,
+                        0,
+                        displayMode.Width,
+                        displayMode.Height
+                    );
 #else
                     Graphics.PreferredBackBufferWidth = displayMode.Width;
                     Graphics.PreferredBackBufferHeight = displayMode.Height;
@@ -618,8 +700,16 @@ namespace ProjectZ
 
             _debugTextSize = Resources.GameFont.MeasureString(DebugText);
 
-            SpriteBatch.Draw(_renderTarget2, new Rectangle(0, 0,
-                (int)(_debugTextSize.X * 2) + 20, (int)(_debugTextSize.Y * 2) + 20), Color.White);
+            SpriteBatch.Draw(
+                _renderTarget2,
+                new Rectangle(
+                    0,
+                    0,
+                    (int)(_debugTextSize.X * 2) + 20,
+                    (int)(_debugTextSize.Y * 2) + 20
+                ),
+                Color.White
+            );
         }
 
         public void DrawDebugText()
@@ -627,11 +717,28 @@ namespace ProjectZ
             if (!ShowDebugText)
                 return;
 
-            SpriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0,
-                    (int)(_debugTextSize.X * 2) + 20, (int)(_debugTextSize.Y * 2) + 20), Color.Black * 0.75f);
+            SpriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(
+                    0,
+                    0,
+                    (int)(_debugTextSize.X * 2) + 20,
+                    (int)(_debugTextSize.Y * 2) + 20
+                ),
+                Color.Black * 0.75f
+            );
 
-            SpriteBatch.DrawString(Resources.GameFont, DebugText, new Vector2(10), Color.White,
-                0, Vector2.Zero, new Vector2(2f), SpriteEffects.None, 0);
+            SpriteBatch.DrawString(
+                Resources.GameFont,
+                DebugText,
+                new Vector2(10),
+                Color.White,
+                0,
+                Vector2.Zero,
+                new Vector2(2f),
+                SpriteEffects.None,
+                0
+            );
         }
 
         public void UpdateFpsSettings()
@@ -675,16 +782,21 @@ namespace ProjectZ
                 int maxScale = MaxGameScale + 1;
 
                 // Calculate the game scale that is used for auto scaling.
-                float gameScale = MathHelper.Clamp(Math.Min(WindowWidth / 160, WindowHeight / 128), 1, maxScale);
+                float gameScale = MathHelper.Clamp(
+                    Math.Min(WindowWidth / 160, WindowHeight / 128),
+                    1,
+                    maxScale
+                );
                 float usedScale = gameScale;
 
                 if (GameSettings.GameScale == maxScale)
                     usedScale = gameScale / 2;
 
                 // If set to autoscale (Game1.MaxGameScale + 1) used the calculated value; otherwise use the value set by the user.
-                MapManager.Camera.Scale = GameSettings.GameScale == maxScale
-                    ? MathF.Ceiling(usedScale) 
-                    : GameSettings.GameScale;
+                MapManager.Camera.Scale =
+                    GameSettings.GameScale == maxScale
+                        ? MathF.Ceiling(usedScale)
+                        : GameSettings.GameScale;
 
                 // The camera scale uses a float value and can use a fractional scaling value when drawing the world.
                 if (MapManager.Camera.Scale < 1)
@@ -692,25 +804,31 @@ namespace ProjectZ
                     MapManager.Camera.Scale = 1 / (2 - MapManager.Camera.Scale);
                     GameManager.SetGameScale(1);
                 }
-                // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional 
+                // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional
                 // values while manually setting the scale only allows upscaling using integer values.
                 else
                 {
-                    float newGameScale = GameSettings.GameScale == maxScale
-                        ? MathF.Ceiling(usedScale)
-                        : GameSettings.GameScale;
+                    float newGameScale =
+                        GameSettings.GameScale == maxScale
+                            ? MathF.Ceiling(usedScale)
+                            : GameSettings.GameScale;
                     GameManager.SetGameScale(newGameScale);
                 }
             }
             // Scale of the user interface.
-            int interfaceScale = MathHelper.Clamp(Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight), 1, 11);
+            int interfaceScale = MathHelper.Clamp(
+                Math.Min(WindowWidth / Values.MinWidth, WindowHeight / Values.MinHeight),
+                1,
+                11
+            );
 
             if (GameSettings.UiScale > interfaceScale)
                 UiScale = interfaceScale;
             else
-                UiScale = GameSettings.UiScale == 0 
-                    ? interfaceScale 
-                    : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
+                UiScale =
+                    GameSettings.UiScale == 0
+                        ? interfaceScale
+                        : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
 
             UiManager.SizeChanged();
             ScreenManager.OnResize(WindowWidth, WindowHeight);

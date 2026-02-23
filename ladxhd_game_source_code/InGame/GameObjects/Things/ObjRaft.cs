@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
@@ -7,7 +8,6 @@ using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -29,9 +29,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _wasColliding;
         private bool _wasMoved;
 
-        public ObjRaft() : base("raft") { }
+        public ObjRaft()
+            : base("raft") { }
 
-        public ObjRaft(Map.Map map, int posX, int posY, string strActivationKey) : base(map)
+        public ObjRaft(Map.Map map, int posX, int posY, string strActivationKey)
+            : base(map)
         {
             if (!string.IsNullOrEmpty(strActivationKey))
             {
@@ -62,16 +64,35 @@ namespace ProjectZ.InGame.GameObjects.Things
             _animator.Play(_isActive ? "water" : "idle");
 
             var _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -offsetY - 15));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -offsetY - 15)
+            );
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, Body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -16 - offsetY, -8, 16, 16, 8), Values.CollisionTypes.Normal));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(EntityPosition, -8, -16 - offsetY, -8, 16, 16, 8),
+                    Values.CollisionTypes.Normal
+                )
+            );
 
             if (!_isActive)
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -offsetY - 1, 16, 1, 8), Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
+                AddComponent(
+                    CollisionComponent.Index,
+                    new BoxCollisionComponent(
+                        new CBox(EntityPosition, -8, -offsetY - 1, 16, 1, 8),
+                        Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore
+                    )
+                );
         }
 
         public override void Init()
@@ -165,7 +186,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _targetPosition = targetPosition;
 
             var percentage = (targetPosition.Y - _startPosition.Y) / 80;
-            _jumpMoveTime = 150;// * percentage;
+            _jumpMoveTime = 150; // * percentage;
             _jumpTime = 1000 * percentage;
             _jumpCounter = 0;
 
@@ -178,7 +199,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateIdle()
         {
-            var distance = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y + 1);
+            var distance =
+                MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y + 1);
 
             // Use a zone large enough players can't clip off the raft or jump over it.
             var isColliding = Math.Abs(distance.X) <= 12 && Math.Abs(distance.Y) <= 3;
@@ -223,15 +245,20 @@ namespace ProjectZ.InGame.GameObjects.Things
                     {
                         var percentageHeight = _jumpCounter / _jumpMoveTime;
                         var posZ = MathF.Sin(percentageHeight * MathF.PI * 0.5f);
-                        EntityPosition.Z = posZ * 12 + percentage * (_targetPosition.Y - _startPosition.Y);
-                        MapManager.ObjLink.EntityPosition.Z = posZ * 16 + percentage * (_targetPosition.Y - _startPosition.Y);
+                        EntityPosition.Z =
+                            posZ * 12 + percentage * (_targetPosition.Y - _startPosition.Y);
+                        MapManager.ObjLink.EntityPosition.Z =
+                            posZ * 16 + percentage * (_targetPosition.Y - _startPosition.Y);
                     }
                     else if (lastJumpCounter <= _jumpMoveTime)
                     {
                         MapManager.ObjLink._body.IsActive = true;
                         Body.IsActive = true;
                     }
-                    Map.CameraTarget = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - MapManager.ObjLink.EntityPosition.Z);
+                    Map.CameraTarget = new Vector2(
+                        MapManager.ObjLink.EntityPosition.X,
+                        MapManager.ObjLink.EntityPosition.Y - MapManager.ObjLink.EntityPosition.Z
+                    );
                     var newPosition = Vector2.Lerp(_startPosition, _targetPosition, percentage);
                     EntityPosition.Set(newPosition);
                 }

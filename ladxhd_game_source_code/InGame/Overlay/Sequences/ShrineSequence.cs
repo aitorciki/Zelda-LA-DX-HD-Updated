@@ -15,10 +15,14 @@ namespace ProjectZ.InGame.Overlay.Sequences
         public override void Update()
         {
             base.Update();
-            if (!Game1.GameManager.DialogIsRunning() && 
-                (ControlHandler.ButtonReleased(CButtons.Start) || 
-                ControlHandler.ButtonPressed(ControlHandler.CancelButton) || 
-                ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)))
+            if (
+                !Game1.GameManager.DialogIsRunning()
+                && (
+                    ControlHandler.ButtonReleased(CButtons.Start)
+                    || ControlHandler.ButtonPressed(ControlHandler.CancelButton)
+                    || ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)
+                )
+            )
             {
                 Game1.GameManager.InGameOverlay.CloseOverlay();
             }

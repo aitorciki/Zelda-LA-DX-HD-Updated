@@ -2,7 +2,7 @@
 {
     public class KeyChangeListenerComponent : Component
     {
-        public new static int Index = 14;
+        public static new int Index = 14;
         public static int Mask = 0x01 << Index;
 
         public delegate void KeyChangeTemplate();

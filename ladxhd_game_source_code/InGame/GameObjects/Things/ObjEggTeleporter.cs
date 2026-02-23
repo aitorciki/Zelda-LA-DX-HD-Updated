@@ -46,12 +46,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private float _classicTimerFix;
 
-        public ObjEggTeleporter() : base("editor egg teleport")
+        public ObjEggTeleporter()
+            : base("editor egg teleport")
         {
             EditorColor = Color.Green * 0.5f;
         }
 
-        public ObjEggTeleporter(Map.Map map, int posX, int posY) : base(map)
+        public ObjEggTeleporter(Map.Map map, int posX, int posY)
+            : base(map)
         {
             for (var y = 0; y < RoomStates.GetLength(1); y++)
             {
@@ -81,7 +83,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 "0" => new int[] { 0, 0, 1, 2, 2, 1, 0 },
                 "1" => new int[] { 2, 1, 1, 2, 1, 1, 2 },
                 "2" => new int[] { 0, 1, 2, 1, 0, 1, 2 },
-                "3" => new int[] { 2, 2, 2, 2, 1, 1, 1 }
+                "3" => new int[] { 2, 2, 2, 2, 1, 1, 1 },
             };
         }
 
@@ -94,7 +96,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void LeaveEggTeleportHack()
         {
-            if (!Camera.ClassicMode) { return; }
+            if (!Camera.ClassicMode)
+            {
+                return;
+            }
 
             var pos = MapManager.ObjLink.Position;
             var dir = AnimationHelper.GetDirection(MapManager.ObjLink.LastMoveVector);
@@ -102,19 +107,29 @@ namespace ProjectZ.InGame.GameObjects.Things
             if ((roomY == 1) && (pos.Y > 240) && (pos.Y < 256) && (dir == 3))
             {
                 var offset = new Vector2(0, Values.FieldHeight);
-                var newpos = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y) + offset;
+                var newpos =
+                    new Vector2(
+                        MapManager.ObjLink.EntityPosition.X,
+                        MapManager.ObjLink.EntityPosition.Y
+                    ) + offset;
 
                 Camera.SnapCameraTimer = 50f;
                 MapManager.ObjLink.EntityPosition.Set(newpos);
 
                 _mapObjects.Clear();
-                Map.Objects.GetComponentList(_mapObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, DrawComponent.Mask);
+                Map.Objects.GetComponentList(
+                    _mapObjects,
+                    (int)MapManager.ObjLink.EntityPosition.X - 200,
+                    (int)MapManager.ObjLink.EntityPosition.Y - 200,
+                    400,
+                    400,
+                    DrawComponent.Mask
+                );
 
                 foreach (var gameObject in _mapObjects)
                 {
                     if (gameObject is ObjBoomerang)
                         gameObject.EntityPosition.Offset(offset);
-
                     else if (gameObject is ObjAnimator)
                         Map.Objects.DeleteObjects.Add(gameObject);
                 }
@@ -145,17 +160,32 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 for (int x = 0; x < RoomStates.GetLength(0); x++)
                 {
-                    var center = new Vector2(-80 + (x + 0.5f) * Values.FieldWidth, (y + 0.5f) * Values.FieldHeight) -
-                        new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - 4);
-                    if (x == roomX && y == roomY ||
-                        Values.FieldWidth / 2 - 8 < Math.Abs(center.X) && Math.Abs(center.X) < Values.FieldWidth / 2 + 8 && Math.Abs(center.Y) < 16 ||
-                        Values.FieldHeight / 2 - 8 < Math.Abs(center.Y) && Math.Abs(center.Y) < Values.FieldHeight / 2 + 8 && Math.Abs(center.X) < 16)
+                    var center =
+                        new Vector2(
+                            -80 + (x + 0.5f) * Values.FieldWidth,
+                            (y + 0.5f) * Values.FieldHeight
+                        )
+                        - new Vector2(
+                            MapManager.ObjLink.EntityPosition.X,
+                            MapManager.ObjLink.EntityPosition.Y - 4
+                        );
+                    if (
+                        x == roomX && y == roomY
+                        || Values.FieldWidth / 2 - 8 < Math.Abs(center.X)
+                            && Math.Abs(center.X) < Values.FieldWidth / 2 + 8
+                            && Math.Abs(center.Y) < 16
+                        || Values.FieldHeight / 2 - 8 < Math.Abs(center.Y)
+                            && Math.Abs(center.Y) < Values.FieldHeight / 2 + 8
+                            && Math.Abs(center.X) < 16
+                    )
                     {
                         if (!RoomStates[x, y].Lit)
                         {
                             RoomStates[x, y].Lit = true;
                             RoomStates[x, y].LightTarget = tLit;
-                            RoomStates[x, y].Direction = AnimationHelper.GetDirection(-new Vector2(center.X, center.Y));
+                            RoomStates[x, y].Direction = AnimationHelper.GetDirection(
+                                -new Vector2(center.X, center.Y)
+                            );
                         }
                     }
                     else
@@ -164,12 +194,21 @@ namespace ProjectZ.InGame.GameObjects.Things
                         {
                             RoomStates[x, y].Lit = false;
                             RoomStates[x, y].LightTarget = tLightBleed;
-                            RoomStates[x, y].Direction = AnimationHelper.GetDirection(-new Vector2(center.X, center.Y));
+                            RoomStates[x, y].Direction = AnimationHelper.GetDirection(
+                                -new Vector2(center.X, center.Y)
+                            );
                         }
                     }
 
-                    var tSpeed = RoomStates[x, y].Light < RoomStates[x, y].LightTarget ? darknessSpeed : lightSpeed;
-                    var newLightValue = AnimationHelper.MoveToTarget(RoomStates[x, y].Light, RoomStates[x, y].LightTarget, tSpeed * Game1.TimeMultiplier);
+                    var tSpeed =
+                        RoomStates[x, y].Light < RoomStates[x, y].LightTarget
+                            ? darknessSpeed
+                            : lightSpeed;
+                    var newLightValue = AnimationHelper.MoveToTarget(
+                        RoomStates[x, y].Light,
+                        RoomStates[x, y].LightTarget,
+                        tSpeed * Game1.TimeMultiplier
+                    );
 
                     if (RoomStates[x, y].Lit)
                     {
@@ -183,7 +222,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                             }
                             if (RoomStates[x, y].Light > 0.125f && newLightValue <= 0.125f)
                             {
-                                SetRoomState(x + (RoomStates[x, y].Direction == 0 ? 1 : -1), y, tLightBleed, RoomStates[x, y].Direction);
+                                SetRoomState(
+                                    x + (RoomStates[x, y].Direction == 0 ? 1 : -1),
+                                    y,
+                                    tLightBleed,
+                                    RoomStates[x, y].Direction
+                                );
                             }
                         }
                         else if (RoomStates[x, y].Direction % 2 == 1)
@@ -195,7 +239,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                             }
                             if (RoomStates[x, y].Light > 0.175f && newLightValue <= 0.175f)
                             {
-                                SetRoomState(x, y + (RoomStates[x, y].Direction == 1 ? 1 : -1), tLightBleed, RoomStates[x, y].Direction);
+                                SetRoomState(
+                                    x,
+                                    y + (RoomStates[x, y].Direction == 1 ? 1 : -1),
+                                    tLightBleed,
+                                    RoomStates[x, y].Direction
+                                );
                             }
                         }
                     }
@@ -211,7 +260,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                             }
                             if (RoomStates[x, y].Light <= 0.0f && newLightValue > 0.0f)
                             {
-                                SetRoomState(x + (RoomStates[x, y].Direction == 0 ? 1 : -1), y, tDark, RoomStates[x, y].Direction);
+                                SetRoomState(
+                                    x + (RoomStates[x, y].Direction == 0 ? 1 : -1),
+                                    y,
+                                    tDark,
+                                    RoomStates[x, y].Direction
+                                );
                             }
                         }
                         else if (RoomStates[x, y].Direction % 2 == 1)
@@ -223,7 +277,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                             }
                             if (RoomStates[x, y].Light < 0.1f && newLightValue >= 0.1f)
                             {
-                                SetRoomState(x, y + (RoomStates[x, y].Direction == 1 ? 1 : -1), tDark, RoomStates[x, y].Direction);
+                                SetRoomState(
+                                    x,
+                                    y + (RoomStates[x, y].Direction == 1 ? 1 : -1),
+                                    tDark,
+                                    RoomStates[x, y].Direction
+                                );
                             }
                         }
                     }
@@ -234,8 +293,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 for (int x = 0; x < RoomStates.GetLength(0); x++)
                 {
-                    var tSpeed = RoomStates[x, y].Light < RoomStates[x, y].LightTarget ? darknessSpeed : lightSpeed;
-                    var newLightValue = AnimationHelper.MoveToTarget(RoomStates[x, y].Light, RoomStates[x, y].LightTarget, tSpeed * Game1.TimeMultiplier);
+                    var tSpeed =
+                        RoomStates[x, y].Light < RoomStates[x, y].LightTarget
+                            ? darknessSpeed
+                            : lightSpeed;
+                    var newLightValue = AnimationHelper.MoveToTarget(
+                        RoomStates[x, y].Light,
+                        RoomStates[x, y].LightTarget,
+                        tSpeed * Game1.TimeMultiplier
+                    );
                     RoomStates[x, y].Light = newLightValue;
                 }
             }
@@ -262,8 +328,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void SetRoomState(int xIndex, int yIndex, float light, int direction)
         {
-            if (0 <= xIndex && xIndex < RoomStates.GetLength(0) &&
-                0 <= yIndex && yIndex < RoomStates.GetLength(1))
+            if (
+                0 <= xIndex
+                && xIndex < RoomStates.GetLength(0)
+                && 0 <= yIndex
+                && yIndex < RoomStates.GetLength(1)
+            )
             {
                 RoomStates[xIndex, yIndex].LightTarget = light;
                 RoomStates[xIndex, yIndex].Direction = direction;
@@ -301,7 +371,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             var dist = 16;
 
             // Up (Classic Camera): The path to the jump has been found. Room Y remains 1 during classic camera.
-            if (_foundPath && posY < roomY * Values.FieldHeight + dist && (roomX == 1 || roomX == 2) && roomY == 1)
+            if (
+                _foundPath
+                && posY < roomY * Values.FieldHeight + dist
+                && (roomX == 1 || roomX == 2)
+                && roomY == 1
+            )
             {
                 // This ensures that "OffsetPlayer" only runs a single time when the final path is found. Running it
                 // multiple times breaks the "camera scroll effect" and causes the camera to snap to the new field.
@@ -312,50 +387,73 @@ namespace ProjectZ.InGame.GameObjects.Things
                 }
             }
             // Up (Normal Camera): The path to the jump has been found. Room Y remains 2 during normal camera.
-            else if (_foundPath && posY < roomY * Values.FieldHeight + dist && (roomX == 1 || roomX == 2) && roomY == 2)
+            else if (
+                _foundPath
+                && posY < roomY * Values.FieldHeight + dist
+                && (roomX == 1 || roomX == 2)
+                && roomY == 2
+            )
                 OffsetPlayer(roomX == 1 ? 0 : -1, -1);
-            
             // Left
             else if (posX < 80 + dist && roomX == 1 && (roomY == 1 || roomY == 2))
                 OffsetPlayer(1, 0);
-            
             // Right
-            else if (posX > 80 + Values.FieldWidth * 2 - dist && roomX == 2 && (roomY == 1 || roomY == 2))
+            else if (
+                posX > 80 + Values.FieldWidth * 2 - dist
+                && roomX == 2
+                && (roomY == 1 || roomY == 2)
+            )
                 OffsetPlayer(-1, 0);
-            
             // Down
             else if (posY > (roomY + 1) * Values.FieldHeight - dist && roomX == 2 && (roomY == 2))
                 OffsetPlayer(-1, 0);
-            
             // Up: With normal camera, always teleport the player from the top room to the room just above the exit.
-            else if (!Camera.ClassicMode && !_foundPath && (roomX == 1 || roomX == 2) && (roomY == 1) &&
-                (!RoomStates[roomX, roomY - 1].Lit) && (RoomStates[roomX, roomY - 1].Light) == (RoomStates[roomX, roomY - 1].LightTarget) &&
-                (!RoomStates[roomX, roomY + 1].Lit) && (RoomStates[roomX, roomY + 1].Light) == (RoomStates[roomX, roomY + 1].LightTarget))
+            else if (
+                !Camera.ClassicMode
+                && !_foundPath
+                && (roomX == 1 || roomX == 2)
+                && (roomY == 1)
+                && (!RoomStates[roomX, roomY - 1].Lit)
+                && (RoomStates[roomX, roomY - 1].Light)
+                    == (RoomStates[roomX, roomY - 1].LightTarget)
+                && (!RoomStates[roomX, roomY + 1].Lit)
+                && (RoomStates[roomX, roomY + 1].Light)
+                    == (RoomStates[roomX, roomY + 1].LightTarget)
+            )
                 OffsetPlayer(roomX == 2 ? -1 : 0, 1);
-            
             // Up: With classic camera, always teleport the player back to the top room and rely on the teleport hack to move to the exit.
-            else if (Camera.ClassicMode && !_foundPath && (roomX == 1 || roomX == 2) && (roomY == 1) && 
-                (posY < roomY * Values.FieldHeight + dist) && AnimationHelper.GetDirection(MapManager.ObjLink.LastMoveVector) == 1)
+            else if (
+                Camera.ClassicMode
+                && !_foundPath
+                && (roomX == 1 || roomX == 2)
+                && (roomY == 1)
+                && (posY < roomY * Values.FieldHeight + dist)
+                && AnimationHelper.GetDirection(MapManager.ObjLink.LastMoveVector) == 1
+            )
                 OffsetPlayer(roomX == 2 ? -1 : 0, 1);
-
         }
 
         private void OffsetPlayer(int offsetX, int offsetY)
         {
             // Offset the light map data with the player.
             for (int y = 0; y < RoomStates.GetLength(1); y++)
-                for (int x = 0; x < RoomStates.GetLength(0); x++)
-                    tempRoomStates[x, y] = RoomStates[x, y];
+            for (int x = 0; x < RoomStates.GetLength(0); x++)
+                tempRoomStates[x, y] = RoomStates[x, y];
 
             for (int y = 0; y < RoomStates.GetLength(1); y++)
-                for (int x = 0; x < RoomStates.GetLength(0); x++)
-                    RoomStates[
-                        (x + offsetX + RoomStates.GetLength(0)) % RoomStates.GetLength(0),
-                        (y + offsetY + RoomStates.GetLength(1)) % RoomStates.GetLength(1)] = tempRoomStates[x, y];
+            for (int x = 0; x < RoomStates.GetLength(0); x++)
+                RoomStates[
+                    (x + offsetX + RoomStates.GetLength(0)) % RoomStates.GetLength(0),
+                    (y + offsetY + RoomStates.GetLength(1)) % RoomStates.GetLength(1)
+                ] = tempRoomStates[x, y];
 
             // Teleport Link to the previous room.
             var offset = new Vector2(offsetX * Values.FieldWidth, offsetY * Values.FieldHeight);
-            var newpos = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y) + offset;
+            var newpos =
+                new Vector2(
+                    MapManager.ObjLink.EntityPosition.X,
+                    MapManager.ObjLink.EntityPosition.Y
+                ) + offset;
             MapManager.ObjLink.EntityPosition.Set(newpos);
 
             // Perform some camera magic.
@@ -367,13 +465,19 @@ namespace ProjectZ.InGame.GameObjects.Things
                 MapManager.Camera.SoftUpdate(goalPosition);
             }
             _mapObjects.Clear();
-            Map.Objects.GetComponentList(_mapObjects, (int)MapManager.ObjLink.EntityPosition.X - 200, (int)MapManager.ObjLink.EntityPosition.Y - 200, 400, 400, DrawComponent.Mask);
+            Map.Objects.GetComponentList(
+                _mapObjects,
+                (int)MapManager.ObjLink.EntityPosition.X - 200,
+                (int)MapManager.ObjLink.EntityPosition.Y - 200,
+                400,
+                400,
+                DrawComponent.Mask
+            );
 
             foreach (var gameObject in _mapObjects)
             {
                 if (gameObject is ObjBoomerang)
                     gameObject.EntityPosition.Offset(offset);
-
                 else if (gameObject is ObjAnimator)
                     Map.Objects.DeleteObjects.Add(gameObject);
             }
@@ -382,10 +486,21 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void DrawLight(SpriteBatch spriteBatch)
         {
             // Don't need to draw the light when classic camera is active.
-            if (Camera.ClassicMode) { return; }
+            if (Camera.ClassicMode)
+            {
+                return;
+            }
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, Resources.LightFadeShader, MapManager.Camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                Resources.LightFadeShader,
+                MapManager.Camera.TransformMatrix
+            );
 
             for (int y = 0; y < RoomStates.GetLength(1); y++)
             {
@@ -393,20 +508,65 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     var lightValue = RoomStates[x, y].Light;
                     if (RoomStates[x, y].Direction == 0)
-                        spriteBatch.Draw(Resources.SprLightRoomH, new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight), Color.Black * lightValue);
+                        spriteBatch.Draw(
+                            Resources.SprLightRoomH,
+                            new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight),
+                            Color.Black * lightValue
+                        );
                     else if (RoomStates[x, y].Direction == 2)
-                        spriteBatch.Draw(Resources.SprLightRoomH, new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight),
-                            new Rectangle(0, 0, Resources.SprLightRoomH.Width, Resources.SprLightRoomH.Height), Color.Black * lightValue, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
+                        spriteBatch.Draw(
+                            Resources.SprLightRoomH,
+                            new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight),
+                            new Rectangle(
+                                0,
+                                0,
+                                Resources.SprLightRoomH.Width,
+                                Resources.SprLightRoomH.Height
+                            ),
+                            Color.Black * lightValue,
+                            0,
+                            Vector2.Zero,
+                            1,
+                            SpriteEffects.FlipHorizontally,
+                            0
+                        );
                     else if (RoomStates[x, y].Direction == 1)
-                        spriteBatch.Draw(Resources.SprLightRoomV, new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight),
-                            new Rectangle(0, 0, Resources.SprLightRoomH.Width, Resources.SprLightRoomH.Height), Color.Black * lightValue, 0, Vector2.Zero, 1, SpriteEffects.FlipVertically, 0);
+                        spriteBatch.Draw(
+                            Resources.SprLightRoomV,
+                            new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight),
+                            new Rectangle(
+                                0,
+                                0,
+                                Resources.SprLightRoomH.Width,
+                                Resources.SprLightRoomH.Height
+                            ),
+                            Color.Black * lightValue,
+                            0,
+                            Vector2.Zero,
+                            1,
+                            SpriteEffects.FlipVertically,
+                            0
+                        );
                     else
-                        spriteBatch.Draw(Resources.SprLightRoomV, new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight), Color.Black * lightValue);
+                        spriteBatch.Draw(
+                            Resources.SprLightRoomV,
+                            new Vector2(-80 + x * Values.FieldWidth, 0 + y * Values.FieldHeight),
+                            Color.Black * lightValue
+                        );
                 }
             }
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, MapManager.LightBlendState,
-                MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap, null, null, null, MapManager.Camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                MapManager.LightBlendState,
+                MapManager.Camera.Scale >= 1
+                    ? SamplerState.PointWrap
+                    : SamplerState.AnisotropicWrap,
+                null,
+                null,
+                null,
+                MapManager.Camera.TransformMatrix
+            );
         }
     }
 }

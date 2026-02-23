@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -26,9 +26,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dir;
         private int _lives = EnemyLives.Keese;
 
-        public EnemyKeese() : base("keese") { }
+        public EnemyKeese()
+            : base("keese") { }
 
-        public EnemyKeese(Map.Map map, int posX, int posY) : base(map)
+        public EnemyKeese(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -37,7 +39,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _dir = Game1.RandomNumber.Next(0, 2) * 2 - 1;
 
             EntityPosition = new CPosition(posX + 8, posY + 24, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 24, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 24, 0);
             EntitySize = new Rectangle(-8, -24, 16, 24);
             CanReset = true;
             OnReset = Reset;
@@ -54,12 +56,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = false,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes     = Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.NPCWall | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.NPCWall | Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
-                FieldRectangle = fieldRectangle
+                FieldRectangle = fieldRectangle,
             };
 
             _aiComponent = new AiComponent();
@@ -74,20 +74,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("cooldown", stateCooldown);
             _aiComponent.States.Add("flying", stateFlying);
             new AiFallState(_aiComponent, _body, null, null, 0);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
 
             _aiComponent.ChangeState("cooldown");
 
             var damageCollider = new CBox(EntityPosition, -5, -20, 0, 10, 8, 4);
             var pushableBox = new CBox(EntityPosition, -4, -18, 0, 8, 6, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -118,7 +133,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
-            var distVec = EntityPosition.Position - new Vector2(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY + 16);
+            var distVec =
+                EntityPosition.Position
+                - new Vector2(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY + 16);
 
             // start flying if the player is near the keese
             if (distVec.Length() < 60)
@@ -163,7 +180,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

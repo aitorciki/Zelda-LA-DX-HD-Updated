@@ -13,7 +13,6 @@ namespace ProjectZ
 #endif
             var editorMode = false;
 
-
             var loadSave = false;
             var saveSlot = 0;
 
@@ -46,7 +45,6 @@ namespace ProjectZ
                 using (var game = new Game1(editorMode, loadSave, saveSlot))
                     game.Run();
             }
-
             catch (Exception exception)
             {
                 NativeDialogs.ShowError(exception.Message, exception.StackTrace);

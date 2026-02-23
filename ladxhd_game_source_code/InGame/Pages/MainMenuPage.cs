@@ -12,9 +12,16 @@ namespace ProjectZ.InGame.Pages
 {
     class MainMenuPage : InterfacePage
     {
-        enum State { Select, Delete, Copy }
+        enum State
+        {
+            Select,
+            Delete,
+            Copy,
+        }
 
-        public InterfaceListLayout[] SaveEntries = new InterfaceListLayout[SaveStateManager.SaveCount];
+        public InterfaceListLayout[] SaveEntries = new InterfaceListLayout[
+            SaveStateManager.SaveCount
+        ];
 
         private float[] _playerSelectionState = new float[SaveStateManager.SaveCount];
         private InterfaceButton[] _saveButtons = new InterfaceButton[SaveStateManager.SaveCount];
@@ -23,10 +30,14 @@ namespace ProjectZ.InGame.Pages
         private Animator _playerAnimation = new Animator();
         private Animator _swordAnimation = new Animator();
 
-        private InterfaceImagePlayer[] _playerImage = new InterfaceImagePlayer[SaveStateManager.SaveCount];
+        private InterfaceImagePlayer[] _playerImage = new InterfaceImagePlayer[
+            SaveStateManager.SaveCount
+        ];
 
         private DictAtlasEntry _heartSprite;
-        private InterfaceElement[][] _heartImage = new InterfaceElement[SaveStateManager.SaveCount][];
+        private InterfaceElement[][] _heartImage = new InterfaceElement[
+            SaveStateManager.SaveCount
+        ][];
 
         private DictAtlasEntry _rupeeSprite;
         private InterfaceImage[] _rupeeImages = new InterfaceImage[SaveStateManager.SaveCount];
@@ -44,15 +55,21 @@ namespace ProjectZ.InGame.Pages
         private InterfaceLabel[] _saveShells = new InterfaceLabel[SaveStateManager.SaveCount];
 
         private DictAtlasEntry[] _instrumentSprites = new DictAtlasEntry[8];
-        private InterfaceElement[][] _instrumentImages = new InterfaceElement[SaveStateManager.SaveCount][];
+        private InterfaceElement[][] _instrumentImages = new InterfaceElement[
+            SaveStateManager.SaveCount
+        ][];
 
-        private InterfaceGravityLayout[] _saveButtonLayouts = new InterfaceGravityLayout[SaveStateManager.SaveCount];
+        private InterfaceGravityLayout[] _saveButtonLayouts = new InterfaceGravityLayout[
+            SaveStateManager.SaveCount
+        ];
 
         private InterfaceLabel[] _saveNames = new InterfaceLabel[SaveStateManager.SaveCount];
         private InterfaceLabel[] _saveRupees = new InterfaceLabel[SaveStateManager.SaveCount];
         private InterfaceLabel[] _savePlaytime = new InterfaceLabel[SaveStateManager.SaveCount];
 
-        private InterfaceListLayout[] _deleteCopyLayouts = new InterfaceListLayout[SaveStateManager.SaveCount];
+        private InterfaceListLayout[] _deleteCopyLayouts = new InterfaceListLayout[
+            SaveStateManager.SaveCount
+        ];
 
         private InterfaceListLayout _mainLayout;
         private InterfaceListLayout _newGameButtonLayout;
@@ -93,10 +110,17 @@ namespace ProjectZ.InGame.Pages
             _newGameButtonLayout.AddElement(new InterfaceLabel("main_menu_new_game"));
 
             // Save File List
-            _saveFileList = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true };
+            _saveFileList = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize) - 12),
+                Selectable = true,
+            };
             for (var i = 0; i < SaveStateManager.SaveCount; i++)
             {
-                _saveButtonLayouts[i] = new InterfaceGravityLayout { Size = new Point(saveButtonRec.X, saveButtonRec.Y) };
+                _saveButtonLayouts[i] = new InterfaceGravityLayout
+                {
+                    Size = new Point(saveButtonRec.X, saveButtonRec.Y),
+                };
 
                 // To make this much simpler to tweak, use fixed sizes for everything.
                 var numberWidth = 12;
@@ -104,46 +128,134 @@ namespace ProjectZ.InGame.Pages
                 var middleWidth = 64;
                 var instrumentsWidth = 64;
 
-                var saveSlotNumber = new InterfaceLabel(null, new Point(numberWidth, 28), Point.Zero) { Gravity = InterfaceElement.Gravities.Left };
+                var saveSlotNumber = new InterfaceLabel(
+                    null,
+                    new Point(numberWidth, 28),
+                    Point.Zero
+                )
+                {
+                    Gravity = InterfaceElement.Gravities.Left,
+                };
 
                 saveSlotNumber.SetText((i + 1).ToString());
                 _saveButtonLayouts[i].AddElement(saveSlotNumber);
 
-                var saveInfoLayout = new InterfaceListLayout { HorizontalMode = true, Size = new Point(saveButtonRec.X - numberWidth, saveButtonRec.Y), Gravity = InterfaceElement.Gravities.Right };
+                var saveInfoLayout = new InterfaceListLayout
+                {
+                    HorizontalMode = true,
+                    Size = new Point(saveButtonRec.X - numberWidth, saveButtonRec.Y),
+                    Gravity = InterfaceElement.Gravities.Right,
+                };
 
                 // Heart Count / Death Count / Shell Count
                 {
                     // Heart Count
                     var hearts = new InterfaceListLayout { Size = new Point(heartsWidth, 40) };
-                    var rowOne = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Left };
-                    var rowTwo = new InterfaceListLayout { Size = new Point(heartsWidth - 4, 7), Margin = new Point(2, 1), HorizontalMode = true, ContentAlignment = InterfaceElement.Gravities.Left };
+                    var rowOne = new InterfaceListLayout
+                    {
+                        Size = new Point(heartsWidth - 4, 7),
+                        Margin = new Point(2, 1),
+                        HorizontalMode = true,
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
+                    var rowTwo = new InterfaceListLayout
+                    {
+                        Size = new Point(heartsWidth - 4, 7),
+                        Margin = new Point(2, 1),
+                        HorizontalMode = true,
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
 
                     _heartImage[i] = new InterfaceElement[14];
 
                     for (var j = 0; j < 7; j++)
                     {
                         int k = j + 7;
-                        _heartImage[i][j] = rowOne.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Left });
-                        _heartImage[i][k] = rowTwo.AddElement(new InterfaceImage(Resources.SprItem, _heartSprite.ScaledRectangle, Point.Zero, new Point(1, 1)) { Gravity = InterfaceElement.Gravities.Left });
+                        _heartImage[i][j] = rowOne.AddElement(
+                            new InterfaceImage(
+                                Resources.SprItem,
+                                _heartSprite.ScaledRectangle,
+                                Point.Zero,
+                                new Point(1, 1)
+                            )
+                            {
+                                Gravity = InterfaceElement.Gravities.Left,
+                            }
+                        );
+                        _heartImage[i][k] = rowTwo.AddElement(
+                            new InterfaceImage(
+                                Resources.SprItem,
+                                _heartSprite.ScaledRectangle,
+                                Point.Zero,
+                                new Point(1, 1)
+                            )
+                            {
+                                Gravity = InterfaceElement.Gravities.Left,
+                            }
+                        );
                     }
                     hearts.AddElement(rowOne);
                     hearts.AddElement(rowTwo);
                     hearts.AddElement(new InterfaceListLayout { Size = new Point(1, 1) });
 
                     // Death Count
-                    var deathRow = new InterfaceListLayout { HorizontalMode = true, Size = new Point(heartsWidth / 2 - 2, 10), Margin = new Point(3, 5), ContentAlignment = InterfaceElement.Gravities.Left };
+                    var deathRow = new InterfaceListLayout
+                    {
+                        HorizontalMode = true,
+                        Size = new Point(heartsWidth / 2 - 2, 10),
+                        Margin = new Point(3, 5),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
 
-                    _deathImages[i] = new InterfaceImage(_deathSprite.Texture, _deathSprite.SourceRectangle, Point.Zero, new Point(1, 1)) { Margin = new Point(0, 1) };
-                    _deathLabels[i] = new InterfaceLabel(null, new Point(heartsWidth / 2 - 12, 10), Point.Zero) { Margin = new Point(2, 0), TextAlignment = InterfaceElement.Gravities.Left };
+                    _deathImages[i] = new InterfaceImage(
+                        _deathSprite.Texture,
+                        _deathSprite.SourceRectangle,
+                        Point.Zero,
+                        new Point(1, 1)
+                    )
+                    {
+                        Margin = new Point(0, 1),
+                    };
+                    _deathLabels[i] = new InterfaceLabel(
+                        null,
+                        new Point(heartsWidth / 2 - 12, 10),
+                        Point.Zero
+                    )
+                    {
+                        Margin = new Point(2, 0),
+                        TextAlignment = InterfaceElement.Gravities.Left,
+                    };
 
                     deathRow.AddElement(_deathImages[i]);
                     deathRow.AddElement(_deathLabels[i]);
 
                     // Shell Count
-                    var shellRow = new InterfaceListLayout { HorizontalMode = true, Size = new Point(heartsWidth - 6, 10), Margin = new Point(3, 0), ContentAlignment = InterfaceElement.Gravities.Left };
-                    var shellLabel = new InterfaceLabel(null, new Point(heartsWidth - 20, 10), Point.Zero) { Margin = new Point(2, 0), TextAlignment = InterfaceElement.Gravities.Left };
+                    var shellRow = new InterfaceListLayout
+                    {
+                        HorizontalMode = true,
+                        Size = new Point(heartsWidth - 6, 10),
+                        Margin = new Point(3, 0),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
+                    var shellLabel = new InterfaceLabel(
+                        null,
+                        new Point(heartsWidth - 20, 10),
+                        Point.Zero
+                    )
+                    {
+                        Margin = new Point(2, 0),
+                        TextAlignment = InterfaceElement.Gravities.Left,
+                    };
 
-                    _shellImages[i] = new InterfaceImage(_shellSprite.Texture, _shellSprite.SourceRectangle, Point.Zero, new Point(1, 1)) { Margin = new Point(0, 1) };
+                    _shellImages[i] = new InterfaceImage(
+                        _shellSprite.Texture,
+                        _shellSprite.SourceRectangle,
+                        Point.Zero,
+                        new Point(1, 1)
+                    )
+                    {
+                        Margin = new Point(0, 1),
+                    };
 
                     shellRow.AddElement(_shellImages[i]);
                     shellRow.AddElement(shellLabel);
@@ -152,7 +264,13 @@ namespace ProjectZ.InGame.Pages
                     _saveShells[i] = shellLabel;
 
                     // Add Death Count and Shell Count to a row below hearts.
-                    var statsRow = new InterfaceListLayout { HorizontalMode = true, Size = new Point(heartsWidth, 10), Margin = new Point(0, 0), ContentAlignment = InterfaceElement.Gravities.Left };
+                    var statsRow = new InterfaceListLayout
+                    {
+                        HorizontalMode = true,
+                        Size = new Point(heartsWidth, 10),
+                        Margin = new Point(0, 0),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
 
                     statsRow.AddElement(deathRow);
                     statsRow.AddElement(shellRow);
@@ -163,22 +281,80 @@ namespace ProjectZ.InGame.Pages
                 // Name / Rupees / Playtime
                 {
                     // Name
-                    var middle = new InterfaceListLayout { Size = new Point(middleWidth, 30), Margin = new Point(2, 0), Gravity = InterfaceElement.Gravities.Left };
-                    middle.AddElement(_saveNames[i] = new InterfaceLabel(null, new Point(middleWidth - 18, 10), Point.Zero) { Margin = new Point(1, 0), TextAlignment = InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Bottom });
+                    var middle = new InterfaceListLayout
+                    {
+                        Size = new Point(middleWidth, 30),
+                        Margin = new Point(2, 0),
+                        Gravity = InterfaceElement.Gravities.Left,
+                    };
+                    middle.AddElement(
+                        _saveNames[i] = new InterfaceLabel(
+                            null,
+                            new Point(middleWidth - 18, 10),
+                            Point.Zero
+                        )
+                        {
+                            Margin = new Point(1, 0),
+                            TextAlignment =
+                                InterfaceElement.Gravities.Left | InterfaceElement.Gravities.Bottom,
+                        }
+                    );
 
                     // Rupees
-                    var rupeeRow = new InterfaceListLayout{HorizontalMode = true, Size = new Point(middleWidth - 17, 10), ContentAlignment = InterfaceElement.Gravities.Left };
-                    _rupeeImages[i] = new InterfaceImage(_rupeeSprite.Texture, _rupeeSprite.SourceRectangle, Point.Zero, new Point(1, 1)) { Margin = new Point(0, 1) };
+                    var rupeeRow = new InterfaceListLayout
+                    {
+                        HorizontalMode = true,
+                        Size = new Point(middleWidth - 17, 10),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
+                    _rupeeImages[i] = new InterfaceImage(
+                        _rupeeSprite.Texture,
+                        _rupeeSprite.SourceRectangle,
+                        Point.Zero,
+                        new Point(1, 1)
+                    )
+                    {
+                        Margin = new Point(0, 1),
+                    };
                     rupeeRow.AddElement(_rupeeImages[i]);
-                    _saveRupees[i] = new InterfaceLabel(null, new Point(middleWidth - 25, 10), Point.Zero) { Margin = new Point(2, 0), TextAlignment = InterfaceElement.Gravities.Left };
+                    _saveRupees[i] = new InterfaceLabel(
+                        null,
+                        new Point(middleWidth - 25, 10),
+                        Point.Zero
+                    )
+                    {
+                        Margin = new Point(2, 0),
+                        TextAlignment = InterfaceElement.Gravities.Left,
+                    };
                     rupeeRow.AddElement(_saveRupees[i]);
                     middle.AddElement(rupeeRow);
 
                     //Playtime
-                    var playtimeRow = new InterfaceListLayout{HorizontalMode = true, Size = new Point(middleWidth - 17, 10), ContentAlignment = InterfaceElement.Gravities.Left };
-                    _clockImages[i] = new InterfaceImage(_clockSprite.Texture, _clockSprite.SourceRectangle, Point.Zero, new Point(1, 1)) { Margin = new Point(0, 1) };
+                    var playtimeRow = new InterfaceListLayout
+                    {
+                        HorizontalMode = true,
+                        Size = new Point(middleWidth - 17, 10),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
+                    _clockImages[i] = new InterfaceImage(
+                        _clockSprite.Texture,
+                        _clockSprite.SourceRectangle,
+                        Point.Zero,
+                        new Point(1, 1)
+                    )
+                    {
+                        Margin = new Point(0, 1),
+                    };
                     playtimeRow.AddElement(_clockImages[i]);
-                    _savePlaytime[i] = new InterfaceLabel(null, new Point(middleWidth - 25, 10), Point.Zero) { Margin = new Point(2, 0), TextAlignment = InterfaceElement.Gravities.Left };
+                    _savePlaytime[i] = new InterfaceLabel(
+                        null,
+                        new Point(middleWidth - 25, 10),
+                        Point.Zero
+                    )
+                    {
+                        Margin = new Point(2, 0),
+                        TextAlignment = InterfaceElement.Gravities.Left,
+                    };
                     playtimeRow.AddElement(_savePlaytime[i]);
                     middle.AddElement(playtimeRow);
                     saveInfoLayout.AddElement(middle);
@@ -187,20 +363,41 @@ namespace ProjectZ.InGame.Pages
                 // Instruments
                 {
                     var instrumentWidth = 64;
-                    var instruments = new InterfaceListLayout { Margin = new Point(2, 1), Size = new Point(instrumentsWidth, 0), Gravity = InterfaceElement.Gravities.Left };
+                    var instruments = new InterfaceListLayout
+                    {
+                        Margin = new Point(2, 1),
+                        Size = new Point(instrumentsWidth, 0),
+                        Gravity = InterfaceElement.Gravities.Left,
+                    };
 
                     // Spacer to push instruments down by 1 pixel.
                     instruments.AddElement(new InterfaceListLayout { Size = new Point(1, 1) });
 
-                    var rowOne = new InterfaceListLayout { Margin = new Point(1, 1), HorizontalMode = true, Size = new Point(instrumentWidth, 14), ContentAlignment = InterfaceElement.Gravities.Left };
-                    var rowTwo = new InterfaceListLayout { Margin = new Point(1, 1), HorizontalMode = true, Size = new Point(instrumentWidth, 14), ContentAlignment = InterfaceElement.Gravities.Left };
+                    var rowOne = new InterfaceListLayout
+                    {
+                        Margin = new Point(1, 1),
+                        HorizontalMode = true,
+                        Size = new Point(instrumentWidth, 14),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
+                    var rowTwo = new InterfaceListLayout
+                    {
+                        Margin = new Point(1, 1),
+                        HorizontalMode = true,
+                        Size = new Point(instrumentWidth, 14),
+                        ContentAlignment = InterfaceElement.Gravities.Left,
+                    };
 
                     _instrumentImages[i] = new InterfaceElement[8];
 
                     for (int j = 0; j < 4; j++)
                     {
-                        _instrumentImages[i][j] = rowOne.AddElement(new InterfaceImageInstrument(_instrumentSprites[j]));
-                        _instrumentImages[i][j+4] = rowTwo.AddElement(new InterfaceImageInstrument(_instrumentSprites[j + 4]));
+                        _instrumentImages[i][j] = rowOne.AddElement(
+                            new InterfaceImageInstrument(_instrumentSprites[j])
+                        );
+                        _instrumentImages[i][j + 4] = rowTwo.AddElement(
+                            new InterfaceImageInstrument(_instrumentSprites[j + 4])
+                        );
                     }
                     instruments.AddElement(rowOne);
                     instruments.AddElement(rowTwo);
@@ -209,11 +406,34 @@ namespace ProjectZ.InGame.Pages
 
                 var i1 = i;
                 _saveButtonLayouts[i].AddElement(saveInfoLayout);
-                _saveButtons[i] = new InterfaceButton{ InsideElement = _saveButtonLayouts[i], Size = new Point(saveButtonRec.X, saveButtonRec.Y), Margin = new Point(0, 2), ClickFunction = e => OnClickSave(i1) };
+                _saveButtons[i] = new InterfaceButton
+                {
+                    InsideElement = _saveButtonLayouts[i],
+                    Size = new Point(saveButtonRec.X, saveButtonRec.Y),
+                    Margin = new Point(0, 2),
+                    ClickFunction = e => OnClickSave(i1),
+                };
 
-                SaveEntries[i] = new InterfaceListLayout { HorizontalMode = true, Gravity = InterfaceElement.Gravities.Right, AutoSize = true, Selectable = true };
-                SaveEntries[i].AddElement(new InterfaceListLayout { Size = new Point(sideSize - 20, 20) });
-                SaveEntries[i].AddElement(_playerImage[i] = new InterfaceImagePlayer(_playerAnimation, _swordAnimation, _playerAnimation.SprTexture, _playerAnimation.CurrentFrame.SourceRectangle, new Point(24, 16), new Point(0, 0)));
+                SaveEntries[i] = new InterfaceListLayout
+                {
+                    HorizontalMode = true,
+                    Gravity = InterfaceElement.Gravities.Right,
+                    AutoSize = true,
+                    Selectable = true,
+                };
+                SaveEntries[i]
+                    .AddElement(new InterfaceListLayout { Size = new Point(sideSize - 20, 20) });
+                SaveEntries[i]
+                    .AddElement(
+                        _playerImage[i] = new InterfaceImagePlayer(
+                            _playerAnimation,
+                            _swordAnimation,
+                            _playerAnimation.SprTexture,
+                            _playerAnimation.CurrentFrame.SourceRectangle,
+                            new Point(24, 16),
+                            new Point(0, 0)
+                        )
+                    );
                 SaveEntries[i].AddElement(_saveButtons[i]);
 
                 // Copy / Delete Options
@@ -224,16 +444,44 @@ namespace ProjectZ.InGame.Pages
                     Size = new Point(sideSize, saveButtonRec.Y),
                     PreventSelection = true,
                     Selectable = true,
-                    Visible = false
+                    Visible = false,
                 };
 
                 var insideCopy = new InterfaceListLayout() { Size = new Point(sideSize - 4, 13) };
-                insideCopy.AddElement(new InterfaceLabel("main_menu_copy") { Size = new Point(40, 12), TextAlignment = InterfaceElement.Gravities.Bottom });
-                _deleteCopyLayouts[i].AddElement(new InterfaceButton(new Point(sideSize - 4, 13), new Point(0, 1), insideCopy, element => OnClickCopy(currentSlot)));
+                insideCopy.AddElement(
+                    new InterfaceLabel("main_menu_copy")
+                    {
+                        Size = new Point(40, 12),
+                        TextAlignment = InterfaceElement.Gravities.Bottom,
+                    }
+                );
+                _deleteCopyLayouts[i]
+                    .AddElement(
+                        new InterfaceButton(
+                            new Point(sideSize - 4, 13),
+                            new Point(0, 1),
+                            insideCopy,
+                            element => OnClickCopy(currentSlot)
+                        )
+                    );
 
                 var insideDelete = new InterfaceListLayout() { Size = new Point(sideSize - 4, 13) };
-                insideDelete.AddElement(new InterfaceLabel("main_menu_erase") { Size = new Point(40, 12), TextAlignment = InterfaceElement.Gravities.Bottom });
-                _deleteCopyLayouts[i].AddElement(new InterfaceButton(new Point(sideSize - 4, 13), new Point(0, 1), insideDelete, element => OnClickDelete(currentSlot)));
+                insideDelete.AddElement(
+                    new InterfaceLabel("main_menu_erase")
+                    {
+                        Size = new Point(40, 12),
+                        TextAlignment = InterfaceElement.Gravities.Bottom,
+                    }
+                );
+                _deleteCopyLayouts[i]
+                    .AddElement(
+                        new InterfaceButton(
+                            new Point(sideSize - 4, 13),
+                            new Point(0, 1),
+                            insideDelete,
+                            element => OnClickDelete(currentSlot)
+                        )
+                    );
 
                 SaveEntries[i].AddElement(_deleteCopyLayouts[i]);
                 _saveFileList.AddElement(SaveEntries[i]);
@@ -245,13 +493,39 @@ namespace ProjectZ.InGame.Pages
             {
                 Size = new Point(saveButtonRec.X, (int)(height * Values.MenuFooterSize)),
                 HorizontalMode = true,
-                Selectable = true
+                Selectable = true,
             };
-            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_settings", element => OpenSettingsPage()));
-            _menuBottomBar.AddElement(new InterfaceButton(new Point(smallButtonWidth, buttonHeight), new Point(smallButtonMargin, 0), "main_menu_quit", element => OpenExitGamePage()));
+            _menuBottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(smallButtonWidth, buttonHeight),
+                    new Point(smallButtonMargin, 0),
+                    "main_menu_settings",
+                    element => OpenSettingsPage()
+                )
+            );
+            _menuBottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(smallButtonWidth, buttonHeight),
+                    new Point(smallButtonMargin, 0),
+                    "main_menu_quit",
+                    element => OpenExitGamePage()
+                )
+            );
 
-            _mainLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Gravity = InterfaceElement.Gravities.Left, Selectable = true };
-            _mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "main_menu_select_header", new Point(width, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
+            _mainLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Gravity = InterfaceElement.Gravities.Left,
+                Selectable = true,
+            };
+            _mainLayout.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "main_menu_select_header",
+                    new Point(width, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
             _mainLayout.AddElement(_saveFileList);
             _mainLayout.AddElement(_menuBottomBar);
 
@@ -262,8 +536,8 @@ namespace ProjectZ.InGame.Pages
         public void HideInstruments()
         {
             for (var i = 0; i < SaveStateManager.SaveCount; i++)
-                for (var j = 0; j < _instrumentSprites.Length; j++)
-                    _instrumentImages[i][j].Hidden = true;
+            for (var j = 0; j < _instrumentSprites.Length; j++)
+                _instrumentImages[i][j].Hidden = true;
         }
 
         public void OpenSettingsPage()
@@ -290,7 +564,9 @@ namespace ProjectZ.InGame.Pages
             if (_selectedSaveIndex != -1)
             {
                 _saveFileList.Elements[_selectedSaveIndex].Deselect(false);
-                _saveFileList.Elements[_selectedSaveIndex].Select(InterfaceElement.Directions.Left, false);
+                _saveFileList
+                    .Elements[_selectedSaveIndex]
+                    .Select(InterfaceElement.Directions.Left, false);
             }
             for (var i = 0; i < _deleteCopyLayouts.Length; i++)
                 _deleteCopyLayouts[i].Visible = i == 0 && SaveStateManager.SaveStates[i] != null;
@@ -308,15 +584,25 @@ namespace ProjectZ.InGame.Pages
 
             base.OnReturn(intent);
 
-            if (intent != null && intent.TryGetValue("deleteReturn", out var deleteReturn) && (bool)deleteReturn)
+            if (
+                intent != null
+                && intent.TryGetValue("deleteReturn", out var deleteReturn)
+                && (bool)deleteReturn
+            )
             {
                 // select the savestate
                 _saveFileList.Elements[_selectedSaveIndex].Deselect(false);
-                _saveFileList.Elements[_selectedSaveIndex].Select(InterfaceElement.Directions.Left, false);
+                _saveFileList
+                    .Elements[_selectedSaveIndex]
+                    .Select(InterfaceElement.Directions.Left, false);
             }
 
             // delete the save state?
-            if (intent != null && intent.TryGetValue("deleteSavestate", out var deleteSaveState) && (bool)deleteSaveState)
+            if (
+                intent != null
+                && intent.TryGetValue("deleteSavestate", out var deleteSaveState)
+                && (bool)deleteSaveState
+            )
             {
                 SaveGameSaveLoad.DeleteSaveFile(_selectedSaveIndex);
                 ReloadSaves();
@@ -330,7 +616,9 @@ namespace ProjectZ.InGame.Pages
 
                 // select the savestate
                 _saveFileList.Elements[_selectedSaveIndex].Deselect(false);
-                _saveFileList.Elements[_selectedSaveIndex].Select(InterfaceElement.Directions.Left, false);
+                _saveFileList
+                    .Elements[_selectedSaveIndex]
+                    .Select(InterfaceElement.Directions.Left, false);
                 _saveFileList.Elements[_selectedSaveIndex].Deselect(false);
 
                 // select the target slot
@@ -373,7 +661,8 @@ namespace ProjectZ.InGame.Pages
             var selectedSaveIndex = -1;
             for (var i = 0; i < _deleteCopyLayouts.Length; i++)
             {
-                _deleteCopyLayouts[i].Visible = _saveFileList.Elements[i].Selected && SaveStateManager.SaveStates[i] != null;
+                _deleteCopyLayouts[i].Visible =
+                    _saveFileList.Elements[i].Selected && SaveStateManager.SaveStates[i] != null;
                 if (_saveFileList.Elements[i].Selected)
                     selectedSaveIndex = i;
             }
@@ -387,7 +676,12 @@ namespace ProjectZ.InGame.Pages
                 // Close the menu page and change to the intro screen.
                 HideInstruments();
                 Game1.ScreenManager.ChangeScreen(Values.ScreenNameIntro);
-                Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
+                Game1.UiPageManager.PopPage(
+                    null,
+                    PageManager.TransitionAnimation.TopToBottom,
+                    PageManager.TransitionAnimation.TopToBottom,
+                    true
+                );
             }
             // Get the selected index to get the cloak color.
             var index = _saveFileList.SelectionIndex;
@@ -414,16 +708,20 @@ namespace ProjectZ.InGame.Pages
                 if (SaveStateManager.SaveStates[i] == null)
                     continue;
 
-                bool goldNames = SaveStateManager.SaveStates[i].GameCleared && !SaveStateManager.SaveStates[i].Thief;
+                bool goldNames =
+                    SaveStateManager.SaveStates[i].GameCleared
+                    && !SaveStateManager.SaveStates[i].Thief;
                 bool goldRupee = SaveStateManager.SaveStates[i].CurrentRupees >= 999;
-                bool goldDeath = SaveStateManager.SaveStates[i].Deaths == 0 && SaveStateManager.SaveStates[i].GameCleared;
+                bool goldDeath =
+                    SaveStateManager.SaveStates[i].Deaths == 0
+                    && SaveStateManager.SaveStates[i].GameCleared;
                 bool goldShell = SaveStateManager.SaveStates[i].CurrentShells >= 26;
                 bool goldTimer = SaveStateManager.SaveStates[i].GameCleared;
 
-                _saveNames[i].TextColor    = goldNames ? textGoldColor : Color.White;
-                _saveRupees[i].TextColor   = goldRupee ? textGoldColor : Color.White;
-                _deathLabels[i].TextColor  = goldDeath ? textGoldColor : Color.White;
-                _saveShells[i].TextColor   = goldShell ? textGoldColor : Color.White;
+                _saveNames[i].TextColor = goldNames ? textGoldColor : Color.White;
+                _saveRupees[i].TextColor = goldRupee ? textGoldColor : Color.White;
+                _deathLabels[i].TextColor = goldDeath ? textGoldColor : Color.White;
+                _saveShells[i].TextColor = goldShell ? textGoldColor : Color.White;
                 _savePlaytime[i].TextColor = goldTimer ? textGoldColor : Color.White;
             }
         }
@@ -435,16 +733,35 @@ namespace ProjectZ.InGame.Pages
 
             for (var i = 0; i < SaveStateManager.SaveCount; i++)
             {
-                _playerSelectionState[i] = AnimationHelper.MoveToTarget(_playerSelectionState[i], _saveButtons[i].Selected ? 1 : 0, 1);
+                _playerSelectionState[i] = AnimationHelper.MoveToTarget(
+                    _playerSelectionState[i],
+                    _saveButtons[i].Selected ? 1 : 0,
+                    1
+                );
 
-                _playerImage[i].ImageColor = Color.Lerp(Color.Transparent, Color.White, _playerSelectionState[i]);
+                _playerImage[i].ImageColor = Color.Lerp(
+                    Color.Transparent,
+                    Color.White,
+                    _playerSelectionState[i]
+                );
                 _playerImage[i].SourceRectangle = _playerAnimation.CurrentFrame.SourceRectangle;
                 _playerImage[i].Offset = new Vector2(
-                    _playerAnimation.CurrentAnimation.Offset.X + _playerAnimation.CurrentFrame.Offset.X,
-                    _playerAnimation.CurrentAnimation.Offset.Y + _playerAnimation.CurrentFrame.Offset.Y);
+                    _playerAnimation.CurrentAnimation.Offset.X
+                        + _playerAnimation.CurrentFrame.Offset.X,
+                    _playerAnimation.CurrentAnimation.Offset.Y
+                        + _playerAnimation.CurrentFrame.Offset.Y
+                );
                 _playerImage[i].Effects =
-                    (_playerAnimation.CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
-                    (_playerAnimation.CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+                    (
+                        _playerAnimation.CurrentFrame.MirroredV
+                            ? SpriteEffects.FlipVertically
+                            : SpriteEffects.None
+                    )
+                    | (
+                        _playerAnimation.CurrentFrame.MirroredH
+                            ? SpriteEffects.FlipHorizontally
+                            : SpriteEffects.None
+                    );
             }
         }
 
@@ -455,14 +772,24 @@ namespace ProjectZ.InGame.Pages
             var intent = new Dictionary<string, object>();
             intent.Add("selectedSlot", number);
             HideInstruments();
-            Game1.UiPageManager.ChangePage(typeof(CopyPage), intent, PageManager.TransitionAnimation.Fade, PageManager.TransitionAnimation.Fade);
+            Game1.UiPageManager.ChangePage(
+                typeof(CopyPage),
+                intent,
+                PageManager.TransitionAnimation.Fade,
+                PageManager.TransitionAnimation.Fade
+            );
         }
 
         private void OnClickDelete(int number)
         {
             _selectedSaveIndex = number;
             HideInstruments();
-            Game1.UiPageManager.ChangePage(typeof(DeleteSaveSlotPage), null, PageManager.TransitionAnimation.Fade, PageManager.TransitionAnimation.Fade);
+            Game1.UiPageManager.ChangePage(
+                typeof(DeleteSaveSlotPage),
+                null,
+                PageManager.TransitionAnimation.Fade,
+                PageManager.TransitionAnimation.Fade
+            );
         }
 
         private void OnClickSave(int number)
@@ -485,7 +812,12 @@ namespace ProjectZ.InGame.Pages
                 // Hide the instruments.
                 HideInstruments();
                 // close the menu page
-                Game1.UiPageManager.PopPage(null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom, true);
+                Game1.UiPageManager.PopPage(
+                    null,
+                    PageManager.TransitionAnimation.TopToBottom,
+                    PageManager.TransitionAnimation.TopToBottom,
+                    true
+                );
                 // Store the last game save that was selected.
                 GameSettings.LastSavePos = saveIndex;
                 _selectStoredSave = false;
@@ -533,7 +865,7 @@ namespace ProjectZ.InGame.Pages
                 {
                     1 => "blue",
                     2 => "red",
-                    _ => "green"
+                    _ => "green",
                 };
                 // Player has the Level 2 sword so show it on Link's sprite.
                 _playerImage[i].ShowSword = sword;
@@ -545,11 +877,21 @@ namespace ProjectZ.InGame.Pages
                 for (var j = 0; j < 14; j++)
                 {
                     _heartImage[i][j].Hidden = SaveStateManager.SaveStates[i].MaxHearts <= j;
-                    var state = 4 - MathHelper.Clamp(SaveStateManager.SaveStates[i].CurrentHealth - (j * 4), 0, 4);
+                    var state =
+                        4
+                        - MathHelper.Clamp(
+                            SaveStateManager.SaveStates[i].CurrentHealth - (j * 4),
+                            0,
+                            4
+                        );
                     ((InterfaceImage)_heartImage[i][j]).SourceRectangle = new Rectangle(
-                        _heartSprite.ScaledRectangle.X + (_heartSprite.ScaledRectangle.Width + _heartSprite.TextureScale) * state,
+                        _heartSprite.ScaledRectangle.X
+                            + (_heartSprite.ScaledRectangle.Width + _heartSprite.TextureScale)
+                                * state,
                         _heartSprite.ScaledRectangle.Y,
-                        _heartSprite.ScaledRectangle.Width, _heartSprite.ScaledRectangle.Height);
+                        _heartSprite.ScaledRectangle.Width,
+                        _heartSprite.ScaledRectangle.Height
+                    );
                 }
                 // Load the player's death count.
                 int deaths = SaveStateManager.SaveStates[i].Deaths;
@@ -560,9 +902,12 @@ namespace ProjectZ.InGame.Pages
                 _saveShells[i].SetText(shells.ToString());
 
                 // Load the player's name. If the player has stolen replace it with the "Thief".
-                _saveNames[i].SetText(SaveStateManager.SaveStates[i].Thief 
-                    ? Game1.LanguageManager.GetString("savename_thief", "error") 
-                    : SaveStateManager.SaveStates[i].Name);
+                _saveNames[i]
+                    .SetText(
+                        SaveStateManager.SaveStates[i].Thief
+                            ? Game1.LanguageManager.GetString("savename_thief", "error")
+                            : SaveStateManager.SaveStates[i].Name
+                    );
 
                 // Load the players rupee count.
                 int rupees = SaveStateManager.SaveStates[i].CurrentRupees;

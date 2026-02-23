@@ -72,7 +72,16 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
         private float _deathCount = -1000;
 
-        public AiDamageState(GameObject gameObject, BodyComponent body, AiComponent aiComponent, CSprite sprite, int lives, bool hasDamageState = true, bool hasBurnState = true, int cooldownTime = CooldownTime)
+        public AiDamageState(
+            GameObject gameObject,
+            BodyComponent body,
+            AiComponent aiComponent,
+            CSprite sprite,
+            int lives,
+            bool hasDamageState = true,
+            bool hasBurnState = true,
+            int cooldownTime = CooldownTime
+        )
         {
             _gameObject = gameObject;
             _body = body;
@@ -92,7 +101,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
 
             DamageSpriteShader = Resources.DamageSpriteShader0;
 
-            _aiComponent.Trigger.Add(DamageTrigger = new AiTriggerCountdown(cooldownTime, DamageTick, FinishDamage));
+            _aiComponent.Trigger.Add(
+                DamageTrigger = new AiTriggerCountdown(cooldownTime, DamageTick, FinishDamage)
+            );
             if (hasDamageState)
                 _aiComponent.States.Add("damage", new AiState());
 
@@ -103,7 +114,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             var stateBurning = new AiState(UpdateBurning) { Init = InitBurning };
             var stateDamageDeath = new AiState { Init = () => OnDeath(false) };
 
-            _aiComponent.Trigger.Add(_deathCountdown = new AiTriggerCountdown(cooldownTime, DeathTick, () => DeathTick(0)));
+            _aiComponent.Trigger.Add(
+                _deathCountdown = new AiTriggerCountdown(
+                    cooldownTime,
+                    DeathTick,
+                    () => DeathTick(0)
+                )
+            );
 
             _aiComponent.States.Add("knockBack", stateKnockBack);
             _aiComponent.States.Add("pieceOfPower", statePieceOfPower);
@@ -117,20 +134,28 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             OnDeath = OnDeathBoss;
 
             var stateDeath = new AiState(UpdateDeath);
-            stateDeath.Trigger.Add(new AiTriggerCountdown(3000 / BlinkTime * BlinkTime, UpdateBlink, deathAnimationEnd));
+            stateDeath.Trigger.Add(
+                new AiTriggerCountdown(3000 / BlinkTime * BlinkTime, UpdateBlink, deathAnimationEnd)
+            );
 
             _aiComponent.States.Add("deathBoss", stateDeath);
         }
 
         public bool IsInDamageState()
         {
-            return DamageTrigger.CurrentTime > 0 ||
-                _aiComponent.CurrentStateId == "knockBack" ||
-                _aiComponent.CurrentStateId == "burning" ||
-                _aiComponent.CurrentStateId == "pieceOfPower";
+            return DamageTrigger.CurrentTime > 0
+                || _aiComponent.CurrentStateId == "knockBack"
+                || _aiComponent.CurrentStateId == "burning"
+                || _aiComponent.CurrentStateId == "pieceOfPower";
         }
 
-        public Values.HitCollision HitKnockBack(GameObject gameObject, Vector2 direction, HitType hitType, bool pieceOfPower, bool blink = true)
+        public Values.HitCollision HitKnockBack(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            bool pieceOfPower,
+            bool blink = true
+        )
         {
             if (!IsActive || IsInDamageState())
                 return Values.HitCollision.None;
@@ -156,14 +181,25 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             return Values.HitCollision.Enemy;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // Don't register a hit if object is not active, is not in damage state, or is not pegasus boots types.
-            if (!IsActive || IsInDamageState() || hitType == HitType.PegasusBootsPush || hitType == HitType.CrystalSmash)
+            if (
+                !IsActive
+                || IsInDamageState()
+                || hitType == HitType.PegasusBootsPush
+                || hitType == HitType.CrystalSmash
+            )
                 return Values.HitCollision.None;
 
             // Directly delete the GameObject if the attack comes from Bow Wow.
@@ -289,8 +325,22 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             if (_pieceOfPowerCounter <= 0)
             {
                 _pieceOfPowerCounter = 80;
-                var animation = new ObjAnimator(_gameObject.Map, 0, 0, 0, 0, Values.LayerPlayer, "Particles/pieceOfPowerTrail", "run", true);
-                var aniOffset = new Vector3(_body.OffsetX + _body.Width / 2f, _body.OffsetY + _body.Height / 2f, 0);
+                var animation = new ObjAnimator(
+                    _gameObject.Map,
+                    0,
+                    0,
+                    0,
+                    0,
+                    Values.LayerPlayer,
+                    "Particles/pieceOfPowerTrail",
+                    "run",
+                    true
+                );
+                var aniOffset = new Vector3(
+                    _body.OffsetX + _body.Width / 2f,
+                    _body.OffsetY + _body.Height / 2f,
+                    0
+                );
                 animation.EntityPosition.Set(_body.Position.ToVector3() + aniOffset);
                 Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(animation);
                 _pieceOfPowerDeathCount++;
@@ -298,7 +348,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             _pieceOfPowerCounter -= Game1.DeltaTime;
 
             // Filter out any extremely small velocities.
-            float epsilon  = 0.001f;
+            float epsilon = 0.001f;
 
             // Store the current velocities so they can be referenced.
             var bodyVelX = _body.Velocity.X;
@@ -306,13 +356,17 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             var lastCollision = _body.LastVelocityCollision;
 
             // Test for collision along the X axis.
-            bool collideL = (bodyVelX < -epsilon) && (lastCollision & Values.BodyCollision.Left) != 0;
-            bool collideR = (bodyVelX > epsilon) && (lastCollision & Values.BodyCollision.Right) != 0;
+            bool collideL =
+                (bodyVelX < -epsilon) && (lastCollision & Values.BodyCollision.Left) != 0;
+            bool collideR =
+                (bodyVelX > epsilon) && (lastCollision & Values.BodyCollision.Right) != 0;
             bool blockedX = collideL || collideR;
 
             // Test for collision along the Y axis.
-            bool collideT = (bodyVelY < -epsilon) && (lastCollision & Values.BodyCollision.Top) != 0;
-            bool collideB = (bodyVelY > epsilon) && (lastCollision & Values.BodyCollision.Bottom) != 0;
+            bool collideT =
+                (bodyVelY < -epsilon) && (lastCollision & Values.BodyCollision.Top) != 0;
+            bool collideB =
+                (bodyVelY > epsilon) && (lastCollision & Values.BodyCollision.Bottom) != 0;
             bool blockedY = collideT || collideB;
 
             // If a collision took place then cancel the corresponding velocity.
@@ -324,7 +378,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             // Glide on the wall depending on the angle the body moved towards the wall.
             bool collisionX = blockedX && MathF.Abs(bodyVelX) > MathF.Abs(bodyVelY);
             bool collisionY = blockedY && MathF.Abs(bodyVelY) > MathF.Abs(bodyVelX);
-            bool collision  = collisionX || collisionY;
+            bool collision = collisionX || collisionY;
 
             // If both collisions happened or the counter has reached 5 iterations.
             if ((collision && _pieceOfPowerDeathCount > 1) || (_pieceOfPowerDeathCount > 5))
@@ -357,9 +411,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             burnAnimator.EntityPosition.Set(_gameObject.EntityPosition.Position);
 
             // Move the animation with the game object.
-            burnAnimator.EntityPosition.SetParent(_gameObject.EntityPosition,
-                new Vector2((int)(_body.OffsetX + _body.Width / 2) + FlameOffset.X,
-                            (int)(_body.OffsetY + _body.Height) - 8 + FlameOffset.Y));
+            burnAnimator.EntityPosition.SetParent(
+                _gameObject.EntityPosition,
+                new Vector2(
+                    (int)(_body.OffsetX + _body.Width / 2) + FlameOffset.X,
+                    (int)(_body.OffsetY + _body.Height) - 8 + FlameOffset.Y
+                )
+            );
 
             // Remove the burning sprite if the ai state changes (e.g. by falling down a hole).
             var prevFrameChange = burnAnimator.Animator.OnFrameChange;
@@ -378,7 +436,9 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 FinishBurning();
             };
             Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(burnAnimator);
-            Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(burnAnimator);
+            Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(
+                burnAnimator
+            );
         }
 
         private void UpdateBurning()
@@ -395,17 +455,22 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private void DamageTick(double time)
         {
             if (_damageBlink)
-                _sprite.SpriteShader = (_cooldownTime - time) % (BlinkTime * 2) < BlinkTime ? DamageSpriteShader : _normalShader;
+                _sprite.SpriteShader =
+                    (_cooldownTime - time) % (BlinkTime * 2) < BlinkTime
+                        ? DamageSpriteShader
+                        : _normalShader;
         }
 
         private void FinishDamage()
         {
             _sprite.SpriteShader = _normalShader;
 
-            if (CurrentLives > 0 &&
-                _aiComponent.CurrentStateId != "pieceOfPower" &&
-                _aiComponent.LastStateId != "pieceOfPower" &&
-                _aiComponent.LastStateId != "knockBack")
+            if (
+                CurrentLives > 0
+                && _aiComponent.CurrentStateId != "pieceOfPower"
+                && _aiComponent.LastStateId != "pieceOfPower"
+                && _aiComponent.LastStateId != "knockBack"
+            )
             {
                 // Go back to the previous state without calling the init methods.
                 if (HasDamageState && _returnState)
@@ -427,7 +492,15 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private void DeathTick(double time)
         {
             // Destroy the enemy when the timer runs out or the velocity is reduced to the threshold.
-            if (time <= 0 || (time < _cooldownTime - 175 && _body.Velocity.Length() < 0.5f && HitMultiplierX > 0 && HitMultiplierY > 0))
+            if (
+                time <= 0
+                || (
+                    time < _cooldownTime - 175
+                    && _body.Velocity.Length() < 0.5f
+                    && HitMultiplierX > 0
+                    && HitMultiplierY > 0
+                )
+            )
             {
                 if (_pieceOfPower)
                 {
@@ -442,7 +515,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private void UpdateBlink(double time)
         {
             var blinkTime = BlinkTime;
-            _sprite.SpriteShader = time % (blinkTime * 2) >= blinkTime ? DamageSpriteShader : _normalShader;
+            _sprite.SpriteShader =
+                time % (blinkTime * 2) >= blinkTime ? DamageSpriteShader : _normalShader;
         }
 
         private void UpdateDeath()
@@ -455,11 +529,29 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             if (PlayDeathExplosions)
                 Game1.GameManager.PlaySoundEffect("D378-19-13");
 
-            var posX = (int)_gameObject.EntityPosition.X - ExplostionWidth / 2 + Game1.RandomNumber.Next(0, ExplostionWidth) - 8;
-            var posY = (int)_gameObject.EntityPosition.Y - (int)_gameObject.EntityPosition.Z + ExplosionOffsetY - ExplostionHeight + Game1.RandomNumber.Next(0, ExplostionHeight) - 8;
+            var posX =
+                (int)_gameObject.EntityPosition.X
+                - ExplostionWidth / 2
+                + Game1.RandomNumber.Next(0, ExplostionWidth)
+                - 8;
+            var posY =
+                (int)_gameObject.EntityPosition.Y
+                - (int)_gameObject.EntityPosition.Z
+                + ExplosionOffsetY
+                - ExplostionHeight
+                + Game1.RandomNumber.Next(0, ExplostionHeight)
+                - 8;
 
             // Spawn the particle effect just before the explosion.
-            var explosionAnimation = new ObjAnimator(_gameObject.Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true);
+            var explosionAnimation = new ObjAnimator(
+                _gameObject.Map,
+                posX,
+                posY,
+                Values.LayerTop,
+                "Particles/spawn",
+                "run",
+                true
+            );
             _gameObject.Map.Objects.SpawnObject(explosionAnimation);
             _gameObject.Map.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
         }
@@ -506,17 +598,35 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 {
                     var posX = (int)bodyCenter.X;
                     var posY = (int)(bodyCenter.Y);
-                    var explosionAnimation = new ObjDeathExplodeEffect(_gameObject.Map, posX, posY, -12, -12, false);
+                    var explosionAnimation = new ObjDeathExplodeEffect(
+                        _gameObject.Map,
+                        posX,
+                        posY,
+                        -12,
+                        -12,
+                        false
+                    );
                     Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(explosionAnimation);
-                    Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
+                    Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(
+                        explosionAnimation
+                    );
                 }
                 else
                 {
                     var posX = (int)bodyCenter.X;
                     var posY = (int)bodyCenter.Y;
-                    var explosionAnimation = new ObjDeathExplodeEffect(_gameObject.Map, posX, posY, 0, 0, true);
+                    var explosionAnimation = new ObjDeathExplodeEffect(
+                        _gameObject.Map,
+                        posX,
+                        posY,
+                        0,
+                        0,
+                        true
+                    );
                     Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(explosionAnimation);
-                    Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
+                    Game1.GameManager.MapManager.CurrentMap.Objects.RegisterAlwaysAnimateObject(
+                        explosionAnimation
+                    );
                 }
             }
             if (!SpawnItems)
@@ -528,7 +638,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             Game1.GameManager.KillCount++;
 
             // Check to see if a powerup is currently active.
-            bool powerupActive = Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive;
+            bool powerupActive =
+                Game1.GameManager.PieceOfPowerIsActive || Game1.GameManager.GuardianAcornIsActive;
 
             // Piece of Power Conditions:
             // Set up now to make things easier later. It's a 25% chance to spawn between 40-44 enemies killed with a guaranteed spawn at 45.
@@ -538,11 +649,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             // If the count is 45 or higher then trigger the threshold.
             if (count >= 45)
                 pop_threshold = count;
-
             // If a dice roll of 25% lands between 40 and 44, track the threshold.
             else if (count >= 40 && Random.Shared.NextDouble() < 0.25)
                 pop_threshold = count;
-            
+
             // Guardian Acorn Conditions:
             // Kill 12 enemies without getting hit. Easy enough.
             int acorn_threshold = Game1.GameManager.GuardianAcornCount;
@@ -565,19 +675,34 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             }
 
             // Spawn: Guardian Acorn.
-            // A simpler check since it's a static 12 kills. 
+            // A simpler check since it's a static 12 kills.
             if (acorn_threshold >= 12)
             {
                 Game1.GameManager.GuardianAcornCount -= acorn_threshold;
                 if (!powerupActive)
                 {
-                    var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, "guardianAcorn", null, true);
-                    objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
+                    var objItem = new ObjItem(
+                        _gameObject.Map,
+                        0,
+                        0,
+                        "j",
+                        null,
+                        "guardianAcorn",
+                        null,
+                        true
+                    );
+                    objItem.EntityPosition.Set(
+                        new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z)
+                    );
                     _gameObject.Map.Objects.SpawnObject(objItem);
-                    objItem.SpriteShadow = new ObjSpriteShadow(_gameObject.Map, objItem, Values.LayerPlayer, "sprshadowm");
+                    objItem.SpriteShadow = new ObjSpriteShadow(
+                        _gameObject.Map,
+                        objItem,
+                        Values.LayerPlayer,
+                        "sprshadowm"
+                    );
                 }
             }
-            
             // Spawn: Piece of Power:
             // When the threshold was met, subtract the triggering value and spawn a piece of power.
             else if (pop_threshold > 0)
@@ -585,25 +710,52 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
                 Game1.GameManager.PieceOfPowerCount -= pop_threshold;
                 if (!powerupActive)
                 {
-                    var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, "pieceOfPower", null, true);
-                    objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
+                    var objItem = new ObjItem(
+                        _gameObject.Map,
+                        0,
+                        0,
+                        "j",
+                        null,
+                        "pieceOfPower",
+                        null,
+                        true
+                    );
+                    objItem.EntityPosition.Set(
+                        new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z)
+                    );
                     _gameObject.Map.Objects.SpawnObject(objItem);
-                    objItem.SpriteShadow = new ObjSpriteShadow(_gameObject.Map, objItem, Values.LayerPlayer, "sprshadowm");
+                    objItem.SpriteShadow = new ObjSpriteShadow(
+                        _gameObject.Map,
+                        objItem,
+                        Values.LayerPlayer,
+                        "sprshadowm"
+                    );
                 }
             }
-            
             // Spawn: Heart or Rupee
             // The powerups take priority even though the logic for this drop was done first.
             else if (strObject != null)
             {
                 var objItem = new ObjItem(_gameObject.Map, 0, 0, "j", null, strObject, null, true);
-                objItem.EntityPosition.Set(new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z));
+                objItem.EntityPosition.Set(
+                    new Vector3(bodyCenter.X, bodyCenter.Y, _body.Position.Z)
+                );
                 _gameObject.Map.Objects.SpawnObject(objItem);
 
                 if (strObject == "heart")
-                    objItem.SpriteShadow = new ObjSpriteShadow(_gameObject.Map, objItem, Values.LayerPlayer, "sprshadows");
+                    objItem.SpriteShadow = new ObjSpriteShadow(
+                        _gameObject.Map,
+                        objItem,
+                        Values.LayerPlayer,
+                        "sprshadows"
+                    );
                 else
-                    objItem.SpriteShadow = new ObjSpriteShadow(_gameObject.Map, objItem, Values.LayerPlayer, "sprshadowm");
+                    objItem.SpriteShadow = new ObjSpriteShadow(
+                        _gameObject.Map,
+                        objItem,
+                        Values.LayerPlayer,
+                        "sprshadowm"
+                    );
             }
         }
     }

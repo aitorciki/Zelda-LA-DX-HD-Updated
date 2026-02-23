@@ -38,9 +38,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _damaged;
         private bool _hasSpawned;
 
-        public BossHotHead() : base("hot head") { }
+        public BossHotHead()
+            : base("hot head") { }
 
-        public BossHotHead(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public BossHotHead(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -50,8 +52,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _spawnPosition = EntityPosition.Position;
             _saveKey = saveKey;
 
-            if (!string.IsNullOrEmpty(saveKey) &&
-                Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 SpawnHeart();
                 IsDead = true;
@@ -79,12 +83,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             stateEndIdle.Trigger.Add(new AiTriggerCountdown(1000, null, EndIdle));
             var stateJumping = new AiState(UpdateJumping) { Init = InitJump };
             var stateHidden = new AiState() { Init = InitHidden };
-            stateHidden.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("jumping")));
+            stateHidden.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("jumping"))
+            );
             var stateDamaged = new AiState() { Init = InitDamaged };
             stateDamaged.Trigger.Add(new AiTriggerCountdown(1000, TickDamaged, DamageEnd));
             var stateMoving = new AiState(UpdateMoving) { Init = InitMoving };
-            stateMoving.Trigger.Add(new AiTriggerCountdown(100, null, UpdateFaceTrail) { ResetAfterEnd = true });
-            stateMoving.Trigger.Add(_hitMoveReset = new AiTriggerCountdown(200, null, ContinueMoving, false));
+            stateMoving.Trigger.Add(
+                new AiTriggerCountdown(100, null, UpdateFaceTrail) { ResetAfterEnd = true }
+            );
+            stateMoving.Trigger.Add(
+                _hitMoveReset = new AiTriggerCountdown(200, null, ContinueMoving, false)
+            );
             stateMoving.Trigger.Add(new AiTriggerCountdown(2500, null, FallDown));
             var stateBreaking = new AiState() { Init = InitBreaking };
             stateBreaking.Trigger.Add(new AiTriggerCountdown(1000, TickDamaged, BreakingEnd));
@@ -105,14 +115,22 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("broken", stateBroken);
             _aiComponent.States.Add("freeze", stateFrozen);
             _aiComponent.States.Add("dead", stateDead);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            )
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 4,
                 BossHitSound = true,
                 PlayDeathSound = false,
-                PlayDeathExplosions = true
+                PlayDeathExplosions = true,
             };
             _damageState.AddBossDamageState(OnDeath);
 
@@ -124,13 +142,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 8, true);
             var hittableBox = new CBox(EntityPosition, -8, -14, 0, 16, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 16));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 16)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, drawPosition));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 20, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, drawPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 20, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
@@ -159,13 +189,19 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void InitJump()
         {
-            var newPosition = new Vector2(_body.FieldRectangle.Center.X - 8, _body.FieldRectangle.Center.Y);
+            var newPosition = new Vector2(
+                _body.FieldRectangle.Center.X - 8,
+                _body.FieldRectangle.Center.Y
+            );
             var dir = Game1.RandomNumber.Next(0, 2) * 2 - 1;
             newPosition.X = MathF.Round(newPosition.X) - dir * Game1.RandomNumber.Next(24, 32);
             newPosition.Y = MathF.Round(newPosition.Y) - 14 + Game1.RandomNumber.Next(0, 36);
             EntityPosition.Set(newPosition);
 
-            _body.VelocityTarget = new Vector2(dir * 1.35f, (Game1.RandomNumber.Next(0, 9) - 4) / 12f);
+            _body.VelocityTarget = new Vector2(
+                dir * 1.35f,
+                (Game1.RandomNumber.Next(0, 9) - 4) / 12f
+            );
             _body.Velocity.Z = 1.5f;
 
             _sprite.IsVisible = true;
@@ -242,14 +278,35 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity = Vector3.Zero;
             _animator.Play("red");
 
-            Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X - 16, (int)(EntityPosition.Y - EntityPosition.Z - 32), Values.LayerPlayer, "Particles/spawn", "run", true));
-            Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X, (int)(EntityPosition.Y - EntityPosition.Z - 32), Values.LayerPlayer, "Particles/spawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X - 16,
+                    (int)(EntityPosition.Y - EntityPosition.Z - 32),
+                    Values.LayerPlayer,
+                    "Particles/spawn",
+                    "run",
+                    true
+                )
+            );
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)(EntityPosition.Y - EntityPosition.Z - 32),
+                    Values.LayerPlayer,
+                    "Particles/spawn",
+                    "run",
+                    true
+                )
+            );
         }
 
         private void TickDamaged(double counter)
         {
             // 2 frames to move left to right
-            _animationComponent.SpriteOffset.X = MathF.Sin((float)Game1.TotalGameTime / 1000f * 30 * MathF.PI) / 2f;
+            _animationComponent.SpriteOffset.X =
+                MathF.Sin((float)Game1.TotalGameTime / 1000f * 30 * MathF.PI) / 2f;
             _animationComponent.UpdateSprite();
         }
 
@@ -284,24 +341,74 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animator.Play("damaged");
             _aiComponent.ChangeState("broken");
 
-            Map.Objects.SpawnObject(new BossHotHeadFace(Map, new Vector3(EntityPosition.X - 7, EntityPosition.Y, EntityPosition.Z), new Vector3(-1, 0.125f, 0.25f), "face_left"));
-            Map.Objects.SpawnObject(new BossHotHeadFace(Map, new Vector3(EntityPosition.X + 7, EntityPosition.Y, EntityPosition.Z), new Vector3(1, 0.125f, 0.25f), "face_right"));
+            Map.Objects.SpawnObject(
+                new BossHotHeadFace(
+                    Map,
+                    new Vector3(EntityPosition.X - 7, EntityPosition.Y, EntityPosition.Z),
+                    new Vector3(-1, 0.125f, 0.25f),
+                    "face_left"
+                )
+            );
+            Map.Objects.SpawnObject(
+                new BossHotHeadFace(
+                    Map,
+                    new Vector3(EntityPosition.X + 7, EntityPosition.Y, EntityPosition.Z),
+                    new Vector3(1, 0.125f, 0.25f),
+                    "face_right"
+                )
+            );
         }
 
         private void SpawnSplashAnimation()
         {
-            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerPlayer, "Nightmares/hot head", "splash", true);
-            splashAnimator.EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y + 0.01f));
+            var splashAnimator = new ObjAnimator(
+                Map,
+                0,
+                0,
+                0,
+                0,
+                Values.LayerPlayer,
+                "Nightmares/hot head",
+                "splash",
+                true
+            );
+            splashAnimator.EntityPosition.Set(
+                new Vector2(EntityPosition.X, EntityPosition.Y + 0.01f)
+            );
             Map.Objects.SpawnObject(splashAnimator);
         }
 
         private void SpawnSplashParticles()
         {
             var speedMult = 0.65f;
-            Map.Objects.SpawnObject(new BossHotHeadSplash(Map, new Vector2(EntityPosition.X - 8, EntityPosition.Y - 8), new Vector2(-1, -1) * speedMult));
-            Map.Objects.SpawnObject(new BossHotHeadSplash(Map, new Vector2(EntityPosition.X - 8, EntityPosition.Y), new Vector2(-1, 1) * speedMult));
-            Map.Objects.SpawnObject(new BossHotHeadSplash(Map, new Vector2(EntityPosition.X + 8, EntityPosition.Y - 8), new Vector2(1, -1) * speedMult));
-            Map.Objects.SpawnObject(new BossHotHeadSplash(Map, new Vector2(EntityPosition.X + 8, EntityPosition.Y), new Vector2(1, 1) * speedMult));
+            Map.Objects.SpawnObject(
+                new BossHotHeadSplash(
+                    Map,
+                    new Vector2(EntityPosition.X - 8, EntityPosition.Y - 8),
+                    new Vector2(-1, -1) * speedMult
+                )
+            );
+            Map.Objects.SpawnObject(
+                new BossHotHeadSplash(
+                    Map,
+                    new Vector2(EntityPosition.X - 8, EntityPosition.Y),
+                    new Vector2(-1, 1) * speedMult
+                )
+            );
+            Map.Objects.SpawnObject(
+                new BossHotHeadSplash(
+                    Map,
+                    new Vector2(EntityPosition.X + 8, EntityPosition.Y - 8),
+                    new Vector2(1, -1) * speedMult
+                )
+            );
+            Map.Objects.SpawnObject(
+                new BossHotHeadSplash(
+                    Map,
+                    new Vector2(EntityPosition.X + 8, EntityPosition.Y),
+                    new Vector2(1, 1) * speedMult
+                )
+            );
         }
 
         private void Draw(SpriteBatch spriteBatch)
@@ -325,20 +432,43 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Map.Objects.DeleteObjects.Add(this);
 
             // spawn big heart
-            var spawnPosition = new Vector2((int)(MapManager.ObjLink.EntityPosition.X / 16) * 16, (int)((MapManager.ObjLink.EntityPosition.Y - 1) / 16) * 16);
+            var spawnPosition = new Vector2(
+                (int)(MapManager.ObjLink.EntityPosition.X / 16) * 16,
+                (int)((MapManager.ObjLink.EntityPosition.Y - 1) / 16) * 16
+            );
 
-            // make sure to not spawn the heart over the lava   
+            // make sure to not spawn the heart over the lava
             if (Map.GetFieldState(spawnPosition) != MapStates.FieldStates.None)
                 spawnPosition = new Vector2((int)_spawnPosition.X, (int)_spawnPosition.Y + 32);
 
             Game1.GameManager.PlaySoundEffect("D378-26-1A");
 
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, "j", "d8_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)spawnPosition.X,
+                    (int)spawnPosition.Y,
+                    "j",
+                    "d8_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
 
         private void SpawnHeart()
         {
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)_spawnPosition.X, (int)_spawnPosition.Y + 32, "j", "d8_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)_spawnPosition.X,
+                    (int)_spawnPosition.Y + 32,
+                    "j",
+                    "d8_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
 
         private void OnMoveCollision(Values.BodyCollision collision)
@@ -352,7 +482,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -363,11 +499,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _damageField.IsActive = false;
                 _hitComponent.IsActive = false;
             }
-            if ((hitType != HitType.MagicRod && hitType != HitType.SwordShot) || _damageState.CurrentLives <= 0)
+            if (
+                (hitType != HitType.MagicRod && hitType != HitType.SwordShot)
+                || _damageState.CurrentLives <= 0
+            )
                 return Values.HitCollision.None;
 
-            if (_aiComponent.CurrentStateId == "breaking" || _aiComponent.CurrentStateId == "broken" ||
-                _damageState.IsInDamageState())
+            if (
+                _aiComponent.CurrentStateId == "breaking"
+                || _aiComponent.CurrentStateId == "broken"
+                || _damageState.IsInDamageState()
+            )
                 return Values.HitCollision.Enemy;
 
             // flame jump => damaged
@@ -410,7 +552,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 // freeze in the air + show final dialog
                 if (_damageState.CurrentLives <= 0)
                 {
-                    Game1.GameManager.SetMusic(93,2);
+                    Game1.GameManager.SetMusic(93, 2);
                     Game1.GameManager.PlaySoundEffect("D370-16-10");
 
                     _body.IsActive = false;

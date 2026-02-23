@@ -24,7 +24,7 @@ namespace ProjectZ.Editor
             1000 / 120.0,
             1000 / 144.0,
             1000 / 288.0,
-            1
+            1,
         };
 
         private Game1 _game;
@@ -60,11 +60,13 @@ namespace ProjectZ.Editor
             if (InputHandler.KeyPressed(Game1.DebugShadowKey))
                 GameSettings.EnableShadows = !GameSettings.EnableShadows;
 
-            if (Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditor &&
-                Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTileset &&
-                Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTilesetExtractor &&
-                Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation &&
-                Game1.ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor)
+            if (
+                Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditor
+                && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTileset
+                && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTilesetExtractor
+                && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation
+                && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor
+            )
             {
                 if (InputHandler.KeyPressed(Keys.D0))
                     _game.TriggerFpsSettings();
@@ -74,24 +76,34 @@ namespace ProjectZ.Editor
                     _currentFrameTimeIndex--;
                     if (_currentFrameTimeIndex < 0)
                         _currentFrameTimeIndex = _debugFrameTimes.Length - 1;
-                    _game.TargetElapsedTime = new TimeSpan((long)Math.Ceiling(_debugFrameTimes[_currentFrameTimeIndex] * 10000));
+                    _game.TargetElapsedTime = new TimeSpan(
+                        (long)Math.Ceiling(_debugFrameTimes[_currentFrameTimeIndex] * 10000)
+                    );
                 }
                 if (InputHandler.KeyPressed(Keys.D2))
                 {
                     _currentFrameTimeIndex = (_currentFrameTimeIndex + 1) % _debugFrameTimes.Length;
-                    _game.TargetElapsedTime = new TimeSpan((long)Math.Ceiling(_debugFrameTimes[_currentFrameTimeIndex] * 10000));
+                    _game.TargetElapsedTime = new TimeSpan(
+                        (long)Math.Ceiling(_debugFrameTimes[_currentFrameTimeIndex] * 10000)
+                    );
                 }
             }
             if (InputHandler.KeyPressed(Keys.Escape) || InputHandler.KeyPressed(Keys.OemPeriod))
             {
-                if (Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditor &&
-                    Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTileset &&
-                    Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTilesetExtractor &&
-                    Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation &&
-                    Game1.ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor)
+                if (
+                    Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditor
+                    && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorTileset
+                    && Game1.ScreenManager.CurrentScreenId
+                        != Values.ScreenNameEditorTilesetExtractor
+                    && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameEditorAnimation
+                    && Game1.ScreenManager.CurrentScreenId != Values.ScreenNameSpriteAtlasEditor
+                )
                 {
                     InputHandler.EnableTextInput();
-                    Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+                    Game1.UiPageManager.PopAllPages(
+                        PageManager.TransitionAnimation.TopToBottom,
+                        PageManager.TransitionAnimation.TopToBottom
+                    );
                     _lastGameScreen = Game1.ScreenManager.CurrentScreenId;
                     Game1.ScreenManager.ChangeScreen(_lastEditorScreen);
                 }
@@ -101,12 +113,16 @@ namespace ProjectZ.Editor
                     _lastEditorScreen = Game1.ScreenManager.CurrentScreenId;
                     Game1.ScreenManager.ChangeScreen(_lastGameScreen);
 
-                    var editorScreen = (MapEditorScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameEditor);
+                    var editorScreen = (MapEditorScreen)
+                        Game1.ScreenManager.GetScreen(Values.ScreenNameEditor);
 
                     if (_lastEditorScreen == Values.ScreenNameEditor)
-                        MapManager.ObjLink.SetPosition(new Vector2(
-                            editorScreen.MousePixelPosition.X,
-                            editorScreen.MousePixelPosition.Y));
+                        MapManager.ObjLink.SetPosition(
+                            new Vector2(
+                                editorScreen.MousePixelPosition.X,
+                                editorScreen.MousePixelPosition.Y
+                            )
+                        );
                 }
             }
             if (InputHandler.KeyPressed(Game1.DebugToggleDebugModeKey))
@@ -129,46 +145,129 @@ namespace ProjectZ.Editor
 
         public void SetUpEditorUi()
         {
-            var strScreen = $"{Values.EditorUiObjectEditor}:" +
-                            $"{Values.EditorUiObjectSelection}:" +
-                            $"{Values.EditorUiTileEditor}:" +
-                            $"{Values.EditorUiTileSelection}:" +
-                            $"{Values.EditorUiDigTileEditor}:" +
-                            $"{Values.EditorUiMusicTileEditor}:" +
-                            $"{Values.EditorUiTileExtractor}:" +
-                            $"{Values.EditorUiTilesetEditor}:" +
-                            $"{Values.EditorUiAnimation}:" +
-                            $"{Values.EditorUiSpriteAtlas}";
+            var strScreen =
+                $"{Values.EditorUiObjectEditor}:"
+                + $"{Values.EditorUiObjectSelection}:"
+                + $"{Values.EditorUiTileEditor}:"
+                + $"{Values.EditorUiTileSelection}:"
+                + $"{Values.EditorUiDigTileEditor}:"
+                + $"{Values.EditorUiMusicTileEditor}:"
+                + $"{Values.EditorUiTileExtractor}:"
+                + $"{Values.EditorUiTilesetEditor}:"
+                + $"{Values.EditorUiAnimation}:"
+                + $"{Values.EditorUiSpriteAtlas}";
 
-            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, Game1.WindowWidth, Values.ToolBarHeight),
-                "top", strScreen, Values.ColorBackgroundDark, Color.White,
-                ui => { ui.Rectangle = new Rectangle(0, 0, Game1.WindowWidth, Values.ToolBarHeight); }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    new Rectangle(0, 0, Game1.WindowWidth, Values.ToolBarHeight),
+                    "top",
+                    strScreen,
+                    Values.ColorBackgroundDark,
+                    Color.White,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(0, 0, Game1.WindowWidth, Values.ToolBarHeight);
+                    }
+                )
+            );
 
             var pos = 0;
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(0, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditor; },
-                element => { Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditor); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(0, 0, 200, Values.ToolBarHeight),
+                    Resources.EditorFont,
+                    "Editor",
+                    "bt1",
+                    strScreen,
+                    ui =>
+                    {
+                        ((UiButton)ui).Marked =
+                            Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditor;
+                    },
+                    element =>
+                    {
+                        Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditor);
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Tileset Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditorTileset; },
-                element => { Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditorTileset); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight),
+                    Resources.EditorFont,
+                    "Tileset Editor",
+                    "bt1",
+                    strScreen,
+                    ui =>
+                    {
+                        ((UiButton)ui).Marked =
+                            Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditorTileset;
+                    },
+                    element =>
+                    {
+                        Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditorTileset);
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Tileset Extractor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditorTilesetExtractor; },
-                element => { Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditorTilesetExtractor); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight),
+                    Resources.EditorFont,
+                    "Tileset Extractor",
+                    "bt1",
+                    strScreen,
+                    ui =>
+                    {
+                        ((UiButton)ui).Marked =
+                            Game1.ScreenManager.CurrentScreenId
+                            == Values.ScreenNameEditorTilesetExtractor;
+                    },
+                    element =>
+                    {
+                        Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditorTilesetExtractor);
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Animation Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditorAnimation; },
-                element => { Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditorAnimation); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight),
+                    Resources.EditorFont,
+                    "Animation Editor",
+                    "bt1",
+                    strScreen,
+                    ui =>
+                    {
+                        ((UiButton)ui).Marked =
+                            Game1.ScreenManager.CurrentScreenId == Values.ScreenNameEditorAnimation;
+                    },
+                    element =>
+                    {
+                        Game1.ScreenManager.ChangeScreen(Values.ScreenNameEditorAnimation);
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight), Resources.EditorFont,
-                "Sprite Atlas Editor", "bt1", strScreen,
-                ui => { ((UiButton)ui).Marked = Game1.ScreenManager.CurrentScreenId == Values.ScreenNameSpriteAtlasEditor; },
-                element => { Game1.ScreenManager.ChangeScreen(Values.ScreenNameSpriteAtlasEditor); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(pos += 205, 0, 200, Values.ToolBarHeight),
+                    Resources.EditorFont,
+                    "Sprite Atlas Editor",
+                    "bt1",
+                    strScreen,
+                    ui =>
+                    {
+                        ((UiButton)ui).Marked =
+                            Game1.ScreenManager.CurrentScreenId
+                            == Values.ScreenNameSpriteAtlasEditor;
+                    },
+                    element =>
+                    {
+                        Game1.ScreenManager.ChangeScreen(Values.ScreenNameSpriteAtlasEditor);
+                    }
+                )
+            );
         }
     }
 }

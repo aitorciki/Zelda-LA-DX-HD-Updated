@@ -32,17 +32,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _punishCount;
         private bool _showThunder;
 
-        public ObjBat() : base("npc_bat") { }
+        public ObjBat()
+            : base("npc_bat") { }
 
-        public ObjBat(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public ObjBat(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
             // was already spawned?
             _strKey = strKey;
-            if (!string.IsNullOrEmpty(_strKey) &&
-                Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -55,20 +59,29 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _goalPosition = new Vector2(_spawnPosition.X, _spawnPosition.Y - 35);
 
             _sprite = new CSprite(EntityPosition) { IsVisible = false };
-            var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero) { UpdateWithOpenDialog = true };
+            var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero)
+            {
+                UpdateWithOpenDialog = true,
+            };
 
             var stateIdle = new AiState();
             var stateSpawning = new AiState(UpdateLockPlayer) { Init = InitSpawn };
-            stateSpawning.Trigger.Add(new AiTriggerCountdown(SpawnTime, TickSpawn, () => TickSpawn(0)));
+            stateSpawning.Trigger.Add(
+                new AiTriggerCountdown(SpawnTime, TickSpawn, () => TickSpawn(0))
+            );
             var stateWaiting = new AiState(UpdateLockPlayer);
             stateWaiting.Trigger.Add(new AiTriggerCountdown(1500, null, ToBat));
             var stateBat = new AiState(UpdateLockPlayer);
             stateBat.Trigger.Add(new AiTriggerCountdown(1300, null, StartDialog));
             var stateThunder = new AiState(UpdateThunder);
             var statePreDespawn = new AiState(UpdateLockPlayer);
-            statePreDespawn.Trigger.Add(new AiTriggerCountdown(125, null, () => _aiComponent.ChangeState("despawn")));
+            statePreDespawn.Trigger.Add(
+                new AiTriggerCountdown(125, null, () => _aiComponent.ChangeState("despawn"))
+            );
             var stateDespawn = new AiState() { Init = InitDespawn };
-            stateDespawn.Trigger.Add(new AiTriggerCountdown(DespawnTime, TickDespawn, () => TickDespawn(0)));
+            stateDespawn.Trigger.Add(
+                new AiTriggerCountdown(DespawnTime, TickDespawn, () => TickDespawn(0))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
@@ -84,9 +97,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             //AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
 
             Game1.GameManager.SaveManager.SetString("npcBatThunder", "0");
 
@@ -102,7 +121,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 EndThunder();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // spawn the bat?
             if (_aiComponent.CurrentStateId == "idle" && hitType == HitType.MagicPowder)
@@ -128,8 +153,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _sprite.IsVisible = true;
 
             // spawn effect
-            var objAnimation = new ObjAnimator(Map,
-                (int)_spawnPosition.X - 8, (int)_spawnPosition.Y - 8, Values.LayerBottom, "Particles/spawn", "run", true);
+            var objAnimation = new ObjAnimator(
+                Map,
+                (int)_spawnPosition.X - 8,
+                (int)_spawnPosition.Y - 8,
+                Values.LayerBottom,
+                "Particles/spawn",
+                "run",
+                true
+            );
             Map.Objects.SpawnObject(objAnimation);
         }
 
@@ -164,8 +196,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.PlaySoundEffect("D378-12-0C");
 
             // spawn effect
-            var objAnimation = new ObjAnimator(Map,
-                (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/explosionBomb", "run", true);
+            var objAnimation = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                Values.LayerTop,
+                "Particles/explosionBomb",
+                "run",
+                true
+            );
             Map.Objects.SpawnObject(objAnimation);
         }
 
@@ -212,7 +251,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (state > 0)
             {
                 var amount = (float)(state / DespawnTime);
-                var newPosition = Vector2.Lerp(new Vector2(_goalPosition.X, _goalPosition.Y - 32), _goalPosition, MathF.Sin(amount * (MathF.PI / 2)));
+                var newPosition = Vector2.Lerp(
+                    new Vector2(_goalPosition.X, _goalPosition.Y - 32),
+                    _goalPosition,
+                    MathF.Sin(amount * (MathF.PI / 2))
+                );
                 EntityPosition.Set(newPosition);
                 _sprite.Color = Color.White * (float)Math.Clamp(amount / 0.25, 0, 1);
             }
@@ -234,14 +277,41 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var offsetY = 3;
             var animationOffset = _punishCount % 133 < 66;
             if (_punishCount > 0)
-                spriteBatch.Draw(Resources.SprNpCs, new Vector2(EntityPosition.X - 7, EntityPosition.Y + offsetY),
-                    new Rectangle(_thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0), _thunderTop.Y, _thunderTop.Width, _thunderTop.Height), Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNpCs,
+                    new Vector2(EntityPosition.X - 7, EntityPosition.Y + offsetY),
+                    new Rectangle(
+                        _thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0),
+                        _thunderTop.Y,
+                        _thunderTop.Width,
+                        _thunderTop.Height
+                    ),
+                    Color.White
+                );
             if (_punishCount > 66)
-                spriteBatch.Draw(Resources.SprNpCs, new Vector2(EntityPosition.X - 7, EntityPosition.Y + offsetY + 16),
-                    new Rectangle(_thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0), _thunderTop.Y, _thunderTop.Width, _thunderTop.Height), Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNpCs,
+                    new Vector2(EntityPosition.X - 7, EntityPosition.Y + offsetY + 16),
+                    new Rectangle(
+                        _thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0),
+                        _thunderTop.Y,
+                        _thunderTop.Width,
+                        _thunderTop.Height
+                    ),
+                    Color.White
+                );
             if (_punishCount > 133)
-                spriteBatch.Draw(Resources.SprNpCs, new Vector2(EntityPosition.X - 16, EntityPosition.Y + offsetY + 32),
-                    new Rectangle(_thunderBottom.X + (animationOffset ? _thunderBottom.Width + 1 : 0), _thunderBottom.Y, _thunderBottom.Width, _thunderBottom.Height), Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNpCs,
+                    new Vector2(EntityPosition.X - 16, EntityPosition.Y + offsetY + 32),
+                    new Rectangle(
+                        _thunderBottom.X + (animationOffset ? _thunderBottom.Width + 1 : 0),
+                        _thunderBottom.Y,
+                        _thunderBottom.Width,
+                        _thunderBottom.Height
+                    ),
+                    Color.White
+                );
         }
     }
 }

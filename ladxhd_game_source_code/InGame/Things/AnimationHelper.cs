@@ -7,7 +7,10 @@ namespace ProjectZ.InGame.Things
     {
         public static Vector2[] DirectionOffset =
         {
-            new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1)
+            new Vector2(-1, 0),
+            new Vector2(0, -1),
+            new Vector2(1, 0),
+            new Vector2(0, 1),
         };
 
         /// <summary>
@@ -30,7 +33,9 @@ namespace ProjectZ.InGame.Things
 
         public static int GetDirection(Vector2 direction, float rotationOffset = MathF.PI * 1.25f)
         {
-            var degree = MathHelper.ToDegrees((float)(Math.Atan2(direction.Y, direction.X) + rotationOffset));
+            var degree = MathHelper.ToDegrees(
+                (float)(Math.Atan2(direction.Y, direction.X) + rotationOffset)
+            );
 
             while (degree >= 360)
                 degree -= 360;
@@ -42,7 +47,8 @@ namespace ProjectZ.InGame.Things
         {
             return new Vector2(
                 (float)(Math.Cos(angle) * input.X - Math.Sin(angle) * input.Y),
-                (float)(Math.Sin(angle) * input.X + Math.Cos(angle) * input.Y));
+                (float)(Math.Sin(angle) * input.X + Math.Cos(angle) * input.Y)
+            );
         }
 
         public static float MoveToTarget(float currentValue, float targetValue, float maxAmount)
@@ -58,7 +64,11 @@ namespace ProjectZ.InGame.Things
             return currentValue;
         }
 
-        public static Vector2 MoveToTarget(Vector2 currentVelocity, Vector2 targetVelocity, float maxAmount)
+        public static Vector2 MoveToTarget(
+            Vector2 currentVelocity,
+            Vector2 targetVelocity,
+            float maxAmount
+        )
         {
             var direction = targetVelocity - currentVelocity;
             if (direction.Length() <= maxAmount)

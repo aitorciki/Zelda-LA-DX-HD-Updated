@@ -26,7 +26,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _deathCount;
         private int _deathState;
 
-        public MBossRollingBonesBone(Map.Map map, int posX, int posY, int offset) : base(map)
+        public MBossRollingBonesBone(Map.Map map, int posX, int posY, int offset)
+            : base(map)
         {
             var fieldRectangle = map.GetField(posX, posY, 16);
 
@@ -45,12 +46,27 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             };
             var hittableCollider = new CBox(EntityPosition, 0, 0, 0, 16, 96, 8);
             var damageCollider = new CBox(EntityPosition, 2, 0, 0, 12, 96, 4);
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableCollider, OnHit));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.0f });
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableCollider, OnHit)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+                {
+                    RepelMultiplier = 2.0f,
+                }
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         public void Push(int direction)
@@ -72,7 +88,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _isDying = true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -100,7 +122,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     Game1.GameManager.PlaySoundEffect("D378-04-04");
 
                     // spawn explosion effect
-                    Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y + (6 - _deathState) * 16, Values.LayerBottom, "Particles/spawn", "run", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X,
+                            (int)EntityPosition.Y + (6 - _deathState) * 16,
+                            Values.LayerBottom,
+                            "Particles/spawn",
+                            "run",
+                            true
+                        )
+                    );
 
                     if (_deathState >= 6)
                         Map.Objects.DeleteObjects.Add(this);
@@ -130,7 +162,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // draw the bar
             for (var i = 0; i < 6; i++)
                 if (i < 6 - _deathState)
-                    _animator.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y + 16 * i), Color.White);
+                    _animator.Draw(
+                        spriteBatch,
+                        new Vector2(EntityPosition.X, EntityPosition.Y + 16 * i),
+                        Color.White
+                    );
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)

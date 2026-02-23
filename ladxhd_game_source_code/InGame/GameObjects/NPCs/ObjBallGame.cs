@@ -26,9 +26,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _throwHeight = 12;
         private int _throwDirection = 1;
 
-        public ObjBallGame() : base("green_child") { }
+        public ObjBallGame()
+            : base("green_child") { }
 
-        public ObjBallGame(Map.Map map, int posX, int posY, string spawnCondition) : base(map)
+        public ObjBallGame(Map.Map map, int posX, int posY, string spawnCondition)
+            : base(map)
         {
             // check if the entity should get spawned
             if (!string.IsNullOrEmpty(spawnCondition))
@@ -44,9 +46,27 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
-            _firstPerson = new ObjPersonNew(Map, posX, posY, null, "npc_boy_left", "npc_boy_ball_left", null, new Rectangle(0, 0, 14, 10));
+            _firstPerson = new ObjPersonNew(
+                Map,
+                posX,
+                posY,
+                null,
+                "npc_boy_left",
+                "npc_boy_ball_left",
+                null,
+                new Rectangle(0, 0, 14, 10)
+            );
             Map.Objects.SpawnObject(_firstPerson);
-            _secondPerson = new ObjPersonNew(Map, posX + 48, posY, null, "npc_boy_right", "npc_boy_ball_right", null, new Rectangle(0, 0, 14, 10));
+            _secondPerson = new ObjPersonNew(
+                Map,
+                posX + 48,
+                posY,
+                null,
+                "npc_boy_right",
+                "npc_boy_ball_right",
+                null,
+                new Rectangle(0, 0, 14, 10)
+            );
             Map.Objects.SpawnObject(_secondPerson);
 
             var sourceRectangle = new Rectangle(338, 10, 6, 6);
@@ -55,7 +75,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _ballEnd = new Vector2(posX + 64 - 13, posY + 15);
 
             var statePreThrow = new AiState();
-            statePreThrow.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("jumping"), 100, 200));
+            statePreThrow.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("jumping"), 100, 200)
+            );
             var stateJump = new AiState(UpdateJump);
             stateJump.Trigger.Add(new AiTriggerRandomTime(ToThrowJump, 500, 750));
             var stateJumpThrow = new AiState(UpdateJumpingThrowing);
@@ -70,13 +92,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.ChangeState("throw");
 
             AddComponent(AiComponent.Index, _aiComponent);
-            var sprite = new CSprite(Resources.SprNpCs, EntityPosition,
-                sourceRectangle, new Vector2(-sourceRectangle.Width / 2, -sourceRectangle.Height));
+            var sprite = new CSprite(
+                Resources.SprNpCs,
+                EntityPosition,
+                sourceRectangle,
+                new Vector2(-sourceRectangle.Width / 2, -sourceRectangle.Height)
+            );
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
 
             _shadowComponent = new DrawShadowSpriteComponent(
-                Resources.SprShadow, EntityPosition, _shadowSourceRectangle,
-                new Vector2(-4, -2), 1.0f, 0.0f);
+                Resources.SprShadow,
+                EntityPosition,
+                _shadowSourceRectangle,
+                new Vector2(-4, -2),
+                1.0f,
+                0.0f
+            );
             _shadowComponent.Width = 8;
             _shadowComponent.Height = 4;
             AddComponent(DrawShadowComponent.Index, _shadowComponent);
@@ -122,7 +153,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var newPosition = Vector2.Lerp(_ballStart, _ballEnd, throwState);
             EntityPosition.Set(newPosition);
             EntityPosition.Z = 3 + (float)Math.Sin(throwState * Math.PI) * _throwHeight;
-            _shadowComponent.Color = Color.White * (1 - (float)Math.Sin(throwState * Math.PI) * 0.5f);
+            _shadowComponent.Color =
+                Color.White * (1 - (float)Math.Sin(throwState * Math.PI) * 0.5f);
         }
 
         private void ToThrowJump()

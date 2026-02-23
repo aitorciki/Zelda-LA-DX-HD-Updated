@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public delegate void ThrowFunction(Vector2 direction);
         public ThrowFunction Throw;
-        
+
         public delegate bool PullFunction(Vector2 direction);
         public PullFunction Pull;
 
@@ -29,10 +29,15 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public bool IsStruggle;
         public bool IsActive = true;
 
-        public new static int Index = 3;
+        public static new int Index = 3;
         public static int Mask = 0x01 << Index;
 
-        public CarriableComponent(CRectangle rectangle, InitFunction init, UpdatePositionFunction updatePosition, ThrowFunction @throw)
+        public CarriableComponent(
+            CRectangle rectangle,
+            InitFunction init,
+            UpdatePositionFunction updatePosition,
+            ThrowFunction @throw
+        )
         {
             Rectangle = rectangle;
             Init = init;

@@ -12,9 +12,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _signText;
         private readonly int _direction;
 
-        public ObjPainting() : base("painting") { }
+        public ObjPainting()
+            : base("painting") { }
 
-        public ObjPainting(Map.Map map, int posX, int posY, string signText, string spriteId, Rectangle interactionRectangle, int direction) : base(map)
+        public ObjPainting(
+            Map.Map map,
+            int posX,
+            int posY,
+            string signText,
+            string spriteId,
+            Rectangle interactionRectangle,
+            int direction
+        )
+            : base(map)
         {
             _signText = signText;
             _direction = direction;
@@ -23,16 +33,30 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             var interactBox = new CBox(
-                posX + interactionRectangle.X, posY + interactionRectangle.Y, 0,
-                interactionRectangle.Width, interactionRectangle.Height, 16);
+                posX + interactionRectangle.X,
+                posY + interactionRectangle.Y,
+                0,
+                interactionRectangle.Width,
+                interactionRectangle.Height,
+                16
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(interactBox, OnInteract));
 
             if (string.IsNullOrEmpty(spriteId))
                 return;
 
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(interactBox, Values.CollisionTypes.Normal));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowSpriteComponent(spriteId, EntityPosition));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(interactBox, Values.CollisionTypes.Normal)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent(spriteId, EntityPosition, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new DrawShadowSpriteComponent(spriteId, EntityPosition)
+            );
         }
 
         private bool OnInteract()

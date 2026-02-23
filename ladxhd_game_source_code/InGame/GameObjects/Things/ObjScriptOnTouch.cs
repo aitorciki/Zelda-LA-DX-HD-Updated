@@ -26,9 +26,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
-        public ObjScriptOnTouch() : base("editor script on touch") { }
+        public ObjScriptOnTouch()
+            : base("editor script on touch") { }
 
-        public ObjScriptOnTouch(Map.Map map, int posX, int posY, int width, int height, string scriptName) : base(map)
+        public ObjScriptOnTouch(
+            Map.Map map,
+            int posX,
+            int posY,
+            int width,
+            int height,
+            string scriptName
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, width, height);

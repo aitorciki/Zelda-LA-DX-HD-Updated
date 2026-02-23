@@ -15,9 +15,21 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         bool light_source = true;
 
-        public ObjLight() : base("editor light") { }
+        public ObjLight()
+            : base("editor light") { }
 
-        public ObjLight(Map.Map map, int posX, int posY, int size, int colorR, int colorG, int colorB, int colorA, int layer) : base(map)
+        public ObjLight(
+            Map.Map map,
+            int posX,
+            int posY,
+            int size,
+            int colorR,
+            int colorG,
+            int colorB,
+            int colorA,
+            int layer
+        )
+            : base(map)
         {
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjLight.lahdmod");
 
@@ -30,7 +42,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _drawRectangle = new Rectangle(posX + 8 - size / 2, posY + 8 - size / 2, size, size);
             _lightColor = new Color(colorR, colorG, colorB) * (colorA / 255f);
 
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = layer });
+            AddComponent(
+                LightDrawComponent.Index,
+                new LightDrawComponent(DrawLight) { Layer = layer }
+            );
         }
 
         public void DrawLight(SpriteBatch spriteBatch)

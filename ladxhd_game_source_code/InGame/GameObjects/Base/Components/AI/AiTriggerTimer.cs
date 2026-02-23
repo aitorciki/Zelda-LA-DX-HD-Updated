@@ -16,7 +16,7 @@
             State = false;
             CurrentTime = StartTime;
         }
-        
+
         public override void Update()
         {
             if (CurrentTime > 0)

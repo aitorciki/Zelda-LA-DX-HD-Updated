@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -12,7 +12,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
     internal class ObjDungeonColorSwitch : GameObject
     {
         private readonly List<GameObject> _neighborSwitches = new List<GameObject>();
-        private readonly Color[] _colors = { new Color(25, 132, 255), new Color(255, 8, 42), new Color(254, 123, 8) };
+        private readonly Color[] _colors =
+        {
+            new Color(25, 132, 255),
+            new Color(255, 8, 42),
+            new Color(254, 123, 8),
+        };
         private readonly CSprite _sprite;
         private readonly Animator _animator;
 
@@ -30,9 +35,20 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _resetKey;
         private bool _finished;
 
-        public ObjDungeonColorSwitch() : base("dungeon_color_head") { }
+        public ObjDungeonColorSwitch()
+            : base("dungeon_color_head") { }
 
-        public ObjDungeonColorSwitch(Map.Map map, int posX, int posY, string strKey, int stateCount, int stateIndex, int position, int neighbors) : base(map)
+        public ObjDungeonColorSwitch(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            int stateCount,
+            int stateIndex,
+            int position,
+            int neighbors
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -14, 16, 16);
@@ -54,7 +70,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _sprite = new CSprite(EntityPosition);
 
-            var activated = !string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1";
+            var activated =
+                !string.IsNullOrEmpty(strKey)
+                && Game1.GameManager.SaveManager.GetString(strKey) == "1";
             if (activated)
             {
                 _stateIndex = 0;
@@ -62,13 +80,25 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             else
             {
                 if (!string.IsNullOrEmpty(strKey))
-                    AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                    AddComponent(
+                        KeyChangeListenerComponent.Index,
+                        new KeyChangeListenerComponent(OnKeyChange)
+                    );
                 AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             }
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal));
-            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(_animator, _sprite, new Vector2(0, 2)));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal)
+            );
+            AddComponent(
+                BaseAnimationComponent.Index,
+                new AnimationComponent(_animator, _sprite, new Vector2(0, 2))
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             Game1.GameManager.SaveManager.SetInt(_strKeyMoved, -1);
@@ -77,8 +107,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         public override void Init()
         {
             var fieldRectangle = Map.GetField(EntityPosition.Position);
-            Map.Objects.GetObjectsOfType(_neighborSwitches, typeof(ObjDungeonColorSwitch),
-                fieldRectangle.X, fieldRectangle.Y, fieldRectangle.Width, fieldRectangle.Height);
+            Map.Objects.GetObjectsOfType(
+                _neighborSwitches,
+                typeof(ObjDungeonColorSwitch),
+                fieldRectangle.X,
+                fieldRectangle.Y,
+                fieldRectangle.Width,
+                fieldRectangle.Height
+            );
         }
 
         public bool IsBlue()
@@ -134,7 +170,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void IncreaseIndex()
         {
             _stateIndex = (_stateIndex + 1) % _stateCount;
-
         }
 
         private void Update()
@@ -171,7 +206,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (CheckNeighbors())
             {
                 _finished = true;
-                if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) != "1")
+                if (
+                    !string.IsNullOrEmpty(_strKey)
+                    && Game1.GameManager.SaveManager.GetString(_strKey) != "1"
+                )
                     Game1.GameManager.SaveManager.SetString(_strKey, "1");
             }
         }
@@ -191,7 +229,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _sprite.SourceRectangle = sourceRectangle;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

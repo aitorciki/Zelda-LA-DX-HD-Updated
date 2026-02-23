@@ -22,8 +22,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private CPosition _owlPosition;
 
         // https://cubic-bezier.com/#.17,.67,.83,.67
-        private readonly CubicBezier _landingCurve = new CubicBezier(100, new Vector2(0.35f, 1f), new Vector2(0.8f, 1));
-        private readonly CubicBezier _leavingCurve = new CubicBezier(100, new Vector2(0.25f, 0.04f), new Vector2(0.35f, 0.11f));
+        private readonly CubicBezier _landingCurve = new CubicBezier(
+            100,
+            new Vector2(0.35f, 1f),
+            new Vector2(0.8f, 1)
+        );
+        private readonly CubicBezier _leavingCurve = new CubicBezier(
+            100,
+            new Vector2(0.25f, 0.04f),
+            new Vector2(0.35f, 0.11f)
+        );
 
         private Vector3 _startPosition;
         private Vector3 _landPosition;
@@ -53,9 +61,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public bool IsVisible { get; internal set; }
 
-        public ObjOwl() : base("owl") { }
+        public ObjOwl()
+            : base("owl") { }
 
-        public ObjOwl(Map.Map map, int posX, int posY, string keyCondition, Rectangle triggerRectangle, bool hoveMode, string strKey, int mode) : base(map)
+        public ObjOwl(
+            Map.Map map,
+            int posX,
+            int posY,
+            string keyCondition,
+            Rectangle triggerRectangle,
+            bool hoveMode,
+            string strKey,
+            int mode
+        )
+            : base(map)
         {
             IsVisible = false;
 
@@ -69,10 +88,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _owlPosition = new CPosition(_startPosition.X, _startPosition.Y, _startPosition.Z);
 
-            var body = new BodyComponent(_owlPosition, -6, -8, 12, 8, 8)
-            {
-                IgnoresZ = true
-            };
+            var body = new BodyComponent(_owlPosition, -6, -8, 12, 8, 8) { IgnoresZ = true };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/owl");
             _sprite = new CSprite(_owlPosition);
@@ -98,10 +114,24 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BodyComponent.Index, body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _drawShadowComponent = new BodyDrawShadowComponent(body, _sprite) { OffsetY = 0 });
-            var enterRectangle = new Rectangle(posX + 8 + triggerRectangle.X, posY + 8 + triggerRectangle.Y, triggerRectangle.Width, triggerRectangle.Height);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(enterRectangle, OnCollision));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new BodyDrawComponent(body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _drawShadowComponent = new BodyDrawShadowComponent(body, _sprite) { OffsetY = 0 }
+            );
+            var enterRectangle = new Rectangle(
+                posX + 8 + triggerRectangle.X,
+                posY + 8 + triggerRectangle.Y,
+                triggerRectangle.Width,
+                triggerRectangle.Height
+            );
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(enterRectangle, OnCollision)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(UpdateSpriteShadow));
 
             _sprite.Color = Color.Transparent;
@@ -121,7 +151,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else
             {
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
 
                 // add key change listener to activate/deactivate the owl
                 if (!string.IsNullOrEmpty(_keyCondition))
@@ -144,13 +177,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateSpriteShadow()
         {
             if (_spriteShadow == null)
-                _spriteShadow = new ObjSpriteShadow(Map, _owlPosition.Position.X-8, _owlPosition.Position.Y-14, Values.LayerPlayer, "sprshadowm");
+                _spriteShadow = new ObjSpriteShadow(
+                    Map,
+                    _owlPosition.Position.X - 8,
+                    _owlPosition.Position.Y - 14,
+                    Values.LayerPlayer,
+                    "sprshadowm"
+                );
 
             _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows && IsVisible);
 
             if (!GameSettings.EnableShadows && _spriteShadow != null)
             {
-                _spriteShadow.EntityPosition.Set(new CPosition(_owlPosition.Position.X-8, _owlPosition.Position.Y-14, 0));
+                _spriteShadow.EntityPosition.Set(
+                    new CPosition(_owlPosition.Position.X - 8, _owlPosition.Position.Y - 14, 0)
+                );
             }
         }
 
@@ -169,7 +210,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateWait()
         {
-            if (_triggerCollided && !MapManager.ObjLink.IsRailJumping() && !MapManager.ObjLink.IsTransitioning)
+            if (
+                _triggerCollided
+                && !MapManager.ObjLink.IsRailJumping()
+                && !MapManager.ObjLink.IsTransitioning
+            )
                 _aiComponent.ChangeState("enter");
         }
 
@@ -263,7 +308,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var time = _airCount / _enterTime;
             if (_airCount < _enterTime)
             {
-                var currentPosition = Vector3.Lerp(_startPosition, _landPosition, _landingCurve.EvaluateX(time));
+                var currentPosition = Vector3.Lerp(
+                    _startPosition,
+                    _landPosition,
+                    _landingCurve.EvaluateX(time)
+                );
                 _owlPosition.Set(currentPosition);
 
                 if (!_hoverMode && time > 0.9)
@@ -317,7 +366,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _hoverCounter += Game1.DeltaTime;
 
                 var hoverPosition = _landPosition;
-                hoverPosition.Y -= MathF.Sin((GetHoverState((float)_hoverCounter / 1000f, 0.0f) - 0.0f) * MathF.PI * 2 - MathF.PI / 2) * 3 + 3;
+                hoverPosition.Y -=
+                    MathF.Sin(
+                        (GetHoverState((float)_hoverCounter / 1000f, 0.0f) - 0.0f) * MathF.PI * 2
+                            - MathF.PI / 2
+                    ) * 3
+                    + 3;
                 _owlPosition.Set(hoverPosition);
             }
 
@@ -339,7 +393,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_hoverCounter < timeX)
                 return _hoverCounter / gradient;
             else
-                return timeX / gradient + (1 - timeX / gradient) * (_hoverCounter - timeX) / (1 - timeX);
+                return timeX / gradient
+                    + (1 - timeX / gradient) * (_hoverCounter - timeX) / (1 - timeX);
         }
 
         private void InitLeave()
@@ -377,7 +432,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var time = _airCount / (float)_enterTime;
             if (_airCount < _enterTime)
             {
-                var currentPosition = Vector3.Lerp(_landPosition, _leavePosition, _leavingCurve.EvaluateX(time));
+                var currentPosition = Vector3.Lerp(
+                    _landPosition,
+                    _leavePosition,
+                    _leavingCurve.EvaluateX(time)
+                );
                 _owlPosition.Set(currentPosition);
             }
             else

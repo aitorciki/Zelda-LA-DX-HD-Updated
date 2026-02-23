@@ -34,9 +34,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _thunderCounter;
         private bool _soundEffect;
 
-        public ObjSwordSpawner() : base("sword_spawn") { }
+        public ObjSwordSpawner()
+            : base("sword_spawn") { }
 
-        public ObjSwordSpawner(Map.Map map, int posX, int posY) : base(map)
+        public ObjSwordSpawner(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
@@ -47,15 +49,29 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _sprite = new CSprite(EntityPosition);
 
-            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(_animator, _sprite, Vector2.Zero));
+            AddComponent(
+                BaseAnimationComponent.Index,
+                new AnimationComponent(_animator, _sprite, Vector2.Zero)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
-        
+
         private void SpawnSword()
         {
             _spawnedSword = true;
-            _objSword = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y, null, "sword2", "sword2", null);
+            _objSword = new ObjItem(
+                Map,
+                (int)EntityPosition.X - 8,
+                (int)EntityPosition.Y,
+                null,
+                "sword2",
+                "sword2",
+                null
+            );
             ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = false;
             _swordBody = ((BodyComponent)_objSword.Components[BodyComponent.Index]);
             _swordBody.OffsetY -= 1;
@@ -110,7 +126,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 SpawnSword();
             }
 
-            _spriteShader = _counter % (AiDamageState.BlinkTime * 2) >= AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
+            _spriteShader =
+                _counter % (AiDamageState.BlinkTime * 2) >= AiDamageState.BlinkTime
+                    ? Resources.DamageSpriteShader0
+                    : null;
 
             if (_counter > AiDamageState.BlinkTime * 2)
             {
@@ -150,23 +169,103 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 if (_thunderIndex == 0)
                 {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.None, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        _thunder.Origin,
+                        _thunder.Scale,
+                        SpriteEffects.None,
+                        0
+                    );
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        Vector2.Zero,
+                        _thunder.Scale,
+                        SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically,
+                        0
+                    );
                 }
                 else if (_thunderIndex == 1)
                 {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipVertically, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipHorizontally, 0);
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X + 16, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        _thunder.Origin,
+                        _thunder.Scale,
+                        SpriteEffects.FlipVertically,
+                        0
+                    );
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X - 16, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        Vector2.Zero,
+                        _thunder.Scale,
+                        SpriteEffects.FlipHorizontally,
+                        0
+                    );
                 }
                 else if (_thunderIndex == 2)
                 {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.None, 0);
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X + 16, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        _thunder.Origin,
+                        _thunder.Scale,
+                        SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically,
+                        0
+                    );
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X - 16, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        Vector2.Zero,
+                        _thunder.Scale,
+                        SpriteEffects.None,
+                        0
+                    );
                 }
                 else if (_thunderIndex == 3)
                 {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 32, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipHorizontally, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 32, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipVertically, 0);
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X + 32, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        _thunder.Origin,
+                        _thunder.Scale,
+                        SpriteEffects.FlipHorizontally,
+                        0
+                    );
+                    spriteBatch.Draw(
+                        _thunder.Texture,
+                        new Vector2(EntityPosition.X - 32, EntityPosition.Y),
+                        _thunder.ScaledRectangle,
+                        Color.White,
+                        0,
+                        Vector2.Zero,
+                        _thunder.Scale,
+                        SpriteEffects.FlipVertically,
+                        0
+                    );
                 }
             }
 

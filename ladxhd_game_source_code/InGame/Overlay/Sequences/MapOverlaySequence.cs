@@ -35,7 +35,10 @@ namespace ProjectZ.InGame.Overlay.Sequences
             _mapOverlay.Update();
 
             // Overlay can be closed if dialog box is not visible.
-            if (ControlHandler.ButtonPressed(ControlHandler.CancelButton) && !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
+            if (
+                ControlHandler.ButtonPressed(ControlHandler.CancelButton)
+                && !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen
+            )
             {
                 Game1.GameManager.InGameOverlay.CloseOverlay();
                 MapManager.ObjLink.ManboTeleport = false;
@@ -56,37 +59,79 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var width = _sequenceWidth;
             var height = _sequenceHeight;
 
-            _mapOverlay.Draw(spriteBatch, new Rectangle(
-                Game1.WindowWidth / 2 - (int)(width * Game1.UiScale) / 2,
-                Game1.WindowHeight / 2 - (int)(height * Game1.UiScale) / 2,
-                width, height),
-                Color.White * transparency, Game1.GetMatrix);
+            _mapOverlay.Draw(
+                spriteBatch,
+                new Rectangle(
+                    Game1.WindowWidth / 2 - (int)(width * Game1.UiScale) / 2,
+                    Game1.WindowHeight / 2 - (int)(height * Game1.UiScale) / 2,
+                    width,
+                    height
+                ),
+                Color.White * transparency,
+                Game1.GetMatrix
+            );
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                null,
+                null
+            );
 
             // Draw the close + button text.
             var selectStr = "";
-            if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys.Length > 0)
-                selectStr = ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys[0].ToString();
+            if (
+                ControlHandler.LastKeyboardDown
+                && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys.Length > 0
+            )
+                selectStr = ControlHandler
+                    .ButtonDictionary[ControlHandler.CancelButton]
+                    .Keys[0]
+                    .ToString();
 
-            if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons.Length > 0)
-                selectStr = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]);
+            if (
+                !ControlHandler.LastKeyboardDown
+                && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons.Length > 0
+            )
+                selectStr = ControlHandler.GetButtonName(
+                    ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0]
+                );
 
-            var inputHelper = selectStr + ": " + Game1.LanguageManager.GetString("map_overlay_close", "error");
+            var inputHelper =
+                selectStr + ": " + Game1.LanguageManager.GetString("map_overlay_close", "error");
 
-            spriteBatch.DrawString(Resources.GameFont, inputHelper,
+            spriteBatch.DrawString(
+                Resources.GameFont,
+                inputHelper,
                 new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale),
-                Color.White * transparency, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+                Color.White * transparency,
+                0,
+                Vector2.Zero,
+                Game1.UiScale,
+                SpriteEffects.None,
+                0
+            );
 
             // When navigating the map, get the currently selected map position.
             var nodeSelected = _mapOverlay.SelectionPosition;
 
             // If we're in map mode and one of the dungeons are selected.
 
-            if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && Game1.GameManager.InGameOverlay.TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
+            if (
+                (
+                    (GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3)
+                    || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)
+                )
+                && Game1.GameManager.InGameOverlay.TeleportMap.ContainsKey(nodeSelected)
+                && MapManager.ObjLink.Map.IsOverworld
+            )
             {
                 // Get the selected dungeon and check if the instrument has been collected.
-                int dungeonLevel = Game1.GameManager.InGameOverlay.TeleportMap[nodeSelected].Level - 1;
+                int dungeonLevel =
+                    Game1.GameManager.InGameOverlay.TeleportMap[nodeSelected].Level - 1;
                 var instrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
                 var hasInstrument = instrument != null && instrument.Count > 0;
                 var isManboPond = dungeonLevel < 0 && MapManager.ObjLink.ManboTeleport;
@@ -97,18 +142,40 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
                 // Get the correct button to display next to the text.
                 var teleStart = "";
-                if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.X].Keys.Length > 0)
+                if (
+                    ControlHandler.LastKeyboardDown
+                    && ControlHandler.ButtonDictionary[CButtons.X].Keys.Length > 0
+                )
                     teleStart = ControlHandler.ButtonDictionary[CButtons.X].Keys[0].ToString();
-                if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.X].Buttons.Length > 0)
-                    teleStart = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.X].Buttons[0]);
+                if (
+                    !ControlHandler.LastKeyboardDown
+                    && ControlHandler.ButtonDictionary[CButtons.X].Buttons.Length > 0
+                )
+                    teleStart = ControlHandler.GetButtonName(
+                        ControlHandler.ButtonDictionary[CButtons.X].Buttons[0]
+                    );
 
                 // Set up the string to display.
-                var teleString = teleStart + ": " + Game1.LanguageManager.GetString("overlay_teleport", "error");
+                var teleString =
+                    teleStart + ": " + Game1.LanguageManager.GetString("overlay_teleport", "error");
                 var teleTextSize = Resources.GameFont.MeasureString(teleString);
-                var teleDrawPos = new Vector2(Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale);
+                var teleDrawPos = new Vector2(
+                    Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale,
+                    Game1.WindowHeight - 16 * Game1.UiScale
+                );
 
                 // Draw the teleport button and label.
-                spriteBatch.DrawString(Resources.GameFont, teleString, teleDrawPos, Color.White, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(
+                    Resources.GameFont,
+                    teleString,
+                    teleDrawPos,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    Game1.UiScale,
+                    SpriteEffects.None,
+                    0
+                );
             }
         }
     }

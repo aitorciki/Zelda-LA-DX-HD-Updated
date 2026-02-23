@@ -35,11 +35,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         ObjSpriteShadow _spriteShadow;
 
-        public ObjWalrus() : base("walrus") { }
+        public ObjWalrus()
+            : base("walrus") { }
 
-        public ObjWalrus(Map.Map map, int posX, int posY, string strDespawnKey) : base(map)
+        public ObjWalrus(Map.Map map, int posX, int posY, string strDespawnKey)
+            : base(map)
         {
-            if (!string.IsNullOrEmpty(strDespawnKey) && Game1.GameManager.SaveManager.GetString(strDespawnKey) == "1")
+            if (
+                !string.IsNullOrEmpty(strDespawnKey)
+                && Game1.GameManager.SaveManager.GetString(strDespawnKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -56,15 +61,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _triggerRectangle = new RectangleF(posX - 8, posY, 32, 32);
 
-            _body = new BodyComponent(EntityPosition, -16, -12, 32, 12, 8)
-            {
-                Gravity = -0.075f,
-            };
+            _body = new BodyComponent(EntityPosition, -16, -12, 32, 12, 8) { Gravity = -0.075f };
 
             _aiComponent = new AiComponent();
 
             var stateSleep = new AiState(UpdateSleep);
-            stateSleep.Trigger.Add(new AiTriggerCountdown(2200, null, SpawnParticle) { ResetAfterEnd = true });
+            stateSleep.Trigger.Add(
+                new AiTriggerCountdown(2200, null, SpawnParticle) { ResetAfterEnd = true }
+            );
             var stateAwaken = new AiState(UpdateAwaken) { Init = InitAwaken };
             var stateDance = new AiState(UpdateDance) { Init = InitDance };
             var stateJump = new AiState(UpdateJump) { Init = InitJump };
@@ -82,12 +86,24 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             //AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -16, -24, 32, 24, 8), Values.CollisionTypes.Enemy));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(EntityPosition, -16, -24, 32, 24, 8),
+                    Values.CollisionTypes.Enemy
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             _spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
@@ -112,14 +128,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void SpawnParticle()
         {
-            var objBubble = new ObjBubble(Map, new Vector3(EntityPosition.X - 16, EntityPosition.Y, 19), new Vector3(-0.05f, 0, 0.1f));
+            var objBubble = new ObjBubble(
+                Map,
+                new Vector3(EntityPosition.X - 16, EntityPosition.Y, 19),
+                new Vector3(-0.05f, 0, 0.1f)
+            );
             Map.Objects.SpawnObject(objBubble);
         }
 
         private void UpdateSleep()
         {
             // trigger dialog on entering the trigger area while marin is following the player
-            if (MapManager.ObjLink.IsGrounded() && _triggerRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
+            if (
+                MapManager.ObjLink.IsGrounded()
+                && _triggerRectangle.Intersects(MapManager.ObjLink.BodyRectangle)
+            )
             {
                 if (!_intersecting)
                 {
@@ -228,13 +251,34 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 Game1.GameManager.PlaySoundEffect("D378-36-24");
 
-                var splashAnimator0 = new ObjAnimator(Map, (int)EntityPosition.X - 6, (int)EntityPosition.Y + 1, 0, 0, Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
-                var splashAnimator1 = new ObjAnimator(Map, (int)EntityPosition.X + 6, (int)EntityPosition.Y + 2, 0, 0, Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                var splashAnimator0 = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X - 6,
+                    (int)EntityPosition.Y + 1,
+                    0,
+                    0,
+                    Values.LayerPlayer,
+                    "Particles/fishingSplash",
+                    "idle",
+                    true
+                );
+                var splashAnimator1 = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X + 6,
+                    (int)EntityPosition.Y + 2,
+                    0,
+                    0,
+                    Values.LayerPlayer,
+                    "Particles/fishingSplash",
+                    "idle",
+                    true
+                );
                 Map.Objects.SpawnObject(splashAnimator0);
                 Map.Objects.SpawnObject(splashAnimator1);
 
                 _splashed = true;
-                ((BodyDrawShadowComponent)Components[BodyDrawShadowComponent.Index]).IsActive = false;
+                ((BodyDrawShadowComponent)Components[BodyDrawShadowComponent.Index]).IsActive =
+                    false;
                 _spriteShadow.Destroy();
             }
         }
@@ -244,8 +288,18 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // disapear into the water
             if (_isFalling)
             {
-                _sprite.SourceRectangle.Y = _spriteSourceRectangle.Y + MathHelper.Clamp(_spriteSourceRectangle.Height - (int)EntityPosition.Z, 0, _spriteSourceRectangle.Height);
-                _sprite.SourceRectangle.Height = MathHelper.Clamp((int)EntityPosition.Z, 0, _spriteSourceRectangle.Height);
+                _sprite.SourceRectangle.Y =
+                    _spriteSourceRectangle.Y
+                    + MathHelper.Clamp(
+                        _spriteSourceRectangle.Height - (int)EntityPosition.Z,
+                        0,
+                        _spriteSourceRectangle.Height
+                    );
+                _sprite.SourceRectangle.Height = MathHelper.Clamp(
+                    (int)EntityPosition.Z,
+                    0,
+                    _spriteSourceRectangle.Height
+                );
             }
 
             _sprite.Draw(spriteBatch);

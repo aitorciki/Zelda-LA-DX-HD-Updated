@@ -35,9 +35,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool _musicPlaying;
 
-        public ObjBallChildrenAttacked() : base("green_child") { }
+        public ObjBallChildrenAttacked()
+            : base("green_child") { }
 
-        public ObjBallChildrenAttacked(Map.Map map, int posX, int posY, string spawnCondition) : base(map)
+        public ObjBallChildrenAttacked(Map.Map map, int posX, int posY, string spawnCondition)
+            : base(map)
         {
             // check if the entity should get spawned
             if (!string.IsNullOrEmpty(spawnCondition))
@@ -57,8 +59,26 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _centerPosition = new Vector2(posX + 24, posY);
 
-            _firstPerson = new ObjPersonNew(Map, posX, posY, null, "npc_green_boy", "npc_kid_attacked", null, new Rectangle(0, 0, 14, 10));
-            _secondPerson = new ObjPersonNew(Map, posX + 48, posY, null, "npc_red_boy", "npc_kid_attacked", null, new Rectangle(0, 0, 14, 10));
+            _firstPerson = new ObjPersonNew(
+                Map,
+                posX,
+                posY,
+                null,
+                "npc_green_boy",
+                "npc_kid_attacked",
+                null,
+                new Rectangle(0, 0, 14, 10)
+            );
+            _secondPerson = new ObjPersonNew(
+                Map,
+                posX + 48,
+                posY,
+                null,
+                "npc_red_boy",
+                "npc_kid_attacked",
+                null,
+                new Rectangle(0, 0, 14, 10)
+            );
 
             _firstPerson.DisableRotating();
             _secondPerson.DisableRotating();
@@ -97,7 +117,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Shrink the field slightly with Classic Camera so the song stops just before the transition since
             // objects outside of the current field are not updated and the song won't be able to trigger the stop.
             if (Camera.ClassicMode)
-                currentField = new Rectangle(_fieldRectangle.X + 1, _fieldRectangle.Y + 1, _fieldRectangle.Width - 2, _fieldRectangle.Height - 2);
+                currentField = new Rectangle(
+                    _fieldRectangle.X + 1,
+                    _fieldRectangle.Y + 1,
+                    _fieldRectangle.Width - 2,
+                    _fieldRectangle.Height - 2
+                );
 
             // start/stop playing music
             if (currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
@@ -186,7 +211,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _npcGroundCount = 200;
                 }
             }
-            var playerDirection = MapManager.ObjLink.Position - _firstPerson.EntityPosition.Position;
+            var playerDirection =
+                MapManager.ObjLink.Position - _firstPerson.EntityPosition.Position;
             var playerDistance = playerDirection.Length();
 
             if (playerDistance < 64)

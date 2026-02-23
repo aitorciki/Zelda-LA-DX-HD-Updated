@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
@@ -12,9 +12,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float _spawnCounter;
 
-        public EnemyRockSpawner() : base("rock") { }
+        public EnemyRockSpawner()
+            : base("rock") { }
 
-        public EnemyRockSpawner(Map.Map map, int posX, int posY, int width, int height) : base(map)
+        public EnemyRockSpawner(Map.Map map, int posX, int posY, int width, int height)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, width, height);
@@ -26,7 +28,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            if (_field.Contains(MapManager.ObjLink.CenterPosition.Position) && !MapManager.ObjLink.FreezeWorldForEvents)
+            if (
+                _field.Contains(MapManager.ObjLink.CenterPosition.Position)
+                && !MapManager.ObjLink.FreezeWorldForEvents
+            )
             {
                 _spawnCounter -= Game1.DeltaTime;
 
@@ -34,7 +39,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 {
                     _spawnCounter += Game1.RandomNumber.Next(750, 1500);
 
-                    var playerPosition = MathHelper.Clamp(MapManager.ObjLink.EntityPosition.X, _field.Left + 80, _field.Right - 80);
+                    var playerPosition = MathHelper.Clamp(
+                        MapManager.ObjLink.EntityPosition.X,
+                        _field.Left + 80,
+                        _field.Right - 80
+                    );
 
                     // spawn the rocks around the player inside the field
                     var posX = playerPosition - 80 + Game1.RandomNumber.Next(0, 160);

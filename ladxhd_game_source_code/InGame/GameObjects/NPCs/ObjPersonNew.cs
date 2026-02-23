@@ -17,6 +17,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             public float MoveSpeed;
             public Vector2 Offset;
         }
+
         private Queue<MoveStep> _nextMoveStep = new Queue<MoveStep>();
 
         public BodyComponent Body;
@@ -45,9 +46,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _jumpTime;
         private float _jumpCounter;
 
-        public ObjPersonNew() : base("person") { }
+        public ObjPersonNew()
+            : base("person") { }
 
-        public ObjPersonNew(Map.Map map, int posX, int posY, string spawnCondition, string animationId, string dialogId, string animationName, Rectangle bodyRectangle, bool binaryFacing = false, int lookrange = 32) : base(map)
+        public ObjPersonNew(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spawnCondition,
+            string animationId,
+            string dialogId,
+            string animationName,
+            Rectangle bodyRectangle,
+            bool binaryFacing = false,
+            int lookrange = 32
+        )
+            : base(map)
         {
             _binaryFacing = binaryFacing;
 
@@ -57,7 +71,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
             }
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            EntitySize = new Rectangle(bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height);
+            EntitySize = new Rectangle(
+                bodyRectangle.X - bodyRectangle.Width / 2,
+                bodyRectangle.Y - bodyRectangle.Height,
+                bodyRectangle.Width,
+                bodyRectangle.Height
+            );
 
             _lookRange = lookrange;
             _spawnCondition = spawnCondition;
@@ -72,22 +91,51 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(Animator, _sprite, Vector2.Zero);
 
-            Body = new BodyComponent(EntityPosition,
-                bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height, bodyRectangle.Height)
+            Body = new BodyComponent(
+                EntityPosition,
+                bodyRectangle.X - bodyRectangle.Width / 2,
+                bodyRectangle.Y - bodyRectangle.Height,
+                bodyRectangle.Width,
+                bodyRectangle.Height,
+                bodyRectangle.Height
+            )
             {
                 Gravity = -0.15f,
             };
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(BodyComponent.Index, Body);
             // only the player should collide with the npc
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BodyCollisionComponent(
+                    Body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
             if (!string.IsNullOrEmpty(_dialogId))
-                AddComponent(InteractComponent.Index, _interactionComponent = new InteractComponent(Body.BodyBox, Interact));
+                AddComponent(
+                    InteractComponent.Index,
+                    _interactionComponent = new InteractComponent(Body.BodyBox, Interact)
+                );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(Body, _sprite, Values.LayerPlayer) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(Body, _sprite));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new BodyDrawComponent(Body, _sprite, Values.LayerPlayer)
+                {
+                    WaterOutline = false,
+                }
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(Body, _sprite)
+            );
 
             if (animationName == "pHidden")
             {
@@ -168,8 +216,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 // Get the distance between Link and the NPC as a vector2.
                 var playerDistance = new Vector2(
-                    MapManager.ObjLink.EntityPosition.X - (EntityPosition.X), 
-                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
+                    MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
+                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4)
+                );
 
                 // Default facing down.
                 var dir = 3;
@@ -286,7 +335,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 UpdateLookAnimation();
 
             Game1.GameManager.StartDialogPath(_dialogId);
-            
+
             return true;
         }
 
@@ -342,7 +391,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     var offsetY = int.Parse(split[1]);
                     var moveSpeed = float.Parse(split[2], CultureInfo.InvariantCulture);
 
-                    _nextMoveStep.Enqueue(new MoveStep() { MoveSpeed = moveSpeed, Offset = new Vector2(offsetX, offsetY) });
+                    _nextMoveStep.Enqueue(
+                        new MoveStep()
+                        {
+                            MoveSpeed = moveSpeed,
+                            Offset = new Vector2(offsetX, offsetY),
+                        }
+                    );
 
                     if (!_isMoving)
                     {

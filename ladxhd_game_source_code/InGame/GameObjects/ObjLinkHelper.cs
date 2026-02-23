@@ -15,37 +15,58 @@ namespace ProjectZ.InGame.GameObjects
         //-------------------------------------------------------------------------------------------------------
         // One-line "getter" functions.
         public bool IsInWater2D() => (_inWater);
+
         public bool IsDiving() => (CurrentState == State.Swimming && _diveCounter > 0);
+
         public bool IsGrounded() => (_body.IsGrounded && !_railJump && !_isFlying);
+
         public bool IsRailJumping() => (_railJump);
+
         public bool IsHoleAbsorb() => (_isFallingIntoHole);
+
         public bool IsDashing() => (_bootsRunning);
+
         public bool IsStunned() => (CurrentState == State.Stunned);
+
         public bool IsTrapped() => (_isTrapped);
+
         public bool IsFlying() => (_isFlying && CurrentState == State.Carrying);
+
         public bool IsDying() => (CurrentState == State.Dying);
+
         public bool IsClimbing() => (_isClimbing);
+
         public bool IsUsingHookshot() => (CurrentState == State.Hookshot);
+
         public Vector2 GetSwimVelocity() => (_swimVelocity);
+
         public ObjMarin GetMarin() => (_objMaria);
 
         //-------------------------------------------------------------------------------------------------------
         // One-line "setter" functions.
         public void SetBowWowFollower(ObjBowWow bowWow) => _objBowWow = bowWow;
+
         public void LinkWalking(bool walk) => _isWalking = walk;
+
         public void ToggleBlockButton(bool toggle) => _blockButton = toggle;
+
         public void ToggleLowHealthBeep(bool toggle) => _enableHealthBeep = toggle;
 
         //-------------------------------------------------------------------------------------------------------
         // Enable/Disable game states by using a SaveManager key-value pair.
-        public void DisableOptions(bool disable) => Game1.GameManager.SaveManager.SetString("disable_options", disable ? "1" : "0");
-        public void DisableInventory(bool disable) => Game1.GameManager.SaveManager.SetString("disable_inventory", disable ? "1" : "0");
-        public void FreezeAnimations(bool freeze)  => Game1.GameManager.SaveManager.SetString("freezeGame", freeze ? "1" : "0");
+        public void DisableOptions(bool disable) =>
+            Game1.GameManager.SaveManager.SetString("disable_options", disable ? "1" : "0");
+
+        public void DisableInventory(bool disable) =>
+            Game1.GameManager.SaveManager.SetString("disable_inventory", disable ? "1" : "0");
+
+        public void FreezeAnimations(bool freeze) =>
+            Game1.GameManager.SaveManager.SetString("freezeGame", freeze ? "1" : "0");
 
         //-------------------------------------------------------------------------------------------------------
         // Various functions to set, manipulate, or reference "Direction".
         private int ReverseDirection(int direction) => (direction + 2) % 4;
-        
+
         public void SetWalkingDirection(int direction)
         {
             // Used in various objects to force Link's current facing.
@@ -56,7 +77,10 @@ namespace ProjectZ.InGame.GameObjects
         public int ToDirection(Vector2 direction)
         {
             // Fail safe in case the impossible happens.
-            if (direction == Vector2.Zero) { return Direction; }
+            if (direction == Vector2.Zero)
+            {
+                return Direction;
+            }
 
             // If player wants old style movement.
             if (GameSettings.OldMovement)
@@ -77,18 +101,22 @@ namespace ProjectZ.InGame.GameObjects
             // Get angle in degrees 0-360.
             float angle = (float)Math.Atan2(direction.Y, direction.X);
             float deg = MathHelper.ToDegrees(angle);
-            if (deg < 0) { deg += 360f; }
+            if (deg < 0)
+            {
+                deg += 360f;
+            }
 
             // 0:Left 1:Up 2:Right 3:Down
             return deg switch
             {
                 180 => 0,
                 270 => 1,
-                0   => 2,
-                90  => 3,
-                _   => Direction
+                0 => 2,
+                90 => 3,
+                _ => Direction,
             };
         }
+
         //-------------------------------------------------------------------------------------------------------
         // Used by "DialogPath" and the function to prevent egg entry when a follower
         // is with Link to temporarily lock input but still update his animations.
@@ -150,7 +178,10 @@ namespace ProjectZ.InGame.GameObjects
         {
             for (var i = 0; i < 6; i++)
             {
-                if (Game1.GameManager.Equipment[i] != null && Game1.GameManager.Equipment[i].Name == "shield")
+                if (
+                    Game1.GameManager.Equipment[i] != null
+                    && Game1.GameManager.Equipment[i].Name == "shield"
+                )
                 {
                     Game1.GameManager.RemoveItem("shield", 1);
                     CarryShield = false;
@@ -254,7 +285,7 @@ namespace ProjectZ.InGame.GameObjects
         }
 
         //-------------------------------------------------------------------------------------------------------
-        // Used by dungeon 8 boss "MBossBlaino" to knock the player to the entrance of the dungeon. 
+        // Used by dungeon 8 boss "MBossBlaino" to knock the player to the entrance of the dungeon.
         public void Knockout(Vector2 direction, string resetDoor)
         {
             if (CurrentState == State.Knockout)
@@ -269,8 +300,17 @@ namespace ProjectZ.InGame.GameObjects
             MapTransitionEnd = MapManager.ObjLink.Position + direction * 80;
             TransitionOutWalking = false;
 
-            var transitionSystem = ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]);
-            transitionSystem.AppendMapChange(Map.MapName, resetDoor, false, false, Color.White, false);
+            var transitionSystem = (
+                (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+            );
+            transitionSystem.AppendMapChange(
+                Map.MapName,
+                resetDoor,
+                false,
+                false,
+                Color.White,
+                false
+            );
             transitionSystem.StartKnockoutTransition = true;
         }
 
@@ -297,12 +337,20 @@ namespace ProjectZ.InGame.GameObjects
         private bool DestroyableWall(Box box)
         {
             _destroyableWallList.Clear();
-            Map.Objects.GetComponentList(_destroyableWallList, (int)box.X, (int)box.Y, (int)box.Width + 1, (int)box.Height + 1, CollisionComponent.Mask);
+            Map.Objects.GetComponentList(
+                _destroyableWallList,
+                (int)box.X,
+                (int)box.Y,
+                (int)box.Width + 1,
+                (int)box.Height + 1,
+                CollisionComponent.Mask
+            );
 
             var collidingBox = Box.Empty;
             foreach (var gameObject in _destroyableWallList)
             {
-                var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
+                var collisionObject =
+                    gameObject.Components[CollisionComponent.Index] as CollisionComponent;
 
                 if (collisionObject.Collision(box, 0, 0, ref collidingBox))
                 {
@@ -311,7 +359,10 @@ namespace ProjectZ.InGame.GameObjects
                         return true;
 
                     // The poked object is a locked dungeon door.
-                    if (gameObject is ObjDungeonDoor door && (door.GetMode() == 1 || door.GetMode() == 3))
+                    if (
+                        gameObject is ObjDungeonDoor door
+                        && (door.GetMode() == 1 || door.GetMode() == 3)
+                    )
                         return true;
                 }
             }

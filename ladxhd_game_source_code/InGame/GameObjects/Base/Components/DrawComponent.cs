@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public bool IsActive = true;
 
-        public new static int Index = 5;
+        public static new int Index = 5;
         public static int Mask = 0x01 << Index;
 
         protected DrawComponent() { }
@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             Layer = layer;
             Position = position;
         }
-        
+
         public int CompareTo(DrawComponent other)
         {
             var compare = Layer.CompareTo(other.Layer);

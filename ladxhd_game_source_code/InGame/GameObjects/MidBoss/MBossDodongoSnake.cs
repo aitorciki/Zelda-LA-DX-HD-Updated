@@ -57,9 +57,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private int _lives = EnemyLives.DodongoSnake;
 
         // @TODO: it looks like the body gets left behind when we move out of the screen
-        public MBossDodongoSnake() : base("snake blue") { }
+        public MBossDodongoSnake()
+            : base("snake blue") { }
 
-        public MBossDodongoSnake(Map.Map map, int posX, int posY, string saveKey, int color, bool resetKey) : base(map)
+        public MBossDodongoSnake(
+            Map.Map map,
+            int posX,
+            int posY,
+            string saveKey,
+            int color,
+            bool resetKey
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -78,7 +87,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var strColor = _color == 0 ? "blue" : "green";
 
             // was the boss already defeated?
-            if (!string.IsNullOrEmpty(_saveKey) && Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 if (resetKey)
                 {
@@ -106,11 +118,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 DragAir = 0.95f,
                 Gravity = -0.15f,
                 FieldRectangle = map.GetField(posX, posY),
-                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
             };
 
             var stateMoving = new AiState(UpdateMoving);
-            stateMoving.Trigger.Add(_directionTrigger = new AiTriggerRandomTime(ChangeDirection, 1000, 1500));
+            stateMoving.Trigger.Add(
+                _directionTrigger = new AiTriggerRandomTime(ChangeDirection, 1000, 1500)
+            );
             var stateExplosion = new AiState(UpdateExplosion);
 
             _aiComponent = new AiComponent();
@@ -119,21 +133,30 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 8, false)
             {
-                OnDeath = OnDeath
+                OnDeath = OnDeath,
             };
 
             _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer);
 
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 8, true);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
 
             var hittableBox = new CBox(EntityPosition, -7, -15, 0, 14, 14, 8, true);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 }
+            );
 
             ChangeDirection();
             _aiComponent.ChangeState("moving");
@@ -153,7 +176,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // Gets the number of remaining Dodongo Snakes. Used to properly start/stop the music.
             List<GameObject> dodongoSnakes = new List<GameObject>();
-            Map.Objects.GetComponentList(dodongoSnakes, (int)EntityPosition.Position.X - 80, (int)EntityPosition.Position.Y - 64, 160, 128, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                dodongoSnakes,
+                (int)EntityPosition.Position.X - 80,
+                (int)EntityPosition.Position.Y - 64,
+                160,
+                128,
+                BodyComponent.Mask
+            );
 
             for (int i = dodongoSnakes.Count - 1; i >= 0; i--)
             {
@@ -168,7 +198,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -213,9 +249,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             if (_explosionCounter > 94 / 0.06 && _explosionCounter - Game1.DeltaTime < 94 / 0.06)
             {
-                var particlePosition = EntityPosition.Position + AnimationHelper.DirectionOffset[_direction] * 13;
-                Map.Objects.SpawnObject(new ObjAnimator(Map,
-                    (int)particlePosition.X, (int)particlePosition.Y, -8, -16, Values.LayerPlayer, "Particles/spawn", "run", true));
+                var particlePosition =
+                    EntityPosition.Position + AnimationHelper.DirectionOffset[_direction] * 13;
+                Map.Objects.SpawnObject(
+                    new ObjAnimator(
+                        Map,
+                        (int)particlePosition.X,
+                        (int)particlePosition.Y,
+                        -8,
+                        -16,
+                        Values.LayerPlayer,
+                        "Particles/spawn",
+                        "run",
+                        true
+                    )
+                );
             }
 
             if (_explosionCounter > 76 / 0.06 && _explosionCounter - Game1.DeltaTime < 76 / 0.06)
@@ -257,7 +305,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     Game1.GameManager.SetMusic(79, 2);
             }
             // Check if the player left the room.
-            else if (!_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position) && _encountered)
+            else if (
+                !_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+                && _encountered
+            )
             {
                 // Disable the encounter.
                 _encountered = false;
@@ -271,11 +322,29 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var offset = 0.5f;
             var speed = 55;
 
-            _sprite.DrawOffset.X = -8 + ((_direction == 0 || _direction == 2) ? MathF.Sin((float)(Game1.TotalGameTime / speed)) * offset : 0);
-            _sprite.DrawOffset.Y = -16 + ((_direction == 1 || _direction == 3) ? MathF.Sin((float)(Game1.TotalGameTime / speed)) * offset : 0);
+            _sprite.DrawOffset.X =
+                -8
+                + (
+                    (_direction == 0 || _direction == 2)
+                        ? MathF.Sin((float)(Game1.TotalGameTime / speed)) * offset
+                        : 0
+                );
+            _sprite.DrawOffset.Y =
+                -16
+                + (
+                    (_direction == 1 || _direction == 3)
+                        ? MathF.Sin((float)(Game1.TotalGameTime / speed)) * offset
+                        : 0
+                );
 
-            _bodyOffset.X = (_direction == 0 || _direction == 2) ? MathF.Sin((float)(Game1.TotalGameTime / speed) + MathF.PI * 0.9f) * offset : 0;
-            _bodyOffset.Y = (_direction == 1 || _direction == 3) ? MathF.Sin((float)(Game1.TotalGameTime / speed) + MathF.PI * 0.9f) * offset : 0;
+            _bodyOffset.X =
+                (_direction == 0 || _direction == 2)
+                    ? MathF.Sin((float)(Game1.TotalGameTime / speed) + MathF.PI * 0.9f) * offset
+                    : 0;
+            _bodyOffset.Y =
+                (_direction == 1 || _direction == 3)
+                    ? MathF.Sin((float)(Game1.TotalGameTime / speed) + MathF.PI * 0.9f) * offset
+                    : 0;
 
             // updated body distance
             var distance = (_lastHeadPosition - EntityPosition.Position).Length();
@@ -319,7 +388,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     if (direction != Vector2.Zero)
                     {
                         direction.Normalize();
-                        _bodyPosition = _turningPosition + direction * (_bodyDistance - turningPointDistance);
+                        _bodyPosition =
+                            _turningPosition + direction * (_bodyDistance - turningPointDistance);
                     }
                 }
             }
@@ -341,14 +411,23 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void EatBombs()
         {
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)EntityPosition.Position.X - 8, (int)EntityPosition.Position.Y - 16, 16, 16, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)EntityPosition.Position.X - 8,
+                (int)EntityPosition.Position.Y - 16,
+                16,
+                16,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {
                 var body = (BodyComponent)collidingObject.Components[BodyComponent.Index];
 
-                if (collidingObject.GetType() == typeof(ObjBomb) && _eatBox.Box.Intersects(body.BodyBox.Box))
+                if (
+                    collidingObject.GetType() == typeof(ObjBomb)
+                    && _eatBox.Box.Intersects(body.BodyBox.Box)
+                )
                 {
                     var bomb = (ObjBomb)collidingObject;
                     if (bomb.Body.IsActive)
@@ -364,6 +443,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 }
             }
         }
+
         private void OnDeath()
         {
             if (!string.IsNullOrEmpty(_saveKey))
@@ -376,15 +456,31 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // Play explosion sound effect & spawn fairy.
             Game1.GameManager.PlaySoundEffect("D378-26-1A");
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y + 8, 0));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(
+                    Map,
+                    (int)_bodyExplosionPosition.X,
+                    (int)_bodyExplosionPosition.Y + 8,
+                    0
+                )
+            );
 
             // Shake the screen.
             if (GameSettings.ExScreenShake)
                 Game1.GameManager.ShakeScreen(200, 2.00f, 1.00f, 50.00f, 25.50f);
 
             // Spawn the explosion effect.
-            Map.Objects.SpawnObject(new ObjAnimator(Map,
-                (int)_bodyExplosionPosition.X, (int)_bodyExplosionPosition.Y - 8, Values.LayerPlayer, "Particles/explosionBomb", "run2", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)_bodyExplosionPosition.X,
+                    (int)_bodyExplosionPosition.Y - 8,
+                    Values.LayerPlayer,
+                    "Particles/explosionBomb",
+                    "run2",
+                    true
+                )
+            );
 
             // Remove from the map.
             Map.Objects.DeleteObjects.Add(this);
@@ -400,7 +496,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             else if (_direction == 3)
                 _sprite.SourceRectangle.X += 36;
 
-            _sprite.SpriteEffect = _direction == 2 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            _sprite.SpriteEffect =
+                _direction == 2 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             var bodyDrawPosition = _bodyPosition + new Vector2(-8, -16) + _bodyOffset;
             var bodyRectangle = _spriteBody0.ScaledRectangle;
@@ -418,21 +515,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     bodyRectangle.Y += 18 * dir;
                 }
 
-                var targetPosition = EntityPosition.Position - new Vector2(
-                    AnimationHelper.DirectionOffset[_direction].X * 13,
-                    AnimationHelper.DirectionOffset[_direction].Y * 12);
+                var targetPosition =
+                    EntityPosition.Position
+                    - new Vector2(
+                        AnimationHelper.DirectionOffset[_direction].X * 13,
+                        AnimationHelper.DirectionOffset[_direction].Y * 12
+                    );
                 var distance = (_bodyExplosionPosition - targetPosition).Length();
 
                 if (distance > 0)
                 {
                     var amount = Math.Min(1, (1 * Game1.TimeMultiplier) / distance);
-                    _bodyExplosionPosition = Vector2.Lerp(_bodyExplosionPosition, targetPosition, amount);
+                    _bodyExplosionPosition = Vector2.Lerp(
+                        _bodyExplosionPosition,
+                        targetPosition,
+                        amount
+                    );
                 }
 
-                if (_explosionCounter < 60 / 0.06)
-                {
-
-                }
+                if (_explosionCounter < 60 / 0.06) { }
                 else if (_explosionCounter < 66 / 0.06)
                 {
                     bodyRectangle = _spriteBody1.ScaledRectangle;
@@ -454,15 +555,16 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     bodyRectangle = _spriteBody1.ScaledRectangle;
                     _sprite.DrawOffset += AnimationHelper.DirectionOffset[_direction] * 2;
                 }
-                else if (_explosionCounter < 98 / 0.06)
-                {
+                else if (_explosionCounter < 98 / 0.06) { }
 
-                }
-
-                bodyDrawPosition = _bodyExplosionPosition + new Vector2(-bodyRectangle.Width / 2, -8 - bodyRectangle.Height / 2);
+                bodyDrawPosition =
+                    _bodyExplosionPosition
+                    + new Vector2(-bodyRectangle.Width / 2, -8 - bodyRectangle.Height / 2);
             }
 
-            var drawBodyFirst = bodyDrawPosition.Y + bodyRectangle.Height <= EntityPosition.Y || (_explosionCounter > 0 && _direction != 1);
+            var drawBodyFirst =
+                bodyDrawPosition.Y + bodyRectangle.Height <= EntityPosition.Y
+                || (_explosionCounter > 0 && _direction != 1);
 
             // draw the body
             if (drawBodyFirst)
@@ -474,7 +576,6 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // draw the body
             if (!drawBodyFirst)
                 spriteBatch.Draw(_spriteHead.Texture, bodyDrawPosition, bodyRectangle, Color.White);
-
         }
 
         private void OnDeath(bool pieceOfPower)

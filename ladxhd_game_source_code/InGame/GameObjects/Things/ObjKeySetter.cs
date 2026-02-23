@@ -4,9 +4,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjKeySetter : GameObject
     {
-        public ObjKeySetter() : base("editor key setter") { }
+        public ObjKeySetter()
+            : base("editor key setter") { }
 
-        public ObjKeySetter(Map.Map map, int posX, int posY, string key, string value) : base(map)
+        public ObjKeySetter(Map.Map map, int posX, int posY, string key, string value)
+            : base(map)
         {
             // set the key and delete the object
             if (!string.IsNullOrEmpty(key))

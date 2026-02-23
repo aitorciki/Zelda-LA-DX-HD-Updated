@@ -44,14 +44,22 @@ namespace ProjectZ.InGame.Things
                 }
             }
             // Return the coordinates of the closest camera.
-            CameraFieldCoords = new Vector2(closestCam.EntityPosition.X, closestCam.EntityPosition.Y);
+            CameraFieldCoords = new Vector2(
+                closestCam.EntityPosition.X,
+                closestCam.EntityPosition.Y
+            );
         }
 
         public void FindClosestCoords()
         {
             // Grab objects with a certain range.
             GameObjectList.Clear();
-            GameObjectList = MapManager.ObjLink.Map.Objects.GetObjects((int)MapManager.ObjLink.CenterPosition.X - 160, (int)MapManager.ObjLink.CenterPosition.Y -100, 320, 200);
+            GameObjectList = MapManager.ObjLink.Map.Objects.GetObjects(
+                (int)MapManager.ObjLink.CenterPosition.X - 160,
+                (int)MapManager.ObjLink.CenterPosition.Y - 100,
+                320,
+                200
+            );
 
             // Loop through the game objects.
             foreach (var gameObject in GameObjectList)
@@ -62,7 +70,7 @@ namespace ProjectZ.InGame.Things
                     // Add the camera object to the list.
                     AddToList(camField);
                 }
-                // Set the closest camera to 
+                // Set the closest camera to
                 SetClosestCoords();
             }
         }

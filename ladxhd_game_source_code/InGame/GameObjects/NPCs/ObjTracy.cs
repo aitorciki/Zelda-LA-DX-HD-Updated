@@ -17,9 +17,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private float _lookUpdateCounter;
 
-        public ObjTracy() : base("tracy") { }
+        public ObjTracy()
+            : base("tracy") { }
 
-        public ObjTracy(Map.Map map, int posX, int posY) : base(map)
+        public ObjTracy(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // Tracy will retain her "in-between" state between messages even when leaving the
             // building and after reloading a save file, so clear upon entering the building.
@@ -48,15 +50,24 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Body = new BodyComponent(EntityPosition, -8, -11, 15, 11, 8);
 
             AddComponent(BodyComponent.Index, Body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    Body,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(Body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, TracySprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(Body, TracySprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(TracySprite));
 
             // Make the "fake Tracy" on the table invisible.
-            CPosition fakeTracyPos = new CPosition(72,64,0);
+            CPosition fakeTracyPos = new CPosition(72, 64, 0);
             if (Body.Position.Position == fakeTracyPos.Position)
                 TracySprite.IsVisible = false;
         }
@@ -64,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void Update()
         {
             // Don't update the fake tracy.
-            if (!TracySprite.IsVisible) 
+            if (!TracySprite.IsVisible)
                 return;
 
             _lookUpdateCounter += Game1.DeltaTime;

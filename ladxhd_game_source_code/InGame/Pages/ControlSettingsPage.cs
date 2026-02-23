@@ -14,8 +14,8 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
 
-        private readonly InterfaceSlider     _sliderDeadZone;
-        private readonly InterfaceButton     _controllerType;
+        private readonly InterfaceSlider _sliderDeadZone;
+        private readonly InterfaceButton _controllerType;
         private readonly InterfaceListLayout _toggleTriggersScale;
         private readonly InterfaceListLayout _toggleSixButtons;
         private readonly InterfaceListLayout _toggleSwapButtons;
@@ -25,17 +25,34 @@ namespace ProjectZ.InGame.Pages
         private float _controlCooldown = 0f;
         private bool _showTooltip;
 
-        public void SetDeadZoneValue(int value) => ((InterfaceSlider)_sliderDeadZone).CurrentStep = value;
-        public void SetTriggerScale(bool state) => ((InterfaceToggle)_toggleTriggersScale.Elements[1]).ToggleState = state;
-        public void SetSixButtons(bool state) => ((InterfaceToggle)_toggleSixButtons.Elements[1]).ToggleState = state;
-        public void SetSwapButtons(bool state) { ((InterfaceToggle)_toggleSwapButtons.Elements[1]).ToggleState = state; ControlHandler.SetConfirmCancelButtons(); }
-        public void SetClassicMove(bool state) => ((InterfaceToggle)_toggleClassicMove.Elements[1]).ToggleState = state;
-        public void SetDigitalAnalog(bool state) => ((InterfaceToggle)_toggleDigitalAnalog.Elements[1]).ToggleState = state;
+        public void SetDeadZoneValue(int value) =>
+            ((InterfaceSlider)_sliderDeadZone).CurrentStep = value;
+
+        public void SetTriggerScale(bool state) =>
+            ((InterfaceToggle)_toggleTriggersScale.Elements[1]).ToggleState = state;
+
+        public void SetSixButtons(bool state) =>
+            ((InterfaceToggle)_toggleSixButtons.Elements[1]).ToggleState = state;
+
+        public void SetSwapButtons(bool state)
+        {
+            ((InterfaceToggle)_toggleSwapButtons.Elements[1]).ToggleState = state;
+            ControlHandler.SetConfirmCancelButtons();
+        }
+
+        public void SetClassicMove(bool state) =>
+            ((InterfaceToggle)_toggleClassicMove.Elements[1]).ToggleState = state;
+
+        public void SetDigitalAnalog(bool state) =>
+            ((InterfaceToggle)_toggleDigitalAnalog.Elements[1]).ToggleState = state;
 
         public void UpdateControllerOverrideText()
         {
             // The "OverrideText" is stored so if the language is changed then the text also needs to be updated.
-            string UpdateText = Game1.LanguageManager.GetString("settings_controls_gamepad", "error") + ": " + GameSettings.Controller;
+            string UpdateText =
+                Game1.LanguageManager.GetString("settings_controls_gamepad", "error")
+                + ": "
+                + GameSettings.Controller;
 
             // Update the label with the properly translated textu.
             _controllerType.InsideLabel.OverrideText = UpdateText;
@@ -46,63 +63,160 @@ namespace ProjectZ.InGame.Pages
             EnableTooltips = true;
 
             // Game Settings Layout
-            _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _controlSettingsList = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Selectable = true,
+            };
 
             var buttonWidth = 320;
             var buttonHeight = 14;
 
-            _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
-                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _controlSettingsList.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_controls_header",
+                    new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
+            _contentLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize) - 12),
+                Selectable = true,
+                ContentAlignment = InterfaceElement.Gravities.Top,
+            };
 
             // Slider: Deadzone
-            _sliderDeadZone = new InterfaceSlider(Resources.GameFont, "settings_controls_deadzone", 
-                buttonWidth, 11, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
-                number => { GameSettings.DeadZone = (float)(number * 0.01); })
-                { SetString = number => ": " + number + "%" };
+            _sliderDeadZone = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_controls_deadzone",
+                buttonWidth,
+                11,
+                new Point(1, 2),
+                0,
+                100,
+                1,
+                (int)(GameSettings.DeadZone * 100),
+                number =>
+                {
+                    GameSettings.DeadZone = (float)(number * 0.01);
+                }
+            )
+            {
+                SetString = number => ": " + number + "%",
+            };
             _contentLayout.AddElement(_sliderDeadZone);
 
             // Button: Controller Type
-            _contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "", PressButtonSetController));
+            _contentLayout.AddElement(
+                _controllerType = new InterfaceButton(
+                    new Point(buttonWidth, buttonHeight),
+                    new Point(0, 2),
+                    "",
+                    PressButtonSetController
+                )
+            );
             UpdateControllerOverrideText();
 
             // Button: Remap Settings
-            _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
-                "settings_controls_remap", element => { Game1.UiPageManager.ChangePage(typeof(ControlMappingPage)); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(buttonWidth, buttonHeight),
+                    new Point(1, 2),
+                    "settings_controls_remap",
+                    element =>
+                    {
+                        Game1.UiPageManager.ChangePage(typeof(ControlMappingPage));
+                    }
+                )
+            );
 
             // Toggle: Triggers Scale Game
-            _toggleTriggersScale = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_controls_triggersscale", GameSettings.TriggersScale, 
-                newState => { GameSettings.TriggersScale = newState; });
+            _toggleTriggersScale = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_controls_triggersscale",
+                GameSettings.TriggersScale,
+                newState =>
+                {
+                    GameSettings.TriggersScale = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleTriggersScale);
 
             // Toggle: Toggle Six Buttons
-            _toggleSixButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_controls_sixbuttons", GameSettings.SixButtons, 
-                newState => { UpdateSixButtonToggle(newState); });
+            _toggleSixButtons = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_controls_sixbuttons",
+                GameSettings.SixButtons,
+                newState =>
+                {
+                    UpdateSixButtonToggle(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleSixButtons);
 
             // Toggle: Swap Confirm & Cancel
-            _toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_controls_swapbuttons", GameSettings.SwapButtons, 
-                newState => { _controlCooldown = 500f; GameSettings.SwapButtons = newState; ControlHandler.SetConfirmCancelButtons(); });
+            _toggleSwapButtons = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_controls_swapbuttons",
+                GameSettings.SwapButtons,
+                newState =>
+                {
+                    _controlCooldown = 500f;
+                    GameSettings.SwapButtons = newState;
+                    ControlHandler.SetConfirmCancelButtons();
+                }
+            );
             _contentLayout.AddElement(_toggleSwapButtons);
 
             // Toggle: Classic Movement
-            _toggleClassicMove = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_controls_classicmove", GameSettings.OldMovement, 
-                newState => { GameSettings.OldMovement = newState; });
+            _toggleClassicMove = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_controls_classicmove",
+                GameSettings.OldMovement,
+                newState =>
+                {
+                    GameSettings.OldMovement = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleClassicMove);
 
             // Toggle: Digital Analog
-            _toggleDigitalAnalog = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_controls_digitalanalog", GameSettings.DigitalAnalog, 
-                newState => { GameSettings.DigitalAnalog = newState; });
+            _toggleDigitalAnalog = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_controls_digitalanalog",
+                GameSettings.DigitalAnalog,
+                newState =>
+                {
+                    GameSettings.DigitalAnalog = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleDigitalAnalog);
 
             // Bottom Bar / Back Button:
-            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(100, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             _controlSettingsList.AddElement(_contentLayout);
             _controlSettingsList.AddElement(_bottomBar);
             PageLayout = _controlSettingsList;
@@ -173,7 +287,12 @@ namespace ProjectZ.InGame.Pages
                 Game1.GameManager.UpdateEquipment();
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -190,23 +309,70 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_controlSettingsList.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
             string tooltip = "Select an option to view its tooltip.";
 
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_deadzone", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_gamepad", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_remap", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_triggersscale", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_sixbuttons", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_swapconfirm", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_classicmove", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_digitalanalog", "error"); break; }
+                case 0:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_controls_deadzone", "error");
+                    break;
+                }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_controls_gamepad", "error");
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_controls_remap", "error");
+                    break;
+                }
+                case 3:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_controls_triggersscale",
+                        "error"
+                    );
+                    break;
+                }
+                case 4:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_controls_sixbuttons",
+                        "error"
+                    );
+                    break;
+                }
+                case 5:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_controls_swapconfirm",
+                        "error"
+                    );
+                    break;
+                }
+                case 6:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_controls_classicmove",
+                        "error"
+                    );
+                    break;
+                }
+                case 7:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_controls_digitalanalog",
+                        "error"
+                    );
+                    break;
+                }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

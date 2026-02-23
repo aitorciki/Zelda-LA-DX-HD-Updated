@@ -54,15 +54,20 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private bool _tailComeOut = true;
         private bool _isVisible = false;
 
-        public BossSlimeEelSpawn() : base("slime eel") { }
+        public BossSlimeEelSpawn()
+            : base("slime eel") { }
 
-        public BossSlimeEelSpawn(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public BossSlimeEelSpawn(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             _centerPosition = new Vector2(posX + 8, posY + 8);
 
-            if (!string.IsNullOrWhiteSpace(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrWhiteSpace(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 // respawn the heart if the player died after he killed the boss without collecting the heart
                 SpawnHeart();
@@ -72,31 +77,129 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 IsDead = true;
                 return;
             }
-            
-            _sprite[0] = new CSprite("eel_floor_broken", new CPosition(posX - 8, posY - 8, 0), Vector2.Zero);
-            _sprite[1] = new CSprite("eel_floor_broken", new CPosition(posX + 8, posY - 8, 0), Vector2.Zero);
-            _sprite[2] = new CSprite("eel_floor_broken", new CPosition(posX - 8, posY + 8, 0), Vector2.Zero);
-            _sprite[3] = new CSprite("eel_floor_broken", new CPosition(posX + 8, posY + 8, 0), Vector2.Zero);
 
-            _sprite[4] = new CSprite("eel_floor", new CPosition(posX - 8, posY - 8, 0), Vector2.Zero);
-            _sprite[5] = new CSprite("eel_floor", new CPosition(posX + 8, posY - 8, 0), Vector2.Zero);
-            _sprite[6] = new CSprite("eel_floor", new CPosition(posX - 8, posY + 8, 0), Vector2.Zero);
-            _sprite[7] = new CSprite("eel_floor", new CPosition(posX + 8, posY + 8, 0), Vector2.Zero);
+            _sprite[0] = new CSprite(
+                "eel_floor_broken",
+                new CPosition(posX - 8, posY - 8, 0),
+                Vector2.Zero
+            );
+            _sprite[1] = new CSprite(
+                "eel_floor_broken",
+                new CPosition(posX + 8, posY - 8, 0),
+                Vector2.Zero
+            );
+            _sprite[2] = new CSprite(
+                "eel_floor_broken",
+                new CPosition(posX - 8, posY + 8, 0),
+                Vector2.Zero
+            );
+            _sprite[3] = new CSprite(
+                "eel_floor_broken",
+                new CPosition(posX + 8, posY + 8, 0),
+                Vector2.Zero
+            );
 
-            _sprite[8] = new CSprite("eel_wall_open", new CPosition(posX - 40, posY - 56, 0), Vector2.Zero);
-            _sprite[9] = new CSprite("eel_wall_open", new CPosition(posX + 24, posY - 56, 0), Vector2.Zero);
-            _sprite[10] = new CSprite("eel_wall_open", new CPosition(posX - 40, posY + 56, 0), Vector2.Zero) { SpriteEffect = SpriteEffects.FlipVertically };
-            _sprite[11] = new CSprite("eel_wall_open", new CPosition(posX + 24, posY + 56, 0), Vector2.Zero) { SpriteEffect = SpriteEffects.FlipVertically };
+            _sprite[4] = new CSprite(
+                "eel_floor",
+                new CPosition(posX - 8, posY - 8, 0),
+                Vector2.Zero
+            );
+            _sprite[5] = new CSprite(
+                "eel_floor",
+                new CPosition(posX + 8, posY - 8, 0),
+                Vector2.Zero
+            );
+            _sprite[6] = new CSprite(
+                "eel_floor",
+                new CPosition(posX - 8, posY + 8, 0),
+                Vector2.Zero
+            );
+            _sprite[7] = new CSprite(
+                "eel_floor",
+                new CPosition(posX + 8, posY + 8, 0),
+                Vector2.Zero
+            );
 
-            _sprite[12] = new CSprite("eel_wall", new CPosition(posX - 40, posY - 72, 0), Vector2.Zero) { SpriteEffect = SpriteEffects.FlipVertically };
-            _sprite[13] = new CSprite("eel_wall", new CPosition(posX + 24, posY - 72, 0), Vector2.Zero) { SpriteEffect = SpriteEffects.FlipVertically };
-            _sprite[14] = new CSprite("eel_wall", new CPosition(posX - 40, posY + 72, 0), Vector2.Zero);
-            _sprite[15] = new CSprite("eel_wall", new CPosition(posX + 24, posY + 72, 0), Vector2.Zero);
+            _sprite[8] = new CSprite(
+                "eel_wall_open",
+                new CPosition(posX - 40, posY - 56, 0),
+                Vector2.Zero
+            );
+            _sprite[9] = new CSprite(
+                "eel_wall_open",
+                new CPosition(posX + 24, posY - 56, 0),
+                Vector2.Zero
+            );
+            _sprite[10] = new CSprite(
+                "eel_wall_open",
+                new CPosition(posX - 40, posY + 56, 0),
+                Vector2.Zero
+            )
+            {
+                SpriteEffect = SpriteEffects.FlipVertically,
+            };
+            _sprite[11] = new CSprite(
+                "eel_wall_open",
+                new CPosition(posX + 24, posY + 56, 0),
+                Vector2.Zero
+            )
+            {
+                SpriteEffect = SpriteEffects.FlipVertically,
+            };
 
-            _sprite[16] = new CSprite("eel_wall", new CPosition(posX - 40, posY - 56, 0), Vector2.Zero);
-            _sprite[17] = new CSprite("eel_wall", new CPosition(posX + 24, posY - 56, 0), Vector2.Zero);
-            _sprite[18] = new CSprite("eel_wall", new CPosition(posX - 40, posY + 56, 0), Vector2.Zero) { SpriteEffect = SpriteEffects.FlipVertically };
-            _sprite[19] = new CSprite("eel_wall", new CPosition(posX + 24, posY + 56, 0), Vector2.Zero) { SpriteEffect = SpriteEffects.FlipVertically };
+            _sprite[12] = new CSprite(
+                "eel_wall",
+                new CPosition(posX - 40, posY - 72, 0),
+                Vector2.Zero
+            )
+            {
+                SpriteEffect = SpriteEffects.FlipVertically,
+            };
+            _sprite[13] = new CSprite(
+                "eel_wall",
+                new CPosition(posX + 24, posY - 72, 0),
+                Vector2.Zero
+            )
+            {
+                SpriteEffect = SpriteEffects.FlipVertically,
+            };
+            _sprite[14] = new CSprite(
+                "eel_wall",
+                new CPosition(posX - 40, posY + 72, 0),
+                Vector2.Zero
+            );
+            _sprite[15] = new CSprite(
+                "eel_wall",
+                new CPosition(posX + 24, posY + 72, 0),
+                Vector2.Zero
+            );
+
+            _sprite[16] = new CSprite(
+                "eel_wall",
+                new CPosition(posX - 40, posY - 56, 0),
+                Vector2.Zero
+            );
+            _sprite[17] = new CSprite(
+                "eel_wall",
+                new CPosition(posX + 24, posY - 56, 0),
+                Vector2.Zero
+            );
+            _sprite[18] = new CSprite(
+                "eel_wall",
+                new CPosition(posX - 40, posY + 56, 0),
+                Vector2.Zero
+            )
+            {
+                SpriteEffect = SpriteEffects.FlipVertically,
+            };
+            _sprite[19] = new CSprite(
+                "eel_wall",
+                new CPosition(posX + 24, posY + 56, 0),
+                Vector2.Zero
+            )
+            {
+                SpriteEffect = SpriteEffects.FlipVertically,
+            };
 
             // moved down so that we draw over the door
             EntityPosition = new CPosition(posX + 8, posY + 64, 0);
@@ -106,7 +209,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // ~4 sec for turn
             _rotationSpeed = (MathF.PI * 2) / 60 / 4;
-            
+
             for (var i = 0; i < _tailParts.Length; i++)
             {
                 var spriteIndex = i < 4 ? 1 : 2;
@@ -135,7 +238,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("hidden");
 
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         public void SetTailState(float tailState)
@@ -176,7 +282,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var spawnTime = 900;
             var endTime = 5500 + spawnTime * 4;
 
-            if(_spawnState == SpawnState.Shake || _spawnState == SpawnState.FloorBreak)
+            if (_spawnState == SpawnState.Shake || _spawnState == SpawnState.FloorBreak)
             {
                 // @TODO: sound effect; gets louder over time
                 _shakeSoundCounter -= Game1.DeltaTime;
@@ -230,7 +336,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             else if (_spawnState == SpawnState.Wall0 && _spawnCounter > 6000)
             {
                 _spawnState = SpawnState.ShakeEnd;
-
             }
             else if (_spawnState == SpawnState.ShakeEnd && _spawnCounter > 5500 + spawnTime)
             {
@@ -270,7 +375,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     _tailState = 1;
 
                 // move the tail left/right
-                _rotation = -MathF.Sin((_spawnCounter - 3000) / (endTime - 3000) * MathF.PI * 7) * 0.35f;
+                _rotation =
+                    -MathF.Sin((_spawnCounter - 3000) / (endTime - 3000) * MathF.PI * 7) * 0.35f;
             }
 
             UpdateTail();
@@ -290,9 +396,30 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var randomOffset1 = Game1.RandomNumber.Next(80, 120) / 100f;
             var randomOffset2 = Game1.RandomNumber.Next(80, 120) / 100f;
 
-            var stone0 = new ObjSmallStone(Map, posX, posY, 0, new Vector3(dir * 0.35f, -0.25f, 1.25f) * randomOffset0, true);
-            var stone1 = new ObjSmallStone(Map, posX, posY + 6, 0, new Vector3(dir * 0.35f, 0.0f, 1.25f) * randomOffset1, true);
-            var stone2 = new ObjSmallStone(Map, posX, posY + 12, 0, new Vector3(dir * 0.35f, 0.25f, 1.25f) * randomOffset2, true);
+            var stone0 = new ObjSmallStone(
+                Map,
+                posX,
+                posY,
+                0,
+                new Vector3(dir * 0.35f, -0.25f, 1.25f) * randomOffset0,
+                true
+            );
+            var stone1 = new ObjSmallStone(
+                Map,
+                posX,
+                posY + 6,
+                0,
+                new Vector3(dir * 0.35f, 0.0f, 1.25f) * randomOffset1,
+                true
+            );
+            var stone2 = new ObjSmallStone(
+                Map,
+                posX,
+                posY + 12,
+                0,
+                new Vector3(dir * 0.35f, 0.25f, 1.25f) * randomOffset2,
+                true
+            );
 
             Map.Objects.SpawnObject(stone0);
             Map.Objects.SpawnObject(stone1);
@@ -308,10 +435,38 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var randomOffset2 = Game1.RandomNumber.Next(90, 110) / 100f;
             var randomOffset3 = Game1.RandomNumber.Next(90, 110) / 100f;
 
-            var stone0 = new ObjSmallStone(Map, posX - 5, posY + 2 * dir, 0, new Vector3(-0.15f, 0.95f * dir, 0.85f) * randomOffset0, true);
-            var stone1 = new ObjSmallStone(Map, posX - 7, posY, 0, new Vector3(-0.45f, 0.75f * dir, 0.85f) * randomOffset1, true);
-            var stone2 = new ObjSmallStone(Map, posX + 5, posY + 2 * dir, 0, new Vector3(0.15f, 0.95f * dir, 0.85f) * randomOffset2, true);
-            var stone3 = new ObjSmallStone(Map, posX + 7, posY, 0, new Vector3(0.45f, 0.75f * dir, 0.85f) * randomOffset3, true);
+            var stone0 = new ObjSmallStone(
+                Map,
+                posX - 5,
+                posY + 2 * dir,
+                0,
+                new Vector3(-0.15f, 0.95f * dir, 0.85f) * randomOffset0,
+                true
+            );
+            var stone1 = new ObjSmallStone(
+                Map,
+                posX - 7,
+                posY,
+                0,
+                new Vector3(-0.45f, 0.75f * dir, 0.85f) * randomOffset1,
+                true
+            );
+            var stone2 = new ObjSmallStone(
+                Map,
+                posX + 5,
+                posY + 2 * dir,
+                0,
+                new Vector3(0.15f, 0.95f * dir, 0.85f) * randomOffset2,
+                true
+            );
+            var stone3 = new ObjSmallStone(
+                Map,
+                posX + 7,
+                posY,
+                0,
+                new Vector3(0.45f, 0.75f * dir, 0.85f) * randomOffset3,
+                true
+            );
 
             Map.Objects.SpawnObject(stone0);
             Map.Objects.SpawnObject(stone1);
@@ -326,9 +481,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             for (var i = 0; i < 4; i++)
             {
-                var hole = new ObjHole(Map,
+                var hole = new ObjHole(
+                    Map,
                     (int)_centerPosition.X - 16 + (i % 2) * 16,
-                    (int)_centerPosition.Y - 16 + (i / 2) * 16, 16, 16, Rectangle.Empty, 0, 0, 0);
+                    (int)_centerPosition.Y - 16 + (i / 2) * 16,
+                    16,
+                    16,
+                    Rectangle.Empty,
+                    0,
+                    0,
+                    0
+                );
                 Map.Objects.SpawnObject(hole);
             }
         }
@@ -383,7 +546,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 var dist = ((tailLength - (parts - 1 - i) * 10) / 47f);
                 var mult = dist * dist;
                 var rotation = _rotation - MathF.Sin(MathF.PI + _rotation * 2) * 0.75f * mult;
-                var newPosition = new Vector2(MathF.Sin(rotation), -MathF.Cos(rotation)) * (tailLength - (parts - 1 - i) * 10);
+                var newPosition =
+                    new Vector2(MathF.Sin(rotation), -MathF.Cos(rotation))
+                    * (tailLength - (parts - 1 - i) * 10);
 
                 if (i > 0)
                 {
@@ -412,8 +577,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void SpawnHeart()
         {
             // spawn big heart
-            Map.Objects.SpawnObject(new ObjItem(Map,
-                (int)_centerPosition.X - 8, (int)_centerPosition.Y - 32, "j", "d5_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)_centerPosition.X - 8,
+                    (int)_centerPosition.Y - 32,
+                    "j",
+                    "d5_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
     }
 }

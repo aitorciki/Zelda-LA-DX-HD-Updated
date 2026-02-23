@@ -8,7 +8,15 @@ namespace ProjectZ.Base.UI
         public Texture2D SprImage;
         public Rectangle SourceRectangle;
 
-        public UiImage(Texture2D sprImage, Rectangle drawRectangle, Rectangle sourceRectangle, string elementId, string screen, Color color, UiFunction update)
+        public UiImage(
+            Texture2D sprImage,
+            Rectangle drawRectangle,
+            Rectangle sourceRectangle,
+            string elementId,
+            string screen,
+            Color color,
+            UiFunction update
+        )
             : base(elementId, screen)
         {
             SprImage = sprImage;

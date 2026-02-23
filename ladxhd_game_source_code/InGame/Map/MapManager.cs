@@ -68,9 +68,9 @@ namespace ProjectZ.InGame.Map
             return GetCameraTargetLink();
         }
 
-        static public Vector2 GetCameraTargetLink()
+        public static Vector2 GetCameraTargetLink()
         {
-            return (new Vector2 (ObjLink.PosX, ObjLink.PosY - 4) + CameraOffset) * Camera.Scale;
+            return (new Vector2(ObjLink.PosX, ObjLink.PosY - 4) + CameraOffset) * Camera.Scale;
         }
 
         public void UpdateCamera()
@@ -116,7 +116,12 @@ namespace ProjectZ.InGame.Map
             CurrentMap.Objects.DrawMiddle(spriteBatch);
 
             // draw the blured part of the tile map
-            DrawBlur(spriteBatch, Game1.GameManager.TempRT2, Game1.GameManager.TempRT0, Game1.GameManager.TempRT1);
+            DrawBlur(
+                spriteBatch,
+                Game1.GameManager.TempRT2,
+                Game1.GameManager.TempRT0,
+                Game1.GameManager.TempRT1
+            );
 
             // draw the objects
             CurrentMap.Objects.Draw(spriteBatch);
@@ -127,20 +132,38 @@ namespace ProjectZ.InGame.Map
         public void DrawBegin(SpriteBatch spriteBatch, Effect spriteEffect)
         {
             if (!Game1.GameManager.UseShockEffect)
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, spriteEffect, blurMatrix);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    spriteEffect,
+                    blurMatrix
+                );
             else
                 ObjectManager.SpriteBatchBegin(spriteBatch, null);
         }
 
-        private void DrawBlur(SpriteBatch spriteBatch, RenderTarget2D blurRT0, RenderTarget2D blurRT1, RenderTarget2D blurRT2)
+        private void DrawBlur(
+            SpriteBatch spriteBatch,
+            RenderTarget2D blurRT0,
+            RenderTarget2D blurRT1,
+            RenderTarget2D blurRT2
+        )
         {
             // Defensive: require all RTs to be valid
             if (blurRT0 == null || blurRT1 == null || blurRT2 == null)
                 return;
 
-            if (blurRT0.Width <= 0 || blurRT0.Height <= 0 ||
-                blurRT1.Width <= 0 || blurRT1.Height <= 0 ||
-                blurRT2.Width <= 0 || blurRT2.Height <= 0)
+            if (
+                blurRT0.Width <= 0
+                || blurRT0.Height <= 0
+                || blurRT1.Width <= 0
+                || blurRT1.Height <= 0
+                || blurRT2.Width <= 0
+                || blurRT2.Height <= 0
+            )
                 return;
 
             // Keep a safe flag so we can restore state if something fails
@@ -155,25 +178,42 @@ namespace ProjectZ.InGame.Map
                     rtWasSet = true;
                     Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
-                    var cameraPosition = new Vector2(Camera.RoundX / Camera.Scale, Camera.RoundY / Camera.Scale);
-                    matrixPosition = new Vector2((int)cameraPosition.X - 1, (int)cameraPosition.Y - 1);
+                    var cameraPosition = new Vector2(
+                        Camera.RoundX / Camera.Scale,
+                        Camera.RoundY / Camera.Scale
+                    );
+                    matrixPosition = new Vector2(
+                        (int)cameraPosition.X - 1,
+                        (int)cameraPosition.Y - 1
+                    );
 
                     // Build blurMatrix - clamp values and avoid NaN
                     var translateX = -matrixPosition.X;
                     var translateY = -matrixPosition.Y;
                     if (float.IsNaN(translateX) || float.IsNaN(translateY))
                     {
-                        translateX = 0; translateY = 0;
+                        translateX = 0;
+                        translateY = 0;
                     }
 
-                    blurMatrix = Matrix.CreateScale(1f) *
-                                 Matrix.CreateTranslation(new Vector3(translateX, translateY, 0f)) *
-                                 Matrix.CreateTranslation(new Vector3(
-                                    (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f),
-                                    (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f), 0f)) *
-                                 Matrix.CreateScale(new Vector3(
-                                    (float)blurRT0.Width / Game1.GameManager.SideBlurRenderTargetWidth,
-                                    (float)blurRT0.Height / Game1.GameManager.SideBlurRenderTargetHeight, 1f));
+                    blurMatrix =
+                        Matrix.CreateScale(1f)
+                        * Matrix.CreateTranslation(new Vector3(translateX, translateY, 0f))
+                        * Matrix.CreateTranslation(
+                            new Vector3(
+                                (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f),
+                                (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f),
+                                0f
+                            )
+                        )
+                        * Matrix.CreateScale(
+                            new Vector3(
+                                (float)blurRT0.Width / Game1.GameManager.SideBlurRenderTargetWidth,
+                                (float)blurRT0.Height
+                                    / Game1.GameManager.SideBlurRenderTargetHeight,
+                                1f
+                            )
+                        );
                 }
 
                 // Begin drawing to blurRT0 (or main RT) - ensure DrawBegin uses blurMatrix; supply null safely if needed
@@ -192,7 +232,14 @@ namespace ProjectZ.InGame.Map
                     return;
 
                 // safety: ensure blurRT1/2 still valid before using them
-                if (blurRT1 == null || blurRT2 == null || blurRT1.Width <= 0 || blurRT1.Height <= 0 || blurRT2.Width <= 0 || blurRT2.Height <= 0)
+                if (
+                    blurRT1 == null
+                    || blurRT2 == null
+                    || blurRT1.Width <= 0
+                    || blurRT1.Height <= 0
+                    || blurRT2.Width <= 0
+                    || blurRT2.Height <= 0
+                )
                     return;
 
                 // prepare blur shaders - safe access of widths
@@ -207,16 +254,41 @@ namespace ProjectZ.InGame.Map
                 var blurX = (-(matrixPosition.X % 2) / 2.0f) + (blurRT1.Width % 2 * 0.5f);
                 var blurY = (-(matrixPosition.Y % 2) / 2.0f) + (blurRT1.Height % 2 * 0.5f);
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BBlurEffectV, null);
-                spriteBatch.Draw(blurRT0, new Vector2(blurX, blurY),
-                    new Rectangle(0, 0, blurRT0.Width, blurRT0.Height), Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+                spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.BBlurEffectV,
+                    null
+                );
+                spriteBatch.Draw(
+                    blurRT0,
+                    new Vector2(blurX, blurY),
+                    new Rectangle(0, 0, blurRT0.Width, blurRT0.Height),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    0.5f,
+                    SpriteEffects.None,
+                    0f
+                );
                 spriteBatch.End();
 
                 // h blur pass
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT2);
                 Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BBlurEffectH, null);
+                spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.BBlurEffectH,
+                    null
+                );
                 spriteBatch.Draw(blurRT1, Vector2.Zero, Color.White);
                 spriteBatch.End();
 
@@ -230,17 +302,43 @@ namespace ProjectZ.InGame.Map
                 if (float.IsNaN(safeTransform.M11) || float.IsNaN(safeTransform.M41))
                     safeTransform = Matrix.Identity;
 
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, null, safeTransform);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    null,
+                    safeTransform
+                );
 
-                var scale = new Vector2((float)Game1.GameManager.BlurRenderTargetWidth / blurRT1.Width * 2f,
-                                        (float)Game1.GameManager.BlurRenderTargetHeight / blurRT1.Height * 2f);
+                var scale = new Vector2(
+                    (float)Game1.GameManager.BlurRenderTargetWidth / blurRT1.Width * 2f,
+                    (float)Game1.GameManager.BlurRenderTargetHeight / blurRT1.Height * 2f
+                );
 
                 var drawPos = new Vector2(
-                    matrixPosition.X + matrixPosition.X % 2 - (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f) - (int)(Game1.RenderWidth / (Camera.Scale * 2)) % 2,
-                    matrixPosition.Y + matrixPosition.Y % 2 - (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f) - (int)(Game1.RenderHeight / (Camera.Scale * 2)) % 2);
+                    matrixPosition.X
+                        + matrixPosition.X % 2
+                        - (int)(Game1.GameManager.SideBlurRenderTargetWidth * 0.5f)
+                        - (int)(Game1.RenderWidth / (Camera.Scale * 2)) % 2,
+                    matrixPosition.Y
+                        + matrixPosition.Y % 2
+                        - (int)(Game1.GameManager.SideBlurRenderTargetHeight * 0.5f)
+                        - (int)(Game1.RenderHeight / (Camera.Scale * 2)) % 2
+                );
 
-                spriteBatch.Draw(blurRT2, drawPos,
-                    new Rectangle(0, 0, blurRT2.Width, blurRT2.Height), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(
+                    blurRT2,
+                    drawPos,
+                    new Rectangle(0, 0, blurRT2.Width, blurRT2.Height),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    scale,
+                    SpriteEffects.None,
+                    0f
+                );
 
                 spriteBatch.End();
             }
@@ -259,9 +357,19 @@ namespace ProjectZ.InGame.Map
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
-            Color lighting = GameSettings.GlobalLights ? CurrentMap.LightColor : new Color(255, 255, 255);
+            Color lighting = GameSettings.GlobalLights
+                ? CurrentMap.LightColor
+                : new Color(255, 255, 255);
             Game1.Graphics.GraphicsDevice.Clear(lighting);
-            spriteBatch.Begin(SpriteSortMode.Deferred, LightBlendState, SamplerState.AnisotropicClamp, null, null, null, Camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                LightBlendState,
+                SamplerState.AnisotropicClamp,
+                null,
+                null,
+                null,
+                Camera.TransformMatrix
+            );
             CurrentMap.Objects.DrawLight(spriteBatch);
             spriteBatch.End();
         }

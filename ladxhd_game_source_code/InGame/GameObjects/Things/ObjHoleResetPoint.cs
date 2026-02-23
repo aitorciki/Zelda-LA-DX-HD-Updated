@@ -11,7 +11,8 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private readonly int _direction;
 
-        public ObjHoleResetPoint(Map.Map map, int posX, int posY, int direction) : base(map)
+        public ObjHoleResetPoint(Map.Map map, int posX, int posY, int direction)
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -23,7 +24,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _direction = direction;
 
             var collisionRectangle = new Rectangle(posX, posY, 16, 16);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(collisionRectangle, OnCollision)
+            );
         }
 
         private void OnCollision(GameObject gameObject)

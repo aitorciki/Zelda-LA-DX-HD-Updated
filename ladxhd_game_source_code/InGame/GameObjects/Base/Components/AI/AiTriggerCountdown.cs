@@ -15,7 +15,12 @@
         private bool _initRunningState;
         private bool _isRunning;
 
-        public AiTriggerCountdown(int startTime, TriggerFunction tickFunction, TriggerEndFunction countdownEnd, bool initRunningState = true)
+        public AiTriggerCountdown(
+            int startTime,
+            TriggerFunction tickFunction,
+            TriggerEndFunction countdownEnd,
+            bool initRunningState = true
+        )
         {
             StartTime = startTime;
 

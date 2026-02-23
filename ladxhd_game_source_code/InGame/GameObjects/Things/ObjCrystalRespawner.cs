@@ -19,7 +19,16 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _respawnStart;
         private float _respawnTimer;
 
-        public CrystalRespawner(Map.Map map, int posX, int posY, string spriteId, string dialogPath, bool isHardCrystal, int color) : base(map)
+        public CrystalRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spriteId,
+            string dialogPath,
+            bool isHardCrystal,
+            int color
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -77,8 +86,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // Delete the respawn object and respawn the crystal object.
             Map.Objects.DeleteObjects.Add(this);
-            Map.Objects.SpawnObject(new ObjCrystal(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 
-                _spriteId, _color, _isHardCrystal, _dialogPath));
+            Map.Objects.SpawnObject(
+                new ObjCrystal(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    _spriteId,
+                    _color,
+                    _isHardCrystal,
+                    _dialogPath
+                )
+            );
         }
     }
 }

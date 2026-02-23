@@ -32,24 +32,33 @@ namespace ProjectZ.InGame.SaveLoad
                 // write frames
                 for (var j = 0; j < animator.Animations[i].Frames.Length; j++)
                 {
-                    saveString += ";" +
-                                    animator.Animations[i].Frames[j].FrameTime + ";" +
-
-                                    animator.Animations[i].Frames[j].SourceRectangle.X + ";" +
-                                    animator.Animations[i].Frames[j].SourceRectangle.Y + ";" +
-                                    animator.Animations[i].Frames[j].SourceRectangle.Width + ";" +
-                                    animator.Animations[i].Frames[j].SourceRectangle.Height + ";" +
-
-                                    animator.Animations[i].Frames[j].Offset.X + ";" +
-                                    animator.Animations[i].Frames[j].Offset.Y + ";" +
-
-                                    animator.Animations[i].Frames[j].CollisionRectangle.X + ";" +
-                                    animator.Animations[i].Frames[j].CollisionRectangle.Y + ";" +
-                                    animator.Animations[i].Frames[j].CollisionRectangle.Width + ";" +
-                                    animator.Animations[i].Frames[j].CollisionRectangle.Height + ";" +
-
-                                    animator.Animations[i].Frames[j].MirroredV + ";" +
-                                    animator.Animations[i].Frames[j].MirroredH;
+                    saveString +=
+                        ";"
+                        + animator.Animations[i].Frames[j].FrameTime
+                        + ";"
+                        + animator.Animations[i].Frames[j].SourceRectangle.X
+                        + ";"
+                        + animator.Animations[i].Frames[j].SourceRectangle.Y
+                        + ";"
+                        + animator.Animations[i].Frames[j].SourceRectangle.Width
+                        + ";"
+                        + animator.Animations[i].Frames[j].SourceRectangle.Height
+                        + ";"
+                        + animator.Animations[i].Frames[j].Offset.X
+                        + ";"
+                        + animator.Animations[i].Frames[j].Offset.Y
+                        + ";"
+                        + animator.Animations[i].Frames[j].CollisionRectangle.X
+                        + ";"
+                        + animator.Animations[i].Frames[j].CollisionRectangle.Y
+                        + ";"
+                        + animator.Animations[i].Frames[j].CollisionRectangle.Width
+                        + ";"
+                        + animator.Animations[i].Frames[j].CollisionRectangle.Height
+                        + ";"
+                        + animator.Animations[i].Frames[j].MirroredV
+                        + ";"
+                        + animator.Animations[i].Frames[j].MirroredH;
                 }
 
                 writer.WriteLine(saveString);
@@ -63,7 +72,10 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static Animator LoadAnimator(string animatorId, bool redux = false)
         {
-            return LoadAnimatorFile(Path.Combine(Values.PathAnimationFolder, animatorId + ".ani"), redux);
+            return LoadAnimatorFile(
+                Path.Combine(Values.PathAnimationFolder, animatorId + ".ani"),
+                redux
+            );
         }
 
         public static Animator LoadAnimatorFile(string filePath, bool redux = false)
@@ -115,23 +127,36 @@ namespace ProjectZ.InGame.SaveLoad
 
                 for (var i = 0; i < frames; i++)
                 {
-                    animator.SetFrameAt(animationId, i, new Frame()
-                    {
-                        FrameTime = Convert.ToInt32(strSplit[pos += 1]),
+                    animator.SetFrameAt(
+                        animationId,
+                        i,
+                        new Frame()
+                        {
+                            FrameTime = Convert.ToInt32(strSplit[pos += 1]),
 
-                        SourceRectangle = new Rectangle(
-                            Convert.ToInt32(strSplit[pos += 1]), Convert.ToInt32(strSplit[pos += 1]),
-                            Convert.ToInt32(strSplit[pos += 1]), Convert.ToInt32(strSplit[pos += 1])),
+                            SourceRectangle = new Rectangle(
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1])
+                            ),
 
-                        Offset = new Point(Convert.ToInt32(strSplit[pos += 1]), Convert.ToInt32(strSplit[pos += 1])),
+                            Offset = new Point(
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1])
+                            ),
 
-                        CollisionRectangle = new Rectangle(
-                            Convert.ToInt32(strSplit[pos += 1]), Convert.ToInt32(strSplit[pos += 1]),
-                            Convert.ToInt32(strSplit[pos += 1]), Convert.ToInt32(strSplit[pos += 1])),
+                            CollisionRectangle = new Rectangle(
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1]),
+                                Convert.ToInt32(strSplit[pos += 1])
+                            ),
 
-                        MirroredV = Convert.ToBoolean(strSplit[pos += 1]),
-                        MirroredH = Convert.ToBoolean(strSplit[pos += 1])
-                    });
+                            MirroredV = Convert.ToBoolean(strSplit[pos += 1]),
+                            MirroredH = Convert.ToBoolean(strSplit[pos += 1]),
+                        }
+                    );
                 }
             }
 

@@ -13,9 +13,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Rectangle _hiddenField;
         private bool _init;
 
-        public ObjObjectHider() : base("editor object hider") { }
+        public ObjObjectHider()
+            : base("editor object hider") { }
 
-        public ObjObjectHider(Map.Map map, int posX, int posY) : base(map)
+        public ObjObjectHider(Map.Map map, int posX, int posY)
+            : base(map)
         {
             if (Game1.GameManager.HasMagnifyingLens)
             {
@@ -34,7 +36,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _init = true;
 
                 // if it was possible to edit the tags of gameobjects we could have a "hiden" tag and only get those objects
-                Map.Objects.GetComponentList(_objectList, _hiddenField.X, _hiddenField.Y, _hiddenField.Width, _hiddenField.Height, DrawComponent.Mask);
+                Map.Objects.GetComponentList(
+                    _objectList,
+                    _hiddenField.X,
+                    _hiddenField.Y,
+                    _hiddenField.Width,
+                    _hiddenField.Height,
+                    DrawComponent.Mask
+                );
 
                 SetVisibility(false);
             }
@@ -54,23 +63,32 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (gameObject is ObjSprite)
                     continue;
 
-                if (gameObject.Tags != Values.GameObjectTag.Enemy &&
-                    !(gameObject is ObjSprite) &&
-                    !(gameObject is ObjPersonNew) &&
-                    !(gameObject is ObjSpriteShadow))
+                if (
+                    gameObject.Tags != Values.GameObjectTag.Enemy
+                    && !(gameObject is ObjSprite)
+                    && !(gameObject is ObjPersonNew)
+                    && !(gameObject is ObjSpriteShadow)
+                )
                     continue;
 
                 // deactivate the person and the sprites
-                if (gameObject is ObjPersonNew || gameObject is ObjSprite || gameObject is ObjSpriteShadow)
+                if (
+                    gameObject is ObjPersonNew
+                    || gameObject is ObjSprite
+                    || gameObject is ObjSpriteShadow
+                )
                 {
                     gameObject.IsActive = visibility;
                     continue;
                 }
 
                 if (gameObject.Components[DrawComponent.Index] != null)
-                    ((DrawComponent)gameObject.Components[DrawComponent.Index]).IsActive = visibility;
+                    ((DrawComponent)gameObject.Components[DrawComponent.Index]).IsActive =
+                        visibility;
                 if (gameObject.Components[DrawShadowComponent.Index] != null)
-                    ((DrawShadowComponent)gameObject.Components[DrawShadowComponent.Index]).IsActive = visibility;
+                    (
+                        (DrawShadowComponent)gameObject.Components[DrawShadowComponent.Index]
+                    ).IsActive = visibility;
             }
         }
     }

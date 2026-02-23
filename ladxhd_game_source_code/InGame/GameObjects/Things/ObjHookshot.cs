@@ -53,9 +53,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _body = new BodyComponent(_hookshotPosition, -1, -1, 2, 2, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Instrument,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Instrument,
                 IgnoresZ = true,
                 IgnoreHoles = true,
                 IgnoreInsideCollision = false,
@@ -67,7 +68,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, _hookshotPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, _hookshotPosition)
+            );
         }
 
         public void Reset()
@@ -80,7 +84,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map = map;
 
             _hookshotPosition.Set(position);
-            _startPositionOffset = new Vector2(position.X, position.Y) - MapManager.ObjLink.Position;
+            _startPositionOffset =
+                new Vector2(position.X, position.Y) - MapManager.ObjLink.Position;
 
             _body.VelocityTarget = direction * Speed;
             _body.CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot;
@@ -114,22 +119,29 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
             }
 
-            var direction = MapManager.ObjLink.Position + _startPositionOffset - _hookshotPosition.Position;
+            var direction =
+                MapManager.ObjLink.Position + _startPositionOffset - _hookshotPosition.Position;
             var distance = direction.Length();
 
             _hookshotPosition.Z = MapManager.ObjLink.EntityPosition.Z;
 
             if (!_comingBack)
             {
-                // When Modern Camera is enabled, use the camera's current bounds to determine when object collides with screen's edge. 
-                if (!Camera.ClassicMode && !MapManager.Camera.GetGameView().Contains(_hookshotPosition.Position))
+                // When Modern Camera is enabled, use the camera's current bounds to determine when object collides with screen's edge.
+                if (
+                    !Camera.ClassicMode
+                    && !MapManager.Camera.GetGameView().Contains(_hookshotPosition.Position)
+                )
                 {
                     Repell();
                     ComeBack();
                     return;
                 }
                 // When Classic Camera is enabled, use current field to determine when object collides with screen's edge.
-                if (Camera.ClassicMode && !MapManager.ObjLink.CurrentField.Contains(_hookshotPosition.Position))
+                if (
+                    Camera.ClassicMode
+                    && !MapManager.ObjLink.CurrentField.Contains(_hookshotPosition.Position)
+                )
                 {
                     Repell();
                     ComeBack();
@@ -155,12 +167,31 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_comingBack)
             {
                 // damage: 2
-                var collision = Map.Objects.Hit(this, _hookshotPosition.Position, _damageBox.Box, HitType.Hookshot, 2, false, false);
-                if ((collision & (
-                    Values.HitCollision.Enemy | Values.HitCollision.Blocking |
-                    Values.HitCollision.Repelling | Values.HitCollision.RepellingParticle)) != 0)
+                var collision = Map.Objects.Hit(
+                    this,
+                    _hookshotPosition.Position,
+                    _damageBox.Box,
+                    HitType.Hookshot,
+                    2,
+                    false,
+                    false
+                );
+                if (
+                    (
+                        collision
+                        & (
+                            Values.HitCollision.Enemy
+                            | Values.HitCollision.Blocking
+                            | Values.HitCollision.Repelling
+                            | Values.HitCollision.RepellingParticle
+                        )
+                    ) != 0
+                )
                 {
-                    if ((collision & Values.HitCollision.RepellingParticle) != 0 && !_pokeParticleSpawned)
+                    if (
+                        (collision & Values.HitCollision.RepellingParticle) != 0
+                        && !_pokeParticleSpawned
+                    )
                         Repell();
 
                     ComeBack();
@@ -176,13 +207,25 @@ namespace ProjectZ.InGame.GameObjects.Things
             handPosition.Y += _startPositionOffset.Y;
             var direction = _hookshotPosition.ToVector3() - handPosition;
             for (var i = 0; i < 3; i++)
-                spriteBatch.Draw(_spriteChain.Texture, new Vector2(handPosition.X - 2, handPosition.Y - 2 - MapManager.ObjLink.EntityPosition.Z) +
-                                                       new Vector2(direction.X, direction.Y) * ((i + 0.75f) / 4f) +
-                                                       new Vector2(0, -direction.Z * ((i + 0.75f) / 4f)), _spriteChain.SourceRectangle, Color.White);
+                spriteBatch.Draw(
+                    _spriteChain.Texture,
+                    new Vector2(
+                        handPosition.X - 2,
+                        handPosition.Y - 2 - MapManager.ObjLink.EntityPosition.Z
+                    )
+                        + new Vector2(direction.X, direction.Y) * ((i + 0.75f) / 4f)
+                        + new Vector2(0, -direction.Z * ((i + 0.75f) / 4f)),
+                    _spriteChain.SourceRectangle,
+                    Color.White
+                );
 
             // draw the hook
-            spriteBatch.Draw(_spriteHook.Texture, new Vector2(_hookshotPosition.X - 7,
-                _hookshotPosition.Y - 7 - _hookshotPosition.Z), _spriteHook.SourceRectangle, Color.White);
+            spriteBatch.Draw(
+                _spriteHook.Texture,
+                new Vector2(_hookshotPosition.X - 7, _hookshotPosition.Y - 7 - _hookshotPosition.Z),
+                _spriteHook.SourceRectangle,
+                Color.White
+            );
         }
 
         private void Despawn()
@@ -194,7 +237,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void CollectItem()
         {
             // I once experienced a strange crash where "Map" was null. Not sure how... so prevent that I guess.
-            if (Map == null) { return; }
+            if (Map == null)
+            {
+                return;
+            }
 
             if (_item != null && !_item.Collected)
                 return;
@@ -202,22 +248,36 @@ namespace ProjectZ.InGame.GameObjects.Things
             _item = null;
             _itemList.Clear();
 
-            Map.Objects.GetComponentList(_itemList, (int)_damageBox.Box.X, (int)_damageBox.Box.Y,
-                (int)_damageBox.Box.Width, (int)_damageBox.Box.Height, CollisionComponent.Mask);
+            Map.Objects.GetComponentList(
+                _itemList,
+                (int)_damageBox.Box.X,
+                (int)_damageBox.Box.Y,
+                (int)_damageBox.Box.Width,
+                (int)_damageBox.Box.Height,
+                CollisionComponent.Mask
+            );
 
             // check if an item was found
             foreach (var gameObject in _itemList)
             {
                 var collidingBox = Box.Empty;
-                var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
-                if ((collisionObject.CollisionType & Values.CollisionTypes.Item) != 0 &&
-                    collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox))
+                var collisionObject =
+                    gameObject.Components[CollisionComponent.Index] as CollisionComponent;
+                if (
+                    (collisionObject.CollisionType & Values.CollisionTypes.Item) != 0
+                    && collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox)
+                )
                 {
                     // Hookshot comes in contact with item.
                     if (collisionObject.Owner.GetType() == (typeof(ObjItem)))
                     {
                         ObjItem newItem = (collisionObject.Owner as ObjItem);
-                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying && !newItem._itemName.Contains("instrument"))
+                        if (
+                            newItem.IsActive
+                            && !newItem.Collected
+                            && !newItem._isFlying
+                            && !newItem._itemName.Contains("instrument")
+                        )
                         {
                             _item = newItem;
                             _item.InitCollection();
@@ -258,7 +318,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             box.X += _direction.X;
             box.Y += _direction.Y;
 
-            if (Map.Objects.Collision(box, Box.Empty, Values.CollisionTypes.Hookshot, 0, _body.Level, ref collidingBox))
+            if (
+                Map.Objects.Collision(
+                    box,
+                    Box.Empty,
+                    Values.CollisionTypes.Hookshot,
+                    0,
+                    _body.Level,
+                    ref collidingBox
+                )
+            )
             {
                 // gets pulled towards the colliding box
                 _body.VelocityTarget = Vector2.Zero;

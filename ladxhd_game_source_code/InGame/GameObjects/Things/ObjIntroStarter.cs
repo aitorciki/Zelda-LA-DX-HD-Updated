@@ -9,9 +9,11 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private bool _init;
 
-        public ObjIntroStarter() : base("editor intro") { }
+        public ObjIntroStarter()
+            : base("editor intro") { }
 
-        public ObjIntroStarter(Map.Map map, int posX, int posY) : base(map)
+        public ObjIntroStarter(Map.Map map, int posX, int posY)
+            : base(map)
         {
             if (Game1.GameManager.SaveManager.GetString("played_intro") == "1")
             {

@@ -9,7 +9,14 @@ namespace ProjectZ.Base.UI
         public Color BlurColor;
         public float Radius = 0;
 
-        public UiRectangle(Rectangle rectangle, string elementId, string screen, Color color, Color blurColor, UiFunction update)
+        public UiRectangle(
+            Rectangle rectangle,
+            string elementId,
+            string screen,
+            Color color,
+            Color blurColor,
+            UiFunction update
+        )
             : base(elementId, screen)
         {
             Rectangle = rectangle;

@@ -16,19 +16,35 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private bool _isActive;
 
-        public MBossBallAndChain(Map.Map map, MBossBallAndChainSoldier owner) : base(map)
+        public MBossBallAndChain(Map.Map map, MBossBallAndChainSoldier owner)
+            : base(map)
         {
-            EntityPosition = new CPosition(owner.EntityPosition.X - 5, owner.EntityPosition.Y - 8 + 2, 0);
+            EntityPosition = new CPosition(
+                owner.EntityPosition.X - 5,
+                owner.EntityPosition.Y - 8 + 2,
+                0
+            );
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             _owner = owner;
-            _sprite = new CSprite(Resources.SprMidBoss, EntityPosition, new Rectangle(184, 175, 16, 16), new Vector2(-8, -16));
+            _sprite = new CSprite(
+                Resources.SprMidBoss,
+                EntityPosition,
+                new Rectangle(184, 175, 16, 16),
+                new Vector2(-8, -16)
+            );
 
             var damageCollider = new CBox(EntityPosition, -6, -8 - 6, 0, 12, 12, 8);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(damageCollider, OnHit));
             AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         public void Activate()
@@ -41,7 +57,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _isActive = false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -67,13 +89,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            var handPosition = new Vector2(_owner.EntityPosition.X - 5, _owner.EntityPosition.Y - 15);
+            var handPosition = new Vector2(
+                _owner.EntityPosition.X - 5,
+                _owner.EntityPosition.Y - 15
+            );
             var direction = new Vector2(EntityPosition.X, EntityPosition.Y - 8) - handPosition;
             // draw the chain
             for (var i = 0; i < 3; i++)
             {
                 var linkPosition = handPosition + direction * ((i + 1) / 4.0f) - new Vector2(2, 2);
-                spriteBatch.Draw(Resources.SprMidBoss, linkPosition, _sourceRectangleLink, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprMidBoss,
+                    linkPosition,
+                    _sourceRectangleLink,
+                    Color.White
+                );
             }
 
             _sprite.Draw(spriteBatch);

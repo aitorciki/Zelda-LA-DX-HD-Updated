@@ -15,13 +15,23 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly DictAtlasEntry _spriteBookOpen;
         private readonly string _strKey;
         private readonly string _dialogKey;
+
         // when the dialogKey + "_open" key is set the book sprite will be shown as opened
         private readonly string _openBookKey;
         private bool _hasFallen;
 
-        public ObjBook() : base("book_0") { }
+        public ObjBook()
+            : base("book_0") { }
 
-        public ObjBook(Map.Map map, int posX, int posY, string strKey, string dialogKey, int spriteIndex) : base(map)
+        public ObjBook(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            string dialogKey,
+            int spriteIndex
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 18);
@@ -33,10 +43,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             spriteIndex = MathHelper.Clamp(spriteIndex, 0, 3);
 
             // has the book already fallen down?
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) != "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) != "1"
+            )
             {
                 EntityPosition.Z = 30;
-                EntitySize = new Rectangle(-Values.FieldWidth / 2, -32, Values.FieldWidth, Values.FieldHeight);
+                EntitySize = new Rectangle(
+                    -Values.FieldWidth / 2,
+                    -32,
+                    Values.FieldWidth,
+                    Values.FieldHeight
+                );
             }
             else
                 _hasFallen = true;
@@ -56,13 +74,29 @@ namespace ProjectZ.InGame.GameObjects.Things
             var interactionBox = new CBox(EntityPosition, -6, -11, 0, 12, 13, 8);
             if (!_hasFallen)
             {
-                var hitBox = new CBox(EntityPosition.X + EntitySize.X, EntityPosition.Y + EntitySize.Y, 0, EntitySize.Width, EntitySize.Height, 16);
+                var hitBox = new CBox(
+                    EntityPosition.X + EntitySize.X,
+                    EntityPosition.Y + EntitySize.Y,
+                    0,
+                    EntitySize.Width,
+                    EntitySize.Height,
+                    16
+                );
                 AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
             }
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(InteractComponent.Index, new InteractComponent(interactionBox, OnInteract));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(interactionBox, OnInteract)
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void OnKeyChange()
@@ -81,7 +115,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (_hasFallen)
                 return Values.HitCollision.None;

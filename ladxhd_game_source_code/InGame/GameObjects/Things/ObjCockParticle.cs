@@ -2,10 +2,10 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
-using ProjectZ.InGame.Things;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -19,6 +19,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         // center where the particle is circling around
         private readonly Vector2[] _circleCenters = new Vector2[7];
+
         // the amount we circle a specifiy center
         private readonly float[] _circleRadians = new float[7];
 
@@ -28,6 +29,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private const float CircleSpeed = MathF.PI / 800;
         private const int Radius = 10;
         private const int OffsetEnd = 12;
+
         // 0/1 clockwise/reversed clockwise
         private const int Direction = 1;
 
@@ -36,7 +38,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _isRunning = true;
 
-        public ObjCockParticle(Map.Map map, Vector2 endPosition) : base(map)
+        public ObjCockParticle(Map.Map map, Vector2 endPosition)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -81,10 +84,26 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_circleRadians.Length % 2 == 0)
                 _startRadiants += MathF.PI;
 
-            _sprites[0] = new CSprite("cock_particle_0", _positions[0] = new CPosition(0, 0, 0), new Vector2(-4, -4));
-            _sprites[1] = new CSprite("cock_particle_1", _positions[1] = new CPosition(0, 0, 0), new Vector2(-3, -3));
-            _sprites[2] = new CSprite("cock_particle_2", _positions[2] = new CPosition(0, 0, 0), new Vector2(-2, -2));
-            _sprites[3] = new CSprite("cock_particle_2", _positions[3] = new CPosition(0, 0, 0), new Vector2(-2, -2));
+            _sprites[0] = new CSprite(
+                "cock_particle_0",
+                _positions[0] = new CPosition(0, 0, 0),
+                new Vector2(-4, -4)
+            );
+            _sprites[1] = new CSprite(
+                "cock_particle_1",
+                _positions[1] = new CPosition(0, 0, 0),
+                new Vector2(-3, -3)
+            );
+            _sprites[2] = new CSprite(
+                "cock_particle_2",
+                _positions[2] = new CPosition(0, 0, 0),
+                new Vector2(-2, -2)
+            );
+            _sprites[3] = new CSprite(
+                "cock_particle_2",
+                _positions[3] = new CPosition(0, 0, 0),
+                new Vector2(-2, -2)
+            );
 
             _endPosition = endPosition;
 
@@ -92,7 +111,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             var hittableBox = new CBox(EntityPosition, -4, -4, 0, 8, 8, 8);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerTop, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerTop, EntityPosition)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
@@ -126,7 +148,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (i % 2 != Direction)
                         radiant = radiantSum - circleTime;
 
-                    return _circleCenters[i] + new Vector2(-MathF.Cos(radiant), MathF.Sin(radiant)) * Radius;
+                    return _circleCenters[i]
+                        + new Vector2(-MathF.Cos(radiant), MathF.Sin(radiant)) * Radius;
                 }
                 else
                 {
@@ -139,7 +162,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 }
             }
 
-            var startPosition = _circleCenters[_circleCenters.Length - 1] - new Vector2(-MathF.Cos(radiantSum), MathF.Sin(radiantSum)) * Radius;
+            var startPosition =
+                _circleCenters[_circleCenters.Length - 1]
+                - new Vector2(-MathF.Cos(radiantSum), MathF.Sin(radiantSum)) * Radius;
             var targetPosition = _endPosition;
             var percentage = (circleTime / CircleSpeed) / 1000 * (60 / 12);
             var newPosition = Vector2.Lerp(startPosition, targetPosition, percentage);
@@ -156,7 +181,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             // for (int i = 0; i < _circleCenters.Length; i++)
             //     spriteBatch.Draw(Resources.SprWhite, _circleCenters[i] - new Vector2(1, 1), new Rectangle(0, 0, 2, 2), Color.Red);
 
-            var color = (Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime) ? _color0 : _color1;
+            var color =
+                (Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime)
+                    ? _color0
+                    : _color1;
 
             if (GameSettings.EpilepsySafe)
                 color = _color1;
@@ -180,8 +208,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 if (_positions[i].Position != Vector2.Zero)
                 {
-                    var sizeMult = i == 0 ? 1 : 0.75f;// (4 - i) / 4f;
-                    DrawHelper.DrawLight(spriteBatch, new Rectangle((int)(_positions[i].X - 16 * sizeMult), (int)(_positions[i].Y - 16 * sizeMult), (int)(32 * sizeMult), (int)(32 * sizeMult)), Color.White);
+                    var sizeMult = i == 0 ? 1 : 0.75f; // (4 - i) / 4f;
+                    DrawHelper.DrawLight(
+                        spriteBatch,
+                        new Rectangle(
+                            (int)(_positions[i].X - 16 * sizeMult),
+                            (int)(_positions[i].Y - 16 * sizeMult),
+                            (int)(32 * sizeMult),
+                            (int)(32 * sizeMult)
+                        ),
+                        Color.White
+                    );
                 }
             }
         }

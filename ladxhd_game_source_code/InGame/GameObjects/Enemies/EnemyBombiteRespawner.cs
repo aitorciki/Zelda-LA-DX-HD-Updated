@@ -18,7 +18,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _respawnTimer;
         private RectangleF _field;
 
-        public EnemyBombiteRespawner(Map.Map map, int posX, int posY, RectangleF field, bool green) : base(map)
+        public EnemyBombiteRespawner(Map.Map map, int posX, int posY, RectangleF field, bool green)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -63,14 +64,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (!Camera.ClassicMode)
             {
-                var anim = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/spawn", "run", true);
+                var anim = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                );
                 Map.Objects.SpawnObject(anim);
                 Game1.GameManager.PlaySoundEffect("D360-47-2F");
             }
             if (_green)
-                Map.Objects.SpawnObject(new EnemyBombiteGreen(Map, (int)EntityPosition.X, (int)EntityPosition.Y));
+                Map.Objects.SpawnObject(
+                    new EnemyBombiteGreen(Map, (int)EntityPosition.X, (int)EntityPosition.Y)
+                );
             else
-                Map.Objects.SpawnObject(new EnemyBombite(Map, (int)EntityPosition.X, (int)EntityPosition.Y));
+                Map.Objects.SpawnObject(
+                    new EnemyBombite(Map, (int)EntityPosition.X, (int)EntityPosition.Y)
+                );
         }
     }
 }

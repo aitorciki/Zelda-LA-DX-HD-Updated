@@ -49,9 +49,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _opened;
 
-        public ObjChest() : base("chest") { }
+        public ObjChest()
+            : base("chest") { }
 
-        public ObjChest(Map.Map map, int posX, int posY, string itemName, string itemBounding, string itemKey, int spriteType, bool hitMode) : base(map)
+        public ObjChest(
+            Map.Map map,
+            int posX,
+            int posY,
+            string itemName,
+            string itemBounding,
+            string itemKey,
+            int spriteType,
+            bool hitMode
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 13, 0);
             EntitySize = new Rectangle(0, -13, 16, 16);
@@ -65,7 +76,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("closed", new AiState());
-            _aiComponent.States.Add("opening", new AiState { Init = InitOpen, Trigger = { openingTrigger } });
+            _aiComponent.States.Add(
+                "opening",
+                new AiState { Init = InitOpen, Trigger = { openingTrigger } }
+            );
             _aiComponent.States.Add("opened", new AiState { Init = InitOpen });
             _aiComponent.States.Add("textbox", new AiState(UpdateTextBox));
             _aiComponent.States.Add("fading", new AiState { Trigger = { fadingTrigger } });
@@ -74,20 +88,50 @@ namespace ProjectZ.InGame.GameObjects.Things
             CRectangle grabBox = new CRectangle(EntityPosition, new Rectangle(1, 2 - 13, 14, 13));
 
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(grabBox, null, null, null) { });
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(posX, posY + 3, 0, 16, 11, 12), Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableComponent = new CarriableComponent(grabBox, null, null, null) { }
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(posX, posY + 3, 0, 16, 11, 12),
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot
+                )
+            );
 
             if (!hitMode)
-                AddComponent(InteractComponent.Index, new InteractComponent(new CBox(posX + 4, posY + 3, 0, 8, 13, 16), Interact));
+                AddComponent(
+                    InteractComponent.Index,
+                    new InteractComponent(new CBox(posX + 4, posY + 3, 0, 8, 13, 16), Interact)
+                );
             else
-                AddComponent(HittableComponent.Index, new HittableComponent(new CBox(posX + 4, posY + 3, 0, 8, 13, 16), OnHit));
-            
-            _spriteBack = new CSprite("chest_back", new CPosition(posX, posY + 12.9f, 0), new Vector2(0, -12.9f));
+                AddComponent(
+                    HittableComponent.Index,
+                    new HittableComponent(new CBox(posX + 4, posY + 3, 0, 8, 13, 16), OnHit)
+                );
+
+            _spriteBack = new CSprite(
+                "chest_back",
+                new CPosition(posX, posY + 12.9f, 0),
+                new Vector2(0, -12.9f)
+            );
             _spriteBack.SourceRectangle.X += spriteType * 32;
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_spriteBack, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_spriteBack, Values.LayerPlayer)
+            );
 
             // sprite front
-            _spriteFront = new ObjSprite(map, posX, posY + 13, "chest_front", Vector2.Zero, Values.LayerPlayer, null);
+            _spriteFront = new ObjSprite(
+                map,
+                posX,
+                posY + 13,
+                "chest_front",
+                Vector2.Zero,
+                Values.LayerPlayer,
+                null
+            );
             _spriteFront.Sprite.SourceRectangle.X += spriteType * 32;
             Map.Objects.SpawnObject(_spriteFront);
 
@@ -109,7 +153,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if ((type & HitType.ThrownObject) != 0)
             {
@@ -122,7 +172,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool CheckOpened()
         {
-            if (!string.IsNullOrEmpty(ItemKey) && Game1.GameManager.SaveManager.GetString(ItemKey) == "1")
+            if (
+                !string.IsNullOrEmpty(ItemKey)
+                && Game1.GameManager.SaveManager.GetString(ItemKey) == "1"
+            )
             {
                 _aiComponent.ChangeState("opened");
                 return true;
@@ -152,8 +205,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             // the offset is needed so the item would not be behind the chest
-            _itemSprite = new ObjSprite(Map, 0, 0, Resources.SprItem, itemSource, new Vector2(0, -itemSource.Height + 1), Values.LayerPlayer);
-            _itemSprite.EntityPosition.Set(new Vector2(EntityPosition.X + 8 - itemSource.Width / 2f, EntityPosition.Y - 0.05f));
+            _itemSprite = new ObjSprite(
+                Map,
+                0,
+                0,
+                Resources.SprItem,
+                itemSource,
+                new Vector2(0, -itemSource.Height + 1),
+                Values.LayerPlayer
+            );
+            _itemSprite.EntityPosition.Set(
+                new Vector2(EntityPosition.X + 8 - itemSource.Width / 2f, EntityPosition.Y - 0.05f)
+            );
             _itemSprite.Sprite.Color = Color.Transparent;
 
             Map.Objects.SpawnObject(_itemSprite);
@@ -175,7 +238,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             MapManager.ObjLink.FreezePlayer();
             MapManager.ObjLink.FreezeWorldForEvents = true;
-            _itemSprite.EntityPosition.Z = (float)Math.Sin((float)(MoveTime - tick) / MoveTime * Math.PI / 1.55f) * 12;
+            _itemSprite.EntityPosition.Z =
+                (float)Math.Sin((float)(MoveTime - tick) / MoveTime * Math.PI / 1.55f) * 12;
         }
 
         private void OpeningEnd()
@@ -189,7 +253,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _aiComponent.ChangeState("textbox");
 
             var collectedItem = new GameItemCollected(_itemName)
-            { Count = _item.Count, LocationBounding = _locationBound };
+            {
+                Count = _item.Count,
+                LocationBounding = _locationBound,
+            };
             MapManager.ObjLink.PickUpItem(collectedItem, true);
 
             SetKey();

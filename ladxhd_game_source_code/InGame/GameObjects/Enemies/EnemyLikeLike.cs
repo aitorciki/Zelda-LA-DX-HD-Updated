@@ -27,14 +27,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _stoleShield;
         private int _lives = EnemyLives.LikeLike;
 
-        public EnemyLikeLike() : base("like like") { }
+        public EnemyLikeLike()
+            : base("like like") { }
 
-        public EnemyLikeLike(Map.Map map, int posX, int posY) : base(map)
+        public EnemyLikeLike(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntityPosition.AddPositionListener(typeof(EnemyLikeLike), UpdatePosition);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
@@ -44,20 +46,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
                 Drag = 0.85f,
-                AbsorbPercentage = 0.75f
+                AbsorbPercentage = 0.75f,
             };
 
             var stateMove = new AiState(UpdateMoving);
@@ -68,7 +74,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMove);
             _aiComponent.States.Add("trap", stateTrap);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _damageState.OnDeath = OnDeath;
             ToMoving();
 
@@ -78,12 +87,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var boxHittable = new CBox(EntityPosition, -8, -16, 16, 16, 8);
             _collisionBox = new CBox(EntityPosition, -5, -10, 10, 8, 2);
 
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(boxHittable, OnHit));
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(boxHittable, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -127,15 +145,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _collisionTimer -= Game1.DeltaTime;
 
             // collided with the player?
-            if (_collisionTimer <= 0 && !MapManager.ObjLink.IsTrapped() &&
-                _collisionBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
+            if (
+                _collisionTimer <= 0
+                && !MapManager.ObjLink.IsTrapped()
+                && _collisionBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box)
+            )
                 ToTrap();
         }
 
         private void ToTrap()
         {
             MapManager.ObjLink.TrapPlayer();
-            MapManager.ObjLink.SetPosition(new Vector2(EntityPosition.Position.X, EntityPosition.Y - 1));
+            MapManager.ObjLink.SetPosition(
+                new Vector2(EntityPosition.Position.X, EntityPosition.Y - 1)
+            );
 
             if (!_stoleShield)
             {
@@ -157,7 +180,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (!MapManager.ObjLink.IsTrapped())
                 ToMoving();
-
             else if (MapManager.ObjLink.IsTrapped() && linkPos != likePos)
                 MapManager.ObjLink.SetPosition(likePos);
         }
@@ -181,7 +203,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -191,7 +217,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_aiComponent.CurrentStateId != "moving")
                 return;
 
-            if ((direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
+            if (
+                (direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0
+            )
             {
                 _direction = (_direction + 2) % 4;
                 _body.VelocityTarget = AnimationHelper.DirectionOffset[_direction] * _moveSpeed;
@@ -203,7 +231,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 3f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -212,8 +246,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_hasPlayerTrapped && (hitType & HitType.Sword) != 0)
                 return Values.HitCollision.None;
 
-            if (_hasPlayerTrapped && (hitType == HitType.Boomerang || hitType == HitType.Bow ||
-                                      hitType == HitType.Hookshot || hitType == HitType.MagicRod))
+            if (
+                _hasPlayerTrapped
+                && (
+                    hitType == HitType.Boomerang
+                    || hitType == HitType.Bow
+                    || hitType == HitType.Hookshot
+                    || hitType == HitType.MagicRod
+                )
+            )
             {
                 _hasPlayerTrapped = false;
                 MapManager.ObjLink.FreeTrappedPlayer();

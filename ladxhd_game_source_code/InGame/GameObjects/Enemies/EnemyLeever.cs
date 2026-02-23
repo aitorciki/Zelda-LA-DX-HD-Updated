@@ -27,14 +27,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float MoveSpeed = 0.5f;
         private int _lives = EnemyLives.Leever;
 
-        public EnemyLeever() : base("leever") { }
+        public EnemyLeever()
+            : base("leever") { }
 
-        public EnemyLeever(Map.Map map, int posX, int posY) : base(map)
+        public EnemyLeever(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-50, -50 - 8, 100, 100);
             CanReset = true;
             OnReset = Reset;
@@ -47,22 +49,28 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sprite = new CSprite(EntityPosition);
             _sprite.IsVisible = false;
 
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.Player,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 Bounciness = 0.25f,
                 Drag = 0.85f,
             };
 
             var stateInit = new AiState();
-            stateInit.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("hidden"), 750, 1500));
+            stateInit.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("hidden"), 750, 1500)
+            );
             var stateHidden = new AiState();
             var stateSpawning = new AiState(UpdateSpawning);
             var stateMoving = new AiState(UpdateMoving);
@@ -78,22 +86,48 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("leaving", stateLeaving);
             _aiComponent.States.Add("waiting", stateWaiting);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
 
             _aiComponent.ChangeState("init");
 
             var damageBox = new CBox(EntityPosition, -8, -13, 0, 16, 14, 4);
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
-            var spawnRectangle = new Rectangle(posX + 8 + EntitySize.X, posY + 16 + EntitySize.Y, EntitySize.Width, EntitySize.Height);
+            var spawnRectangle = new Rectangle(
+                posX + 8 + EntitySize.X,
+                posY + 16 + EntitySize.Y,
+                EntitySize.Width,
+                EntitySize.Height
+            );
 
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(spawnRectangle, OnEnterSpawnArea));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(spawnRectangle, OnEnterSpawnArea)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { IsActive = false });
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             Deactivate();
@@ -145,19 +179,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // find new position
             var newPosition = new Vector2(
                 _fieldPosition.X + Game1.RandomNumber.Next(0, 10) * 16,
-                _fieldPosition.Y + Game1.RandomNumber.Next(0, 8) * 16);
+                _fieldPosition.Y + Game1.RandomNumber.Next(0, 8) * 16
+            );
 
             // make sure to not spawn directly at the player
-            var playerDistance = MapManager.ObjLink.Position - new Vector2(newPosition.X + 8, newPosition.Y + 16);
+            var playerDistance =
+                MapManager.ObjLink.Position - new Vector2(newPosition.X + 8, newPosition.Y + 16);
             if (playerDistance.Length() < 24)
                 return;
 
             // respawn if the position is free
             var collidingRectangle = Box.Empty;
             var fieldState = Map.GetFieldState(newPosition);
-            if ((fieldState & (MapStates.FieldStates.Water | MapStates.FieldStates.DeepWater)) == 0 &&
-                !Map.Objects.Collision(new Box(newPosition.X, newPosition.Y, 0, 16, 16, 16), Box.Empty,
-                Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall | Values.CollisionTypes.Enemy | Values.CollisionTypes.Player, 0, 0, ref collidingRectangle))
+            if (
+                (fieldState & (MapStates.FieldStates.Water | MapStates.FieldStates.DeepWater)) == 0
+                && !Map.Objects.Collision(
+                    new Box(newPosition.X, newPosition.Y, 0, 16, 16, 16),
+                    Box.Empty,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.NPCWall
+                        | Values.CollisionTypes.Enemy
+                        | Values.CollisionTypes.Player,
+                    0,
+                    0,
+                    ref collidingRectangle
+                )
+            )
             {
                 EntityPosition.Set(newPosition + new Vector2(8, 16));
                 ToSpawning();
@@ -233,12 +280,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return false;
 
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

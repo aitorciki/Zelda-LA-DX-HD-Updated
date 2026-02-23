@@ -21,9 +21,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _showBroom;
         private bool _missingBroomState;
 
-        public ObjGrandmother() : base("grandmother") { }
+        public ObjGrandmother()
+            : base("grandmother") { }
 
-        public ObjGrandmother(Map.Map map, int posX, int posY, string spawnCondition, string dialogId) : base(map)
+        public ObjGrandmother(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spawnCondition,
+            string dialogId
+        )
+            : base(map)
         {
             var condition = SaveCondition.GetConditionNode(spawnCondition);
             if (!condition.Check())
@@ -45,19 +53,44 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8);
 
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, new InteractComponent(new CBox(EntityPosition, -7, -12, 14, 12, 8), Interact));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(new CBox(EntityPosition, -7, -12, 14, 12, 8), Interact)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, sprite));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
 
             if (Game1.GameManager.SaveManager.GetString("missing_broom", "0") == "1")
             {
                 _missingBroomState = true;
                 _animator.Play("missing_broom");
-                _objBroom = new ObjAnimator(map, posX + 8, posY + 16, Values.LayerPlayer, "NPCs/broom", "show", false);
+                _objBroom = new ObjAnimator(
+                    map,
+                    posX + 8,
+                    posY + 16,
+                    Values.LayerPlayer,
+                    "NPCs/broom",
+                    "show",
+                    false
+                );
             }
         }
 
@@ -85,7 +118,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             // look at the player
-            var box = new RectangleF(EntityPosition.X - 16 * _direction - 8, EntityPosition.Y - 32, 16, 48);
+            var box = new RectangleF(
+                EntityPosition.X - 16 * _direction - 8,
+                EntityPosition.Y - 32,
+                16,
+                48
+            );
             if (MapManager.ObjLink.BodyRectangle.Intersects(box))
             {
                 _direction = EntityPosition.X < MapManager.ObjLink.PosX ? 1 : -1;

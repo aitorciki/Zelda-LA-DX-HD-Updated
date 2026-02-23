@@ -20,21 +20,59 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float[] _potCounter = new float[4];
         private bool[] _potIsActive = new bool[4];
 
-        private Vector2[] _potPositions = { new Vector2(-4, -2), new Vector2(3, 3), new Vector2(-4, 3), new Vector2(3, -2) };
+        private Vector2[] _potPositions =
+        {
+            new Vector2(-4, -2),
+            new Vector2(3, 3),
+            new Vector2(-4, 3),
+            new Vector2(3, -2),
+        };
         private Vector2[] _tilePositions =
         {
-            new Vector2(-4, -1), new Vector2(-4, 0), new Vector2(-4, 1), new Vector2(-4, 2),
-            new Vector2(3, -1), new Vector2(3, 0), new Vector2(3, 1), new Vector2(3, 2),
-            new Vector2(-3, -2), new Vector2(-2, -2), new Vector2(-1, -2), new Vector2(0, -2), new Vector2(1, -2), new Vector2(2, -2),
-            new Vector2(-3, 3), new Vector2(-2, 3), new Vector2(-1, 3), new Vector2(0, 3), new Vector2(1, 3), new Vector2(2, 3)
+            new Vector2(-4, -1),
+            new Vector2(-4, 0),
+            new Vector2(-4, 1),
+            new Vector2(-4, 2),
+            new Vector2(3, -1),
+            new Vector2(3, 0),
+            new Vector2(3, 1),
+            new Vector2(3, 2),
+            new Vector2(-3, -2),
+            new Vector2(-2, -2),
+            new Vector2(-1, -2),
+            new Vector2(0, -2),
+            new Vector2(1, -2),
+            new Vector2(2, -2),
+            new Vector2(-3, 3),
+            new Vector2(-2, 3),
+            new Vector2(-1, 3),
+            new Vector2(0, 3),
+            new Vector2(1, 3),
+            new Vector2(2, 3),
         };
 
         private int[] _tileOrder =
         {
-            12, 16, 18, 15,
-            14, 19, 17, 13,
-            0, 2, 4, 6, 8, 10,
-            11, 9, 7, 5, 3, 1
+            12,
+            16,
+            18,
+            15,
+            14,
+            19,
+            17,
+            13,
+            0,
+            2,
+            4,
+            6,
+            8,
+            10,
+            11,
+            9,
+            7,
+            5,
+            3,
+            1,
         };
 
         private readonly Animator _animatorEyes;
@@ -64,9 +102,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool _shakeScreen;
 
-        public BossFacade() : base("facade") { }
+        public BossFacade()
+            : base("facade") { }
 
-        public BossFacade(Map.Map map, int posX, int posY, string saveKey, string saveKeyHeart) : base(map)
+        public BossFacade(Map.Map map, int posX, int posY, string saveKey, string saveKeyHeart)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -82,7 +122,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             SpawnTilesAndPots();
 
-            if (!string.IsNullOrWhiteSpace(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrWhiteSpace(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 // respawn the heart if the player died after he killed the boss without collecting the heart
                 SpawnHeart();
@@ -99,11 +142,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var stateInit = new AiState(UpdateInit);
             var statePre = new AiState();
-            statePre.Trigger.Add(new AiTriggerCountdown(3500, null, () => _aiComponent.ChangeState("spawn")));
+            statePre.Trigger.Add(
+                new AiTriggerCountdown(3500, null, () => _aiComponent.ChangeState("spawn"))
+            );
             var stateSpawn = new AiState { Init = InitSpawn };
-            stateSpawn.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("preBlink")));
+            stateSpawn.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("preBlink"))
+            );
             var statePreBlink = new AiState { Init = InitPreBlink };
-            statePreBlink.Trigger.Add(new AiTriggerCountdown(1800, null, () => _aiComponent.ChangeState("blink")));
+            statePreBlink.Trigger.Add(
+                new AiTriggerCountdown(1800, null, () => _aiComponent.ChangeState("blink"))
+            );
             var stateBlink = new AiState(UpdateBlink) { Init = InitBlink };
             var statePostBlink = new AiState(UpdatePostBlink);
             statePostBlink.Trigger.Add(new AiTriggerCountdown(1000, null, ToDialog));
@@ -113,16 +162,32 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateDespawn = new AiState();
             stateDespawn.Trigger.Add(new AiTriggerCountdown(DespawnTime, DespawnTick, EndDespawn));
             var stateHidden = new AiState();
-            stateHidden.Trigger.Add(new AiTriggerCountdown(2750, null, () => _aiComponent.ChangeState("respawn")));
+            stateHidden.Trigger.Add(
+                new AiTriggerCountdown(2750, null, () => _aiComponent.ChangeState("respawn"))
+            );
             var stateRespawn = new AiState(UpdateRespawn) { Init = InitRespawn };
             var statePreDeath = new AiState();
-            statePreDeath.Trigger.Add(new AiTriggerCountdown(1500, null, () => _aiComponent.ChangeState("death")));
+            statePreDeath.Trigger.Add(
+                new AiTriggerCountdown(1500, null, () => _aiComponent.ChangeState("death"))
+            );
             var stateDeath = new AiState(UpdateDeath);
-            stateDeath.Trigger.Add(new AiTriggerCountdown(3000 / AiDamageState.BlinkTime * AiDamageState.BlinkTime, UpdateBlink, DeathAnimationEnd));
+            stateDeath.Trigger.Add(
+                new AiTriggerCountdown(
+                    3000 / AiDamageState.BlinkTime * AiDamageState.BlinkTime,
+                    UpdateBlink,
+                    DeathAnimationEnd
+                )
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.Trigger.Add(new AiTriggerUpdate(UpdateAnimations));
-            _aiComponent.Trigger.Add(_blinkTigger = new AiTriggerCountdown(AiDamageState.BlinkTime * 4 * 2, BlinkTick, null));
+            _aiComponent.Trigger.Add(
+                _blinkTigger = new AiTriggerCountdown(
+                    AiDamageState.BlinkTime * 4 * 2,
+                    BlinkTick,
+                    null
+                )
+            );
             _aiComponent.Trigger.Add(new AiTriggerUpdate(Update));
 
             _aiComponent.States.Add("init", stateInit);
@@ -143,8 +208,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
 
             _potCounter[0] = -600;
             _potCounter[1] = -300;
@@ -236,8 +307,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 return;
             }
 
-            var playerDirection = MapManager.ObjLink.Position -
-                                  new Vector2(objPot.EntityPosition.X, objPot.EntityPosition.Y - objPot.EntityPosition.Z + 2);
+            var playerDirection =
+                MapManager.ObjLink.Position
+                - new Vector2(
+                    objPot.EntityPosition.X,
+                    objPot.EntityPosition.Y - objPot.EntityPosition.Z + 2
+                );
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 
@@ -263,7 +338,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 var posX = (int)(EntityPosition.X + _tilePositions[i].X * Values.TileSize);
                 var posY = (int)(EntityPosition.Y + _tilePositions[i].Y * Values.TileSize);
                 // tile index starts at 1 so that they do not start automatically
-                var flyingTile = new EnemyFlyingTile(Map, posX, posY, _tileString, _tileOrder[i] + 1, 1);
+                var flyingTile = new EnemyFlyingTile(
+                    Map,
+                    posX,
+                    posY,
+                    _tileString,
+                    _tileOrder[i] + 1,
+                    1
+                );
                 Map.Objects.SpawnObject(flyingTile);
             }
         }
@@ -279,10 +361,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Game1.GameManager.PlaySoundEffect("D378-19-13");
 
             var posX = (int)EntityPosition.X + Game1.RandomNumber.Next(0, 32) - 8 - 16;
-            var posY = (int)EntityPosition.Y - (int)EntityPosition.Z + Game1.RandomNumber.Next(0, 32) - 8;
+            var posY =
+                (int)EntityPosition.Y - (int)EntityPosition.Z + Game1.RandomNumber.Next(0, 32) - 8;
 
             // spawn explosion effect
-            Map.Objects.SpawnObject(new ObjAnimator(Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true)
+            );
         }
 
         private void UpdateBlink(double time)
@@ -303,13 +388,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void BlinkTick(double time)
         {
             var blinkTime = AiDamageState.BlinkTime;
-            _drawEffect = time % (blinkTime * 2) >= blinkTime ? Resources.DamageSpriteShader0 : null;
+            _drawEffect =
+                time % (blinkTime * 2) >= blinkTime ? Resources.DamageSpriteShader0 : null;
         }
 
         private void DespawnTick(double counter)
         {
             _animatorEyes.Play(counter > (DespawnTime * (16 / 70f)) ? "eye_half" : "eye_closed");
-            _animatorMouth.Play(counter > (DespawnTime * (32 / 70f)) ? "mouth_opened" : "mouth_closed");
+            _animatorMouth.Play(
+                counter > (DespawnTime * (32 / 70f)) ? "mouth_opened" : "mouth_closed"
+            );
         }
 
         private void EndDespawn()
@@ -430,9 +518,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool IsVisible()
         {
-            return _aiComponent.CurrentStateId != "init" &&
-                   _aiComponent.CurrentStateId != "preSpawn" &&
-                   _aiComponent.CurrentStateId != "hidden";
+            return _aiComponent.CurrentStateId != "init"
+                && _aiComponent.CurrentStateId != "preSpawn"
+                && _aiComponent.CurrentStateId != "hidden";
         }
 
         private void Draw(SpriteBatch spriteBatch)
@@ -447,8 +535,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             // draw the eye and the mouth
-            _animatorEyes.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
-            _animatorMouth.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y + 23), Color.White);
+            _animatorEyes.Draw(
+                spriteBatch,
+                new Vector2(EntityPosition.X, EntityPosition.Y),
+                Color.White
+            );
+            _animatorMouth.Draw(
+                spriteBatch,
+                new Vector2(EntityPosition.X, EntityPosition.Y + 23),
+                Color.White
+            );
 
             if (_drawEffect != null)
             {
@@ -457,13 +553,24 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (_blinkTigger.IsRunning() || !_hittable || !IsVisible() || (hitType & HitType.Bomb) == 0)
+            if (
+                _blinkTigger.IsRunning()
+                || !_hittable
+                || !IsVisible()
+                || (hitType & HitType.Bomb) == 0
+            )
                 return Values.HitCollision.None;
 
             _wasHit = true;
@@ -479,7 +586,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
                 _hittable = false;
                 _shakeScreen = false;
-                Game1.GameManager.SetMusic(93,2);
+                Game1.GameManager.SetMusic(93, 2);
                 Game1.GameManager.PlayMusic(true);
                 Game1.GameManager.PlaySoundEffect("D370-16-10");
 
@@ -496,7 +603,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return Values.HitCollision.None;
         }
 
-
         private void DeathAnimationEnd()
         {
             if (!string.IsNullOrEmpty(_saveKey))
@@ -512,7 +618,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void SpawnHeart()
         {
             // spawn big heart
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y + 8, "j", "d6_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y + 8,
+                    "j",
+                    "d6_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
     }
 }

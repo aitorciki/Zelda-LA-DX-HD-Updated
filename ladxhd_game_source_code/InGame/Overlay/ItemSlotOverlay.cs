@@ -34,34 +34,74 @@ namespace ProjectZ.InGame.Overlay
 
             if (GameSettings.SixButtons)
             {
-                _itemSlots = new Rectangle[] 
+                _itemSlots = new Rectangle[]
                 {
-                    new Rectangle(RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2, RecItemselection.Height * 2 + DistY * 2,
-                        RecItemselection.Width, RecItemselection.Height / 2 * 2),
-                    new Rectangle(RecItemselection.Width + DistX, RecItemselection.Height + DistY,
-                        RecItemselection.Width, RecItemselection.Height / 2 * 2),
-                    new Rectangle(0, RecItemselection.Height + DistY, 
-                        RecItemselection.Width, RecItemselection.Height / 2 * 2), 
-                    new Rectangle(RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2, 0,
-                        RecItemselection.Width, RecItemselection.Height / 2 * 2),
-                    new Rectangle(0, -RecItemselection.Height - DistY,
-                        RecItemselection.Width, RecItemselection.Height / 2 * 2),
-                    new Rectangle(RecItemselection.Width + DistX, -RecItemselection.Height - DistY,
-                        RecItemselection.Width, RecItemselection.Height / 2 * 2)
+                    new Rectangle(
+                        RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2,
+                        RecItemselection.Height * 2 + DistY * 2,
+                        RecItemselection.Width,
+                        RecItemselection.Height / 2 * 2
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + DistX,
+                        RecItemselection.Height + DistY,
+                        RecItemselection.Width,
+                        RecItemselection.Height / 2 * 2
+                    ),
+                    new Rectangle(
+                        0,
+                        RecItemselection.Height + DistY,
+                        RecItemselection.Width,
+                        RecItemselection.Height / 2 * 2
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2,
+                        0,
+                        RecItemselection.Width,
+                        RecItemselection.Height / 2 * 2
+                    ),
+                    new Rectangle(
+                        0,
+                        -RecItemselection.Height - DistY,
+                        RecItemselection.Width,
+                        RecItemselection.Height / 2 * 2
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + DistX,
+                        -RecItemselection.Height - DistY,
+                        RecItemselection.Width,
+                        RecItemselection.Height / 2 * 2
+                    ),
                 };
             }
             else
             {
-                _itemSlots = new Rectangle[] 
+                _itemSlots = new Rectangle[]
                 {
-                    new Rectangle(RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2, RecItemselection.Height * 2 + DistY * 2, 
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + DistX, RecItemselection.Height + DistY,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(0, RecItemselection.Height + DistY,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2, 0,
-                        RecItemselection.Width, RecItemselection.Height)
+                    new Rectangle(
+                        RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2,
+                        RecItemselection.Height * 2 + DistY * 2,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + DistX,
+                        RecItemselection.Height + DistY,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        0,
+                        RecItemselection.Height + DistY,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + DistX / 2 - RecItemselection.Width / 2,
+                        0,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
                 };
             }
             // Create the backgrounds for the item slots.
@@ -72,12 +112,26 @@ namespace ProjectZ.InGame.Overlay
         {
             var hud = Game1.GameManager.InGameOverlay.InGameHud;
 
-            if (hud != null && hud.custom_items_show && _uiBackgroundBoxes?.Length != _itemSlots.Length)
+            if (
+                hud != null
+                && hud.custom_items_show
+                && _uiBackgroundBoxes?.Length != _itemSlots.Length
+            )
             {
                 _uiBackgroundBoxes = new UiRectangle[_itemSlots.Length];
                 for (var i = 0; i < _uiBackgroundBoxes.Length; i++)
                 {
-                    _uiBackgroundBoxes[i] = new UiRectangle(_itemSlots[i], "itemBox" + i, Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
+                    _uiBackgroundBoxes[i] = new UiRectangle(
+                        _itemSlots[i],
+                        "itemBox" + i,
+                        Values.ScreenNameGame,
+                        Values.OverlayBackgroundColor,
+                        Values.OverlayBackgroundBlurColor,
+                        null
+                    )
+                    {
+                        Radius = Values.UiBackgroundRadius,
+                    };
                     Game1.UiManager.AddElement(_uiBackgroundBoxes[i]);
                 }
             }
@@ -85,19 +139,26 @@ namespace ProjectZ.InGame.Overlay
 
         public void SetTransparency(float transparency)
         {
-            // If the user did not disable the 
+            // If the user did not disable the
             var hud = Game1.GameManager.InGameOverlay.InGameHud;
             if (hud.custom_items_show)
             {
                 for (var i = 0; i < _itemSlots.Length; i++)
                 {
-                    _uiBackgroundBoxes[i].BackgroundColor = Values.OverlayBackgroundColor * transparency;
-                    _uiBackgroundBoxes[i].BlurColor = Values.OverlayBackgroundBlurColor * transparency;
+                    _uiBackgroundBoxes[i].BackgroundColor =
+                        Values.OverlayBackgroundColor * transparency;
+                    _uiBackgroundBoxes[i].BlurColor =
+                        Values.OverlayBackgroundBlurColor * transparency;
                 }
             }
         }
 
-        public static void Draw(SpriteBatch spriteBatch, Point position, int scale, float transparency)
+        public static void Draw(
+            SpriteBatch spriteBatch,
+            Point position,
+            int scale,
+            float transparency
+        )
         {
             // If the player disabled drawing items.
             var hud = Game1.GameManager.InGameOverlay.InGameHud;
@@ -107,8 +168,20 @@ namespace ProjectZ.InGame.Overlay
             // Draw the item slots.
             for (var i = 0; i < _itemSlots.Length; i++)
             {
-                var slotRectangle = new Rectangle(_itemSlots[i].X, _itemSlots[i].Y, RecItemselection.Width, RecItemselection.Height);
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[i], position, slotRectangle, scale, Color.White * transparency);
+                var slotRectangle = new Rectangle(
+                    _itemSlots[i].X,
+                    _itemSlots[i].Y,
+                    RecItemselection.Width,
+                    RecItemselection.Height
+                );
+                ItemDrawHelper.DrawItemWithInfo(
+                    spriteBatch,
+                    Game1.GameManager.Equipment[i],
+                    position,
+                    slotRectangle,
+                    scale,
+                    Color.White * transparency
+                );
             }
         }
 
@@ -121,9 +194,18 @@ namespace ProjectZ.InGame.Overlay
             if (hud.custom_items_show)
             {
                 // Set the position of items based on whether they should be on right or left side of screen.
-                ItemSlotPosition = new Point(GameSettings.ItemsOnRight 
-                    ? uiWindow.X + uiWindow.Width - (RecItemselection.Width * 2 + DistX * 2 + 16) * scale + hud.custom_items_offsetx
-                    : uiWindow.X + 16 * scale + hud.custom_items_offsetx, uiWindow.Y + uiWindow.Height - (RecItemselection.Height * 3 + DistY * 2 + 16) * scale + hud.custom_items_offsety);
+                ItemSlotPosition = new Point(
+                    GameSettings.ItemsOnRight
+                        ? uiWindow.X
+                            + uiWindow.Width
+                            - (RecItemselection.Width * 2 + DistX * 2 + 16) * scale
+                            + hud.custom_items_offsetx
+                        : uiWindow.X + 16 * scale + hud.custom_items_offsetx,
+                    uiWindow.Y
+                        + uiWindow.Height
+                        - (RecItemselection.Height * 3 + DistY * 2 + 16) * scale
+                        + hud.custom_items_offsety
+                );
 
                 // Solves a race condition where "InGameHud" doesn't exist when these should be created.
                 if (_uiBackgroundBoxes == null)
@@ -135,7 +217,9 @@ namespace ProjectZ.InGame.Overlay
                     _uiBackgroundBoxes[i].Rectangle = new Rectangle(
                         ItemSlotPosition.X + _itemSlots[i].X * scale + offset.X,
                         ItemSlotPosition.Y + _itemSlots[i].Y * scale + offset.Y,
-                        _itemSlots[i].Width * scale, _itemSlots[i].Height * scale);
+                        _itemSlots[i].Width * scale,
+                        _itemSlots[i].Height * scale
+                    );
                 }
             }
         }

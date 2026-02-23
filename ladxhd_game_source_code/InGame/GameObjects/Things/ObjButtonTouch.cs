@@ -16,7 +16,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _currentState;
 
-        public ObjButtonTouch(Map.Map map, int posX, int posY, int buttonWidth, int buttonHeight, string strKey, string value, bool deleteOnTouch, bool resetKey) : base(map, "button")
+        public ObjButtonTouch(
+            Map.Map map,
+            int posX,
+            int posY,
+            int buttonWidth,
+            int buttonHeight,
+            string strKey,
+            string value,
+            bool deleteOnTouch,
+            bool resetKey
+        )
+            : base(map, "button")
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, buttonWidth, buttonHeight);
@@ -33,7 +44,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             _collisionRectangle = new Rectangle(posX, posY, buttonWidth, buttonHeight);
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
@@ -51,8 +65,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void CheckNextMapPosition()
         {
-            if (MapManager.ObjLink.NextMapPositionStart.HasValue &&
-                _collisionRectangle.Contains(MapManager.ObjLink.NextMapPositionStart.Value))
+            if (
+                MapManager.ObjLink.NextMapPositionStart.HasValue
+                && _collisionRectangle.Contains(MapManager.ObjLink.NextMapPositionStart.Value)
+            )
             {
                 Activate();
 

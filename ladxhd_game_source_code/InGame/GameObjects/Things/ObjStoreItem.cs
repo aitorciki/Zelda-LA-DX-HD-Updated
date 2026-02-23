@@ -21,9 +21,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _holding;
 
-        public ObjStoreItem() : base("item") { }
+        public ObjStoreItem()
+            : base("item") { }
 
-        public ObjStoreItem(Map.Map map, int posX, int posY, string itemName, int itemPrice, int count) : base(map)
+        public ObjStoreItem(
+            Map.Map map,
+            int posX,
+            int posY,
+            string itemName,
+            int itemPrice,
+            int count
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 32, 40);
@@ -51,16 +60,27 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             var countLength = _itemCount.ToString().Length;
-            var textWidth = _itemCount > 1 ? ItemDrawHelper.LetterWidth * countLength + countLength + 6 : 0;
+            var textWidth =
+                _itemCount > 1 ? ItemDrawHelper.LetterWidth * countLength + countLength + 6 : 0;
 
             _itemPosition = new Vector2(
                 EntityPosition.X + 16 - (int)(_sourceRectangle.Width + textWidth) / 2,
-                EntityPosition.Y + 22 - _sourceRectangle.Height / 2);
+                EntityPosition.Y + 22 - _sourceRectangle.Height / 2
+            );
 
             var interactRectangle = new CBox(posX, posY, 0, 32, 40, 16);
-            AddComponent(InteractComponent.Index, new InteractComponent(interactRectangle, Interact));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(interactRectangle, Interact)
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowComponent(DrawShadow));
         }
 
@@ -111,21 +131,38 @@ namespace ProjectZ.InGame.GameObjects.Things
             // draw the price of the item
             var priceLength = _itemPrice.ToString().Length;
             var textWidth = ItemDrawHelper.LetterWidth * priceLength + priceLength - 1;
-            ItemDrawHelper.DrawNumber(spriteBatch,
-                    (int)(EntityPosition.X + 16 - textWidth / 2f),
-                    (int)(EntityPosition.Y + 12 - ItemDrawHelper.LetterHeight), _itemPrice, priceLength, 1, Color.Black);
+            ItemDrawHelper.DrawNumber(
+                spriteBatch,
+                (int)(EntityPosition.X + 16 - textWidth / 2f),
+                (int)(EntityPosition.Y + 12 - ItemDrawHelper.LetterHeight),
+                _itemPrice,
+                priceLength,
+                1,
+                Color.Black
+            );
 
             if (_itemCount > 1)
             {
-                spriteBatch.DrawString(Resources.GameFont, "x",
+                spriteBatch.DrawString(
+                    Resources.GameFont,
+                    "x",
                     new Vector2(
                         (int)(_itemPosition.X + _sourceRectangle.Width),
-                        (int)(EntityPosition.Y + 24 - ItemDrawHelper.LetterHeight)), Color.Black);
+                        (int)(EntityPosition.Y + 24 - ItemDrawHelper.LetterHeight)
+                    ),
+                    Color.Black
+                );
 
                 var countLength = _itemCount.ToString().Length;
-                ItemDrawHelper.DrawNumber(spriteBatch,
-                        (int)(_itemPosition.X + _sourceRectangle.Width + 7),
-                        (int)(EntityPosition.Y + 25 - ItemDrawHelper.LetterHeight), _itemCount, countLength, 1, Color.Black);
+                ItemDrawHelper.DrawNumber(
+                    spriteBatch,
+                    (int)(_itemPosition.X + _sourceRectangle.Width + 7),
+                    (int)(EntityPosition.Y + 25 - ItemDrawHelper.LetterHeight),
+                    _itemCount,
+                    countLength,
+                    1,
+                    Color.Black
+                );
             }
 
             // draw the item
@@ -137,12 +174,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_holding)
                 return;
 
-            var baseItem = _item.SourceRectangle.HasValue ? _item : Game1.GameManager.ItemManager[_item.Name];
+            var baseItem = _item.SourceRectangle.HasValue
+                ? _item
+                : Game1.GameManager.ItemManager[_item.Name];
             var sourceRectangle = baseItem.SourceRectangle.Value;
 
-            DrawHelper.DrawShadow(Resources.SprItem, _itemPosition,
-                sourceRectangle, sourceRectangle.Width, sourceRectangle.Height,
-                false, Map.ShadowHeight, Map.ShadowRotation, Color.White);
+            DrawHelper.DrawShadow(
+                Resources.SprItem,
+                _itemPosition,
+                sourceRectangle,
+                sourceRectangle.Width,
+                sourceRectangle.Height,
+                false,
+                Map.ShadowHeight,
+                Map.ShadowRotation,
+                Color.White
+            );
         }
     }
 }

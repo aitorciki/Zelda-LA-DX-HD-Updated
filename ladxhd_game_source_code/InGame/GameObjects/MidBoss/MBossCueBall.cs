@@ -40,9 +40,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private bool _entered;
 
-        public MBossCueBall() : base("cue ball") { }
+        public MBossCueBall()
+            : base("cue ball") { }
 
-        public MBossCueBall(Map.Map map, int posX, int posY, string saveKey, string enterKey) : base(map)
+        public MBossCueBall(Map.Map map, int posX, int posY, string saveKey, string enterKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
@@ -50,8 +52,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _saveKey = saveKey;
             _enterKey = enterKey;
 
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -61,7 +65,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animation.Play("move_2");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animation, _sprite, new Vector2(-16, -16));
+            var animationComponent = new AnimationComponent(
+                _animation,
+                _sprite,
+                new Vector2(-16, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -16, -16, 32, 32, 8)
             {
@@ -83,22 +91,51 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("spinning", stateSpinning);
             _aiComponent.States.Add("dead", stateDead);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
-            { HitMultiplierX = 0, HitMultiplierY = 0, OnDeath = OnDeath, ExplosionOffsetY = 16, BossHitSound = true };
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            )
+            {
+                HitMultiplierX = 0,
+                HitMultiplierY = 0,
+                OnDeath = OnDeath,
+                ExplosionOffsetY = 16,
+                BossHitSound = true,
+            };
             _aiDamageState.AddBossDamageState(OnDeathEnd);
 
             ToMoving();
 
             var damageCollider = new CBox(EntityPosition, -14, -14, 0, 28, 28, 2);
             if (!string.IsNullOrEmpty(enterKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 50 });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit) { IsActive = false });
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 50 }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit) { IsActive = false }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void OnKeyChange()
@@ -134,12 +171,23 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // spawn particle?
             if (_lastFrameIndex == 1 && _lastFrameIndex != _animation.CurrentFrameIndex)
             {
-                var posX = EntityPosition.X + AnimationHelper.DirectionOffset[_moveDirection].X * 22;
-                var posY = EntityPosition.Y + AnimationHelper.DirectionOffset[_moveDirection].Y * 22;
+                var posX =
+                    EntityPosition.X + AnimationHelper.DirectionOffset[_moveDirection].X * 22;
+                var posY =
+                    EntityPosition.Y + AnimationHelper.DirectionOffset[_moveDirection].Y * 22;
 
                 // spawn splash effect
-                Map.Objects.SpawnObject(new ObjAnimator(Map,
-                    (int)posX, (int)posY, Values.LayerPlayer, "Particles/big_water_splash", "run_" + _moveDirection, true));
+                Map.Objects.SpawnObject(
+                    new ObjAnimator(
+                        Map,
+                        (int)posX,
+                        (int)posY,
+                        Values.LayerPlayer,
+                        "Particles/big_water_splash",
+                        "run_" + _moveDirection,
+                        true
+                    )
+                );
 
                 if (_entered)
                     Game1.GameManager.PlaySoundEffect("D378-47-2F");
@@ -193,17 +241,53 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
                 var offset = 22;
                 if (spinDirection == 0)
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)EntityPosition.X - offset, (int)EntityPosition.Y, Values.LayerPlayer, "Particles/big_water_splash", "run_0", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X - offset,
+                            (int)EntityPosition.Y,
+                            Values.LayerPlayer,
+                            "Particles/big_water_splash",
+                            "run_0",
+                            true
+                        )
+                    );
                 else if (spinDirection == 1)
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)EntityPosition.X, (int)EntityPosition.Y - offset, Values.LayerPlayer, "Particles/big_water_splash", "run_1", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X,
+                            (int)EntityPosition.Y - offset,
+                            Values.LayerPlayer,
+                            "Particles/big_water_splash",
+                            "run_1",
+                            true
+                        )
+                    );
                 else if (spinDirection == 2)
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)EntityPosition.X + offset, (int)EntityPosition.Y, Values.LayerPlayer, "Particles/big_water_splash", "run_2", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X + offset,
+                            (int)EntityPosition.Y,
+                            Values.LayerPlayer,
+                            "Particles/big_water_splash",
+                            "run_2",
+                            true
+                        )
+                    );
                 else if (spinDirection == 3)
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)EntityPosition.X, (int)EntityPosition.Y + offset, Values.LayerPlayer, "Particles/big_water_splash", "run_3", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X,
+                            (int)EntityPosition.Y + offset,
+                            Values.LayerPlayer,
+                            "Particles/big_water_splash",
+                            "run_3",
+                            true
+                        )
+                    );
             }
 
             _moveDirection = spinDirection;
@@ -238,7 +322,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Game1.GameManager.PlaySoundEffect("D378-26-1A");
 
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }
@@ -254,7 +340,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

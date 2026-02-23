@@ -15,9 +15,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private static double _lastTime;
         private static float _soundTimer;
 
-        public ObjWaterfallSound() : base("editor shore sound") { }
+        public ObjWaterfallSound()
+            : base("editor shore sound") { }
 
-        public ObjWaterfallSound(Map.Map map, int posX, int posY) : base(map)
+        public ObjWaterfallSound(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
 

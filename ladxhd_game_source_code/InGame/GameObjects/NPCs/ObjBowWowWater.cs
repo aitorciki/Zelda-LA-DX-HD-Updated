@@ -24,11 +24,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool _effectPlayed;
 
-        public ObjBowWowWater() : this("bowwow_water") { }
+        public ObjBowWowWater()
+            : this("bowwow_water") { }
 
-        public ObjBowWowWater(string spriteName) : base(spriteName) { }
+        public ObjBowWowWater(string spriteName)
+            : base(spriteName) { }
 
-        public ObjBowWowWater(Map.Map map, float posX, float posY, ObjBowWow host) : base(map)
+        public ObjBowWowWater(Map.Map map, float posX, float posY, ObjBowWow host)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + _offset.X, posY + _offset.Y, 0);
 
@@ -37,10 +40,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var _sprite = new CSprite(EntityPosition);
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/bowwow_water");
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -15));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -15)
+            );
 
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             Map.Objects.SpawnObject(this);
@@ -52,11 +62,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void Update()
         {
             // Update the position of the water effect.
-            _position = new CPosition(_host.EntityPosition.Position.X + _offset.X, _host.EntityPosition.Position.Y + _offset.Y, 0);
+            _position = new CPosition(
+                _host.EntityPosition.Position.X + _offset.X,
+                _host.EntityPosition.Position.Y + _offset.Y,
+                0
+            );
             EntityPosition.Set(_position.Position);
 
             // Check if Bow Wow is currently in the water.
-            bool inWater = SystemBody.GetFieldState(_host._body).HasFlag(MapStates.FieldStates.DeepWater);
+            bool inWater = SystemBody
+                .GetFieldState(_host._body)
+                .HasFlag(MapStates.FieldStates.DeepWater);
 
             // Get the water state and see if he's jumping or not.
             if (inWater && _host.EntityPosition.Z <= 2.5f)
@@ -80,10 +96,27 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _drawComponent.IsActive = true;
             if (!_effectPlayed)
             {
-                var splashAnimator = new ObjAnimator(_host._body.Owner.Map, 0, 0, 0, 3, Values.LayerPlayer, "Particles/splash", "idle", true);
-                splashAnimator.EntityPosition.Set(new Vector2(
-                    _host._body.Position.X + _host._body.OffsetX + _host._body.Width / 2f,
-                    _host._body.Position.Y + _host._body.OffsetY + _host._body.Height - _host._body.Position.Z - 3));
+                var splashAnimator = new ObjAnimator(
+                    _host._body.Owner.Map,
+                    0,
+                    0,
+                    0,
+                    3,
+                    Values.LayerPlayer,
+                    "Particles/splash",
+                    "idle",
+                    true
+                );
+                splashAnimator.EntityPosition.Set(
+                    new Vector2(
+                        _host._body.Position.X + _host._body.OffsetX + _host._body.Width / 2f,
+                        _host._body.Position.Y
+                            + _host._body.OffsetY
+                            + _host._body.Height
+                            - _host._body.Position.Z
+                            - 3
+                    )
+                );
                 Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(splashAnimator);
             }
             _effectPlayed = true;

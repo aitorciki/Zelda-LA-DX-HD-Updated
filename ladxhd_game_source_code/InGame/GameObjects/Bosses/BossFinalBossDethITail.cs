@@ -16,7 +16,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         public readonly CSprite Sprite;
 
-        public BossFinalBossDethITail(Map.Map map, BossFinalBoss owner, string spriteId, Vector2 position) : base(map)
+        public BossFinalBossDethITail(
+            Map.Map map,
+            BossFinalBoss owner,
+            string spriteId,
+            Vector2 position
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -28,8 +34,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Sprite = new CSprite(spriteId, EntityPosition);
 
             var damageCollider = new CBox(EntityPosition, -3, -3, 6, 6, 3);
-            AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageFieldComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
 
             SetActive(false);
         }

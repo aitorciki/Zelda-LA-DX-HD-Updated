@@ -11,15 +11,25 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _init;
         private bool _state;
+
         // key will be set and reset or just set
         private bool _reset;
 
-        public ObjKeyConditionSetter() : base("editor key condition setter")
+        public ObjKeyConditionSetter()
+            : base("editor key condition setter")
         {
             EditorColor = Color.Green;
         }
 
-        public ObjKeyConditionSetter(Map.Map map, int posX, int posY, string strKey, string strCondition, bool reset) : base(map)
+        public ObjKeyConditionSetter(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            string strCondition,
+            bool reset
+        )
+            : base(map)
         {
             // set the key and delete the object
             if (string.IsNullOrEmpty(strKey) || string.IsNullOrEmpty(strCondition))
@@ -32,7 +42,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _condition = SaveLoad.SaveCondition.GetConditionNode(strCondition);
             _reset = reset;
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
         }
 
         public void KeyChanged()

@@ -25,14 +25,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private int _lives = EnemyLives.Tektite;
 
-        public EnemyTektite() : base("tektite") { }
+        public EnemyTektite()
+            : base("tektite") { }
 
-        public EnemyTektite(Map.Map map, int posX, int posY) : base(map)
+        public EnemyTektite(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = true;
             OnReset = Reset;
@@ -49,38 +51,58 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Gravity = -0.05f,
                 DragAir = 0.85f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
-                FieldRectangle = _fieldRectangle
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                FieldRectangle = _fieldRectangle,
             };
 
             _aiComponent = new AiComponent();
 
             var stateIdle = new AiState() { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("jumping"), 750, 1250));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("jumping"), 750, 1250)
+            );
             var stateJumping = new AiState(UpdateJumping) { Init = InitJumping };
 
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("jumping", stateJumping);
             new AiFallState(_aiComponent, _body, null, null, 300);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState("idle");
 
             var damageBox = new CBox(EntityPosition, -6, -12, 0, 12, 12, 4);
             var hittableBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 8, true);
             var pushableBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -119,8 +141,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // jump towards the player if he is in the range
             Vector2 vecDirection;
-            if (_fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY) ||
-                !_fieldRectangle.Contains(EntityPosition.X, EntityPosition.Y))
+            if (
+                _fieldRectangle.Contains(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY)
+                || !_fieldRectangle.Contains(EntityPosition.X, EntityPosition.Y)
+            )
             {
                 vecDirection = MapManager.ObjLink.Position - EntityPosition.Position;
                 vecDirection.Normalize();
@@ -130,7 +154,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 var randomDir = Game1.RandomNumber.Next(0, 100) / 100.0f;
                 var directionRadius = (float)(Math.PI * 2 * randomDir);
-                vecDirection = new Vector2((float)Math.Cos(directionRadius), (float)Math.Sin(directionRadius));
+                vecDirection = new Vector2(
+                    (float)Math.Cos(directionRadius),
+                    (float)Math.Sin(directionRadius)
+                );
                 vecDirection *= 0.75f;
             }
 
@@ -148,12 +175,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

@@ -14,7 +14,7 @@ namespace ProjectZ.InGame.Screens
         }
 
         public virtual void Load(ContentManager content) { }
-        
+
         public virtual void Update(GameTime gameTime) { }
 
         public virtual void Draw(SpriteBatch spriteBatch) { }

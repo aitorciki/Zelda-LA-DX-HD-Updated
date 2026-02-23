@@ -38,9 +38,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         float light_bright = 1.00f;
         int light_size = 64;
 
-        public ObjDungeonTeleporter() : base("teleporter_middle") { }
+        public ObjDungeonTeleporter()
+            : base("teleporter_middle") { }
 
-        public ObjDungeonTeleporter(Map.Map map, int posX, int posY, string teleportMap, string teleporterId) : base(map)
+        public ObjDungeonTeleporter(
+            Map.Map map,
+            int posX,
+            int posY,
+            string teleportMap,
+            string teleporterId
+        )
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjDungeonTeleporter.lahdmod");
@@ -48,7 +56,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (File.Exists(modFile))
                 ModFile.Parse(modFile, this);
 
-            if (!enabled) return;
+            if (!enabled)
+                return;
 
             _pointRectangle = Resources.SourceRectangle("teleporter_outer");
             var sourceRectangle = Resources.SourceRectangle("teleporter_middle");
@@ -56,7 +65,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
-            TeleportPosition = new Vector2(EntityPosition.X, EntityPosition.Y + MapManager.ObjLink.CollisionBoxSize.Y / 2f);
+            TeleportPosition = new Vector2(
+                EntityPosition.X,
+                EntityPosition.Y + MapManager.ObjLink.CollisionBoxSize.Y / 2f
+            );
 
             _teleportMap = teleportMap;
             _teleporterId = teleporterId;
@@ -81,8 +93,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             }
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = Values.LightLayer1 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
+            AddComponent(
+                LightDrawComponent.Index,
+                new LightDrawComponent(DrawLight) { Layer = Values.LightLayer1 }
+            );
 
             // Update the positions of the rotating orbs.
             UpdatePositions();
@@ -157,7 +175,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             {
                 _pointPositions[i] = new Vector2(
                     _origin.X + (float)(7 * Math.Sin(radiants + Math.PI / 2 * i) - 2),
-                    _origin.Y + (float)(7 * Math.Cos(radiants + Math.PI / 2 * i)) - 2);
+                    _origin.Y + (float)(7 * Math.Cos(radiants + Math.PI / 2 * i)) - 2
+                );
             }
         }
 
@@ -175,7 +194,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             // draw the circles around
             for (var i = 0; i < _pointPositions.Length; i++)
-                spriteBatch.Draw(Resources.SprObjects, _pointPositions[i], _pointRectangle, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    _pointPositions[i],
+                    _pointRectangle,
+                    Color.White
+                );
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
@@ -183,7 +207,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (light_source && GameSettings.ObjectLights)
             {
                 var _lightColor = new Color(light_red, light_grn, light_blu);
-                var _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size);
+                var _lightRectangle = new Rectangle(
+                    (int)EntityPosition.X - light_size / 2,
+                    (int)EntityPosition.Y - light_size / 2,
+                    light_size,
+                    light_size
+                );
                 DrawHelper.DrawLight(spriteBatch, _lightRectangle, _lightColor * light_bright);
             }
         }

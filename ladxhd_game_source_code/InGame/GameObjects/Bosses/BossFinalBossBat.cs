@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -16,7 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private readonly Animator _animator;
         private readonly CSprite _sprite;
 
-        public BossFinalBossBat(Map.Map map, int posX, int posY) : base(map)
+        public BossFinalBossBat(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -32,17 +33,23 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             _aiComponent = new AiComponent();
 
             var stateIdle = new AiState() { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("fire")));
+            stateIdle.Trigger.Add(
+                new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("fire"))
+            );
             var stateFire = new AiState() { Init = InitFire };
-            stateFire.Trigger.Add(new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("bat")));
+            stateFire.Trigger.Add(
+                new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("bat"))
+            );
             var stateBat = new AiState() { Init = InitBat };
-            stateBat.Trigger.Add(new AiTriggerCountdown(550, null, () => _aiComponent.ChangeState("flying")));
+            stateBat.Trigger.Add(
+                new AiTriggerCountdown(550, null, () => _aiComponent.ChangeState("flying"))
+            );
             var stateFlying = new AiState() { Init = InitFlying };
             stateFlying.Trigger.Add(new AiTriggerCountdown(2000, FadeOut, Despawn));
 
@@ -54,7 +61,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("idle");
 
             var damageCollider = new CBox(EntityPosition, -5, -4, 0, 10, 8, 8);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -66,7 +76,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void Update()
         {
             _sprite.SpriteShader =
-                Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
+                Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime
+                    ? Resources.DamageSpriteShader0
+                    : null;
         }
 
         private void InitIdle()

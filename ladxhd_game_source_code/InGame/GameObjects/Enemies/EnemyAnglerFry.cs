@@ -22,9 +22,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = EnemyLives.AnglerFry;
         private float _swimCounter;
 
-        public EnemyAnglerFry() : base("anglerFry") { }
+        public EnemyAnglerFry()
+            : base("anglerFry") { }
 
-        public EnemyAnglerFry(Map.Map map, int posX, int posY, int dir) : base(map)
+        public EnemyAnglerFry(Map.Map map, int posX, int posY, int dir)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -37,7 +39,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _sprite = new CSprite(EntityPosition);
             _sprite.Color = Color.Transparent;
-            var animationComponent = new AnimationComponent(animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8)
             {
@@ -45,31 +51,43 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 DragAir = 0.8f,
                 DragWater = 0.8f,
                 IgnoresZ = true,
-                SplashEffect = false
+                SplashEffect = false,
             };
 
             var triggerCount = new AiTriggerCountdown(SpawnTime, TickSpawn, () => TickSpawn(1));
             var stateMoving = new AiState(UpdateMoving);
             var stateDespawning = new AiState();
-            stateDespawning.Trigger.Add(new AiTriggerCountdown(SpawnTime, TickDespawn, () => TickDespawn(1)));
+            stateDespawning.Trigger.Add(
+                new AiTriggerCountdown(SpawnTime, TickDespawn, () => TickDespawn(1))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.Trigger.Add(triggerCount);
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.States.Add("despawning", stateDespawning);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
-            { SpawnItems = false, HitMultiplierX = 6, HitMultiplierY = 6 };
+            {
+                SpawnItems = false,
+                HitMultiplierX = 6,
+                HitMultiplierY = 6,
+            };
             _aiComponent.ChangeState("moving");
 
             var hittableBox = new CBox(EntityPosition, -8, -14, 0, 16, 14, 8);
             var damageBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 4);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(AnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             triggerCount.OnInit();
@@ -77,13 +95,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (_damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower) != Values.HitCollision.None)
+            if (
+                _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower)
+                != Values.HitCollision.None
+            )
             {
                 _body.UpdateFieldState = false;
                 _body.VelocityTarget = Vector2.Zero;

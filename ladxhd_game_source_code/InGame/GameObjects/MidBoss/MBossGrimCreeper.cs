@@ -22,15 +22,56 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly MBossGrimCreeperFly[] _fly = new MBossGrimCreeperFly[6];
 
         private Vector2 _flyOrigin;
-        private Vector2[] _positions = new[] {
-            new Vector2(1, 2), new Vector2(6, 2), new Vector2(2, 3), new Vector2(3, 2),new Vector2(5, 3), new Vector2(4, 2),
-            new Vector2(2, 1), new Vector2(5, 1), new Vector2(2, 3), new Vector2(5, 3), new Vector2(2, 5), new Vector2(5, 5),
-            new Vector2(2, 2), new Vector2(5, 4), new Vector2(3.5f, 1), new Vector2(3.5f, 5), new Vector2(2, 4), new Vector2(5, 2),
-            new Vector2(1, 1), new Vector2(6, 5), new Vector2(6, 1), new Vector2(1, 5), new Vector2(3.5f, 1), new Vector2(3.5f, 5),
-            new Vector2(1, 0), new Vector2(2, 1), new Vector2(3, 2), new Vector2(4, 2), new Vector2(5, 1), new Vector2(6, 0),
-            new Vector2(1, 1), new Vector2(6, 1), new Vector2(6, 5), new Vector2(1, 5), new Vector2(4.5f, 3), new Vector2(2.5f, 3),
-            new Vector2(0, 1.5f), new Vector2(7, 1.5f), new Vector2(1, 3.5f), new Vector2(6, 3.5f), new Vector2(4.5f, 5), new Vector2(2.5f, 5),
-            new Vector2(2, 4), new Vector2(5, 4), new Vector2(3, 3), new Vector2(4, 5), new Vector2(3, 5), new Vector2(4, 3),
+        private Vector2[] _positions = new[]
+        {
+            new Vector2(1, 2),
+            new Vector2(6, 2),
+            new Vector2(2, 3),
+            new Vector2(3, 2),
+            new Vector2(5, 3),
+            new Vector2(4, 2),
+            new Vector2(2, 1),
+            new Vector2(5, 1),
+            new Vector2(2, 3),
+            new Vector2(5, 3),
+            new Vector2(2, 5),
+            new Vector2(5, 5),
+            new Vector2(2, 2),
+            new Vector2(5, 4),
+            new Vector2(3.5f, 1),
+            new Vector2(3.5f, 5),
+            new Vector2(2, 4),
+            new Vector2(5, 2),
+            new Vector2(1, 1),
+            new Vector2(6, 5),
+            new Vector2(6, 1),
+            new Vector2(1, 5),
+            new Vector2(3.5f, 1),
+            new Vector2(3.5f, 5),
+            new Vector2(1, 0),
+            new Vector2(2, 1),
+            new Vector2(3, 2),
+            new Vector2(4, 2),
+            new Vector2(5, 1),
+            new Vector2(6, 0),
+            new Vector2(1, 1),
+            new Vector2(6, 1),
+            new Vector2(6, 5),
+            new Vector2(1, 5),
+            new Vector2(4.5f, 3),
+            new Vector2(2.5f, 3),
+            new Vector2(0, 1.5f),
+            new Vector2(7, 1.5f),
+            new Vector2(1, 3.5f),
+            new Vector2(6, 3.5f),
+            new Vector2(4.5f, 5),
+            new Vector2(2.5f, 5),
+            new Vector2(2, 4),
+            new Vector2(5, 4),
+            new Vector2(3, 3),
+            new Vector2(4, 5),
+            new Vector2(3, 5),
+            new Vector2(4, 3),
         };
 
         private readonly string _saveKey;
@@ -47,17 +88,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private bool _initDialog;
 
-        public MBossGrimCreeper() : base("grim creeper") { }
+        public MBossGrimCreeper()
+            : base("grim creeper") { }
 
-        public MBossGrimCreeper(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public MBossGrimCreeper(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 32);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             _saveKey = saveKey;
 
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -74,23 +119,31 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 IsActive = false,
                 IsGrounded = false,
                 Gravity = -0.125f,
-                FieldRectangle = Map.GetField(posX, posY, 16)
+                FieldRectangle = Map.GetField(posX, posY, 16),
             };
 
             var stateIdle = new AiState(UpdateIdle);
             var stateSpawn = new AiState(UpdateSpawn) { Init = InitSpawn };
             var statePostSpawn = new AiState();
-            statePostSpawn.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("summoning")));
+            statePostSpawn.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("summoning"))
+            );
             var stateSummoning = new AiState(UpdateSummoning) { Init = InitSummoning };
             var stateWait = new AiState() { Init = InitWait };
-            stateWait.Trigger.Add(new AiTriggerCountdown(3500, null, () => _aiComponent.ChangeState("attack")));
+            stateWait.Trigger.Add(
+                new AiTriggerCountdown(3500, null, () => _aiComponent.ChangeState("attack"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             var statePostAttack = new AiState(UpdatePostAttack);
             statePostAttack.Trigger.Add(new AiTriggerCountdown(1500, null, EndPostAttack));
             var stateFinished = new AiState();
-            stateFinished.Trigger.Add(new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("preJump")));
+            stateFinished.Trigger.Add(
+                new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("preJump"))
+            );
             var statePreJump = new AiState() { Init = InitPreJump };
-            statePreJump.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("jump")));
+            statePreJump.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("jump"))
+            );
             var stateJump = new AiState(UpdateJump) { Init = InitJump };
 
             // evil eagle states
@@ -112,11 +165,20 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var damageCollider = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8);
             AddComponent(BaseAnimationComponent.Index, _animatorComponent);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, _sprite)
+            );
 
             UpdateTransparency(24);
             _flyOrigin = new Vector2(posX - 48, posY + 8 + 43);
@@ -195,9 +257,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return;
 
             var index = _flyIndex * 6 + _spawnIndex;
-            var targetPosition = _flyOrigin + new Vector2(_positions[index].X, _positions[index].Y) * 16;
+            var targetPosition =
+                _flyOrigin + new Vector2(_positions[index].X, _positions[index].Y) * 16;
             var randomOffsetX = Game1.RandomNumber.Next(0, 32) - 16;
-            var startPosition = targetPosition + new Vector2(randomOffsetX, 64) * (_positions[index].Y > 4 ? 1 : -1);
+            var startPosition =
+                targetPosition
+                + new Vector2(randomOffsetX, 64) * (_positions[index].Y > 4 ? 1 : -1);
             _fly[_spawnIndex] = new MBossGrimCreeperFly(Map, startPosition, targetPosition);
             _fly[_spawnIndex].FightInit();
             Map.Objects.SpawnObject(_fly[_spawnIndex]);

@@ -16,29 +16,101 @@ namespace ProjectZ.InGame.GameObjects.Effects
         public AnimationComponent AnimationComponent;
         public CSprite Sprite;
 
-        enum DeathState { Alive, FadingLight, Dead }
+        enum DeathState
+        {
+            Alive,
+            FadingLight,
+            Dead,
+        }
 
         private DeathState deathState = DeathState.Alive;
 
         private float fadeTimer = 0f;
         private float startBrightness;
 
-        bool  light_source = false;
-        int   light_red = 255;
-        int   light_grn = 220;
-        int   light_blu = 100;
+        bool light_source = false;
+        int light_red = 255;
+        int light_grn = 220;
+        int light_blu = 100;
         float light_bright = 0.8f;
-        int   light_size = 32;
+        int light_size = 32;
         float light_fade = 0.35f;
 
-        public ObjAnimator(Map.Map map, int posX, int posY, int layer, string animatorName, string animationName, bool deleteOnFinish) : 
-            this(map, posX, posY, 0, 0, layer, animatorName, animationName, deleteOnFinish) { }
+        public ObjAnimator(
+            Map.Map map,
+            int posX,
+            int posY,
+            int layer,
+            string animatorName,
+            string animationName,
+            bool deleteOnFinish
+        )
+            : this(map, posX, posY, 0, 0, layer, animatorName, animationName, deleteOnFinish) { }
 
-        public ObjAnimator(Map.Map map, int posX, int posY, int layer, string animatorName, string animationName, bool deleteOnFinish, bool useLight, int red, int grn, int blu, float brightness, int lightArea, float fadeDuration = 0.35f) : 
-            this(map, posX, posY, 0, 0, layer, animatorName, animationName, deleteOnFinish, useLight, red, grn, blu, brightness, lightArea, fadeDuration) { }
+        public ObjAnimator(
+            Map.Map map,
+            int posX,
+            int posY,
+            int layer,
+            string animatorName,
+            string animationName,
+            bool deleteOnFinish,
+            bool useLight,
+            int red,
+            int grn,
+            int blu,
+            float brightness,
+            int lightArea,
+            float fadeDuration = 0.35f
+        )
+            : this(
+                map,
+                posX,
+                posY,
+                0,
+                0,
+                layer,
+                animatorName,
+                animationName,
+                deleteOnFinish,
+                useLight,
+                red,
+                grn,
+                blu,
+                brightness,
+                lightArea,
+                fadeDuration
+            ) { }
 
-        public ObjAnimator(Map.Map map, int posX, int posY, int offsetX, int offsetY, int layer, string animatorName, string animationName, bool deleteOnFinish, bool useLight, int red, int grn, int blu, float brightness, int lightArea, float fadeDuration = 0.35f) : 
-            this(map, posX, posY, offsetX, offsetY, layer, animatorName, animationName, deleteOnFinish)
+        public ObjAnimator(
+            Map.Map map,
+            int posX,
+            int posY,
+            int offsetX,
+            int offsetY,
+            int layer,
+            string animatorName,
+            string animationName,
+            bool deleteOnFinish,
+            bool useLight,
+            int red,
+            int grn,
+            int blu,
+            float brightness,
+            int lightArea,
+            float fadeDuration = 0.35f
+        )
+            : this(
+                map,
+                posX,
+                posY,
+                offsetX,
+                offsetY,
+                layer,
+                animatorName,
+                animationName,
+                deleteOnFinish
+            )
         {
             light_source = useLight;
             light_red = red;
@@ -49,7 +121,18 @@ namespace ProjectZ.InGame.GameObjects.Effects
             light_fade = fadeDuration;
         }
 
-        public ObjAnimator(Map.Map map, int posX, int posY, int offsetX, int offsetY, int layer, string animatorName, string animationName, bool deleteOnFinish) : base(map)
+        public ObjAnimator(
+            Map.Map map,
+            int posX,
+            int posY,
+            int offsetX,
+            int offsetY,
+            int layer,
+            string animatorName,
+            string animationName,
+            bool deleteOnFinish
+        )
+            : base(map)
         {
             SprEditorImage = Resources.SprItem;
             EditorIconSource = new Rectangle(64, 168, 16, 16);
@@ -65,12 +148,22 @@ namespace ProjectZ.InGame.GameObjects.Effects
             Animator.Play(animationName);
 
             EntitySize = new Rectangle(
-                offsetX + Animator.CurrentAnimation.Offset.X + Animator.CurrentAnimation.AnimationLeft,
-                offsetY + Animator.CurrentAnimation.Offset.Y + Animator.CurrentAnimation.AnimationTop,
-                Animator.CurrentAnimation.AnimationWidth, Animator.CurrentAnimation.AnimationHeight);
+                offsetX
+                    + Animator.CurrentAnimation.Offset.X
+                    + Animator.CurrentAnimation.AnimationLeft,
+                offsetY
+                    + Animator.CurrentAnimation.Offset.Y
+                    + Animator.CurrentAnimation.AnimationTop,
+                Animator.CurrentAnimation.AnimationWidth,
+                Animator.CurrentAnimation.AnimationHeight
+            );
 
             Sprite = new CSprite(EntityPosition);
-            AnimationComponent = new AnimationComponent(Animator, Sprite, new Vector2(offsetX, offsetY));
+            AnimationComponent = new AnimationComponent(
+                Animator,
+                Sprite,
+                new Vector2(offsetX, offsetY)
+            );
 
             if (deleteOnFinish)
             {
@@ -107,7 +200,15 @@ namespace ProjectZ.InGame.GameObjects.Effects
             }
         }
 
-        protected void ConfigureLight(bool useLight, int red, int grn, int blu, float brightness, int size, float fadeDuration)
+        protected void ConfigureLight(
+            bool useLight,
+            int red,
+            int grn,
+            int blu,
+            float brightness,
+            int size,
+            float fadeDuration
+        )
         {
             light_source = useLight;
             light_red = red;
@@ -122,8 +223,17 @@ namespace ProjectZ.InGame.GameObjects.Effects
         {
             if (!GameSettings.ObjectLights || !light_source || light_bright <= 0f)
                 return;
-            Rectangle rect = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size);
-            DrawHelper.DrawLight(spriteBatch, rect, new Color(light_red, light_grn, light_blu) * light_bright);
+            Rectangle rect = new Rectangle(
+                (int)EntityPosition.X - light_size / 2,
+                (int)EntityPosition.Y - light_size / 2,
+                light_size,
+                light_size
+            );
+            DrawHelper.DrawLight(
+                spriteBatch,
+                rect,
+                new Color(light_red, light_grn, light_blu) * light_bright
+            );
         }
     }
 }

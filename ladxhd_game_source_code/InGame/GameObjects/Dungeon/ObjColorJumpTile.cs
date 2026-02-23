@@ -25,13 +25,15 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private int _currentState;
         private readonly int _startState;
-        
+
         private Rectangle _collisionRectangle;
         private Rectangle _fieldRectangle;
 
-        public ObjColorJumpTile() : base("color_tile_0") { }
+        public ObjColorJumpTile()
+            : base("color_tile_0") { }
 
-        public ObjColorJumpTile(Map.Map map, int posX, int posY, int state) : base(map)
+        public ObjColorJumpTile(Map.Map map, int posX, int posY, int state)
+            : base(map)
         {
             Tags = Values.GameObjectTag.None;
 
@@ -57,14 +59,30 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _restoreCounter = Game1.RandomNumber.Next(500, 1500);
 
             // spawn hole; delete jump object
-            _objHole = new ObjHole(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 16, 14, Rectangle.Empty, 0, 1, 0) { IsActive = false };
+            _objHole = new ObjHole(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                16,
+                14,
+                Rectangle.Empty,
+                0,
+                1,
+                0
+            )
+            {
+                IsActive = false,
+            };
             Map.Objects.SpawnObject(_objHole);
         }
 
         private void Update()
         {
             // when the player leaves the room the tiles will get restored to there original state
-            if (_currentState != _startState && !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
+            if (
+                _currentState != _startState
+                && !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+            )
             {
                 _restoreMode = true;
             }
@@ -87,30 +105,43 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 return;
 
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                _collisionRectangle.X, _collisionRectangle.Y, _collisionRectangle.Width, _collisionRectangle.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                _collisionRectangle.X,
+                _collisionRectangle.Y,
+                _collisionRectangle.Width,
+                _collisionRectangle.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {
                 // is the player standing on the tile -> jump
-                if (collidingObject is ObjLink link &&
-                    _collisionRectangle.Contains(link._body.BodyBox.Box.Center) && link._body.IsGrounded)
+                if (
+                    collidingObject is ObjLink link
+                    && _collisionRectangle.Contains(link._body.BodyBox.Box.Center)
+                    && link._body.IsGrounded
+                )
                 {
                     link.StartJump();
                     OffsetState(1);
                 }
                 // could be changed to work with all bodies; but things like bombs are not affected by the tile
-                else if (collidingObject is EnemyBonePutter bonePutter && 
-                         collidingObject.Components[BodyComponent.Index] is BodyComponent bodyComponent)
+                else if (
+                    collidingObject is EnemyBonePutter bonePutter
+                    && collidingObject.Components[BodyComponent.Index]
+                        is BodyComponent bodyComponent
+                )
                 {
-                    if (bonePutter.StartJump() &&
-                        _collisionRectangle.Contains(bodyComponent.BodyBox.Box.Center))
+                    if (
+                        bonePutter.StartJump()
+                        && _collisionRectangle.Contains(bodyComponent.BodyBox.Box.Center)
+                    )
                     {
                         OffsetState(1);
                     }
                 }
             }
-
         }
 
         private void OffsetState(int offset)

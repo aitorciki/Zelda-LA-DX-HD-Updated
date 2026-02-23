@@ -11,7 +11,8 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private Rectangle _rectangle;
 
-        public ObjMarinDungeonEntry(Map.Map map, int posX, int posY, int offsetX, int offsetY) : base(map)
+        public ObjMarinDungeonEntry(Map.Map map, int posX, int posY, int offsetX, int offsetY)
+            : base(map)
         {
             EditorIconSource = new Rectangle(0, 0, 16, 16);
             EditorColor = Color.Blue;

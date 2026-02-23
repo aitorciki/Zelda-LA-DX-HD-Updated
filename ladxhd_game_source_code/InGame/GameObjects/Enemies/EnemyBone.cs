@@ -16,7 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private double _liveTime = 1250;
 
-        public EnemyBone(Map.Map map, int posX, int posY, float speed) : base(map)
+        public EnemyBone(Map.Map map, int posX, int posY, float speed)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -34,9 +35,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                MoveCollision = OnCollision
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                MoveCollision = OnCollision,
             };
 
             var velocity = MapManager.ObjLink.Position - EntityPosition.Position;
@@ -47,7 +47,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4);
             var hittableBox = new CBox(EntityPosition, -3, -3, 0, 6, 6, 8);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, body);
             AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
@@ -73,7 +76,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -95,7 +104,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Despawn()
         {
             Map.Objects.DeleteObjects.Add(this);
-            Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/despawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    Values.LayerTop,
+                    "Particles/despawn",
+                    "run",
+                    true
+                )
+            );
         }
     }
 }

@@ -12,7 +12,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly Box _collisionRectangle;
         private readonly bool _isTop;
 
-        public ObjLadder(Map.Map map, int posX, int posY, bool isTop) : base(map)
+        public ObjLadder(Map.Map map, int posX, int posY, bool isTop)
+            : base(map)
         {
             var sprite = Resources.GetSprite(isTop ? "editor ladder top" : "editor ladder");
             SprEditorImage = sprite.Texture;
@@ -28,11 +29,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             else
                 _collisionRectangle = new Box(posX + 4, posY, 0, 8, 16, 8);
 
-            AddComponent(CollisionComponent.Index, new CollisionComponent(Collision)
-            {
-                CollisionType = !isTop ? Values.CollisionTypes.Ladder :
-                Values.CollisionTypes.Ladder | Values.CollisionTypes.LadderTop
-            });
+            AddComponent(
+                CollisionComponent.Index,
+                new CollisionComponent(Collision)
+                {
+                    CollisionType = !isTop
+                        ? Values.CollisionTypes.Ladder
+                        : Values.CollisionTypes.Ladder | Values.CollisionTypes.LadderTop,
+                }
+            );
         }
 
         private bool Collision(Box box, int dir, int level, ref Box collidingBox)

@@ -25,7 +25,13 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly bool _playerBomb;
         private readonly bool _floorExplode;
 
-        enum DeathState { Alive, FadingLight, Dead }
+        enum DeathState
+        {
+            Alive,
+            FadingLight,
+            Dead,
+        }
+
         private DeathState _deathState = DeathState.Alive;
 
         private float _fadeTimer = 0f;
@@ -38,7 +44,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private double _lastHitTime;
         private double _deepWaterCounter;
 
-        private Map.Map _map; 
+        private Map.Map _map;
 
         private bool _exploded;
         private bool _arrowMode;
@@ -51,15 +57,23 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool fire_detonates = false;
         private bool arrow_pickup = false;
 
-        bool  light_source = true;
-        int   light_red = 255;
-        int   light_grn = 255;
-        int   light_blu = 255;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 255;
+        int light_blu = 255;
         float light_bright = 1.0f;
-        int   light_size = 160;
+        int light_size = 160;
         float light_fade = 0.60f;
 
-        public ObjBomb(Map.Map map, float posX, float posY, bool playerBomb, bool floorExplode, int explosionTime = 1500) : base(map)
+        public ObjBomb(
+            Map.Map map,
+            float posX,
+            float posY,
+            bool playerBomb,
+            bool floorExplode,
+            int explosionTime = 1500
+        )
+            : base(map)
         {
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjBomb.lahdmod");
 
@@ -69,7 +83,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             CanReset = true;
             OnReset = Reset;
 
-            // For some reason, getting the map from the parameter avoids a crash that *sometimes* happens when shooting a bomb arrow into the 
+            // For some reason, getting the map from the parameter avoids a crash that *sometimes* happens when shooting a bomb arrow into the
             // mouth of a Dodongo Snake. This was originally coded to use "Map" directly, but for reasons unknown it could end up being null!
             _map = map;
 
@@ -91,8 +105,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 HoleAbsorb = FallDeath,
                 MoveCollision = OnCollision,
                 IgnoreInsideCollision = false,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
             };
 
             if (_map.Is2dMap)
@@ -119,18 +132,38 @@ namespace ProjectZ.InGame.GameObjects.Things
             _drawComponent = new BodyDrawComponent(Body, sprite, Values.LayerPlayer);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(HittableComponent.Index, new HittableComponent(new CBox(EntityPosition, -4, -10, 8, 10, 8), OnHit));
+            AddComponent(
+                HittableComponent.Index,
+                new HittableComponent(new CBox(EntityPosition, -4, -10, 8, 10, 8), OnHit)
+            );
             AddComponent(BodyComponent.Index, Body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
 
             // can not push away the bombs from enemies; would probably be fun
             if (playerBomb)
             {
-                AddComponent(PushableComponent.Index, new PushableComponent(Body.BodyBox, OnPush) { RepelMultiplier = 0.5f });
-                AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)), CarryInit, CarryUpdate, CarryThrow));
+                AddComponent(
+                    PushableComponent.Index,
+                    new PushableComponent(Body.BodyBox, OnPush) { RepelMultiplier = 0.5f }
+                );
+                AddComponent(
+                    CarriableComponent.Index,
+                    _carriableComponent = new CarriableComponent(
+                        new CRectangle(EntityPosition, new Rectangle(-4, -8, 8, 8)),
+                        CarryInit,
+                        CarryUpdate,
+                        CarryThrow
+                    )
+                );
             }
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, _bodyShadow = new BodyDrawShadowComponent(Body, sprite));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _bodyShadow = new BodyDrawShadowComponent(Body, sprite)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
             if (_playerBomb)
@@ -165,8 +198,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                     {
                         var collisionBox = new Box(
                             EntityPosition.X + collisionRect.X,
-                            EntityPosition.Y + collisionRect.Y, 0,
-                            collisionRect.Width, collisionRect.Height, 16);
+                            EntityPosition.Y + collisionRect.Y,
+                            0,
+                            collisionRect.Width,
+                            collisionRect.Height,
+                            16
+                        );
 
                         if (collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
                             MapManager.ObjLink.HitPlayer(collisionBox, HitType.Bomb, 4);
@@ -175,7 +212,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // remove bomb if the animation is finished
                 if (!_animator.IsPlaying && _deathState == DeathState.Alive)
                     StartLightFade();
-                
             }
             else
             {
@@ -193,14 +229,26 @@ namespace ProjectZ.InGame.GameObjects.Things
                     Explode();
             }
             // fall into the water
-            if (!_map.Is2dMap && Body.IsGrounded && Body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater))
+            if (
+                !_map.Is2dMap
+                && Body.IsGrounded
+                && Body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater)
+            )
             {
                 _deepWaterCounter -= Game1.DeltaTime;
 
                 if (_deepWaterCounter <= 0)
                 {
                     // spawn splash effect
-                    var fallAnimation = new ObjAnimator(_map, (int)(Body.Position.X + Body.OffsetX + Body.Width / 2.0f), (int)(Body.Position.Y + Body.OffsetY + Body.Height / 2.0f), Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                    var fallAnimation = new ObjAnimator(
+                        _map,
+                        (int)(Body.Position.X + Body.OffsetX + Body.Width / 2.0f),
+                        (int)(Body.Position.Y + Body.OffsetY + Body.Height / 2.0f),
+                        Values.LayerPlayer,
+                        "Particles/fishingSplash",
+                        "idle",
+                        true
+                    );
                     _map.Objects.SpawnObject(fallAnimation);
                     RemoveBomb();
                 }
@@ -236,10 +284,21 @@ namespace ProjectZ.InGame.GameObjects.Things
             // play sound effect
             Game1.GameManager.PlaySoundEffect("D360-24-18");
 
-            var fallAnimation = new ObjAnimator(Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
-            fallAnimation.EntityPosition.Set(new Vector2(
-                Body.Position.X + Body.OffsetX + Body.Width / 2.0f - 5,
-                Body.Position.Y + Body.OffsetY + Body.Height / 2.0f - 5));
+            var fallAnimation = new ObjAnimator(
+                Map,
+                0,
+                0,
+                Values.LayerBottom,
+                "Particles/fall",
+                "idle",
+                true
+            );
+            fallAnimation.EntityPosition.Set(
+                new Vector2(
+                    Body.Position.X + Body.OffsetX + Body.Width / 2.0f - 5,
+                    Body.Position.Y + Body.OffsetY + Body.Height / 2.0f - 5
+                )
+            );
             _map.Objects.SpawnObject(fallAnimation);
             RemoveBomb();
         }
@@ -309,8 +368,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // deals damage to the player or to the enemies
             if (_playerBomb || DamageEnemies)
-                _map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y),
-                    new Box(EntityPosition.X - 20, EntityPosition.Y - 20 - 5, 0, 40, 40, 16), HitType.Bomb, 2, false);
+                _map.Objects.Hit(
+                    this,
+                    new Vector2(EntityPosition.X, EntityPosition.Y),
+                    new Box(EntityPosition.X - 20, EntityPosition.Y - 20 - 5, 0, 40, 40, 16),
+                    HitType.Bomb,
+                    2,
+                    false
+                );
 
             Game1.GameManager.PlaySoundEffect("D378-12-0C");
 
@@ -376,16 +441,30 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return false;
 
             // push the bomb away
-            if (type == PushableComponent.PushType.Impact && GameSettings.SwSmackBombs && _playerBomb)
+            if (
+                type == PushableComponent.PushType.Impact
+                && GameSettings.SwSmackBombs
+                && _playerBomb
+            )
             {
                 Body.Drag = 0.85f;
-                Body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, Body.Velocity.Z);
+                Body.Velocity = new Vector3(
+                    direction.X * 1.5f,
+                    direction.Y * 1.5f,
+                    Body.Velocity.Z
+                );
                 return true;
             }
             return false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Allow exploding bombs with the magic rod or magic powder.
             if (fire_detonates && (hitType == HitType.MagicPowder || hitType == HitType.MagicRod))
@@ -398,17 +477,36 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return Values.HitCollision.None;
 
             // Block the sword from smacking it around unless the player enabled it.
-            if ((hitType & HitType.Sword) != 0 || (hitType & HitType.SwordSpin) != 0 || (hitType & HitType.SwordHold) != 0 || (hitType & HitType.SwordShot) != 0 || (hitType & HitType.ClassicSword) != 0 || (hitType & HitType.PegasusBootsSword) != 0)
+            if (
+                (hitType & HitType.Sword) != 0
+                || (hitType & HitType.SwordSpin) != 0
+                || (hitType & HitType.SwordHold) != 0
+                || (hitType & HitType.SwordShot) != 0
+                || (hitType & HitType.ClassicSword) != 0
+                || (hitType & HitType.PegasusBootsSword) != 0
+            )
                 if ((!enemy_interact && !_playerBomb) || !GameSettings.SwSmackBombs)
                     return Values.HitCollision.None;
 
             // Block other item interactions unless the player enabled it.
-            if (hitType == HitType.Boomerang || hitType == HitType.Bomb || hitType == HitType.MagicRod || hitType == HitType.Hookshot || hitType == HitType.MagicPowder || hitType == HitType.ThrownObject)
+            if (
+                hitType == HitType.Boomerang
+                || hitType == HitType.Bomb
+                || hitType == HitType.MagicRod
+                || hitType == HitType.Hookshot
+                || hitType == HitType.MagicPowder
+                || hitType == HitType.ThrownObject
+            )
                 if ((!enemy_interact && !_playerBomb) || !item_interact)
                     return Values.HitCollision.None;
 
             // Combine with arrows to create a bomb-arrow.
-            if (_playerBomb && !_exploded && (_bombCounter + 175 > _explosionTime || arrow_pickup) && gameObject is ObjArrow objArrow)
+            if (
+                _playerBomb
+                && !_exploded
+                && (_bombCounter + 175 > _explosionTime || arrow_pickup)
+                && gameObject is ObjArrow objArrow
+            )
             {
                 _arrowMode = true;
                 _bombCounter = fuse_timer;
@@ -423,7 +521,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 return Values.HitCollision.None;
             }
-            if (_exploded || (_lastHitTime != 0 && Game1.TotalGameTime - _lastHitTime < 250) || hitType == HitType.Bow)
+            if (
+                _exploded
+                || (_lastHitTime != 0 && Game1.TotalGameTime - _lastHitTime < 250)
+                || hitType == HitType.Bow
+            )
             {
                 return Values.HitCollision.None;
             }
@@ -457,11 +559,26 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            if (!GameSettings.ObjectLights || !light_source || !_exploded || _deathState == DeathState.Dead || light_bright <= 0f)
+            if (
+                !GameSettings.ObjectLights
+                || !light_source
+                || !_exploded
+                || _deathState == DeathState.Dead
+                || light_bright <= 0f
+            )
                 return;
 
-            Rectangle rect = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z, light_size, light_size);
-            DrawHelper.DrawLight(spriteBatch, rect, new Color(light_red, light_grn, light_blu) * light_bright);
+            Rectangle rect = new Rectangle(
+                (int)EntityPosition.X - light_size / 2,
+                (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z,
+                light_size,
+                light_size
+            );
+            DrawHelper.DrawLight(
+                spriteBatch,
+                rect,
+                new Color(light_red, light_grn, light_blu) * light_bright
+            );
         }
     }
 }

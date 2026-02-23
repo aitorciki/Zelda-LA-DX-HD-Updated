@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -30,12 +30,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private int _lives = EnemyLives.Pairodd;
 
-        public EnemyPairodd() : base("pairodd") { }
+        public EnemyPairodd()
+            : base("pairodd") { }
 
-        public EnemyPairodd(Map.Map map, int posX, int posY) : base(map)
+        public EnemyPairodd(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -48,14 +50,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/pairodd");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
                 FieldRectangle = map.GetField(posX, posY),
-                AbsorbPercentage = 0.75f
+                AbsorbPercentage = 0.75f,
             };
             var stateIdle = new AiState(UpdateIdle);
             stateIdle.Trigger.Add(_teleportCooldown = new AiTriggerTimer(300));
@@ -74,21 +79,52 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.States.Add("hidden", stateHidden);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { OnBurn = OnBurn };
-            _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "idle" };
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                true,
+                false
+            )
+            {
+                OnBurn = OnBurn,
+            };
+            _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900)
+            {
+                ShakeOffset = 1,
+                SilentStateChange = false,
+                ReturnState = "idle",
+            };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
 
             var damageBox = new CBox(EntityPosition, -7, -12, 0, 12, 7);
             var hittableBox = new CBox(EntityPosition, -7, -14, 14, 14, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new DrawShadowCSpriteComponent(_sprite));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new DrawShadowCSpriteComponent(_sprite)
+            );
 
             ToIdle();
             // do not shoot directly after spawning
@@ -160,7 +196,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!_teleportCooldown.State)
                 return;
 
-            var playerDistance = _body.BodyBox.Box.Center - MapManager.ObjLink.CenterPosition.Position;
+            var playerDistance =
+                _body.BodyBox.Box.Center - MapManager.ObjLink.CenterPosition.Position;
 
             if (playerDistance.Length() < 36)
                 _aiComponent.ChangeState("preDespawn");
@@ -171,7 +208,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (!_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return;
 
-            var projectile = new EnemyPairoddProjectile(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 8), 1.5f);
+            var projectile = new EnemyPairoddProjectile(
+                Map,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 8),
+                1.5f
+            );
             Map.Objects.SpawnObject(projectile);
         }
 
@@ -216,12 +257,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return false;
 
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Remove components when killed.
             if (_damageState.CurrentLives <= 0)

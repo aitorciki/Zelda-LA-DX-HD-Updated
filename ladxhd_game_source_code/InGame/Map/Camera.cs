@@ -21,8 +21,10 @@ namespace ProjectZ.InGame.Map
         private float RoundedShakeY => MathF.Round(ShakeOffsetY);
 
         // This is needed so there is no texture bleeding while rendering the game.
-        public float RoundX => (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
-        public float RoundY => (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
+        public float RoundX =>
+            (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
+        public float RoundY =>
+            (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
 
         public Matrix TransformMatrix
         {
@@ -31,12 +33,15 @@ namespace ProjectZ.InGame.Map
                 float tx = (float)Math.Round(-RoundX);
                 float ty = (float)Math.Round(-RoundY);
 
-                return Matrix.CreateScale(Scale) *
-                       Matrix.CreateTranslation(new Vector3(tx, ty, 0)) *
-                       Matrix.CreateTranslation(new Vector3((int)(_viewportWidth * 0.5f), (int)(_viewportHeight * 0.5f), 0)) * Game1.GameManager.GetMatrix;
+                return Matrix.CreateScale(Scale)
+                    * Matrix.CreateTranslation(new Vector3(tx, ty, 0))
+                    * Matrix.CreateTranslation(
+                        new Vector3((int)(_viewportWidth * 0.5f), (int)(_viewportHeight * 0.5f), 0)
+                    )
+                    * Game1.GameManager.GetMatrix;
             }
         }
-        public static bool  SnapCamera;
+        public static bool SnapCamera;
         public static float SnapCameraTimer;
 
         public int X => (int)Math.Round(Location.X + ShakeOffsetX * Scale);
@@ -49,16 +54,21 @@ namespace ProjectZ.InGame.Map
         private int _viewportWidth;
         private int _viewportHeight;
 
-        public static bool ClassicMode => 
-            (!GameSettings.ClassicCamera && 
-            GameSettings.ModernOverworld && 
-            (MapManager.ObjLink?.Map?.IsOverworld == false)) 
-            || 
-            (GameSettings.ClassicCamera && 
-            (!GameSettings.ClassicDungeon || 
-            MapManager.ObjLink?.Map?.DungeonMode == true || 
-            MapManager.ObjLink?.Map?.DungeonMapless == true || 
-            MapManager.ObjLink?.Map?.DungeonCastle == true));
+        public static bool ClassicMode =>
+            (
+                !GameSettings.ClassicCamera
+                && GameSettings.ModernOverworld
+                && (MapManager.ObjLink?.Map?.IsOverworld == false)
+            )
+            || (
+                GameSettings.ClassicCamera
+                && (
+                    !GameSettings.ClassicDungeon
+                    || MapManager.ObjLink?.Map?.DungeonMode == true
+                    || MapManager.ObjLink?.Map?.DungeonMapless == true
+                    || MapManager.ObjLink?.Map?.DungeonCastle == true
+                )
+            );
 
         // Classic Camera transition speed loaded via "lahdmod".
         public float classic_transition_speed = 1.00f;
@@ -83,7 +93,9 @@ namespace ProjectZ.InGame.Map
             var rectangle = new Rectangle(
                 (int)RoundX - _viewportWidth / 2,
                 (int)RoundY - _viewportHeight / 2,
-                _viewportWidth, _viewportHeight);
+                _viewportWidth,
+                _viewportHeight
+            );
             return rectangle;
         }
 
@@ -92,7 +104,9 @@ namespace ProjectZ.InGame.Map
             var rectangle = new Rectangle(
                 (int)(RoundX / Scale) - (int)(_viewportWidth / 2 / Scale),
                 (int)(RoundY / Scale) - (int)(_viewportHeight / 2 / Scale),
-                (int)(_viewportWidth / Scale), (int)(_viewportHeight / Scale));
+                (int)(_viewportWidth / Scale),
+                (int)(_viewportHeight / Scale)
+            );
             return rectangle;
         }
 
@@ -100,7 +114,10 @@ namespace ProjectZ.InGame.Map
         {
             Vector2 fieldCoords = MapManager.ObjLink.CenterPosition.Position;
 
-            if (Game1.ClassicCamera.CameraFieldCoords != Vector2.Zero && MapManager.ObjLink.Map.MapName != "overworld.map")
+            if (
+                Game1.ClassicCamera.CameraFieldCoords != Vector2.Zero
+                && MapManager.ObjLink.Map.MapName != "overworld.map"
+            )
                 fieldCoords = Game1.ClassicCamera.CameraFieldCoords;
 
             fieldRect = MapManager.ObjLink.Map.GetField(fieldCoords);
@@ -139,7 +156,12 @@ namespace ProjectZ.InGame.Map
                     var speedMult = CameraFunction(distance / 3.5f);
 
                     direction.Normalize();
-                    var cameraSpeed = direction * speedMult * Scale * Game1.TimeMultiplier * classic_transition_speed ;
+                    var cameraSpeed =
+                        direction
+                        * speedMult
+                        * Scale
+                        * Game1.TimeMultiplier
+                        * classic_transition_speed;
 
                     if (moveX)
                         Location.X += cameraSpeed.X;
@@ -186,7 +208,9 @@ namespace ProjectZ.InGame.Map
                     _cameraDistance.X = position.X - MoveLocation.X;
                 if (moveY)
                     _cameraDistance.Y = position.Y - MoveLocation.Y;
-                Location = new Vector2((int)Math.Round(position.X), (int)Math.Round(position.Y)) - _cameraDistance;
+                Location =
+                    new Vector2((int)Math.Round(position.X), (int)Math.Round(position.Y))
+                    - _cameraDistance;
             }
         }
 
@@ -256,10 +280,46 @@ namespace ProjectZ.InGame.Map
                     Color borderColor = Color.Black * GameSettings.ClassicAlpha;
 
                     // Draw Order: Top / Bottom / Left / Right
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(
+                            (int)(drawOffset.X + fieldX - Location.X),
+                            (int)(drawOffset.Y + fieldY - Location.Y),
+                            (int)fieldW,
+                            thickness
+                        ),
+                        borderColor
+                    );
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(
+                            (int)(drawOffset.X + fieldX - Location.X),
+                            (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness),
+                            (int)fieldW,
+                            thickness
+                        ),
+                        borderColor
+                    );
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(
+                            (int)(drawOffset.X + fieldX - Location.X),
+                            (int)(drawOffset.Y + fieldY - Location.Y - 1),
+                            thickness,
+                            (int)fieldH + 2
+                        ),
+                        borderColor
+                    );
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(
+                            (int)(drawOffset.X + fieldX - Location.X + fieldW - thickness),
+                            (int)(drawOffset.Y + fieldY - Location.Y - 1),
+                            thickness,
+                            (int)fieldH + 2
+                        ),
+                        borderColor
+                    );
 
                     // Fill everything outside the border with black.
                     var screenW = viewport.Width + 1;
@@ -273,10 +333,36 @@ namespace ProjectZ.InGame.Map
                     Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
 
                     // Draw Order: Top / Bottom / Left / Right
-                    spriteBatch.Draw(tex, new Rectangle(0, 0, screenW, (int)rectScreenY), blackoutColor);
-                    spriteBatch.Draw(tex, new Rectangle(0, (int)(rectScreenY + fieldH), screenW, (int)(screenH - (rectScreenY + fieldH))), blackoutColor);
-                    spriteBatch.Draw(tex, new Rectangle(0, (int)rectScreenY - 1, (int)rectScreenX, (int)fieldH + 2), blackoutColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY - 1, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH + 2), blackoutColor);
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(0, 0, screenW, (int)rectScreenY),
+                        blackoutColor
+                    );
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(
+                            0,
+                            (int)(rectScreenY + fieldH),
+                            screenW,
+                            (int)(screenH - (rectScreenY + fieldH))
+                        ),
+                        blackoutColor
+                    );
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(0, (int)rectScreenY - 1, (int)rectScreenX, (int)fieldH + 2),
+                        blackoutColor
+                    );
+                    spriteBatch.Draw(
+                        tex,
+                        new Rectangle(
+                            (int)(rectScreenX + fieldW),
+                            (int)rectScreenY - 1,
+                            (int)(screenW - (rectScreenX + fieldW)),
+                            (int)fieldH + 2
+                        ),
+                        blackoutColor
+                    );
 
                     // If set to the Super Game Boy border.
                     if (GameSettings.ClassicBorders == 2)
@@ -290,14 +376,33 @@ namespace ProjectZ.InGame.Map
                         int scaledH = (int)(borderH * MapManager.Camera.Scale);
 
                         // Center the SGB border on the screen.
-                        Vector2 pos = new Vector2((viewport.Width  - scaledW) / 2f, (viewport.Height - scaledH) / 2f);
+                        Vector2 pos = new Vector2(
+                            (viewport.Width - scaledW) / 2f,
+                            (viewport.Height - scaledH) / 2f
+                        );
 
                         // Draw centered with point sampling.
                         spriteBatch.End();
-                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+                        spriteBatch.Begin(
+                            SpriteSortMode.Deferred,
+                            BlendState.AlphaBlend,
+                            SamplerState.PointClamp,
+                            DepthStencilState.None,
+                            RasterizerState.CullNone
+                        );
 
                         // Draw the border using nearest neighbor (point filtering) for sharp pixels).
-                        spriteBatch.Draw(Resources.sgbBorder, pos, null, Color.White, 0f, Vector2.Zero, MapManager.Camera.Scale, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(
+                            Resources.sgbBorder,
+                            pos,
+                            null,
+                            Color.White,
+                            0f,
+                            Vector2.Zero,
+                            MapManager.Camera.Scale,
+                            SpriteEffects.None,
+                            0f
+                        );
                     }
                 }
             }

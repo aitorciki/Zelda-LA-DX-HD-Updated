@@ -24,9 +24,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         int _posX;
         int _posY;
 
-        public ObjIceBlock() : base("ice block") { }
+        public ObjIceBlock()
+            : base("ice block") { }
 
-        public ObjIceBlock(Map.Map map, int posX, int posY) : base(map)
+        public ObjIceBlock(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
@@ -39,21 +41,36 @@ namespace ProjectZ.InGame.GameObjects.Things
             _animator = AnimatorSaveLoad.LoadAnimator("Objects/ice block");
             _animator.Play("idle");
 
-            _animationLength = _animator.GetAnimationTime(0, _animator.CurrentAnimation.Frames.Length);
+            _animationLength = _animator.GetAnimationTime(
+                0,
+                _animator.CurrentAnimation.Frames.Length
+            );
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -8));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -8)
+            );
 
             var hittableBox = new CBox(EntityPosition, -7, -7, 0, 14, 14, 8, true);
             var collisionBox = new CBox(EntityPosition, -8, -8, 0, 16, 16, 16, true);
 
-            AddComponent(CollisionComponent.Index, _collisionComponent =
-                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    collisionBox,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore
+                )
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(collisionBox, OnPush));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void Update()
@@ -72,7 +89,17 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (_respawnCounter <= 0)
                 {
                     // spawn explosion effect
-                    Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 7, Values.LayerTop, "Particles/spawn", "run", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X - 8,
+                            (int)EntityPosition.Y - 7,
+                            Values.LayerTop,
+                            "Particles/spawn",
+                            "run",
+                            true
+                        )
+                    );
 
                     SetActive(true);
                 }
@@ -99,7 +126,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             return false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (!_isActive || (hitType & (HitType.Sword | HitType.PegasusBootsSword)) != 0)
                 return Values.HitCollision.None;
@@ -109,7 +142,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D378-19-13");
 
             Map.Objects.SpawnObject(new ObjIceBlockRespawner(Map, _posX, _posY, false));
-            var animation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0, Values.LayerPlayer, "Particles/ice block despawn", "run", true);
+            var animation = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                0,
+                0,
+                Values.LayerPlayer,
+                "Particles/ice block despawn",
+                "run",
+                true
+            );
             Map.Objects.SpawnObject(animation);
 
             _respawnCounter = RespawnTime;

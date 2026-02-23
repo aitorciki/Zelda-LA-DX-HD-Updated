@@ -28,7 +28,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _chainLengthInit = 7.5f;
         private float _chainLengthEnd = 4f;
 
-        public ObjChain(Map.Map map, Vector2 startPosition) : base(map)
+        public ObjChain(Map.Map map, Vector2 startPosition)
+            : base(map)
         {
             // init the chain
             for (var i = 0; i < ChainCount; i++)
@@ -38,7 +39,15 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             for (var i = 0; i < ChainCount - 1; i++)
             {
-                _objChains[i] = new ObjSprite(map, (int)startPosition.X, (int)startPosition.Y, "bowwow chain", Vector2.Zero, Values.LayerPlayer, null);
+                _objChains[i] = new ObjSprite(
+                    map,
+                    (int)startPosition.X,
+                    (int)startPosition.Y,
+                    "bowwow chain",
+                    Vector2.Zero,
+                    Values.LayerPlayer,
+                    null
+                );
                 map.Objects.SpawnObject(_objChains[i]);
             }
         }
@@ -54,7 +63,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void UpdateChain(Vector3 startPosition, Vector3 endPosition)
         {
-            var distance = (new Vector2(startPosition.X, startPosition.Y) - new Vector2(endPosition.X, endPosition.Y)).Length();
+            var distance = (
+                new Vector2(startPosition.X, startPosition.Y)
+                - new Vector2(endPosition.X, endPosition.Y)
+            ).Length();
             if ((distance - _chainLengthEnd) > (_chains.Length - 1) * _chainLengthInit)
                 _chainLength = (distance - _chainLengthEnd) / (_chains.Length - 1);
             else
@@ -107,7 +119,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 if (i < _objChains.Length)
                 {
-                    _objChains[i].EntityPosition.Set(new Vector2(_chains[i].EndPosition.X, _chains[i].EndPosition.Y + 3));
+                    _objChains[i]
+                        .EntityPosition.Set(
+                            new Vector2(_chains[i].EndPosition.X, _chains[i].EndPosition.Y + 3)
+                        );
                     _objChains[i].EntityPosition.Z = _chains[i].Height;
                 }
 

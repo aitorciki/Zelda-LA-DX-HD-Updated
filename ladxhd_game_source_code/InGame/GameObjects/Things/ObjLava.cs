@@ -16,9 +16,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _fieldX;
         private int _fieldY;
 
-        public ObjLava() : base("lava") { }
+        public ObjLava()
+            : base("lava") { }
 
-        public ObjLava(Map.Map map, int posX, int posY) : base(map)
+        public ObjLava(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -32,14 +34,26 @@ namespace ProjectZ.InGame.GameObjects.Things
             _animator = AnimatorSaveLoad.LoadAnimator("Objects/lava");
             _animator.Play("idle");
 
-            _animationLength = _animator.GetAnimationTime(0, _animator.CurrentAnimation.Frames.Length);
+            _animationLength = _animator.GetAnimationTime(
+                0,
+                _animator.CurrentAnimation.Frames.Length
+            );
 
             var sprite = new CSprite(EntityPosition);
             new AnimationComponent(_animator, sprite, Vector2.Zero);
 
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(posX, posY, -4, 16, 16, 8), Values.CollisionTypes.DeepWater));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(posX, posY, -4, 16, 16, 8),
+                    Values.CollisionTypes.DeepWater
+                )
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBackground));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(sprite, Values.LayerBackground)
+            );
         }
 
         private void Update()
@@ -56,8 +70,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             IsActive = active;
 
             if (active)
-                Map.AddFieldState(_fieldX, _fieldY,
-                    MapStates.FieldStates.DeepWater | MapStates.FieldStates.Lava);
+                Map.AddFieldState(
+                    _fieldX,
+                    _fieldY,
+                    MapStates.FieldStates.DeepWater | MapStates.FieldStates.Lava
+                );
             else
                 Map.SetFieldState(_fieldX, _fieldY, MapStates.FieldStates.None);
         }

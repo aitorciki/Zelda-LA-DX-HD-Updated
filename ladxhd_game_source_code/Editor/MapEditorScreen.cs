@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,7 +8,6 @@ using ProjectZ.Base.UI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Screens;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.Editor
 {
@@ -18,16 +18,22 @@ namespace ProjectZ.Editor
             TileMode,
             ObjectMode,
             DigMode,
-            MusicMode
+            MusicMode,
         }
 
-        public Vector2 MousePixelPosition => new Vector2(
-            (InputHandler.MousePosition().X - _camera.Location.X) / _camera.Scale,
-            (InputHandler.MousePosition().Y - _camera.Location.Y) / _camera.Scale);
+        public Vector2 MousePixelPosition =>
+            new Vector2(
+                (InputHandler.MousePosition().X - _camera.Location.X) / _camera.Scale,
+                (InputHandler.MousePosition().Y - _camera.Location.Y) / _camera.Scale
+            );
 
-        public Point MouseMapPosition => new Point(
-            (InputHandler.MousePosition().X - _camera.Location.X) / (int)(Values.TileSize * _camera.Scale),
-            (InputHandler.MousePosition().Y - _camera.Location.Y) / (int)(Values.TileSize * _camera.Scale));
+        public Point MouseMapPosition =>
+            new Point(
+                (InputHandler.MousePosition().X - _camera.Location.X)
+                    / (int)(Values.TileSize * _camera.Scale),
+                (InputHandler.MousePosition().Y - _camera.Location.Y)
+                    / (int)(Values.TileSize * _camera.Scale)
+            );
 
         public bool ShowGrid;
 
@@ -54,7 +60,8 @@ namespace ProjectZ.Editor
         private bool _showObjects = true;
         private bool _shiftDown;
 
-        public MapEditorScreen(string screenId) : base(screenId)
+        public MapEditorScreen(string screenId)
+            : base(screenId)
         {
             _tileEditorScreen = new TileEditorScreen(_camera);
             _objectEditorScreen = new ObjectEditorScreen(_camera);
@@ -80,84 +87,242 @@ namespace ProjectZ.Editor
             var dist = 4;
             var bigDist = 16;
 
-            var strScreenName = $"{Values.EditorUiTileEditor}:{Values.EditorUiObjectEditor}:{Values.EditorUiDigTileEditor}:{Values.EditorUiMusicTileEditor}";
+            var strScreenName =
+                $"{Values.EditorUiTileEditor}:{Values.EditorUiObjectEditor}:{Values.EditorUiDigTileEditor}:{Values.EditorUiMusicTileEditor}";
 
             // left background
-            Game1.UiManager.AddElement(new UiRectangle(Rectangle.Empty, "left", strScreenName,
-                Values.ColorBackgroundLight, Color.White,
-                ui =>
-                {
-                    ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, _toolBarWidth,
-                        Game1.WindowHeight - Values.ToolBarHeight);
-                }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    Rectangle.Empty,
+                    "left",
+                    strScreenName,
+                    Values.ColorBackgroundLight,
+                    Color.White,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            0,
+                            Values.ToolBarHeight,
+                            _toolBarWidth,
+                            Game1.WindowHeight - Values.ToolBarHeight
+                        );
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "Load", "", strScreenName, null, ui => SaveLoadMap.LoadMap(Game1.GameManager.MapManager.CurrentMap)));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Load",
+                    "",
+                    strScreenName,
+                    null,
+                    ui => SaveLoadMap.LoadMap(Game1.GameManager.MapManager.CurrentMap)
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "Save as...", "", strScreenName, null, ui => SaveLoadMap.SaveMapDialog(Game1.GameManager.MapManager.CurrentMap)));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Save as...",
+                    "",
+                    strScreenName,
+                    null,
+                    ui => SaveLoadMap.SaveMapDialog(Game1.GameManager.MapManager.CurrentMap)
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "Save...", "", strScreenName, null, ui => SaveLoadMap.SaveMap(Game1.GameManager.MapManager.CurrentMap)));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Save...",
+                    "",
+                    strScreenName,
+                    null,
+                    ui => SaveLoadMap.SaveMap(Game1.GameManager.MapManager.CurrentMap)
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "Update Maps", "", strScreenName, null, ui => SaveLoadMap.UpdateMaps()));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Update Maps",
+                    "",
+                    strScreenName,
+                    null,
+                    ui => SaveLoadMap.UpdateMaps()
+                )
+            );
 
             // map offset
-            Game1.UiManager.AddElement(_niOffsetX = new UiNumberInput(
-                new Rectangle(5, posY += buttonHeight + dist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeMapOffsetX));
-            Game1.UiManager.AddElement(_niOffsetY = new UiNumberInput(
-                new Rectangle(5 + buttonWidthHalf + dist, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeMapOffsetY));
+            Game1.UiManager.AddElement(
+                _niOffsetX = new UiNumberInput(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidthHalf, buttonHeight),
+                    Resources.EditorFont,
+                    _mapOffsetX,
+                    -16,
+                    16,
+                    1,
+                    "",
+                    strScreenName,
+                    null,
+                    NumberInputChangeMapOffsetX
+                )
+            );
+            Game1.UiManager.AddElement(
+                _niOffsetY = new UiNumberInput(
+                    new Rectangle(5 + buttonWidthHalf + dist, posY, buttonWidthHalf, buttonHeight),
+                    Resources.EditorFont,
+                    _mapOffsetX,
+                    -16,
+                    16,
+                    1,
+                    "",
+                    strScreenName,
+                    null,
+                    NumberInputChangeMapOffsetY
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiNumberInput(
-                new Rectangle(5, posY += buttonHeight + dist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeOffsetX));
-            Game1.UiManager.AddElement(new UiNumberInput(
-                new Rectangle(5 + buttonWidthHalf + dist, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, _mapOffsetX, -16, 16, 1, "", strScreenName, null, NumberInputChangeOffsetY));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont, "Offset Map", "", strScreenName, null, ButtonPressedOffsetMap));
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidthHalf, buttonHeight),
+                    Resources.EditorFont,
+                    _mapOffsetX,
+                    -16,
+                    16,
+                    1,
+                    "",
+                    strScreenName,
+                    null,
+                    NumberInputChangeOffsetX
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(5 + buttonWidthHalf + dist, posY, buttonWidthHalf, buttonHeight),
+                    Resources.EditorFont,
+                    _mapOffsetX,
+                    -16,
+                    16,
+                    1,
+                    "",
+                    strScreenName,
+                    null,
+                    NumberInputChangeOffsetY
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Offset Map",
+                    "",
+                    strScreenName,
+                    null,
+                    ButtonPressedOffsetMap
+                )
+            );
 
             // show grid button
-            Game1.UiManager.AddElement(new UiCheckBox(
-                new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "show grid", "cb", strScreenName, false, null,
-                ui => { ShowGrid = ((UiCheckBox)ui).CurrentState; }));
+            Game1.UiManager.AddElement(
+                new UiCheckBox(
+                    new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "show grid",
+                    "cb",
+                    strScreenName,
+                    false,
+                    null,
+                    ui =>
+                    {
+                        ShowGrid = ((UiCheckBox)ui).CurrentState;
+                    }
+                )
+            );
 
             // tile/object mode switch
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + bigDist, buttonQWidth, buttonHeight),
-                Resources.EditorFont, "Tiles", "", strScreenName,
-                element => ((UiButton)element).Marked = _currentMode == EditorModes.TileMode,
-                element => _currentMode = EditorModes.TileMode));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + bigDist, buttonQWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Tiles",
+                    "",
+                    strScreenName,
+                    element => ((UiButton)element).Marked = _currentMode == EditorModes.TileMode,
+                    element => _currentMode = EditorModes.TileMode
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
-                    Resources.EditorFont, "", "bt1", strScreenName, null, ButtonUpdateTilesVisibility)
-            { ButtonIcon = Resources.EditorEyeOpen });
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
+                    Resources.EditorFont,
+                    "",
+                    "bt1",
+                    strScreenName,
+                    null,
+                    ButtonUpdateTilesVisibility
+                )
+                {
+                    ButtonIcon = Resources.EditorEyeOpen,
+                }
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight),
-                Resources.EditorFont, "Objects", "", strScreenName,
-                element => ((UiButton)element).Marked = _currentMode == EditorModes.ObjectMode,
-                element => _currentMode = EditorModes.ObjectMode));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Objects",
+                    "",
+                    strScreenName,
+                    element => ((UiButton)element).Marked = _currentMode == EditorModes.ObjectMode,
+                    element => _currentMode = EditorModes.ObjectMode
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
-                    Resources.EditorFont, "", "bt1", strScreenName, null, ButtonUpdateObjectsVisibility)
-            { ButtonIcon = Resources.EditorEyeOpen });
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
+                    Resources.EditorFont,
+                    "",
+                    "bt1",
+                    strScreenName,
+                    null,
+                    ButtonUpdateObjectsVisibility
+                )
+                {
+                    ButtonIcon = Resources.EditorEyeOpen,
+                }
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont, "Dig Map", "", strScreenName,
-                element => ((UiButton)element).Marked = _currentMode == EditorModes.DigMode,
-                element => _currentMode = EditorModes.DigMode));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Dig Map",
+                    "",
+                    strScreenName,
+                    element => ((UiButton)element).Marked = _currentMode == EditorModes.DigMode,
+                    element => _currentMode = EditorModes.DigMode
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont, "Music", "", strScreenName,
-                element => ((UiButton)element).Marked = _currentMode == EditorModes.MusicMode,
-                element => _currentMode = EditorModes.MusicMode));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Music",
+                    "",
+                    strScreenName,
+                    element => ((UiButton)element).Marked = _currentMode == EditorModes.MusicMode,
+                    element => _currentMode = EditorModes.MusicMode
+                )
+            );
 
             posY += buttonHeight + bigDist;
 
@@ -172,10 +337,12 @@ namespace ProjectZ.Editor
             // set up music ui
             _musicTileEditor.SetUpUi(posY);
         }
-        
+
         public override void Update(GameTime gameTime)
         {
-            _shiftDown = InputHandler.KeyDown(Keys.LeftControl) & InputHandler.MousePosition().X < Game1.WindowWidth - _toolBarWidth;
+            _shiftDown =
+                InputHandler.KeyDown(Keys.LeftControl)
+                & InputHandler.MousePosition().X < Game1.WindowWidth - _toolBarWidth;
 
             // update the selection screen or the editor screen
             if (_shiftDown)
@@ -250,16 +417,33 @@ namespace ProjectZ.Editor
 
         private void DrawEditorScreen(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, _camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _camera.TransformMatrix
+            );
 
             // draw the background
-            spriteBatch.Draw(Resources.SprTiledBlock, new Rectangle(0, 0,
+            spriteBatch.Draw(
+                Resources.SprTiledBlock,
+                new Rectangle(
+                    0,
+                    0,
                     Game1.GameManager.MapManager.CurrentMap.MapWidth * Values.TileSize,
-                    Game1.GameManager.MapManager.CurrentMap.MapHeight * Values.TileSize),
-                new Rectangle(0, 0,
+                    Game1.GameManager.MapManager.CurrentMap.MapHeight * Values.TileSize
+                ),
+                new Rectangle(
+                    0,
+                    0,
                     Game1.GameManager.MapManager.CurrentMap.MapWidth * 2,
-                    Game1.GameManager.MapManager.CurrentMap.MapHeight * 2),
-                Color.White);
+                    Game1.GameManager.MapManager.CurrentMap.MapHeight * 2
+                ),
+                Color.White
+            );
 
             // draw the tile layers
             if (_showTiles)
@@ -282,17 +466,29 @@ namespace ProjectZ.Editor
                 var countY = MathF.Ceiling(currentMap.TileMap.ArrayTileMap.GetLength(1) / 8.0f);
 
                 for (var y = 0; y < countY; y++)
-                    for (var x = 0; x < countX; x++)
-                        if ((y + x) % 2 == 0)
-                        {
-                            var sizeX = Math.Min(10, currentMap.TileMap.ArrayTileMap.GetLength(0) - x * 10);
-                            var sizeY = Math.Min(8, currentMap.TileMap.ArrayTileMap.GetLength(1) - y * 8);
+                for (var x = 0; x < countX; x++)
+                    if ((y + x) % 2 == 0)
+                    {
+                        var sizeX = Math.Min(
+                            10,
+                            currentMap.TileMap.ArrayTileMap.GetLength(0) - x * 10
+                        );
+                        var sizeY = Math.Min(
+                            8,
+                            currentMap.TileMap.ArrayTileMap.GetLength(1) - y * 8
+                        );
 
-                            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                                    (x * 10 + currentMap.MapOffsetX) * Values.TileSize,
-                                    (y * 8 + currentMap.MapOffsetY) * Values.TileSize,
-                                    Values.TileSize * sizeX, Values.TileSize * sizeY), Color.White * 0.5f);
-                        }
+                        spriteBatch.Draw(
+                            Resources.SprWhite,
+                            new Rectangle(
+                                (x * 10 + currentMap.MapOffsetX) * Values.TileSize,
+                                (y * 8 + currentMap.MapOffsetY) * Values.TileSize,
+                                Values.TileSize * sizeX,
+                                Values.TileSize * sizeY
+                            ),
+                            Color.White * 0.5f
+                        );
+                    }
             }
 
             spriteBatch.End();
@@ -311,38 +507,60 @@ namespace ProjectZ.Editor
 
         public void CenterCamera()
         {
-            _camera.Location.X = (int)(Game1.WindowWidth - Values.TileSize * Game1.GameManager.MapManager.CurrentMap.MapWidth * _camera.Scale) / 2;
-            _camera.Location.Y = (int)(Game1.WindowHeight - Values.TileSize * Game1.GameManager.MapManager.CurrentMap.MapHeight * _camera.Scale) / 2;
+            _camera.Location.X =
+                (int)(
+                    Game1.WindowWidth
+                    - Values.TileSize
+                        * Game1.GameManager.MapManager.CurrentMap.MapWidth
+                        * _camera.Scale
+                ) / 2;
+            _camera.Location.Y =
+                (int)(
+                    Game1.WindowHeight
+                    - Values.TileSize
+                        * Game1.GameManager.MapManager.CurrentMap.MapHeight
+                        * _camera.Scale
+                ) / 2;
         }
 
         public bool InsideField()
         {
-            return InputHandler.MouseIntersect(new Rectangle(
-                _toolBarWidth, Values.ToolBarHeight,
-                Game1.WindowWidth - _toolBarWidth * 2,
-                Game1.WindowHeight - Values.ToolBarHeight));
+            return InputHandler.MouseIntersect(
+                new Rectangle(
+                    _toolBarWidth,
+                    Values.ToolBarHeight,
+                    Game1.WindowWidth - _toolBarWidth * 2,
+                    Game1.WindowHeight - Values.ToolBarHeight
+                )
+            );
         }
 
         private void ButtonUpdateTilesVisibility(UiElement ui)
         {
             _showTiles = !_showTiles;
-            ((UiButton)ui).ButtonIcon = _showTiles ? Resources.EditorEyeOpen : Resources.EditorEyeClosed;
+            ((UiButton)ui).ButtonIcon = _showTiles
+                ? Resources.EditorEyeOpen
+                : Resources.EditorEyeClosed;
         }
 
         private void ButtonUpdateObjectsVisibility(UiElement ui)
         {
             _showObjects = !_showObjects;
-            ((UiButton)ui).ButtonIcon = _showObjects ? Resources.EditorEyeOpen : Resources.EditorEyeClosed;
+            ((UiButton)ui).ButtonIcon = _showObjects
+                ? Resources.EditorEyeOpen
+                : Resources.EditorEyeClosed;
         }
 
         private void NumberInputChangeMapOffsetX(UiElement uiElement)
         {
-            Game1.GameManager.MapManager.CurrentMap.MapOffsetX = (int)((UiNumberInput)uiElement).Value;
+            Game1.GameManager.MapManager.CurrentMap.MapOffsetX = (int)
+                ((UiNumberInput)uiElement).Value;
         }
 
         private void NumberInputChangeMapOffsetY(UiElement uiElement)
         {
-            Game1.GameManager.MapManager.CurrentMap.MapOffsetY = (int)((UiNumberInput)uiElement).Value;
+            Game1.GameManager.MapManager.CurrentMap.MapOffsetY = (int)
+                ((UiNumberInput)uiElement).Value;
         }
 
         private void NumberInputChangeOffsetX(UiElement uiElement)
@@ -361,7 +579,10 @@ namespace ProjectZ.Editor
             _tileEditorScreen.OffsetTileMap(_mapOffsetX, _mapOffsetY);
             // offset the objects
             ObjectEditorScreen.OffsetObjects(
-                Game1.GameManager.MapManager.CurrentMap, _mapOffsetX * Values.TileSize, _mapOffsetY * Values.TileSize);
+                Game1.GameManager.MapManager.CurrentMap,
+                _mapOffsetX * Values.TileSize,
+                _mapOffsetY * Values.TileSize
+            );
         }
     }
 }

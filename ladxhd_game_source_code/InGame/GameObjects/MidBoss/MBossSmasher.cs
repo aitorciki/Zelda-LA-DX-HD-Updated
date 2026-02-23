@@ -43,7 +43,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private int _direction;
         private int _jumpCount;
 
-        public MBossSmasher(Map.Map map, int posX, int posY, string saveKey) : base(map, "smasher")
+        public MBossSmasher(Map.Map map, int posX, int posY, string saveKey)
+            : base(map, "smasher")
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -52,8 +53,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _saveKey = saveKey;
 
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -77,7 +80,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 Drag = 0.65f,
                 DragAir = 0.75f,
                 Gravity = -0.125f,
-                FieldRectangle = map.GetField(posX, posY)
+                FieldRectangle = map.GetField(posX, posY),
             };
 
             var stateWaiting = new AiState(UpdateWaiting) { Init = InitWaiting };
@@ -86,7 +89,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             statePickup.Trigger.Add(new AiTriggerCountdown(PickupTime, TickPickup, PickupEnd));
             var stateCarry = new AiState(UpdateCarry) { Init = InitCarrying };
             var statePostThrow = new AiState();
-            statePostThrow.Trigger.Add(new AiTriggerCountdown(550, null, () => _aiComponent.ChangeState("walk")));
+            statePostThrow.Trigger.Add(
+                new AiTriggerCountdown(550, null, () => _aiComponent.ChangeState("walk"))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.Trigger.Add(new AiTriggerUpdate(Update));
@@ -96,7 +101,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("pickup", statePickup);
             _aiComponent.States.Add("carry", stateCarry);
             _aiComponent.States.Add("postThrow", statePostThrow);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { BossHitSound = true, ExplosionOffsetY = 6, OnLiveZeroed = OnLiveZeroed };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                BossHitSound = true,
+                ExplosionOffsetY = 6,
+                OnLiveZeroed = OnLiveZeroed,
+            };
             _damageState.AddBossDamageState(RemoveObject);
 
             _aiComponent.ChangeState("waiting");
@@ -104,19 +114,37 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 14, true);
             var hittableBox = new CBox(EntityPosition, -9, -18, 0, 18, 18, 16, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 18, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 18, ShadowHeight = 6 }
+            );
 
             _moveDirection = new Vector2(-1.2f, 0);
             _animator.Play("idle_0");
 
-            _ball = new MBossSmasherBall(map, new Vector2(EntityPosition.X + 56, EntityPosition.Y + 16));
+            _ball = new MBossSmasherBall(
+                map,
+                new Vector2(EntityPosition.X + 56, EntityPosition.Y + 16)
+            );
             map.Objects.SpawnObject(_ball);
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
@@ -125,8 +153,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void Update()
         {
             // player left?
-            if (!_triggerRectangle.Contains(MapManager.ObjLink.BodyRectangle) &&
-                _aiComponent.CurrentStateId == "walk" && _body.IsGrounded)
+            if (
+                !_triggerRectangle.Contains(MapManager.ObjLink.BodyRectangle)
+                && _aiComponent.CurrentStateId == "walk"
+                && _body.IsGrounded
+            )
             {
                 _aiComponent.ChangeState("waiting");
 
@@ -165,7 +196,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             Game1.GameManager.PlaySoundEffect("D370-28-1C");
 
-            _pickupStart = new Vector2(_ball.EntityPosition.Position.X, EntityPosition.Y - _ball.EntityPosition.Position.Y);
+            _pickupStart = new Vector2(
+                _ball.EntityPosition.Position.X,
+                EntityPosition.Y - _ball.EntityPosition.Position.Y
+            );
             _direction = _ball.EntityPosition.Position.X < EntityPosition.X ? 0 : 1;
             _animator.Play("up_" + _direction);
         }
@@ -180,14 +214,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var percentageY = _pickupCurveY.EvaluateX(percentage);
             var newBallPosition = new Vector2(
                 MathHelper.Lerp(_pickupStart.X, ballTargetPosition.X, percentageX),
-                MathHelper.Lerp(_pickupStart.Y, ballTargetPosition.Y, percentageY));
+                MathHelper.Lerp(_pickupStart.Y, ballTargetPosition.Y, percentageY)
+            );
 
-            _ball.EntityPosition.Set(new Vector3(newBallPosition.X, EntityPosition.Y + 1, newBallPosition.Y));
+            _ball.EntityPosition.Set(
+                new Vector3(newBallPosition.X, EntityPosition.Y + 1, newBallPosition.Y)
+            );
 
             var Link = MapManager.ObjLink;
             var lState = Link.CurrentState;
 
-            if (lState == ObjLink.State.Pulling || lState == ObjLink.State.PreCarrying || lState == ObjLink.State.Carrying)
+            if (
+                lState == ObjLink.State.Pulling
+                || lState == ObjLink.State.PreCarrying
+                || lState == ObjLink.State.Carrying
+            )
             {
                 _ball.DisableDamageField();
                 _aiComponent.ChangeState("walk");
@@ -249,13 +290,23 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (EntityPosition.Position.X < _ball.EntityPosition.X)
             {
                 // need to make sure that the target position is not inside the wall where the boss can not reach it
-                var offset = Math.Clamp(14 + _body.Width / 2 - (_ball.EntityPosition.X - (_body.FieldRectangle.X + 16)), 0, 32);
+                var offset = Math.Clamp(
+                    14 + _body.Width / 2 - (_ball.EntityPosition.X - (_body.FieldRectangle.X + 16)),
+                    0,
+                    32
+                );
                 targetPosition.X -= 14 - offset;
             }
             else
             {
                 // need to make sure that the target position is not inside the wall where the boss can not reach it
-                var offset = Math.Clamp(14 + _body.Width / 2 - ((_body.FieldRectangle.Right - 16) - _ball.EntityPosition.X), 0, 32);
+                var offset = Math.Clamp(
+                    14
+                        + _body.Width / 2
+                        - ((_body.FieldRectangle.Right - 16) - _ball.EntityPosition.X),
+                    0,
+                    32
+                );
                 targetPosition.X += 14 - offset;
             }
             var ballDirection = targetPosition - EntityPosition.Position;
@@ -287,7 +338,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return;
 
             // set the position of the ball if it is carried
-            _ball.EntityPosition.Set(new Vector3(newPosition.X, newPosition.Y + 1, newPosition.Z + 15));
+            _ball.EntityPosition.Set(
+                new Vector3(newPosition.X, newPosition.Y + 1, newPosition.Z + 15)
+            );
         }
 
         private void InitCarrying()
@@ -351,7 +404,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -367,21 +426,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _body.VelocityTarget = Vector2.Zero;
             }
 
-    /*  ----------------------------------------------------------------------------
-        Note: These behaviors are not accurate to the original game. Hitting the boss with the sword should
-              not cause knockback, nor should it drop the ball when hit. Not sure why it was designed this way.
-
-            else if (_aiComponent.CurrentStateId != "pickup")
-            {
-                _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
-            }
-            if (_aiComponent.CurrentStateId == "carry")
-            {
-                _ball.EndPickup();
-                _animator.Play("idle_" + _direction);
-                _aiComponent.ChangeState("walk");
-            }
-        ---------------------------------------------------------------------------- */
+            /*  ----------------------------------------------------------------------------
+                Note: These behaviors are not accurate to the original game. Hitting the boss with the sword should
+                      not cause knockback, nor should it drop the ball when hit. Not sure why it was designed this way.
+        
+                    else if (_aiComponent.CurrentStateId != "pickup")
+                    {
+                        _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
+                    }
+                    if (_aiComponent.CurrentStateId == "carry")
+                    {
+                        _ball.EndPickup();
+                        _animator.Play("idle_" + _direction);
+                        _aiComponent.ChangeState("walk");
+                    }
+                ---------------------------------------------------------------------------- */
 
             // Remove damage box on death.
             if (_damageState.CurrentLives <= 0)
@@ -395,8 +454,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void OnCollision(Values.BodyCollision direction)
         {
-            if (_aiComponent.CurrentStateId == "jumping" && (direction & Values.BodyCollision.Horizontal) != 0 &&
-                Math.Sign(_body.Velocity.X) == Math.Sign(_moveDirection.X))
+            if (
+                _aiComponent.CurrentStateId == "jumping"
+                && (direction & Values.BodyCollision.Horizontal) != 0
+                && Math.Sign(_body.Velocity.X) == Math.Sign(_moveDirection.X)
+            )
             {
                 _aiComponent.ChangeState("pushing");
                 _moveDirection.X = -_moveDirection.X;
@@ -432,7 +494,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // spawns a fairy
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }

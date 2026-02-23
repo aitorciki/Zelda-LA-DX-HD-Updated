@@ -37,7 +37,12 @@ namespace ProjectZ.InGame.Interface
             return element;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             if (Recalculate)
                 CalculatePosition();
@@ -47,7 +52,12 @@ namespace ProjectZ.InGame.Interface
             // draw all elements that are inside the layout
             foreach (var element in Elements)
             {
-                element.Draw(spriteBatch, element.Position.ToVector2() * scale + drawPosition, scale, transparency);
+                element.Draw(
+                    spriteBatch,
+                    element.Position.ToVector2() * scale + drawPosition,
+                    scale,
+                    transparency
+                );
             }
         }
 
@@ -71,19 +81,25 @@ namespace ProjectZ.InGame.Interface
                 if (element.Gravity == Gravities.Center)
                 {
                     elementPosition = new Point(
-                        centerX - element.Size.X / 2, centerY - element.Size.Y / 2);
+                        centerX - element.Size.X / 2,
+                        centerY - element.Size.Y / 2
+                    );
                 }
                 else if (element.Gravity == Gravities.Left)
                 {
                     elementPosition = new Point(
-                        left + element.Margin.X, centerY - element.Size.Y / 2);
+                        left + element.Margin.X,
+                        centerY - element.Size.Y / 2
+                    );
 
                     left += element.Size.X + element.Margin.X * 2;
                 }
                 else if (element.Gravity == Gravities.Right)
                 {
                     elementPosition = new Point(
-                        right - element.Size.X - element.Margin.X, centerY - element.Size.Y / 2);
+                        right - element.Size.X - element.Margin.X,
+                        centerY - element.Size.Y / 2
+                    );
 
                     left += element.Size.X + element.Margin.X * 2;
                 }
@@ -91,6 +107,5 @@ namespace ProjectZ.InGame.Interface
                 element.Position = elementPosition;
             }
         }
-
     }
 }

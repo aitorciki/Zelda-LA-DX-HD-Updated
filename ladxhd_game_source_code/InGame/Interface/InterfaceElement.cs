@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.Interface
 {
@@ -15,17 +15,21 @@ namespace ProjectZ.InGame.Interface
             Left = 0x01 << 1,
             Right = 0x01 << 2,
             Top = 0x01 << 3,
-            Bottom = 0x01 << 4
+            Bottom = 0x01 << 4,
         }
 
         public enum Directions
         {
-            Left, Right, Top, Down
+            Left,
+            Right,
+            Top,
+            Down,
         }
 
         public enum InputEventReturn
         {
-            Nothing, Something
+            Nothing,
+            Something,
         }
 
         public Gravities Gravity = Gravities.Center;
@@ -48,10 +52,7 @@ namespace ProjectZ.InGame.Interface
         public bool Visible
         {
             get => _visible;
-            set
-            {
-                _visible = value;
-            }
+            set { _visible = value; }
         }
 
         // this is ignored at the layout stage
@@ -109,20 +110,35 @@ namespace ProjectZ.InGame.Interface
             if (_selectionCounter > 0)
             {
                 _selectionCounter -= Game1.DeltaTime;
-                SelectionState = Selected ? 1 - _selectionCounter / _selectAnimationTime : _selectionCounter / _deselectionTime;
+                SelectionState = Selected
+                    ? 1 - _selectionCounter / _selectAnimationTime
+                    : _selectionCounter / _deselectionTime;
             }
             else
                 SelectionState = Selected ? 1 : 0;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public virtual void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             var color = Color.Lerp(Color, SelectionColor, SelectionState) * transparency;
 
             if (color != Color.Transparent)
             {
                 spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Game1.GetMatrix);
+                spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    null,
+                    null,
+                    null,
+                    Resources.RoundedCornerEffect,
+                    Game1.GetMatrix
+                );
 
                 Resources.RoundedCornerEffect.Parameters["radius"].SetValue(CornerRadius);
                 Resources.RoundedCornerEffect.Parameters["width"].SetValue(Size.X);
@@ -130,23 +146,41 @@ namespace ProjectZ.InGame.Interface
                 Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
 
                 // draw the background
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    (int)drawPosition.X + (int)(-SelectionState * scale),
-                    (int)drawPosition.Y + (int)(-SelectionState * scale),
-                    (int)(Size.X * scale) + (int)(SelectionState * 2 * scale),
-                    (int)(Size.Y * scale) + (int)(SelectionState * 2 * scale)), color);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(
+                        (int)drawPosition.X + (int)(-SelectionState * scale),
+                        (int)drawPosition.Y + (int)(-SelectionState * scale),
+                        (int)(Size.X * scale) + (int)(SelectionState * 2 * scale),
+                        (int)(Size.Y * scale) + (int)(SelectionState * 2 * scale)
+                    ),
+                    color
+                );
 
                 spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    null,
+                    Game1.GetMatrix
+                );
             }
 
             // draw the debug background
             if (Game1.DebugMode)
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    (int)drawPosition.X,
-                    (int)drawPosition.Y,
-                    (int)(Size.X * scale),
-                    (int)(Size.Y * scale)), Color.White * 0.25f * transparency);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(
+                        (int)drawPosition.X,
+                        (int)drawPosition.Y,
+                        (int)(Size.X * scale),
+                        (int)(Size.Y * scale)
+                    ),
+                    Color.White * 0.25f * transparency
+                );
         }
     }
 }

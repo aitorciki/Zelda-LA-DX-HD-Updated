@@ -83,17 +83,30 @@ namespace ProjectZ.InGame.GameObjects.Things
             _itemsGrabbed.Clear();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // If "Sword Item Interactions" is enabled, bounce the boomerang off the sword.
-            if ((hitType & HitType.Sword) != 0 && GameSettings.SwBoomerang && !_swordBounce && _comingBack)
+            if (
+                (hitType & HitType.Sword) != 0
+                && GameSettings.SwBoomerang
+                && !_swordBounce
+                && _comingBack
+            )
             {
                 _comingBack = false;
                 _swordBounce = true;
                 _startPosition = EntityPosition.Position;
                 _body.CollisionTypes = Values.CollisionTypes.Normal;
                 var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
-                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0));
+                animation.EntityPosition.Set(
+                    new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0)
+                );
                 Map.Objects.SpawnObject(animation);
                 Game1.GameManager.PlaySoundEffect("D360-07-07");
             }
@@ -103,7 +116,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Update()
         {
             // A null map can cause a crash so make sure it isn't null for some reason.
-            if (Map == null) 
+            if (Map == null)
                 return;
 
             // Set up some shortcut vars for Link.
@@ -117,20 +130,28 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_comingBack)
             {
                 // Update the boomerang's position.
-                EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, 4, 0.35f * Game1.TimeMultiplier);
+                EntityPosition.Z = AnimationHelper.MoveToTarget(
+                    EntityPosition.Z,
+                    4,
+                    0.35f * Game1.TimeMultiplier
+                );
 
                 // Get the position and set the speed of the boomerang.
                 float distance = (_startPosition - EntityPosition.Position).Length();
-                float speed = 3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
+                float speed =
+                    3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2));
                 _body.VelocityTarget = _direction * speed;
 
-                // When Modern Camera is enabled, use the camera's current bounds to determine when object collides with screen's edge. 
-                if (!Camera.ClassicMode && !MapManager.Camera.GetGameView().Contains(EntityPosition.Position))
+                // When Modern Camera is enabled, use the camera's current bounds to determine when object collides with screen's edge.
+                if (
+                    !Camera.ClassicMode
+                    && !MapManager.Camera.GetGameView().Contains(EntityPosition.Position)
+                )
                 {
                     ComeBack(true);
                     return;
                 }
-                // When Classic Camera is enabled, use current field to determine when object collides with screen's edge. 
+                // When Classic Camera is enabled, use current field to determine when object collides with screen's edge.
                 else if (Camera.ClassicMode && !Link.CurrentField.Contains(EntityPosition.Position))
                 {
                     ComeBack(true);
@@ -144,12 +165,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             else
             {
                 // Update the boomerang's position.
-                EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, 4, 1.25f * Game1.TimeMultiplier);
+                EntityPosition.Z = AnimationHelper.MoveToTarget(
+                    EntityPosition.Z,
+                    4,
+                    1.25f * Game1.TimeMultiplier
+                );
 
                 // Get the direction, position, and set the speed of the boomerang.
                 Vector2 direction = new Vector2(LinkPos.X, LinkPos.Y - 3) - EntityPosition.Position;
                 float distance = direction.Length();
-                float speed = Math.Min(3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2)), distance);
+                float speed = Math.Min(
+                    3f - (float)Math.Sin(MathHelper.Clamp(distance / 80, 0, 1) * (Math.PI / 2)),
+                    distance
+                );
 
                 // Normalize the direction if it's not zero.
                 if (direction != Vector2.Zero)
@@ -159,7 +187,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _body.VelocityTarget = direction * speed;
 
                 // Remove the boomerang when it returns to Link.
-                if ((Map.Is2dMap || Math.Abs(Link.EntityPosition.Z - EntityPosition.Z) <= 6) && distance < 2)
+                if (
+                    (Map.Is2dMap || Math.Abs(Link.EntityPosition.Z - EntityPosition.Z) <= 6)
+                    && distance < 2
+                )
                 {
                     _isReady = true;
                     Map.Objects.DeleteObjects.Add(this);
@@ -169,10 +200,27 @@ namespace ProjectZ.InGame.GameObjects.Things
             CollectItem();
 
             // Find enemies to hit.
-            var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.Boomerang, 32, false);
+            var collision = Map.Objects.Hit(
+                this,
+                EntityPosition.Position,
+                _damageBox.Box,
+                HitType.Boomerang,
+                32,
+                false
+            );
 
             // Return the boomerang if it collision hits something.
-            if (!_comingBack && (collision & (Values.HitCollision.Blocking | Values.HitCollision.Repelling | Values.HitCollision.Enemy)) != 0)
+            if (
+                !_comingBack
+                && (
+                    collision
+                    & (
+                        Values.HitCollision.Blocking
+                        | Values.HitCollision.Repelling
+                        | Values.HitCollision.Enemy
+                    )
+                ) != 0
+            )
             {
                 var particle = (collision & Values.HitCollision.Repelling) != 0;
                 ComeBack(particle);
@@ -182,31 +230,48 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void CollectItem()
         {
             // I once experienced a strange crash where "Map" was null. Not sure how... so prevent that I guess.
-            if (Map == null) { return; }
+            if (Map == null)
+            {
+                return;
+            }
 
             _itemList.Clear();
 
             // Search for objects via collision component mask.
-            Map.Objects.GetComponentList(_itemList, (int)_damageBox.Box.X, (int)_damageBox.Box.Y,
-                (int)_damageBox.Box.Width, (int)_damageBox.Box.Height, CollisionComponent.Mask);
+            Map.Objects.GetComponentList(
+                _itemList,
+                (int)_damageBox.Box.X,
+                (int)_damageBox.Box.Y,
+                (int)_damageBox.Box.Width,
+                (int)_damageBox.Box.Height,
+                CollisionComponent.Mask
+            );
 
             // Check if an item was found.
             foreach (var gameObject in _itemList)
             {
                 // Create box reference and get object via collision component.
                 var collidingBox = Box.Empty;
-                var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
+                var collisionObject =
+                    gameObject.Components[CollisionComponent.Index] as CollisionComponent;
 
                 // Get objects colliding with the boomerang.
-                if ((collisionObject.CollisionType & Values.CollisionTypes.Item) != 0 && 
-                    collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox))
+                if (
+                    (collisionObject.CollisionType & Values.CollisionTypes.Item) != 0
+                    && collisionObject.Collision(_damageBox.Box, 0, 0, ref collidingBox)
+                )
                 {
                     // Type of colliding object is an item.
                     if (collisionObject.Owner is ObjItem newItem)
                     {
                         // Item must be active, not collected, not flying, not an instrument, and not in the boomerang list.
-                        if (newItem.IsActive && !newItem.Collected && !newItem._isFlying && 
-                            !newItem._itemName.Contains("instrument") && !_itemsGrabbed.Contains(newItem))
+                        if (
+                            newItem.IsActive
+                            && !newItem.Collected
+                            && !newItem._isFlying
+                            && !newItem._itemName.Contains("instrument")
+                            && !_itemsGrabbed.Contains(newItem)
+                        )
                         {
                             _itemsGrabbed.Add(newItem);
                             newItem.InitCollection();
@@ -230,7 +295,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // If itemn wasn't collected update its postion.
                 if (item != null && !item.Collected)
                     item.EntityPosition.Set(new Vector3(position.X, position.Y + 4, position.Z));
-
                 // Otherwise remove the item from the list.
                 else
                     _itemsGrabbed.Remove(item);
@@ -252,14 +316,16 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void ComeBack(bool particle = false)
         {
             // A null map can cause a crash so make sure it isn't null for some reason.
-            if (Map == null) 
+            if (Map == null)
                 return;
 
             // Draw the "sparking" effect and play the sound if set.
             if (particle)
             {
                 var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
-                animation.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0));
+                animation.EntityPosition.Set(
+                    new Vector3(EntityPosition.X, EntityPosition.Y - EntityPosition.Z, 0)
+                );
                 Map.Objects.SpawnObject(animation);
                 Game1.GameManager.PlaySoundEffect("D360-07-07");
             }

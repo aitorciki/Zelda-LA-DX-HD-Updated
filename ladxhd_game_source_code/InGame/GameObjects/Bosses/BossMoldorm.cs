@@ -25,11 +25,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private Rectangle _headSourceRectangle = new Rectangle(2, 4, 28, 24);
         private Rectangle _headSourceRectangleDamage = new Rectangle(34, 4, 28, 24);
 
-        private Rectangle[] _tailRectangles = {
-            new Rectangle(8, 40, 16, 16), new Rectangle(8, 40, 16, 16), new Rectangle(41, 41, 14, 14)
+        private Rectangle[] _tailRectangles =
+        {
+            new Rectangle(8, 40, 16, 16),
+            new Rectangle(8, 40, 16, 16),
+            new Rectangle(41, 41, 14, 14),
         };
-        private Rectangle[] _tailRectanglesDamage = {
-            new Rectangle(8, 72, 16, 16), new Rectangle(8, 72, 16, 16), new Rectangle(41, 73, 14, 14)
+        private Rectangle[] _tailRectanglesDamage =
+        {
+            new Rectangle(8, 72, 16, 16),
+            new Rectangle(8, 72, 16, 16),
+            new Rectangle(41, 73, 14, 14),
         };
 
         private Vector2[] _tailPositions = new Vector2[4];
@@ -58,12 +64,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool _blinking;
 
-        public BossMoldorm() : base("moldorm") { }
+        public BossMoldorm()
+            : base("moldorm") { }
 
-        public BossMoldorm(Map.Map map, int posX, int posY, string saveKey, string triggerKey) : base(map)
+        public BossMoldorm(Map.Map map, int posX, int posY, string saveKey, string triggerKey)
+            : base(map)
         {
-            if (!string.IsNullOrEmpty(saveKey) &&
-                Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -97,10 +107,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 Gravity = -0.1f,
                 DragAir = 1.0f,
                 Drag = 0.925f,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Hole,
-                FieldRectangle = map.GetField(posX, posY)
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Hole,
+                FieldRectangle = map.GetField(posX, posY),
             };
 
             _aiComponent = new AiComponent();
@@ -123,13 +131,31 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, 1);
             var damageCollider = new CBox(EntityPosition, -8, -8, 0, 16, 16, 8);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChang));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChang)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.35f });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { PushMultiplier = 2.5f } );
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.35f }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(damageCollider, OnHit)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+                {
+                    PushMultiplier = 2.5f,
+                }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             // add the tail to the map
@@ -144,8 +170,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (_aiComponent.CurrentStateId == "moving" && _aiComponent.CurrentStateId != "damage")
                 Game1.GameManager.PlaySoundEffect("D378-27-1B", false);
-
-            else if (_aiComponent.CurrentStateId == "running" || _aiComponent.CurrentStateId == "damage")
+            else if (
+                _aiComponent.CurrentStateId == "running"
+                || _aiComponent.CurrentStateId == "damage"
+            )
             {
                 Game1.GameManager.StopSoundEffect("D378-27-1B");
 
@@ -197,10 +225,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _sprite.Rotation = -_direction - (float)Math.PI / 2;
 
             // move
-            var vecDirection = new Vector2((float)Math.Sin(_direction), (float)Math.Cos(_direction));
+            var vecDirection = new Vector2(
+                (float)Math.Sin(_direction),
+                (float)Math.Cos(_direction)
+            );
             _body.VelocityTarget = vecDirection * 1.0f * speedMultiplier;
 
-            _directionChangeMultiplier = AnimationHelper.MoveToTarget(_directionChangeMultiplier, 1, 0.1f * Game1.TimeMultiplier);
+            _directionChangeMultiplier = AnimationHelper.MoveToTarget(
+                _directionChangeMultiplier,
+                1,
+                0.1f * Game1.TimeMultiplier
+            );
         }
 
         private void UpdateDamage()
@@ -213,7 +248,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             _blinking = (time % 150) >= 75;
 
-            _direction += _dir * (float)Math.Sin(((time + 150) / 800f) * Math.PI) * 0.1f * Game1.TimeMultiplier;
+            _direction +=
+                _dir
+                * (float)Math.Sin(((time + 150) / 800f) * Math.PI)
+                * 0.1f
+                * Game1.TimeMultiplier;
             _sprite.Rotation = -_direction - (float)Math.PI / 2;
             _sprite.SourceRectangle = _blinking ? _headSourceRectangleDamage : _headSourceRectangle;
         }
@@ -223,7 +262,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
 
-            _body.Velocity = new Vector3(_body.VelocityTarget.X, _body.VelocityTarget.Y, _body.Velocity.Z);
+            _body.Velocity = new Vector3(
+                _body.VelocityTarget.X,
+                _body.VelocityTarget.Y,
+                _body.Velocity.Z
+            );
             _body.VelocityTarget = Vector2.Zero;
 
             _aiComponent.ChangeState("dying");
@@ -263,7 +306,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
                     // spawn big heart
-                    Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", "d1_nHeart", "heartMeterFull", null));
+                    Map.Objects.SpawnObject(
+                        new ObjItem(
+                            Map,
+                            (int)EntityPosition.X - 8,
+                            (int)EntityPosition.Y - 8,
+                            "j",
+                            "d1_nHeart",
+                            "heartMeterFull",
+                            null
+                        )
+                    );
 
                     Game1.GameManager.PlaySoundEffect("D378-26-1A");
                 }
@@ -273,19 +326,38 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     Game1.GameManager.PlaySoundEffect("D378-19-13");
 
                     // spawn explosion effect arount the head
-                    var position = new Point((int)(Math.Sin(-_dyingState / 1.5f) * 8), (int)(Math.Cos(-_dyingState / 1.5f) * 8));
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)EntityPosition.X - 8 + position.X,
-                        (int)EntityPosition.Y - 8 + position.Y, Values.LayerTop, "Particles/spawn", "run", true));
+                    var position = new Point(
+                        (int)(Math.Sin(-_dyingState / 1.5f) * 8),
+                        (int)(Math.Cos(-_dyingState / 1.5f) * 8)
+                    );
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)EntityPosition.X - 8 + position.X,
+                            (int)EntityPosition.Y - 8 + position.Y,
+                            Values.LayerTop,
+                            "Particles/spawn",
+                            "run",
+                            true
+                        )
+                    );
                 }
                 else
                 {
                     Game1.GameManager.PlaySoundEffect("D378-19-13");
 
                     // spawn explosion at the tail
-                    Map.Objects.SpawnObject(new ObjAnimator(Map,
-                        (int)_tailPositions[_dyingState].X - 8,
-                        (int)_tailPositions[_dyingState].Y - 8, Values.LayerTop, "Particles/spawn", "run", true));
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            (int)_tailPositions[_dyingState].X - 8,
+                            (int)_tailPositions[_dyingState].Y - 8,
+                            Values.LayerTop,
+                            "Particles/spawn",
+                            "run",
+                            true
+                        )
+                    );
                 }
             }
         }
@@ -296,15 +368,26 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var tailRectangles = _blinking ? _tailRectanglesDamage : _tailRectangles;
             for (var i = _tailState; i >= 0; i--)
             {
-                spriteBatch.Draw(Resources.SprNightmares, _tailPositions[i] -
-                    new Vector2(tailRectangles[i].Width / 2f, tailRectangles[i].Height / 2f), tailRectangles[i], Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNightmares,
+                    _tailPositions[i]
+                        - new Vector2(tailRectangles[i].Width / 2f, tailRectangles[i].Height / 2f),
+                    tailRectangles[i],
+                    Color.White
+                );
             }
 
             // draw the head
             _bodyDrawComponent.Draw(spriteBatch);
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -313,7 +396,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return Values.HitCollision.RepellingParticle;
         }
 
-        public Values.HitCollision OnHitTail(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHitTail(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -359,8 +448,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 var index = (int)indexCount;
 
                 _tailPositions[i] = Vector2.Lerp(
-                    _savedPosition[index], _savedPosition[(index + 1) % _savedPosition.Length],
-                    (timeDiff % _saveInterval) / _saveInterval);
+                    _savedPosition[index],
+                    _savedPosition[(index + 1) % _savedPosition.Length],
+                    (timeDiff % _saveInterval) / _saveInterval
+                );
             }
 
             // set the position of the tail
@@ -369,7 +460,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void SavePosition(float speedMultiplier)
         {
-            var position = EntityPosition.Position + _body.VelocityTarget * (Game1.DeltaTime / 16.6667f) * speedMultiplier;
+            var position =
+                EntityPosition.Position
+                + _body.VelocityTarget * (Game1.DeltaTime / 16.6667f) * speedMultiplier;
             _saveCounter += Game1.DeltaTime * speedMultiplier;
             var diff = _saveCounter % _saveInterval;
 
@@ -387,7 +480,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 if (index < 0)
                     index = _savedPosition.Length - 1;
 
-                var vecDir = new Vector2((float)Math.Sin(currentDirection), (float)Math.Cos(currentDirection));
+                var vecDir = new Vector2(
+                    (float)Math.Sin(currentDirection),
+                    (float)Math.Cos(currentDirection)
+                );
                 _savedPosition[index] = position - vecDir * (diff / 16.6667f);
 
                 position = _savedPosition[index];
@@ -402,9 +498,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _dir = -_dir;
 
             if ((collision & Values.BodyCollision.Horizontal) != 0)
-                _direction = (float)Math.Atan2(-_body.VelocityTarget.X * _directionChangeMultiplier, _body.VelocityTarget.Y);
+                _direction = (float)
+                    Math.Atan2(
+                        -_body.VelocityTarget.X * _directionChangeMultiplier,
+                        _body.VelocityTarget.Y
+                    );
             else if ((collision & Values.BodyCollision.Vertical) != 0)
-                _direction = (float)Math.Atan2(_body.VelocityTarget.X, -_body.VelocityTarget.Y * _directionChangeMultiplier);
+                _direction = (float)
+                    Math.Atan2(
+                        _body.VelocityTarget.X,
+                        -_body.VelocityTarget.Y * _directionChangeMultiplier
+                    );
 
             _directionChangeMultiplier *= 0.75f;
         }
@@ -412,7 +516,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 0.25f, direction.Y * 0.25f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 0.25f,
+                    direction.Y * 0.25f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -426,8 +534,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void OnKeyChang()
         {
             // activate the boss if the trigger key was set
-            if (_aiComponent.CurrentStateId == "waiting" &&
-                !string.IsNullOrEmpty(_triggerKey) && Game1.GameManager.SaveManager.GetString(_triggerKey) == "1")
+            if (
+                _aiComponent.CurrentStateId == "waiting"
+                && !string.IsNullOrEmpty(_triggerKey)
+                && Game1.GameManager.SaveManager.GetString(_triggerKey) == "1"
+            )
             {
                 _aiComponent.ChangeState("moving");
             }

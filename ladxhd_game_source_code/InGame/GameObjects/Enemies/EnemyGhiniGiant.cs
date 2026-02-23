@@ -37,30 +37,43 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public bool IsVisible { get; private set; }
 
-        public EnemyGhiniGiant() : base("giant ghini") { }
+        public EnemyGhiniGiant()
+            : base("giant ghini") { }
 
-        public EnemyGhiniGiant(Map.Map map, int posX, int posY, bool spawnAnimation) : base(map)
+        public EnemyGhiniGiant(Map.Map map, int posX, int posY, bool spawnAnimation)
+            : base(map)
         {
             IsVisible = false;
             Tags = Values.GameObjectTag.Enemy;
 
-            EntityPosition = new CPosition(posX + 8, posY + 16 + 7, spawnAnimation ? 0 : _flyHeight);
-            ResetPosition  = new CPosition(posX + 8, posY + 16 + 7, spawnAnimation ? 0 : _flyHeight);
+            EntityPosition = new CPosition(
+                posX + 8,
+                posY + 16 + 7,
+                spawnAnimation ? 0 : _flyHeight
+            );
+            ResetPosition = new CPosition(posX + 8, posY + 16 + 7, spawnAnimation ? 0 : _flyHeight);
             EntitySize = new Rectangle(-16, -(30 + _flyHeight), 32, 30 + _flyHeight);
             CanReset = true;
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/ghiniGiant");
             _animator.Play("fly_1");
 
-            _sprite = new CSprite(EntityPosition) { Color = spawnAnimation ? Color.Transparent : Color.White };
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-16, -30));
+            _sprite = new CSprite(EntityPosition)
+            {
+                Color = spawnAnimation ? Color.Transparent : Color.White,
+            };
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-16, -30)
+            );
 
             _fieldRectangle = map.GetField(posX, posY, 16);
 
             _body = new BodyComponent(EntityPosition, -12, -30, 24, 30, 8)
             {
                 CollisionTypes = Values.CollisionTypes.Field,
-                AvoidTypes     = Values.CollisionTypes.NPCWall,
+                AvoidTypes = Values.CollisionTypes.NPCWall,
                 IgnoreHoles = true,
                 IgnoresZ = true,
             };
@@ -76,23 +89,57 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var damageBox = new CBox(EntityPosition, -12, -28, 0, 24, 26, 8, true);
             var hittableBox = new CBox(EntityPosition, -13, -29, 0, 26, 28, 8, true);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false) { OnDeath = OnDeath, IsActive = !spawnAnimation };
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                true,
+                false
+            )
+            {
+                OnDeath = OnDeath,
+                IsActive = !spawnAnimation,
+            };
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4) { IsActive = !spawnAnimation });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+                {
+                    IsActive = !spawnAnimation,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 24, ShadowHeight = 6 });
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 24, ShadowHeight = 6 }
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(hittableBox, OnPush)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
         private void UpdateSpawning()
         {
-            _transparency = AnimationHelper.MoveToTarget(_transparency, 1, Game1.TimeMultiplier * 0.15f);
+            _transparency = AnimationHelper.MoveToTarget(
+                _transparency,
+                1,
+                Game1.TimeMultiplier * 0.15f
+            );
             _sprite.Color = Color.White * _transparency;
 
             EntityPosition.Z += Game1.TimeMultiplier * 0.25f;
@@ -117,7 +164,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_dirChangeCount <= 0)
             {
                 var newDirection = Game1.RandomNumber.Next(0, 628) / 100f;
-                _vecDirection = new Vector2((float)Math.Cos(newDirection), (float)Math.Sin(newDirection));
+                _vecDirection = new Vector2(
+                    (float)Math.Cos(newDirection),
+                    (float)Math.Sin(newDirection)
+                );
                 _direction = newDirection;
 
                 // new direction + new rotation speed
@@ -127,13 +177,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _velocity *= (float)Math.Pow(0.95f, Game1.TimeMultiplier);
 
-            _velocity += new Vector2((float)Math.Cos(_direction), (float)Math.Sin(_direction)) * 0.025f * Game1.TimeMultiplier;
+            _velocity +=
+                new Vector2((float)Math.Cos(_direction), (float)Math.Sin(_direction))
+                * 0.025f
+                * Game1.TimeMultiplier;
             _direction += _rotationDirection * Game1.TimeMultiplier;
 
             _velocity += _vecDirection * 0.025f * Game1.TimeMultiplier;
 
-            if ((EntityPosition.X < _fieldRectangle.X && _vecDirection.X < 0) ||
-                (EntityPosition.X > _fieldRectangle.X + _fieldRectangle.Width && _vecDirection.X > 0))
+            if (
+                (EntityPosition.X < _fieldRectangle.X && _vecDirection.X < 0)
+                || (
+                    EntityPosition.X > _fieldRectangle.X + _fieldRectangle.Width
+                    && _vecDirection.X > 0
+                )
+            )
             {
                 _vecDirection.X = -Math.Sign(_vecDirection.X);
                 _vecDirection.Y = 0;
@@ -141,8 +199,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _direction = 1;
             }
 
-            if ((EntityPosition.Y < _fieldRectangle.Y && _vecDirection.Y < 0) ||
-                (EntityPosition.Y > _fieldRectangle.Y + _fieldRectangle.Height && _vecDirection.Y > 0))
+            if (
+                (EntityPosition.Y < _fieldRectangle.Y && _vecDirection.Y < 0)
+                || (
+                    EntityPosition.Y > _fieldRectangle.Y + _fieldRectangle.Height
+                    && _vecDirection.Y > 0
+                )
+            )
             {
                 _vecDirection.X = 0;
                 _vecDirection.Y = -Math.Sign(_vecDirection.Y);
@@ -158,7 +221,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // A 25% chance to spawn a fairy.
             if (Game1.RandomNumber.Next(0, 4) == 1)
-                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, (int)EntityPosition.Z));
+                Map.Objects.SpawnObject(
+                    new ObjDungeonFairy(
+                        Map,
+                        (int)EntityPosition.X,
+                        (int)EntityPosition.Y,
+                        (int)EntityPosition.Z
+                    )
+                );
 
             _damageState.BaseOnDeath(pieceOfPower);
         }
@@ -166,12 +236,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

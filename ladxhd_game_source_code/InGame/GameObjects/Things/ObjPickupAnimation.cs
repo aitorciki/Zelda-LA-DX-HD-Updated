@@ -15,7 +15,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private double _counter;
         private int _state;
 
-        public ObjPickupAnimation(Map.Map map, float posX, float posY) : base(map)
+        public ObjPickupAnimation(Map.Map map, float posX, float posY)
+            : base(map)
         {
             SprEditorImage = Resources.SprItem;
             EditorIconSource = new Rectangle(64, 168, 16, 16);
@@ -24,7 +25,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(-29, -29, 58, 58);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
         }
 
         private void Update()
@@ -59,17 +63,30 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_state == 0)
             {
                 for (var y = 0; y < 2; y++)
-                    for (var x = 0; x < 2; x++)
-                    {
-                        var distance = (float)(23 * (1 - _counter / 380));
-                        var position = EntityPosition.Position + new Vector2(x * 2 - 1, y * 2 - 1) * distance + new Vector2(-6, -6);
-                        spriteBatch.Draw(Resources.SprItem, position, _sourceRectangle0, Color.White);
-                    }
+                for (var x = 0; x < 2; x++)
+                {
+                    var distance = (float)(23 * (1 - _counter / 380));
+                    var position =
+                        EntityPosition.Position
+                        + new Vector2(x * 2 - 1, y * 2 - 1) * distance
+                        + new Vector2(-6, -6);
+                    spriteBatch.Draw(Resources.SprItem, position, _sourceRectangle0, Color.White);
+                }
             }
             else if (_state == 1)
-                spriteBatch.Draw(Resources.SprItem, EntityPosition.Position + new Vector2(-6, -6), _sourceRectangle0, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprItem,
+                    EntityPosition.Position + new Vector2(-6, -6),
+                    _sourceRectangle0,
+                    Color.White
+                );
             else if (_state == 2)
-                spriteBatch.Draw(Resources.SprItem, EntityPosition.Position + new Vector2(-8, -8), _sourceRectangle1, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprItem,
+                    EntityPosition.Position + new Vector2(-8, -8),
+                    _sourceRectangle1,
+                    Color.White
+                );
         }
     }
 }

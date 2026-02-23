@@ -85,9 +85,9 @@ namespace ProjectZ.InGame.Things
             time = MathHelper.Clamp(time, 0, 1);
 
             var point = // (float)Math.Pow(1 - time, 3) * Vector2.Zero +
-                (float)(3 * Math.Pow(1 - time, 2) * time) * _firstPoint +
-                ((3 * (1 - time) * time * time) * _secondPoint) +
-                (float)Math.Pow(time, 3) * Vector2.One;
+                (float)(3 * Math.Pow(1 - time, 2) * time) * _firstPoint
+                + ((3 * (1 - time) * time * time) * _secondPoint)
+                + (float)Math.Pow(time, 3) * Vector2.One;
 
             return point;
         }

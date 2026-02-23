@@ -28,7 +28,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private EnemyStalfosGreen[] _stalfos = new EnemyStalfosGreen[2];
 
-        private readonly Color[] _colors = {
+        private readonly Color[] _colors =
+        {
             new Color(42, 41, 254),
             new Color(0, 149, 114),
             new Color(34, 212, 16),
@@ -36,7 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             new Color(254, 198, 1),
             new Color(253, 131, 0),
             new Color(255, 66, 1),
-            new Color(253, 0, 0)
+            new Color(253, 0, 0),
         };
 
         private readonly string _saveKey;
@@ -55,9 +56,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float _stalfosCounter;
         private bool _spawnedStalfos;
 
-        public BossHardhitBeetle() : base("hardhit beetle") { }
+        public BossHardhitBeetle()
+            : base("hardhit beetle") { }
 
-        public BossHardhitBeetle(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public BossHardhitBeetle(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 32, 0);
             EntitySize = new Rectangle(-16, -40, 32, 40);
@@ -65,8 +68,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _saveKey = saveKey;
 
             // was already killed?
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -81,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body = new BodyComponent(EntityPosition, -14, -26, 28, 26, 8)
             {
                 Gravity = -0.1f,
-                FieldRectangle = Map.GetField(posX, posY, 16)
+                FieldRectangle = Map.GetField(posX, posY, 16),
             };
 
             var stateIdle = new AiState(UpdateIdle);
@@ -91,8 +96,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _aiComponent = new AiComponent();
             _aiComponent.Trigger.Add(new AiTriggerRandomTime(Shoot, 750, 2500));
-            _aiComponent.Trigger.Add(_colorCountdown = new AiTriggerCountdown(2000, null, OnColorReset));
-            _aiComponent.Trigger.Add(_hitCooldown = new AiTriggerCountdown(CooldownTime, TickCooldown, null));
+            _aiComponent.Trigger.Add(
+                _colorCountdown = new AiTriggerCountdown(2000, null, OnColorReset)
+            );
+            _aiComponent.Trigger.Add(
+                _hitCooldown = new AiTriggerCountdown(CooldownTime, TickCooldown, null)
+            );
 
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("idleDelay", stateIdleDelay);
@@ -101,7 +110,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
-                BossHitSound = true
+                BossHitSound = true,
             };
             _aiDamageState.DamageSpriteShader = Resources.DamageSpriteShader1;
             _aiDamageState.AddBossDamageState(OnDeathAnimationEnd);
@@ -111,13 +120,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var damageBox = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
             var hittableBox = new CBox(EntityPosition, -13, -34, 0, 26, 30, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
         }
 
@@ -145,7 +166,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void TickCooldown(double counter)
         {
-            _sprite.SpriteShader = (CooldownTime - counter) <= 4200 / 60f ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                (CooldownTime - counter) <= 4200 / 60f ? Resources.DamageSpriteShader0 : null;
         }
 
         private void OffsetColor(int offset)
@@ -179,7 +201,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void InitWalk()
         {
             var direction = Game1.RandomNumber.Next(0, 8) / 4f * MathF.PI;
-            _body.VelocityTarget = new Vector2(MathF.Sin(direction), MathF.Cos(direction)) * MoveSpeed;
+            _body.VelocityTarget =
+                new Vector2(MathF.Sin(direction), MathF.Cos(direction)) * MoveSpeed;
         }
 
         private void UpdateWalk()
@@ -198,9 +221,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     var randomOffsetX = Game1.RandomNumber.Next(0, 13) - 6;
                     var randomOffsetY = Game1.RandomNumber.Next(0, 8) - 4;
 
-                    _stalfos[i] = new EnemyStalfosGreen(Map,
+                    _stalfos[i] = new EnemyStalfosGreen(
+                        Map,
                         (int)MapManager.ObjLink.EntityPosition.X - 8 + randomOffsetX,
-                        (int)MapManager.ObjLink.EntityPosition.Y - 15 + randomOffsetY);
+                        (int)MapManager.ObjLink.EntityPosition.Y - 15 + randomOffsetY
+                    );
                     _stalfos[i].SetAirPosition(32);
                     Map.Objects.SpawnObject(_stalfos[i]);
                 }
@@ -212,7 +237,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_aiComponent.CurrentStateId != "walk")
                 return;
 
-            var objShot = new BossHardhitBeetleShot(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 16), 1, _body.FieldRectangle);
+            var objShot = new BossHardhitBeetleShot(
+                Map,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 16),
+                1,
+                _body.FieldRectangle
+            );
             Map.Objects.SpawnObject(objShot);
         }
 
@@ -248,12 +278,20 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // spawns a fairy
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

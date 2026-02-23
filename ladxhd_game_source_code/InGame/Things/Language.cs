@@ -20,14 +20,26 @@ namespace ProjectZ.InGame.Things
         public void Load()
         {
             // Go through the ".lng" files and fill the "_languageStrings" dictionary array. Searches both language and mods folders.
-            var files = (Directory.Exists(Values.PathLanguageFolder)
-                            ? Directory.EnumerateFiles(Values.PathLanguageFolder, "*.lng", SearchOption.AllDirectories)
-                            : Enumerable.Empty<string>())
-                        .Concat(Directory.Exists(Values.PathMods)
-                            ? Directory.EnumerateFiles(Values.PathMods, "*.lng", SearchOption.AllDirectories)
-                            : Enumerable.Empty<string>())
-                        .OrderBy(f => f)
-                        .ToArray();
+            var files = (
+                Directory.Exists(Values.PathLanguageFolder)
+                    ? Directory.EnumerateFiles(
+                        Values.PathLanguageFolder,
+                        "*.lng",
+                        SearchOption.AllDirectories
+                    )
+                    : Enumerable.Empty<string>()
+            )
+                .Concat(
+                    Directory.Exists(Values.PathMods)
+                        ? Directory.EnumerateFiles(
+                            Values.PathMods,
+                            "*.lng",
+                            SearchOption.AllDirectories
+                        )
+                        : Enumerable.Empty<string>()
+                )
+                .OrderBy(f => f)
+                .ToArray();
 
             // Create the dictionary to store available languages. The default (first) entry is English.
             var languageStrings = new Dictionary<string, Dictionary<string, string>>();
@@ -120,15 +132,15 @@ namespace ProjectZ.InGame.Things
         public string ReplacePlaceholderTag(string inputString)
         {
             string Confirm = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 0];
-            string Cancel  = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 1];
+            string Cancel = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 1];
 
             if (GameSettings.SwapButtons)
             {
                 Confirm = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 1];
-                Cancel  = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 0];
+                Cancel = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 0];
             }
             string Select = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 8];
-            string Start  = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 9];
+            string Start = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 9];
             string X = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 2];
             string Y = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, 3];
 

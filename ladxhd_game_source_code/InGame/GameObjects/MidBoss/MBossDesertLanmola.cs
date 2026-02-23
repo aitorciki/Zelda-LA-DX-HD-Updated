@@ -43,9 +43,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private const int CooldownTime = 350;
         private const int DespawnTime = 5500;
 
-        public MBossDesertLanmola() : base("desert lanmola") { }
+        public MBossDesertLanmola()
+            : base("desert lanmola") { }
 
-        public MBossDesertLanmola(Map.Map map, int posX, int posY, string triggerKey, string saveKey) : base(map)
+        public MBossDesertLanmola(
+            Map.Map map,
+            int posX,
+            int posY,
+            string triggerKey,
+            string saveKey
+        )
+            : base(map)
         {
             _position = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -57,8 +65,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _field = map.GetField(posX, posY);
             _fieldSmall = map.GetField(posX, posY, 16);
 
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -70,14 +80,20 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var stateSpawning = new AiState();
             stateSpawning.Trigger.Add(new AiTriggerCountdown(500, null, ToJumping));
             var stateJumping = new AiState();
-            stateJumping.Trigger.Add(_jumpCountdown = new AiTriggerCountdown(500, JumpTick, JumpEnd));
+            stateJumping.Trigger.Add(
+                _jumpCountdown = new AiTriggerCountdown(500, JumpTick, JumpEnd)
+            );
             var stateDespawning = new AiState();
-            stateDespawning.Trigger.Add(new AiTriggerCountdown(DespawnTime, DespawnTick, DespawnEnd));
+            stateDespawning.Trigger.Add(
+                new AiTriggerCountdown(DespawnTime, DespawnTick, DespawnEnd)
+            );
 
             _aiComponent = new AiComponent();
 
             _aiComponent.Trigger.Add(new AiTriggerUpdate(Update));
-            _aiComponent.Trigger.Add(_damageTrigger = new AiTriggerCountdown(CooldownTime, DamageTick, FinishDamage));
+            _aiComponent.Trigger.Add(
+                _damageTrigger = new AiTriggerCountdown(CooldownTime, DamageTick, FinishDamage)
+            );
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("spawning", stateSpawning);
@@ -92,12 +108,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _sprite = new CSprite(_position);
             _sprite.IsVisible = false;
 
-            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(_animator, _sprite, new Vector2(0, 0)));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                BaseAnimationComponent.Index,
+                new AnimationComponent(_animator, _sprite, new Vector2(0, 0))
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
 
             if (!string.IsNullOrEmpty(_triggerKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
 
             _head = new MBossDesertLanmolaHead(map, this, new Vector2(posX, posY));
             map.Objects.SpawnObject(_head);
@@ -144,7 +169,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // Adjust the rect slightly when classic camera is enabled.
             if (Camera.ClassicMode)
-                currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
+                currentField = new Rectangle(
+                    currentField.X + 1,
+                    currentField.Y + 1,
+                    currentField.Width - 2,
+                    currentField.Height - 2
+                );
 
             // The player left the field.
             if (!_playerLeft && !currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
@@ -170,7 +200,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (randomX == 0 || randomX == 7)
                 randomY = Math.Clamp(randomY, 1, 6);
 
-            _position.Set(new Vector2(_fieldSmall.X + randomX * 16 + 8, _fieldSmall.Y + randomY * 16 + 16));
+            _position.Set(
+                new Vector2(_fieldSmall.X + randomX * 16 + 8, _fieldSmall.Y + randomY * 16 + 16)
+            );
 
             _sprite.IsVisible = true;
             _animator.Play("ground");
@@ -187,7 +219,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _sprite.IsVisible = false;
 
-            var direction = new Vector2(_fieldSmall.Center.X, _fieldSmall.Center.Y) - _position.Position;
+            var direction =
+                new Vector2(_fieldSmall.Center.X, _fieldSmall.Center.Y) - _position.Position;
             direction.Normalize();
 
             var randomDistance = Game1.RandomNumber.Next(48, 80);
@@ -277,16 +310,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void SpawnParticles(Vector2 position)
         {
             // sand particles
-            var leftSand = new MBossDesertLanmolaSand(Map, new Vector2(position.X - 4, position.Y), false);
+            var leftSand = new MBossDesertLanmolaSand(
+                Map,
+                new Vector2(position.X - 4, position.Y),
+                false
+            );
             Map.Objects.SpawnObject(leftSand);
 
-            var rightSand = new MBossDesertLanmolaSand(Map, new Vector2(position.X + 4, position.Y), true);
+            var rightSand = new MBossDesertLanmolaSand(
+                Map,
+                new Vector2(position.X + 4, position.Y),
+                true
+            );
             Map.Objects.SpawnObject(rightSand);
         }
 
         private void DamageTick(double time)
         {
-            var currentEffect = (CooldownTime - time) % 133 < 66 ? Resources.DamageSpriteShader0 : null;
+            var currentEffect =
+                (CooldownTime - time) % 133 < 66 ? Resources.DamageSpriteShader0 : null;
             SetEffect(currentEffect);
         }
 
@@ -305,14 +347,29 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 for (var i = 0; i < _bodyParts.Length; i++)
                 {
-                    if (_bodyParts[i] != null && _bodyParts[i].IsVisible && time < DespawnTime - 2000 - (6 - i) * 500)
+                    if (
+                        _bodyParts[i] != null
+                        && _bodyParts[i].IsVisible
+                        && time < DespawnTime - 2000 - (6 - i) * 500
+                    )
                     {
                         Game1.GameManager.PlaySoundEffect("D378-19-13");
 
-                        var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
-                        animation.EntityPosition.Set(new Vector2(
-                            _bodyParts[i].EntityPosition.X - 8,
-                            _bodyParts[i].EntityPosition.Y - 16 - _bodyParts[i].EntityPosition.Z));
+                        var animation = new ObjAnimator(
+                            Map,
+                            0,
+                            0,
+                            Values.LayerTop,
+                            "Particles/spawn",
+                            "run",
+                            true
+                        );
+                        animation.EntityPosition.Set(
+                            new Vector2(
+                                _bodyParts[i].EntityPosition.X - 8,
+                                _bodyParts[i].EntityPosition.Y - 16 - _bodyParts[i].EntityPosition.Z
+                            )
+                        );
                         Map.Objects.SpawnObject(animation);
 
                         Map.Objects.DeleteObjects.Add(_bodyParts[i]);
@@ -328,17 +385,38 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             Map.Objects.DeleteObjects.Add(_head);
 
-            var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
-            animation.EntityPosition.Set(new Vector2(
-                _head.EntityPosition.X - 8,
-                _head.EntityPosition.Y - 16 - _head.EntityPosition.Z));
+            var animation = new ObjAnimator(
+                Map,
+                0,
+                0,
+                Values.LayerTop,
+                "Particles/spawn",
+                "run",
+                true
+            );
+            animation.EntityPosition.Set(
+                new Vector2(
+                    _head.EntityPosition.X - 8,
+                    _head.EntityPosition.Y - 16 - _head.EntityPosition.Z
+                )
+            );
             Map.Objects.SpawnObject(animation);
 
             // set the save key
             Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
             // spawn the fish dungeon key
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)_head.EntityPosition.X - 8, (int)_head.EntityPosition.Y - 16, "j", "dkey3Collected", "dkey3", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)_head.EntityPosition.X - 8,
+                    (int)_head.EntityPosition.Y - 16,
+                    "j",
+                    "dkey3Collected",
+                    "dkey3",
+                    null
+                )
+            );
 
             // prevent recurrent spawns after defeat
             _defeated = true;
@@ -352,7 +430,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     part.Sprite.SpriteShader = effect;
         }
 
-        public Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

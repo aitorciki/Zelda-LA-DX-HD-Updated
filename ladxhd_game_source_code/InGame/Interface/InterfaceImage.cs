@@ -37,21 +37,39 @@ namespace ProjectZ.InGame.Interface
             Margin = margin;
 
             if (size != Point.Zero)
-                _drawOffset = new Vector2(Size.X / 2 - SourceRectangle.Width / 2, Size.Y / 2 - SourceRectangle.Height / 2);
+                _drawOffset = new Vector2(
+                    Size.X / 2 - SourceRectangle.Width / 2,
+                    Size.Y / 2 - SourceRectangle.Height / 2
+                );
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 
             if (!Visible || Hidden)
                 return;
 
-            spriteBatch.Draw(_sprImage, new Rectangle(
-                (int)(drawPosition.X + _drawOffset.X * scale + Offset.X * scale),
-                (int)(drawPosition.Y + _drawOffset.Y * scale + Offset.Y * scale),
-                (int)(SourceRectangle.Width * scale),
-                (int)(SourceRectangle.Height * scale)), SourceRectangle, ImageColor * transparency, 0, Origin, Effects, 0);
+            spriteBatch.Draw(
+                _sprImage,
+                new Rectangle(
+                    (int)(drawPosition.X + _drawOffset.X * scale + Offset.X * scale),
+                    (int)(drawPosition.Y + _drawOffset.Y * scale + Offset.Y * scale),
+                    (int)(SourceRectangle.Width * scale),
+                    (int)(SourceRectangle.Height * scale)
+                ),
+                SourceRectangle,
+                ImageColor * transparency,
+                0,
+                Origin,
+                Effects,
+                0
+            );
         }
     }
 }

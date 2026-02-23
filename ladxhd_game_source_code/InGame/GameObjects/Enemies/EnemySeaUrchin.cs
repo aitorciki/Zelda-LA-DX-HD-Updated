@@ -31,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _dealsDamage = true;
         private int _lives = EnemyLives.SeaUrchin;
 
-        public EnemySeaUrchin() : base("sea urchin") { }
+        public EnemySeaUrchin()
+            : base("sea urchin") { }
 
-        public EnemySeaUrchin(Map.Map map, int posX, int posY) : base(map)
+        public EnemySeaUrchin(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -47,23 +49,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Bounciness = 0.25f,
                 Drag = 0.85f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Player,
-                AbsorbPercentage = 0.75f
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Player,
+                AbsorbPercentage = 0.75f,
             };
             var sprite = new CSprite(EntityPosition);
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/sea urchin");
             _animator.Play("idle");
 
             // randomize the start frame
-            _animator.SetFrame(Game1.RandomNumber.Next(0, _animator.CurrentAnimation.Frames.Length));
+            _animator.SetFrame(
+                Game1.RandomNumber.Next(0, _animator.CurrentAnimation.Frames.Length)
+            );
 
             var animatorComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState());
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8, true);
@@ -71,11 +79,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 0 });
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { CooldownTime = 0 }
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f }
+            );
         }
 
         private void Reset()
@@ -106,8 +129,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return false;
 
             // push the enemy away if the player is holding a shield in the push direction
-            if ((MapManager.ObjLink.IsBlockingState()) &&
-                AnimationHelper.GetDirection(direction) == MapManager.ObjLink.Direction)
+            if (
+                (MapManager.ObjLink.IsBlockingState())
+                && AnimationHelper.GetDirection(direction) == MapManager.ObjLink.Direction
+            )
             {
                 _body.Velocity = new Vector3(direction.X, direction.Y, 0) * _moveSpeed;
 
@@ -131,7 +156,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

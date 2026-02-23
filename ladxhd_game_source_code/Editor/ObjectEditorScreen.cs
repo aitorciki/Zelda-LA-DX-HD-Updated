@@ -19,29 +19,31 @@ namespace ProjectZ.Editor
         enum Mode
         {
             Draw,
-            Edit
+            Edit,
         }
 
         enum EditMode
         {
             Idle,
-            Moving
+            Moving,
         }
 
         enum DrawMode
         {
             Draw,
             Erase,
-            Nothing
+            Nothing,
         }
 
-        public static Dictionary<string, GameObject> EditorObjectTemplates = new Dictionary<string, GameObject>();
+        public static Dictionary<string, GameObject> EditorObjectTemplates =
+            new Dictionary<string, GameObject>();
 
         private Mode _currentMode = Mode.Edit;
         private EditMode _currentEditMode = EditMode.Idle;
         private DrawMode _currentDrawMode = DrawMode.Nothing;
 
-        private readonly ObjectSelectionScreen _objectSelectionSelectionScreen = new ObjectSelectionScreen();
+        private readonly ObjectSelectionScreen _objectSelectionSelectionScreen =
+            new ObjectSelectionScreen();
 
         private const int MaxParameter = 15;
         private readonly UiLabel[] _uiParameterHeader = new UiLabel[MaxParameter];
@@ -57,14 +59,19 @@ namespace ProjectZ.Editor
         public Point SelectionEnd;
 
         private Point? LastObjectCursor;
-        private Point mousePosition, mouseMapPosition;
+        private Point mousePosition,
+            mouseMapPosition;
 
         private Point _moveOffset;
         private Point _startMovePosition;
 
-        public Point MouseMapPosition => new Point(
-            (InputHandler.MousePosition().X - _camera.Location.X) / (int)(Values.TileSize * _camera.Scale),
-            (InputHandler.MousePosition().Y - _camera.Location.Y) / (int)(Values.TileSize * _camera.Scale));
+        public Point MouseMapPosition =>
+            new Point(
+                (InputHandler.MousePosition().X - _camera.Location.X)
+                    / (int)(Values.TileSize * _camera.Scale),
+                (InputHandler.MousePosition().Y - _camera.Location.Y)
+                    / (int)(Values.TileSize * _camera.Scale)
+            );
 
         private int _leftToolbarWidth = 200;
         private int _rightToolbarWidth = 250;
@@ -91,27 +98,69 @@ namespace ProjectZ.Editor
                 var halfButtonWidth = buttonWidth / 2 - 2;
                 var buttonHeight = 30;
 
-                Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY, buttonWidth, buttonHeight),
-                    Resources.EditorFont, "Mode", "bt1", Values.EditorUiObjectEditor, null));
+                Game1.UiManager.AddElement(
+                    new UiLabel(
+                        new Rectangle(5, posY, buttonWidth, buttonHeight),
+                        Resources.EditorFont,
+                        "Mode",
+                        "bt1",
+                        Values.EditorUiObjectEditor,
+                        null
+                    )
+                );
 
-                Game1.UiManager.AddElement(new UiButton(
-                        new Rectangle(5, posY += buttonHeight, halfButtonWidth, buttonHeight), Resources.EditorFont,
-                        "Draw", "bt1", Values.EditorUiObjectEditor,
-                        ui => { ((UiButton)ui).Marked = _currentMode == Mode.Draw; },
-                        ui => { _currentMode = Mode.Draw; })
-                { ButtonIcon = Resources.EditorIconEdit });
+                Game1.UiManager.AddElement(
+                    new UiButton(
+                        new Rectangle(5, posY += buttonHeight, halfButtonWidth, buttonHeight),
+                        Resources.EditorFont,
+                        "Draw",
+                        "bt1",
+                        Values.EditorUiObjectEditor,
+                        ui =>
+                        {
+                            ((UiButton)ui).Marked = _currentMode == Mode.Draw;
+                        },
+                        ui =>
+                        {
+                            _currentMode = Mode.Draw;
+                        }
+                    )
+                    {
+                        ButtonIcon = Resources.EditorIconEdit,
+                    }
+                );
 
-                Game1.UiManager.AddElement(new UiButton(
+                Game1.UiManager.AddElement(
+                    new UiButton(
                         new Rectangle(5 + halfButtonWidth + 4, posY, halfButtonWidth, buttonHeight),
                         Resources.EditorFont,
-                        "Edit", "bt1", Values.EditorUiObjectEditor,
-                        ui => { ((UiButton)ui).Marked = _currentMode == Mode.Edit; },
-                        ui => { _currentMode = Mode.Edit; })
-                { ButtonIcon = Resources.EditorIconSelect });
+                        "Edit",
+                        "bt1",
+                        Values.EditorUiObjectEditor,
+                        ui =>
+                        {
+                            ((UiButton)ui).Marked = _currentMode == Mode.Edit;
+                        },
+                        ui =>
+                        {
+                            _currentMode = Mode.Edit;
+                        }
+                    )
+                    {
+                        ButtonIcon = Resources.EditorIconSelect,
+                    }
+                );
 
-                Game1.UiManager.AddElement(new UiLabel(
-                    new Rectangle(5, posY += buttonHeight + 5, buttonWidth, buttonHeight),
-                    Resources.EditorFont, "Grid", "bt1", Values.EditorUiObjectEditor, null));
+                Game1.UiManager.AddElement(
+                    new UiLabel(
+                        new Rectangle(5, posY += buttonHeight + 5, buttonWidth, buttonHeight),
+                        Resources.EditorFont,
+                        "Grid",
+                        "bt1",
+                        Values.EditorUiObjectEditor,
+                        null
+                    )
+                );
 
                 // grid size
                 posY += buttonHeight;
@@ -121,12 +170,28 @@ namespace ProjectZ.Editor
                 {
                     var gridValueLocal = gridValue;
 
-                    Game1.UiManager.AddElement(new UiButton(
-                        new Rectangle(5 + (gridButtonWidth + 3) * i, posY, gridButtonWidth, buttonHeight),
-                        Resources.EditorFont,
-                        gridValue.ToString(), "bt1", Values.EditorUiObjectEditor,
-                        ui => { ((UiButton)ui).Marked = gridSize == gridValueLocal; },
-                        ui => { ChangeGridSteps(gridValueLocal); }));
+                    Game1.UiManager.AddElement(
+                        new UiButton(
+                            new Rectangle(
+                                5 + (gridButtonWidth + 3) * i,
+                                posY,
+                                gridButtonWidth,
+                                buttonHeight
+                            ),
+                            Resources.EditorFont,
+                            gridValue.ToString(),
+                            "bt1",
+                            Values.EditorUiObjectEditor,
+                            ui =>
+                            {
+                                ((UiButton)ui).Marked = gridSize == gridValueLocal;
+                            },
+                            ui =>
+                            {
+                                ChangeGridSteps(gridValueLocal);
+                            }
+                        )
+                    );
 
                     gridValue *= 2;
                 }
@@ -139,14 +204,24 @@ namespace ProjectZ.Editor
                 var lableHeight = 20;
 
                 // right background
-                Game1.UiManager.AddElement(new UiRectangle(Rectangle.Empty, "left", Values.EditorUiObjectEditor,
-                    Values.ColorBackgroundLight, Color.White,
-                    ui =>
-                    {
-                        ui.Rectangle = new Rectangle(Game1.WindowWidth - _rightToolbarWidth, Values.ToolBarHeight,
-                            _rightToolbarWidth,
-                            Game1.WindowHeight - Values.ToolBarHeight);
-                    }));
+                Game1.UiManager.AddElement(
+                    new UiRectangle(
+                        Rectangle.Empty,
+                        "left",
+                        Values.EditorUiObjectEditor,
+                        Values.ColorBackgroundLight,
+                        Color.White,
+                        ui =>
+                        {
+                            ui.Rectangle = new Rectangle(
+                                Game1.WindowWidth - _rightToolbarWidth,
+                                Values.ToolBarHeight,
+                                _rightToolbarWidth,
+                                Game1.WindowHeight - Values.ToolBarHeight
+                            );
+                        }
+                    )
+                );
 
                 var leftPosition = Game1.WindowWidth - buttonWidth - 5;
                 posY = Values.ToolBarHeight + 5;
@@ -158,31 +233,56 @@ namespace ProjectZ.Editor
                     var textInputHeight = i >= 2 ? buttonHeightBig : buttonHeight;
 
                     _uiParameterHeader[i] = new UiLabel(
-                        new Rectangle(leftPosition, posY += textInputHeight + 5, buttonWidth, lableHeight), "",
-                        Values.EditorUiObjectEditor)
+                        new Rectangle(
+                            leftPosition,
+                            posY += textInputHeight + 5,
+                            buttonWidth,
+                            lableHeight
+                        ),
+                        "",
+                        Values.EditorUiObjectEditor
+                    )
                     {
                         SizeUpdate = ui =>
                         {
-                            ui.Rectangle = new Rectangle(Game1.WindowWidth - buttonWidth - 5, ui.Rectangle.Y,
-                                ui.Rectangle.Width, ui.Rectangle.Height);
+                            ui.Rectangle = new Rectangle(
+                                Game1.WindowWidth - buttonWidth - 5,
+                                ui.Rectangle.Y,
+                                ui.Rectangle.Width,
+                                ui.Rectangle.Height
+                            );
                             ((UiLabel)ui).UpdateLabelPosition();
-                        }
+                        },
                     };
 
                     _uiParameterTextInput[i] = new UiTextInput(
-                        new Rectangle(leftPosition, posY += lableHeight, buttonWidth, textInputHeight),
+                        new Rectangle(
+                            leftPosition,
+                            posY += lableHeight,
+                            buttonWidth,
+                            textInputHeight
+                        ),
                         Resources.EditorFontMonoSpace,
-                        100, "objectparameter", Values.EditorUiObjectEditor, null, ui =>
+                        100,
+                        "objectparameter",
+                        Values.EditorUiObjectEditor,
+                        null,
+                        ui =>
                         {
                             _strParameter[i1] = ((UiTextInput)ui).StrValue;
                             UpdateObjectParameter();
-                        })
+                        }
+                    )
                     {
                         SizeUpdate = ui =>
                         {
-                            ui.Rectangle = new Rectangle(Game1.WindowWidth - buttonWidth - 5, ui.Rectangle.Y,
-                                ui.Rectangle.Width, ui.Rectangle.Height);
-                        }
+                            ui.Rectangle = new Rectangle(
+                                Game1.WindowWidth - buttonWidth - 5,
+                                ui.Rectangle.Y,
+                                ui.Rectangle.Width,
+                                ui.Rectangle.Height
+                            );
+                        },
                     };
                 }
 
@@ -239,12 +339,20 @@ namespace ProjectZ.Editor
                 LastObjectCursor = null;
             }
 
-            if (_currentDrawMode == DrawMode.Draw && (InputHandler.MouseLeftDown() || InputHandler.MouseLeftReleased()) ||
-                _currentDrawMode == DrawMode.Erase && (InputHandler.MouseRightDown() || InputHandler.MouseRightReleased()))
+            if (
+                _currentDrawMode == DrawMode.Draw
+                    && (InputHandler.MouseLeftDown() || InputHandler.MouseLeftReleased())
+                || _currentDrawMode == DrawMode.Erase
+                    && (InputHandler.MouseRightDown() || InputHandler.MouseRightReleased())
+            )
             {
-                if (InputHandler.KeyDown(Keys.LeftAlt) &&
-                    (_currentDrawMode == DrawMode.Draw && InputHandler.MouseLeftDown() ||
-                     _currentDrawMode == DrawMode.Erase && InputHandler.MouseRightDown()))
+                if (
+                    InputHandler.KeyDown(Keys.LeftAlt)
+                    && (
+                        _currentDrawMode == DrawMode.Draw && InputHandler.MouseLeftDown()
+                        || _currentDrawMode == DrawMode.Erase && InputHandler.MouseRightDown()
+                    )
+                )
                 {
                     MultiSelect = true;
                 }
@@ -284,13 +392,17 @@ namespace ProjectZ.Editor
                     _startMovePosition = GetGriddedPosition(mapPosition);
 
                     // what was this for???
-                    _moveOffset = GetGriddedPosition(new Point(
-                        mapPosition.X - (int)_selectedGameObjectItem.Parameter[1],
-                        mapPosition.Y - (int)_selectedGameObjectItem.Parameter[2]));
+                    _moveOffset = GetGriddedPosition(
+                        new Point(
+                            mapPosition.X - (int)_selectedGameObjectItem.Parameter[1],
+                            mapPosition.Y - (int)_selectedGameObjectItem.Parameter[2]
+                        )
+                    );
 
                     _moveOffset = new Point(
                         _moveOffset.X * (Values.TileSize / gridSize),
-                        _moveOffset.Y * (Values.TileSize / gridSize));
+                        _moveOffset.Y * (Values.TileSize / gridSize)
+                    );
 
                     _currentEditMode = EditMode.Moving;
                 }
@@ -309,15 +421,20 @@ namespace ProjectZ.Editor
             {
                 var scaledOffset = new Point(
                     (int)(_moveOffset.X * _camera.Scale),
-                    (int)(_moveOffset.Y * _camera.Scale));
+                    (int)(_moveOffset.Y * _camera.Scale)
+                );
 
-                var griddedPosition = GetGriddedPosition(GetMapPosition(mousePosition - scaledOffset));
+                var griddedPosition = GetGriddedPosition(
+                    GetMapPosition(mousePosition - scaledOffset)
+                );
 
                 if (_startMovePosition != griddedPosition)
                 {
                     _startMovePosition = griddedPosition;
-                    _selectedGameObjectItem.Parameter[1] = griddedPosition.X * Values.TileSize / gridSize;
-                    _selectedGameObjectItem.Parameter[2] = griddedPosition.Y * Values.TileSize / gridSize;
+                    _selectedGameObjectItem.Parameter[1] =
+                        griddedPosition.X * Values.TileSize / gridSize;
+                    _selectedGameObjectItem.Parameter[2] =
+                        griddedPosition.Y * Values.TileSize / gridSize;
                 }
             }
         }
@@ -332,23 +449,39 @@ namespace ProjectZ.Editor
             // draw all the objects
             if (DrawObjectLayer)
             {
-                var objectList = Game1.GameManager.MapManager.CurrentMap.Objects.GetMergedObjectLists();
+                var objectList =
+                    Game1.GameManager.MapManager.CurrentMap.Objects.GetMergedObjectLists();
                 foreach (var gameObjItem in objectList)
                 {
                     // draw the object
                     if (EditorObjectTemplates.ContainsKey(gameObjItem.Index))
                     {
                         var gameObject = EditorObjectTemplates[gameObjItem.Index];
-                        var scaledSize = new Vector2(gameObject.EditorIconSource.Width, gameObject.EditorIconSource.Height) * gameObject.EditorIconScale;
+                        var scaledSize =
+                            new Vector2(
+                                gameObject.EditorIconSource.Width,
+                                gameObject.EditorIconSource.Height
+                            ) * gameObject.EditorIconScale;
                         var position = new Vector2(
-                            (int)gameObjItem.Parameter[1] + (scaledSize.X > 16 ? 0 : 8 - scaledSize.X / 2),
-                            (int)gameObjItem.Parameter[2] + (scaledSize.Y > 16 ? 0 : 8 - scaledSize.Y / 2));
+                            (int)gameObjItem.Parameter[1]
+                                + (scaledSize.X > 16 ? 0 : 8 - scaledSize.X / 2),
+                            (int)gameObjItem.Parameter[2]
+                                + (scaledSize.Y > 16 ? 0 : 8 - scaledSize.Y / 2)
+                        );
                         gameObject.DrawEditor(spriteBatch, position);
 
                         // overlay red on the selected object
                         if (_selectedGameObjectItem == gameObjItem)
-                            spriteBatch.Draw(Resources.SprWhite,
-                                new Rectangle((int)position.X, (int)position.Y, (int)scaledSize.X, (int)scaledSize.Y), Color.Red * 0.25f);
+                            spriteBatch.Draw(
+                                Resources.SprWhite,
+                                new Rectangle(
+                                    (int)position.X,
+                                    (int)position.Y,
+                                    (int)scaledSize.X,
+                                    (int)scaledSize.Y
+                                ),
+                                Color.Red * 0.25f
+                            );
                     }
                 }
             }
@@ -363,21 +496,29 @@ namespace ProjectZ.Editor
                     var top = Math.Min(SelectionStart.Y, SelectionEnd.Y);
                     var down = Math.Max(SelectionStart.Y, SelectionEnd.Y);
 
-                    spriteBatch.Draw(Resources.SprWhite,
+                    spriteBatch.Draw(
+                        Resources.SprWhite,
                         new Rectangle(
                             left * Values.TileSize / gridSize,
                             top * Values.TileSize / gridSize,
                             (right - left + 1) * Values.TileSize / gridSize,
-                            (down - top + 1) * Values.TileSize / gridSize), Color.White * 0.5f);
+                            (down - top + 1) * Values.TileSize / gridSize
+                        ),
+                        Color.White * 0.5f
+                    );
                 }
 
                 // draw the cursor
-                spriteBatch.Draw(Resources.SprWhite,
+                spriteBatch.Draw(
+                    Resources.SprWhite,
                     new Rectangle(
                         ObjectCursor.X * Values.TileSize / gridSize,
                         ObjectCursor.Y * Values.TileSize / gridSize,
                         Values.TileSize / gridSize,
-                        Values.TileSize / gridSize), Color.Red * 0.75f);
+                        Values.TileSize / gridSize
+                    ),
+                    Color.Red * 0.75f
+                );
             }
         }
 
@@ -385,22 +526,33 @@ namespace ProjectZ.Editor
         {
             // draw the selected object above the blured layer
             var rectangle = new Rectangle(
-                0, Game1.WindowHeight - _leftToolbarWidth, _leftToolbarWidth, _leftToolbarWidth);
+                0,
+                Game1.WindowHeight - _leftToolbarWidth,
+                _leftToolbarWidth,
+                _leftToolbarWidth
+            );
 
             _objectSelectionSelectionScreen.DrawSelectedObject(spriteBatch, rectangle);
         }
 
         public bool InsideField()
         {
-            return InputHandler.MouseIntersect(new Rectangle(
-                _leftToolbarWidth, Values.ToolBarHeight,
-                Game1.WindowWidth - _leftToolbarWidth - _rightToolbarWidth,
-                Game1.WindowHeight - Values.ToolBarHeight));
+            return InputHandler.MouseIntersect(
+                new Rectangle(
+                    _leftToolbarWidth,
+                    Values.ToolBarHeight,
+                    Game1.WindowWidth - _leftToolbarWidth - _rightToolbarWidth,
+                    Game1.WindowHeight - Values.ToolBarHeight
+                )
+            );
         }
 
         private void GetSingleSelectedObject()
         {
-            _selectedGameObjectItem = GetSelectedGameObject(mouseMapPosition, _selectedGameObjectItem);
+            _selectedGameObjectItem = GetSelectedGameObject(
+                mouseMapPosition,
+                _selectedGameObjectItem
+            );
 
             UpdateSelectedObjectParameters();
         }
@@ -416,12 +568,18 @@ namespace ProjectZ.Editor
                 {
                     var objectPosition = GetObjectPosition(objlist[i], true);
                     var objTemplate = EditorObjectTemplates[objlist[i].Index];
-                    var scaledSize = new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height) * objTemplate.EditorIconScale;
+                    var scaledSize =
+                        new Vector2(
+                            objTemplate.EditorIconSource.Width,
+                            objTemplate.EditorIconSource.Height
+                        ) * objTemplate.EditorIconScale;
 
-                    if (objectPosition.X < deleteRectangle.X + deleteRectangle.Width &&
-                        deleteRectangle.X < objectPosition.X + scaledSize.X &&
-                        objectPosition.Y < deleteRectangle.Y + deleteRectangle.Height &&
-                        deleteRectangle.Y < objectPosition.Y + scaledSize.Y)
+                    if (
+                        objectPosition.X < deleteRectangle.X + deleteRectangle.Width
+                        && deleteRectangle.X < objectPosition.X + scaledSize.X
+                        && objectPosition.Y < deleteRectangle.Y + deleteRectangle.Height
+                        && deleteRectangle.Y < objectPosition.Y + scaledSize.Y
+                    )
                     {
                         objlist.RemoveAt(i);
                         return;
@@ -451,31 +609,51 @@ namespace ProjectZ.Editor
         {
             // calculate the position of the object
             if (!selectMode)
-                return new Vector2((int)gameObjectItem.Parameter[1], (int)gameObjectItem.Parameter[2]);
+                return new Vector2(
+                    (int)gameObjectItem.Parameter[1],
+                    (int)gameObjectItem.Parameter[2]
+                );
 
             var objTemplate = EditorObjectTemplates[gameObjectItem.Index];
-            var scaledSize = new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height) * objTemplate.EditorIconScale;
+            var scaledSize =
+                new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height)
+                * objTemplate.EditorIconScale;
 
             return new Vector2(
                 (int)gameObjectItem.Parameter[1] + (scaledSize.X > 16 ? 0 : 8 - scaledSize.X / 2),
-                (int)gameObjectItem.Parameter[2] + (scaledSize.Y > 16 ? 0 : 8 - scaledSize.Y / 2));
+                (int)gameObjectItem.Parameter[2] + (scaledSize.Y > 16 ? 0 : 8 - scaledSize.Y / 2)
+            );
         }
 
-        private bool ObjectContainsPosition(GameObjectItem gameObjectItem, Point position, bool selectMode)
+        private bool ObjectContainsPosition(
+            GameObjectItem gameObjectItem,
+            Point position,
+            bool selectMode
+        )
         {
             var objectPosition = GetObjectPosition(gameObjectItem, selectMode);
 
             var objTemplate = EditorObjectTemplates[gameObjectItem.Index];
-            var scaledSize = new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height) * objTemplate.EditorIconScale;
+            var scaledSize =
+                new Vector2(objTemplate.EditorIconSource.Width, objTemplate.EditorIconSource.Height)
+                * objTemplate.EditorIconScale;
 
-            return objectPosition.X <= position.X && position.X < objectPosition.X + scaledSize.X &&
-                   objectPosition.Y <= position.Y && position.Y < objectPosition.Y + scaledSize.Y;
+            return objectPosition.X <= position.X
+                && position.X < objectPosition.X + scaledSize.X
+                && objectPosition.Y <= position.Y
+                && position.Y < objectPosition.Y + scaledSize.Y;
         }
 
         public string ObjectToString(object stringObject)
         {
             if (stringObject is Rectangle rectangle)
-                return rectangle.X + "." + rectangle.Y + "." + rectangle.Width + "." + rectangle.Height;
+                return rectangle.X
+                    + "."
+                    + rectangle.Y
+                    + "."
+                    + rectangle.Width
+                    + "."
+                    + rectangle.Height;
             if (stringObject is float)
                 return ((float)stringObject).ToString(CultureInfo.InvariantCulture);
 
@@ -495,7 +673,9 @@ namespace ProjectZ.Editor
                 return;
             }
 
-            var objectParameter = GameObjectTemplates.GameObjectParameter[_selectedGameObjectItem.Index];
+            var objectParameter = GameObjectTemplates.GameObjectParameter[
+                _selectedGameObjectItem.Index
+            ];
 
             for (var i = 1; i <= MaxParameter; i++)
             {
@@ -508,7 +688,9 @@ namespace ProjectZ.Editor
                         _strParameter[i - 1] = ObjectToString(_selectedGameObjectItem.Parameter[i]);
 
                     _uiParameterTextInput[i - 1].StrValue = _strParameter[i - 1];
-                    _uiParameterTextInput[i - 1].InputType = GameObjectTemplates.GameObjectParameter[_selectedGameObjectItem.Index][i].ParameterType;
+                    _uiParameterTextInput[i - 1].InputType = GameObjectTemplates
+                        .GameObjectParameter[_selectedGameObjectItem.Index][i]
+                        .ParameterType;
                 }
 
                 // hide the empty ui elements
@@ -517,17 +699,21 @@ namespace ProjectZ.Editor
             }
 
             _objectSelectionSelectionScreen.SelectObject(_selectedGameObjectItem.Index);
-            _objectSelectionSelectionScreen.SelectedObjectParameter = _selectedGameObjectItem.Parameter;
+            _objectSelectionSelectionScreen.SelectedObjectParameter =
+                _selectedGameObjectItem.Parameter;
         }
 
         private void UpdateObjectParameter()
         {
             // set the parameter of the object
-            if (_selectedGameObjectItem == null) return;
+            if (_selectedGameObjectItem == null)
+                return;
 
             for (var i = 1; i < _selectedGameObjectItem.Parameter.Length; i++)
             {
-                var parameterType = GameObjectTemplates.GameObjectParameter[_selectedGameObjectItem.Index][i].ParameterType;
+                var parameterType = GameObjectTemplates
+                    .GameObjectParameter[_selectedGameObjectItem.Index][i]
+                    .ParameterType;
                 var parameter = MapData.ConvertToObject(_strParameter[i - 1], parameterType);
 
                 if (parameter != null)
@@ -537,7 +723,9 @@ namespace ProjectZ.Editor
 
         private string GetObjectIndex()
         {
-            return _currentDrawMode == DrawMode.Draw ? _objectSelectionSelectionScreen.SelectedObjectIndex : null;
+            return _currentDrawMode == DrawMode.Draw
+                ? _objectSelectionSelectionScreen.SelectedObjectIndex
+                : null;
         }
 
         private object[] GetObjectParameter()
@@ -553,12 +741,16 @@ namespace ProjectZ.Editor
             var down = Math.Max(SelectionStart.Y, SelectionEnd.Y);
 
             for (var y = top; y <= down; y++)
-                for (var x = left; x <= right; x++)
-                {
-                    SetMapObject(
-                        x * Values.TileSize / gridSize,
-                        y * Values.TileSize / gridSize, 0, GetObjectIndex(), GetObjectParameter());
-                }
+            for (var x = left; x <= right; x++)
+            {
+                SetMapObject(
+                    x * Values.TileSize / gridSize,
+                    y * Values.TileSize / gridSize,
+                    0,
+                    GetObjectIndex(),
+                    GetObjectParameter()
+                );
+            }
         }
 
         private void FillSelection()
@@ -566,7 +758,11 @@ namespace ProjectZ.Editor
             // draw or delete
             SetMapObject(
                 ObjectCursor.X * Values.TileSize / gridSize,
-                ObjectCursor.Y * Values.TileSize / gridSize, 0, GetObjectIndex(), GetObjectParameter());
+                ObjectCursor.Y * Values.TileSize / gridSize,
+                0,
+                GetObjectIndex(),
+                GetObjectParameter()
+            );
         }
 
         private void SetMapObject(int x, int y, int z, string index, object[] parameter)
@@ -574,7 +770,9 @@ namespace ProjectZ.Editor
             // remove the object
             if (index == null)
             {
-                RemoveObject(new Rectangle(x, y, Values.TileSize / gridSize, Values.TileSize / gridSize));
+                RemoveObject(
+                    new Rectangle(x, y, Values.TileSize / gridSize, Values.TileSize / gridSize)
+                );
                 return;
             }
 
@@ -596,14 +794,16 @@ namespace ProjectZ.Editor
         {
             return new Point(
                 (int)((inputPosition.X - _camera.Location.X) / _camera.Scale),
-                (int)((inputPosition.Y - _camera.Location.Y) / _camera.Scale));
+                (int)((inputPosition.Y - _camera.Location.Y) / _camera.Scale)
+            );
         }
 
         public Point GetGriddedPosition(Point inputPosition)
         {
             var position = new Point(
                 inputPosition.X / (Values.TileSize / gridSize),
-                inputPosition.Y / (Values.TileSize / gridSize));
+                inputPosition.Y / (Values.TileSize / gridSize)
+            );
 
             // fix
             if (inputPosition.X < 0)
@@ -621,18 +821,26 @@ namespace ProjectZ.Editor
 
         public void AddObjectToMap(string index, object[] parameter)
         {
-            if (index == null) return;
+            if (index == null)
+                return;
 
             // only add the object if there is currently not the same object on the position
-            var goAtPosition = GetGameObjectsAt(new Point((int)parameter[1], (int)parameter[2]), false);
+            var goAtPosition = GetGameObjectsAt(
+                new Point((int)parameter[1], (int)parameter[2]),
+                false
+            );
             foreach (var gameObjects in goAtPosition)
-                if (gameObjects.Index == index &&
-                    (int)gameObjects.Parameter[1] == (int)parameter[1] &&
-                    (int)gameObjects.Parameter[2] == (int)parameter[2])
+                if (
+                    gameObjects.Index == index
+                    && (int)gameObjects.Parameter[1] == (int)parameter[1]
+                    && (int)gameObjects.Parameter[2] == (int)parameter[2]
+                )
                     return;
 
             // add the object
-            Game1.GameManager.MapManager.CurrentMap.Objects.ObjectList.Add(new GameObjectItem(index, parameter));
+            Game1.GameManager.MapManager.CurrentMap.Objects.ObjectList.Add(
+                new GameObjectItem(index, parameter)
+            );
         }
 
         public GameObjectItem GetSelectedGameObject(Point position, GameObjectItem startSelection)

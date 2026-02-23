@@ -23,13 +23,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int fieldX;
         private int fieldY;
 
-        public ObjWater() : base("editor water")
+        public ObjWater()
+            : base("editor water")
         {
             EditorColor = Color.AliceBlue * 0.65f;
-
         }
 
-        public ObjWater(Map.Map map, int posX, int posY, int depth) : base(map)
+        public ObjWater(Map.Map map, int posX, int posY, int depth)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -38,13 +39,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             fieldY = posY / 16;
             UpdateFieldState();
 
-            AddComponent(CollisionComponent.Index,
-                new BoxCollisionComponent(new CBox(posX, posY, -10 + depth, 16, 16, 10), Values.CollisionTypes.Normal));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(posX, posY, -10 + depth, 16, 16, 10),
+                    Values.CollisionTypes.Normal
+                )
+            );
         }
 
         private void UpdateFieldState()
         {
-            if(_isActive)
+            if (_isActive)
                 Map.AddFieldState(fieldX, fieldY, MapStates.FieldStates.Water);
             else
             {

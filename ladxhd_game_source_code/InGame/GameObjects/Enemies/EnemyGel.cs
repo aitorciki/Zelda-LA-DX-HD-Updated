@@ -37,15 +37,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public bool IsVisible { get; private set; }
 
-        public EnemyGel() : base("gel") { }
+        public EnemyGel()
+            : base("gel") { }
 
-        public EnemyGel(Map.Map map, int posX, int posY) : base(map)
+        public EnemyGel(Map.Map map, int posX, int posY)
+            : base(map)
         {
             IsVisible = false;
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-4, -12, 7, 17);
             CanReset = true;
             OnReset = Reset;
@@ -63,11 +65,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -4, -7, 7, 7, 8)
             {
                 Gravity = -0.2f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
-                FieldRectangle = fieldRectangle
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                FieldRectangle = fieldRectangle,
             };
 
             _grabX = Game1.RandomNumber.Next(90, 110);
@@ -102,11 +102,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _ai.ChangeState("idle");
 
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new CRectangle(EntityPosition, new Rectangle(-4, -7, 7, 12)), OnPlayerCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-4, -7, 7, 12)),
+                    OnPlayerCollision
+                )
+            );
             AddComponent(AiComponent.Index, _ai);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animatorComponent);
-            AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
@@ -123,16 +132,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // Make sure both Gels are alive and check the index to prevent double respawn.
                 if (OtherGel != null && !IsDead && !OtherGel.IsDead && IsMainGel)
                 {
-                    // Spawn the Red Zol if both Gels are alive. 
+                    // Spawn the Red Zol if both Gels are alive.
                     var newZol = new EnemyRedZol(Map, (int)ZolRespawnPos.X, (int)ZolRespawnPos.Y);
                     Map.Objects.SpawnObject(newZol);
 
                     // If there is utility objects in the room find them.
-                    Map.Objects.GetGameObjectsWithTag(enemyTriggers, Values.GameObjectTag.Utility,
-                        (int)_body.FieldRectangle.X, (int)_body.FieldRectangle.Y, (int)_body.FieldRectangle.Width, (int)_body.FieldRectangle.Height);
+                    Map.Objects.GetGameObjectsWithTag(
+                        enemyTriggers,
+                        Values.GameObjectTag.Utility,
+                        (int)_body.FieldRectangle.X,
+                        (int)_body.FieldRectangle.Y,
+                        (int)_body.FieldRectangle.Width,
+                        (int)_body.FieldRectangle.Height
+                    );
 
                     // Loop through the list of utility objects.
-                    foreach (var trigger in enemyTriggers) 
+                    foreach (var trigger in enemyTriggers)
                     {
                         // If it's an enemy trigger add the Red Zol.
                         if (trigger is ObjEnemyTrigger etrig)
@@ -179,7 +194,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var vecDirection = new Vector2(
                 MapManager.ObjLink.PosX - EntityPosition.X,
-                MapManager.ObjLink.PosY - EntityPosition.Y);
+                MapManager.ObjLink.PosY - EntityPosition.Y
+            );
             if (vecDirection != Vector2.Zero)
                 vecDirection.Normalize();
             _dir = vecDirection.X < 0 ? -1 : 1;
@@ -201,7 +217,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateShaking()
         {
             _body.VelocityTarget = Vector2.Zero;
-            _animatorComponent.SpriteOffset.X = -4 + (float)Math.Sin((Game1.TotalGameTime + _timerOffset) / 25f);
+            _animatorComponent.SpriteOffset.X =
+                -4 + (float)Math.Sin((Game1.TotalGameTime + _timerOffset) / 25f);
             _animatorComponent.UpdateSprite();
         }
 
@@ -214,7 +231,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var vecDirection = new Vector2(
                 MapManager.ObjLink.PosX - EntityPosition.X,
-                MapManager.ObjLink.PosY - EntityPosition.Y);
+                MapManager.ObjLink.PosY - EntityPosition.Y
+            );
             if (vecDirection != Vector2.Zero)
                 vecDirection.Normalize();
 
@@ -240,8 +258,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _bodyDrawComponent.Layer = Values.LayerTop;
             _animator.Play(_dir.ToString());
 
-            _animatorComponent.SpriteOffset.X = -4 + (float)Math.Sin((Game1.TotalGameTime + _timerOffset) / _grabX) * 3.5f;
-            _animatorComponent.SpriteOffset.Y = -7 - 2 + (float)Math.Sin((Game1.TotalGameTime + _timerOffset) / _grabY) * 1.5f;
+            _animatorComponent.SpriteOffset.X =
+                -4 + (float)Math.Sin((Game1.TotalGameTime + _timerOffset) / _grabX) * 3.5f;
+            _animatorComponent.SpriteOffset.Y =
+                -7 - 2 + (float)Math.Sin((Game1.TotalGameTime + _timerOffset) / _grabY) * 1.5f;
             _animatorComponent.UpdateSprite();
         }
 
@@ -262,10 +282,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnPlayerCollision(GameObject gameObject)
         {
-            if (_grabCooldown.State &&
-                _ai.CurrentStateId != "grabbing" &&
-                _ai.CurrentStateId != "grabbingRelease" &&
-                _ai.CurrentStateId != "burning")
+            if (
+                _grabCooldown.State
+                && _ai.CurrentStateId != "grabbing"
+                && _ai.CurrentStateId != "grabbingRelease"
+                && _ai.CurrentStateId != "burning"
+            )
                 _ai.ChangeState("grabbing");
         }
 
@@ -274,13 +296,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // If this ran, it's a Gel spawned from a Red Zol.
             WasSpawned = true;
 
-            // Store some properties of the other Gel that split off of the Zol. 
+            // Store some properties of the other Gel that split off of the Zol.
             OtherGel = otherGel;
             IsMainGel = isMainGel;
             ZolRespawnPos = zolPos;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

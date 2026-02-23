@@ -21,9 +21,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _spawnCounter;
         private int _spawnIndex;
 
-        public ObjFinalStairs() : base(spriteId) { }
+        public ObjFinalStairs()
+            : base(spriteId) { }
 
-        public ObjFinalStairs(Map.Map map, int posX, int posY, string spawnKey) : base(map)
+        public ObjFinalStairs(Map.Map map, int posX, int posY, string spawnKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -32,9 +34,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             _collisionBox = new CBox(posX + 7, posY + 5, 0, 2, 2, 2);
 
             if (!string.IsNullOrEmpty(_spawnKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawSpriteComponent(spriteId, EntityPosition, Values.LayerBottom) { IsActive = false });
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawSpriteComponent(
+                    spriteId,
+                    EntityPosition,
+                    Values.LayerBottom
+                )
+                {
+                    IsActive = false,
+                }
+            );
         }
 
         private void OnKeyChange()
@@ -55,12 +70,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_collided && _spawnIndex < 2)
             {
                 _spawnCounter += Game1.DeltaTime;
-                if(_spawnCounter > _spawnTime)
+                if (_spawnCounter > _spawnTime)
                 {
                     _spawnCounter -= _spawnTime;
                     _spawnIndex++;
 
-                    var objSprite = new ObjSprite(Map, (int)EntityPosition.X, (int)EntityPosition.Y - _spawnIndex * 16, spriteId, Vector2.Zero, Values.LayerBottom, null);
+                    var objSprite = new ObjSprite(
+                        Map,
+                        (int)EntityPosition.X,
+                        (int)EntityPosition.Y - _spawnIndex * 16,
+                        spriteId,
+                        Vector2.Zero,
+                        Values.LayerBottom,
+                        null
+                    );
                     Map.Objects.SpawnObject(objSprite);
                 }
             }
@@ -70,7 +93,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 _collided = true;
                 Game1.GameManager.StartDialogPath("final_stairs");
-                MapManager.ObjLink.SetPosition(new Vector2(EntityPosition.X + 8, EntityPosition.Y + 12));
+                MapManager.ObjLink.SetPosition(
+                    new Vector2(EntityPosition.X + 8, EntityPosition.Y + 12)
+                );
             }
         }
     }

@@ -18,11 +18,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _liveTime = 1250;
 
         private const float AttackSpeed = 2.0f;
-        private bool _isAttackable;        
+        private bool _isAttackable;
 
         public bool IsVisible { get; internal set; }
 
-        public EnemyVireBat(Map.Map map, Vector3 position, Vector2 direction) : base(map)
+        public EnemyVireBat(Map.Map map, Vector3 position, Vector2 direction)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -40,9 +41,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var _aiComponent = new AiComponent();
 
             var stateMove = new AiState();
-            stateMove.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("wait")));
+            stateMove.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("wait"))
+            );
             var stateWait = new AiState() { Init = InitWait };
-            stateWait.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("attack")));
+            stateWait.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("attack"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
 
             _aiComponent.States.Add("move", stateMove);
@@ -57,19 +62,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoresZ = true,
                 IgnoreHoles = true,
                 VelocityTarget = direction,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             var damageCollider = new CBox(EntityPosition, -5, -6, 0, 10, 6, 8, true);
             var hittableBox = new CBox(EntityPosition, -4, -12, 0, 8, 12, 8, true);
 
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             var spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -79,8 +90,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitAttack()
         {
-            var playerDirection = MapManager.ObjLink.Position -
-                new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+            var playerDirection =
+                MapManager.ObjLink.Position
+                - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();
@@ -106,7 +118,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.VelocityTarget = Vector2.Zero;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -123,15 +141,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
         private void OnDeath()
         {
-            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
-            splashAnimator.EntityPosition.Set(new Vector2(EntityPosition.X - 8, EntityPosition.Y - EntityPosition.Z - 16));
+            var splashAnimator = new ObjAnimator(
+                Map,
+                0,
+                0,
+                0,
+                0,
+                Values.LayerTop,
+                "Particles/spawn",
+                "run",
+                true
+            );
+            splashAnimator.EntityPosition.Set(
+                new Vector2(EntityPosition.X - 8, EntityPosition.Y - EntityPosition.Z - 16)
+            );
             Map.Objects.SpawnObject(splashAnimator);
 
             Game1.GameManager.PlaySoundEffect("D378-19-13");

@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -29,14 +29,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _collided;
         private int _lives = EnemyLives.Armos;
 
-        public EnemyArmos() : base("armos") { }
+        public EnemyArmos()
+            : base("armos") { }
 
-        public EnemyArmos(Map.Map map, int posX, int posY, bool darkArmos) : base(map)
+        public EnemyArmos(Map.Map map, int posX, int posY, bool darkArmos)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 17);
             CanReset = true;
             OnReset = Reset;
@@ -50,20 +52,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
-                Drag = 0.8f
+                Drag = 0.8f,
             };
 
             var stateIdle = new AiState { Init = InitIdle };
             var stateAwaking = new AiState(UpdateAwaking) { Init = InitAwaking };
             var stateWalking = new AiState { Init = InitWalking };
-            stateWalking.Trigger.Add(_walkCounter = new AiTriggerRandomTime(ChangeDirection, 1000, 1500));
+            stateWalking.Trigger.Add(
+                _walkCounter = new AiTriggerRandomTime(ChangeDirection, 1000, 1500)
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
@@ -71,22 +75,42 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             new AiFallState(_aiComponent, _body, null, null);
             new AiDeepWaterState(_body);
-            _sunnedState = new AiStunnedState(_aiComponent, _animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "walking" };
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { SpawnItem = "arrow_1" };
+            _sunnedState = new AiStunnedState(_aiComponent, _animationComponent, 3300, 900)
+            {
+                ShakeOffset = 1,
+                SilentStateChange = false,
+                ReturnState = "walking",
+            };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                SpawnItem = "arrow_1",
+            };
 
             _aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
             var damageBox = new CBox(EntityPosition, -8, -13, 0, 16, 13, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 8) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 8)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(CollisionComponent.Index, _bodyCollision = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
+            AddComponent(
+                CollisionComponent.Index,
+                _bodyCollision = new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy)
+            );
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -98,7 +122,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -152,7 +182,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // wobble
             _counter += Game1.DeltaTime;
-            _animationComponent.SpriteOffset.X = -8 + 1 * MathF.Sin(MathF.PI * ((_counter / 1000) * (60 / 4f)));
+            _animationComponent.SpriteOffset.X =
+                -8 + 1 * MathF.Sin(MathF.PI * ((_counter / 1000) * (60 / 4f)));
 
             if (!_animator.IsPlaying)
             {
@@ -177,13 +208,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // random new direction
             _direction = Game1.RandomNumber.Next(0, 8);
             var radius = (float)Math.PI * (_direction / 4f);
-            _body.VelocityTarget = new Vector2((float)Math.Sin(radius), (float)Math.Cos(radius)) * _moveSpeed;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(radius), (float)Math.Cos(radius)) * _moveSpeed;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
             else if (_aiComponent.CurrentStateId == "idle")
                 _aiComponent.ChangeState("awaking");
 

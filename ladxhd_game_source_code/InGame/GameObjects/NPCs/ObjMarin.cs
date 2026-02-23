@@ -19,7 +19,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 {
     public class ObjMarin : GameObjectFollower, IHasVisibility
     {
-        private enum States { Idle, Sequence, Fade, Singing, SingingFinal, AnimalSinging, SingingDuo, PostDuo, SingingWalrus, FollowPlayer, Jumping, Saved, DungeonReturn };
+        private enum States
+        {
+            Idle,
+            Sequence,
+            Fade,
+            Singing,
+            SingingFinal,
+            AnimalSinging,
+            SingingDuo,
+            PostDuo,
+            SingingWalrus,
+            FollowPlayer,
+            Jumping,
+            Saved,
+            DungeonReturn,
+        };
+
         private States _currentState = States.Idle;
 
         struct MoveStep
@@ -29,6 +45,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             public Vector2 Offset;
             public Vector2 Position;
         }
+
         private Queue<MoveStep> _nextMoveStep = new Queue<MoveStep>();
 
         public override bool IsActive
@@ -119,9 +136,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private ObjSpriteShadow _spriteShadow;
 
-        public ObjMarin() : base("marin") { }
+        public ObjMarin()
+            : base("marin") { }
 
-        public ObjMarin(Map.Map map, int posX, int posY) : base(map)
+        public ObjMarin(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -142,20 +161,37 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 MoveCollision = OnCollision,
                 IgnoreHoles = true,
-                Gravity = -0.15f
+                Gravity = -0.15f,
             };
             _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, 1);
 
             var mariaState = Game1.GameManager.SaveManager.GetString("maria_state");
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    _body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, _sprite)
+            );
 
             // Marin will crash the game when playing the intro without this since it's not a map.
             if (Map != null)
@@ -222,7 +258,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public void OnAppendMapChange()
         {
-            if (_currentState == States.FollowPlayer && (_enterDungeonMessage || EnterDungeonMessage))
+            if (
+                _currentState == States.FollowPlayer
+                && (_enterDungeonMessage || EnterDungeonMessage)
+            )
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _currentState = States.Idle;
@@ -273,10 +312,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _currentState = States.FollowPlayer;
                 _followVelocity = Vector2.Zero;
 
-                if (MapManager.ObjLink.NextMapPositionStart.HasValue &&
-                    MapManager.ObjLink.NextMapPositionEnd.HasValue)
+                if (
+                    MapManager.ObjLink.NextMapPositionStart.HasValue
+                    && MapManager.ObjLink.NextMapPositionEnd.HasValue
+                )
                 {
-                    var direction = MapManager.ObjLink.NextMapPositionEnd.Value - MapManager.ObjLink.NextMapPositionStart.Value;
+                    var direction =
+                        MapManager.ObjLink.NextMapPositionEnd.Value
+                        - MapManager.ObjLink.NextMapPositionStart.Value;
                     if (direction != Vector2.Zero)
                         _walkDirection = AnimationHelper.GetDirection(direction);
                     _animator.Play("walk_" + _walkDirection);
@@ -285,11 +328,56 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Marin is singing in Animal Village.
             else if (mariaState == "4")
             {
-                var animal0 = new ObjPersonNew(Map, (int)EntityPosition.X + 8, (int)EntityPosition.Y - 32, null, "animal_rabbit", "animals_absorbed", "dance_3", new Rectangle(0, 0, 12, 12));
-                var animal1 = new ObjPersonNew(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y + 32, null, "animal_rabbit", "animals_absorbed", "dance_1", new Rectangle(0, 0, 12, 12));
-                var animal2 = new ObjPersonNew(Map, (int)EntityPosition.X - 40, (int)EntityPosition.Y + 16, null, "animal_rabbit", "animals_absorbed", "dance_1", new Rectangle(0, 0, 12, 12));
-                var animal3 = new ObjPersonNew(Map, (int)EntityPosition.X - 40, (int)EntityPosition.Y - 32, null, "animal 02", "animals_absorbed", "dance", new Rectangle(0, 0, 12, 12));
-                var animal4 = new ObjPersonNew(Map, (int)EntityPosition.X + 24, (int)EntityPosition.Y + 16, null, "animal 03", "animals_absorbed", "dance", new Rectangle(0, 0, 12, 12));
+                var animal0 = new ObjPersonNew(
+                    Map,
+                    (int)EntityPosition.X + 8,
+                    (int)EntityPosition.Y - 32,
+                    null,
+                    "animal_rabbit",
+                    "animals_absorbed",
+                    "dance_3",
+                    new Rectangle(0, 0, 12, 12)
+                );
+                var animal1 = new ObjPersonNew(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y + 32,
+                    null,
+                    "animal_rabbit",
+                    "animals_absorbed",
+                    "dance_1",
+                    new Rectangle(0, 0, 12, 12)
+                );
+                var animal2 = new ObjPersonNew(
+                    Map,
+                    (int)EntityPosition.X - 40,
+                    (int)EntityPosition.Y + 16,
+                    null,
+                    "animal_rabbit",
+                    "animals_absorbed",
+                    "dance_1",
+                    new Rectangle(0, 0, 12, 12)
+                );
+                var animal3 = new ObjPersonNew(
+                    Map,
+                    (int)EntityPosition.X - 40,
+                    (int)EntityPosition.Y - 32,
+                    null,
+                    "animal 02",
+                    "animals_absorbed",
+                    "dance",
+                    new Rectangle(0, 0, 12, 12)
+                );
+                var animal4 = new ObjPersonNew(
+                    Map,
+                    (int)EntityPosition.X + 24,
+                    (int)EntityPosition.Y + 16,
+                    null,
+                    "animal 03",
+                    "animals_absorbed",
+                    "dance",
+                    new Rectangle(0, 0, 12, 12)
+                );
 
                 Map.Objects.SpawnObject(animal0);
                 Map.Objects.SpawnObject(animal1);
@@ -318,7 +406,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 var playerDistance = new Vector2(
                     MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
-                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
+                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4)
+                );
 
                 var dir = 3;
 
@@ -359,7 +448,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             else if (_currentState == States.AnimalSinging)
             {
                 // Start/stop depending on the distance to the player.
-                var nearPlayer = _fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position);
+                var nearPlayer = _fieldRectangle.Contains(
+                    MapManager.ObjLink.CenterPosition.Position
+                );
 
                 if (!_isSingingWithSound && nearPlayer)
                 {
@@ -382,16 +473,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else if (_currentState == States.SingingDuo)
                 UpdateSingingDuo();
-            
             else if (_currentState == States.FollowPlayer)
                 UpdateFollowPlayer();
-            
             else if (_currentState == States.Jumping)
                 UpdateMountainSequence();
-            
             else if (_currentState == States.DungeonReturn)
                 UpdateReturn();
-            
+
             UpdateMoving();
 
             UpdateFade();
@@ -433,7 +521,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 else
                 {
                     // Set up the blocking field rectangle to the right of Marin.
-                    _blockingField = new RectangleF(EntityPosition.X + 6, EntityPosition.Y - 15, 18, 50);
+                    _blockingField = new RectangleF(
+                        EntityPosition.X + 6,
+                        EntityPosition.Y - 15,
+                        18,
+                        50
+                    );
 
                     // Check to see if Link entered the blocking field.
                     if (_blockingField.Contains(MapManager.ObjLink.CenterPosition.Position))
@@ -444,7 +537,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                         // Set up the blocking position.
                         if (!_blockingStart)
-                            _blockingVector = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y);
+                            _blockingVector = new Vector2(
+                                MapManager.ObjLink.EntityPosition.X,
+                                MapManager.ObjLink.EntityPosition.Y
+                            );
 
                         // Start blocking at that position.
                         _blockingStart = true;
@@ -484,7 +580,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_isPulled)
             {
                 // Update the position of Marin as she is being pulled.
-                EntityPosition.Set(new Vector2(playerPosition.X + 14, playerPosition.Y + _pullOffsetY));
+                EntityPosition.Set(
+                    new Vector2(playerPosition.X + 14, playerPosition.Y + _pullOffsetY)
+                );
 
                 // When the hookshot is finished assume we're on the other side of the gap.
                 if (!MapManager.ObjLink.IsUsingHookshot())
@@ -511,7 +609,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateReturn()
         {
             // freeze the player (need to make sure to play the transition animation)
-            var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+            var transitionSystem = (MapTransitionSystem)
+                Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
             if (!transitionSystem.IsTransitioningIn())
                 MapManager.ObjLink.FreezePlayer();
 
@@ -532,13 +631,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 {
                     // show message after having 4 or less lives and having walked into the dungeon with more than 4
                     // there are two different dialogs; the second one appear not as often as the first one
-                    var heartsDialog = Game1.GameManager.CurrentHealth <= 4 && (_dungeonEnterLives >= 4 || _dungeonEnterLives == 0);
+                    var heartsDialog =
+                        Game1.GameManager.CurrentHealth <= 4
+                        && (_dungeonEnterLives >= 4 || _dungeonEnterLives == 0);
                     var randomDialog = Game1.RandomNumber.Next(0, 5);
-                    Game1.GameManager.SaveManager.SetString("marin_dungeon_hearts", heartsDialog ? (randomDialog < 4 ? "1" : "2") : "0");
+                    Game1.GameManager.SaveManager.SetString(
+                        "marin_dungeon_hearts",
+                        heartsDialog ? (randomDialog < 4 ? "1" : "2") : "0"
+                    );
 
                     // show a different message after two minutes; does not work correctly if the savestate is loaded
                     var longTimeDialog = _dungeonEnterTime + 120000 < Game1.TotalGameTime;
-                    Game1.GameManager.SaveManager.SetString("marin_dungeon_time", longTimeDialog ? "1" : "0");
+                    Game1.GameManager.SaveManager.SetString(
+                        "marin_dungeon_time",
+                        longTimeDialog ? "1" : "0"
+                    );
 
                     _currentState = States.FollowPlayer;
                     Game1.GameManager.StartDialogPath("marin_dungeon_leave");
@@ -551,7 +658,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_returnCounter > 1500)
             {
                 _animator.Play("walk_0");
-                var newPosition = AnimationHelper.MoveToTarget(EntityPosition.Position, _returnEnd, 0.75f * Game1.TimeMultiplier);
+                var newPosition = AnimationHelper.MoveToTarget(
+                    EntityPosition.Position,
+                    _returnEnd,
+                    0.75f * Game1.TimeMultiplier
+                );
                 EntityPosition.Set(newPosition);
 
                 if (newPosition == _returnEnd)
@@ -565,7 +676,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             _fadeCounter -= Game1.DeltaTime;
-            
+
             if (_fadeCounter <= 0)
                 _map.Objects.DeleteObjects.Add(this);
             else
@@ -679,8 +790,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var Link = MapManager.ObjLink;
             var fieldState = SystemBody.GetFieldState(_body);
             var inDeepWater = fieldState.HasFlag(MapStates.FieldStates.DeepWater);
-            
-            if (((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).IsTransitioningIn())
+
+            if (
+                (
+                    (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+                ).IsTransitioningIn()
+            )
             {
                 _body.VelocityTarget = Vector2.Zero;
                 return;
@@ -716,11 +831,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _fountainSequence = false;
 
                 // Check the distance between Link and Marin when she lands to determine a collision.
-                var playerDist = Link.EntityPosition.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y);
+                var playerDist =
+                    Link.EntityPosition.Position
+                    - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y);
                 var fallenOnLink = playerDist.Length() < 5;
 
                 // Store whether Marin fell on Link or he dodged her.
-                Game1.GameManager.SaveManager.SetString("fallen_on_link", (fallenOnLink ? "1" : "0"));
+                Game1.GameManager.SaveManager.SetString(
+                    "fallen_on_link",
+                    (fallenOnLink ? "1" : "0")
+                );
                 Game1.GameManager.StartDialogPath("seq_fountain");
 
                 // Play a screen shake when falling on Link.
@@ -733,8 +853,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             // ---------------------------------------------------------------------
             // Jump when Link jumps or when rail jumping.
-            if (Link.IsJumpingState() && _body.IsGrounded && !inDeepWater &&
-                (Link.RailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
+            if (
+                Link.IsJumpingState()
+                && _body.IsGrounded
+                && !inDeepWater
+                && (
+                    Link.RailJumpAmount() > 0.45f
+                    || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)
+                )
+            )
             {
                 _body.Velocity.Z = 2.35f;
 
@@ -759,15 +886,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _walkDirection = Link.Direction;
                     _animator.Play("stand_" + _walkDirection);
                 }
-                else 
+                else
                     Game1.GameManager.PlaySoundEffect("D360-36-24");
             }
             // Marin is currently in a rail jump.
             if (_isRailJumping)
             {
                 _railJumpPercentage += Game1.TimeMultiplier * _railJumpSpeed;
-                var amount = MathF.Sin(_railJumpPercentage * (MathF.PI * 0.3f)) / MathF.Sin(MathF.PI * 0.3f);
-                var newPosition = Vector2.Lerp(_railJumpStartPosition, _railJumpTargetPosition, amount);
+                var amount =
+                    MathF.Sin(_railJumpPercentage * (MathF.PI * 0.3f)) / MathF.Sin(MathF.PI * 0.3f);
+                var newPosition = Vector2.Lerp(
+                    _railJumpStartPosition,
+                    _railJumpTargetPosition,
+                    amount
+                );
                 EntityPosition.Set(newPosition);
                 EntityPosition.Z = MathF.Sin(_railJumpPercentage * MathF.PI) * _railJumpHeight;
 
@@ -796,10 +928,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 if (_holeAbsorbCounter >= 0)
                     return;
 
-                var fallAnimation = new ObjAnimator(Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
-                fallAnimation.EntityPosition.Set(new Vector2(
-                    _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
-                    _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
+                var fallAnimation = new ObjAnimator(
+                    Map,
+                    0,
+                    0,
+                    Values.LayerBottom,
+                    "Particles/fall",
+                    "idle",
+                    true
+                );
+                fallAnimation.EntityPosition.Set(
+                    new Vector2(
+                        _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
+                        _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5
+                    )
+                );
                 Map.Objects.SpawnObject(fallAnimation);
 
                 _sprite.IsVisible = false;
@@ -819,12 +962,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if ((landedGround && inDeepWater) || enteredWater)
             {
                 var splashAnimator = new ObjAnimator(
-                    Map, 0, 0, 0, 3, Values.LayerPlayer,
-                    "Particles/splash", "idle", true);
+                    Map,
+                    0,
+                    0,
+                    0,
+                    3,
+                    Values.LayerPlayer,
+                    "Particles/splash",
+                    "idle",
+                    true
+                );
 
-                splashAnimator.EntityPosition.Set(new Vector2(
-                    _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                    _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 6));
+                splashAnimator.EntityPosition.Set(
+                    new Vector2(
+                        _body.Position.X + _body.OffsetX + _body.Width / 2f,
+                        _body.Position.Y + _body.OffsetY + _body.Height - _body.Position.Z - 6
+                    )
+                );
 
                 Map.Objects.SpawnObject(splashAnimator);
 
@@ -845,16 +999,30 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var collidingBox = Box.Empty;
 
             // Check for future collisions.
-            var collisionH = SystemBody.Collision(_body,
+            var collisionH = SystemBody.Collision(
+                _body,
                 EntityPosition.X + playerDirection.X * collisionCheckDist,
-                EntityPosition.Y, 0, _body.CollisionTypes, false, ref collidingBox);
-            var collisionV = SystemBody.Collision(_body,
+                EntityPosition.Y,
+                0,
+                _body.CollisionTypes,
+                false,
+                ref collidingBox
+            );
+            var collisionV = SystemBody.Collision(
+                _body,
                 EntityPosition.X,
-                EntityPosition.Y + playerDirection.Y * collisionCheckDist, 0, _body.CollisionTypes, false, ref collidingBox);
+                EntityPosition.Y + playerDirection.Y * collisionCheckDist,
+                0,
+                _body.CollisionTypes,
+                false,
+                ref collidingBox
+            );
 
             // Disable the collision if we are too far away from the player; this will prevent situations where we are stuck.
             var ignoreCollisions = Link.IsRailJumping() || playerDistance > 24;
-            _body.CollisionTypes = ignoreCollisions ? Values.CollisionTypes.None : Values.CollisionTypes.Normal;
+            _body.CollisionTypes = ignoreCollisions
+                ? Values.CollisionTypes.None
+                : Values.CollisionTypes.Normal;
 
             if (playerDistance > 16)
             {
@@ -863,16 +1031,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // Try to avoid future collisions by walking around the colliding object.
                 if (!ignoreCollisions && collisionH)
                 {
-                    targetVelocity.Y += (Math.Abs(targetVelocity.X) * MathF.Sign(targetVelocity.Y)) * 0.5f;
+                    targetVelocity.Y +=
+                        (Math.Abs(targetVelocity.X) * MathF.Sign(targetVelocity.Y)) * 0.5f;
                     targetVelocity.X *= 0.5f;
                 }
                 else if (!ignoreCollisions && collisionV)
                 {
-                    targetVelocity.X += (Math.Abs(targetVelocity.Y) * MathF.Sign(targetVelocity.X)) * 0.5f;
+                    targetVelocity.X +=
+                        (Math.Abs(targetVelocity.Y) * MathF.Sign(targetVelocity.X)) * 0.5f;
                     targetVelocity.Y *= 0.5f;
                 }
             }
-            _followVelocity = Vector2.Lerp(_followVelocity, targetVelocity, 0.45f * Game1.TimeMultiplier);
+            _followVelocity = Vector2.Lerp(
+                _followVelocity,
+                targetVelocity,
+                0.45f * Game1.TimeMultiplier
+            );
             _body.VelocityTarget = _followVelocity;
 
             if (_followVelocity.Length() > 0.1f)
@@ -932,7 +1106,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _animator.Play("sing");
 
             // set the position for the dogs listening
-            Game1.GameManager.SaveManager.SetString("marin_sing_position", (int)EntityPosition.X + "," + (int)EntityPosition.Y);
+            Game1.GameManager.SaveManager.SetString(
+                "marin_sing_position",
+                (int)EntityPosition.X + "," + (int)EntityPosition.Y
+            );
         }
 
         private void StopSinging()
@@ -971,14 +1148,27 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     var offsetX = int.Parse(split[0]);
                     var offsetY = int.Parse(split[1]);
                     _moveSpeed = float.Parse(split[2], CultureInfo.InvariantCulture);
-                    _nextMoveStep.Enqueue(new MoveStep() { MoveSpeed = _moveSpeed, Offset = new Vector2(offsetX, offsetY), OffsetMode = true });
+                    _nextMoveStep.Enqueue(
+                        new MoveStep()
+                        {
+                            MoveSpeed = _moveSpeed,
+                            Offset = new Vector2(offsetX, offsetY),
+                            OffsetMode = true,
+                        }
+                    );
                 }
                 if (split.Length == 4)
                 {
                     var positionX = int.Parse(split[0]);
                     var positionY = int.Parse(split[1]);
                     _moveSpeed = float.Parse(split[2], CultureInfo.InvariantCulture);
-                    _nextMoveStep.Enqueue(new MoveStep() { MoveSpeed = _moveSpeed, Position = new Vector2(positionX, positionY) });
+                    _nextMoveStep.Enqueue(
+                        new MoveStep()
+                        {
+                            MoveSpeed = _moveSpeed,
+                            Position = new Vector2(positionX, positionY),
+                        }
+                    );
                 }
 
                 if (!_isMoving)
@@ -1062,9 +1252,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool Interact()
         {
-            if (_currentState != States.Idle &&
-                _currentState != States.AnimalSinging &&
-                _currentState != States.PostDuo)
+            if (
+                _currentState != States.Idle
+                && _currentState != States.AnimalSinging
+                && _currentState != States.PostDuo
+            )
                 return false;
 
             if (_currentState == States.AnimalSinging)
@@ -1081,23 +1273,40 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             _bodyDrawComponent.Draw(spriteBatch);
 
-            var leftNotePosition = new Vector2(EntityPosition.X - 8 - _spriteNote.SourceRectangle.Width / 2f, EntityPosition.Y - 16 - _spriteNote.SourceRectangle.Height / 2f);
+            var leftNotePosition = new Vector2(
+                EntityPosition.X - 8 - _spriteNote.SourceRectangle.Width / 2f,
+                EntityPosition.Y - 16 - _spriteNote.SourceRectangle.Height / 2f
+            );
             var leftNoteDirection = new Vector2(-0.4f, -1.0f);
             DrawNote(spriteBatch, leftNotePosition, leftNoteDirection, 0);
 
-            var rightNotePosition = new Vector2(EntityPosition.X + 8 - _spriteNote.SourceRectangle.Width / 2f, EntityPosition.Y - 16 - _spriteNote.SourceRectangle.Height / 2f);
+            var rightNotePosition = new Vector2(
+                EntityPosition.X + 8 - _spriteNote.SourceRectangle.Width / 2f,
+                EntityPosition.Y - 16 - _spriteNote.SourceRectangle.Height / 2f
+            );
             var rightNoteDirection = new Vector2(0.4f, -1.0f);
             DrawNote(spriteBatch, rightNotePosition, rightNoteDirection, _cycleTime / 2);
         }
 
-        private void DrawNote(SpriteBatch spriteBatch, Vector2 position, Vector2 direction, int timeOffset)
+        private void DrawNote(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            Vector2 direction,
+            int timeOffset
+        )
         {
-            if (_noteCount < timeOffset ||
-                !_isSinging && (int)((_noteCount - timeOffset) / _cycleTime + 1) * _cycleTime + timeOffset > _noteEndTime)
+            if (
+                _noteCount < timeOffset
+                || !_isSinging
+                    && (int)((_noteCount - timeOffset) / _cycleTime + 1) * _cycleTime + timeOffset
+                        > _noteEndTime
+            )
                 return;
 
             var time = (_noteCount + timeOffset) % _cycleTime;
-            position += direction * time * 0.02f + new Vector2(-direction.X, direction.Y) * (float)Math.Sin(time * 0.015) * 1.25f;
+            position +=
+                direction * time * 0.02f
+                + new Vector2(-direction.X, direction.Y) * (float)Math.Sin(time * 0.015) * 1.25f;
 
             var transparency = 1.0f;
             if (time > _cycleTime - 100)
@@ -1105,7 +1314,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             else if (time < 100)
                 transparency = time / 100;
 
-            DrawHelper.DrawNormalized(spriteBatch, _spriteNote, position, Color.White * transparency);
+            DrawHelper.DrawNormalized(
+                spriteBatch,
+                _spriteNote,
+                position,
+                Color.White * transparency
+            );
         }
 
         public void SetFacingDirection(int direction)

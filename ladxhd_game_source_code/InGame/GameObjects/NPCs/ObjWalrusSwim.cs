@@ -27,9 +27,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _dialog;
         private bool _init;
 
-        public ObjWalrusSwim() : base("walrus") { }
+        public ObjWalrusSwim()
+            : base("walrus") { }
 
-        public ObjWalrusSwim(Map.Map map, int posX, int posY, string strSpawnKey) : base(map)
+        public ObjWalrusSwim(Map.Map map, int posX, int posY, string strSpawnKey)
+            : base(map)
         {
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/walrus");
             _animator.Play("sleep");
@@ -58,8 +60,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                OcarinaListenerComponent.Index,
+                new OcarinaListenerComponent(OnSongPlayed)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
         }
 
@@ -78,8 +86,28 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.PlaySoundEffect("D378-36-24");
             _init = true;
 
-            var splashAnimator0 = new ObjAnimator(Map, (int)EntityPosition.X - 6, (int)EntityPosition.Y + 1, 0, 0, Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
-            var splashAnimator1 = new ObjAnimator(Map, (int)EntityPosition.X + 6, (int)EntityPosition.Y + 2, 0, 0, Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+            var splashAnimator0 = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X - 6,
+                (int)EntityPosition.Y + 1,
+                0,
+                0,
+                Values.LayerPlayer,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
+            var splashAnimator1 = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X + 6,
+                (int)EntityPosition.Y + 2,
+                0,
+                0,
+                Values.LayerPlayer,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             Map.Objects.SpawnObject(splashAnimator0);
             Map.Objects.SpawnObject(splashAnimator1);
         }
@@ -120,7 +148,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
             }
 
-            var offset = new Vector2(0, (int)MathF.Round(MathF.Cos(_moveCounter / 2000 * MathF.PI * 2)));
+            var offset = new Vector2(
+                0,
+                (int)MathF.Round(MathF.Cos(_moveCounter / 2000 * MathF.PI * 2))
+            );
             EntityPosition.Set(_spawnPosition + offset);
 
             _animator.Play("swim_" + (offset.Y > 0 ? "up" : "down"));

@@ -13,11 +13,11 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
 
-        private readonly InterfaceButton     _buttonCameraType;
+        private readonly InterfaceButton _buttonCameraType;
         private readonly InterfaceListLayout _toggleModernOverworld;
         private readonly InterfaceListLayout _toggleClassicDungeon;
-        private readonly InterfaceSlider     _sliderCameraBorder;
-        private readonly InterfaceSlider     _sliderBorderOpacity;
+        private readonly InterfaceSlider _sliderCameraBorder;
+        private readonly InterfaceSlider _sliderBorderOpacity;
         private readonly InterfaceListLayout _toggleCameraLock;
         private readonly InterfaceListLayout _toggleCameraSmooth;
         private readonly InterfaceListLayout _toggleScreenShake;
@@ -26,24 +26,47 @@ namespace ProjectZ.InGame.Pages
         private bool _showTooltip;
 
         public void SetCameraMode(bool state) => ToggleCameraModes(state);
-        public void SetModernOverworld(bool state) => ((InterfaceToggle)_toggleModernOverworld.Elements[1]).ToggleState = state;
-        public void SetClassicDungeon(bool state) => ((InterfaceToggle)_toggleClassicDungeon.Elements[1]).ToggleState = state;
-        public void SetClassicCamBorder(int value) { ((InterfaceSlider)_sliderCameraBorder).CurrentStep = value; }
-        public void SetClassicBorderAlpha(int value) { ((InterfaceSlider)_sliderBorderOpacity).CurrentStep = value; }
-        public void SetCameraLock(bool state) => ((InterfaceToggle)_toggleCameraLock.Elements[1]).ToggleState = state; 
-        public void SetCameraSmoothCam(bool state) => ((InterfaceToggle)_toggleCameraSmooth.Elements[1]).ToggleState = state;
-        public void SetCameraScreenShake(bool state) => ((InterfaceToggle)_toggleScreenShake.Elements[1]).ToggleState = state;
-        public void SetCameraExScreenShake(bool state) => ((InterfaceToggle)_toggleExScreenShake.Elements[1]).ToggleState = state;
+
+        public void SetModernOverworld(bool state) =>
+            ((InterfaceToggle)_toggleModernOverworld.Elements[1]).ToggleState = state;
+
+        public void SetClassicDungeon(bool state) =>
+            ((InterfaceToggle)_toggleClassicDungeon.Elements[1]).ToggleState = state;
+
+        public void SetClassicCamBorder(int value)
+        {
+            ((InterfaceSlider)_sliderCameraBorder).CurrentStep = value;
+        }
+
+        public void SetClassicBorderAlpha(int value)
+        {
+            ((InterfaceSlider)_sliderBorderOpacity).CurrentStep = value;
+        }
+
+        public void SetCameraLock(bool state) =>
+            ((InterfaceToggle)_toggleCameraLock.Elements[1]).ToggleState = state;
+
+        public void SetCameraSmoothCam(bool state) =>
+            ((InterfaceToggle)_toggleCameraSmooth.Elements[1]).ToggleState = state;
+
+        public void SetCameraScreenShake(bool state) =>
+            ((InterfaceToggle)_toggleScreenShake.Elements[1]).ToggleState = state;
+
+        public void SetCameraExScreenShake(bool state) =>
+            ((InterfaceToggle)_toggleExScreenShake.Elements[1]).ToggleState = state;
 
         public void UpdateCameraOverrideText()
         {
             // Get the translated camera name for modern/classic.
-            string cameraName = GameSettings.ClassicCamera 
+            string cameraName = GameSettings.ClassicCamera
                 ? Game1.LanguageManager.GetString("settings_camera_camera_classic", "error")
                 : Game1.LanguageManager.GetString("settings_camera_camera_modern", "error");
 
             // The "OverrideText" is stored so if the language is changed then the text also needs to be updated.
-            string UpdateText = Game1.LanguageManager.GetString("settings_camera_cameratype", "error") + ": " + cameraName;
+            string UpdateText =
+                Game1.LanguageManager.GetString("settings_camera_cameratype", "error")
+                + ": "
+                + cameraName;
 
             // Update the label with the properly translated textu.
             _buttonCameraType.InsideLabel.OverrideText = UpdateText;
@@ -58,25 +81,63 @@ namespace ProjectZ.InGame.Pages
             var sliderHeight = 10;
 
             // Camera Settings Layout
-            _cameraOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-            _cameraOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_camera_header",
-                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _cameraOptionsList = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Selectable = true,
+            };
+            _cameraOptionsList.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_camera_header",
+                    new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
+            _contentLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize) - 12),
+                Selectable = true,
+                ContentAlignment = InterfaceElement.Gravities.Top,
+            };
 
             // Button: Modern/Classic Camera
-            _contentLayout.AddElement(_buttonCameraType = new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "", PressButtonCameraChange));
+            _contentLayout.AddElement(
+                _buttonCameraType = new InterfaceButton(
+                    new Point(buttonWidth, buttonHeight),
+                    new Point(0, 2),
+                    "",
+                    PressButtonCameraChange
+                )
+            );
             UpdateCameraOverrideText();
 
             // Toggle: Overworld Only
-            _toggleModernOverworld = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_modernoverworld", GameSettings.ModernOverworld, 
-                newState => { GameSettings.ModernOverworld = newState; Game1.ScaleChanged = true; });
+            _toggleModernOverworld = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_camera_modernoverworld",
+                GameSettings.ModernOverworld,
+                newState =>
+                {
+                    GameSettings.ModernOverworld = newState;
+                    Game1.ScaleChanged = true;
+                }
+            );
 
             // Toggle: Dungeons Only
-            _toggleClassicDungeon = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_classicdungeon", GameSettings.ClassicDungeon, 
-                newState => { GameSettings.ClassicDungeon = newState; Game1.ScaleChanged = true; });
-            
+            _toggleClassicDungeon = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_camera_classicdungeon",
+                GameSettings.ClassicDungeon,
+                newState =>
+                {
+                    GameSettings.ClassicDungeon = newState;
+                    Game1.ScaleChanged = true;
+                }
+            );
+
             // Depending on which of the above two options is added depends on camera state.
             if (GameSettings.ClassicCamera)
                 _contentLayout.AddElement(_toggleClassicDungeon);
@@ -84,46 +145,118 @@ namespace ProjectZ.InGame.Pages
                 _contentLayout.AddElement(_toggleModernOverworld);
 
             // Slider: Camera Border
-            _sliderCameraBorder = new InterfaceSlider(Resources.GameFont, "settings_camera_camborder",
-                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
-                number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; }) 
-                { SetString = number => ClassicBorderAdjustment(number) };
+            _sliderCameraBorder = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_camera_camborder",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 2),
+                0,
+                2,
+                1,
+                GameSettings.ClassicBorders,
+                number =>
+                {
+                    GameSettings.ClassicBorders = number;
+                    Game1.ScaleChanged = true;
+                }
+            )
+            {
+                SetString = number => ClassicBorderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderCameraBorder);
 
             // Slider: Blackout Amount
-            _sliderBorderOpacity = new InterfaceSlider(Resources.GameFont, "settings_camera_blackpercent",
-                buttonWidth, sliderHeight, new Point(1, 2), 0, 100, 5, (int)(GameSettings.ClassicAlpha * 100),
-                number => { GameSettings.ClassicAlpha = (float)(number * 0.01); })
-                { SetString = number => SetClassicBorderOpacity(number) };
+            _sliderBorderOpacity = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_camera_blackpercent",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 2),
+                0,
+                100,
+                5,
+                (int)(GameSettings.ClassicAlpha * 100),
+                number =>
+                {
+                    GameSettings.ClassicAlpha = (float)(number * 0.01);
+                }
+            )
+            {
+                SetString = number => SetClassicBorderOpacity(number),
+            };
             _contentLayout.AddElement(_sliderBorderOpacity);
 
             // Toggle: Camera Lock
-            _toggleCameraLock = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_cameralock", GameSettings.CameraLock, 
-                newState => { GameSettings.CameraLock = newState; });
+            _toggleCameraLock = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_camera_cameralock",
+                GameSettings.CameraLock,
+                newState =>
+                {
+                    GameSettings.CameraLock = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleCameraLock);
 
             // Toggle: Smooth Camera
-            _toggleCameraSmooth = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_smoothcamera", GameSettings.SmoothCamera, 
-                newState => { GameSettings.SmoothCamera = newState; });
+            _toggleCameraSmooth = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_camera_smoothcamera",
+                GameSettings.SmoothCamera,
+                newState =>
+                {
+                    GameSettings.SmoothCamera = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleCameraSmooth);
 
             // Toggle: Screen-Shake
-            _toggleScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_screenshake", GameSettings.ScreenShake, 
-                newState => { GameSettings.ScreenShake = newState; });
+            _toggleScreenShake = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_camera_screenshake",
+                GameSettings.ScreenShake,
+                newState =>
+                {
+                    GameSettings.ScreenShake = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleScreenShake);
 
             // Toggle: Extra Screen-Shake
-            _toggleExScreenShake = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_exscreenshake", GameSettings.ExScreenShake, 
-                newState => { GameSettings.ExScreenShake = newState; });
+            _toggleExScreenShake = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_camera_exscreenshake",
+                GameSettings.ExScreenShake,
+                newState =>
+                {
+                    GameSettings.ExScreenShake = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleExScreenShake);
 
             // Bottom Bar / Back Button:
-            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(100, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             _cameraOptionsList.AddElement(_contentLayout);
             _cameraOptionsList.AddElement(_bottomBar);
             PageLayout = _cameraOptionsList;
@@ -199,12 +332,13 @@ namespace ProjectZ.InGame.Pages
 
         private string ClassicBorderAdjustment(int number)
         {
-            return ": " + number switch
-            {
-                0 => Game1.LanguageManager.GetString("tooltip_camera_camborderA", "error"),
-                1 => Game1.LanguageManager.GetString("tooltip_camera_camborderB", "error"),
-                2 => Game1.LanguageManager.GetString("tooltip_camera_camborderC", "error")
-            };
+            return ": "
+                + number switch
+                {
+                    0 => Game1.LanguageManager.GetString("tooltip_camera_camborderA", "error"),
+                    1 => Game1.LanguageManager.GetString("tooltip_camera_camborderB", "error"),
+                    2 => Game1.LanguageManager.GetString("tooltip_camera_camborderC", "error"),
+                };
         }
 
         private string SetClassicBorderOpacity(int number)
@@ -212,7 +346,12 @@ namespace ProjectZ.InGame.Pages
             return ": " + number + "%";
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -229,23 +368,77 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_cameraOptionsList.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
             string tooltip = "Select an option to view its tooltip.";
 
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString(GameSettings.ClassicCamera ? "tooltip_camera_classiccam" : "tooltip_camera_moderncam", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString(GameSettings.ClassicCamera ? "tooltip_camera_classicdungeon" : "tooltip_camera_modernoverworld", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_camborder", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_blackpercent", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_cameralock", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_smoothcamera", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_screenshake", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_exscreenshake", "error"); break; }
+                case 0:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        GameSettings.ClassicCamera
+                            ? "tooltip_camera_classiccam"
+                            : "tooltip_camera_moderncam",
+                        "error"
+                    );
+                    break;
+                }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        GameSettings.ClassicCamera
+                            ? "tooltip_camera_classicdungeon"
+                            : "tooltip_camera_modernoverworld",
+                        "error"
+                    );
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_camera_camborder", "error");
+                    break;
+                }
+                case 3:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_camera_blackpercent",
+                        "error"
+                    );
+                    break;
+                }
+                case 4:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_camera_cameralock", "error");
+                    break;
+                }
+                case 5:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_camera_smoothcamera",
+                        "error"
+                    );
+                    break;
+                }
+                case 6:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_camera_screenshake",
+                        "error"
+                    );
+                    break;
+                }
+                case 7:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_camera_exscreenshake",
+                        "error"
+                    );
+                    break;
+                }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

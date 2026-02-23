@@ -16,7 +16,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private double _liveTime = 2000;
         private RectangleF _bossField;
 
-        public BossHardhitBeetleShot(Map.Map map, Vector2 position, float speed, RectangleF bossField) : base(map)
+        public BossHardhitBeetleShot(
+            Map.Map map,
+            Vector2 position,
+            float speed,
+            RectangleF bossField
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -35,7 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             // move towards the player
@@ -45,12 +51,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body.VelocityTarget = velocity * speed;
 
             var hittableBox = new CBox(EntityPosition, -6, -6, 0, 12, 12, 8);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(hittableBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(hittableBox, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
@@ -66,7 +78,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

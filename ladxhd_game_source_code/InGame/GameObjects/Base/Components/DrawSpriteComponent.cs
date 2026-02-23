@@ -24,8 +24,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             Draw = DrawFunction;
         }
 
-        public DrawSpriteComponent(Texture2D sprite, CPosition position, Rectangle sourceRectangle, Vector2 offset, int layer)
-             : base(layer, position)
+        public DrawSpriteComponent(
+            Texture2D sprite,
+            CPosition position,
+            Rectangle sourceRectangle,
+            Vector2 offset,
+            int layer
+        )
+            : base(layer, position)
         {
             Sprite = new CSprite(sprite, position, sourceRectangle, offset);
             Draw = DrawFunction;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
@@ -15,7 +15,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _bottomBar;
         private readonly ContentManager _content;
 
-        private readonly InterfaceSlider     _sliderMapTeleporter;
+        private readonly InterfaceSlider _sliderMapTeleporter;
         private readonly InterfaceListLayout _toggleVariableFont;
         private readonly InterfaceListLayout _toggleHelperText;
         private readonly InterfaceListLayout _toggleDialogSkip;
@@ -26,14 +26,43 @@ namespace ProjectZ.InGame.Pages
 
         private bool _showTooltip;
 
-        public void SetMapTeleportValue(int value) { ((InterfaceSlider)_sliderMapTeleporter).CurrentStep = value; }
-        public void SetVariableWidthFont(bool state) { ((InterfaceToggle)_toggleVariableFont.Elements[1]).ToggleState = state; PressButtonDialogFontChange(state); }
-        public void SetDisableHelperText(bool state) { ((InterfaceToggle)_toggleHelperText.Elements[1]).ToggleState = state; PressButtonToggleHelpers(state); }
-        public void SetEnableDialogSkip(bool state) => ((InterfaceToggle)_toggleDialogSkip.Elements[1]).ToggleState = state;
-        public void SetDisableCensorship(bool state) { ((InterfaceToggle)_toggleUncensored.Elements[1]).ToggleState = state; PressButtonToggleUncensored(state); }
-        public void SetEnableUnmissables(bool state) => ((InterfaceToggle)_toggleUnmissables.Elements[1]).ToggleState = state;
-        public void SetColoredPhotographs(bool state) { ((InterfaceToggle)_togglePhotosColor.Elements[1]).ToggleState = state; PressButtonTogglePhotosColor(state); }
-        public void SetNoAnimalDamage(bool state) => ((InterfaceToggle)_toggleAnimalDamage.Elements[1]).ToggleState = state;
+        public void SetMapTeleportValue(int value)
+        {
+            ((InterfaceSlider)_sliderMapTeleporter).CurrentStep = value;
+        }
+
+        public void SetVariableWidthFont(bool state)
+        {
+            ((InterfaceToggle)_toggleVariableFont.Elements[1]).ToggleState = state;
+            PressButtonDialogFontChange(state);
+        }
+
+        public void SetDisableHelperText(bool state)
+        {
+            ((InterfaceToggle)_toggleHelperText.Elements[1]).ToggleState = state;
+            PressButtonToggleHelpers(state);
+        }
+
+        public void SetEnableDialogSkip(bool state) =>
+            ((InterfaceToggle)_toggleDialogSkip.Elements[1]).ToggleState = state;
+
+        public void SetDisableCensorship(bool state)
+        {
+            ((InterfaceToggle)_toggleUncensored.Elements[1]).ToggleState = state;
+            PressButtonToggleUncensored(state);
+        }
+
+        public void SetEnableUnmissables(bool state) =>
+            ((InterfaceToggle)_toggleUnmissables.Elements[1]).ToggleState = state;
+
+        public void SetColoredPhotographs(bool state)
+        {
+            ((InterfaceToggle)_togglePhotosColor.Elements[1]).ToggleState = state;
+            PressButtonTogglePhotosColor(state);
+        }
+
+        public void SetNoAnimalDamage(bool state) =>
+            ((InterfaceToggle)_toggleAnimalDamage.Elements[1]).ToggleState = state;
 
         public ReduxOptionsPage(int width, int height, ContentManager content)
         {
@@ -45,63 +74,156 @@ namespace ProjectZ.InGame.Pages
             var sliderHeight = 10;
 
             // Redux Settings Layout
-            _reduxOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-            _reduxOptionsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_redux_header",
-                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _reduxOptionsList = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Selectable = true,
+            };
+            _reduxOptionsList.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_redux_header",
+                    new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
+            _contentLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize) - 12),
+                Selectable = true,
+                ContentAlignment = InterfaceElement.Gravities.Top,
+            };
 
             // Slider: Map Teleport
-            _sliderMapTeleporter = new InterfaceSlider(Resources.GameFont, "settings_redux_dungeonteleport",
-                buttonWidth, sliderHeight, new Point(1, 2), 0, 3, 1, GameSettings.MapTeleport, 
-                number => { GameSettings.MapTeleport = number; })
-                { SetString = number => MapTeleportSliderAdjustment(number) };
+            _sliderMapTeleporter = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_redux_dungeonteleport",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 2),
+                0,
+                3,
+                1,
+                GameSettings.MapTeleport,
+                number =>
+                {
+                    GameSettings.MapTeleport = number;
+                }
+            )
+            {
+                SetString = number => MapTeleportSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderMapTeleporter);
 
             // Toggle: Variable Width Font Toggle:
-            _toggleVariableFont = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_vwfont", GameSettings.VarWidthFont, 
-                newState => { PressButtonDialogFontChange(newState); });
+            _toggleVariableFont = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_vwfont",
+                GameSettings.VarWidthFont,
+                newState =>
+                {
+                    PressButtonDialogFontChange(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleVariableFont);
 
             // Toggle: Disable Helper Interactions:
-            _toggleHelperText = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_nohelptext", GameSettings.NoHelperText, 
-                newState => { PressButtonToggleHelpers(newState); });
+            _toggleHelperText = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_nohelptext",
+                GameSettings.NoHelperText,
+                newState =>
+                {
+                    PressButtonToggleHelpers(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleHelperText);
 
             // Toggle: Enable Dialog Skip:
-            _toggleDialogSkip = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_dialogskip", GameSettings.DialogSkip, 
-                newState => { PressButtonToggleDialogSkip(newState); });
+            _toggleDialogSkip = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_dialogskip",
+                GameSettings.DialogSkip,
+                newState =>
+                {
+                    PressButtonToggleDialogSkip(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleDialogSkip);
 
             // Toggle: Disable Censorship:
-            _toggleUncensored = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_uncensor", GameSettings.Uncensored, 
-                newState => { PressButtonToggleUncensored(newState); });
+            _toggleUncensored = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_uncensor",
+                GameSettings.Uncensored,
+                newState =>
+                {
+                    PressButtonToggleUncensored(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleUncensored);
 
             // Toggle: Enable No Missables:
-            _toggleUnmissables = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_unmissables", GameSettings.Unmissables, 
-                newState => { PressButtonToggleUnmissables(newState); });
+            _toggleUnmissables = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_unmissables",
+                GameSettings.Unmissables,
+                newState =>
+                {
+                    PressButtonToggleUnmissables(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleUnmissables);
 
             // Toggle: Colored Photos:
-            _togglePhotosColor = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_photoscolor", GameSettings.PhotosColor, 
-                newState => { PressButtonTogglePhotosColor(newState); });
+            _togglePhotosColor = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_photoscolor",
+                GameSettings.PhotosColor,
+                newState =>
+                {
+                    PressButtonTogglePhotosColor(newState);
+                }
+            );
             _contentLayout.AddElement(_togglePhotosColor);
 
             // Toggle: No Animal Damage:
-            _toggleAnimalDamage = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_redux_noanimaldmg", GameSettings.NoAnimalDamage, 
-                newState => { PressButtonNoAnimalDamage(newState); });
+            _toggleAnimalDamage = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_redux_noanimaldmg",
+                GameSettings.NoAnimalDamage,
+                newState =>
+                {
+                    PressButtonNoAnimalDamage(newState);
+                }
+            );
             _contentLayout.AddElement(_toggleAnimalDamage);
 
             // Bottom Bar / Back Button:
-            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(100, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             _reduxOptionsList.AddElement(_contentLayout);
             _reduxOptionsList.AddElement(_bottomBar);
             PageLayout = _reduxOptionsList;
@@ -166,18 +288,18 @@ namespace ProjectZ.InGame.Pages
             Game1.GameManager.ItemManager.Load();
         }
 
-        public void PressButtonToggleUnmissables(bool newState) 
+        public void PressButtonToggleUnmissables(bool newState)
         {
             GameSettings.Unmissables = newState;
         }
 
-        public void PressButtonTogglePhotosColor(bool newState) 
+        public void PressButtonTogglePhotosColor(bool newState)
         {
             GameSettings.PhotosColor = newState;
             Resources.RefreshDynamicResources();
         }
 
-        public void PressButtonNoAnimalDamage(bool newState) 
+        public void PressButtonNoAnimalDamage(bool newState)
         {
             GameSettings.NoAnimalDamage = newState;
         }
@@ -189,12 +311,17 @@ namespace ProjectZ.InGame.Pages
                 1 => "settings_redux_dungeonteleport_02",
                 2 => "settings_redux_dungeonteleport_03",
                 3 => "settings_redux_dungeonteleport_04",
-                _ => "settings_redux_dungeonteleport_01"
+                _ => "settings_redux_dungeonteleport_01",
             };
             return " " + Game1.LanguageManager.GetString(option, "error");
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -211,7 +338,7 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_reduxOptionsList.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
@@ -224,26 +351,82 @@ namespace ProjectZ.InGame.Pages
                 index = _sliderMapTeleporter.CurrentStep;
 
                 // Use the selected index to determine which tooltip to show.
-                switch (index) 
+                switch (index)
                 {
-                    case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dungeonteleport_01", "error"); break; }
-                    case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dungeonteleport_02", "error"); break; }
-                    case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dungeonteleport_03", "error"); break; }
-                    case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dungeonteleport_04", "error"); break; }
+                    case 0:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_redux_dungeonteleport_01",
+                            "error"
+                        );
+                        break;
+                    }
+                    case 1:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_redux_dungeonteleport_02",
+                            "error"
+                        );
+                        break;
+                    }
+                    case 2:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_redux_dungeonteleport_03",
+                            "error"
+                        );
+                        break;
+                    }
+                    case 3:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_redux_dungeonteleport_04",
+                            "error"
+                        );
+                        break;
+                    }
                 }
                 // Display the tooltip in the tooltip window.
                 return tooltip;
             }
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_vwfont", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_nohelptext", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_dialogskip", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_uncensor", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_unmissables", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_photoscolor", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_redux_noanimaldmg", "error"); break; }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_vwfont", "error");
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_nohelptext", "error");
+                    break;
+                }
+                case 3:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_dialogskip", "error");
+                    break;
+                }
+                case 4:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_uncensor", "error");
+                    break;
+                }
+                case 5:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_unmissables", "error");
+                    break;
+                }
+                case 6:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_photoscolor", "error");
+                    break;
+                }
+                case 7:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_redux_noanimaldmg", "error");
+                    break;
+                }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

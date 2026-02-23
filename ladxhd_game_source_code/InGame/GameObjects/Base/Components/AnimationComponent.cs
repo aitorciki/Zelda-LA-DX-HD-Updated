@@ -48,12 +48,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public void UpdateSprite()
         {
             var offsetX = MirroredH ? -1 : 1;
-            Sprite.DrawOffset.X = SpriteOffset.X + (Animator.CurrentAnimation.Offset.X +
-                                                    Animator.CurrentFrame.Offset.X) * offsetX;
+            Sprite.DrawOffset.X =
+                SpriteOffset.X
+                + (Animator.CurrentAnimation.Offset.X + Animator.CurrentFrame.Offset.X) * offsetX;
 
             var offsetY = MirroredV ? -1 : 1;
-            Sprite.DrawOffset.Y = SpriteOffset.Y + (Animator.CurrentAnimation.Offset.Y +
-                                                    Animator.CurrentFrame.Offset.Y) * offsetY;
+            Sprite.DrawOffset.Y =
+                SpriteOffset.Y
+                + (Animator.CurrentAnimation.Offset.Y + Animator.CurrentFrame.Offset.Y) * offsetY;
 
             if (MirroredH)
                 Sprite.DrawOffset.X -= Animator.CurrentFrame.SourceRectangle.Width;
@@ -62,8 +64,16 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
             Sprite.SourceRectangle = Animator.CurrentFrame.SourceRectangle;
             Sprite.SpriteEffect =
-                (Animator.CurrentFrame.MirroredV ^ MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
-                (Animator.CurrentFrame.MirroredH ^ MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
+                (
+                    Animator.CurrentFrame.MirroredV ^ MirroredV
+                        ? SpriteEffects.FlipVertically
+                        : SpriteEffects.None
+                )
+                | (
+                    Animator.CurrentFrame.MirroredH ^ MirroredH
+                        ? SpriteEffects.FlipHorizontally
+                        : SpriteEffects.None
+                );
         }
 
         public override void UpdateAnimation()

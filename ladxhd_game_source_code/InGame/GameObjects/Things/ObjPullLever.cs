@@ -36,9 +36,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isGrabbed;
         private bool _wasPulled;
 
-        public ObjPullLever() : base("pull_lever") { }
+        public ObjPullLever()
+            : base("pull_lever") { }
 
-        public ObjPullLever(Map.Map map, int posX, int posY, float retractingSpeed, string openStrKey) : base(map)
+        public ObjPullLever(
+            Map.Map map,
+            int posX,
+            int posY,
+            float retractingSpeed,
+            string openStrKey
+        )
+            : base(map)
         {
             _startPosition = new Point(posX + 8, posY);
 
@@ -58,12 +66,34 @@ namespace ProjectZ.InGame.GameObjects.Things
             var collisionBox = new CBox(_position, -2, -56, 0, 4, 54, 8);
 
             if (!string.IsNullOrEmpty(_openStrKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
 
-            AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(_position, new Rectangle(-3, -4, 6, 2)), null, null, null) { IsStruggle = true, StartGrabbing = StartGrabbing, Pull = OnPull });
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal));
+            AddComponent(
+                CarriableComponent.Index,
+                new CarriableComponent(
+                    new CRectangle(_position, new Rectangle(-3, -4, 6, 2)),
+                    null,
+                    null,
+                    null
+                )
+                {
+                    IsStruggle = true,
+                    StartGrabbing = StartGrabbing,
+                    Pull = OnPull,
+                }
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, _position));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, _position)
+            );
         }
 
         private void OnKeyChange()
@@ -128,8 +158,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void UpdatePlayerPosition()
         {
             // set the position of the player
-            MapManager.ObjLink.EntityPosition.Set(new Vector2(
-                _position.X, _position.Y + MapManager.ObjLink.BodyRectangle.Height - 2));
+            MapManager.ObjLink.EntityPosition.Set(
+                new Vector2(_position.X, _position.Y + MapManager.ObjLink.BodyRectangle.Height - 2)
+            );
         }
 
         private void UpdateLeverState(float offset)
@@ -154,7 +185,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 _position.Move(new Vector2(0, -RetractingSpeed));
                 if (_position.Y < _startPosition.Y + 16 + MinLeverLength)
-                    _position.Set(new Vector2(_startPosition.X, _startPosition.Y + 16 + MinLeverLength));
+                    _position.Set(
+                        new Vector2(_startPosition.X, _startPosition.Y + 16 + MinLeverLength)
+                    );
 
                 _length = _position.Y - 16 - _startPosition.Y;
             }
@@ -165,12 +198,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Draw(SpriteBatch spriteBatch)
         {
             // thing
-            spriteBatch.Draw(_dictLeverTop.Texture,
-                new Rectangle(_startPosition.X - 2, _startPosition.Y, 4, (int)_length + 1), _dictLeverTop.ScaledRectangle, Color.White);
+            spriteBatch.Draw(
+                _dictLeverTop.Texture,
+                new Rectangle(_startPosition.X - 2, _startPosition.Y, 4, (int)_length + 1),
+                _dictLeverTop.ScaledRectangle,
+                Color.White
+            );
 
             // pull thing
-            spriteBatch.Draw(_dictLever.Texture,
-                new Vector2(_position.X - 8, _position.Y - 16), _dictLever.ScaledRectangle, Color.White);
+            spriteBatch.Draw(
+                _dictLever.Texture,
+                new Vector2(_position.X - 8, _position.Y - 16),
+                _dictLever.ScaledRectangle,
+                Color.White
+            );
         }
     }
 }

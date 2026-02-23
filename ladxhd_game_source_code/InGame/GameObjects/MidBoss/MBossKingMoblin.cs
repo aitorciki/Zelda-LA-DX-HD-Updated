@@ -40,12 +40,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private int _throws;
         private bool _endWaiting;
 
-        public MBossKingMoblin() : base("king_moblin") { }
+        public MBossKingMoblin()
+            : base("king_moblin") { }
 
-        public MBossKingMoblin(Map.Map map, int posX, int posY, string triggerKey, string saveKey) : base(map)
+        public MBossKingMoblin(Map.Map map, int posX, int posY, string triggerKey, string saveKey)
+            : base(map)
         {
             // was the boss already defeated?
-            if (!string.IsNullOrEmpty(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -65,7 +70,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animator.Play("wait");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -10, -16, 20, 16, 8)
             {
@@ -73,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 Drag = 0.65f,
                 DragAir = 0.95f,
                 Gravity = -0.15f,
-                FieldRectangle = map.GetField(posX, posY)
+                FieldRectangle = map.GetField(posX, posY),
             };
 
             var stateWaiting = new AiState(UpdateWaiting);
@@ -98,10 +107,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("bounce", stateBounce);
             _aiComponent.States.Add("look", stateLook);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false)
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                true,
+                false
+            )
             {
                 ExplostionWidth = 22,
-                ExplostionHeight = 18
+                ExplostionHeight = 18,
             };
             _damageState.AddBossDamageState(OnDeath);
 
@@ -112,15 +129,39 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer);
 
             if (!string.IsNullOrEmpty(_triggerKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.10f });
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { OnDamagedPlayer = OnDamagedPlayer });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+                {
+                    RepelMultiplier = 2.10f,
+                }
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+                {
+                    OnDamagedPlayer = OnDamagedPlayer,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
@@ -128,9 +169,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void KeyChanged()
         {
             // activate the boss after entering the room
-            if (IsActive &&
-                _aiComponent.CurrentStateId == "waiting" &&
-                Game1.GameManager.SaveManager.GetString(_triggerKey) == "1")
+            if (
+                IsActive
+                && _aiComponent.CurrentStateId == "waiting"
+                && Game1.GameManager.SaveManager.GetString(_triggerKey) == "1"
+            )
             {
                 _endWaiting = true;
             }
@@ -177,10 +220,19 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     var distanceMultiplier = Math.Clamp(
                         Math.Min(
                             (maxDistanceX - Math.Abs(directionToStart.X)) / maxDistanceX,
-                            (maxDistanceY - Math.Abs(directionToStart.Y)) / maxDistanceY), 0, 1);
+                            (maxDistanceY - Math.Abs(directionToStart.Y)) / maxDistanceY
+                        ),
+                        0,
+                        1
+                    );
 
-                    var dir = radiusToCenter + (Math.PI - Game1.RandomNumber.Next(0, 628) / 100f) * distanceMultiplier;
-                    _body.VelocityTarget = new Vector2((float)Math.Cos(dir), (float)Math.Sin(dir)) * 0.125f * Game1.TimeMultiplier;
+                    var dir =
+                        radiusToCenter
+                        + (Math.PI - Game1.RandomNumber.Next(0, 628) / 100f) * distanceMultiplier;
+                    _body.VelocityTarget =
+                        new Vector2((float)Math.Cos(dir), (float)Math.Sin(dir))
+                        * 0.125f
+                        * Game1.TimeMultiplier;
                 }
 
                 _direction = EntityPosition.X < MapManager.ObjLink.EntityPosition.X ? 2 : 0;
@@ -211,7 +263,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     _direction = EntityPosition.X < MapManager.ObjLink.EntityPosition.X ? 2 : 0;
 
                     // On update: charge if thrown at least 2 spears + 1/3 chance, or always after 4 throws.
-                    if (_throws >= 2 && Game1.RandomNumber.Next(0, 3) == 0 || _throws == 4) 
+                    if (_throws >= 2 && Game1.RandomNumber.Next(0, 3) == 0 || _throws == 4)
                     {
                         _throws = 0;
                         ToPreAttack();
@@ -227,7 +279,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 }
                 _animator.Play("idle_" + _direction);
 
-                var targetPosition = new Vector2(MapManager.ObjLink.EntityPosition.X + (_direction == 0 ? 50 : -50), MapManager.ObjLink.EntityPosition.Y);
+                var targetPosition = new Vector2(
+                    MapManager.ObjLink.EntityPosition.X + (_direction == 0 ? 50 : -50),
+                    MapManager.ObjLink.EntityPosition.Y
+                );
                 _moveDirection = targetPosition - EntityPosition.Position;
                 if (_moveDirection != Vector2.Zero)
                     _moveDirection.Normalize();
@@ -255,7 +310,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _aiComponent.ChangeState("postSpear");
 
                 // spawn spear
-                var spear = new EnemySpear(Map, new Vector3(EntityPosition.X, EntityPosition.Y - 9, 3), AnimationHelper.DirectionOffset[_direction] * 2f, _direction);
+                var spear = new EnemySpear(
+                    Map,
+                    new Vector3(EntityPosition.X, EntityPosition.Y - 9, 3),
+                    AnimationHelper.DirectionOffset[_direction] * 2f,
+                    _direction
+                );
                 Map.Objects.SpawnObject(spear);
             }
         }
@@ -333,7 +393,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // spawn fairy
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }
@@ -345,16 +407,39 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (_aiComponent.CurrentStateId == "bounce" || _aiComponent.CurrentStateId == "damage")
             {
                 var sourceRectangle = new Rectangle(188, 11, 4, 4);
-                var distance = new Vector2((float)Math.Sin(Game1.TotalGameTime / 100f) * 8, (float)Math.Cos(Game1.TotalGameTime / 100f) * 3);
+                var distance = new Vector2(
+                    (float)Math.Sin(Game1.TotalGameTime / 100f) * 8,
+                    (float)Math.Cos(Game1.TotalGameTime / 100f) * 3
+                );
 
-                spriteBatch.Draw(Resources.SprMidBoss, new Vector2(
-                    EntityPosition.X + distance.X - 2, EntityPosition.Y - EntityPosition.Z - 18 + distance.Y - 2), sourceRectangle, Color.White);
-                spriteBatch.Draw(Resources.SprMidBoss, new Vector2(
-                    EntityPosition.X - distance.X - 2, EntityPosition.Y - EntityPosition.Z - 18 - distance.Y - 2), sourceRectangle, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprMidBoss,
+                    new Vector2(
+                        EntityPosition.X + distance.X - 2,
+                        EntityPosition.Y - EntityPosition.Z - 18 + distance.Y - 2
+                    ),
+                    sourceRectangle,
+                    Color.White
+                );
+                spriteBatch.Draw(
+                    Resources.SprMidBoss,
+                    new Vector2(
+                        EntityPosition.X - distance.X - 2,
+                        EntityPosition.Y - EntityPosition.Z - 18 - distance.Y - 2
+                    ),
+                    sourceRectangle,
+                    Color.White
+                );
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -380,7 +465,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void OnCollision(Values.BodyCollision direction)
         {
-            if ((direction & Values.BodyCollision.Horizontal) != 0 && _aiComponent.CurrentStateId == "attack")
+            if (
+                (direction & Values.BodyCollision.Horizontal) != 0
+                && _aiComponent.CurrentStateId == "attack"
+            )
                 ToBounce();
         }
     }

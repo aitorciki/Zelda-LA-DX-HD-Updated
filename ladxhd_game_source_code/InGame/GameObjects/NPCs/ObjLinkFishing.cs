@@ -36,7 +36,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _wasInWater;
         private bool _pulledOut;
 
-        public ObjLinkFishing(Map.Map map, int posX, int posY) : base(map)
+        public ObjLinkFishing(Map.Map map, int posX, int posY)
+            : base(map)
         {
             SprEditorImage = Resources.SprLink;
             EditorIconSource = new Rectangle(313, 133, 25, 16);
@@ -62,12 +63,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             MapManager.ObjLink.TransitionInWalking = false;
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-18, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-18, -16)
+            );
 
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
         }
 
         public override void Init()
@@ -94,9 +105,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
 
                 // set the hook position to the animation
-                if (_animator.IsPlaying && _animator.CurrentAnimation.Id == "throw" && _animator.CurrentFrameIndex <= 5)
+                if (
+                    _animator.IsPlaying
+                    && _animator.CurrentAnimation.Id == "throw"
+                    && _animator.CurrentFrameIndex <= 5
+                )
                 {
-                    HookPosition = EntityPosition.Position + new Vector2(-18, -16) + new Vector2(_animator.CollisionRectangle.X, _animator.CollisionRectangle.Y);
+                    HookPosition =
+                        EntityPosition.Position
+                        + new Vector2(-18, -16)
+                        + new Vector2(
+                            _animator.CollisionRectangle.X,
+                            _animator.CollisionRectangle.Y
+                        );
                 }
 
                 // throw hook
@@ -176,7 +197,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                         if (!_wasInWater)
                         {
                             _wasInWater = true;
-                            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 36, 0, "Particles/fishingSplash", "idle", true);
+                            var splashAnimator = new ObjAnimator(
+                                Map,
+                                0,
+                                0,
+                                0,
+                                36,
+                                0,
+                                "Particles/fishingSplash",
+                                "idle",
+                                true
+                            );
                             splashAnimator.EntityPosition.Set(new Vector2(HookPosition.X + 2, 0));
                             Map.Objects.SpawnObject(splashAnimator);
                         }
@@ -198,9 +229,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 else
                 {
                     // Fluctuate the strength of a button press to give the fish the appearance of having more "fight" to them.
-                    float pullStrength = (HookedFish.Type == 0) 
-                        ? GameMath.GetRandomFloat(0.10f, 0.20f)
-                        : GameMath.GetRandomFloat(0.06f, 0.20f);
+                    float pullStrength =
+                        (HookedFish.Type == 0)
+                            ? GameMath.GetRandomFloat(0.10f, 0.20f)
+                            : GameMath.GetRandomFloat(0.06f, 0.20f);
 
                     // I settled on 3 decimal places for a good amount of variation.
                     pullStrength = (float)Math.Round(pullStrength, 3);
@@ -244,15 +276,24 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // "Hook is up/down?" was the original comment. Not sure what this means yet.
             if (_hookVelocity.Y >= 0)
                 source.Y += 16;
-
             // "Rotate color?" was the original comment. Not sure what this means yet either.
             else if (_isFishing && HookPosition.Y >= 28)
                 source.X += 16 * (Game1.TotalGameTime % 200 < 100 ? 1 : 0);
 
             if (HookedFish == null)
-                spriteBatch.Draw(Resources.SprLink, HookPosition - new Vector2(9, 6), source, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprLink,
+                    HookPosition - new Vector2(9, 6),
+                    source,
+                    Color.White
+                );
             else
-                spriteBatch.Draw(Resources.SprLink, HookPosition - new Vector2(4, 6), _hookSourceHooked, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprLink,
+                    HookPosition - new Vector2(4, 6),
+                    _hookSourceHooked,
+                    Color.White
+                );
         }
 
         private void PulledInHook()
@@ -303,7 +344,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void KeyChanged()
         {
             // spawn object
-            if (_isTransitioning || Game1.GameManager.SaveManager.GetString("leavePond") != "yes") return;
+            if (_isTransitioning || Game1.GameManager.SaveManager.GetString("leavePond") != "yes")
+                return;
 
             _isTransitioning = true;
 
@@ -311,7 +353,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.Position;
 
             // append a map change
-            ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange("overworld.map", "pond");
+            (
+                (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+            ).AppendMapChange("overworld.map", "pond");
         }
     }
 }

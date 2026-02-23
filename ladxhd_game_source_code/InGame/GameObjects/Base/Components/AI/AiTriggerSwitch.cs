@@ -16,7 +16,7 @@
             State = true;
             CurrentTime = 0;
         }
-        
+
         public override void Update()
         {
             if (CurrentTime > 0)

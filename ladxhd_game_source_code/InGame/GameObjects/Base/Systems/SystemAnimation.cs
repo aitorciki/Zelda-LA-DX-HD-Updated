@@ -27,19 +27,28 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                Pool.GetComponentList(_objectList, ObjectManager.UpdateField.X, ObjectManager.UpdateField.Y, ObjectManager.UpdateField.Width, ObjectManager.UpdateField.Height, BaseAnimationComponent.Mask);
+                Pool.GetComponentList(
+                    _objectList,
+                    ObjectManager.UpdateField.X,
+                    ObjectManager.UpdateField.Y,
+                    ObjectManager.UpdateField.Width,
+                    ObjectManager.UpdateField.Height,
+                    BaseAnimationComponent.Mask
+                );
                 ObjectManager.FilterObjectsInField(_objectList, ObjectManager.ActualField);
                 _objectListSet.UnionWith(_objectList);
             }
             // Normal Camera: Update objects that are within the viewport.
             else
             {
-                Pool.GetComponentList(_objectList,
+                Pool.GetComponentList(
+                    _objectList,
                     (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                     (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                     (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                    (int)(Game1.RenderHeight / MapManager.Camera.Scale), 
-                    BaseAnimationComponent.Mask);
+                    (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                    BaseAnimationComponent.Mask
+                );
                 _objectListSet.UnionWith(_objectList);
             }
             // Always include certain objects that are flagged as "always animate".
@@ -53,13 +62,21 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             for (int i = 0; i < _objectList.Count; i++)
             {
                 var gameObject = _objectList[i];
-                bool skipObject = freezePersistTypes == null
-                    ? !gameObject.IsActive
-                    : !gameObject.IsActive || !ObjectManager.IsGameObjectType(gameObject, freezePersistTypes);
+                bool skipObject =
+                    freezePersistTypes == null
+                        ? !gameObject.IsActive
+                        : !gameObject.IsActive
+                            || !ObjectManager.IsGameObjectType(gameObject, freezePersistTypes);
 
-                if (skipObject) { continue; }
+                if (skipObject)
+                {
+                    continue;
+                }
 
-                if (gameObject.Components[BaseAnimationComponent.Index] is BaseAnimationComponent animationComponent)
+                if (
+                    gameObject.Components[BaseAnimationComponent.Index]
+                    is BaseAnimationComponent animationComponent
+                )
                     if (!dialogOpen || animationComponent.UpdateWithOpenDialog)
                         animationComponent.UpdateAnimation();
             }

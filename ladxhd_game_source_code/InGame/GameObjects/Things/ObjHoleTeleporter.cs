@@ -12,7 +12,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _roomName;
         private readonly string _entryId;
 
-        public ObjHoleTeleporter(Map.Map map, int posX, int posY, string roomName, string entryId) : base(map)
+        public ObjHoleTeleporter(Map.Map map, int posX, int posY, string roomName, string entryId)
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -25,7 +26,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _entryId = entryId;
 
             var collisionRectangle = new Rectangle(posX, posY, 16, 16);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(collisionRectangle, OnCollision)
+            );
         }
 
         private void OnCollision(GameObject gameObject)

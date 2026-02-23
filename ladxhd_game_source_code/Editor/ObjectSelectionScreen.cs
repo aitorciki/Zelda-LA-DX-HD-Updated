@@ -45,7 +45,10 @@ namespace ProjectZ.Editor
                 }
             }
 
-            _drawSize = new Point(_columns * 32, (int)Math.Ceiling(_objectList.Count / (float)_columns) * 32);
+            _drawSize = new Point(
+                _columns * 32,
+                (int)Math.Ceiling(_objectList.Count / (float)_columns) * 32
+            );
         }
 
         public void Update(GameTime gameTime)
@@ -59,15 +62,23 @@ namespace ProjectZ.Editor
             {
                 _camera.Scale += 0.25f;
                 var scale = _camera.Scale / (_camera.Scale - 0.25f);
-                _camera.Location.X = InputHandler.MousePosition().X - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
-                _camera.Location.Y = InputHandler.MousePosition().Y - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
+                _camera.Location.X =
+                    InputHandler.MousePosition().X
+                    - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
+                _camera.Location.Y =
+                    InputHandler.MousePosition().Y
+                    - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
             }
             if (InputHandler.MouseWheelDown() && _camera.Scale > 1)
             {
                 _camera.Scale -= 0.25f;
                 var scale = _camera.Scale / (_camera.Scale + 0.25f);
-                _camera.Location.X = InputHandler.MousePosition().X - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
-                _camera.Location.Y = InputHandler.MousePosition().Y - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
+                _camera.Location.X =
+                    InputHandler.MousePosition().X
+                    - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
+                _camera.Location.Y =
+                    InputHandler.MousePosition().Y
+                    - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
             }
 
             // move the tileset
@@ -75,13 +86,20 @@ namespace ProjectZ.Editor
                 _camera.Location += position - InputHandler.LastMousePosition();
 
             // update currentSelection
-            if (InputHandler.MouseLeftPressed(new Rectangle(
-                _camera.Location.X, _camera.Location.Y,
-                (int)(_drawSize.X * _camera.Scale),
-                (int)(_drawSize.Y * _camera.Scale))))
+            if (
+                InputHandler.MouseLeftPressed(
+                    new Rectangle(
+                        _camera.Location.X,
+                        _camera.Location.Y,
+                        (int)(_drawSize.X * _camera.Scale),
+                        (int)(_drawSize.Y * _camera.Scale)
+                    )
+                )
+            )
             {
-                var selectionIndex = (int)((position.X - _camera.Location.X) / (32 * _camera.Scale)) +
-                                     (int)((position.Y - _camera.Location.Y) / (32 * _camera.Scale)) * _columns;
+                var selectionIndex =
+                    (int)((position.X - _camera.Location.X) / (32 * _camera.Scale))
+                    + (int)((position.Y - _camera.Location.Y) / (32 * _camera.Scale)) * _columns;
 
                 if (_objectList[selectionIndex] != "" && selectionIndex < _objectList.Count)
                     SelectObject(_objectList[selectionIndex]);
@@ -90,13 +108,28 @@ namespace ProjectZ.Editor
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, _camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _camera.TransformMatrix
+            );
 
             // draw the tiled background
-            spriteBatch.Draw(Resources.SprTiledBlock,
+            spriteBatch.Draw(
+                Resources.SprTiledBlock,
                 new Rectangle(0, 0, _drawSize.X, _drawSize.Y),
-                new Rectangle(0, 0, _drawSize.X / Values.TileSize * 2,
-                                    _drawSize.Y / Values.TileSize * 2), Color.LightGray);
+                new Rectangle(
+                    0,
+                    0,
+                    _drawSize.X / Values.TileSize * 2,
+                    _drawSize.Y / Values.TileSize * 2
+                ),
+                Color.LightGray
+            );
 
             // draw the objects
             var objIndex = 0;
@@ -110,14 +143,24 @@ namespace ProjectZ.Editor
 
                 // draw the selection
                 if (SelectedObjectIndex == objKey)
-                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                            objIndex % _columns * 32,
-                            objIndex / _columns * 32, 32, 32), Color.Red * 0.5f);
+                    spriteBatch.Draw(
+                        Resources.SprWhite,
+                        new Rectangle(objIndex % _columns * 32, objIndex / _columns * 32, 32, 32),
+                        Color.Red * 0.5f
+                    );
 
                 var objTemplate = ObjectEditorScreen.EditorObjectTemplates[objKey];
-                objTemplate.DrawEditor(spriteBatch, new Vector2(
-                    objIndex % _columns * 32 + 16 - objTemplate.EditorIconSource.Width * objTemplate.EditorIconScale / 2,
-                    objIndex / _columns * 32 + 16 - objTemplate.EditorIconSource.Height * objTemplate.EditorIconScale / 2));
+                objTemplate.DrawEditor(
+                    spriteBatch,
+                    new Vector2(
+                        objIndex % _columns * 32
+                            + 16
+                            - objTemplate.EditorIconSource.Width * objTemplate.EditorIconScale / 2,
+                        objIndex / _columns * 32
+                            + 16
+                            - objTemplate.EditorIconSource.Height * objTemplate.EditorIconScale / 2
+                    )
+                );
 
                 objIndex++;
             }
@@ -129,8 +172,12 @@ namespace ProjectZ.Editor
             // draw the name of the selected object
             if (SelectedObjectIndex != null)
             {
-                spriteBatch.DrawString(Resources.EditorFont, SelectedObjectIndex,
-                    new Vector2(5, Game1.WindowHeight - Resources.EditorFontHeight - 5), Color.Red);
+                spriteBatch.DrawString(
+                    Resources.EditorFont,
+                    SelectedObjectIndex,
+                    new Vector2(5, Game1.WindowHeight - Resources.EditorFontHeight - 5),
+                    Color.Red
+                );
             }
 
             spriteBatch.End();
@@ -153,26 +200,47 @@ namespace ProjectZ.Editor
             // draw the background
             spriteBatch.Draw(Resources.SprWhite, rectangle, Color.White * 0.25f);
 
-            if (_selectedObject == null) return;
+            if (_selectedObject == null)
+                return;
 
             // draw the name
-            spriteBatch.DrawString(Resources.EditorFont, SelectedObjectIndex,
-                new Vector2(rectangle.Right - _objectNameTextSize.X - 10, rectangle.Bottom + 5), Color.White);
+            spriteBatch.DrawString(
+                Resources.EditorFont,
+                SelectedObjectIndex,
+                new Vector2(rectangle.Right - _objectNameTextSize.X - 10, rectangle.Bottom + 5),
+                Color.White
+            );
 
             var scale = MathHelper.Min(
-                rectangle.Width / (_selectedObject.EditorIconSource.Width * _selectedObject.EditorIconScale),
-                rectangle.Height / (_selectedObject.EditorIconSource.Height * _selectedObject.EditorIconScale));
+                rectangle.Width
+                    / (_selectedObject.EditorIconSource.Width * _selectedObject.EditorIconScale),
+                rectangle.Height
+                    / (_selectedObject.EditorIconSource.Height * _selectedObject.EditorIconScale)
+            );
 
-            var drawWidth = (int)(scale * _selectedObject.EditorIconSource.Width * _selectedObject.EditorIconScale);
-            var drawHeight = (int)(scale * _selectedObject.EditorIconSource.Height * _selectedObject.EditorIconScale);
+            var drawWidth = (int)(
+                scale * _selectedObject.EditorIconSource.Width * _selectedObject.EditorIconScale
+            );
+            var drawHeight = (int)(
+                scale * _selectedObject.EditorIconSource.Height * _selectedObject.EditorIconScale
+            );
 
             _singleObjectCamera.Scale = scale;
             _singleObjectCamera.Location = new Point(
                 rectangle.X + rectangle.Width / 2 - drawWidth / 2,
-                rectangle.Y + rectangle.Height / 2 - drawHeight / 2);
+                rectangle.Y + rectangle.Height / 2 - drawHeight / 2
+            );
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, _singleObjectCamera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _singleObjectCamera.TransformMatrix
+            );
 
             // draw the selected object
             _selectedObject.DrawEditor(spriteBatch, new Vector2(0, 0));

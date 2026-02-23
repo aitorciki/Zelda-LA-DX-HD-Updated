@@ -22,7 +22,21 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _respawnTimer;
         private bool _respawnedStone;
 
-        public ObjMoveStoneRespawner(Map.Map map, int posX, int posY, int moveDirections, string strKey, string spriteId, Rectangle collisionRectangle, int layer, int type, bool freezePlayer, string resetKey, bool fromSpawner = false) : base(map)
+        public ObjMoveStoneRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            int moveDirections,
+            string strKey,
+            string spriteId,
+            Rectangle collisionRectangle,
+            int layer,
+            int type,
+            bool freezePlayer,
+            string resetKey,
+            bool fromSpawner = false
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -87,7 +101,21 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void SpawnStone()
         {
             Map.Objects.DeleteObjects.Add(this);
-            Map.Objects.SpawnObject(new ObjMoveStone(Map, (int)EntityPosition.X, (int)EntityPosition.Y, _moveDirections, _strKey, _spriteId, _collisionRectangle, _layer, _type, _freezePlayer, _resetKey));
+            Map.Objects.SpawnObject(
+                new ObjMoveStone(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    _moveDirections,
+                    _strKey,
+                    _spriteId,
+                    _collisionRectangle,
+                    _layer,
+                    _type,
+                    _freezePlayer,
+                    _resetKey
+                )
+            );
         }
     }
 }

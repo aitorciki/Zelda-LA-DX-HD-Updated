@@ -17,7 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     internal class EnemyFloorLayer : GameObject
     {
         private readonly List<GameObject> _deactivatedGameObjects = new List<GameObject>();
-        private readonly List<EnemyFloorLayerFloor> _spawnedTiles = new List<EnemyFloorLayerFloor>();
+        private readonly List<EnemyFloorLayerFloor> _spawnedTiles =
+            new List<EnemyFloorLayerFloor>();
 
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
@@ -36,9 +37,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private const float MoveSpeed = 0.5f;
 
-        public EnemyFloorLayer() : base("floor layer") { }
+        public EnemyFloorLayer()
+            : base("floor layer") { }
 
-        public EnemyFloorLayer(Map.Map map, int posX, int posY, int count, string fullKey) : base(map)
+        public EnemyFloorLayer(Map.Map map, int posX, int posY, int count, string fullKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -53,10 +56,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -8, -14, 16, 14, 8)
             {
                 IgnoreHoles = true,
-                CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Player,
-                FieldRectangle = map.GetField(posX, posY)
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Player,
+                FieldRectangle = map.GetField(posX, posY),
             };
 
             var sprite = new CSprite(EntityPosition);
@@ -78,10 +79,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { InertiaTime = 250 });
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_body.BodyBox, OnPush) { InertiaTime = 250 }
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f }
+            );
 
             _aiComponent.ChangeState("idle");
         }
@@ -111,7 +124,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateDead()
         {
             // remove the floor when the player leaves the room and not all tiles where layed
-            if (!_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position) && _moveIndex != _minMoveCount + 1)
+            if (
+                !_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+                && _moveIndex != _minMoveCount + 1
+            )
                 Reactivate();
         }
 
@@ -131,8 +147,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Map.Objects.DeleteObjects.Add(tile);
 
                 // spawn the explosion effect
-                var splashAnimator = new ObjAnimator(Map, (int)tile.EntityPosition.X,
-                    (int)tile.EntityPosition.Y, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
+                var splashAnimator = new ObjAnimator(
+                    Map,
+                    (int)tile.EntityPosition.X,
+                    (int)tile.EntityPosition.Y,
+                    0,
+                    0,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                );
                 Map.Objects.SpawnObject(splashAnimator);
             }
             _spawnedTiles.Clear();
@@ -205,7 +230,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // spawn the floor
             if (spawnFloor)
             {
-                var objFloor = new EnemyFloorLayerFloor(Map, (int)_startPosition.X - 8, (int)_startPosition.Y - 14);
+                var objFloor = new EnemyFloorLayerFloor(
+                    Map,
+                    (int)_startPosition.X - 8,
+                    (int)_startPosition.Y - 14
+                );
                 Map.Objects.SpawnObject(objFloor);
                 _spawnedTiles.Add(objFloor);
             }
@@ -216,8 +245,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Game1.GameManager.PlaySoundEffect("D360-47-2F");
 
                 // spawn the explosion effect
-                var splashAnimator = new ObjAnimator(Map, (int)EntityPosition.X - 8,
-                    (int)EntityPosition.Y - 14, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
+                var splashAnimator = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y - 14,
+                    0,
+                    0,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                );
                 Map.Objects.SpawnObject(splashAnimator);
 
                 if (_moveIndex > _minMoveCount && !string.IsNullOrEmpty(_fullKey))
@@ -226,11 +264,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("dead");
             }
         }
+
         private bool CheckForHole(int posX, int posY)
         {
             // Find holes and lava by using their associated tags.
             _deactivatedGameObjects.Clear();
-            Map.Objects.GetGameObjectsWithTag(_deactivatedGameObjects, Values.GameObjectTag.Hole | Values.GameObjectTag.Trap, posX, posY, 16, 16);
+            Map.Objects.GetGameObjectsWithTag(
+                _deactivatedGameObjects,
+                Values.GameObjectTag.Hole | Values.GameObjectTag.Trap,
+                posX,
+                posY,
+                16,
+                16
+            );
 
             // Loop through the objects that are found.
             for (int i = 0; i < _deactivatedGameObjects.Count; i++)
@@ -239,7 +285,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 var tile = _deactivatedGameObjects[i];
 
                 // We are looking for a hole or lava tile in the same position.
-                if (!tile.IsActive || tile.EntityPosition.Position.X != posX || tile.EntityPosition.Position.Y != posY)
+                if (
+                    !tile.IsActive
+                    || tile.EntityPosition.Position.X != posX
+                    || tile.EntityPosition.Position.Y != posY
+                )
                     continue;
 
                 // If a hole is found return true.

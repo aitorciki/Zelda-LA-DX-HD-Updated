@@ -15,9 +15,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _spawnTime;
         private float _spawnCounter;
 
-        public ObjZombieSpawner() : base("zombie") { }
+        public ObjZombieSpawner()
+            : base("zombie") { }
 
-        public ObjZombieSpawner(Map.Map map, int posX, int posY, int spawnTime) : base(map)
+        public ObjZombieSpawner(Map.Map map, int posX, int posY, int spawnTime)
+            : base(map)
         {
             _triggerField = map.GetField(posX, posY);
             _spawnTime = spawnTime;
@@ -28,7 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
-        
+
         private void Update()
         {
             bool inZombieField = _triggerField.Contains(MapManager.ObjLink.CenterPosition.Position);
@@ -49,9 +51,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                     // found a good position?
                     var collidingRectangle = Box.Empty;
-                    if (!Map.Objects.Collision(new Box(posX, posY, 0, 16, 16, 8), Box.Empty,
-                        Values.CollisionTypes.Normal | Values.CollisionTypes.Enemy | Values.CollisionTypes.Passageway | Values.CollisionTypes.Player, 0, 0,
-                        ref collidingRectangle))
+                    if (
+                        !Map.Objects.Collision(
+                            new Box(posX, posY, 0, 16, 16, 8),
+                            Box.Empty,
+                            Values.CollisionTypes.Normal
+                                | Values.CollisionTypes.Enemy
+                                | Values.CollisionTypes.Passageway
+                                | Values.CollisionTypes.Player,
+                            0,
+                            0,
+                            ref collidingRectangle
+                        )
+                    )
                     {
                         var newZombie = new EnemyZombie(Map, posX, posY);
                         Map.Objects.SpawnObject(newZombie);

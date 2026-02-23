@@ -32,9 +32,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         // the butterfly will stay around this distance from the start point
         private int _startDistance;
 
-        public ObjButterfly() : base("butterfly") { }
+        public ObjButterfly()
+            : base("butterfly") { }
 
-        public ObjButterfly(Map.Map map, int posX, int posY) : base(map)
+        public ObjButterfly(Map.Map map, int posX, int posY)
+            : base(map)
         {
             _startPosition = new Vector2(posX, posY);
             EntityPosition = new CPosition(posX + 8, posY + 8 + 15, 15);
@@ -74,7 +76,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 var startDifference = EntityPosition.Position - _startPosition;
                 var targetRotation = Math.Atan2(startDifference.Y, startDifference.X);
-                var randomDirection = ((Game1.RandomNumber.Next(0, 20) - 10) / 6f) * ((float)Math.PI / (60 * (_flyCounter / 1000f)));
+                var randomDirection =
+                    ((Game1.RandomNumber.Next(0, 20) - 10) / 6f)
+                    * ((float)Math.PI / (60 * (_flyCounter / 1000f)));
 
                 var rotationDifference = (float)targetRotation - _currentRotation;
                 while (rotationDifference < 0)
@@ -86,7 +90,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 // calculate the new rotation direction of the butterfly
                 // the farther away it is from the start position the more likely it is to rotate to face the start position
-                _directionChange = MathHelper.Lerp(randomDirection, newRotation, startDifference.Length() / _startDistance);
+                _directionChange = MathHelper.Lerp(
+                    randomDirection,
+                    newRotation,
+                    startDifference.Length() / _startDistance
+                );
             }
 
             // update the speed
@@ -95,8 +103,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // update direction
             _currentRotation += _directionChange * Game1.TimeMultiplier;
             _currentRotation = _currentRotation % (float)(Math.PI * 2);
-            _direction = new Vector2((float)Math.Cos(_currentRotation), (float)Math.Sin(_currentRotation)) *
-                         (_animator.CurrentFrameIndex == 0 ? _currentSpeed : _currentSpeed * 1.125f);
+            _direction =
+                new Vector2((float)Math.Cos(_currentRotation), (float)Math.Sin(_currentRotation))
+                * (_animator.CurrentFrameIndex == 0 ? _currentSpeed : _currentSpeed * 1.125f);
             EntityPosition.Move(_direction);
         }
     }

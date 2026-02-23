@@ -32,14 +32,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dirIndex;
         private int _lives = EnemyLives.Raven;
 
-        public EnemyRaven() : base("raven") { }
+        public EnemyRaven()
+            : base("raven") { }
 
-        public EnemyRaven(Map.Map map, int posX, int posY) : base(map)
+        public EnemyRaven(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 12, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 12, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 12, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = false;
 
@@ -48,13 +50,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/raven");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-7, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-7, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -14, 12, 14, 8)
             {
                 CollisionTypes = Values.CollisionTypes.None,
                 IgnoreHoles = true,
-                IgnoresZ = true
+                IgnoresZ = true,
             };
             var stateIdle = new AiState(UpdateIdle);
             stateIdle.Trigger.Add(new AiTriggerCountdown(1000, null, StartWaiting));
@@ -68,20 +74,43 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("start", stateStart);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                true,
+                false
+            );
 
             _aiComponent.ChangeState("idle");
 
             // the player can jump over the enemy...
             var damageCollider = new CBox(EntityPosition, -6, -14, 0, 12, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(damageCollider, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(damageCollider, OnPush)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerTop));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerTop)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             var spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -129,23 +158,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Play("fly_" + _dirIndex);
 
-            EntityPosition.Set(new Vector3(
-                EntityPosition.X,
-                EntityPosition.Y,
-                EntityPosition.Z + 0.5f * Game1.TimeMultiplier));
+            EntityPosition.Set(
+                new Vector3(
+                    EntityPosition.X,
+                    EntityPosition.Y,
+                    EntityPosition.Z + 0.5f * Game1.TimeMultiplier
+                )
+            );
 
             if (EntityPosition.Z >= 15)
             {
                 EntityPosition.Z = 15;
                 _aiComponent.ChangeState("flying");
-                _dirRadius = Math.Atan2(MapManager.ObjLink.PosY - EntityPosition.Y, MapManager.ObjLink.PosX - EntityPosition.X);
+                _dirRadius = Math.Atan2(
+                    MapManager.ObjLink.PosY - EntityPosition.Y,
+                    MapManager.ObjLink.PosX - EntityPosition.X
+                );
             }
             UpdateFlyingSound();
         }
 
         private void UpdateFlying()
         {
-            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+            var direction =
+                MapManager.ObjLink.Position
+                - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             var directionRadius = Math.Atan2(direction.Y, direction.X);
             var distance = direction.Length();
 
@@ -189,7 +226,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.Color = Color.White * MathHelper.Clamp(_fadeOutTime / 100, 0, 1);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

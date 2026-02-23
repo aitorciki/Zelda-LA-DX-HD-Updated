@@ -22,8 +22,18 @@ namespace ProjectZ.InGame.GameObjects.Things
         // TODO_OPT: should probably only switch the tilemap values
         // one object could update a lot of tiles in the tilemap
         // would be better for performance
-        public ObjAnimatedTile(Map.Map map, int posX, int posY,
-            string spriteId, int frames, int animationSpeed, bool sync, int spriteEffects, int drawLayer) : base(map)
+        public ObjAnimatedTile(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spriteId,
+            int frames,
+            int animationSpeed,
+            bool sync,
+            int spriteEffects,
+            int drawLayer
+        )
+            : base(map)
         {
             var sprite = Resources.GetSprite(spriteId);
 
@@ -40,14 +50,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             Sprite = new CSprite(sprite.Texture, EntityPosition, _sourceRectangle, Vector2.Zero)
             {
                 Scale = sprite.Scale,
-                SpriteEffect = (SpriteEffects)spriteEffects
+                SpriteEffect = (SpriteEffects)spriteEffects,
             };
 
-            AddComponent(UpdateComponent.Index, new UpdateComponent(sync ? UpdateSync : UpdateNoSync));
+            AddComponent(
+                UpdateComponent.Index,
+                new UpdateComponent(sync ? UpdateSync : UpdateNoSync)
+            );
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, drawLayer));
 
             // randomize the starting state of the animation
-            if (!sync) 
+            if (!sync)
                 RandomizeStartFrame();
         }
 
@@ -70,8 +83,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         public void UpdateSync()
         {
             // all the animations are in sync
-            _currentFrame = (int)Game1.TotalGameTime %
-                            (_frames * _animationSpeed) / _animationSpeed;
+            _currentFrame =
+                (int)Game1.TotalGameTime % (_frames * _animationSpeed) / _animationSpeed;
 
             UpdateSourceRectangle();
         }

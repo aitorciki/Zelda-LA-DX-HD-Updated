@@ -33,9 +33,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _lives = EnemyLives.GenieBottle;
         private bool _showedStunnedMessage;
 
-        public BossGenieBottle() : base("genie") { }
+        public BossGenieBottle()
+            : base("genie") { }
 
-        public BossGenieBottle(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public BossGenieBottle(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -44,7 +46,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _spawnTargetPosition = new Vector2(EntityPosition.X, EntityPosition.Y + 24);
 
-            if (!string.IsNullOrWhiteSpace(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrWhiteSpace(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 // respawn the heart if the player died after he killed the boss without collecting the heart
                 SpawnHeart();
@@ -54,7 +59,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             // add the genie to the map
-            _objGenie = new BossGenie(map, saveKey, new Vector3(EntityPosition.X, EntityPosition.Y, 0), this);
+            _objGenie = new BossGenie(
+                map,
+                saveKey,
+                new Vector3(EntityPosition.X, EntityPosition.Y, 0),
+                this
+            );
             map.Objects.SpawnObject(_objGenie);
 
             _animator = AnimatorSaveLoad.LoadAnimator("Nightmares/genie bottle");
@@ -72,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 Drag = 0.65f,
                 DragAir = 1.0f,
                 MoveCollision = OnCollision,
-                FieldRectangle = Map.GetField(posX, posY, 16)
+                FieldRectangle = Map.GetField(posX, posY, 16),
             };
 
             var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8, true);
@@ -82,7 +92,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var stateIdle = new AiState(UpdateIdle);
             var stateTriggered = new AiState();
-            stateTriggered.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("spawn")));
+            stateTriggered.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("spawn"))
+            );
             var stateSpawn = new AiState(UpdateSpawn) { Init = InitSpawn };
             var stateSpawnDelay = new AiState { Init = InitSpawnDelay };
             stateSpawnDelay.Trigger.Add(new AiTriggerCountdown(3300, null, EndSpawnDelay));
@@ -91,7 +103,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateSpawned = new AiState();
             var stateFollow = new AiState(UpdateFollow) { Init = InitFollow };
             var stateStunned = new AiState(UpdateStunned);
-            stateStunned.Trigger.Add(new AiTriggerCountdown(2500, null, () => _aiComponent.ChangeState("shaking")));
+            stateStunned.Trigger.Add(
+                new AiTriggerCountdown(2500, null, () => _aiComponent.ChangeState("shaking"))
+            );
             var stateShaking = new AiState();
             stateShaking.Trigger.Add(new AiTriggerCountdown(600, TickShake, ShakeEnd));
             var stateGrabbed = new AiState();
@@ -113,20 +127,54 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("grabbed", stateGrabbed);
             _aiComponent.States.Add("return", stateReturn);
             _aiComponent.States.Add("thrown", stateThrown);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { MoveBody = false, OnDeath = OnDeath, BossHitSound = true };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                MoveBody = false,
+                OnDeath = OnDeath,
+                BossHitSound = true,
+            };
 
             _aiComponent.ChangeState("idle");
 
             AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(carryRectangle, CarryInit, CarryUpdate, CarryThrow) { IsActive = false });
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableComponent = new CarriableComponent(
+                    carryRectangle,
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(pushableBox, Values.CollisionTypes.Enemy) { IsActive = false });
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    pushableBox,
+                    Values.CollisionTypes.Enemy
+                )
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 6 });
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -291,7 +339,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Game1.GameManager.PlaySoundEffect("D360-32-20");
 
             // follow the player
-            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
+            var direction =
+                MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
             if (direction != Vector2.Zero)
             {
                 direction.Normalize();
@@ -328,16 +377,35 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void SpawnHeart()
         {
             // spawn big heart
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y, "", "d2_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y,
+                    "",
+                    "d2_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
 
         private void OnCollision(Values.BodyCollision collision)
         {
-            if (_aiComponent.CurrentStateId == "thrown" &&
-                (collision & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
+            if (
+                _aiComponent.CurrentStateId == "thrown"
+                && (collision & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical))
+                    != 0
+            )
             {
                 _aiComponent.ChangeState("return");
-                _damageState.OnHit(MapManager.ObjLink, Vector2.Zero, HitType.ThrownObject, 1, false);
+                _damageState.OnHit(
+                    MapManager.ObjLink,
+                    Vector2.Zero,
+                    HitType.ThrownObject,
+                    1,
+                    false
+                );
 
                 _body.Velocity.X = -_body.Velocity.X * 0.2f;
                 _body.Velocity.Y = -_body.Velocity.Y * 0.2f;
@@ -345,7 +413,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

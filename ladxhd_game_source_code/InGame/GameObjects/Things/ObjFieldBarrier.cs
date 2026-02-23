@@ -15,12 +15,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         public int Width;
         public int Height;
 
-        public ObjFieldBarrier(Map.Map map, int posX, int posY, Values.CollisionTypes type, Rectangle rectangle) : base(map)
+        public ObjFieldBarrier(
+            Map.Map map,
+            int posX,
+            int posY,
+            Values.CollisionTypes type,
+            Rectangle rectangle
+        )
+            : base(map)
         {
             Position.X = posX;
             Position.Y = posY;
 
-            Width  = rectangle.Width;
+            Width = rectangle.Width;
             Height = rectangle.Height;
 
             EditorIconSource = new Rectangle(0, 0, Width, Height);
@@ -29,9 +36,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(0, 0, Width, Height);
 
             Rect = rectangle;
-            CollisionBox = new Box(Position.X + rectangle.X, Position.Y + rectangle.Y, 0, Width, Height, 16);
+            CollisionBox = new Box(
+                Position.X + rectangle.X,
+                Position.Y + rectangle.Y,
+                0,
+                Width,
+                Height,
+                16
+            );
 
-            AddComponent(CollisionComponent.Index, new CollisionComponent(DetectCollision) { CollisionType = type });
+            AddComponent(
+                CollisionComponent.Index,
+                new CollisionComponent(DetectCollision) { CollisionType = type }
+            );
         }
 
         public void SetPosition(int posX, int posY)

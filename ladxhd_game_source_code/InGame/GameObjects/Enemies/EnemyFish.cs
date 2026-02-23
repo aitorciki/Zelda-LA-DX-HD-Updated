@@ -29,14 +29,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = EnemyLives.Fish;
 
         // blinking
-        public EnemyFish() : base("fish") { }
+        public EnemyFish()
+            : base("fish") { }
 
-        public EnemyFish(Map.Map map, int posX, int posY) : base(map)
+        public EnemyFish(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 11, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 11, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 11, 0);
             EntitySize = new Rectangle(-8, -11 - 16, 16, 32);
             CanReset = true;
             OnReset = Reset;
@@ -53,10 +55,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Gravity = -0.075f,
                 DragAir = 1.0f,
                 IgnoreHeight = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NonWater |
-                                 Values.CollisionTypes.NPCWall
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NonWater
+                    | Values.CollisionTypes.NPCWall,
             };
 
             // start swimming randomly left or right
@@ -65,14 +68,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // states
             var stateSwim = new AiState(UpdateSwim) { Init = StartSwimming };
-            stateSwim.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("jump"), 1500, 3000));
+            stateSwim.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("jump"), 1500, 3000)
+            );
             var stateJump = new AiState(UpdateJump) { Init = StartJump };
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("swim", stateSwim);
             _aiComponent.States.Add("jump", stateJump);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
-            { HitMultiplierX = 0, HitMultiplierY = 0, FlameOffset = new Point(0, 2), IsActive = false, OnBurn = OnBurn };
+            {
+                HitMultiplierX = 0,
+                HitMultiplierY = 0,
+                FlameOffset = new Point(0, 2),
+                IsActive = false,
+                OnBurn = OnBurn,
+            };
 
             _aiComponent.ChangeState("swim");
 
@@ -80,13 +91,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -8, -11, 0, 16, 14, 8, true);
             var pushableBox = new CBox(EntityPosition, -7, -11, 0, 14, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, _damageState.OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, _damageState.OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { DeepWaterOutline = true, WaterOutlineOffsetY = 1 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+                {
+                    DeepWaterOutline = true,
+                    WaterOutlineOffsetY = 1,
+                }
+            );
         }
 
         private void Reset()
@@ -125,10 +152,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Game1.GameManager.PlaySoundEffect("D360-14-0E", false, EntityPosition.Position);
 
             // spawn splash effect
-            var fallAnimation = new ObjAnimator(_body.Owner.Map,
+            var fallAnimation = new ObjAnimator(
+                _body.Owner.Map,
                 (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
                 (int)(_body.Position.Y + _body.OffsetY + 9),
-                Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                Values.LayerPlayer,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             _body.Owner.Map.Objects.SpawnObject(fallAnimation);
         }
 
@@ -145,12 +177,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Play(_body.Velocity.Z > 0 ? "jump_up" : "jump_down");
             _damageState.IsActive = true;
-            _sprite.SpriteEffect = _direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            _sprite.SpriteEffect =
+                _direction > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
         {
-            if (pushType == PushableComponent.PushType.Impact && _aiComponent.CurrentStateId == "jump")
+            if (
+                pushType == PushableComponent.PushType.Impact
+                && _aiComponent.CurrentStateId == "jump"
+            )
             {
                 _body.Velocity.X += direction.X;
                 _body.Velocity.Y += direction.Y;

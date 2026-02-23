@@ -16,9 +16,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _currentEnabled;
 
         // @TODO: fade in/out
-        public ObjMusicTile() : base("editor music") { }
+        public ObjMusicTile()
+            : base("editor music") { }
 
-        public ObjMusicTile(Map.Map map, int posX, int posY) : base(map)
+        public ObjMusicTile(Map.Map map, int posX, int posY)
+            : base(map)
         {
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
@@ -34,10 +36,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Offset the Y position by 4 pixels to match Link's body box center.
             var position = new Point(
                 (int)(MapManager.ObjLink.PosX - Map.MapOffsetX * Values.TileSize) / 16,
-                (int)(MapManager.ObjLink.PosY - 4 - Map.MapOffsetY * Values.TileSize) / 16);
+                (int)(MapManager.ObjLink.PosY - 4 - Map.MapOffsetY * Values.TileSize) / 16
+            );
 
-            if (0 <= position.X && position.X < _musicData.GetLength(0) &&
-                0 <= position.Y && position.Y < _musicData.GetLength(1))
+            if (
+                0 <= position.X
+                && position.X < _musicData.GetLength(0)
+                && 0 <= position.Y
+                && position.Y < _musicData.GetLength(1)
+            )
             {
                 var track = _musicData[position.X, position.Y];
 
@@ -65,7 +72,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 musicTileData = "musicOverworldClassic.data";
 
             // Reload the data into the game.
-            _musicData = DataMapSerializer.LoadData(Path.Combine(Values.PathContentFolder, musicTileData));
+            _musicData = DataMapSerializer.LoadData(
+                Path.Combine(Values.PathContentFolder, musicTileData)
+            );
 
             // Update the currently enabled boolean to detect a future change.
             _currentEnabled = GameSettings.ClassicMusic;

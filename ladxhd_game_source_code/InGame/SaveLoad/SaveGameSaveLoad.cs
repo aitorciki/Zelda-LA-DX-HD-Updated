@@ -16,14 +16,22 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static bool SaveExists(int slot)
         {
-            return SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)) &&
-                   SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
+            return SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveFileName + slot))
+                && SaveManager.FileExists(
+                    Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot)
+                );
         }
 
         public static bool CopySaveFile(int from, int to)
         {
-            return CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + from), Path.Combine(Values.PathSaveFolder, SaveFileName + to)) &&
-                   CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + from), Path.Combine(Values.PathSaveFolder, SaveFileNameGame + to));
+            return CopySaveFile(
+                    Path.Combine(Values.PathSaveFolder, SaveFileName + from),
+                    Path.Combine(Values.PathSaveFolder, SaveFileName + to)
+                )
+                && CopySaveFile(
+                    Path.Combine(Values.PathSaveFolder, SaveFileNameGame + from),
+                    Path.Combine(Values.PathSaveFolder, SaveFileNameGame + to)
+                );
         }
 
         public static bool CopySaveFile(string fromFile, string toFile)
@@ -43,8 +51,8 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static bool DeleteSaveFile(int slot)
         {
-            return DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)) &&
-                   DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
+            return DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + slot))
+                && DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
         }
 
         private static bool DeleteSaveFile(string filePath)
@@ -61,14 +69,20 @@ namespace ProjectZ.InGame.SaveLoad
         public static void SaveGame(GameManager gameManager, bool showIcon)
         {
             // save the game variables
-            gameManager.SaveManager.Save(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + gameManager.SaveSlot), Values.SaveRetries);
+            gameManager.SaveManager.Save(
+                Path.Combine(Values.PathSaveFolder, SaveFileNameGame + gameManager.SaveSlot),
+                Values.SaveRetries
+            );
 
             // player variables
             // is this state already created before starting a sequence?
             if (playerSaveState == null)
                 FillSaveState(ref playerSaveState, gameManager);
 
-            playerSaveState.Save(Path.Combine(Values.PathSaveFolder, SaveFileName + gameManager.SaveSlot), Values.SaveRetries);
+            playerSaveState.Save(
+                Path.Combine(Values.PathSaveFolder, SaveFileName + gameManager.SaveSlot),
+                Values.SaveRetries
+            );
             playerSaveState = null;
 
             // Show the save icon.
@@ -100,7 +114,10 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("ocarinaSong", gameManager.SelectedOcarinaSong);
             saveManager.SetInt("guardianAcornCount", gameManager.GuardianAcornCount);
             saveManager.SetInt("pieceOfPowerCount", gameManager.PieceOfPowerCount);
-            saveManager.SetFloat("totalPlaytime", gameManager.TotalPlaytime + gameManager.CurrentSessionPlaytime);
+            saveManager.SetFloat(
+                "totalPlaytime",
+                gameManager.TotalPlaytime + gameManager.CurrentSessionPlaytime
+            );
             saveManager.SetBool("cleared", gameManager.GameCleared);
             saveManager.SetBool("debugMode", gameManager.DebugMode);
 
@@ -153,7 +170,8 @@ namespace ProjectZ.InGame.SaveLoad
             for (var i = 0; i < gameManager.CollectedItems.Count; i++)
             {
                 var strItem = "";
-                strItem += gameManager.CollectedItems[i].Name + ":" + gameManager.CollectedItems[i].Count;
+                strItem +=
+                    gameManager.CollectedItems[i].Name + ":" + gameManager.CollectedItems[i].Count;
 
                 if (gameManager.CollectedItems[i].LocationBounding != null)
                     strItem += ":" + gameManager.CollectedItems[i].LocationBounding;
@@ -168,7 +186,8 @@ namespace ProjectZ.InGame.SaveLoad
                 {
                     var index = y / 2;
                     for (var x = 0; x < 16; x++)
-                        values[index] = values[index] << 1 | (gameManager.MapVisibility[x, y] ? 0x1 : 0x0);
+                        values[index] =
+                            values[index] << 1 | (gameManager.MapVisibility[x, y] ? 0x1 : 0x0);
                 }
 
             for (var i = 0; i < values.Length; i++)
@@ -177,7 +196,11 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static void LoadSaveFile(GameManager gameManager, int slot)
         {
-            if (!gameManager.SaveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot)))
+            if (
+                !gameManager.SaveManager.LoadFile(
+                    Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot)
+                )
+            )
                 return;
 
             var saveManager = new SaveManager();
@@ -210,7 +233,8 @@ namespace ProjectZ.InGame.SaveLoad
             if (saveManager.ContainsValue("mapPosX"))
                 gameManager.PlayerMapPosition = new Point(
                     saveManager.GetInt("mapPosX"),
-                    saveManager.GetInt("mapPosY"));
+                    saveManager.GetInt("mapPosY")
+                );
             else
                 gameManager.PlayerMapPosition = null;
 
@@ -308,10 +332,7 @@ namespace ProjectZ.InGame.SaveLoad
             var strSplit = strItem.Split(':');
 
             // set the item name and count
-            var item = new GameItemCollected(strSplit[0])
-            {
-                Count = Convert.ToInt16(strSplit[1])
-            };
+            var item = new GameItemCollected(strSplit[0]) { Count = Convert.ToInt16(strSplit[1]) };
 
             // check if the item is location bound
             if (strSplit.Length > 2)

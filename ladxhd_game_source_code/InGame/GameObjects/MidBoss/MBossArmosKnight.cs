@@ -32,16 +32,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private const float WalkSpeed = 0.6f;
         private const int AttackUpTime = 400;
 
-        public MBossArmosKnight() : base("armos knight") { }
+        public MBossArmosKnight()
+            : base("armos knight") { }
 
-        public MBossArmosKnight(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public MBossArmosKnight(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 32, 0);
             EntitySize = new Rectangle(-16, -32, 32, 32);
 
             // check if the boss was already killed
             _saveKey = saveKey;
-            if (!string.IsNullOrEmpty(_saveKey) && Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 // we need to make sure to spawn the key because the player could walk out after killing the boss without collecting the key
                 SpawnKey();
@@ -59,7 +64,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 IgnoreHoles = true,
                 Gravity = -0.15f,
                 DragAir = 0.875f,
-                MaxJumpHeight = 8
+                MaxJumpHeight = 8,
             };
 
             _aiComponent = new AiComponent();
@@ -72,12 +77,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var stateWalk = new AiState(UpdateWalk) { Init = InitWalk };
             var stateJump = new AiState();
             var stateAttackUp = new AiState { Init = InitAttackUp };
-            stateAttackUp.Trigger.Add(new AiTriggerCountdown(AttackUpTime, AttackUpTick, AttackUpEnd));
+            stateAttackUp.Trigger.Add(
+                new AiTriggerCountdown(AttackUpTime, AttackUpTick, AttackUpEnd)
+            );
             var stateAttackWait = new AiState();
-            stateAttackWait.Trigger.Add(new AiTriggerCountdown(200, null, () => _aiComponent.ChangeState("attack")));
+            stateAttackWait.Trigger.Add(
+                new AiTriggerCountdown(200, null, () => _aiComponent.ChangeState("attack"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             var stateAttackFinished = new AiState();
-            stateAttackFinished.Trigger.Add(new AiTriggerCountdown(850, null, () => _aiComponent.ChangeState("walk")));
+            stateAttackFinished.Trigger.Add(
+                new AiTriggerCountdown(850, null, () => _aiComponent.ChangeState("walk"))
+            );
 
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("awake", stateAwake);
@@ -88,21 +99,39 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("attackWait", stateAttackWait);
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("attackFinished", stateAttackFinished);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { BossHitSound = true };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false)
+            {
+                BossHitSound = true,
+            };
             _aiDamageState.AddBossDamageState(RemoveObject);
 
             _aiComponent.ChangeState("idle");
 
             var damageCollider = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
             var hittableBox = new CBox(EntityPosition, -13, -24, 0, 26, 22, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 24, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 24, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
@@ -138,7 +167,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void ShakeTick(double counter)
         {
             // 5 frames to go left/right
-            _animationComponent.SpriteOffset.X = MathF.Sin(MathF.PI * ((ShakeTime - (float)counter) / 1000 * (60 / 5f)));
+            _animationComponent.SpriteOffset.X = MathF.Sin(
+                MathF.PI * ((ShakeTime - (float)counter) / 1000 * (60 / 5f))
+            );
             _animationComponent.UpdateSprite();
         }
 
@@ -198,7 +229,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void AttackUpTick(double time)
         {
-            EntityPosition.Z = MathF.Sin((float)((AttackUpTime - time) / AttackUpTime) * MathF.PI * 0.5f) * 38;
+            EntityPosition.Z =
+                MathF.Sin((float)((AttackUpTime - time) / AttackUpTime) * MathF.PI * 0.5f) * 38;
         }
 
         private void AttackUpEnd()
@@ -255,10 +287,38 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var randomOffset2 = Game1.RandomNumber.Next(90, 110) / 100f;
             var randomOffset3 = Game1.RandomNumber.Next(90, 110) / 100f;
 
-            var stone0 = new ObjSmallStone(Map, (int)EntityPosition.X - 3, (int)EntityPosition.Y, (int)EntityPosition.Z + 26, new Vector3(-0.25f, 0.25f * 1, 0.85f) * randomOffset0, true);
-            var stone1 = new ObjSmallStone(Map, (int)EntityPosition.X - 4, (int)EntityPosition.Y + 8, (int)EntityPosition.Z + 26, new Vector3(-0.35f, 0.25f * 1, 0.85f) * randomOffset1, true);
-            var stone2 = new ObjSmallStone(Map, (int)EntityPosition.X + 3, (int)EntityPosition.Y, (int)EntityPosition.Z + 26, new Vector3(0.25f, 0.25f * 1, 0.85f) * randomOffset2, true);
-            var stone3 = new ObjSmallStone(Map, (int)EntityPosition.X + 4, (int)EntityPosition.Y + 8, (int)EntityPosition.Z + 26, new Vector3(0.35f, 0.25f * 1, 0.85f) * randomOffset3, true);
+            var stone0 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X - 3,
+                (int)EntityPosition.Y,
+                (int)EntityPosition.Z + 26,
+                new Vector3(-0.25f, 0.25f * 1, 0.85f) * randomOffset0,
+                true
+            );
+            var stone1 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X - 4,
+                (int)EntityPosition.Y + 8,
+                (int)EntityPosition.Z + 26,
+                new Vector3(-0.35f, 0.25f * 1, 0.85f) * randomOffset1,
+                true
+            );
+            var stone2 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X + 3,
+                (int)EntityPosition.Y,
+                (int)EntityPosition.Z + 26,
+                new Vector3(0.25f, 0.25f * 1, 0.85f) * randomOffset2,
+                true
+            );
+            var stone3 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X + 4,
+                (int)EntityPosition.Y + 8,
+                (int)EntityPosition.Z + 26,
+                new Vector3(0.35f, 0.25f * 1, 0.85f) * randomOffset3,
+                true
+            );
 
             Map.Objects.SpawnObject(stone0);
             Map.Objects.SpawnObject(stone1);
@@ -297,7 +357,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (_aiDamageState.CurrentLives <= 0 || _aiDamageState.IsInDamageState())
                 return Values.HitCollision.None;
@@ -314,9 +380,19 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return Values.HitCollision.RepellingParticle;
 
             // In the original game, he could be damaged by the bow, a sword spin, or when dashing with pegasus boots.
-            if ((hitType & HitType.SwordSpin) != 0 || (hitType & HitType.Bow) != 0 || (hitType & HitType.PegasusBootsSword) != 0 )
+            if (
+                (hitType & HitType.SwordSpin) != 0
+                || (hitType & HitType.Bow) != 0
+                || (hitType & HitType.PegasusBootsSword) != 0
+            )
             {
-                var hitCollision = _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
+                var hitCollision = _aiDamageState.OnHit(
+                    gameObject,
+                    direction,
+                    hitType,
+                    damage,
+                    pieceOfPower
+                );
 
                 if (_aiDamageState.CurrentLives <= 0)
                 {

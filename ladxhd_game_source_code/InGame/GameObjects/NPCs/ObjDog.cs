@@ -28,12 +28,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private int _direction;
 
-        public ObjDog() : base("dog") { }
+        public ObjDog()
+            : base("dog") { }
 
-        public ObjDog(Map.Map map, int posX, int posY) : base(map)
+        public ObjDog(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             CanReset = true;
@@ -45,14 +47,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Gravity = -0.15f,
                 Drag = 0.75f,
                 DragAir = 0.95f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Player,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Player,
+                AvoidTypes =
+                    Values.CollisionTypes.Hole
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Player,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/dog");
@@ -60,13 +64,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var animationComponent = new AnimationComponent(_animator, sprite, Vector2.Zero);
 
             var stateIdle = new AiState() { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500)
+            );
             var stateWalking = new AiState(UpdateWalking) { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1500));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1500)
+            );
             stateWalking.Trigger.Add(_changeDirectionSwitch = new AiTriggerSwitch(250));
             var stateListening = new AiState(UpdateListening);
             var statePreAttack = new AiState();
-            statePreAttack.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("attack")));
+            statePreAttack.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("attack"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
 
             _aiComponent = new AiComponent();
@@ -75,21 +85,45 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("listening", stateListening);
             _aiComponent.States.Add("preAttack", statePreAttack);
             _aiComponent.States.Add("attack", stateAttack);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, 2)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 10) < 5 ? "idle" : "walking");
 
             var box = new CBox(EntityPosition, -7, -14, 14, 14, 8);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(box, OnHit));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(box, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
-            AddComponent(InteractComponent.Index, _interactComponent = new InteractComponent(_body.BodyBox, Interact));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 }
+            );
+            AddComponent(
+                InteractComponent.Index,
+                _interactComponent = new InteractComponent(_body.BodyBox, Interact)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -121,7 +155,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
             else
                 _marinPosition = Vector2.Zero;
-            
         }
 
         private void InitIdle()
@@ -138,7 +171,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
             var speed = Game1.RandomNumber.Next(40, 55) / 100f;
 
-            _body.VelocityTarget = new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation)) * speed;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation)) * speed;
 
             UpdateAnimation();
         }
@@ -225,14 +259,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
-            if (_aiComponent.CurrentStateId == "preAttack" ||
-                _aiComponent.CurrentStateId == "attack")
+            if (
+                _aiComponent.CurrentStateId == "preAttack"
+                || _aiComponent.CurrentStateId == "attack"
+            )
                 return false;
 
             if (type == PushableComponent.PushType.Continues)
             {
                 // push the dog away
-                SystemBody.MoveBody(_body, new Vector2(direction.X, direction.Y) * 0.33f * Game1.TimeMultiplier, _body.CollisionTypes, false, false, false);
+                SystemBody.MoveBody(
+                    _body,
+                    new Vector2(direction.X, direction.Y) * 0.33f * Game1.TimeMultiplier,
+                    _body.CollisionTypes,
+                    false,
+                    false,
+                    false
+                );
                 _body.Position.NotifyListeners();
 
                 if (_aiComponent.CurrentStateId == "walking")
@@ -241,10 +284,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 // start moving away from the pusher
                 _aiComponent.ChangeState("walking");
 
-                var offsetAngle = MathHelper.ToRadians(Game1.RandomNumber.Next(55, 85) * (Game1.RandomNumber.Next(0, 2) * 2 - 1));
-                var newDirection = new Vector2(
-                                       direction.X * (float)Math.Cos(offsetAngle) - direction.Y * (float)Math.Sin(offsetAngle),
-                                       direction.X * (float)Math.Sin(offsetAngle) + direction.Y * (float)Math.Cos(offsetAngle)) * 0.5f;
+                var offsetAngle = MathHelper.ToRadians(
+                    Game1.RandomNumber.Next(55, 85) * (Game1.RandomNumber.Next(0, 2) * 2 - 1)
+                );
+                var newDirection =
+                    new Vector2(
+                        direction.X * (float)Math.Cos(offsetAngle)
+                            - direction.Y * (float)Math.Sin(offsetAngle),
+                        direction.X * (float)Math.Sin(offsetAngle)
+                            + direction.Y * (float)Math.Cos(offsetAngle)
+                    ) * 0.5f;
                 _body.VelocityTarget = newDirection;
                 UpdateAnimation();
             }
@@ -277,10 +326,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // vertical collision
             else if ((moveCollision & Values.BodyCollision.Vertical) != 0)
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y;
-            
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -301,8 +355,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     return Values.HitCollision.Enemy;
                 }
             }
-            if (_aiComponent.CurrentStateId == "idle" ||
-                _aiComponent.CurrentStateId == "walking")
+            if (_aiComponent.CurrentStateId == "idle" || _aiComponent.CurrentStateId == "walking")
             {
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
 

@@ -35,20 +35,26 @@ namespace ProjectZ.Base
 
         public bool Intersects(RectangleF second)
         {
-            return second.Left < Right && Left < second.Right &&
-                   second.Top < Bottom && Top < second.Bottom;
+            return second.Left < Right
+                && Left < second.Right
+                && second.Top < Bottom
+                && Top < second.Bottom;
         }
 
         public bool Contains(RectangleF second)
         {
-            return Left <= second.Left && second.Right <= Right &&
-                   Top <= second.Top && second.Bottom <= Bottom;
+            return Left <= second.Left
+                && second.Right <= Right
+                && Top <= second.Top
+                && second.Bottom <= Bottom;
         }
 
         public bool Contains(Vector2 position)
         {
-            return Left <= position.X && position.X <= Right &&
-                   Top <= position.Y && position.Y <= Bottom;
+            return Left <= position.X
+                && position.X <= Right
+                && Top <= position.Y
+                && position.Y <= Bottom;
         }
 
         public Rectangle ToRectangle()

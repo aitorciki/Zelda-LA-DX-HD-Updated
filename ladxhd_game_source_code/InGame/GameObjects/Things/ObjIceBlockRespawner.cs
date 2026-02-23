@@ -15,7 +15,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _respawnTimer;
         private readonly bool _respawnedFromSpawner;
 
-        public ObjIceBlockRespawner(Map.Map map, int posX, int posY, bool fromSpawner) : base(map)
+        public ObjIceBlockRespawner(Map.Map map, int posX, int posY, bool fromSpawner)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -79,9 +80,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.DeleteObjects.Add(this);
 
             // Respawn Ice Block
-            Map.Objects.SpawnObject(new ObjIceBlock(Map,
-                (int)EntityPosition.X,
-                (int)EntityPosition.Y));
+            Map.Objects.SpawnObject(
+                new ObjIceBlock(Map, (int)EntityPosition.X, (int)EntityPosition.Y)
+            );
         }
     }
 }

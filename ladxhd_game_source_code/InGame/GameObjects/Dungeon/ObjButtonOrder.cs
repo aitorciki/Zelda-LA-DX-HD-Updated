@@ -25,7 +25,16 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _isActive;
         private bool _wasColliding;
 
-        public ObjButtonOrder(Map.Map map, int posX, int posY, int index, string strStateKey, string strKey, bool drawSprite) : base(map, "button")
+        public ObjButtonOrder(
+            Map.Map map,
+            int posX,
+            int posY,
+            int index,
+            string strStateKey,
+            string strKey,
+            bool drawSprite
+        )
+            : base(map, "button")
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -40,14 +49,24 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (drawSprite)
             {
                 _sprite = new CSprite(EntityPosition);
-                var animationComponent = new AnimationComponent(animator, _sprite, new Vector2(8, 8));
+                var animationComponent = new AnimationComponent(
+                    animator,
+                    _sprite,
+                    new Vector2(8, 8)
+                );
                 AddComponent(BaseAnimationComponent.Index, animationComponent);
             }
             _collisionBox = new Box(posX + 4, posY + 4, 0, 8, 8, 1);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         private void Update()
@@ -103,10 +122,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 var radian = _effectCounter / 300 * MathF.PI;
                 var offset = new Vector2(-MathF.Sin(radian), MathF.Cos(radian));
 
-                var pos0 = new Vector2(EntityPosition.X + 8 - 6, EntityPosition.Y + 8 - 6) + offset * 14;
+                var pos0 =
+                    new Vector2(EntityPosition.X + 8 - 6, EntityPosition.Y + 8 - 6) + offset * 14;
                 spriteBatch.Draw(Resources.SprItem, pos0, _effectSourceRectangle, Color.White);
 
-                var pos1 = new Vector2(EntityPosition.X + 8 - 6, EntityPosition.Y + 8 - 6) - offset * 14;
+                var pos1 =
+                    new Vector2(EntityPosition.X + 8 - 6, EntityPosition.Y + 8 - 6) - offset * 14;
                 spriteBatch.Draw(Resources.SprItem, pos1, _effectSourceRectangle, Color.White);
             }
         }

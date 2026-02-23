@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
@@ -15,9 +15,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private float _colorCounter;
         private float _hitCooldown;
 
-        public ObjDungeonSwitch() : base("dungeon_switch") { }
+        public ObjDungeonSwitch()
+            : base("dungeon_switch") { }
 
-        public ObjDungeonSwitch(Map.Map map, int posX, int posY, string key) : base(map)
+        public ObjDungeonSwitch(Map.Map map, int posX, int posY, string key)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(0, -16, 16, 17);
@@ -30,9 +32,15 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             if (!string.IsNullOrEmpty(_key))
                 AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
         }
 
         private void Update()
@@ -50,7 +58,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _sprite.SpriteShader = null;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -61,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _hitCooldown = 250;
             _colorCounter = ColorChangeTime;
-            
+
             Game1.GameManager.PlaySoundEffect("D360-03-03");
             Game1.GameManager.PlaySoundEffect("D370-14-0E");
 

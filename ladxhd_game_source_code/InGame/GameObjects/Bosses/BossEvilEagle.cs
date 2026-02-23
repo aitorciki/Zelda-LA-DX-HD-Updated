@@ -51,9 +51,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private bool _playedIntro;
         private bool _introSound;
 
-        public BossEvilEagle() : base("evil eagle") { }
+        public BossEvilEagle()
+            : base("evil eagle") { }
 
-        public BossEvilEagle(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public BossEvilEagle(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -64,7 +66,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _saveKey = saveKey;
 
-            if (!string.IsNullOrWhiteSpace(_saveKey) && Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrWhiteSpace(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 // respawn the heart if the player died after he killed the boss without collecting the heart
                 SpawnHeart();
@@ -87,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 Drag = 1.0f,
                 DragAir = 1.0f,
                 IgnoresZ = true,
-                IsGrounded = false
+                IsGrounded = false,
             };
 
             var hittableRectangle = new CBox(EntityPosition, -8, -16, 16, 16, 8);
@@ -95,20 +100,29 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var stateIdle = new AiState(UpdateIdle) { Init = InitIdle };
             var stateSpawnDelay = new AiState();
-            stateSpawnDelay.Trigger.Add(new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("spawning")));
+            stateSpawnDelay.Trigger.Add(
+                new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("spawning"))
+            );
             var stateSpawning = new AiState(UpdateSpawning) { Init = InitSpawning };
             var statePreJump = new AiState();
-            statePreJump.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("grimSaddle")));
+            statePreJump.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("grimSaddle"))
+            );
             var stateGrimSaddle = new AiState(UpdateGrimSaddle) { Init = InitGrimSaddle };
             var stateSaddled = new AiState(UpdateSaddled);
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             var stateDamaged = new AiState(UpdateDamaged);
             stateDamaged.Trigger.Add(new AiTriggerCountdown(350, null, FlyUp));
             var stateFlyUp = new AiState(UpdateFlyUp) { Init = InitFlyUp };
-            var stateAttackEnter = new AiState(UpdateWingAttackEnter) { Init = InitWingAttackEnter };
+            var stateAttackEnter = new AiState(UpdateWingAttackEnter)
+            {
+                Init = InitWingAttackEnter,
+            };
             var stateFeatherAttack = new AiState(UpdateWingAttack) { Init = InitWingAttack };
             var statePreAttack = new AiState() { Init = InitPreAttack };
-            statePreAttack.Trigger.Add(new AiTriggerCountdown(800, null, () => _aiComponent.ChangeState("grabAttack")));
+            statePreAttack.Trigger.Add(
+                new AiTriggerCountdown(800, null, () => _aiComponent.ChangeState("grabAttack"))
+            );
             var stateGrab = new AiState(UpdateAttackGrab) { Init = InitGrab };
             var stateLeave = new AiState(UpdateLeave) { Init = InitLeave };
             var stateGone = new AiState();
@@ -133,15 +147,37 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("leave", stateLeave);
             _aiComponent.States.Add("gone", stateGone);
 
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false, AiDamageState.BlinkTime * 2 * 10) { ExplosionOffsetY = 8, PlayDeathSound = true };
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false,
+                AiDamageState.BlinkTime * 2 * 10
+            )
+            {
+                ExplosionOffsetY = 8,
+                PlayDeathSound = true,
+            };
             _damageState.AddBossDamageState(OnDeath);
 
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 8));
-            AddComponent(HittableComponent.Index, _hittableComponent = new HittableComponent(hittableRectangle, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 8)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hittableComponent = new HittableComponent(hittableRectangle, OnHit)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(GenericUpdate));
 
             InitStartSequence();
@@ -163,24 +199,48 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void InitStartSequence()
         {
-            _grimCreeper = new MBossGrimCreeper(Map, (int)EntityPosition.X - 32, (int)EntityPosition.Y + 32, null);
+            _grimCreeper = new MBossGrimCreeper(
+                Map,
+                (int)EntityPosition.X - 32,
+                (int)EntityPosition.Y + 32,
+                null
+            );
             _grimCreeper.StartNightmareSequnece();
             Map.Objects.SpawnObject(_grimCreeper);
 
-            _creeperFly0 = new MBossGrimCreeperFly(Map, new Vector2(EntityPosition.X - 41, EntityPosition.Y + 32), new Vector2(-24, 12));
+            _creeperFly0 = new MBossGrimCreeperFly(
+                Map,
+                new Vector2(EntityPosition.X - 41, EntityPosition.Y + 32),
+                new Vector2(-24, 12)
+            );
             _creeperFly0.StartSequenceMode();
             Map.Objects.SpawnObject(_creeperFly0);
 
-            _creeperFly1 = new MBossGrimCreeperFly(Map, new Vector2(EntityPosition.X - 7, EntityPosition.Y + 32), new Vector2(-16, -8));
+            _creeperFly1 = new MBossGrimCreeperFly(
+                Map,
+                new Vector2(EntityPosition.X - 7, EntityPosition.Y + 32),
+                new Vector2(-16, -8)
+            );
             _creeperFly1.StartSequenceMode();
             Map.Objects.SpawnObject(_creeperFly1);
         }
 
         private void UpdateVisibility()
         {
-            var target = (_startPosition.X - 144 < EntityPosition.X && EntityPosition.X < _startPosition.X + 144 &&
-                          EntityPosition.Y > -16 && EntityPosition.Y < 160) ? 1 : 0;
-            _transparency = AnimationHelper.MoveToTarget(_transparency, target, 0.175f * Game1.TimeMultiplier);
+            var target =
+                (
+                    _startPosition.X - 144 < EntityPosition.X
+                    && EntityPosition.X < _startPosition.X + 144
+                    && EntityPosition.Y > -16
+                    && EntityPosition.Y < 160
+                )
+                    ? 1
+                    : 0;
+            _transparency = AnimationHelper.MoveToTarget(
+                _transparency,
+                target,
+                0.175f * Game1.TimeMultiplier
+            );
             _sprite.Color = Color.White * _transparency;
         }
 
@@ -193,7 +253,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateIdle()
         {
-            if (!MapManager.ObjLink.IsClimbing() || MapManager.ObjLink.EntityPosition.Y > 126f || MapManager.ObjLink.IsJumpingState())
+            if (
+                !MapManager.ObjLink.IsClimbing()
+                || MapManager.ObjLink.EntityPosition.Y > 126f
+                || MapManager.ObjLink.IsJumpingState()
+            )
                 return;
 
             if (!_playedIntro)
@@ -234,13 +298,22 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void SpawnHeart()
         {
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)_startPosition.X - 8, (int)_startPosition.Y, null, "d7_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)_startPosition.X - 8,
+                    (int)_startPosition.Y,
+                    null,
+                    "d7_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
 
         private void InitPreAttack()
         {
             _animator.SpeedMultiplier = 1.5f;
-
         }
 
         private void InitGrab()
@@ -280,13 +353,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _body.Velocity.Y -= 0.015f * Game1.TimeMultiplier;
 
             // start playing the glide animation
-            if (_direction == -1 && EntityPosition.X < _startPosition.X ||
-                _direction == 1 && EntityPosition.X > _startPosition.X)
+            if (
+                _direction == -1 && EntityPosition.X < _startPosition.X
+                || _direction == 1 && EntityPosition.X > _startPosition.X
+            )
             {
                 _animator.Play("cglide_" + _direction);
             }
-            if (_direction == -1 && EntityPosition.X < _startPosition.X - 160 ||
-                _direction == 1 && EntityPosition.X > _startPosition.X + 160)
+            if (
+                _direction == -1 && EntityPosition.X < _startPosition.X - 160
+                || _direction == 1 && EntityPosition.X > _startPosition.X + 160
+            )
             {
                 ToAttack();
             }
@@ -304,8 +381,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body.VelocityTarget = Vector2.Zero;
 
             _wingCounter = 0;
-            _wingStartPosition = new Vector2(_startPosition.X - _direction * 100, _startPosition.Y - 24);
-            _wingEndPosition = new Vector2(_startPosition.X - _direction * 28, _startPosition.Y + 8);
+            _wingStartPosition = new Vector2(
+                _startPosition.X - _direction * 100,
+                _startPosition.Y - 24
+            );
+            _wingEndPosition = new Vector2(
+                _startPosition.X - _direction * 28,
+                _startPosition.Y + 8
+            );
 
             EntityPosition.Set(_wingStartPosition);
         }
@@ -369,7 +452,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 _featherCounter = 0;
 
-                var startPosition = new Vector2(EntityPosition.X - _direction * 4, EntityPosition.Y + 10);
+                var startPosition = new Vector2(
+                    EntityPosition.X - _direction * 4,
+                    EntityPosition.Y + 10
+                );
                 var direction = MapManager.ObjLink.Position - startPosition;
                 if (direction != Vector2.Zero)
                     direction.Normalize();
@@ -400,9 +486,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _animator.Play("cflap_" + _direction);
         }
 
-        private void InitFlyUp()
-        {
-        }
+        private void InitFlyUp() { }
 
         private void UpdateFlyUp()
         {
@@ -440,14 +524,22 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var randomHeight = Game1.RandomNumber.Next(0, 28) * 2;
 
-            EntityPosition.Set(new Vector2(_startPosition.X - _direction * 160, (int)MapManager.ObjLink.EntityPosition.Y - randomHeight));
+            EntityPosition.Set(
+                new Vector2(
+                    _startPosition.X - _direction * 160,
+                    (int)MapManager.ObjLink.EntityPosition.Y - randomHeight
+                )
+            );
 
             _animator.Play("cglide_" + _direction);
         }
 
         private void UpdateAttack()
         {
-            if (EntityPosition.X < _startPosition.X - 180 || _startPosition.X + 180 < EntityPosition.X)
+            if (
+                EntityPosition.X < _startPosition.X - 180
+                || _startPosition.X + 180 < EntityPosition.X
+            )
                 _aiComponent.ChangeState("gone");
         }
 
@@ -536,14 +628,24 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // The "flyup" state does not start fast enough so also check "damaged" state.
-            if (_damageState.IsInDamageState() || _aiComponent.CurrentStateId == "flyup" || _aiComponent.CurrentStateId == "damaged")
+            if (
+                _damageState.IsInDamageState()
+                || _aiComponent.CurrentStateId == "flyup"
+                || _aiComponent.CurrentStateId == "damaged"
+            )
                 return Values.HitCollision.None;
 
             if (hitType == HitType.Boomerang)

@@ -17,9 +17,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _lookCounter;
         private bool _look;
 
-        public ObjLetterGirl() : base("letter_girl") { }
+        public ObjLetterGirl()
+            : base("letter_girl") { }
 
-        public ObjLetterGirl(Map.Map map, int posX, int posY, string dialogId) : base(map)
+        public ObjLetterGirl(Map.Map map, int posX, int posY, string dialogId)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-12, -24, 24, 40);
@@ -34,11 +36,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var body = new BodyComponent(EntityPosition, -8, -13, 16, 12, 8);
 
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, new InteractComponent(new CBox(EntityPosition, -7, -10, 14, 24, 8), Interact));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(new CBox(EntityPosition, -7, -10, 14, 24, 8), Interact)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, sprite));
         }
 

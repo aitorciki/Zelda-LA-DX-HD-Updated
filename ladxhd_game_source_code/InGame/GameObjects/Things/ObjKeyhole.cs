@@ -22,21 +22,39 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _wasPushed;
         private bool _rumbling;
 
-        public ObjKeyhole() : base("keyhole_block") { }
+        public ObjKeyhole()
+            : base("keyhole_block") { }
 
-        public ObjKeyhole(Map.Map map, int posX, int posY, string itemName, string outputKey, string strDialog) : base(map)
+        public ObjKeyhole(
+            Map.Map map,
+            int posX,
+            int posY,
+            string itemName,
+            string outputKey,
+            string strDialog
+        )
+            : base(map)
         {
             _itemName = itemName;
             _outputKey = outputKey;
             _strDialog = strDialog;
 
             // check if the lock was already activated
-            if (_itemName == null || string.IsNullOrEmpty(_outputKey) ||
-                Game1.GameManager.SaveManager.GetString(_outputKey) == "1")
+            if (
+                _itemName == null
+                || string.IsNullOrEmpty(_outputKey)
+                || Game1.GameManager.SaveManager.GetString(_outputKey) == "1"
+            )
                 IsDead = true;
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(PushableComponent.Index, new PushableComponent(new CBox(posX + 3, posY + 8, 0, 10, 8, 8), OnPush) { InertiaTime = 75 });
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(new CBox(posX + 3, posY + 8, 0, 10, 8, 8), OnPush)
+                {
+                    InertiaTime = 75,
+                }
+            );
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
@@ -96,7 +114,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 // shake the screen
                 if (GameSettings.ScreenShake)
-                Game1.GameManager.ShakeScreen(_shakeTime, 1.75f, 0.00f, 5.50f, 0.00f);
+                    Game1.GameManager.ShakeScreen(_shakeTime, 1.75f, 0.00f, 5.50f, 0.00f);
             }
 
             if (_counter <= _openTime)

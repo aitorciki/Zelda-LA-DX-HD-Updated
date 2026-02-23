@@ -23,22 +23,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Vector2[] _shotOffset =
         {
-            new Vector2(-8, -1), new Vector2(0, -3),
-            new Vector2(8, -1), new Vector2(0, 2)
+            new Vector2(-8, -1),
+            new Vector2(0, -3),
+            new Vector2(8, -1),
+            new Vector2(0, 2),
         };
 
         private float _moveSpeed = 0.5f;
         private int _direction;
         private int _lives = EnemyLives.Moblin;
 
-        public EnemyMoblin() : base("moblin") { }
+        public EnemyMoblin()
+            : base("moblin") { }
 
-        public EnemyMoblin(Map.Map map, int posX, int posY) : base(map)
+        public EnemyMoblin(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -47,34 +51,47 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk_1");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy,
-                AvoidTypes     = Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
-                Drag = 0.85f
+                Drag = 0.85f,
             };
 
             var stateInit = new AiState();
-            stateInit.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 0, 500));
+            stateInit.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 0, 500)
+            );
             var stateIdle = new AiState { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 300, 500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 300, 500)
+            );
             var stateWalking = new AiState { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 550, 850));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 550, 850)
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("init", stateInit);
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState("init");
 
             // stand in a random direction
@@ -85,13 +102,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
             var pushableBox = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -159,10 +188,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     var colBox = new Box(offsetX - 4, offsetY - 4, 0, 8, 8, 8);
                     var refBox = Box.Empty;
 
-                    if (!Map.Objects.Collision(colBox, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref refBox))
+                    if (
+                        !Map.Objects.Collision(
+                            colBox,
+                            Box.Empty,
+                            Values.CollisionTypes.Normal,
+                            0,
+                            _body.Level,
+                            ref refBox
+                        )
+                    )
                     {
                         Vector3 position = new Vector3(offsetX, offsetY, 3);
-                        var spear = new EnemySpear(Map, position, AnimationHelper.DirectionOffset[_direction] * 2f, _direction);
+                        var spear = new EnemySpear(
+                            Map,
+                            position,
+                            AnimationHelper.DirectionOffset[_direction] * 2f,
+                            _direction
+                        );
                         Map.Objects.SpawnObject(spear);
                     }
                 }
@@ -172,7 +215,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -192,7 +239,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk_" + _direction);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

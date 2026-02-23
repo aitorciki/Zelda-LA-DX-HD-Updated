@@ -7,7 +7,12 @@ namespace ProjectZ.InGame.Interface
     {
         public InterfaceElement InsideElement;
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 

@@ -10,8 +10,17 @@ namespace ProjectZ.InGame.Things
         private const uint SDL_MESSAGEBOX_WARNING = 0x00000020;
         private const uint SDL_MESSAGEBOX_INFORMATION = 0x00000040;
 
-        [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_ShowSimpleMessageBox")]
-        private static extern int SDL_ShowSimpleMessageBox(uint flags, string title, string message, IntPtr window);
+        [DllImport(
+            "SDL2",
+            CallingConvention = CallingConvention.Cdecl,
+            EntryPoint = "SDL_ShowSimpleMessageBox"
+        )]
+        private static extern int SDL_ShowSimpleMessageBox(
+            uint flags,
+            string title,
+            string message,
+            IntPtr window
+        );
 
         public static void ShowError(string title, string message)
         {

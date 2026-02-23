@@ -17,7 +17,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public bool IsVisible { get; internal set; }
 
-        public MBossDesertLanmolaBody(Map.Map map, Vector2 position, bool isTail) : base(map)
+        public MBossDesertLanmolaBody(Map.Map map, Vector2 position, bool isTail)
+            : base(map)
         {
             IsVisible = true;
             EntityPosition = new CPosition(position.X, position.Y, 0);
@@ -30,11 +31,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var animationComponent = new AnimationComponent(animator, Sprite, new Vector2(0, 0));
 
             var damageBox = new CBox(EntityPosition, -7, -15, 0, 14, 14, 8, true);
-            AddComponent(DamageFieldComponent.Index, _damageComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
 
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new ShadowBodyDrawComponent(EntityPosition)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }

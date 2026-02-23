@@ -69,7 +69,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float _saveCounter;
         private int _saveIndex;
 
-        public BossSlimeEel(Map.Map map, Vector2 centerPosition, BossSlimeEelSpawn eelSpawner, string saveKey) : base(map)
+        public BossSlimeEel(
+            Map.Map map,
+            Vector2 centerPosition,
+            BossSlimeEelSpawn eelSpawner,
+            string saveKey
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -84,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body = new BodyComponent(EntityPosition, -8, -8, 16, 16, 8)
             {
                 MoveCollision = OnCollision,
-                IgnoreHoles = true
+                IgnoreHoles = true,
             };
 
             _spriteTail = Resources.GetSprite("eel_tail_0");
@@ -95,7 +101,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             for (var i = 0; i < _tailParts.Length; i++)
             {
                 if (i == 0)
-                    _tailParts[i] = new BossSlimeEelTail(Map, EntityPosition.Position, 0, OnHitHeart);
+                    _tailParts[i] = new BossSlimeEelTail(
+                        Map,
+                        EntityPosition.Position,
+                        0,
+                        OnHitHeart
+                    );
                 else
                     _tailParts[i] = new BossSlimeEelTail(Map, EntityPosition.Position, 0, null);
 
@@ -125,9 +136,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateJumpingOut = new AiState(UpdateJumpingOut) { Init = InitJumpingOut };
             var statePulledOut = new AiState(UpdatePulledOut) { Init = InitPulledOut };
             statePulledOut.Trigger.Add(new AiTriggerRandomTime(ChangeDirection, 650, 1000));
-            statePulledOut.Trigger.Add(new AiTriggerCountdown(1600, null, () => _aiComponent.ChangeState("blink")));
+            statePulledOut.Trigger.Add(
+                new AiTriggerCountdown(1600, null, () => _aiComponent.ChangeState("blink"))
+            );
             var stateBlink = new AiState { Init = InitBlink };
-            stateBlink.Trigger.Add(new AiTriggerCountdown(AiDamageState.CooldownTime, TickBlink, Explode));
+            stateBlink.Trigger.Add(
+                new AiTriggerCountdown(AiDamageState.CooldownTime, TickBlink, Explode)
+            );
             var stateExplode = new AiState(UpdateExplode) { Init = InitExplode };
 
             _aiComponent.States.Add("spawn", stateSpawn);
@@ -141,14 +156,22 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("pulledOut", statePulledOut);
             _aiComponent.States.Add("blink", stateBlink);
             _aiComponent.States.Add("explode", stateExplode);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            )
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
                 ExplosionOffsetY = 16,
                 BossHitSound = true,
                 PlayDeathSound = false,
-                PlayDeathExplosions = true
+                PlayDeathExplosions = true,
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 
@@ -160,9 +183,21 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    IsActive = false,
+                }
+            );
         }
 
         public void SpawnAttack(int positionIndex)
@@ -215,8 +250,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 var collisionBox = new Box(
                     EntityPosition.X + collisionRect.X,
-                    EntityPosition.Y + collisionRect.Y, 0,
-                    collisionRect.Width, collisionRect.Height, 16);
+                    EntityPosition.Y + collisionRect.Y,
+                    0,
+                    collisionRect.Width,
+                    collisionRect.Height,
+                    16
+                );
 
                 if (collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
                     MapManager.ObjLink.HitPlayer(collisionBox, HitType.Bomb, 4);
@@ -235,8 +274,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void TickBlink(double counter)
         {
-            _sprite.SpriteShader = (AiDamageState.CooldownTime - counter) % (AiDamageState.BlinkTime * 2) <
-                                   AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                (AiDamageState.CooldownTime - counter) % (AiDamageState.BlinkTime * 2)
+                < AiDamageState.BlinkTime
+                    ? Resources.DamageSpriteShader0
+                    : null;
         }
 
         private void Explode()
@@ -280,15 +322,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _moveRotation += MathF.PI;
         }
 
-        private void InitPulledOut()
-        {
-        }
+        private void InitPulledOut() { }
 
         private void UpdatePulledOut()
         {
             _moveRotation += _rotationDir * Game1.TimeMultiplier * 0.1f;
 
-            var newVelocity = new Vector2(-MathF.Sin(_moveRotation), MathF.Cos(_moveRotation)) * MoveSpeed;
+            var newVelocity =
+                new Vector2(-MathF.Sin(_moveRotation), MathF.Cos(_moveRotation)) * MoveSpeed;
             _body.VelocityTarget = newVelocity;
 
             UpdateTailPositions();
@@ -318,7 +359,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             // spawn a heart
             Game1.GameManager.PlaySoundEffect("D378-26-1A");
-            Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", "d5_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y - 8,
+                    "j",
+                    "d5_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
             Game1.GameManager.SaveManager.SetString(_saveKey, "1");
             DespawnObjects();
         }
@@ -356,7 +407,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (_retreatCount > 1500)
             {
-                _moveSpeed = AnimationHelper.MoveToTarget(_moveSpeed, 1, 0.05f * Game1.TimeMultiplier);
+                _moveSpeed = AnimationHelper.MoveToTarget(
+                    _moveSpeed,
+                    1,
+                    0.05f * Game1.TimeMultiplier
+                );
             }
 
             var moveDistance = _moveSpeed * Game1.TimeMultiplier;
@@ -405,7 +460,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void FinishPull()
         {
-            MapManager.ObjLink.Hookshot.HookshotPosition.PositionChangedDict.Remove(typeof(BossSlimeEel));
+            MapManager.ObjLink.Hookshot.HookshotPosition.PositionChangedDict.Remove(
+                typeof(BossSlimeEel)
+            );
 
             _aiComponent.ChangeState("retreat");
         }
@@ -429,7 +486,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var spawnPosition = new Vector2(
                 _centerPosition.X + (index % 2 == 0 ? -32 : 32),
-                _centerPosition.Y + (index < 2 ? -56 : 56));
+                _centerPosition.Y + (index < 2 ? -56 : 56)
+            );
 
             _animationComponent.MirroredV = index >= 2;
             _animationComponent.MirroredH = index >= 2;
@@ -478,18 +536,26 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_attackOut)
                 for (var i = 0; i < 5; i++)
                 {
-                    var centerPosition = new Vector2(EntityPosition.X, EntityPosition.Y + (14 + i * 14) * -_moveDirection);
+                    var centerPosition = new Vector2(
+                        EntityPosition.X,
+                        EntityPosition.Y + (14 + i * 14) * -_moveDirection
+                    );
                     var position = new Vector2(centerPosition.X - 8, centerPosition.Y - 8);
                     _tailParts[i].EntityPosition.Set(centerPosition);
 
-                    if (_moveDirection == 1 && position.Y + 16 < _startPosition.Y ||
-                        _moveDirection == -1 && position.Y > _startPosition.Y)
+                    if (
+                        _moveDirection == 1 && position.Y + 16 < _startPosition.Y
+                        || _moveDirection == -1 && position.Y > _startPosition.Y
+                    )
                         continue;
 
                     var sprite = _spriteTail;
                     // draw the part with the heart
                     if (i == 0)
-                        sprite = Game1.TotalGameTime % (32000 / 60f) < (16000 / 60f) ? _spriteHeart0 : _spriteHeart1;
+                        sprite =
+                            Game1.TotalGameTime % (32000 / 60f) < (16000 / 60f)
+                                ? _spriteHeart0
+                                : _spriteHeart1;
 
                     DrawHelper.DrawNormalized(spriteBatch, sprite, position, Color.White);
                 }
@@ -520,7 +586,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _explosionAnimator.Draw(spriteBatch, EntityPosition.Position, Color.White);
         }
 
-        public Values.HitCollision OnHitHeart(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHitHeart(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -535,15 +607,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             if (_aiDamageState.CurrentLives <= 0 && wasAlive)
             {
-                Game1.GameManager.SetMusic(93,2);
+                Game1.GameManager.SetMusic(93, 2);
                 Game1.GameManager.PlayMusic(true);
                 Game1.GameManager.PlaySoundEffect("D370-16-10");
 
                 Game1.GameManager.StartDialogPath("slime_eel_1");
                 _eelSpawner.ToDespawn();
 
-                _damageField.IsActive = false;;
-                _hitComponent.IsActive = false;;
+                _damageField.IsActive = false;
+                ;
+                _hitComponent.IsActive = false;
+                ;
 
                 foreach (var part in _tailParts)
                     if (part != null)
@@ -552,14 +626,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return hitReturn;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can get pulled out by the hookshot at animation frame 1, 2 and 3
-            if (_aiComponent.CurrentStateId == "attack" && 0 < _animator.CurrentFrameIndex && _animator.CurrentFrameIndex < 4 && hitType == HitType.Hookshot)
+            if (
+                _aiComponent.CurrentStateId == "attack"
+                && 0 < _animator.CurrentFrameIndex
+                && _animator.CurrentFrameIndex < 4
+                && hitType == HitType.Hookshot
+            )
             {
                 _hockshotPosition = MapManager.ObjLink.Hookshot.HookshotPosition.Position;
                 _hookshotOffset = EntityPosition.Position - _hockshotPosition;
@@ -569,7 +654,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     _aiComponent.ChangeState("jumpingOut");
                 else
                 {
-                    MapManager.ObjLink.Hookshot.HookshotPosition.AddPositionListener(typeof(BossSlimeEel), OnPositionChange);
+                    MapManager.ObjLink.Hookshot.HookshotPosition.AddPositionListener(
+                        typeof(BossSlimeEel),
+                        OnPositionChange
+                    );
                     _aiComponent.ChangeState("pulled");
                 }
 
@@ -612,15 +700,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 var index = (int)indexCount;
 
                 _tailPositions[i] = Vector2.Lerp(
-                    _savedPosition[index], _savedPosition[(index + 1) % _savedPosition.Length],
-                    (timeDiff % _saveInterval) / _saveInterval);
+                    _savedPosition[index],
+                    _savedPosition[(index + 1) % _savedPosition.Length],
+                    (timeDiff % _saveInterval) / _saveInterval
+                );
             }
         }
 
         // TODO: make this better; does not work correctly
         private void SavePosition()
         {
-            var position = EntityPosition.Position + _body.VelocityTarget * (Game1.DeltaTime / 16.6667f);
+            var position =
+                EntityPosition.Position + _body.VelocityTarget * (Game1.DeltaTime / 16.6667f);
             _saveCounter += Game1.DeltaTime;
             var diff = _saveCounter % _saveInterval;
 
@@ -638,7 +729,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 if (index < 0)
                     index = _savedPosition.Length - 1;
 
-                var vecDir = new Vector2((float)Math.Sin(currentDirection), (float)Math.Cos(currentDirection));
+                var vecDir = new Vector2(
+                    (float)Math.Sin(currentDirection),
+                    (float)Math.Cos(currentDirection)
+                );
                 _savedPosition[index] = position - vecDir * (diff / 16.6667f);
 
                 position = _savedPosition[index];

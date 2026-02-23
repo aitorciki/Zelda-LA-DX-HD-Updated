@@ -16,10 +16,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             CollisionType = collisionType;
             Collision = IsColliding;
         }
-        
+
         public bool IsColliding(Box box, int dir, int level, ref Box collidingBox)
         {
-            if (!IsActive || ((0x01 << dir) & DirectionFlag) == 0 || !box.Intersects(CollisionBox.Box))
+            if (
+                !IsActive
+                || ((0x01 << dir) & DirectionFlag) == 0
+                || !box.Intersects(CollisionBox.Box)
+            )
                 return false;
 
             collidingBox = CollisionBox.Box;

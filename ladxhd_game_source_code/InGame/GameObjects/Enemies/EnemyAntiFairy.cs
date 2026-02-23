@@ -26,16 +26,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         bool _lastEpSafe;
 
-        bool  light_source = true;
-        int   light_red = 255;
-        int   light_grn = 255;
-        int   light_blu = 255;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 255;
+        int light_blu = 255;
         float light_bright = 1.0f;
-        int   light_size = 120;
+        int light_size = 120;
 
-        public EnemyAntiFairy() : base("antiFairy") { }
+        public EnemyAntiFairy()
+            : base("antiFairy") { }
 
-        public EnemyAntiFairy(Map.Map map, int posX, int posY) : base(map)
+        public EnemyAntiFairy(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "EnemyAntiFairy.lahdmod");
@@ -47,7 +49,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 8, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
             CanReset = true;
             OnReset = Reset;
@@ -65,9 +67,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 FieldRectangle = map.GetField(posX, posY),
                 MoveCollision = OnCollision,
                 CollisionTypes =
-                    Values.CollisionTypes.Normal |
-                    Values.CollisionTypes.Hole |
-                    Values.CollisionTypes.NPCWall
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Hole
+                    | Values.CollisionTypes.NPCWall,
             };
             _body.VelocityTarget = new Vector2(-1, 1) * (3 / 4.0f);
 
@@ -80,20 +82,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoreZeroDamage = true,
                 FlameOffset = new Point(0, 2),
                 OnDeath = OnDeath,
-                OnBurn = OnBurn
+                OnBurn = OnBurn,
             };
 
             var hittableBox = new CBox(EntityPosition, -8, -8, 0, 16, 16, 8);
             var damageBox = new CBox(EntityPosition, -7, -7, 0, 14, 14, 4);
 
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(hittableBox, OnPush)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
@@ -116,13 +130,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
-            OnCollision(MapManager.ObjLink.Direction % 2 == 0
-                ? Values.BodyCollision.Horizontal
-                : Values.BodyCollision.Vertical);
+            OnCollision(
+                MapManager.ObjLink.Direction % 2 == 0
+                    ? Values.BodyCollision.Horizontal
+                    : Values.BodyCollision.Vertical
+            );
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -157,8 +179,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (light_source && GameSettings.ObjectLights)
             {
-                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size);
-                DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * light_bright);
+                Rectangle _lightRectangle = new Rectangle(
+                    (int)EntityPosition.X - light_size / 2,
+                    (int)EntityPosition.Y - light_size / 2,
+                    light_size,
+                    light_size
+                );
+                DrawHelper.DrawLight(
+                    spriteBatch,
+                    _lightRectangle,
+                    new Color(light_red, light_grn, light_blu) * light_bright
+                );
             }
         }
 
@@ -167,7 +198,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // spawn fairy? ~50% cance
             // not sure how this is calculated in the original game
             if (Game1.RandomNumber.Next(0, 100) < 50)
-                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y + 4, 0));
+                Map.Objects.SpawnObject(
+                    new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y + 4, 0)
+                );
 
             _aiDamageState.BaseOnDeath(pieceOfPower);
         }

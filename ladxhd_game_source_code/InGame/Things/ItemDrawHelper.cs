@@ -32,7 +32,12 @@ namespace ProjectZ.InGame.Things
         private static Color _relictColorOne = new Color(0, 135, 115);
         private static Color _relictColorTwo = new Color(255, 255, 255);
 
-        public static Color[] CloakColors = { new Color(16, 173, 66), new Color(24, 132, 255), new Color(255, 8, 41) };
+        public static Color[] CloakColors =
+        {
+            new Color(16, 173, 66),
+            new Color(24, 132, 255),
+            new Color(255, 8, 41),
+        };
 
         private static Rectangle _recRelicts = new Rectangle(224, 128, 16, 16);
 
@@ -92,8 +97,14 @@ namespace ProjectZ.InGame.Things
             RecRubee = SpriteRubee.ScaledRectangle;
             RecKey = SpriteKey.ScaledRectangle;
 
-            RubeeSize = new Point((RecLetters.Width + LetterMargin) * 3 + RecRubee.Width, RecRubee.Height);
-            KeySize = new Point((RecLetters.Width + LetterMargin) * 3 + RecKey.Width, RecKey.Height);
+            RubeeSize = new Point(
+                (RecLetters.Width + LetterMargin) * 3 + RecRubee.Width,
+                RecRubee.Height
+            );
+            KeySize = new Point(
+                (RecLetters.Width + LetterMargin) * 3 + RecKey.Width,
+                RecKey.Height
+            );
         }
 
         public static void RefreshImagesUI()
@@ -139,12 +150,14 @@ namespace ProjectZ.InGame.Things
             _relictColorOne = new Color(
                 MathHelper.Clamp((byte)(colorR * 120), 0, 255),
                 MathHelper.Clamp((byte)(colorG * 80), 0, 255),
-                MathHelper.Clamp((byte)(colorB * 140), 0, 255));
+                MathHelper.Clamp((byte)(colorB * 140), 0, 255)
+            );
 
             _relictColorTwo = new Color(
                 MathHelper.Clamp((byte)(colorR * 220), 0, 255),
                 MathHelper.Clamp((byte)(colorG * 180), 0, 255),
-                MathHelper.Clamp((byte)(colorB * 240), 0, 255));
+                MathHelper.Clamp((byte)(colorB * 240), 0, 255)
+            );
 
             UpdateRubyAnimation();
             UpdateHeartAnimation();
@@ -157,8 +170,10 @@ namespace ProjectZ.InGame.Things
             if (item != null)
                 realCount = item.Count;
 
-            if (!Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen &&
-                !Game1.GameManager.InGameOverlay.MenuIsOpen())
+            if (
+                !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen
+                && !Game1.GameManager.InGameOverlay.MenuIsOpen()
+            )
             {
                 // start the animation?
                 if (!_rubyAnimation)
@@ -203,7 +218,8 @@ namespace ProjectZ.InGame.Things
                     if (_rubyCounter > _rubyTime)
                         _rubyCounter = _rubyTime;
 
-                    _rubyCount = (int)MathHelper.Lerp(_rubyStart, _rubyEnd, _rubyCounter / _rubyTime);
+                    _rubyCount = (int)
+                        MathHelper.Lerp(_rubyStart, _rubyEnd, _rubyCounter / _rubyTime);
 
                     // ruby sound every 2 frames
                     if ((_rubySoundIndex + 1) * 32 <= _rubyCounter)
@@ -228,8 +244,10 @@ namespace ProjectZ.InGame.Things
         {
             var realCount = Game1.GameManager.CurrentHealth;
 
-            if (!Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen &&
-                !Game1.GameManager.InGameOverlay.MenuIsOpen())
+            if (
+                !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen
+                && !Game1.GameManager.InGameOverlay.MenuIsOpen()
+            )
             {
                 // start the animation?
                 if (!_heartAnimation)
@@ -270,38 +288,97 @@ namespace ProjectZ.InGame.Things
             }
         }
 
-        public static void DrawLevel(SpriteBatch spriteBatch, int posX, int posY, int number, int scale, Color textColor)
+        public static void DrawLevel(
+            SpriteBatch spriteBatch,
+            int posX,
+            int posY,
+            int number,
+            int scale,
+            Color textColor
+        )
         {
             // add L- if the number is < 0
             // L- 0 1 2 3...
             var letter0 = number < 0 ? 0 : number / 10 + 1;
             var letter1 = number < 0 ? -number + 1 : number % 10 + 1;
 
-            spriteBatch.Draw(SpriteLetter.Texture, new Rectangle(posX, posY, RecLetters.Width * scale, RecLetters.Height * scale),
-                new Rectangle(RecLetters.X + letter0 * (RecLetters.Width + (int)SpriteLetter.Scale), RecLetters.Y, RecLetters.Width, RecLetters.Height), textColor);
-            spriteBatch.Draw(SpriteLetter.Texture, new Rectangle(posX + RecLetters.Width * scale, posY, RecLetters.Width * scale, RecLetters.Height * scale),
-                new Rectangle(RecLetters.X + letter1 * (RecLetters.Width + (int)SpriteLetter.Scale), RecLetters.Y, RecLetters.Width, RecLetters.Height), textColor);
+            spriteBatch.Draw(
+                SpriteLetter.Texture,
+                new Rectangle(posX, posY, RecLetters.Width * scale, RecLetters.Height * scale),
+                new Rectangle(
+                    RecLetters.X + letter0 * (RecLetters.Width + (int)SpriteLetter.Scale),
+                    RecLetters.Y,
+                    RecLetters.Width,
+                    RecLetters.Height
+                ),
+                textColor
+            );
+            spriteBatch.Draw(
+                SpriteLetter.Texture,
+                new Rectangle(
+                    posX + RecLetters.Width * scale,
+                    posY,
+                    RecLetters.Width * scale,
+                    RecLetters.Height * scale
+                ),
+                new Rectangle(
+                    RecLetters.X + letter1 * (RecLetters.Width + (int)SpriteLetter.Scale),
+                    RecLetters.Y,
+                    RecLetters.Width,
+                    RecLetters.Height
+                ),
+                textColor
+            );
         }
 
-        public static void DrawNumber(SpriteBatch spriteBatch, int posX, int posY, int number, int length, int scale, Color textColor)
+        public static void DrawNumber(
+            SpriteBatch spriteBatch,
+            int posX,
+            int posY,
+            int number,
+            int length,
+            int scale,
+            Color textColor
+        )
         {
             for (var i = 0; i < length; i++)
             {
                 var letter = number / (int)Math.Pow(10, length - i - 1) % 10 + 1;
 
-                spriteBatch.Draw(SpriteLetter.Texture, new Rectangle(
+                spriteBatch.Draw(
+                    SpriteLetter.Texture,
+                    new Rectangle(
                         posX + (RecLetters.Width + LetterMargin) * i * scale,
-                        posY, RecLetters.Width * scale, RecLetters.Height * scale),
-                    new Rectangle(RecLetters.X + letter * (RecLetters.Width + (int)SpriteLetter.Scale), RecLetters.Y, RecLetters.Width, RecLetters.Height), textColor);
+                        posY,
+                        RecLetters.Width * scale,
+                        RecLetters.Height * scale
+                    ),
+                    new Rectangle(
+                        RecLetters.X + letter * (RecLetters.Width + (int)SpriteLetter.Scale),
+                        RecLetters.Y,
+                        RecLetters.Width,
+                        RecLetters.Height
+                    ),
+                    textColor
+                );
             }
         }
 
-        public static void DrawItem(SpriteBatch spriteBatch, GameItem item, Vector2 position, Color color, int scale, bool mapSprite = false)
+        public static void DrawItem(
+            SpriteBatch spriteBatch,
+            GameItem item,
+            Vector2 position,
+            Color color,
+            int scale,
+            bool mapSprite = false
+        )
         {
             if (item == null)
                 return;
 
-            var baseItem = item.SourceRectangle.HasValue ? item : Game1.GameManager.ItemManager[item.Name];
+            var baseItem = item.SourceRectangle.HasValue
+                ? item
+                : Game1.GameManager.ItemManager[item.Name];
 
             Rectangle sourceRectangle;
             DictAtlasEntry sprite;
@@ -320,11 +397,20 @@ namespace ProjectZ.InGame.Things
             if (item.Name == "ruby" && item.AnimateSprite)
             {
                 var frameLength = 10 / 60f * 1000;
-                sourceRectangle.X += (int)((Game1.TotalGameTime % (frameLength * 4)) / frameLength) * (sourceRectangle.Width + sprite.TextureScale);
+                sourceRectangle.X +=
+                    (int)((Game1.TotalGameTime % (frameLength * 4)) / frameLength)
+                    * (sourceRectangle.Width + sprite.TextureScale);
             }
 
             // draw the item
-            if ((item.Name == "sword1" || item.Name == "sword2" || item.Name == "sword1PoP" || item.Name == "sword2PoP") && Game1.GameManager.PieceOfPowerIsActive)
+            if (
+                (
+                    item.Name == "sword1"
+                    || item.Name == "sword2"
+                    || item.Name == "sword1PoP"
+                    || item.Name == "sword2PoP"
+                ) && Game1.GameManager.PieceOfPowerIsActive
+            )
             {
                 if (Game1.TotalTime % (16 / 0.06) >= 8 / 0.06)
                 {
@@ -332,74 +418,215 @@ namespace ProjectZ.InGame.Things
                     sourceRectangle = swordSprite.SourceRectangle;
                 }
 
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y), sourceRectangle, color, scale * sprite.Scale);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    sourceRectangle,
+                    color,
+                    scale * sprite.Scale
+                );
             }
             else if (item.Name == "pieceOfPower")
             {
                 if (Game1.TotalTime % (16 / 0.06) >= 8 / 0.06)
                     sourceRectangle.X += sourceRectangle.Width + sprite.TextureScale;
 
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y), sourceRectangle, color, scale * sprite.Scale);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    sourceRectangle,
+                    color,
+                    scale * sprite.Scale
+                );
             }
             else if (item.Name == "cloakBlue")
             {
                 var transparency = color.A / 255f;
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y), sourceRectangle, new Color(253, 188, 140) * transparency, scale * sprite.Scale);
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y),
-                    new Rectangle(sourceRectangle.X, sourceRectangle.Y + sourceRectangle.Height, sourceRectangle.Width, sourceRectangle.Height), CloakColors[1] * transparency, scale * sprite.Scale);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    sourceRectangle,
+                    new Color(253, 188, 140) * transparency,
+                    scale * sprite.Scale
+                );
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    new Rectangle(
+                        sourceRectangle.X,
+                        sourceRectangle.Y + sourceRectangle.Height,
+                        sourceRectangle.Width,
+                        sourceRectangle.Height
+                    ),
+                    CloakColors[1] * transparency,
+                    scale * sprite.Scale
+                );
             }
             else if (item.Name == "cloakRed")
             {
                 var transparency = color.A / 255f;
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y), sourceRectangle, new Color(253, 188, 140) * transparency, scale * sprite.Scale);
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y),
-                    new Rectangle(sourceRectangle.X, sourceRectangle.Y + sourceRectangle.Height, sourceRectangle.Width, sourceRectangle.Height), CloakColors[2] * transparency, scale * sprite.Scale);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    sourceRectangle,
+                    new Color(253, 188, 140) * transparency,
+                    scale * sprite.Scale
+                );
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    new Rectangle(
+                        sourceRectangle.X,
+                        sourceRectangle.Y + sourceRectangle.Height,
+                        sourceRectangle.Width,
+                        sourceRectangle.Height
+                    ),
+                    CloakColors[2] * transparency,
+                    scale * sprite.Scale
+                );
             }
             else if (!item.Instrument)
             {
-                DrawHelper.DrawNormalized(spriteBatch, sprite.Texture, new Vector2(position.X, position.Y), sourceRectangle, color, scale * sprite.Scale);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    sprite.Texture,
+                    new Vector2(position.X, position.Y),
+                    sourceRectangle,
+                    color,
+                    scale * sprite.Scale
+                );
             }
             else
             {
                 var normalizedPosition = new Vector2(
-                    (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale,
-                    (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale);
+                    (float)Math.Round(position.X * MapManager.Camera.Scale)
+                        / MapManager.Camera.Scale,
+                    (float)Math.Round(position.Y * MapManager.Camera.Scale)
+                        / MapManager.Camera.Scale
+                );
 
                 DrawInstrument(spriteBatch, sprite, normalizedPosition);
             }
         }
 
-        public static void DrawInstrument(SpriteBatch spriteBatch, DictAtlasEntry sprite, Vector2 position)
+        public static void DrawInstrument(
+            SpriteBatch spriteBatch,
+            DictAtlasEntry sprite,
+            Vector2 position
+        )
         {
             var rectangle = sprite.ScaledRectangle;
 
             // draw the item
-            spriteBatch.Draw(Resources.SprItem, position,
-                new Rectangle(rectangle.X + 0, rectangle.Y, rectangle.Width, rectangle.Height), Color.White, 0, Vector2.Zero, sprite.Scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
+                new Rectangle(rectangle.X + 0, rectangle.Y, rectangle.Width, rectangle.Height),
+                Color.White,
+                0,
+                Vector2.Zero,
+                sprite.Scale,
+                SpriteEffects.None,
+                0
+            );
 
-            spriteBatch.Draw(Resources.SprItem, position,
-                new Rectangle(rectangle.X + 16 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height), _relictColorOne, 0, Vector2.Zero, sprite.Scale, SpriteEffects.None, 0); ;
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
+                new Rectangle(
+                    rectangle.X + 16 * sprite.TextureScale,
+                    rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height
+                ),
+                _relictColorOne,
+                0,
+                Vector2.Zero,
+                sprite.Scale,
+                SpriteEffects.None,
+                0
+            );
+            ;
 
-            spriteBatch.Draw(Resources.SprItem, position,
-                new Rectangle(rectangle.X + 32 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height), _relictColorTwo, 0, Vector2.Zero, sprite.Scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
+                new Rectangle(
+                    rectangle.X + 32 * sprite.TextureScale,
+                    rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height
+                ),
+                _relictColorTwo,
+                0,
+                Vector2.Zero,
+                sprite.Scale,
+                SpriteEffects.None,
+                0
+            );
         }
 
-        public static void DrawInstrument(SpriteBatch spriteBatch, DictAtlasEntry sprite, Vector2 position, float uiScale)
+        public static void DrawInstrument(
+            SpriteBatch spriteBatch,
+            DictAtlasEntry sprite,
+            Vector2 position,
+            float uiScale
+        )
         {
             var rectangle = sprite.ScaledRectangle;
             var finalScale = sprite.Scale * uiScale;
 
-            spriteBatch.Draw(Resources.SprItem, position,
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
                 new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height),
-                Color.White, 0, Vector2.Zero, finalScale, SpriteEffects.None, 0);
+                Color.White,
+                0,
+                Vector2.Zero,
+                finalScale,
+                SpriteEffects.None,
+                0
+            );
 
-            spriteBatch.Draw(Resources.SprItem, position,
-                new Rectangle(rectangle.X + 16 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height),
-                _relictColorOne, 0, Vector2.Zero, finalScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
+                new Rectangle(
+                    rectangle.X + 16 * sprite.TextureScale,
+                    rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height
+                ),
+                _relictColorOne,
+                0,
+                Vector2.Zero,
+                finalScale,
+                SpriteEffects.None,
+                0
+            );
 
-            spriteBatch.Draw(Resources.SprItem, position,
-                new Rectangle(rectangle.X + 32 * sprite.TextureScale, rectangle.Y, rectangle.Width, rectangle.Height),
-                _relictColorTwo, 0, Vector2.Zero, finalScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                position,
+                new Rectangle(
+                    rectangle.X + 32 * sprite.TextureScale,
+                    rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height
+                ),
+                _relictColorTwo,
+                0,
+                Vector2.Zero,
+                finalScale,
+                SpriteEffects.None,
+                0
+            );
         }
 
         public static void DrawRelictBackground(SpriteBatch spriteBatch, Vector2 position)
@@ -408,7 +635,14 @@ namespace ProjectZ.InGame.Things
             spriteBatch.Draw(Resources.SprItem, position, _recRelicts, _relictColorOne);
         }
 
-        public static void DrawItemWithInfo(SpriteBatch spriteBatch, GameItemCollected itemCollected, Point offset, Rectangle rectangle, int scale, Color color)
+        public static void DrawItemWithInfo(
+            SpriteBatch spriteBatch,
+            GameItemCollected itemCollected,
+            Point offset,
+            Rectangle rectangle,
+            int scale,
+            Color color
+        )
         {
             if (itemCollected == null)
                 return;
@@ -434,11 +668,16 @@ namespace ProjectZ.InGame.Things
 
             var itemPosition = new Point(
                 offset.X + rectangle.X * scale + rectangle.Width * scale / 2 - width / 2 * scale,
-                offset.Y + rectangle.Y * scale + rectangle.Height * scale / 2 - sourceRectangle.Height / 2 * scale);
+                offset.Y
+                    + rectangle.Y * scale
+                    + rectangle.Height * scale / 2
+                    - sourceRectangle.Height / 2 * scale
+            );
 
             var textPosition = new Point(
                 itemPosition.X + (sourceRectangle.Width + 1) * scale,
-                itemPosition.Y + sourceRectangle.Height * scale - RecLetters.Height * scale);
+                itemPosition.Y + sourceRectangle.Height * scale - RecLetters.Height * scale
+            );
 
             // draw the item
             DrawItem(spriteBatch, item, new Vector2(itemPosition.X, itemPosition.Y), color, scale);
@@ -446,75 +685,130 @@ namespace ProjectZ.InGame.Things
             if (item.Level > 0)
             {
                 // draw the level of the item
-                DrawLevel(spriteBatch,
-                    textPosition.X, textPosition.Y,
-                    -item.Level, scale, Color.Black * (color.A / 255f));
+                DrawLevel(
+                    spriteBatch,
+                    textPosition.X,
+                    textPosition.Y,
+                    -item.Level,
+                    scale,
+                    Color.Black * (color.A / 255f)
+                );
             }
             else if (item.MaxCount != 1)
             {
                 // draw the count of the item
-                DrawNumber(spriteBatch,
-                    textPosition.X, textPosition.Y,
-                    itemCollected.Count, item.DrawLength, scale, Color.Black * (color.A / 255f));
+                DrawNumber(
+                    spriteBatch,
+                    textPosition.X,
+                    textPosition.Y,
+                    itemCollected.Count,
+                    item.DrawLength,
+                    scale,
+                    Color.Black * (color.A / 255f)
+                );
             }
         }
 
         public static Rectangle GetRubeeRectangle(Point position, int scale)
         {
             return new Rectangle(
-                position.X - _paddingHud * scale, position.Y - _paddingHud * scale,
+                position.X - _paddingHud * scale,
+                position.Y - _paddingHud * scale,
                 ((RecLetters.Width + LetterMargin) * 3 + RecRubee.Width + _paddingHud * 2) * scale,
-                (RecLetters.Height + _paddingHud * 2) * scale);
+                (RecLetters.Height + _paddingHud * 2) * scale
+            );
         }
 
-        public static void DrawRubee(SpriteBatch spriteBatch, Point position, int scale, Color color)
+        public static void DrawRubee(
+            SpriteBatch spriteBatch,
+            Point position,
+            int scale,
+            Color color
+        )
         {
             // draw the number
             DrawNumber(spriteBatch, position.X, position.Y, _rubyCount, 3, scale, color);
 
             // draw the rubee count
-            spriteBatch.Draw(SpriteRubee.Texture, new Rectangle(
+            spriteBatch.Draw(
+                SpriteRubee.Texture,
+                new Rectangle(
                     position.X + (RecLetters.Width + LetterMargin) * 3 * scale,
                     position.Y - 1 * scale,
                     RecRubee.Width * scale + 1,
-                    RecRubee.Height * scale), RecRubee, Color.White * (color.A / 255f));
+                    RecRubee.Height * scale
+                ),
+                RecRubee,
+                Color.White * (color.A / 255f)
+            );
         }
 
         public static Rectangle GetKeyRectangle(Point position, int scale)
         {
             return new Rectangle(
-                position.X - _paddingHud * scale, position.Y - _paddingHud * scale,
+                position.X - _paddingHud * scale,
+                position.Y - _paddingHud * scale,
                 ((RecLetters.Width + LetterMargin) * 3 + RecKey.Width + _paddingHud * 2) * scale,
-                (RecLetters.Height + _paddingHud * 2) * scale);
+                (RecLetters.Height + _paddingHud * 2) * scale
+            );
         }
-        public static void DrawSmallKeys(SpriteBatch spriteBatch, Point position, int scale, Color color)
+
+        public static void DrawSmallKeys(
+            SpriteBatch spriteBatch,
+            Point position,
+            int scale,
+            Color color
+        )
         {
             var keyItem = Game1.GameManager.GetItem("smallkey");
 
-            if (keyItem == null) return;
+            if (keyItem == null)
+                return;
 
             // draw the key icon
             // TODO: actual key icon instead of using the smallkey sprite
-            spriteBatch.Draw(SpriteKey.Texture, new Rectangle(
+            spriteBatch.Draw(
+                SpriteKey.Texture,
+                new Rectangle(
                     position.X + (RecLetters.Width + LetterMargin) * 3 * scale,
                     position.Y - 2 * scale,
                     RecKey.Width * scale,
-                    RecKey.Height * scale), RecKey, Color.White * (color.A / 255f));
+                    RecKey.Height * scale
+                ),
+                RecKey,
+                Color.White * (color.A / 255f)
+            );
 
             // draw the number
-            DrawNumber(spriteBatch, position.X, position.Y, keyItem.Count, 3, scale, Color.Black * (color.A / 255f));
+            DrawNumber(
+                spriteBatch,
+                position.X,
+                position.Y,
+                keyItem.Count,
+                3,
+                scale,
+                Color.Black * (color.A / 255f)
+            );
         }
 
         public static Rectangle GetHeartRectangle(Point position, int scale)
         {
             var width = MathHelper.Clamp(Game1.GameManager.MaxHearts, 0, 7);
             var height = (int)Math.Ceiling(Game1.GameManager.MaxHearts / 7.0f);
-            return new Rectangle(position.X - _paddingHud * scale, position.Y - _paddingHud * scale,
+            return new Rectangle(
+                position.X - _paddingHud * scale,
+                position.Y - _paddingHud * scale,
                 (width * RecHeart.Width + (width - 1) + _paddingHud * 2) * scale,
-                (RecHeart.Height * height + _paddingHud * 2) * scale);
+                (RecHeart.Height * height + _paddingHud * 2) * scale
+            );
         }
 
-        public static void DrawHearts(SpriteBatch spriteBatch, Point position, int scale, Color color)
+        public static void DrawHearts(
+            SpriteBatch spriteBatch,
+            Point position,
+            int scale,
+            Color color
+        )
         {
             // draw the hearts
             for (var i = 0; i < Game1.GameManager.MaxHearts; i++)
@@ -527,14 +821,23 @@ namespace ProjectZ.InGame.Things
                 else if (heartValue <= 3)
                     type = 4 - heartValue;
 
-                spriteBatch.Draw(SpriteHeart.Texture, new Rectangle(
+                spriteBatch.Draw(
+                    SpriteHeart.Texture,
+                    new Rectangle(
                         position.X + (RecHeart.Width + _heartsDistanceA) * (i % 7) * scale,
                         position.Y + (RecHeart.Width + _heartsDistanceA) * (i / 7) * scale,
                         RecHeart.Width * scale,
-                        RecHeart.Height * scale),
+                        RecHeart.Height * scale
+                    ),
                     new Rectangle(
-                        RecHeart.X + type * (RecHeart.Width + (int)(_heartsDistanceB * SpriteHeart.Scale)),
-                        RecHeart.Y, RecHeart.Width, RecHeart.Height), color);
+                        RecHeart.X
+                            + type * (RecHeart.Width + (int)(_heartsDistanceB * SpriteHeart.Scale)),
+                        RecHeart.Y,
+                        RecHeart.Width,
+                        RecHeart.Height
+                    ),
+                    color
+                );
             }
         }
     }

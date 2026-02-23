@@ -19,9 +19,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _fallen;
         private bool _endDialog;
 
-        public ObjTrendy() : base("person") { }
+        public ObjTrendy()
+            : base("person") { }
 
-        public ObjTrendy(Map.Map map, int posX, int posY) : base(map)
+        public ObjTrendy(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -37,17 +39,34 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 RestAdditionalMovement = false,
                 Gravity = -0.15f,
                 Bounciness = 0.5f,
-                MoveCollision = OnMoveCollision
+                MoveCollision = OnMoveCollision,
             };
             var box = new CBox(EntityPosition, -7, -14, 14, 14, 8);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(box, Values.CollisionTypes.Enemy | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, _interactComponent = new InteractComponent(box, Interact));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    box,
+                    Values.CollisionTypes.Enemy
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                InteractComponent.Index,
+                _interactComponent = new InteractComponent(box, Interact)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
 
             // Reset this value when entering the building so NPC doesn't get stuck.
             Game1.GameManager.SaveManager.SetString("trendy_npc", "0");
@@ -68,7 +87,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("fall");
             }
             // ending dialog?
-            if (_fallen && !_endDialog && _body.AdditionalMovementVT == Vector2.Zero && EntityPosition.Z == 0 && _body.Velocity.Z == 0)
+            if (
+                _fallen
+                && !_endDialog
+                && _body.AdditionalMovementVT == Vector2.Zero
+                && EntityPosition.Z == 0
+                && _body.Velocity.Z == 0
+            )
             {
                 _endDialog = true;
                 Game1.GameManager.StartDialogPath("trendy_marin_end");

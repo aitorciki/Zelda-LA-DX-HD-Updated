@@ -21,7 +21,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _liveTime = 2500;
         private bool _reflected;
 
-        public EnemyVireball(Map.Map map, Vector2 position, Vector2 velocity) : base(map)
+        public EnemyVireball(Map.Map map, Vector2 position, Vector2 velocity)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -40,7 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             _body.VelocityTarget = velocity;
@@ -49,9 +50,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -4, -4, 0, 8, 8, 8);
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageCollider, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
@@ -80,13 +90,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_reflected)
             {
                 // Probably the closest parallel to player damage types is the Bow.
-                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bow, 2, false, false);
+                var collision = Map.Objects.Hit(
+                    MapManager.ObjLink,
+                    EntityPosition.Position,
+                    _damageCollider.Box,
+                    HitType.Bow,
+                    2,
+                    false,
+                    false
+                );
                 if ((collision & Values.HitCollision.Enemy) != 0)
                     Map.Objects.DeleteObjects.Add(this);
             }
         }
-        
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -106,7 +130,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (!_reflected)
                 {
                     // If the shield is able to reflect the shot.
-                    if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2 && !MapManager.ObjLink.InDamageState)
+                    if (
+                        GameSettings.MirrorReflects
+                        && Game1.GameManager.ShieldLevel == 2
+                        && !MapManager.ObjLink.InDamageState
+                    )
                     {
                         Reflect(direction);
                         return false;
@@ -137,7 +165,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Use the incoming direction and the shield reflect direction to determine new direction.
             shieldDirection.Normalize();
             var incoming = _body.VelocityTarget;
-            var reflected = (incoming - 2 * Vector2.Dot(incoming, shieldDirection) * shieldDirection) * 1.75f;
+            var reflected =
+                (incoming - 2 * Vector2.Dot(incoming, shieldDirection) * shieldDirection) * 1.75f;
 
             // Reverse the movement of the spear.
             _body.VelocityTarget = reflected;
@@ -148,7 +177,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (playSound)
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
 
-            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
+            var splashAnimator = new ObjAnimator(
+                Map,
+                0,
+                0,
+                0,
+                0,
+                Values.LayerTop,
+                "Particles/spawn",
+                "run",
+                true
+            );
             splashAnimator.EntityPosition.Set(EntityPosition.Position - new Vector2(8, 8));
             Map.Objects.SpawnObject(splashAnimator);
             Delete();

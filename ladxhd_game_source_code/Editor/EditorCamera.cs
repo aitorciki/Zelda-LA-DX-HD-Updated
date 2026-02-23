@@ -5,8 +5,9 @@ namespace ProjectZ.Editor
 {
     public class EditorCamera
     {
-        public Matrix TransformMatrix => Matrix.CreateScale(Scale) *
-                                         Matrix.CreateTranslation(new Vector3(Location.X, Location.Y, 0));
+        public Matrix TransformMatrix =>
+            Matrix.CreateScale(Scale)
+            * Matrix.CreateTranslation(new Vector3(Location.X, Location.Y, 0));
         public Point Location = new Point(0, 0);
         public float Scale = 1;
 
@@ -23,7 +24,7 @@ namespace ProjectZ.Editor
                 Scale = stepSize < 0 ? MinScale : MaxScale;
             else
                 Scale += stepSize;
-            
+
             Scale = (int)Math.Round(Scale * 100) / 100f;
 
             var scale = Scale / preScale;

@@ -45,11 +45,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public bool IsVisible { get; internal set; }
 
-        public ObjCock() : base("cock") { }
+        public ObjCock()
+            : base("cock") { }
 
         private Map.Map _map;
 
-        public ObjCock(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public ObjCock(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             _map = map;
 
@@ -113,17 +115,41 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("thrown", stateThrown);
             _aiComponent.States.Add("pickedUp", statePickedUp);
 
-            AddComponent(CarriableComponent.Index, _carriableCompnent = new CarriableComponent(
-                new CRectangle(EntityPosition, new Rectangle(-6, -14, 12, 14)), CarryInit, CarryUpdate, CarryThrow)
-            { CarryHeight = CarryHeight });
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableCompnent = new CarriableComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-6, -14, 12, 14)),
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+                {
+                    CarryHeight = CarryHeight,
+                }
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -16, 16, 16, 8), Values.CollisionTypes.Normal));
+            AddComponent(
+                OcarinaListenerComponent.Index,
+                new OcarinaListenerComponent(OnSongPlayed)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(EntityPosition, -8, -16, 16, 16, 8),
+                    Values.CollisionTypes.Normal
+                )
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerBottom));
-            AddComponent(DrawShadowComponent.Index, _shadowCompnent = new BodyDrawShadowComponent(_body, _sprite) { IsActive = false });
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerBottom)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowCompnent = new BodyDrawShadowComponent(_body, _sprite) { IsActive = false }
+            );
 
             // no saveKey => spawned by the player in the following state
             if (_saveKey == null)
@@ -192,7 +218,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 if (_aiComponent.States.Keys.ToList().IndexOf(_aiComponent.CurrentStateId) > 5)
                 {
                     // Spawn a new sprite shadow on this map and always animate it.
-                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm") { ForceDraw = true };
+                    _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm")
+                    {
+                        ForceDraw = true,
+                    };
                     Map.Objects.RegisterAlwaysAnimateObject(_spriteShadow);
                 }
             }
@@ -215,7 +244,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.SetMusic(84, 2);
 
             // Spawn the rooster's spirit which flies into the body.
-            _objParticle = new ObjCockParticle(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 8));
+            _objParticle = new ObjCockParticle(
+                Map,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 8)
+            );
             Map.Objects.SpawnObject(_objParticle);
         }
 
@@ -228,7 +260,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void TickBlink(double time)
         {
-            _sprite.SpriteShader = ((_blinkTime - time) % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime) ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                ((_blinkTime - time) % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime)
+                    ? Resources.DamageSpriteShader0
+                    : null;
         }
 
         private void EndBlink()
@@ -240,7 +275,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void ToSpawn()
         {
             // Spawn an explosion effect.
-            var objAnimation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, Values.LayerTop, "Particles/explosionBomb", "run", true);
+            var objAnimation = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y - 8,
+                Values.LayerTop,
+                "Particles/explosionBomb",
+                "run",
+                true
+            );
             Map.Objects.SpawnObject(objAnimation);
 
             // Play the explosion sound effect and restore the music.
@@ -250,7 +293,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Play the spawn animation, change the AI state, and spawn a sprite shadow.
             _animator.Play("spawn");
             _aiComponent.ChangeState("spawn");
-            _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm") { ForceDraw = true };
+            _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm")
+            {
+                ForceDraw = true,
+            };
 
             // Always animate both the rooster and the sprite shadow.
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -295,7 +341,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // On the first tick only, check if the rooster is alive and can be carried.
             if (_updateCarry && !Map.DungeonMode)
             {
-                _carriableCompnent.IsActive = (Game1.GameManager.SaveManager.GetString("rooster_respawned", "0") == "1");
+                _carriableCompnent.IsActive = (
+                    Game1.GameManager.SaveManager.GetString("rooster_respawned", "0") == "1"
+                );
                 _updateCarry = false;
             }
             // Import properties from Link to apply to rooster.
@@ -333,8 +381,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _body.IsGrounded = false;
                 _body.IgnoresZ = true;
-                var targetPosZ = 7.5f + MathF.Sin(((float)Game1.TotalGameTime / 1000) * MathF.PI * 2) * 1.5f;
-                EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, targetPosZ, 1 * Game1.TimeMultiplier);
+                var targetPosZ =
+                    7.5f + MathF.Sin(((float)Game1.TotalGameTime / 1000) * MathF.PI * 2) * 1.5f;
+                EntityPosition.Z = AnimationHelper.MoveToTarget(
+                    EntityPosition.Z,
+                    targetPosZ,
+                    1 * Game1.TimeMultiplier
+                );
             }
             else
             {
@@ -342,8 +395,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             // If Link is jumping then store that jump as a high jump the next time the rooster is grounded.
-            if (Link.IsJumpingState() && _body.IsGrounded &&
-                (Link.RailJumpAmount() > 0.45f || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)))
+            if (
+                Link.IsJumpingState()
+                && _body.IsGrounded
+                && (
+                    Link.RailJumpAmount() > 0.45f
+                    || (!Link.IsRailJumping() && Link._body.Velocity.Z < 0)
+                )
+            )
             {
                 _highJump = true;
             }
@@ -392,8 +451,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
 
             // move up
-            var targetPosZ = 36 + MathF.Sin(((float)Game1.TotalGameTime / 450) * MathF.PI * 2) * 1.5f;
-            EntityPosition.Z = AnimationHelper.MoveToTarget(EntityPosition.Z, targetPosZ, 0.5f * Game1.TimeMultiplier);
+            var targetPosZ =
+                36 + MathF.Sin(((float)Game1.TotalGameTime / 450) * MathF.PI * 2) * 1.5f;
+            EntityPosition.Z = AnimationHelper.MoveToTarget(
+                EntityPosition.Z,
+                targetPosZ,
+                0.5f * Game1.TimeMultiplier
+            );
 
             // lift the player up
             if (EntityPosition.Z > CarryHeight)

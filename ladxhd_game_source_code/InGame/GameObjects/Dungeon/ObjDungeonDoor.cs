@@ -2,15 +2,22 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
 {
     internal class ObjDungeonDoor : GameObject
     {
-        public enum DoorStates { Opening, Closing, Open, Closed }
+        public enum DoorStates
+        {
+            Opening,
+            Closing,
+            Open,
+            Closed,
+        }
+
         public DoorStates _currentState;
 
         private readonly BoxCollisionComponent _collisionComponent;
@@ -26,12 +33,22 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private float _doorState;
         private bool _wasUpdated;
 
-        public ObjDungeonDoor() : base("dungeon_door") { }
+        public ObjDungeonDoor()
+            : base("dungeon_door") { }
 
-        public ObjDungeonDoor(Map.Map map, int posX, int posY, int mode, string strKey, int direction, string strPushKey) : base(map)
+        public ObjDungeonDoor(
+            Map.Map map,
+            int posX,
+            int posY,
+            int mode,
+            string strKey,
+            int direction,
+            string strPushKey
+        )
+            : base(map)
         {
             _sourceRectangle = Resources.SourceRectangle("dungeon_door");
-            
+
             _strKey = strKey;
             _strPushKey = strPushKey;
             _mode = mode;
@@ -45,19 +62,36 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
-            _collisionComponent = new BoxCollisionComponent(new CBox(posX, posY, 0, 16, 16, 16), Values.CollisionTypes.Normal);
-            _sprite = new CSprite(Resources.SprObjects, EntityPosition, Rectangle.Empty, new Vector2(8, 8));
+            _collisionComponent = new BoxCollisionComponent(
+                new CBox(posX, posY, 0, 16, 16, 16),
+                Values.CollisionTypes.Normal
+            );
+            _sprite = new CSprite(
+                Resources.SprObjects,
+                EntityPosition,
+                Rectangle.Empty,
+                new Vector2(8, 8)
+            );
             _sprite.Center = new Vector2(8, 8);
             _sprite.Rotation = (float)(Math.PI / 2 * (direction + 1));
 
             CRectangle grabBox = new CRectangle(EntityPosition, new Rectangle(1, 1, 14, 14));
 
             if (!string.IsNullOrEmpty(_strKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(grabBox, null, null, null) { });
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableComponent = new CarriableComponent(grabBox, null, null, null) { }
+            );
             AddComponent(CollisionComponent.Index, _collisionComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
 
             _sourceRectangle.X += mode * 16;
 
@@ -69,7 +103,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (mode == 1 || mode == 3)
             {
                 var pushBox = new CBox(EntityPosition, 0, 0, 16, 16, 8);
-                AddComponent(PushableComponent.Index, new PushableComponent(pushBox, OnPush) { InertiaTime = 100 });
+                AddComponent(
+                    PushableComponent.Index,
+                    new PushableComponent(pushBox, OnPush) { InertiaTime = 100 }
+                );
             }
 
             _sprite.SourceRectangle = _sourceRectangle;
@@ -168,7 +205,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             {
                 if (_currentState != DoorStates.Open && openDoor)
                     Open();
-                else if (_currentState != DoorStates.Closed && _currentState != DoorStates.Closing && !openDoor)
+                else if (
+                    _currentState != DoorStates.Closed
+                    && _currentState != DoorStates.Closing
+                    && !openDoor
+                )
                     Close();
             }
             else
@@ -188,6 +229,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 }
             }
         }
+
         public int GetMode()
         {
             return _mode;

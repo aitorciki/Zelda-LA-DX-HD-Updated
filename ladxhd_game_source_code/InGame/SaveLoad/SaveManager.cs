@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using ProjectZ.InGame.Things;
-using System.Globalization;
 
 namespace ProjectZ.InGame.SaveLoad
 {
@@ -10,17 +10,28 @@ namespace ProjectZ.InGame.SaveLoad
     {
         private readonly Dictionary<string, bool> _boolDictionary = new Dictionary<string, bool>();
         private readonly Dictionary<string, int> _intDictionary = new Dictionary<string, int>();
-        private readonly Dictionary<string, float> _floatDictionary = new Dictionary<string, float>();
-        private readonly Dictionary<string, string> _stringDictionary = new Dictionary<string, string>();
+        private readonly Dictionary<string, float> _floatDictionary =
+            new Dictionary<string, float>();
+        private readonly Dictionary<string, string> _stringDictionary =
+            new Dictionary<string, string>();
 
         private int _shellCount;
         private bool _hasSwordLevel2;
         private bool _hasMirrorShield;
         private bool[] _hasInstruments;
 
-        public int ShellCount { get => _shellCount; }
-        public bool HasSwordLevel2 { get => _hasSwordLevel2; }
-        public bool HasMirrorShield { get => _hasMirrorShield; }
+        public int ShellCount
+        {
+            get => _shellCount;
+        }
+        public bool HasSwordLevel2
+        {
+            get => _hasSwordLevel2;
+        }
+        public bool HasMirrorShield
+        {
+            get => _hasMirrorShield;
+        }
 
         public bool HasInstrument(int index)
         {
@@ -107,7 +118,12 @@ namespace ProjectZ.InGame.SaveLoad
                 foreach (var element in _intDictionary)
                     writer.WriteLine("i " + element.Key + " " + element.Value);
                 foreach (var element in _floatDictionary)
-                    writer.WriteLine("f " + element.Key + " " + element.Value.ToString(CultureInfo.InvariantCulture));
+                    writer.WriteLine(
+                        "f "
+                            + element.Key
+                            + " "
+                            + element.Value.ToString(CultureInfo.InvariantCulture)
+                    );
                 foreach (var element in _stringDictionary)
                     writer.WriteLine("s " + element.Key + " " + element.Value);
             }
@@ -149,17 +165,22 @@ namespace ProjectZ.InGame.SaveLoad
 
                             if (strSplit?.Length >= 3)
                             {
-                                var valueString = line.Substring(strSplit[0].Length + strSplit[1].Length + 2);
+                                var valueString = line.Substring(
+                                    strSplit[0].Length + strSplit[1].Length + 2
+                                );
 
                                 if (strSplit[0] == "b")
-                                    _boolDictionary.Add(strSplit[1], Convert.ToBoolean(valueString));
-                                
+                                    _boolDictionary.Add(
+                                        strSplit[1],
+                                        Convert.ToBoolean(valueString)
+                                    );
                                 else if (strSplit[0] == "i")
                                     _intDictionary.Add(strSplit[1], Convert.ToInt32(valueString));
-                                
                                 else if (strSplit[0] == "f")
-                                    _floatDictionary.Add(strSplit[1], float.Parse(valueString, CultureInfo.InvariantCulture));
-                                
+                                    _floatDictionary.Add(
+                                        strSplit[1],
+                                        float.Parse(valueString, CultureInfo.InvariantCulture)
+                                    );
                                 else if (strSplit[0] == "s")
                                 {
                                     if (strSplit[2] == "sword2:1")
@@ -172,9 +193,9 @@ namespace ProjectZ.InGame.SaveLoad
                                     {
                                         string count = strSplit[2].Split(':')[1];
                                         _shellCount = Convert.ToInt32(count);
-                                    }                                       
+                                    }
 
-                                    for (int j = 0; j < 8; j++) 
+                                    for (int j = 0; j < 8; j++)
                                     {
                                         if (strSplit[2] == "instrument" + j + ":1")
                                             _hasInstruments[j] = true;
@@ -196,7 +217,14 @@ namespace ProjectZ.InGame.SaveLoad
             if (_boolDictionary.ContainsKey(key))
             {
                 if (_historyEnabled && _boolDictionary[key] != value)
-                    _history.Push(new HistoryFrame() { Key = key, BoolValueOld = _boolDictionary[key], BoolValue = value });
+                    _history.Push(
+                        new HistoryFrame()
+                        {
+                            Key = key,
+                            BoolValueOld = _boolDictionary[key],
+                            BoolValue = value,
+                        }
+                    );
                 _boolDictionary[key] = value;
             }
             else
@@ -221,7 +249,14 @@ namespace ProjectZ.InGame.SaveLoad
             if (_intDictionary.ContainsKey(key))
             {
                 if (_historyEnabled && _intDictionary[key] != value)
-                    _history.Push(new HistoryFrame() { Key = key, IntValueOld = _intDictionary[key], IntValue = value });
+                    _history.Push(
+                        new HistoryFrame()
+                        {
+                            Key = key,
+                            IntValueOld = _intDictionary[key],
+                            IntValue = value,
+                        }
+                    );
 
                 _intDictionary[key] = value;
             }
@@ -258,7 +293,9 @@ namespace ProjectZ.InGame.SaveLoad
             if (_intDictionary.ContainsKey(key))
             {
                 if (_historyEnabled)
-                    _history.Push(new HistoryFrame() { Key = key, IntValueOld = _intDictionary[key] });
+                    _history.Push(
+                        new HistoryFrame() { Key = key, IntValueOld = _intDictionary[key] }
+                    );
 
                 _intDictionary.Remove(key);
             }
@@ -270,7 +307,14 @@ namespace ProjectZ.InGame.SaveLoad
             if (_floatDictionary.ContainsKey(key))
             {
                 if (_historyEnabled && _floatDictionary[key] != value)
-                    _history.Push(new HistoryFrame() { Key = key, FloatValueOld = _floatDictionary[key], FloatValue = value });
+                    _history.Push(
+                        new HistoryFrame()
+                        {
+                            Key = key,
+                            FloatValueOld = _floatDictionary[key],
+                            FloatValue = value,
+                        }
+                    );
 
                 _floatDictionary[key] = value;
             }
@@ -302,7 +346,14 @@ namespace ProjectZ.InGame.SaveLoad
             if (_stringDictionary.ContainsKey(key))
             {
                 if (_historyEnabled && _stringDictionary[key] != value)
-                    _history.Push(new HistoryFrame() { Key = key, StringValueOld = _stringDictionary[key], StringValue = value });
+                    _history.Push(
+                        new HistoryFrame()
+                        {
+                            Key = key,
+                            StringValueOld = _stringDictionary[key],
+                            StringValue = value,
+                        }
+                    );
 
                 _stringDictionary[key] = value;
             }
@@ -335,7 +386,9 @@ namespace ProjectZ.InGame.SaveLoad
             if (_stringDictionary.ContainsKey(key))
             {
                 if (_historyEnabled)
-                    _history.Push(new HistoryFrame() { Key = key, StringValueOld = _stringDictionary[key] });
+                    _history.Push(
+                        new HistoryFrame() { Key = key, StringValueOld = _stringDictionary[key] }
+                    );
 
                 _stringDictionary.Remove(key);
             }
@@ -344,11 +397,10 @@ namespace ProjectZ.InGame.SaveLoad
 
         public bool ContainsValue(string key)
         {
-            return
-                _boolDictionary.ContainsKey(key) ||
-                _intDictionary.ContainsKey(key) ||
-                _floatDictionary.ContainsKey(key) ||
-                _stringDictionary.ContainsKey(key);
+            return _boolDictionary.ContainsKey(key)
+                || _intDictionary.ContainsKey(key)
+                || _floatDictionary.ContainsKey(key)
+                || _stringDictionary.ContainsKey(key);
         }
 
         public void EnableHistory()

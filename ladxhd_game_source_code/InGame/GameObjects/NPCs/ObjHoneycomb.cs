@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
@@ -25,15 +25,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private double _fallCounter;
         private const double FallTime = 250;
 
-        public ObjHoneycomb() : base("trade5Map") { }
+        public ObjHoneycomb()
+            : base("trade5Map") { }
 
-        public ObjHoneycomb(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public ObjHoneycomb(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 24, 0);
             EntitySize = new Rectangle(0, -32, 16, 32);
 
-            if (!string.IsNullOrEmpty(saveKey) &&
-                Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 SpawnItem();
                 IsDead = true;
@@ -44,24 +48,55 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _sprite = new CSprite("trade5Map", EntityPosition, new Vector2(0, -24));
 
             AddComponent(BodyComponent.Index, body);
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
         }
 
         public override void Init()
         {
             // get tarin to parent the stick to
-            var objTarin = Map.Objects.GetObjectOfType((int)EntityPosition.X, (int)EntityPosition.Y, 32, 32, typeof(ObjPersonNew));
+            var objTarin = Map.Objects.GetObjectOfType(
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                32,
+                32,
+                typeof(ObjPersonNew)
+            );
             if (objTarin != null)
             {
-                var objStick = new ObjPersonNew(Map, (int)objTarin.EntityPosition.X, (int)objTarin.EntityPosition.Y, null, "tarin stick", "tarinStick", "pHidden", new Rectangle(0, 0, 8, 8));
-                ((BodyCollisionComponent)objStick.Components[CollisionComponent.Index]).IsActive = false;
+                var objStick = new ObjPersonNew(
+                    Map,
+                    (int)objTarin.EntityPosition.X,
+                    (int)objTarin.EntityPosition.Y,
+                    null,
+                    "tarin stick",
+                    "tarinStick",
+                    "pHidden",
+                    new Rectangle(0, 0, 8, 8)
+                );
+                ((BodyCollisionComponent)objStick.Components[CollisionComponent.Index]).IsActive =
+                    false;
                 objStick.EntityPosition.SetParent(objTarin.EntityPosition, Vector2.Zero, true);
                 Map.Objects.SpawnObject(objStick);
             }
 
-            _objFollowerTarget = new ObjPersonNew(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 24, null, "bee target", "beeTarget", null, new Rectangle(0, 0, 8, 8));
+            _objFollowerTarget = new ObjPersonNew(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y - 24,
+                null,
+                "bee target",
+                "beeTarget",
+                null,
+                new Rectangle(0, 0, 8, 8)
+            );
             Map.Objects.SpawnObject(_objFollowerTarget);
 
             SpawnBee(0);
@@ -86,7 +121,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 if (!_spawnBees)
                 {
-                    _objFollowerTarget.EntityPosition.Set(new Vector2(EntityPosition.X - 12, EntityPosition.Y - 0));
+                    _objFollowerTarget.EntityPosition.Set(
+                        new Vector2(EntityPosition.X - 12, EntityPosition.Y - 0)
+                    );
                     _spawnBees = true;
                     _spawnCounter = SpawnTime;
                     _spawnIndex = 1;
@@ -129,7 +166,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // look at tarin
             if (_spawnBees && _spawnCounter > 2350)
             {
-                var playerDirection = new Vector2(_objFollowerTarget.EntityPosition.X, _objFollowerTarget.EntityPosition.Y + 16) - MapManager.ObjLink.Position;
+                var playerDirection =
+                    new Vector2(
+                        _objFollowerTarget.EntityPosition.X,
+                        _objFollowerTarget.EntityPosition.Y + 16
+                    ) - MapManager.ObjLink.Position;
                 if (playerDirection != Vector2.Zero)
                     playerDirection.Normalize();
 
@@ -151,23 +192,40 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void SpawnBee(int index)
         {
-            _objBee[index] = new ObjBees(Map, new Vector2((int)EntityPosition.X + 8, (int)EntityPosition.Y - 12), _objFollowerTarget, index == 0);
+            _objBee[index] = new ObjBees(
+                Map,
+                new Vector2((int)EntityPosition.X + 8, (int)EntityPosition.Y - 12),
+                _objFollowerTarget,
+                index == 0
+            );
             Map.Objects.SpawnObject(_objBee[index]);
         }
 
         private void StartFollowing(int index)
         {
             var radiants = index / 6f * MathF.PI * 2;
-            var offset = new Vector2(MathF.Sin(radiants), MathF.Cos(radiants)) * Game1.RandomNumber.Next(4, 7);
+            var offset =
+                new Vector2(MathF.Sin(radiants), MathF.Cos(radiants))
+                * Game1.RandomNumber.Next(4, 7);
             _objBee[index].SetFollowMode(offset);
         }
 
         private void SpawnItem()
         {
-            var objItem = new ObjItem(Map, (int)EntityPosition.X, (int)EntityPosition.Y, null, "ow_honeycomb", "trade5", null);
+            var objItem = new ObjItem(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                null,
+                "ow_honeycomb",
+                "trade5",
+                null
+            );
             if (!objItem.IsDead)
             {
-                objItem.EntityPosition.Set(new Vector3(EntityPosition.X + 8, EntityPosition.Y + 8, 16));
+                objItem.EntityPosition.Set(
+                    new Vector3(EntityPosition.X + 8, EntityPosition.Y + 8, 16)
+                );
                 ((BodyComponent)objItem.Components[BodyComponent.Index]).Bounciness = 0;
                 Map.Objects.SpawnObject(objItem);
             }

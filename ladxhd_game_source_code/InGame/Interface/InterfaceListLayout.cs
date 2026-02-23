@@ -34,7 +34,12 @@ namespace ProjectZ.InGame.Interface
                 element.Update();
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             // look for changes
             foreach (var element in Elements)
@@ -56,7 +61,12 @@ namespace ProjectZ.InGame.Interface
             foreach (var element in Elements)
             {
                 if (element.Visible && !element.Hidden)
-                    element.Draw(spriteBatch, element.Position.ToVector2() * scale + drawPosition, scale, transparency);
+                    element.Draw(
+                        spriteBatch,
+                        element.Position.ToVector2() * scale + drawPosition,
+                        scale,
+                        transparency
+                    );
             }
         }
 
@@ -69,11 +79,21 @@ namespace ProjectZ.InGame.Interface
 
             switch (direction.ToLower())
             {
-                case "up":    button = CButtons.Up; break;
-                case "down":  button = CButtons.Down; break;
-                case "left":  button = CButtons.Left; break;
-                case "right": button = CButtons.Right; break;
-                default:      button = CButtons.Down; break;
+                case "up":
+                    button = CButtons.Up;
+                    break;
+                case "down":
+                    button = CButtons.Down;
+                    break;
+                case "left":
+                    button = CButtons.Left;
+                    break;
+                case "right":
+                    button = CButtons.Right;
+                    break;
+                default:
+                    button = CButtons.Down;
+                    break;
             }
             for (int i = 0; i < count; i++)
                 SimulateSinglePadPress(button, playSound);
@@ -90,13 +110,17 @@ namespace ProjectZ.InGame.Interface
 
             if (HorizontalMode)
             {
-                if (button == CButtons.Left)  direction = -1;
-                if (button == CButtons.Right) direction = 1;
+                if (button == CButtons.Left)
+                    direction = -1;
+                if (button == CButtons.Right)
+                    direction = 1;
             }
             else
             {
-                if (button == CButtons.Up)   direction = -1;
-                if (button == CButtons.Down) direction = 1;
+                if (button == CButtons.Up)
+                    direction = -1;
+                if (button == CButtons.Down)
+                    direction = 1;
             }
 
             if (direction == 0)
@@ -111,13 +135,14 @@ namespace ProjectZ.InGame.Interface
                     _selectionIndex = Elements.Count - 1;
                 else if (_selectionIndex >= Elements.Count)
                     _selectionIndex = 0;
-            } 
-            while (!Elements[_selectionIndex].Selectable || !Elements[_selectionIndex].Visible);
+            } while (!Elements[_selectionIndex].Selectable || !Elements[_selectionIndex].Visible);
 
             if (direction < 0)
-                Elements[_selectionIndex].Select(HorizontalMode ? Directions.Right : Directions.Down, true);
+                Elements[_selectionIndex]
+                    .Select(HorizontalMode ? Directions.Right : Directions.Down, true);
             else
-                Elements[_selectionIndex].Select(HorizontalMode ? Directions.Left : Directions.Top, true);
+                Elements[_selectionIndex]
+                    .Select(HorizontalMode ? Directions.Left : Directions.Top, true);
 
             if (playSound)
                 Game1.GameManager.PlaySoundEffect("D360-10-0A");
@@ -133,10 +158,18 @@ namespace ProjectZ.InGame.Interface
 
             var direction = 0;
 
-            if (HorizontalMode ? ControlHandler.MenuButtonDown(CButtons.Left) : ControlHandler.MenuButtonDown(CButtons.Up))
+            if (
+                HorizontalMode
+                    ? ControlHandler.MenuButtonDown(CButtons.Left)
+                    : ControlHandler.MenuButtonDown(CButtons.Up)
+            )
                 direction = -1;
 
-            if (HorizontalMode ? ControlHandler.MenuButtonDown(CButtons.Right) : ControlHandler.MenuButtonDown(CButtons.Down))
+            if (
+                HorizontalMode
+                    ? ControlHandler.MenuButtonDown(CButtons.Right)
+                    : ControlHandler.MenuButtonDown(CButtons.Down)
+            )
                 direction = 1;
 
             if (direction == 0)
@@ -153,21 +186,26 @@ namespace ProjectZ.InGame.Interface
 
                 if (_selectionIndex < 0)
                 {
-                    rValue = PreventSelection ? InputEventReturn.Something : InputEventReturn.Nothing;
+                    rValue = PreventSelection
+                        ? InputEventReturn.Something
+                        : InputEventReturn.Nothing;
                     _selectionIndex = Elements.Count - 1;
                 }
                 else if (_selectionIndex >= Elements.Count)
                 {
-                    rValue = PreventSelection ? InputEventReturn.Something : InputEventReturn.Nothing;
+                    rValue = PreventSelection
+                        ? InputEventReturn.Something
+                        : InputEventReturn.Nothing;
                     _selectionIndex = 0;
                 }
-
             } while (!Elements[_selectionIndex].Selectable || !Elements[_selectionIndex].Visible);
 
             if (direction < 0)
-                Elements[_selectionIndex].Select(HorizontalMode ? Directions.Right : Directions.Down, true);
+                Elements[_selectionIndex]
+                    .Select(HorizontalMode ? Directions.Right : Directions.Down, true);
             else
-                Elements[_selectionIndex].Select(HorizontalMode ? Directions.Left : Directions.Top, true);
+                Elements[_selectionIndex]
+                    .Select(HorizontalMode ? Directions.Left : Directions.Top, true);
 
             Game1.GameManager.PlaySoundEffect("D360-10-0A");
 
@@ -181,14 +219,18 @@ namespace ProjectZ.InGame.Interface
 
             var dir = 1;
 
-            if (!HorizontalMode && direction == Directions.Down ||
-                HorizontalMode && direction == Directions.Right)
+            if (
+                !HorizontalMode && direction == Directions.Down
+                || HorizontalMode && direction == Directions.Right
+            )
             {
                 _selectionIndex = Elements.Count - 1;
                 dir = -1;
             }
-            else if (!HorizontalMode && direction == Directions.Top ||
-                HorizontalMode && direction == Directions.Left)
+            else if (
+                !HorizontalMode && direction == Directions.Top
+                || HorizontalMode && direction == Directions.Left
+            )
             {
                 _selectionIndex = 0;
                 dir = 1;
@@ -245,7 +287,6 @@ namespace ProjectZ.InGame.Interface
 
             if (Elements.Count == 1)
                 _selectionIndex = 0;
-            
             else if (index <= _selectionIndex)
                 _selectionIndex++;
 
@@ -269,7 +310,6 @@ namespace ProjectZ.InGame.Interface
 
             if (Elements.Count == 0)
                 _selectionIndex = 0;
-            
             else
             {
                 if (_selectionIndex >= Elements.Count)
@@ -280,8 +320,10 @@ namespace ProjectZ.InGame.Interface
                     int start = _selectionIndex;
                     do
                     {
-                        if (Elements[_selectionIndex].Selectable &&
-                            Elements[_selectionIndex].Visible)
+                        if (
+                            Elements[_selectionIndex].Selectable
+                            && Elements[_selectionIndex].Visible
+                        )
                         {
                             Elements[_selectionIndex].Select(Directions.Top, false);
                             break;
@@ -289,16 +331,17 @@ namespace ProjectZ.InGame.Interface
                         _selectionIndex++;
                         if (_selectionIndex >= Elements.Count)
                             _selectionIndex = 0;
-
-                    }
-                    while (_selectionIndex != start);
+                    } while (_selectionIndex != start);
                 }
             }
             Recalculate = true;
             return true;
         }
 
-        public InterfaceElement ReplaceElement(InterfaceElement oldElement, InterfaceElement newElement)
+        public InterfaceElement ReplaceElement(
+            InterfaceElement oldElement,
+            InterfaceElement newElement
+        )
         {
             int index = Elements.IndexOf(oldElement);
 

@@ -12,7 +12,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public int ShadowWidth = 8;
         public int ShadowHeight = 4;
-        
+
         public float Transparency = 1;
 
         public ShadowBodyDrawComponent(CPosition position)
@@ -27,8 +27,20 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
                 return;
 
             // draw the shadow
-            DrawHelper.DrawShadow(Resources.SprItem, new Vector2(_position.X - ShadowWidth / 2 + _offset.X, _position.Y - ShadowHeight / 2 + _offset.Y),
-                new Rectangle(1, 218, 8, 4), ShadowWidth, ShadowHeight, false, 1, 0, Color.White * ((_position.Z + 10) / 20f) * Transparency);
+            DrawHelper.DrawShadow(
+                Resources.SprItem,
+                new Vector2(
+                    _position.X - ShadowWidth / 2 + _offset.X,
+                    _position.Y - ShadowHeight / 2 + _offset.Y
+                ),
+                new Rectangle(1, 218, 8, 4),
+                ShadowWidth,
+                ShadowHeight,
+                false,
+                1,
+                0,
+                Color.White * ((_position.Z + 10) / 20f) * Transparency
+            );
         }
     }
 }

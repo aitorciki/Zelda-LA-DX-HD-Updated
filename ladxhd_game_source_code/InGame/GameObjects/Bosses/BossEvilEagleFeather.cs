@@ -16,7 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _liveTime = 750;
         private bool _reflected;
 
-        public BossEvilEagleFeather(Map.Map map, Vector2 position, Vector2 velocity) : base(map)
+        public BossEvilEagleFeather(Map.Map map, Vector2 position, Vector2 velocity)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -36,7 +37,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             _body.VelocityTarget = velocity;
@@ -47,10 +48,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(PushableComponent.Index, new PushableComponent(pushBox, OnPush) { RepelMultiplier = 0.2f });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageFieldComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(pushBox, OnPush) { RepelMultiplier = 0.2f }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
@@ -65,7 +75,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

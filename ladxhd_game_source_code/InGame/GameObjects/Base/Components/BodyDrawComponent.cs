@@ -44,16 +44,33 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             if (!IsActive)
                 return;
 
-            var isOnWater = _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water) && WaterOutline ||
-                            _body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater) && DeepWaterOutline;
+            var isOnWater =
+                _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water) && WaterOutline
+                || _body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater)
+                    && DeepWaterOutline;
 
             // draw the water stuff
             if (_body.IsActive && isOnWater && _body.IsGrounded && _body.Position.Z <= 0)
             {
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(
                         _body.Position.X + _body.OffsetX + _body.Width / 2f - 6,
-                        _body.Position.Y - _body.Position.Z + _body.OffsetY + _body.Height - 6 + WaterOutlineOffsetY),
-                    new Rectangle(_sourceWater.X, _sourceWater.Y + (Game1.TotalGameTime % 133 > 66 ? 9 : 0), _sourceWater.Width, _sourceWater.Height / 2), Color.White);
+                        _body.Position.Y
+                            - _body.Position.Z
+                            + _body.OffsetY
+                            + _body.Height
+                            - 6
+                            + WaterOutlineOffsetY
+                    ),
+                    new Rectangle(
+                        _sourceWater.X,
+                        _sourceWater.Y + (Game1.TotalGameTime % 133 > 66 ? 9 : 0),
+                        _sourceWater.Width,
+                        _sourceWater.Height / 2
+                    ),
+                    Color.White
+                );
             }
 
             _draw(spriteBatch);
@@ -61,26 +78,68 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             // draw water effect
             if (_body.IsActive && isOnWater && _body.IsGrounded && _body.Position.Z <= 0)
             {
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(
                         _body.Position.X + _body.OffsetX + _body.Width / 2f - 6,
-                        _body.Position.Y - _body.Position.Z + _body.OffsetY + _body.Height - 2 + WaterOutlineOffsetY),
-                    new Rectangle(_sourceWater.X, _sourceWater.Y + _sourceWater.Height / 2 + (Game1.TotalGameTime % 133 > 66 ? 9 : 0), _sourceWater.Width, _sourceWater.Height / 2), Color.White);
+                        _body.Position.Y
+                            - _body.Position.Z
+                            + _body.OffsetY
+                            + _body.Height
+                            - 2
+                            + WaterOutlineOffsetY
+                    ),
+                    new Rectangle(
+                        _sourceWater.X,
+                        _sourceWater.Y
+                            + _sourceWater.Height / 2
+                            + (Game1.TotalGameTime % 133 > 66 ? 9 : 0),
+                        _sourceWater.Width,
+                        _sourceWater.Height / 2
+                    ),
+                    Color.White
+                );
             }
 
             // draw grass if the body is standing on grass
-            if (_body.IsActive && Grass && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.Position.Z < 4)
+            if (
+                _body.IsActive
+                && Grass
+                && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass)
+                && _body.Position.Z < 4
+            )
             {
                 var flip = (_body.Position.X + _body.Position.Y) % 8 > 4;
 
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(
                         _body.Position.X + _body.OffsetX + _body.Width / 2f - 8,
-                        _body.Position.Y + _body.OffsetY + _body.Height - 8), _sourceGrass, Color.White,
-                    0, Vector2.Zero, Vector2.One, !flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+                        _body.Position.Y + _body.OffsetY + _body.Height - 8
+                    ),
+                    _sourceGrass,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    Vector2.One,
+                    !flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    0
+                );
 
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(
                         _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                        _body.Position.Y + _body.OffsetY + _body.Height - 8), _sourceGrass, Color.White,
-                    0, Vector2.Zero, Vector2.One, flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
+                        _body.Position.Y + _body.OffsetY + _body.Height - 8
+                    ),
+                    _sourceGrass,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    Vector2.One,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    0
+                );
             }
         }
     }

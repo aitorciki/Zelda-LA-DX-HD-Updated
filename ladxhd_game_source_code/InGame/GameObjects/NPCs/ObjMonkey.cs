@@ -40,12 +40,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _damageCounter;
         private const int DamageTime = 400;
 
-        public ObjMonkey() : base("monkey") { }
+        public ObjMonkey()
+            : base("monkey") { }
 
-        public ObjMonkey(Map.Map map, int posX, int posY) : base(map)
+        public ObjMonkey(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -59,21 +61,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 MaxJumpHeight = 4f,
                 DragAir = 0.99f,
                 Drag = 0.85f,
-                Gravity = -0.15f
+                Gravity = -0.15f,
             };
             var randomDir = (Game1.RandomNumber.Next(0, 50) / 50.0f) * MathF.PI * 2;
-            _endPosition = new Vector2(EntityPosition.X + 8, EntityPosition.Y - 24) +
-                           new Vector2(MathF.Sin(randomDir), MathF.Cos(randomDir)) * 150;
+            _endPosition =
+                new Vector2(EntityPosition.X + 8, EntityPosition.Y - 24)
+                + new Vector2(MathF.Sin(randomDir), MathF.Cos(randomDir)) * 150;
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/monkey");
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _hitCooldown = new AiTriggerSwitch(250);
             _waitTimer = new AiTriggerSwitch(150);
@@ -89,7 +95,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             stateJump.Trigger.Add(_hitCooldown);
             var stateFlee = new AiState(UpdateFlee) { Init = ToFlee };
             var stateFleeSit = new AiState(UpdateFleeSit);
-            stateFleeSit.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("flee"), 250, 300));
+            stateFleeSit.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("flee"), 250, 300)
+            );
             var stateReset = new AiState(UpdateReset);
             var stateBanana = new AiState(UpdateBusiness);
             stateBanana.Trigger.Add(new AiTriggerCountdown(1500, null, ToBusiness));
@@ -124,16 +132,37 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    _body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             if (Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1")
             {
                 Tags = Values.GameObjectTag.Enemy;
-                _bowWow = (ObjBowWow)Map.Objects.GetObjectOfType((int)EntityPosition.X - 120, (int)EntityPosition.Y - 120, 240, 240, typeof(ObjBowWow));
+                _bowWow = (ObjBowWow)
+                    Map.Objects.GetObjectOfType(
+                        (int)EntityPosition.X - 120,
+                        (int)EntityPosition.Y - 120,
+                        240,
+                        240,
+                        typeof(ObjBowWow)
+                    );
                 _hitCooldown.State = true;
             }
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -155,8 +184,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _damageCounter = 0;
             _directionChangeCounter = 0;
             _body.Velocity = Vector3.Zero;
-            _body.CollisionTypes = Values.CollisionTypes.Normal |
-                                    Values.CollisionTypes.NPCWall;
+            _body.CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall;
             EntityPosition.Set(ResetPosition);
         }
 
@@ -168,7 +196,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _initBusiness = true;
                 ToBanana();
             }
-            else if (_aiComponent.CurrentStateId != "leave" && _aiComponent.CurrentStateId != "fade" && value == "3")
+            else if (
+                _aiComponent.CurrentStateId != "leave"
+                && _aiComponent.CurrentStateId != "fade"
+                && value == "3"
+            )
                 ToLeave();
         }
 
@@ -187,7 +219,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.ChangeState("sit");
             Game1.GameManager.StartDialogPath("castle_monkey");
             Tags = Values.GameObjectTag.Enemy;
-            _bowWow = (ObjBowWow)Map.Objects.GetObjectOfType((int)EntityPosition.X - 80, (int)EntityPosition.Y - 40, 160, 160, typeof(ObjBowWow));
+            _bowWow = (ObjBowWow)
+                Map.Objects.GetObjectOfType(
+                    (int)EntityPosition.X - 80,
+                    (int)EntityPosition.Y - 40,
+                    160,
+                    160,
+                    typeof(ObjBowWow)
+                );
         }
 
         private void UpdateWaiting()
@@ -234,9 +273,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 // Change the direction.
                 var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-                direction = new Vector2(
-                    (float)Math.Sin(rotation),
-                    (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
+                direction =
+                    new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation))
+                    * Game1.RandomNumber.Next(25, 40)
+                    / 50f;
             }
             _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, 1.75f);
             _direction = direction.X < 0 ? 0 : 1;
@@ -286,8 +326,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 EntityPosition.Set(ResetPosition);
                 _aiComponent.ChangeState("waiting");
                 _damageCounter = 0;
-                _body.CollisionTypes = Values.CollisionTypes.Normal |
-                                       Values.CollisionTypes.NPCWall;
+                _body.CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall;
             }
         }
 
@@ -375,10 +414,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // Draw the banana sprite.
             var sourceRectangle = Game1.GameManager.ItemManager["trade3"].SourceRectangle;
-            spriteBatch.Draw(Resources.SprItem, new Vector2(EntityPosition.X - 8, EntityPosition.Y - 30), sourceRectangle, Color.White);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Vector2(EntityPosition.X - 8, EntityPosition.Y - 30),
+                sourceRectangle,
+                Color.White
+            );
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (!_hitCooldown.State || hitType != HitType.BowWow)
                 return Values.HitCollision.None;
@@ -404,7 +454,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void OnCollision(Values.BodyCollision moveCollision)
         {
-            if (_aiComponent.CurrentStateId == "leave" && moveCollision.HasFlag(Values.BodyCollision.Floor))
+            if (
+                _aiComponent.CurrentStateId == "leave"
+                && moveCollision.HasFlag(Values.BodyCollision.Floor)
+            )
             {
                 _waitTimer.Reset();
 
@@ -415,7 +468,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 _body.Velocity = Vector3.Zero;
             }
-            if (_aiComponent.CurrentStateId == "flee" && moveCollision.HasFlag(Values.BodyCollision.Floor))
+            if (
+                _aiComponent.CurrentStateId == "flee"
+                && moveCollision.HasFlag(Values.BodyCollision.Floor)
+            )
                 _aiComponent.ChangeState("fleeSit");
 
             if (_aiComponent.CurrentStateId != "jump")

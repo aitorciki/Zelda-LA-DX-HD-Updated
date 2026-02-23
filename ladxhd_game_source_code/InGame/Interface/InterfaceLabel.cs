@@ -8,7 +8,7 @@ namespace ProjectZ.InGame.Interface
     {
         // A cached version of the font if fed to the parameter (used for header text).
         private SpriteFont _font;
-        
+
         // Try to use the cached font if available. If not use the current GameFont.
         private SpriteFont Font => _font ?? Resources.GameFont;
 
@@ -51,9 +51,11 @@ namespace ProjectZ.InGame.Interface
             UpdateLanguageText();
         }
 
-        public InterfaceLabel(string key, Point size, Point margin) : this(null, key, size, margin) { }
+        public InterfaceLabel(string key, Point size, Point margin)
+            : this(null, key, size, margin) { }
 
-        public InterfaceLabel(string key) : this(key, Point.Zero, Point.Zero)
+        public InterfaceLabel(string key)
+            : this(key, Point.Zero, Point.Zero)
         {
             Size = new Point((int)_textSize.X, (int)_textSize.Y);
         }
@@ -92,7 +94,10 @@ namespace ProjectZ.InGame.Interface
 
             if (Size != Point.Zero)
             {
-                _drawOffset = new Vector2(Size.X / 2 - _textSize.X / 2, Size.Y / 2 - _textSize.Y / 2);
+                _drawOffset = new Vector2(
+                    Size.X / 2 - _textSize.X / 2,
+                    Size.Y / 2 - _textSize.Y / 2
+                );
 
                 if ((TextAlignment & Gravities.Left) != 0)
                     _drawOffset.X = 0;
@@ -122,12 +127,24 @@ namespace ProjectZ.InGame.Interface
                 SetText(OverrideText);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 
             // This is expensive and runs every frame. It should be removed and replaced with "language changed" event.
-            if (OverrideText != "" || (Translate && _textKey != null && Game1.LanguageManager.GetString(_textKey, "error") != Text))
+            if (
+                OverrideText != ""
+                || (
+                    Translate
+                    && _textKey != null
+                    && Game1.LanguageManager.GetString(_textKey, "error") != Text
+                )
+            )
                 UpdateLanguageText();
 
             // If there is no text then don't try to draw any.
@@ -135,11 +152,20 @@ namespace ProjectZ.InGame.Interface
                 return;
 
             // Draw the text on the label.
-            spriteBatch.DrawString(Font, Text,
+            spriteBatch.DrawString(
+                Font,
+                Text,
                 new Vector2(
                     (int)(drawPosition.X + _drawOffset.X * scale),
-                    (int)(drawPosition.Y + (_drawOffset.Y + 1) * scale)),
-                TextColor * transparency, 0, Vector2.Zero, new Vector2(scale), SpriteEffects.None, 0);
+                    (int)(drawPosition.Y + (_drawOffset.Y + 1) * scale)
+                ),
+                TextColor * transparency,
+                0,
+                Vector2.Zero,
+                new Vector2(scale),
+                SpriteEffects.None,
+                0
+            );
         }
     }
 }

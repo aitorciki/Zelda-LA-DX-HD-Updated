@@ -21,7 +21,13 @@ namespace ProjectZ.InGame.Interface
             SelectionColor = Values.MenuButtonColorSelected;
         }
 
-        public InterfaceButton(Point size, Point margin, InterfaceElement insideElement, BFunction clickFunction) : this()
+        public InterfaceButton(
+            Point size,
+            Point margin,
+            InterfaceElement insideElement,
+            BFunction clickFunction
+        )
+            : this()
         {
             Size = size;
             Margin = margin;
@@ -29,7 +35,8 @@ namespace ProjectZ.InGame.Interface
             ClickFunction = clickFunction;
         }
 
-        public InterfaceButton(Point size, Point margin, string text, BFunction clickFunction) : this()
+        public InterfaceButton(Point size, Point margin, string text, BFunction clickFunction)
+            : this()
         {
             Size = size;
             Margin = margin;
@@ -65,11 +72,17 @@ namespace ProjectZ.InGame.Interface
             if (currentPage != null && currentPage.GetType() == typeof(MainMenuPage))
             {
                 // Only allow Start to select the save file and not the other buttons.
-                if (pressedButton == CButtons.Start && (buttonText == "Settings" || buttonText == "Quit"))
+                if (
+                    pressedButton == CButtons.Start
+                    && (buttonText == "Settings" || buttonText == "Quit")
+                )
                     return InputEventReturn.Nothing;
 
                 // All that remains is the save file selection.
-                if (pressedButton != CButtons.Start && pressedButton != ControlHandler.ConfirmButton)
+                if (
+                    pressedButton != CButtons.Start
+                    && pressedButton != ControlHandler.ConfirmButton
+                )
                     return InputEventReturn.Nothing;
             }
             // In every other case only allow the confirm button to click a button.
@@ -91,7 +104,12 @@ namespace ProjectZ.InGame.Interface
             return InputEventReturn.Nothing;
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 

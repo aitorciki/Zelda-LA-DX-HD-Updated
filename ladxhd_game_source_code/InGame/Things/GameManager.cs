@@ -1,6 +1,6 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
-﻿using System.IO;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -65,7 +65,12 @@ namespace ProjectZ.InGame.Things
                 float scaleX = (float)_activeRenderTarget.Width / denomX;
                 float scaleY = (float)_activeRenderTarget.Height / denomY;
 
-                if (float.IsNaN(scaleX) || float.IsNaN(scaleY) || float.IsInfinity(scaleX) || float.IsInfinity(scaleY))
+                if (
+                    float.IsNaN(scaleX)
+                    || float.IsNaN(scaleY)
+                    || float.IsInfinity(scaleX)
+                    || float.IsInfinity(scaleY)
+                )
                     return Matrix.Identity;
 
                 return Matrix.CreateScale(scaleX, scaleY, 1f);
@@ -75,8 +80,10 @@ namespace ProjectZ.InGame.Things
         public int CurrentRenderHeight;
         public float CurrentRenderScale;
 
-        public int BlurRenderTargetWidth => (int)(Game1.RenderWidth / MapManager.Camera.Scale / 2) + 8;
-        public int BlurRenderTargetHeight => (int)(Game1.RenderHeight / MapManager.Camera.Scale / 2) + 8;
+        public int BlurRenderTargetWidth =>
+            (int)(Game1.RenderWidth / MapManager.Camera.Scale / 2) + 8;
+        public int BlurRenderTargetHeight =>
+            (int)(Game1.RenderHeight / MapManager.Camera.Scale / 2) + 8;
 
         public int SideBlurRenderTargetWidth => BlurRenderTargetWidth * 2;
         public int SideBlurRenderTargetHeight => BlurRenderTargetHeight * 2;
@@ -94,7 +101,8 @@ namespace ProjectZ.InGame.Things
         public List<GameItemCollected> CollectedItems = new List<GameItemCollected>();
 
         // sound effects that are currently playing
-        private Dictionary<string, PlayingSoundEffect> CurrentSoundEffects = new Dictionary<string, PlayingSoundEffect>();
+        private Dictionary<string, PlayingSoundEffect> CurrentSoundEffects =
+            new Dictionary<string, PlayingSoundEffect>();
 
         // dungeon maps
         public Dictionary<string, MiniMap> DungeonMaps = new Dictionary<string, MiniMap>();
@@ -107,11 +115,16 @@ namespace ProjectZ.InGame.Things
         public bool ThiefState = false;
         public string RealSaveName = "Link";
 
-        public string SaveName 
+        public string SaveName
         {
-            get { return ThiefState ? Game1.LanguageManager.GetString("savename_thief", "error") : RealSaveName; }
-            set { RealSaveName = value; } 
-        } 
+            get
+            {
+                return ThiefState
+                    ? Game1.LanguageManager.GetString("savename_thief", "error")
+                    : RealSaveName;
+            }
+            set { RealSaveName = value; }
+        }
         public int GameType = 0;
 
         // playtime tracking
@@ -164,7 +177,8 @@ namespace ProjectZ.InGame.Things
         public int PieceOfPowerCount;
         public int PieceOfPowerDamageCount;
 
-        private readonly Dictionary<string, List<DialogPath>> _dialogPaths = new Dictionary<string, List<DialogPath>>();
+        private readonly Dictionary<string, List<DialogPath>> _dialogPaths =
+            new Dictionary<string, List<DialogPath>>();
         private DialogPath _currentDialogPath;
         private readonly Queue<string> _dialogPathQueue = new Queue<string>();
 
@@ -217,7 +231,10 @@ namespace ProjectZ.InGame.Things
             MapManager.Load();
             ItemManager.Load();
 
-            DialogPathLoader.LoadScripts(Path.Combine(Values.PathContentFolder, "scripts.zScript"), _dialogPaths);
+            DialogPathLoader.LoadScripts(
+                Path.Combine(Values.PathContentFolder, "scripts.zScript"),
+                _dialogPaths
+            );
         }
 
         public void OnLoad()
@@ -267,7 +284,7 @@ namespace ProjectZ.InGame.Things
                 if (Game1.UpdateGame)
                     MapManager.Update(false);
             }
-            // Update the current map but freeze all objects. 
+            // Update the current map but freeze all objects.
             else if (InGameOverlay.UpdateCameraAndAnimation())
             {
                 MapManager.Update(true);
@@ -286,18 +303,22 @@ namespace ProjectZ.InGame.Things
         }
 
         public void DrawGame(SpriteBatch spriteBatch)
-
         {
             if (GameSettings.EnableShadows && MapManager.CurrentMap.UseShadows && !UseShockEffect)
             {
                 /// RT:CRASH BYPASS
-                if (_shadowRenderTarget == null) return;
+                if (_shadowRenderTarget == null)
+                    return;
 
                 // render the shadows
                 RenderShadows(spriteBatch);
 
-                Resources.BlurEffectH.Parameters["pixelX"].SetValue(1.0f / _shadowRenderTarget.Width);
-                Resources.BlurEffectV.Parameters["pixelY"].SetValue(1.0f / _shadowRenderTarget.Height);
+                Resources
+                    .BlurEffectH.Parameters["pixelX"]
+                    .SetValue(1.0f / _shadowRenderTarget.Width);
+                Resources
+                    .BlurEffectV.Parameters["pixelY"]
+                    .SetValue(1.0f / _shadowRenderTarget.Height);
                 Resources.BlurEffectH.Parameters["mult0"].SetValue(0.35f);
                 Resources.BlurEffectH.Parameters["mult1"].SetValue(0.15f);
                 Resources.BlurEffectV.Parameters["mult0"].SetValue(0.35f);
@@ -306,14 +327,30 @@ namespace ProjectZ.InGame.Things
                 // v blur
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(_shadowRenderTargetBlur);
                 Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BlurEffectV, null);
+                spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.BlurEffectV,
+                    null
+                );
                 spriteBatch.Draw(_shadowRenderTarget, Vector2.Zero, Color.White);
                 spriteBatch.End();
 
                 // h blur
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(_shadowRenderTarget);
                 Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.BlurEffectH, null);
+                spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.BlurEffectH,
+                    null
+                );
                 spriteBatch.Draw(_shadowRenderTargetBlur, Vector2.Zero, Color.White);
                 spriteBatch.End();
 
@@ -333,10 +370,19 @@ namespace ProjectZ.InGame.Things
                 {
                     ChangeRenderTarget();
 
-                    var usedShader = MapManager.CurrentMap.UseLight ? Resources.ShockShader1 : Resources.ShockShader0;
+                    var usedShader = MapManager.CurrentMap.UseLight
+                        ? Resources.ShockShader1
+                        : Resources.ShockShader0;
                     ObjectManager.SetSpriteShader(usedShader);
 
-                    spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, usedShader.Effect);
+                    spriteBatch.Begin(
+                        SpriteSortMode.Deferred,
+                        null,
+                        SamplerState.PointWrap,
+                        null,
+                        null,
+                        usedShader.Effect
+                    );
                     spriteBatch.Draw(_inactiveRenderTarget1, Vector2.Zero, Color.White);
                     spriteBatch.End();
                 }
@@ -355,13 +401,21 @@ namespace ProjectZ.InGame.Things
 
                 Game1.Graphics.GraphicsDevice.Clear(Color.Black);
                 Resources.LightShader.Parameters["sprLight"].SetValue(_lightRenderTarget);
-                Resources.LightShader.Parameters["lightState"].SetValue(MapManager.CurrentMap.LightState);
+                Resources
+                    .LightShader.Parameters["lightState"]
+                    .SetValue(MapManager.CurrentMap.LightState);
                 Resources.LightShader.Parameters["mode"].SetValue(0);
                 SetParameter(Resources.LightShader, "width", _lightRenderTarget.Width);
                 SetParameter(Resources.LightShader, "height", _lightRenderTarget.Height);
 
-
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, Resources.LightShader);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.AnisotropicClamp,
+                    null,
+                    null,
+                    Resources.LightShader
+                );
                 spriteBatch.Draw(_inactiveRenderTarget2, Vector2.Zero, Color.White);
                 spriteBatch.End();
             }
@@ -370,7 +424,12 @@ namespace ProjectZ.InGame.Things
             foreach (var gameSystem in GameSystems)
                 gameSystem.Value.Draw(spriteBatch);
 
-            if (MapManager.CurrentMap.UseLight && !UseShockEffect && DrawPlayerOnTopPercentage > 0 && _lightRenderTarget != null)
+            if (
+                MapManager.CurrentMap.UseLight
+                && !UseShockEffect
+                && DrawPlayerOnTopPercentage > 0
+                && _lightRenderTarget != null
+            )
             {
                 Resources.LightShader.Parameters["sprLight"].SetValue(_lightRenderTarget);
                 Resources.LightShader.Parameters["lightState"].SetValue(DrawPlayerOnTopPercentage);
@@ -378,14 +437,29 @@ namespace ProjectZ.InGame.Things
                 SetParameter(Resources.LightShader, "width", _lightRenderTarget.Width);
                 SetParameter(Resources.LightShader, "height", _lightRenderTarget.Height);
 
-
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, Resources.LightShader, MapManager.Camera.TransformMatrix);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    Resources.LightShader,
+                    MapManager.Camera.TransformMatrix
+                );
                 Link.DrawTransition(spriteBatch);
                 spriteBatch.End();
             }
             else if (DrawPlayerOnTopPercentage > 0)
             {
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, MapManager.Camera.TransformMatrix);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    null,
+                    MapManager.Camera.TransformMatrix
+                );
                 Link.DrawTransition(spriteBatch);
                 spriteBatch.End();
             }
@@ -397,7 +471,16 @@ namespace ProjectZ.InGame.Things
 
             /// RT:CRASH BYPASS
             if (_inactiveRenderTarget1 != null)
-                spriteBatch.Draw(_inactiveRenderTarget1, new Rectangle(0, 0, Game1.Graphics.PreferredBackBufferWidth, Game1.Graphics.PreferredBackBufferHeight), Color.White);
+                spriteBatch.Draw(
+                    _inactiveRenderTarget1,
+                    new Rectangle(
+                        0,
+                        0,
+                        Game1.Graphics.PreferredBackBufferWidth,
+                        Game1.Graphics.PreferredBackBufferHeight
+                    ),
+                    Color.White
+                );
 
             // debug stuff
             MapManager.Camera.Draw(spriteBatch);
@@ -425,7 +508,9 @@ namespace ProjectZ.InGame.Things
         // @TODO: this should probably be removed and replaced with StartDialogPath
         public void StartDialog(string dialogKey)
         {
-            InGameOverlay.TextboxOverlay.StartDialog(Game1.LanguageManager.GetString(dialogKey, "error"));
+            InGameOverlay.TextboxOverlay.StartDialog(
+                Game1.LanguageManager.GetString(dialogKey, "error")
+            );
         }
 
         /// <summary>
@@ -442,8 +527,11 @@ namespace ProjectZ.InGame.Things
                 var paths = _dialogPaths[dialogKey];
                 for (var i = 0; i < paths.Count; i++)
                 {
-                    if (SaveManager.GetString(paths[i].VariableKey) == null && paths[i].Condition == "0" ||
-                        SaveManager.GetString(paths[i].VariableKey) == paths[i].Condition)
+                    if (
+                        SaveManager.GetString(paths[i].VariableKey) == null
+                            && paths[i].Condition == "0"
+                        || SaveManager.GetString(paths[i].VariableKey) == paths[i].Condition
+                    )
                     {
                         dialogPath = paths[i];
                         break;
@@ -460,7 +548,11 @@ namespace ProjectZ.InGame.Things
                     stateString = SaveManager.GetString(dialogKey);
 
                 InGameOverlay.TextboxOverlay.StartDialog(
-                    Game1.LanguageManager.GetString(dialogKey + (stateString != null ? "_" + stateString : ""), "error"));
+                    Game1.LanguageManager.GetString(
+                        dialogKey + (stateString != null ? "_" + stateString : ""),
+                        "error"
+                    )
+                );
             }
 
             while (dialogPath != null)
@@ -471,8 +563,10 @@ namespace ProjectZ.InGame.Things
                 // execute the current dialog path
                 if (dialogPath != null)
                 {
-                    while (dialogPath.Action.Count > dialogPathState &&
-                           dialogPath.Action[dialogPathState].Execute())
+                    while (
+                        dialogPath.Action.Count > dialogPathState
+                        && dialogPath.Action[dialogPathState].Execute()
+                    )
                     {
                         dialogPathState++;
 
@@ -521,15 +615,20 @@ namespace ProjectZ.InGame.Things
                     _currentDialogPath = DequeueDialogPath();
                     _currentDialogPathState = 0;
 
-                    if (_currentDialogPath != null && _currentDialogPath.Action.Count > _currentDialogPathState)
+                    if (
+                        _currentDialogPath != null
+                        && _currentDialogPath.Action.Count > _currentDialogPathState
+                    )
                         _currentDialogPath.Action[_currentDialogPathState].Init();
                 }
 
                 // execute the current dialog path
                 if (_currentDialogPath != null)
                 {
-                    while (_currentDialogPath.Action.Count > _currentDialogPathState &&
-                           _currentDialogPath.Action[_currentDialogPathState].Execute())
+                    while (
+                        _currentDialogPath.Action.Count > _currentDialogPathState
+                        && _currentDialogPath.Action[_currentDialogPathState].Execute()
+                    )
                     {
                         _currentDialogPathState++;
 
@@ -568,8 +667,11 @@ namespace ProjectZ.InGame.Things
                 var paths = _dialogPaths[dialogKey];
                 for (var i = 0; i < paths.Count; i++)
                 {
-                    if (SaveManager.GetString(paths[i].VariableKey) == null && paths[i].Condition == "0" ||
-                        SaveManager.GetString(paths[i].VariableKey) == paths[i].Condition)
+                    if (
+                        SaveManager.GetString(paths[i].VariableKey) == null
+                            && paths[i].Condition == "0"
+                        || SaveManager.GetString(paths[i].VariableKey) == paths[i].Condition
+                    )
                     {
                         _dialogPathQueue.Dequeue();
                         return paths[i];
@@ -588,7 +690,11 @@ namespace ProjectZ.InGame.Things
                     stateString = SaveManager.GetString(dialogKey);
 
                 InGameOverlay.TextboxOverlay.StartDialog(
-                    Game1.LanguageManager.GetString(dialogKey + (stateString != null ? "_" + stateString : ""), "error"));
+                    Game1.LanguageManager.GetString(
+                        dialogKey + (stateString != null ? "_" + stateString : ""),
+                        "error"
+                    )
+                );
             }
 
             return null;
@@ -614,20 +720,36 @@ namespace ProjectZ.InGame.Things
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("RenderShadows failed: " + ex);
-                try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+                try
+                {
+                    Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
+                }
+                catch { }
             }
         }
 
         public void ChangeRenderTarget()
         {
             // If RTs not created, try to create them.
-            if (_activeRenderTarget == null || _inactiveRenderTarget1 == null || _inactiveRenderTarget2 == null)
+            if (
+                _activeRenderTarget == null
+                || _inactiveRenderTarget1 == null
+                || _inactiveRenderTarget2 == null
+            )
             {
                 UpdateRenderTargets();
-                if (_activeRenderTarget == null || _inactiveRenderTarget1 == null || _inactiveRenderTarget2 == null)
+                if (
+                    _activeRenderTarget == null
+                    || _inactiveRenderTarget1 == null
+                    || _inactiveRenderTarget2 == null
+                )
                 {
                     // fallback: leave render target as backbuffer
-                    try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+                    try
+                    {
+                        Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
+                    }
+                    catch { }
                     return;
                 }
             }
@@ -650,7 +772,11 @@ namespace ProjectZ.InGame.Things
                 if (_activeRenderTarget == null)
                 {
                     // can't set a null RT; fallback to backbuffer (null)
-                    try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+                    try
+                    {
+                        Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
+                    }
+                    catch { }
                     return;
                 }
             }
@@ -662,7 +788,11 @@ namespace ProjectZ.InGame.Things
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("SetActiveRenderTarget failed: " + ex);
-                try { Game1.Graphics.GraphicsDevice.SetRenderTarget(null); } catch { }
+                try
+                {
+                    Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
+                }
+                catch { }
             }
         }
 
@@ -712,13 +842,18 @@ namespace ProjectZ.InGame.Things
             UpdateRenderTargets();
         }
 
-         public void UpdateRenderTargets()
-         {
+        public void UpdateRenderTargets()
+        {
             // If sizes didn't change or sizes invalid, skip
-            if ((CurrentRenderWidth == Game1.RenderWidth &&
-                 CurrentRenderHeight == Game1.RenderHeight &&
-                 CurrentRenderScale == MapManager.Camera.Scale) ||
-                 Game1.RenderWidth <= 0 || Game1.RenderHeight <= 0)
+            if (
+                (
+                    CurrentRenderWidth == Game1.RenderWidth
+                    && CurrentRenderHeight == Game1.RenderHeight
+                    && CurrentRenderScale == MapManager.Camera.Scale
+                )
+                || Game1.RenderWidth <= 0
+                || Game1.RenderHeight <= 0
+            )
                 return;
 
             CurrentRenderWidth = Math.Max(1, Game1.RenderWidth);
@@ -749,28 +884,94 @@ namespace ProjectZ.InGame.Things
             {
                 // Note: use DiscardContents unless you truly need PreserveContents; preserve is more fragile on some platforms.
                 var usage = RenderTargetUsage.PreserveContents; // keep existing, or change to DiscardContents if safe
-                newActive = new RenderTarget2D(Game1.Graphics.GraphicsDevice, CurrentRenderWidth, CurrentRenderHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, usage);
-                newInactive1 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, CurrentRenderWidth, CurrentRenderHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, usage);
-                newInactive2 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, CurrentRenderWidth, CurrentRenderHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, usage);
+                newActive = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    CurrentRenderWidth,
+                    CurrentRenderHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    usage
+                );
+                newInactive1 = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    CurrentRenderWidth,
+                    CurrentRenderHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    usage
+                );
+                newInactive2 = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    CurrentRenderWidth,
+                    CurrentRenderHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    usage
+                );
 
-                newShadow = new RenderTarget2D(Game1.Graphics.GraphicsDevice, shadowRtWidth, shadowRtHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-                newShadowBlur = new RenderTarget2D(Game1.Graphics.GraphicsDevice, shadowRtWidth, shadowRtHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+                newShadow = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    shadowRtWidth,
+                    shadowRtHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    RenderTargetUsage.DiscardContents
+                );
+                newShadowBlur = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    shadowRtWidth,
+                    shadowRtHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    RenderTargetUsage.DiscardContents
+                );
 
-                newTemp0 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, blurRtWidth, blurRtHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-                newTemp1 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, blurRtWidth, blurRtHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
-                newTemp2 = new RenderTarget2D(Game1.Graphics.GraphicsDevice, sideBlurRtWidth, sideBlurRtHeight,
-                    false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.DiscardContents);
+                newTemp0 = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    blurRtWidth,
+                    blurRtHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    RenderTargetUsage.DiscardContents
+                );
+                newTemp1 = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    blurRtWidth,
+                    blurRtHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    RenderTargetUsage.DiscardContents
+                );
+                newTemp2 = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    sideBlurRtWidth,
+                    sideBlurRtHeight,
+                    false,
+                    SurfaceFormat.Color,
+                    DepthFormat.None,
+                    0,
+                    RenderTargetUsage.DiscardContents
+                );
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("UpdateRenderTargets: failed creating render targets: " + ex);
+                System.Diagnostics.Debug.WriteLine(
+                    "UpdateRenderTargets: failed creating render targets: " + ex
+                );
                 // Clean up any partially-created RTs
                 newActive?.Dispose();
                 newInactive1?.Dispose();
@@ -887,6 +1088,7 @@ namespace ProjectZ.InGame.Things
             else
                 PlaySoundEffect("D360-23-17");
         }
+
         public void StartPieceOfPowerMusic(int Variation)
         {
             // 0: Delayed with sound effect
@@ -902,6 +1104,7 @@ namespace ProjectZ.InGame.Things
                 _musicArray[1] = 72;
             }
         }
+
         public void StopPieceOfPower()
         {
             PieceOfPowerIsActive = false;
@@ -975,10 +1178,14 @@ namespace ProjectZ.InGame.Things
         {
             // Don't restart the overworld track if the version with the intro was already started. But if it's the part
             // of the game where Marin joins the player and the beach photo is taken, we need to allow song 4 to replace 48.
-            if (trackID == 4 && _musicArray[priority] == 48 && SaveManager.GetString("maria_state") != "3")
+            if (
+                trackID == 4
+                && _musicArray[priority] == 48
+                && SaveManager.GetString("maria_state") != "3"
+            )
                 return false;
 
-            // Make sure to not restart the music while showing the overworld in the final sequence. 
+            // Make sure to not restart the music while showing the overworld in the final sequence.
             if (priority != 2 && _musicArray[2] == 62)
                 return false;
 
@@ -1053,11 +1260,17 @@ namespace ProjectZ.InGame.Things
                     lowerVolume = true;
 
                 // update the volume of the sound effects to match the current settings
-                soundEffect.Value.Instance.Volume = CurrentSoundEffects[soundEffect.Key].Volume * _curEffectVolume / 100 * Values.SoundEffectVolumeMult;
+                soundEffect.Value.Instance.Volume =
+                    CurrentSoundEffects[soundEffect.Key].Volume
+                    * _curEffectVolume
+                    / 100
+                    * Values.SoundEffectVolumeMult;
                 soundEffect.Value.Instance.IsLooped = false;
 
-                if (soundEffect.Value.EndTime != 0 &&
-                    soundEffect.Value.EndTime < Game1.TotalGameTime)
+                if (
+                    soundEffect.Value.EndTime != 0
+                    && soundEffect.Value.EndTime < Game1.TotalGameTime
+                )
                     soundEffect.Value.Instance.Stop();
 
                 // finished playing?
@@ -1092,12 +1305,19 @@ namespace ProjectZ.InGame.Things
                 PlaySoundEffect(name, restart, volume);
         }
 
-        public void PlaySoundEffect(string name, bool restart = true, float volume = 1, float pitch = 0, bool lowerMusicVolume = false, float playtime = 0)
+        public void PlaySoundEffect(
+            string name,
+            bool restart = true,
+            float volume = 1,
+            float pitch = 0,
+            bool lowerMusicVolume = false,
+            float playtime = 0
+        )
         {
             CurrentSoundEffects.TryGetValue(name, out var entry);
 
             // if the same sound is playing it will be stopped and replaced with the new instance
-            if (restart && entry!= null && entry.Instance != null)
+            if (restart && entry != null && entry.Instance != null)
             {
                 entry.Instance.Stop();
                 CurrentSoundEffects.Remove(name);
@@ -1108,13 +1328,18 @@ namespace ProjectZ.InGame.Things
                 if (playtime != 0)
                     entry.EndTime = Game1.TotalGameTime + playtime;
 
-                entry.Instance.Volume = volume * _curEffectVolume / 100f * Values.SoundEffectVolumeMult;
+                entry.Instance.Volume =
+                    volume * _curEffectVolume / 100f * Values.SoundEffectVolumeMult;
                 entry.Instance.Pitch = pitch;
-                
+
                 return;
             }
 
-            entry = new PlayingSoundEffect() { Volume = volume, LowerMusicVolume = lowerMusicVolume };
+            entry = new PlayingSoundEffect()
+            {
+                Volume = volume,
+                LowerMusicVolume = lowerMusicVolume,
+            };
             entry.Instance = Resources.SoundEffects[name].CreateInstance();
 
             // the volume of the sound effects is higher than the music; so scale effect volume a little down
@@ -1146,7 +1371,13 @@ namespace ProjectZ.InGame.Things
             return false;
         }
 
-        public void ShakeScreenContinue(int time, int maxX, int maxY, float shakeSpeedX, float shakeSpeedY)
+        public void ShakeScreenContinue(
+            int time,
+            int maxX,
+            int maxY,
+            float shakeSpeedX,
+            float shakeSpeedY
+        )
         {
             var periodsX = (_shakeCountX / 100f * _shakeSpeedX) % (MathF.PI * 2);
             _shakeCountX = time;
@@ -1160,7 +1391,15 @@ namespace ProjectZ.InGame.Things
             _shakeSpeedY = shakeSpeedY;
         }
 
-        public void ShakeScreen(int time, float maxX, float maxY, float shakeSpeedX, float shakeSpeedY, int startDirX = 1, int startDirY = 1)
+        public void ShakeScreen(
+            int time,
+            float maxX,
+            float maxY,
+            float shakeSpeedX,
+            float shakeSpeedY,
+            int startDirX = 1,
+            int startDirY = 1
+        )
         {
             _shakeCountX = time;
             _shakeCountY = time;
@@ -1172,8 +1411,7 @@ namespace ProjectZ.InGame.Things
             if (_shakeSpeedX > 0)
             {
                 var periodsX = MathF.Round((time / 100f * _shakeSpeedX) / MathF.PI);
-                if ((startDirX == -1 && periodsX % 2 == 0) ||
-                    (startDirX == 1 && periodsX % 2 == 1))
+                if ((startDirX == -1 && periodsX % 2 == 0) || (startDirX == 1 && periodsX % 2 == 1))
                     periodsX += 1;
                 _shakeCountX = (periodsX * MathF.PI) / _shakeSpeedX * 100f;
             }
@@ -1181,8 +1419,7 @@ namespace ProjectZ.InGame.Things
             if (_shakeSpeedY > 0)
             {
                 var periodsY = MathF.Round((time / 100f * _shakeSpeedY) / MathF.PI);
-                if ((startDirY == 1 && periodsY % 2 == 0) ||
-                    (startDirY == -1 && periodsY % 2 == 1))
+                if ((startDirY == 1 && periodsY % 2 == 0) || (startDirY == -1 && periodsY % 2 == 1))
                     periodsY += 1;
                 _shakeCountY = (periodsY * MathF.PI) / _shakeSpeedY * 100f;
             }
@@ -1196,7 +1433,8 @@ namespace ProjectZ.InGame.Things
             if (shakingX)
             {
                 _shakeCountX -= Game1.DeltaTime;
-                MapManager.Camera.ShakeOffsetX = (float)Math.Sin(_shakeCountX / 100f * _shakeSpeedX) * _maxOffsetX;
+                MapManager.Camera.ShakeOffsetX =
+                    (float)Math.Sin(_shakeCountX / 100f * _shakeSpeedX) * _maxOffsetX;
             }
             else
             {
@@ -1208,7 +1446,8 @@ namespace ProjectZ.InGame.Things
             if (shakingY)
             {
                 _shakeCountY -= Game1.DeltaTime;
-                MapManager.Camera.ShakeOffsetY = (float)Math.Sin(_shakeCountY / 100f * _shakeSpeedY) * _maxOffsetY;
+                MapManager.Camera.ShakeOffsetY =
+                    (float)Math.Sin(_shakeCountY / 100f * _shakeSpeedY) * _maxOffsetY;
             }
             else
             {
@@ -1289,21 +1528,32 @@ namespace ProjectZ.InGame.Things
         public void DungeonUpdatePlayerPosition(Point position)
         {
             // updated map discovery state
-            if (MapManager.CurrentMap.LocationFullName != null &&
-                DungeonMaps.ContainsKey(MapManager.CurrentMap.LocationFullName) &&
-                position.X >= 0 && position.Y >= 0 &&
-                position.X < DungeonMaps[MapManager.CurrentMap.LocationFullName].Tiles.GetLength(0) &&
-                position.Y < DungeonMaps[MapManager.CurrentMap.LocationFullName].Tiles.GetLength(1))
-                DungeonMaps[MapManager.CurrentMap.LocationFullName].Tiles[position.X, position.Y].DiscoveryState = true;
+            if (
+                MapManager.CurrentMap.LocationFullName != null
+                && DungeonMaps.ContainsKey(MapManager.CurrentMap.LocationFullName)
+                && position.X >= 0
+                && position.Y >= 0
+                && position.X
+                    < DungeonMaps[MapManager.CurrentMap.LocationFullName].Tiles.GetLength(0)
+                && position.Y
+                    < DungeonMaps[MapManager.CurrentMap.LocationFullName].Tiles.GetLength(1)
+            )
+                DungeonMaps[MapManager.CurrentMap.LocationFullName]
+                    .Tiles[position.X, position.Y]
+                    .DiscoveryState = true;
 
             PlayerDungeonPosition = position;
         }
 
         public void SetMapPosition(Point position)
         {
-            if (MapVisibility == null ||
-                0 > position.X || position.X >= MapVisibility.GetLength(0) ||
-                0 > position.Y || position.Y >= MapVisibility.GetLength(1))
+            if (
+                MapVisibility == null
+                || 0 > position.X
+                || position.X >= MapVisibility.GetLength(0)
+                || 0 > position.Y
+                || position.Y >= MapVisibility.GetLength(1)
+            )
                 return;
 
             MapVisibility[position.X, position.Y] = true;
@@ -1314,18 +1564,27 @@ namespace ProjectZ.InGame.Things
         {
             for (var i = 0; i < Equipment.Length; i++)
             {
-                if (Equipment[i] != null && Equipment[i].Name == itemId &&
-                    (string.IsNullOrEmpty(Equipment[i].LocationBounding) ||
-                     Equipment[i].LocationBounding == MapManager.CurrentMap.LocationName))
+                if (
+                    Equipment[i] != null
+                    && Equipment[i].Name == itemId
+                    && (
+                        string.IsNullOrEmpty(Equipment[i].LocationBounding)
+                        || Equipment[i].LocationBounding == MapManager.CurrentMap.LocationName
+                    )
+                )
                     return Equipment[i];
             }
 
             for (var i = 0; i < CollectedItems.Count; i++)
             {
                 // player has item
-                if (CollectedItems[i].Name == itemId &&
-                    (string.IsNullOrEmpty(CollectedItems[i].LocationBounding) ||
-                     CollectedItems[i].LocationBounding == MapManager.CurrentMap.LocationName))
+                if (
+                    CollectedItems[i].Name == itemId
+                    && (
+                        string.IsNullOrEmpty(CollectedItems[i].LocationBounding)
+                        || CollectedItems[i].LocationBounding == MapManager.CurrentMap.LocationName
+                    )
+                )
                     return CollectedItems[i];
             }
 
@@ -1407,8 +1666,7 @@ namespace ProjectZ.InGame.Things
                 else if (itemCollected.Name == "sword2")
                     SwordLevel = 2;
 
-                if (itemCollected.Name == "shield" ||
-                    itemCollected.Name == "mirrorShield")
+                if (itemCollected.Name == "shield" || itemCollected.Name == "mirrorShield")
                     ShieldLevel = item.Level;
                 if (itemCollected.Name == "stonelifter" || itemCollected.Name == "stonelifter2")
                     StoneGrabberLevel = item.Level;
@@ -1440,7 +1698,11 @@ namespace ProjectZ.InGame.Things
                     itemCollected.Count = maxCount;
 
                 // requested equipment slot is empty?
-                if (0 <= equipmentSlot && equipmentSlot < Equipment.Length && Equipment[equipmentSlot] == null)
+                if (
+                    0 <= equipmentSlot
+                    && equipmentSlot < Equipment.Length
+                    && Equipment[equipmentSlot] == null
+                )
                 {
                     SetEquipment(equipmentSlot, itemCollected);
                     return;
@@ -1464,7 +1726,10 @@ namespace ProjectZ.InGame.Things
                 var found = false;
                 for (var i = 0; i < CollectedItems.Count; i++)
                 {
-                    if ((CollectedItems[i].Name == item.Name) && (CollectedItems[i].LocationBounding == itemCollected.LocationBounding))
+                    if (
+                        (CollectedItems[i].Name == item.Name)
+                        && (CollectedItems[i].LocationBounding == itemCollected.LocationBounding)
+                    )
                     {
                         CollectedItems[i].Count += itemCollected.Count;
 
@@ -1490,7 +1755,6 @@ namespace ProjectZ.InGame.Things
                         ItemDrawHelper.EnableHeartAnimationSound();
                     }
                 }
-
                 // The flippers were picked up.
                 else if (item.Name == "flippers")
                     Link.HasFlippers = true;
@@ -1513,8 +1777,11 @@ namespace ProjectZ.InGame.Things
             // equipment
             for (var i = 0; i < Equipment.Length; i++)
             {
-                if (Equipment[i] == null || Equipment[i].Name != itemName ||
-                    ItemManager[Equipment[i].Name].Level == 0 && Equipment[i].Count < count)
+                if (
+                    Equipment[i] == null
+                    || Equipment[i].Name != itemName
+                    || ItemManager[Equipment[i].Name].Level == 0 && Equipment[i].Count < count
+                )
                     continue;
 
                 Equipment[i].Count -= count;
@@ -1536,9 +1803,14 @@ namespace ProjectZ.InGame.Things
             // items
             for (var i = 0; i < CollectedItems.Count; i++)
             {
-                if (CollectedItems[i] == null || CollectedItems[i].Name != itemName ||
-                    ItemManager[CollectedItems[i].Name].Level == 0 && CollectedItems[i].Count < count ||
-                    !string.IsNullOrEmpty(CollectedItems[i].LocationBounding) && CollectedItems[i].LocationBounding != MapManager.CurrentMap.LocationName)
+                if (
+                    CollectedItems[i] == null
+                    || CollectedItems[i].Name != itemName
+                    || ItemManager[CollectedItems[i].Name].Level == 0
+                        && CollectedItems[i].Count < count
+                    || !string.IsNullOrEmpty(CollectedItems[i].LocationBounding)
+                        && CollectedItems[i].LocationBounding != MapManager.CurrentMap.LocationName
+                )
                     continue;
 
                 CollectedItems[i].Count -= count;
@@ -1613,12 +1885,22 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicBorders = 1;
             }
             // Apply the settings to the settings menus.
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(AudioSettingsPage),
+                    out var audPage
+                )
+            )
             {
                 var audioPage = (AudioSettingsPage)audPage;
                 audioPage.SetClassicAudio(GameSettings.ClassicMusic);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(CameraSettingsPage),
+                    out var camPage
+                )
+            )
             {
                 var cameraPage = (CameraSettingsPage)camPage;
                 cameraPage.SetCameraMode(GameSettings.ClassicCamera);
@@ -1723,8 +2005,16 @@ namespace ProjectZ.InGame.Things
 
             // load the map
             Link.SetNextMapPosition(new Vector2(Link.PosX, Link.PosY));
-            ((MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]).LoadMapFromFile("house1.map", true, true, Values.MapFirstTransitionColor, false);
-            ((MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]).AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
+            ((MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]).LoadMapFromFile(
+                "house1.map",
+                true,
+                true,
+                Values.MapFirstTransitionColor,
+                false
+            );
+            (
+                (MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]
+            ).AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
         }
 
         public void LoadSaveFile(int slot)
@@ -1733,7 +2023,7 @@ namespace ProjectZ.InGame.Things
 
             Link.InitGame();
 
-            // Load the values from "save#" and "saveGame#". 
+            // Load the values from "save#" and "saveGame#".
             SaveGameSaveLoad.LoadSaveFile(this, slot);
 
             // Fixes changes to save files that are now invalid.
@@ -1781,7 +2071,13 @@ namespace ProjectZ.InGame.Things
             // load the map
             var transitionSystem = ((MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]);
             Link.SetNextMapPosition(new Vector2(SavePositionX, SavePositionY));
-            transitionSystem.LoadMapFromFile(LoadedMap, true, true, Values.MapFirstTransitionColor, false);
+            transitionSystem.LoadMapFromFile(
+                LoadedMap,
+                true,
+                true,
+                Values.MapFirstTransitionColor,
+                false
+            );
             transitionSystem.AdditionalBlackScreenDelay = Values.GameSaveBlackScreen;
 
             // If the game was saved frozen or the inventory disabled, unfreeze and enable the inventory.
@@ -1823,7 +2119,7 @@ namespace ProjectZ.InGame.Things
                         SaveManager.SetString("unlocked_teleporter_2", "1");
                         SaveManager.RemoveString("unlocked_teleporter_1");
                     }
-                    if (teleporter2 == "1") 
+                    if (teleporter2 == "1")
                     {
                         SaveManager.SetString("unlocked_teleporter_1", "1");
                         SaveManager.RemoveString("unlocked_teleporter_2");
@@ -1914,7 +2210,13 @@ namespace ProjectZ.InGame.Things
 
             // load the map
             var transitionSystem = ((MapTransitionSystem)GameSystems[typeof(MapTransitionSystem)]);
-            transitionSystem.LoadMapFromFile(Link.SaveMap, true, true, Values.MapFirstTransitionColor, false);
+            transitionSystem.LoadMapFromFile(
+                Link.SaveMap,
+                true,
+                true,
+                Values.MapFirstTransitionColor,
+                false
+            );
             transitionSystem.AdditionalBlackScreenDelay = Values.GameRespawnBlackScreen;
         }
 

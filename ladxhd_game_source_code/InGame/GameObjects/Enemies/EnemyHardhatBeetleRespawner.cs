@@ -61,14 +61,24 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.DeleteObjects.Add(this);
 
             // If not in classic camera, spawn a smoke effect.
-            if (!Camera.ClassicMode) 
+            if (!Camera.ClassicMode)
             {
-                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/spawn", "run", true);
+                var explosionAnimation = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                );
                 Map.Objects.SpawnObject(explosionAnimation);
                 Game1.GameManager.PlaySoundEffect("D360-47-2F");
             }
             // Spawn the original enemy
-            Map.Objects.SpawnObject(new EnemyHardhatBeetle(Map, (int)EntityPosition.X, (int)EntityPosition.Y));
+            Map.Objects.SpawnObject(
+                new EnemyHardhatBeetle(Map, (int)EntityPosition.X, (int)EntityPosition.Y)
+            );
         }
     }
 }

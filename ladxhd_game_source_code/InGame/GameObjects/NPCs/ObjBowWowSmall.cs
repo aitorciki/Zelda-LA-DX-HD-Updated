@@ -21,9 +21,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private string _name;
         private int _direction;
 
-        public ObjBowWowSmall() : base("smallBowWow") { }
+        public ObjBowWowSmall()
+            : base("smallBowWow") { }
 
-        public ObjBowWowSmall(Map.Map map, int posX, int posY, string name) : base(map)
+        public ObjBowWowSmall(Map.Map map, int posX, int posY, string name)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -33,10 +35,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -5, -8, 10, 8, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
-                Gravity = -0.15f
+                Gravity = -0.15f,
             };
 
             OnKeyChange();
@@ -48,7 +49,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var animationComponent = new AnimationComponent(_animator, sprite, Vector2.Zero);
 
             var stateIdle = new AiState();
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500)
+            );
             var stateWalking = new AiState(UpdateWalking) { Init = InitWalk };
             stateWalking.Trigger.Add(new AiTriggerRandomTime(ToIdle, 750, 1500));
             stateWalking.Trigger.Add(_changeDirectionSwitch = new AiTriggerSwitch(250));
@@ -61,17 +64,32 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (!string.IsNullOrEmpty(_name))
             {
                 var interactionBox = new CBox(EntityPosition, -8, -16, 16, 16, 8);
-                AddComponent(InteractComponent.Index, new InteractComponent(interactionBox, Interact));
+                AddComponent(
+                    InteractComponent.Index,
+                    new InteractComponent(interactionBox, Interact)
+                );
             }
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_body.BodyBox, Values.CollisionTypes.Normal | Values.CollisionTypes.NPC));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    _body.BodyBox,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
 
             string endingstate = Game1.GameManager.SaveManager.GetString("final_show", "0");
 
@@ -82,10 +100,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void OnKeyChange()
         {
             // show the ribbon on the head?
-            _traded = (_name == "bowWow3" && Game1.GameManager.SaveManager.GetString("trade1") == "1") ? "r_" : "";
+            _traded =
+                (_name == "bowWow3" && Game1.GameManager.SaveManager.GetString("trade1") == "1")
+                    ? "r_"
+                    : "";
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -110,9 +137,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             // change the direction
             var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-            _body.VelocityTarget = new Vector2(
-                                       (float)Math.Sin(rotation),
-                                       (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation))
+                * Game1.RandomNumber.Next(25, 40)
+                / 50f;
             _direction = _body.VelocityTarget.X < 0 ? 0 : 1;
 
             _animator.Play("walk_" + _traded + _direction);
@@ -156,10 +184,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _aiComponent.ChangeState("walking");
 
-            var offsetAngle = MathHelper.ToRadians(Game1.RandomNumber.Next(45, 85) * (_direction * 2 - 1));
-            var newDirection = new Vector2(
-                                   direction.X * (float)Math.Cos(offsetAngle) - direction.Y * (float)Math.Sin(offsetAngle),
-                                   direction.X * (float)Math.Sin(offsetAngle) + direction.Y * (float)Math.Cos(offsetAngle)) * 0.5f;
+            var offsetAngle = MathHelper.ToRadians(
+                Game1.RandomNumber.Next(45, 85) * (_direction * 2 - 1)
+            );
+            var newDirection =
+                new Vector2(
+                    direction.X * (float)Math.Cos(offsetAngle)
+                        - direction.Y * (float)Math.Sin(offsetAngle),
+                    direction.X * (float)Math.Sin(offsetAngle)
+                        + direction.Y * (float)Math.Cos(offsetAngle)
+                ) * 0.5f;
             _body.VelocityTarget = newDirection;
 
             _direction = _body.VelocityTarget.X < 0 ? 0 : 1;

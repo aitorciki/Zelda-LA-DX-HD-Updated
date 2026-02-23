@@ -7,7 +7,7 @@ namespace ProjectZ.InGame.Things
     public class GameItem
     {
         public readonly DictAtlasEntry Sprite;
-        public readonly DictAtlasEntry MapSprite;    // show a different sprite when drawn on the map compared to the one shown in the inventory
+        public readonly DictAtlasEntry MapSprite; // show a different sprite when drawn on the map compared to the one shown in the inventory
         public readonly Rectangle? SourceRectangle;
         public readonly bool AnimateSprite;
         public readonly string Name;
@@ -54,7 +54,8 @@ namespace ProjectZ.InGame.Things
             int collectWidth = -1,
             int collectHeight = -1,
             int collectOffsetX = 0,
-            int collectOffsetY = 0)
+            int collectOffsetY = 0
+        )
         {
             Sprite = sprite;
             MapSprite = mapSprite;
@@ -88,7 +89,12 @@ namespace ProjectZ.InGame.Things
         {
             var width = CollectWidth > 0 ? CollectWidth : sourceRectangle.Width + 2;
             var height = CollectHeight > 0 ? CollectHeight : Math.Min(sourceRectangle.Height, 12);
-            return new Rectangle(-sourceRectangle.Width / 2 + CollectOffsetX, -height + CollectOffsetY, width, height);
+            return new Rectangle(
+                -sourceRectangle.Width / 2 + CollectOffsetX,
+                -height + CollectOffsetY,
+                width,
+                height
+            );
         }
     }
 

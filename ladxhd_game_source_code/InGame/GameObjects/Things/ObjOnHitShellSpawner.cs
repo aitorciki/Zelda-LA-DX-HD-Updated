@@ -12,14 +12,18 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _saveKey;
         private readonly string _itemName;
 
-        public ObjOnDashSpawner() : base("signpost_0") { }
+        public ObjOnDashSpawner()
+            : base("signpost_0") { }
 
-        public ObjOnDashSpawner(Map.Map map, int posX, int posY, string strKey, string itemName) : base(map)
+        public ObjOnDashSpawner(Map.Map map, int posX, int posY, string strKey, string itemName)
+            : base(map)
         {
             _saveKey = strKey;
 
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -34,7 +38,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if ((type & HitType.PegasusBootsPush) != 0)
             {
@@ -47,15 +57,28 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void SpawnItem(Vector2 direction)
         {
-            if(_itemName == "fairy")
+            if (_itemName == "fairy")
             {
-                var objFairy = new ObjDungeonFairy(Map, (int)EntityPosition.X + 16, (int)EntityPosition.Y + 12, 0);
+                var objFairy = new ObjDungeonFairy(
+                    Map,
+                    (int)EntityPosition.X + 16,
+                    (int)EntityPosition.Y + 12,
+                    0
+                );
                 Map.Objects.SpawnObject(objFairy);
                 return;
             }
 
             // spawn the shell
-            var objItem = new ObjItem(Map, (int)EntityPosition.X + 8, (int)EntityPosition.Y + 12, null, _saveKey, _itemName, null);
+            var objItem = new ObjItem(
+                Map,
+                (int)EntityPosition.X + 8,
+                (int)EntityPosition.Y + 12,
+                null,
+                _saveKey,
+                _itemName,
+                null
+            );
             //if (objItem.IsDead)
             //    return;
 

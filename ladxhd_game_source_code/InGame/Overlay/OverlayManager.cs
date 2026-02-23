@@ -21,19 +21,26 @@ namespace ProjectZ.InGame.Overlay
 
         enum MenuState
         {
-            None, Menu, Inventory, PhotoBook, GameSequence
+            None,
+            Menu,
+            Inventory,
+            PhotoBook,
+            GameSequence,
         }
 
-        enum GameScaleDirection: int
+        enum GameScaleDirection : int
         {
-            Decrease = -1, 
-            Increase = 1
+            Decrease = -1,
+            Increase = 1,
         }
 
         private MenuState _currentMenuState = MenuState.None;
         private MenuState _lastMenuState = MenuState.None;
 
-        public bool InventoryState { get => _currentMenuState == MenuState.Inventory; }
+        public bool InventoryState
+        {
+            get => _currentMenuState == MenuState.Inventory;
+        }
 
         public TextboxOverlay TextboxOverlay;
         public HudOverlay InGameHud;
@@ -43,7 +50,8 @@ namespace ProjectZ.InGame.Overlay
         private DungeonOverlay _dungeonOverlay;
         private PhotoOverlay _photoOverlay;
 
-        private Dictionary<string, GameSequence> _gameSequences = new Dictionary<string, GameSequence>();
+        private Dictionary<string, GameSequence> _gameSequences =
+            new Dictionary<string, GameSequence>();
         private string _currentSequenceName;
 
         private RenderTarget2D _menuRenderTarget2D;
@@ -92,21 +100,31 @@ namespace ProjectZ.InGame.Overlay
         public Dictionary<Point, (int Level, Vector2 Teleport)> TeleportMap = new()
         {
             // Tile Position    = Level, Link Teleport Position
-            [new Point(5, 4)]   = (0, new Vector2(872, 606)),   // Manbo's Pond
-            [new Point(3, 13)]  = (1, new Vector2(600, 1720)),  // Dungeon 1
-            [new Point(4, 2)]   = (2, new Vector2(736, 340)),   // Dungeon 2
-            [new Point(5, 11)]  = (3, new Vector2(920, 1472)),  // Dungeon 3
-            [new Point(11, 2)]  = (4, new Vector2(1848, 320)),  // Dungeon 4
-            [new Point(9, 13)]  = (5, new Vector2(1544, 1728)), // Dungeon 5
-            [new Point(12, 8)]  = (6, new Vector2(1992, 1120)), // Dungeon 6
-            [new Point(14, 0)]  = (7, new Vector2(2344, 96)),   // Dungeon 7
-            [new Point(0, 1)]   = (8, new Vector2(104, 192))    // Dungeon 8
+            [new Point(5, 4)] = (0, new Vector2(872, 606)), // Manbo's Pond
+            [new Point(3, 13)] = (1, new Vector2(600, 1720)), // Dungeon 1
+            [new Point(4, 2)] = (2, new Vector2(736, 340)), // Dungeon 2
+            [new Point(5, 11)] = (3, new Vector2(920, 1472)), // Dungeon 3
+            [new Point(11, 2)] = (4, new Vector2(1848, 320)), // Dungeon 4
+            [new Point(9, 13)] = (5, new Vector2(1544, 1728)), // Dungeon 5
+            [new Point(12, 8)] = (6, new Vector2(1992, 1120)), // Dungeon 6
+            [new Point(14, 0)] = (7, new Vector2(2344, 96)), // Dungeon 7
+            [new Point(0, 1)] = (8, new Vector2(104, 192)), // Dungeon 8
         };
 
         public OverlayManager()
         {
-            _blurRectangle = (UiRectangle)Game1.UiManager.AddElement(
-                new UiRectangle(Rectangle.Empty, "background", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null), true);
+            _blurRectangle = (UiRectangle)
+                Game1.UiManager.AddElement(
+                    new UiRectangle(
+                        Rectangle.Empty,
+                        "background",
+                        Values.ScreenNameGame,
+                        Color.Transparent,
+                        Color.Transparent,
+                        null
+                    ),
+                    true
+                );
         }
 
         public void Load(ContentManager content)
@@ -163,18 +181,30 @@ namespace ProjectZ.InGame.Overlay
         public void Update()
         {
             // See if the inventory was disabled in "script.zScript".
-            bool disableOptions = Game1.GameManager.SaveManager.GetString("disable_options", "0") == "1";
-            bool disableInventory = Game1.GameManager.SaveManager.GetString("disable_inventory", "0") == "1";
+            bool disableOptions =
+                Game1.GameManager.SaveManager.GetString("disable_options", "0") == "1";
+            bool disableInventory =
+                Game1.GameManager.SaveManager.GetString("disable_inventory", "0") == "1";
 
             // Toggle Game Options Menu Overlay
-            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Menu) && ControlHandler.ButtonPressed(CButtons.Select) && !disableOptions)
+            if (
+                (_currentMenuState == MenuState.None || _currentMenuState == MenuState.Menu)
+                && ControlHandler.ButtonPressed(CButtons.Select)
+                && !disableOptions
+            )
                 ToggleState(MenuState.Menu);
 
             // Toggle the Inventory / Map Overlay
-            if ((_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory) && ControlHandler.ButtonPressed(CButtons.Start) && 
-                !disableInventory && !DisableInventoryToggle && !_hideHud && !TextboxOverlay.IsOpen)
+            if (
+                (_currentMenuState == MenuState.None || _currentMenuState == MenuState.Inventory)
+                && ControlHandler.ButtonPressed(CButtons.Start)
+                && !disableInventory
+                && !DisableInventoryToggle
+                && !_hideHud
+                && !TextboxOverlay.IsOpen
+            )
                 ToggleState(MenuState.Inventory);
-            
+
             // Use the inventory disable to identify moments to lock the free camera.
             if (!Camera.ClassicMode && (disableInventory || DisableInventoryToggle))
                 MapManager.CameraOffset = Vector2.Zero;
@@ -214,7 +244,7 @@ namespace ProjectZ.InGame.Overlay
                 // A transition between inventory and map is not taking place.
                 else
                 {
-                    // Check if the select button has been pressed. 
+                    // Check if the select button has been pressed.
                     if (ControlHandler.ButtonPressed(CButtons.Select) && !TextboxOverlay.IsOpen)
                         ToggleInventoryMap();
 
@@ -262,6 +292,7 @@ namespace ProjectZ.InGame.Overlay
             DisableOverlayToggle = false;
             DisableInventoryToggle = false;
         }
+
         private void ChangeGameScale(GameScaleDirection scaleDirection)
         {
             // Get the maximum scale and add 1 for auto-scale.
@@ -272,19 +303,37 @@ namespace ProjectZ.InGame.Overlay
                 return;
 
             // If both LT and RT are pressed together, set the scaling to auto-scaling.
-            if ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB) && ControlHandler.ButtonDown(CButtons.LB)))
+            if (
+                (
+                    GameSettings.SixButtons
+                    && ControlHandler.ButtonDown(CButtons.RT)
+                    && ControlHandler.ButtonDown(CButtons.LT)
+                )
+                || (
+                    !GameSettings.SixButtons
+                    && ControlHandler.ButtonDown(CButtons.RB)
+                    && ControlHandler.ButtonDown(CButtons.LB)
+                )
+            )
             {
                 GameSettings.GameScale = maxScale;
             }
             // If either LT or RT were pressed scale up or down.
-            else if ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT)) || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB)) ||
-                (GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LT)) || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LB)))
+            else if (
+                (GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT))
+                || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB))
+                || (GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LT))
+                || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LB))
+            )
             {
                 // When autoscaling is set, match the scaling value so it can move up and down smoothly.
                 if (GameSettings.GameScale == maxScale)
                 {
-                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, maxScale);
+                    float gameScale = MathHelper.Clamp(
+                        Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128),
+                        1,
+                        maxScale
+                    );
                     gameScale = gameScale / 2;
                     GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
                 }
@@ -306,16 +355,20 @@ namespace ProjectZ.InGame.Overlay
                 _scaleButtonTimer += Game1.DeltaTime;
 
             // Increase/Decrease game scale. Start the timer so that there is a 500ms repeat delay.
-            if ((GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.LT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.LB)))
+            if (
+                (GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.LT))
+                || (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.LB))
+            )
             {
                 ChangeGameScale(GameScaleDirection.Decrease);
                 _scaleButtonDown = true;
                 _scaleButtonTimer = -425f;
                 _scaleButtonPeriod = 75;
             }
-            else if ((GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RB)))
+            else if (
+                (GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RT))
+                || (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RB))
+            )
             {
                 ChangeGameScale(GameScaleDirection.Increase);
                 _scaleButtonDown = true;
@@ -323,17 +376,27 @@ namespace ProjectZ.InGame.Overlay
                 _scaleButtonPeriod = 75;
             }
             // Increase/Decrease game scale repeatedly while button is held every 75ms.
-            if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && 
-                ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LB))))
+            if (
+                _scaleButtonDown
+                && _scaleButtonTimer > _scaleButtonPeriod
+                && (
+                    (GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LT))
+                    || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LB))
+                )
+            )
             {
                 ChangeGameScale(GameScaleDirection.Decrease);
                 _scaleButtonTimer = 0;
                 _scaleButtonCount++;
             }
-            if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && 
-                ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB))))
+            if (
+                _scaleButtonDown
+                && _scaleButtonTimer > _scaleButtonPeriod
+                && (
+                    (GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT))
+                    || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB))
+                )
+            )
             {
                 ChangeGameScale(GameScaleDirection.Increase);
                 _scaleButtonTimer = 0;
@@ -343,18 +406,22 @@ namespace ProjectZ.InGame.Overlay
             // how many scaling iterations have passed, the right value represents how many milliseconds between iterations.
             _scaleButtonPeriod = _scaleButtonCount switch
             {
-                <  5  => 75,
-                <  8  => 60,
-                <  12 => 55,
-                <  15 => 40,
-                <  18 => 25,
-                <  21 => 10,
-                >= 24 =>  5,
-                _ => _scaleButtonPeriod
+                < 5 => 75,
+                < 8 => 60,
+                < 12 => 55,
+                < 15 => 40,
+                < 18 => 25,
+                < 21 => 10,
+                >= 24 => 5,
+                _ => _scaleButtonPeriod,
             };
             // When either button is released, reset the repeat variables.
-            if ((GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.LT)) || (!GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.LB)) ||
-                (GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.RT)) || (!GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.RB)))
+            if (
+                (GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.LT))
+                || (!GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.LB))
+                || (GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.RT))
+                || (!GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.RB))
+            )
             {
                 _scaleButtonDown = false;
                 _scaleButtonTimer = 0;
@@ -374,7 +441,10 @@ namespace ProjectZ.InGame.Overlay
             if (_fadeAnimationPercentage > 0)
             {
                 // If the current or last menu state is the inventory.
-                if (_currentMenuState == MenuState.Inventory || _lastMenuState == MenuState.Inventory)
+                if (
+                    _currentMenuState == MenuState.Inventory
+                    || _lastMenuState == MenuState.Inventory
+                )
                 {
                     // Draw the menu on the screen.
                     var menuY = 25 * _scale * (1 - _fadeAnimationPercentage);
@@ -387,39 +457,95 @@ namespace ProjectZ.InGame.Overlay
                     if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
                         dungeonOffset = (_margin + _dungeonSize.X) * _scale / 2;
                     else
-                        dungeonOffset = Math.Clamp((_margin + _dungeonSize.X) * _scale / 2, -16, (Game1.WindowWidth - _overlayWidth) / 2 - 8);
+                        dungeonOffset = Math.Clamp(
+                            (_margin + _dungeonSize.X) * _scale / 2,
+                            -16,
+                            (Game1.WindowWidth - _overlayWidth) / 2 - 8
+                        );
 
-                    spriteBatch.Draw(_menuRenderTarget2D, new Rectangle(
-                        (int)_menuPosition.X + dungeonOffset, (int)(_menuPosition.Y - menuY), _overlayWidth, _overlayHeight), menuColor);
+                    spriteBatch.Draw(
+                        _menuRenderTarget2D,
+                        new Rectangle(
+                            (int)_menuPosition.X + dungeonOffset,
+                            (int)(_menuPosition.Y - menuY),
+                            _overlayWidth,
+                            _overlayHeight
+                        ),
+                        menuColor
+                    );
                 }
                 // Draw the Photobook overlay.
-                else if (_currentMenuState == MenuState.PhotoBook || _lastMenuState == MenuState.PhotoBook)
+                else if (
+                    _currentMenuState == MenuState.PhotoBook
+                    || _lastMenuState == MenuState.PhotoBook
+                )
                     _photoOverlay.Draw(spriteBatch, _fadeAnimationPercentage);
-
                 // Draw the current game sequence.
-                else if (_currentMenuState == MenuState.GameSequence || _lastMenuState == MenuState.GameSequence)
-                    _gameSequences[_currentSequenceName].Draw(spriteBatch, _fadeAnimationPercentage);
+                else if (
+                    _currentMenuState == MenuState.GameSequence
+                    || _lastMenuState == MenuState.GameSequence
+                )
+                    _gameSequences[_currentSequenceName]
+                        .Draw(spriteBatch, _fadeAnimationPercentage);
 
                 // Draw the inventory screen.
                 if (_currentMenuState == MenuState.Inventory)
                 {
                     // Draw the map toggle button and label.
                     var mapStart = "";
-                    if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Select].Keys.Length > 0)
-                        mapStart = ControlHandler.ButtonDictionary[CButtons.Select].Keys[0].ToString();
-                    if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.Select].Buttons.Length > 0)
-                        mapStart = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.Select].Buttons[0]);
+                    if (
+                        ControlHandler.LastKeyboardDown
+                        && ControlHandler.ButtonDictionary[CButtons.Select].Keys.Length > 0
+                    )
+                        mapStart = ControlHandler
+                            .ButtonDictionary[CButtons.Select]
+                            .Keys[0]
+                            .ToString();
+                    if (
+                        !ControlHandler.LastKeyboardDown
+                        && ControlHandler.ButtonDictionary[CButtons.Select].Buttons.Length > 0
+                    )
+                        mapStart = ControlHandler.GetButtonName(
+                            ControlHandler.ButtonDictionary[CButtons.Select].Buttons[0]
+                        );
 
-                    var mapString = mapStart + ": " + Game1.LanguageManager.GetString(_updateInventory ? "overlay_map" : "overlay_inventory", "error");
-                    var mapDrawPos = new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale);
+                    var mapString =
+                        mapStart
+                        + ": "
+                        + Game1.LanguageManager.GetString(
+                            _updateInventory ? "overlay_map" : "overlay_inventory",
+                            "error"
+                        );
+                    var mapDrawPos = new Vector2(
+                        8 * Game1.UiScale,
+                        Game1.WindowHeight - 16 * Game1.UiScale
+                    );
 
-                    spriteBatch.DrawString(Resources.GameFont, mapString, mapDrawPos, Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(
+                        Resources.GameFont,
+                        mapString,
+                        mapDrawPos,
+                        Color.White * _fadeAnimationPercentage,
+                        0,
+                        Vector2.Zero,
+                        Game1.UiScale,
+                        SpriteEffects.None,
+                        0
+                    );
 
                     // When navigating the map, get the currently selected map position.
                     var nodeSelected = _mapOverlay.SelectionPosition;
 
                     // If we're in map mode and one of the dungeons are selected.
-                    if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && !_updateInventory && TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
+                    if (
+                        (
+                            (GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3)
+                            || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)
+                        )
+                        && !_updateInventory
+                        && TeleportMap.ContainsKey(nodeSelected)
+                        && MapManager.ObjLink.Map.IsOverworld
+                    )
                     {
                         // Get the selected dungeon and check if the instrument has been collected.
                         int dungeonLevel = TeleportMap[nodeSelected].Level - 1;
@@ -431,18 +557,45 @@ namespace ProjectZ.InGame.Overlay
 
                         // Get the correct button to display next to the text.
                         var teleStart = "";
-                        if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.X].Keys.Length > 0)
-                            teleStart = ControlHandler.ButtonDictionary[CButtons.X].Keys[0].ToString();
-                        if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.X].Buttons.Length > 0)
-                            teleStart = ControlHandler.GetButtonName(ControlHandler.ButtonDictionary[CButtons.X].Buttons[0]);
+                        if (
+                            ControlHandler.LastKeyboardDown
+                            && ControlHandler.ButtonDictionary[CButtons.X].Keys.Length > 0
+                        )
+                            teleStart = ControlHandler
+                                .ButtonDictionary[CButtons.X]
+                                .Keys[0]
+                                .ToString();
+                        if (
+                            !ControlHandler.LastKeyboardDown
+                            && ControlHandler.ButtonDictionary[CButtons.X].Buttons.Length > 0
+                        )
+                            teleStart = ControlHandler.GetButtonName(
+                                ControlHandler.ButtonDictionary[CButtons.X].Buttons[0]
+                            );
 
                         // Set up the string to display.
-                        var teleString = teleStart + ": " + Game1.LanguageManager.GetString("overlay_teleport", "error");
+                        var teleString =
+                            teleStart
+                            + ": "
+                            + Game1.LanguageManager.GetString("overlay_teleport", "error");
                         var teleTextSize = Resources.GameFont.MeasureString(teleString);
-                        var teleDrawPos = new Vector2(Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale);
+                        var teleDrawPos = new Vector2(
+                            Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale,
+                            Game1.WindowHeight - 16 * Game1.UiScale
+                        );
 
                         // Draw the teleport button and label.
-                        spriteBatch.DrawString(Resources.GameFont, teleString, teleDrawPos, Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0);
+                        spriteBatch.DrawString(
+                            Resources.GameFont,
+                            teleString,
+                            teleDrawPos,
+                            Color.White * _fadeAnimationPercentage,
+                            0,
+                            Vector2.Zero,
+                            Game1.UiScale,
+                            SpriteEffects.None,
+                            0
+                        );
                     }
                 }
             }
@@ -454,22 +607,28 @@ namespace ProjectZ.InGame.Overlay
             if (_overlayWidth <= 0 || _overlayHeight <= 0)
                 return;
 
-            if (_menuRenderTarget2D == null
+            if (
+                _menuRenderTarget2D == null
                 || _menuRenderTarget2D.IsDisposed
                 || _menuRenderTarget2D.Width != _overlayWidth
-                || _menuRenderTarget2D.Height != _overlayHeight)
+                || _menuRenderTarget2D.Height != _overlayHeight
+            )
             {
                 try
                 {
                     _menuRenderTarget2D?.Dispose();
-                    _menuRenderTarget2D = new RenderTarget2D(Game1.Graphics.GraphicsDevice,
+                    _menuRenderTarget2D = new RenderTarget2D(
+                        Game1.Graphics.GraphicsDevice,
                         Math.Max(1, _overlayWidth),
-                        Math.Max(1, _overlayHeight));
+                        Math.Max(1, _overlayHeight)
+                    );
                 }
                 catch (Exception ex)
                 {
                     // optional: log for debugging
-                    System.Diagnostics.Debug.WriteLine($"MenuRenderTarget creation failed: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"MenuRenderTarget creation failed: {ex.Message}"
+                    );
                     _menuRenderTarget2D = null;
                 }
             }
@@ -478,7 +637,13 @@ namespace ProjectZ.InGame.Overlay
         public void DrawRenderTarget(SpriteBatch spriteBatch)
         {
             // If the fade percentage is above zero and a game sequence is currently visible, draw it with current render target.
-            if (_fadeAnimationPercentage > 0 && (_currentMenuState == MenuState.GameSequence || _lastMenuState == MenuState.GameSequence))
+            if (
+                _fadeAnimationPercentage > 0
+                && (
+                    _currentMenuState == MenuState.GameSequence
+                    || _lastMenuState == MenuState.GameSequence
+                )
+            )
                 _gameSequences[_currentSequenceName].DrawRT(spriteBatch);
 
             // If the inventory is currently visible.
@@ -510,19 +675,32 @@ namespace ProjectZ.InGame.Overlay
             _scale = Game1.UiScale;
 
             // Recalculate the size of the inventory.
-            _recInventory = new Rectangle(0, 0, _inventorySize.X * _scale, _inventorySize.Y * _scale);
+            _recInventory = new Rectangle(
+                0,
+                0,
+                _inventorySize.X * _scale,
+                _inventorySize.Y * _scale
+            );
 
             // Recalculate the size of the map stuff.
             _recMap = new Rectangle(
                 _recInventory.Right - 6 * _scale - _mapSize.X * _scale,
-                _recInventory.Bottom - 6 * _scale - _mapSize.Y * _scale, _mapSize.X * _scale, _mapSize.Y * _scale);
+                _recInventory.Bottom - 6 * _scale - _mapSize.Y * _scale,
+                _mapSize.X * _scale,
+                _mapSize.Y * _scale
+            );
             _recMapCenter = new Rectangle(
                 _recInventory.Width / 2 - _mapSize.X / 2 * _scale,
-                _recInventory.Height / 2 - _mapSize.Y / 2 * _scale, _mapSize.X * _scale, _mapSize.Y * _scale);
+                _recInventory.Height / 2 - _mapSize.Y / 2 * _scale,
+                _mapSize.X * _scale,
+                _mapSize.Y * _scale
+            );
             _recDungeon = new Rectangle(
                 _recInventory.Right + _margin * _scale,
                 _recInventory.Bottom - _dungeonSize.Y * _scale,
-                _dungeonSize.X * _scale, _dungeonSize.Y * _scale);
+                _dungeonSize.X * _scale,
+                _dungeonSize.Y * _scale
+            );
         }
 
         private void DrawInventory(SpriteBatch spriteBatch)
@@ -530,9 +708,18 @@ namespace ProjectZ.InGame.Overlay
             // Recalculate the dimensions in case the UI scale has changed.
             UpdateOverlayDimensions();
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, null);
+            spriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                null,
+                null
+            );
 
-            var percentage = MathF.Sin(-MathF.PI / 2 + (_changeCount / ChangeTime) * MathF.PI) * 0.5f + 0.5f;
+            var percentage =
+                MathF.Sin(-MathF.PI / 2 + (_changeCount / ChangeTime) * MathF.PI) * 0.5f + 0.5f;
 
             // Draw the inventory overlay.
             _inventoryOverlay.Draw(spriteBatch, _recInventory, Color.White * (1 - percentage));
@@ -542,7 +729,10 @@ namespace ProjectZ.InGame.Overlay
             // Draw the map onto the inventory screen.
             var mapRectangle = new Rectangle(
                 (int)MathHelper.Lerp(_recMap.X, _recMapCenter.X, percentage),
-                (int)MathHelper.Lerp(_recMap.Y, _recMapCenter.Y, percentage), _recMap.Width, _recMap.Height);
+                (int)MathHelper.Lerp(_recMap.Y, _recMapCenter.Y, percentage),
+                _recMap.Width,
+                _recMap.Height
+            );
             _mapOverlay.Draw(spriteBatch, mapRectangle, Color.White);
 
             spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
@@ -576,8 +766,9 @@ namespace ProjectZ.InGame.Overlay
             _overlayHeight = _overlaySize.Y * _scale;
 
             _menuPosition = new Vector2(
-                Game1.WindowWidth / 2 - _overlayWidth / 2, 
-                Game1.WindowHeight / 2 - _overlayHeight / 2);
+                Game1.WindowWidth / 2 - _overlayWidth / 2,
+                Game1.WindowHeight / 2 - _overlayHeight / 2
+            );
 
             EnsureMenuRenderTarget();
         }
@@ -585,8 +776,16 @@ namespace ProjectZ.InGame.Overlay
         public void UpdateRenderTarget()
         {
             // Update all render targets.
-            if (_menuRenderTarget2D == null || _menuRenderTarget2D.Width != _overlayWidth || _menuRenderTarget2D.Height != _overlayHeight)
-                _menuRenderTarget2D = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _overlayWidth, _overlayHeight);
+            if (
+                _menuRenderTarget2D == null
+                || _menuRenderTarget2D.Width != _overlayWidth
+                || _menuRenderTarget2D.Height != _overlayHeight
+            )
+                _menuRenderTarget2D = new RenderTarget2D(
+                    Game1.Graphics.GraphicsDevice,
+                    _overlayWidth,
+                    _overlayHeight
+                );
 
             _inventoryOverlay.UpdateRenderTarget();
             _mapOverlay.UpdateRenderTarget();
@@ -635,7 +834,8 @@ namespace ProjectZ.InGame.Overlay
 
         public bool UpdateCameraAndAnimation()
         {
-            return (_currentMenuState != MenuState.Inventory && TextboxOverlay.IsOpen) || _currentMenuState == MenuState.GameSequence;
+            return (_currentMenuState != MenuState.Inventory && TextboxOverlay.IsOpen)
+                || _currentMenuState == MenuState.GameSequence;
         }
 
         public void HideHud(bool hidden)
@@ -663,7 +863,11 @@ namespace ProjectZ.InGame.Overlay
             _blurRectangle.BackgroundColor = Color.Black * 0.5f * _fadeAnimationPercentage;
             _blurRectangle.BlurColor = Values.GameMenuBackgroundColor * _fadeAnimationPercentage;
 
-            if (_fadeAnimationPercentage <= 0 && _currentSequenceName != null && _currentMenuState == MenuState.None)
+            if (
+                _fadeAnimationPercentage <= 0
+                && _currentSequenceName != null
+                && _currentMenuState == MenuState.None
+            )
                 _currentSequenceName = null;
 
             // Hide the HUD.
@@ -671,7 +875,10 @@ namespace ProjectZ.InGame.Overlay
             {
                 _hudState = AnimationHelper.MoveToTarget(_hudState, 1, 0.1f * Game1.TimeMultiplier);
             }
-            else if (!Game1.GameManager.DialogIsRunning() && (Game1.UpdateGame || Game1.ForceDialogUpdate))
+            else if (
+                !Game1.GameManager.DialogIsRunning()
+                && (Game1.UpdateGame || Game1.ForceDialogUpdate)
+            )
             {
                 _hudState = AnimationHelper.MoveToTarget(_hudState, 0, 0.1f * Game1.TimeMultiplier);
             }
@@ -718,7 +925,12 @@ namespace ProjectZ.InGame.Overlay
             else if (newState == MenuState.Menu)
             {
                 // Don't allow opening the menu again until it has closed.
-                Game1.UiPageManager.ChangePage(typeof(GameMenuPage), null, PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+                Game1.UiPageManager.ChangePage(
+                    typeof(GameMenuPage),
+                    null,
+                    PageManager.TransitionAnimation.TopToBottom,
+                    PageManager.TransitionAnimation.TopToBottom
+                );
             }
             _fading = true;
             _fadeDir = 1;
@@ -739,7 +951,10 @@ namespace ProjectZ.InGame.Overlay
 
             // Store last input state and close all open pages.
             InputHandler.ResetInputState();
-            Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+            Game1.UiPageManager.PopAllPages(
+                PageManager.TransitionAnimation.TopToBottom,
+                PageManager.TransitionAnimation.TopToBottom
+            );
 
             // Resume the sound effects.
             Game1.GameManager.ContinueSoundEffects();

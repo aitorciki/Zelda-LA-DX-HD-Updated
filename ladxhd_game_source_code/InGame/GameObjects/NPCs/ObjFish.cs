@@ -37,11 +37,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isLockedOn;
 
         // type: 0: small fish; 1: big fish, 2: big fish with heart
-        public ObjFish(Map.Map map, int posX, int posY, int type, int offset, int wait) : base(map)
+        public ObjFish(Map.Map map, int posX, int posY, int type, int offset, int wait)
+            : base(map)
         {
             Type = type;
             SprEditorImage = Resources.SprNpCs;
-            EditorIconSource = type == 0 ? new Rectangle(487, 142, 15, 11) : new Rectangle(528, 158, 16, 16);
+            EditorIconSource =
+                type == 0 ? new Rectangle(487, 142, 15, 11) : new Rectangle(528, 158, 16, 16);
 
             EntityPosition = new CPosition(posX, posY + 8, 0);
             EntitySize = new Rectangle(-16, -8, 48, 16);
@@ -49,10 +51,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _startPosition = EntityPosition.Position;
             EntityPosition.Set(EntityPosition.Position + new Vector2(offset, 0));
 
-            Body = new BodyComponent(EntityPosition, 0, -6, 16, 11, 8)
-            {
-                IgnoreHeight = true,
-            };
+            Body = new BodyComponent(EntityPosition, 0, -6, 16, 11, 8) { IgnoreHeight = true };
 
             var name = type == 0 ? "fish_small" : "fish_big";
 
@@ -69,7 +68,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             var offsetY = type == 0 ? -6 : -8;
             _sprite = new CSprite(EntityPosition);
-            _animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(8, offsetY));
+            _animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(8, offsetY)
+            );
 
             var waitCountdown = new AiTriggerCountdown(250, null, ToSwim);
 
@@ -98,7 +101,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BodyComponent.Index, Body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(Body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(Body.BodyBox, Interact));
         }
 
@@ -141,7 +147,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (distanceLength >= _moveDistance - _speedDistance)
             {
-                Body.Velocity.X = Math.Sign(distance.X) * ((1.0f - ((distanceLength - (_moveDistance - _speedDistance)) / _speedDistance)) * _speed + 0.05f);
+                Body.Velocity.X =
+                    Math.Sign(distance.X)
+                    * (
+                        (
+                            1.0f
+                            - ((distanceLength - (_moveDistance - _speedDistance)) / _speedDistance)
+                        ) * _speed
+                        + 0.05f
+                    );
             }
 
             if (distanceLength <= 0)
@@ -176,10 +190,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             goalPosition.X += flipped ? 14 : -14;
 
             goalPosition += new Vector2(
-                (float)Math.Sin(Game1.TotalGameTime * 0.005), 
-                (float)Math.Cos(Game1.TotalGameTime * 0.004));
+                (float)Math.Sin(Game1.TotalGameTime * 0.005),
+                (float)Math.Cos(Game1.TotalGameTime * 0.004)
+            );
 
-            var direction = goalPosition - new Vector2(EntityPosition.Position.X + 8, EntityPosition.Position.Y);
+            var direction =
+                goalPosition
+                - new Vector2(EntityPosition.Position.X + 8, EntityPosition.Position.Y);
             var swimSpeed = 0.5f;
 
             if (direction.Length() < 1)
@@ -195,7 +212,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 if (_lockOnCount < 0)
                 {
-                    direction = ObjLinkFishing.HookPosition - new Vector2(EntityPosition.Position.X + 8, EntityPosition.Position.Y);
+                    direction =
+                        ObjLinkFishing.HookPosition
+                        - new Vector2(EntityPosition.Position.X + 8, EntityPosition.Position.Y);
                     swimSpeed = 2.0f;
 
                     if (direction.Length() <= 2)
@@ -226,7 +245,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void StateBitten()
         {
-            if(ObjLinkFishing.HookedFish == null)
+            if (ObjLinkFishing.HookedFish == null)
                 return;
 
             _animator.Play("swim");
@@ -236,13 +255,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var flipped = Body.Velocity.X < (_animationComponent.MirroredH ? 0.2f : -0.2f);
             _animationComponent.MirroredH = flipped;
             _animationComponent.UpdateSprite();
-            
+
             // update fish position
             var position = new Vector2(EntityPosition.X + (flipped ? 0 : 16), EntityPosition.Y - 2);
             ObjLinkFishing.HookPosition = position;
 
             // swim to the left side
-            var goalVelocity = (new Vector2(-16, 80) - EntityPosition.Position) - new Vector2(Body.Velocity.X, Body.Velocity.Y);
+            var goalVelocity =
+                (new Vector2(-16, 80) - EntityPosition.Position)
+                - new Vector2(Body.Velocity.X, Body.Velocity.Y);
             if (goalVelocity != Vector2.Zero)
                 goalVelocity.Normalize();
             Body.Velocity.X += goalVelocity.X * 0.025f * Game1.TimeMultiplier;
@@ -251,7 +272,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public void ToJump()
         {
-            if(_aiComponent.CurrentStateId == "jump")
+            if (_aiComponent.CurrentStateId == "jump")
                 return;
 
             _aiComponent.ChangeState("jump");
@@ -260,7 +281,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // splash effect
             Game1.GameManager.PlaySoundEffect("D360-14-0E");
-            var splashAnimator = new ObjAnimator(Map, 0, 0, 0, 36, 0, "Particles/fishingSplash", "idle", true);
+            var splashAnimator = new ObjAnimator(
+                Map,
+                0,
+                0,
+                0,
+                36,
+                0,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             splashAnimator.EntityPosition.Set(new Vector2(EntityPosition.X + 8, 0));
             Map.Objects.SpawnObject(splashAnimator);
         }

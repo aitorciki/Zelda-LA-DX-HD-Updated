@@ -105,22 +105,45 @@ namespace ProjectZ.InGame.Overlay
             // If the setting was set to use six buttons.
             if (sixButtons)
             {
-                var pos = new Point(8,2);
-                _itemSlots = new Rectangle[] 
+                var pos = new Point(8, 2);
+                _itemSlots = new Rectangle[]
                 {
-                    new Rectangle(RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2,
+                    new Rectangle(
+                        RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2,
                         RecItemselection.Height * 2 + pos.Y * 2,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + pos.X, RecItemselection.Height + pos.Y,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(0, RecItemselection.Height + pos.Y,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2, 0,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(0, -RecItemselection.Height - pos.Y,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + pos.X, -RecItemselection.Height - pos.Y,
-                        RecItemselection.Width, RecItemselection.Height)
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + pos.X,
+                        RecItemselection.Height + pos.Y,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        0,
+                        RecItemselection.Height + pos.Y,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2,
+                        0,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        0,
+                        -RecItemselection.Height - pos.Y,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + pos.X,
+                        -RecItemselection.Height - pos.Y,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
                 };
                 _itemSlotWidth = 3;
                 _itemSlotsPosition = new Point(14, 55);
@@ -130,18 +153,33 @@ namespace ProjectZ.InGame.Overlay
             // The setting was set to use four buttons.
             else
             {
-                var pos = new Point(8,5);
-                _itemSlots = new Rectangle[] 
+                var pos = new Point(8, 5);
+                _itemSlots = new Rectangle[]
                 {
-                    new Rectangle(RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2,
+                    new Rectangle(
+                        RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2,
                         RecItemselection.Height * 2 + pos.Y * 2,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + pos.X, RecItemselection.Height + pos.Y,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(0, RecItemselection.Height + pos.Y,
-                        RecItemselection.Width, RecItemselection.Height),
-                    new Rectangle(RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2, 0,
-                        RecItemselection.Width, RecItemselection.Height)
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + pos.X,
+                        RecItemselection.Height + pos.Y,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        0,
+                        RecItemselection.Height + pos.Y,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
+                    new Rectangle(
+                        RecItemselection.Width + pos.X / 2 - RecItemselection.Width / 2,
+                        0,
+                        RecItemselection.Width,
+                        RecItemselection.Height
+                    ),
                 };
                 _itemSlotWidth = 4;
                 _itemSlotsPosition = new Point(14, 41);
@@ -163,7 +201,11 @@ namespace ProjectZ.InGame.Overlay
         public void UpdateRenderTarget()
         {
             // Keep render target at base logical size (no scaling).
-            if (_renderTarget == null || _renderTarget.Width != _width || _renderTarget.Height != _height)
+            if (
+                _renderTarget == null
+                || _renderTarget.Width != _width
+                || _renderTarget.Height != _height
+            )
             {
                 _renderTarget?.Dispose();
                 _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width, _height);
@@ -211,12 +253,16 @@ namespace ProjectZ.InGame.Overlay
             }
 
             // update the selected ocarina song
-            var selectedItem = Game1.GameManager.Equipment[Values.HandItemSlots + _selectedItemSlot];
+            var selectedItem = Game1.GameManager.Equipment[
+                Values.HandItemSlots + _selectedItemSlot
+            ];
 
             if (selectedItem != null && selectedItem.Name == "ocarina")
             {
-                if ((selectionOffset == -1 || selectionOffset == 1) &&
-                    MoveOcarinaSelection(selectionOffset))
+                if (
+                    (selectionOffset == -1 || selectionOffset == 1)
+                    && MoveOcarinaSelection(selectionOffset)
+                )
                     selectionOffset = 0;
             }
 
@@ -236,14 +282,18 @@ namespace ProjectZ.InGame.Overlay
             for (var i = 0; i < Game1.GameManager.Equipment.Length; i++)
             {
                 Game1.GameManager.SelectedOcarinaSong += direction;
-                if (Game1.GameManager.SelectedOcarinaSong < 0 ||
-                    Game1.GameManager.SelectedOcarinaSong >= _ocarinaFaces.Length)
+                if (
+                    Game1.GameManager.SelectedOcarinaSong < 0
+                    || Game1.GameManager.SelectedOcarinaSong >= _ocarinaFaces.Length
+                )
                 {
                     Game1.GameManager.SelectedOcarinaSong = previousSong;
                     return false;
                 }
-                if (Game1.GameManager.SelectedOcarinaSong != -1 &&
-                    Game1.GameManager.OcarinaSongs[Game1.GameManager.SelectedOcarinaSong] == 1)
+                if (
+                    Game1.GameManager.SelectedOcarinaSong != -1
+                    && Game1.GameManager.OcarinaSongs[Game1.GameManager.SelectedOcarinaSong] == 1
+                )
                     return Game1.GameManager.SelectedOcarinaSong != previousSong;
             }
             Game1.GameManager.SelectedOcarinaSong = -1;
@@ -252,8 +302,14 @@ namespace ProjectZ.InGame.Overlay
 
         public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color)
         {
-            if (_renderTarget == null) return;
-            var destRect = new Rectangle(drawPosition.X, drawPosition.Y, _renderTarget.Width, _renderTarget.Height);
+            if (_renderTarget == null)
+                return;
+            var destRect = new Rectangle(
+                drawPosition.X,
+                drawPosition.Y,
+                _renderTarget.Width,
+                _renderTarget.Height
+            );
             spriteBatch.Draw(_renderTarget, destRect, color);
         }
 
@@ -267,7 +323,15 @@ namespace ProjectZ.InGame.Overlay
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
 
             // Draw main background.
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiScale));
+            spriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                null,
+                null,
+                null,
+                null,
+                Resources.RoundedCornerEffect,
+                Matrix.CreateScale(Game1.UiScale)
+            );
 
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_background0.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_background0.Height);
@@ -280,7 +344,15 @@ namespace ProjectZ.InGame.Overlay
             spriteBatch.End();
 
             // Draw item backgrounds.
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiScale));
+            spriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                null,
+                null,
+                null,
+                null,
+                Resources.RoundedCornerEffect,
+                Matrix.CreateScale(Game1.UiScale)
+            );
 
             var offset = new Point(_background1.X, _background1.Y);
 
@@ -294,16 +366,34 @@ namespace ProjectZ.InGame.Overlay
 
             // Draw item selection box.
             var selectionPosition = new Point(
-                (_itemsRectangle.X + _selectedItemSlot % _itemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X)),
-                (_itemsRectangle.Y + _selectedItemSlot / _itemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y)));
-            DrawBackground(spriteBatch, offset + selectionPosition, new Rectangle(0, 0, _itemRectangleSize.X, _itemRectangleSize.Y));
+                (
+                    _itemsRectangle.X
+                    + _selectedItemSlot % _itemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X)
+                ),
+                (
+                    _itemsRectangle.Y
+                    + _selectedItemSlot / _itemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y)
+                )
+            );
+            DrawBackground(
+                spriteBatch,
+                offset + selectionPosition,
+                new Rectangle(0, 0, _itemRectangleSize.X, _itemRectangleSize.Y)
+            );
 
             // Draw missing items/equipment markers.
             for (var i = 0; i < Game1.GameManager.Equipment.Length - Values.HandItemSlots; i++)
             {
                 var slotRectangle = new Rectangle(
-                    i % _itemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X) + _itemRectangleSize.X / 2 - 2,
-                    i / _itemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y) + _itemRectangleSize.Y - 8, 4, 2);
+                    i % _itemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X)
+                        + _itemRectangleSize.X / 2
+                        - 2,
+                    i / _itemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y)
+                        + _itemRectangleSize.Y
+                        - 8,
+                    4,
+                    2
+                );
 
                 if (Game1.GameManager.Equipment[Values.HandItemSlots + i] == null)
                     DrawBackground(spriteBatch, offset + _equipmentPosition, slotRectangle, 1);
@@ -314,7 +404,10 @@ namespace ProjectZ.InGame.Overlay
             {
                 var slotRectangle = new Rectangle(
                     _keyPositions[i].X + _keyPositions[i].Width / 2 - 2,
-                    _keyPositions[i].Y + _keyPositions[i].Height - 2, 4, 2);
+                    _keyPositions[i].Y + _keyPositions[i].Height - 2,
+                    4,
+                    2
+                );
 
                 var itemKey = Game1.GameManager.GetItem("dkey" + (i + 1));
                 if (itemKey == null)
@@ -329,23 +422,47 @@ namespace ProjectZ.InGame.Overlay
 
                 if (!hasItem)
                 {
-                    var position = new Point(_relictPosition.X + _relicOffsets[i].X + _relicOffsets[i].Width / 2 - 2,
-                                             _relictPosition.Y + _relicOffsets[i].Bottom - 2);
+                    var position = new Point(
+                        _relictPosition.X + _relicOffsets[i].X + _relicOffsets[i].Width / 2 - 2,
+                        _relictPosition.Y + _relicOffsets[i].Bottom - 2
+                    );
                     DrawBackground(spriteBatch, offset + position, new Rectangle(0, 0, 4, 2), 1);
                 }
             }
             spriteBatch.End();
 
             // Draw icons, hearts, etc.
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiScale));
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                null,
+                Matrix.CreateScale(Game1.UiScale)
+            );
 
             var heartOffset = new Point(0, Game1.GameManager.MaxHearts > 7 ? 0 : 4);
             ItemDrawHelper.DrawHearts(spriteBatch, _heartsPosition + heartOffset, 1, Color.White);
 
             DrawSkirt(spriteBatch, _skirtPosition);
             DrawHeartContainer(spriteBatch, _heartPiecePosition);
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("flippers"), Point.Zero, _flipperRectangle, 1, Color.White);
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("potion"), Point.Zero, _potionRectangle, 1, Color.White);
+            ItemDrawHelper.DrawItemWithInfo(
+                spriteBatch,
+                Game1.GameManager.GetItem("flippers"),
+                Point.Zero,
+                _flipperRectangle,
+                1,
+                Color.White
+            );
+            ItemDrawHelper.DrawItemWithInfo(
+                spriteBatch,
+                Game1.GameManager.GetItem("potion"),
+                Point.Zero,
+                _potionRectangle,
+                1,
+                Color.White
+            );
             ItemDrawHelper.DrawRubee(spriteBatch, _rubeePosition, 1, Color.Black);
 
             var offsetBottom = new Point(_background1.X, _background1.Y);
@@ -365,41 +482,81 @@ namespace ProjectZ.InGame.Overlay
                 }
                 var itemShell = Game1.GameManager.GetItem("shell");
                 var itemLeaf = Game1.GameManager.GetItem("goldLeaf");
-                if (itemShell != null) width += 28;
-                if (itemLeaf != null) width += 28;
+                if (itemShell != null)
+                    width += 28;
+                if (itemLeaf != null)
+                    width += 28;
 
                 var posX = _tradeStuffRectangle.Width / 2 - width / 2;
                 _tradeRectangle = new Rectangle(6 + posX, 6, 28, 22);
 
-                if (hasTradeItem) posX += 28;
+                if (hasTradeItem)
+                    posX += 28;
                 _shellRectangle = new Rectangle(6 + posX, 6, 28, 22);
 
-                if (itemShell != null) posX += 28;
+                if (itemShell != null)
+                    posX += 28;
                 _leafRectangle = new Rectangle(6 + posX, 6, 28, 22);
 
                 DrawTradeItem(spriteBatch, offsetBottom, 1);
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("shell"), offsetBottom, _shellRectangle, 1, Color.White);
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("goldLeaf"), offsetBottom, _leafRectangle, 1, Color.White);
+                ItemDrawHelper.DrawItemWithInfo(
+                    spriteBatch,
+                    Game1.GameManager.GetItem("shell"),
+                    offsetBottom,
+                    _shellRectangle,
+                    1,
+                    Color.White
+                );
+                ItemDrawHelper.DrawItemWithInfo(
+                    spriteBatch,
+                    Game1.GameManager.GetItem("goldLeaf"),
+                    offsetBottom,
+                    _leafRectangle,
+                    1,
+                    Color.White
+                );
             }
 
             DrawEquipment(spriteBatch, offsetBottom + _equipmentPosition);
 
             // Draw slot labels and items.
             for (int y = 0; y < _itemSlots.Length; y++)
-                _itemSlotString[y] = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, y];
+                _itemSlotString[y] = ControlHandler.ControllerLabels[
+                    ControlHandler.ControllerIndex,
+                    y
+                ];
 
             for (var i = 0; i < _itemSlots.Length; i++)
             {
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[i],
-                    offsetBottom + _itemSlotsPosition, _itemSlots[i], 1, Color.White);
+                ItemDrawHelper.DrawItemWithInfo(
+                    spriteBatch,
+                    Game1.GameManager.Equipment[i],
+                    offsetBottom + _itemSlotsPosition,
+                    _itemSlots[i],
+                    1,
+                    Color.White
+                );
 
-                spriteBatch.DrawString(Resources.GameFont, _itemSlotString[i],
-                    new Vector2(offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4,
-                                offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 5), Color.Black);
+                spriteBatch.DrawString(
+                    Resources.GameFont,
+                    _itemSlotString[i],
+                    new Vector2(
+                        offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4,
+                        offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 5
+                    ),
+                    Color.Black
+                );
             }
 
             for (var i = 0; i < 5; i++)
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dkey" + (i + 1)), offsetBottom, _keyPositions[i], 1, Color.White);
+                ItemDrawHelper.DrawItemWithInfo(
+                    spriteBatch,
+                    Game1.GameManager.GetItem("dkey" + (i + 1)),
+                    offsetBottom,
+                    _keyPositions[i],
+                    1,
+                    Color.White
+                );
 
             DrawRelicts(spriteBatch, offsetBottom + _relictPosition);
 
@@ -409,13 +566,27 @@ namespace ProjectZ.InGame.Overlay
             device.SetRenderTarget(null);
         }
 
-        private void DrawBackground(SpriteBatch spriteBatch, Point offset, Rectangle rectangle, float radius = 3f)
+        private void DrawBackground(
+            SpriteBatch spriteBatch,
+            Point offset,
+            Rectangle rectangle,
+            float radius = 3f
+        )
         {
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(radius);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(rectangle.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(rectangle.Height);
 
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(offset.X + rectangle.X, offset.Y + rectangle.Y, rectangle.Width, rectangle.Height), Color.Black * 0.15f);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(
+                    offset.X + rectangle.X,
+                    offset.Y + rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height
+                ),
+                Color.Black * 0.15f
+            );
         }
 
         public void DrawEquipment(SpriteBatch spriteBatch, Point drawPosition)
@@ -426,16 +597,19 @@ namespace ProjectZ.InGame.Overlay
                 var slotRectangle = new Rectangle(
                     i % _itemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X),
                     i / _itemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y),
-                    _itemRectangleSize.X, 
-                    _itemRectangleSize.Y);
+                    _itemRectangleSize.X,
+                    _itemRectangleSize.Y
+                );
 
                 // draw the item
                 var itemIndex = i + Values.HandItemSlots;
                 var offsetY = _selectedItemSlot == i ? -1 : 0;
 
-                if (_selectedItemSlot == i &&
-                    Game1.GameManager.Equipment[itemIndex] != null &&
-                    Game1.GameManager.Equipment[itemIndex].Name == "ocarina")
+                if (
+                    _selectedItemSlot == i
+                    && Game1.GameManager.Equipment[itemIndex] != null
+                    && Game1.GameManager.Equipment[itemIndex].Name == "ocarina"
+                )
                 {
                     var hasSong = false;
                     for (var j = 0; j < Game1.GameManager.OcarinaSongs.Length; j++)
@@ -448,11 +622,20 @@ namespace ProjectZ.InGame.Overlay
                     if (hasSong)
                         continue;
                 }
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[itemIndex], new Point(drawPosition.X, drawPosition.Y + offsetY + 1), slotRectangle, 1, Color.White);
+                ItemDrawHelper.DrawItemWithInfo(
+                    spriteBatch,
+                    Game1.GameManager.Equipment[itemIndex],
+                    new Point(drawPosition.X, drawPosition.Y + offsetY + 1),
+                    slotRectangle,
+                    1,
+                    Color.White
+                );
             }
 
             // Draw the selected ocarina song.
-            var selectedItem = Game1.GameManager.Equipment[Values.HandItemSlots + _selectedItemSlot];
+            var selectedItem = Game1.GameManager.Equipment[
+                Values.HandItemSlots + _selectedItemSlot
+            ];
             if (selectedItem != null && selectedItem.Name == "ocarina")
             {
                 var selectedSong = Game1.GameManager.SelectedOcarinaSong;
@@ -460,12 +643,30 @@ namespace ProjectZ.InGame.Overlay
                 {
                     var hasSong = Game1.GameManager.OcarinaSongs[selectedSong] == 1;
                     var position = new Vector2(
-                        drawPosition.X + (_selectedItemSlot % _itemSlotWidth * (_itemRectangleSize.X + _itemRecMargin.X)) +
-                        _itemRectangleSize.X / 2 - _ocarinaFaces[selectedSong].ScaledRectangle.Width / 2,
-                        drawPosition.Y + (_selectedItemSlot / _itemSlotWidth * (_itemRectangleSize.Y + _itemRecMargin.Y)) +
-                        _itemRectangleSize.Y / 2 - _ocarinaFaces[selectedSong].ScaledRectangle.Height / 2);
+                        drawPosition.X
+                            + (
+                                _selectedItemSlot
+                                % _itemSlotWidth
+                                * (_itemRectangleSize.X + _itemRecMargin.X)
+                            )
+                            + _itemRectangleSize.X / 2
+                            - _ocarinaFaces[selectedSong].ScaledRectangle.Width / 2,
+                        drawPosition.Y
+                            + (
+                                _selectedItemSlot
+                                / _itemSlotWidth
+                                * (_itemRectangleSize.Y + _itemRecMargin.Y)
+                            )
+                            + _itemRectangleSize.Y / 2
+                            - _ocarinaFaces[selectedSong].ScaledRectangle.Height / 2
+                    );
 
-                    DrawHelper.DrawNormalized(spriteBatch, _ocarinaFaces[selectedSong], position, hasSong ? Color.White : Color.Gray);
+                    DrawHelper.DrawNormalized(
+                        spriteBatch,
+                        _ocarinaFaces[selectedSong],
+                        position,
+                        hasSong ? Color.White : Color.Gray
+                    );
                 }
             }
         }
@@ -480,8 +681,14 @@ namespace ProjectZ.InGame.Overlay
                 var item = Game1.GameManager.ItemManager[name];
 
                 if (hasItem)
-                    ItemDrawHelper.DrawInstrument(spriteBatch, item.Sprite, new Vector2(
-                        drawPosition.X + _relicOffsets[i].X, drawPosition.Y + _relicOffsets[i].Y));
+                    ItemDrawHelper.DrawInstrument(
+                        spriteBatch,
+                        item.Sprite,
+                        new Vector2(
+                            drawPosition.X + _relicOffsets[i].X,
+                            drawPosition.Y + _relicOffsets[i].Y
+                        )
+                    );
             }
         }
 
@@ -495,10 +702,22 @@ namespace ProjectZ.InGame.Overlay
                 count = item.Count;
 
             // draw the heart container
-            spriteBatch.Draw(Resources.SprItem, new Rectangle(
-                    drawPosition.X, drawPosition.Y, _heartPiecesRectangle.Width, _heartPiecesRectangle.Height),
-                new Rectangle(_heartPiecesRectangle.X + (_heartPiecesRectangle.Width + 2) * count,
-                    _heartPiecesRectangle.Y, _heartPiecesRectangle.Width, _heartPiecesRectangle.Height), Color.White);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Rectangle(
+                    drawPosition.X,
+                    drawPosition.Y,
+                    _heartPiecesRectangle.Width,
+                    _heartPiecesRectangle.Height
+                ),
+                new Rectangle(
+                    _heartPiecesRectangle.X + (_heartPiecesRectangle.Width + 2) * count,
+                    _heartPiecesRectangle.Y,
+                    _heartPiecesRectangle.Width,
+                    _heartPiecesRectangle.Height
+                ),
+                Color.White
+            );
         }
 
         public void DrawTradeItem(SpriteBatch spriteBatch, Point drawPosition, int scale)
@@ -512,8 +731,14 @@ namespace ProjectZ.InGame.Overlay
                     continue;
 
                 // draw the key
-                DrawHelper.DrawCenter(spriteBatch, Resources.SprItem,
-                    drawPosition, _tradeRectangle, Game1.GameManager.ItemManager["trade" + i].SourceRectangle.Value, scale);
+                DrawHelper.DrawCenter(
+                    spriteBatch,
+                    Resources.SprItem,
+                    drawPosition,
+                    _tradeRectangle,
+                    Game1.GameManager.ItemManager["trade" + i].SourceRectangle.Value,
+                    scale
+                );
 
                 break;
             }
@@ -522,28 +747,59 @@ namespace ProjectZ.InGame.Overlay
         public void DrawSkirt(SpriteBatch spriteBatch, Point drawPosition)
         {
             // draw GBR
-            spriteBatch.Draw(Resources.SprItem, new Rectangle(
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Rectangle(
                     drawPosition.X,
                     drawPosition.Y + 2,
-                    _skirtColorRectangle.Width, _skirtColorRectangle.Height),
+                    _skirtColorRectangle.Width,
+                    _skirtColorRectangle.Height
+                ),
                 new Rectangle(
                     _skirtColorRectangle.X,
-                    _skirtColorRectangle.Y + Game1.GameManager.CloakType * (_skirtColorRectangle.Height + 1),
-                    _skirtColorRectangle.Width, _skirtColorRectangle.Height), Color.White);
+                    _skirtColorRectangle.Y
+                        + Game1.GameManager.CloakType * (_skirtColorRectangle.Height + 1),
+                    _skirtColorRectangle.Width,
+                    _skirtColorRectangle.Height
+                ),
+                Color.White
+            );
 
-            var skirtPosition = new Point(drawPosition.X + _skirtColorRectangle.Width + 1, drawPosition.Y);
+            var skirtPosition = new Point(
+                drawPosition.X + _skirtColorRectangle.Width + 1,
+                drawPosition.Y
+            );
 
             // draw the skirt
-            spriteBatch.Draw(Resources.SprItem, new Rectangle(
-                skirtPosition.X, skirtPosition.Y,
-                _skirtRectangle.Width, _skirtRectangle.Height), _skirtRectangle, Color.White);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Rectangle(
+                    skirtPosition.X,
+                    skirtPosition.Y,
+                    _skirtRectangle.Width,
+                    _skirtRectangle.Height
+                ),
+                _skirtRectangle,
+                Color.White
+            );
 
             // draw the skirt color
-            spriteBatch.Draw(Resources.SprItem, new Rectangle(
-                    skirtPosition.X, skirtPosition.Y,
-                    _skirtRectangle.Width, _skirtRectangle.Height),
-                new Rectangle(_skirtRectangle.X, _skirtRectangle.Y + _skirtRectangle.Height,
-                    _skirtRectangle.Width, _skirtRectangle.Height), Values.SkirtColors[Game1.GameManager.CloakType]);
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Rectangle(
+                    skirtPosition.X,
+                    skirtPosition.Y,
+                    _skirtRectangle.Width,
+                    _skirtRectangle.Height
+                ),
+                new Rectangle(
+                    _skirtRectangle.X,
+                    _skirtRectangle.Y + _skirtRectangle.Height,
+                    _skirtRectangle.Width,
+                    _skirtRectangle.Height
+                ),
+                Values.SkirtColors[Game1.GameManager.CloakType]
+            );
         }
     }
 }

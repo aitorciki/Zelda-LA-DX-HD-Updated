@@ -25,9 +25,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private float _shakeCounter;
         private bool _shakeScreen;
 
-        public ObjTower() : base("tower") { }
+        public ObjTower()
+            : base("tower") { }
 
-        public ObjTower(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public ObjTower(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX - 16, posY - 16, 0);
             EntitySize = new Rectangle(0, 0, 80, 80);
@@ -36,7 +38,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             string hasCollapsed = Game1.GameManager.SaveManager.GetString("d7_collapsed");
 
-            if (hasCollapsed != null) 
+            if (hasCollapsed != null)
                 _collapsed = hasCollapsed == "1";
 
             _animatorTop0 = SaveLoad.AnimatorSaveLoad.LoadAnimator("Objects/d7 tower");
@@ -57,12 +59,23 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _animatorBottom.Play("idle");
             _animatorBottom.Pause();
 
-            var opened = !string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1";
+            var opened =
+                !string.IsNullOrEmpty(strKey)
+                && Game1.GameManager.SaveManager.GetString(strKey) == "1";
 
             if (!opened)
             {
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(posX + 8, posY + 48, 0, 16, 16, 16), Values.CollisionTypes.Normal));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
+                AddComponent(
+                    CollisionComponent.Index,
+                    new BoxCollisionComponent(
+                        new CBox(posX + 8, posY + 48, 0, 16, 16, 16),
+                        Values.CollisionTypes.Normal
+                    )
+                );
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             }
             else
@@ -70,7 +83,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _animatorBottom.Play("opened");
             }
 
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         private void Open()
@@ -143,18 +159,42 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            _animatorTop0.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
+            _animatorTop0.Draw(
+                spriteBatch,
+                new Vector2(EntityPosition.X, EntityPosition.Y),
+                Color.White
+            );
             if (!_collapsed)
             {
-                _animatorTop1.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
-                _animatorTop2.Draw(spriteBatch, new Vector2(EntityPosition.X + 16, EntityPosition.Y - 96), Color.White);
+                _animatorTop1.Draw(
+                    spriteBatch,
+                    new Vector2(EntityPosition.X, EntityPosition.Y),
+                    Color.White
+                );
+                _animatorTop2.Draw(
+                    spriteBatch,
+                    new Vector2(EntityPosition.X + 16, EntityPosition.Y - 96),
+                    Color.White
+                );
             }
             else
             {
-                _animatorTop1.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y + 40), Color.White);
-                _animatorTop2.Draw(spriteBatch, new Vector2(EntityPosition.X + 16, EntityPosition.Y - 56), Color.White);
+                _animatorTop1.Draw(
+                    spriteBatch,
+                    new Vector2(EntityPosition.X, EntityPosition.Y + 40),
+                    Color.White
+                );
+                _animatorTop2.Draw(
+                    spriteBatch,
+                    new Vector2(EntityPosition.X + 16, EntityPosition.Y - 56),
+                    Color.White
+                );
             }
-            _animatorBottom.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y), Color.White);
+            _animatorBottom.Draw(
+                spriteBatch,
+                new Vector2(EntityPosition.X, EntityPosition.Y),
+                Color.White
+            );
         }
     }
 }

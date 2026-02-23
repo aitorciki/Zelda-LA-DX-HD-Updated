@@ -7,7 +7,8 @@ namespace ProjectZ.InGame.Screens
 {
     internal class GameScreen : Screen
     {
-        public GameScreen(string screenId) : base(screenId) { }
+        public GameScreen(string screenId)
+            : base(screenId) { }
 
         public override void Load(ContentManager content) { }
 

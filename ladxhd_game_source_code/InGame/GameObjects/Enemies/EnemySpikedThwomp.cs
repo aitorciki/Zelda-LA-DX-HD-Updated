@@ -27,12 +27,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Box _lastCollisionBox;
 
-        public EnemySpikedThwomp() : base("spiked thwomp") { }
+        public EnemySpikedThwomp()
+            : base("spiked thwomp") { }
 
-        public EnemySpikedThwomp(Map.Map map, int posX, int posY) : base(map)
+        public EnemySpikedThwomp(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 16, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
             CanReset = true;
             OnReset = Reset;
@@ -43,17 +45,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 Gravity2D = 0.175f,
                 IgnoresZ = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall,
-                MoveCollision = OnCollision
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall,
+                MoveCollision = OnCollision,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/spiked thwomp");
             _animator.Play("attack");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-16, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-16, -16)
+            );
 
             var stateIdle = new AiState(UpdateIdle);
             var stateAttack = new AiState();
@@ -77,15 +84,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             _collisionBox = new CBox(EntityPosition, -16, -16, 32, 4, 8);
 
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Enemy)
+            );
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
 
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
+
         private void Reset()
         {
             _aiComponent.ChangeState("idle");
@@ -95,7 +109,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             _animator.Play("idle");
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -162,8 +182,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void OnCollision(Values.BodyCollision collision)
         {
-            if ((collision & Values.BodyCollision.Bottom) != 0 &&
-                _aiComponent.CurrentStateId == "attack")
+            if (
+                (collision & Values.BodyCollision.Bottom) != 0
+                && _aiComponent.CurrentStateId == "attack"
+            )
             {
                 HitGround();
             }
@@ -184,18 +206,25 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // Check for colliding bodies and push them forward.
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)_lastCollisionBox.Left, (int)_lastCollisionBox.Back - 8,
-                (int)_lastCollisionBox.Width, (int)_lastCollisionBox.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)_lastCollisionBox.Left,
+                (int)_lastCollisionBox.Back - 8,
+                (int)_lastCollisionBox.Width,
+                (int)_lastCollisionBox.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {
                 var body = (BodyComponent)collidingObject.Components[BodyComponent.Index];
 
                 // The enemy moves into the body that is standing on top of it.
-                if (body.BodyBox.Box.Front <= _lastCollisionBox.Back &&
-                    body.BodyBox.Box.Front >= _collisionBox.Box.Back &&
-                    body.BodyBox.Box.Intersects(_collisionBox.Box))
+                if (
+                    body.BodyBox.Box.Front <= _lastCollisionBox.Back
+                    && body.BodyBox.Box.Front >= _collisionBox.Box.Back
+                    && body.BodyBox.Box.Intersects(_collisionBox.Box)
+                )
                 {
                     // Snap the body into the correct offset if there has been change.
                     float correction = _collisionBox.Box.Back - body.BodyBox.Box.Front;

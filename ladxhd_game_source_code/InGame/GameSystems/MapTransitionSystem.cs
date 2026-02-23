@@ -2,12 +2,11 @@ using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.InGame.GameObjects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects;
-
 
 namespace ProjectZ.InGame.GameSystems
 {
@@ -25,7 +24,7 @@ namespace ProjectZ.InGame.GameSystems
             TransitionBlank_0,
             TransitionBlank_1,
             TransitionOut,
-            ColorMode
+            ColorMode,
         }
 
         public TransitionState CurrentState = TransitionState.Idle;
@@ -79,12 +78,21 @@ namespace ProjectZ.InGame.GameSystems
                 if (!string.IsNullOrEmpty(_nextMapPosition))
                     MapManager.ObjLink.SetNextMapPosition(_nextMapPosition);
 
-                LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
+                LoadMapFromFile(
+                    _nextMapName,
+                    _nextMapCenter,
+                    _nextMapStartInMiddle,
+                    _nextMapColor,
+                    _nextColorMode
+                );
                 _nextMapName = null;
 
                 // If classic camera is enabled then find the closest camera. Do not try to find a camera
                 // field object during ocarina teleport or it will pan to the nearest one that is found.
-                if (Camera.ClassicMode && MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport)
+                if (
+                    Camera.ClassicMode
+                    && MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport
+                )
                     Game1.ClassicCamera.FindClosestCoords();
             }
 
@@ -104,7 +112,11 @@ namespace ProjectZ.InGame.GameSystems
                 _changeMapCount += Game1.DeltaTime;
 
                 var transitionState = _changeMapCount / ChangeMapTime;
-                var percentage = MathHelper.Clamp((float)(Math.Sin(transitionState * 1.1) / Math.Sin(1.1)), 0, 1);
+                var percentage = MathHelper.Clamp(
+                    (float)(Math.Sin(transitionState * 1.1) / Math.Sin(1.1)),
+                    0,
+                    1
+                );
                 MapManager.ObjLink.UpdateMapTransitionOut(percentage);
 
                 if (!_wobbleTransitionOut && !_knockoutTransition)
@@ -119,7 +131,9 @@ namespace ProjectZ.InGame.GameSystems
                     // fade out to a white screen
                     var wobblePercentage = MathHelper.Clamp(_changeMapCount / ChangeMapTime, 0, 1);
                     _transitionObject.Brightness = wobblePercentage;
-                    _transitionObject.WobblePercentage = (_wobbleTransitionTime + _changeMapCount) / (_wobbleTransitionTime + ChangeMapTime);
+                    _transitionObject.WobblePercentage =
+                        (_wobbleTransitionTime + _changeMapCount)
+                        / (_wobbleTransitionTime + ChangeMapTime);
                 }
 
                 if (_changeMapCount >= ChangeMapTime)
@@ -132,7 +146,11 @@ namespace ProjectZ.InGame.GameSystems
                 MapManager.ObjLink.UpdateMapTransitionOut(1);
 
                 // new map is loaded?
-                if (_finishedLoading && _changeMapCount >= ChangeMapTime + BlackScreenDelay + AdditionalBlackScreenDelay)
+                if (
+                    _finishedLoading
+                    && _changeMapCount
+                        >= ChangeMapTime + BlackScreenDelay + AdditionalBlackScreenDelay
+                )
                 {
                     FinishLoading();
                     CurrentState = TransitionState.TransitionBlank_1;
@@ -144,7 +162,10 @@ namespace ProjectZ.InGame.GameSystems
 
                 MapManager.ObjLink.UpdateMapTransitionIn(0);
 
-                if (_changeMapCount >= ChangeMapTime + BlackScreenDelay * 2 + AdditionalBlackScreenDelay)
+                if (
+                    _changeMapCount
+                    >= ChangeMapTime + BlackScreenDelay * 2 + AdditionalBlackScreenDelay
+                )
                 {
                     CurrentState = TransitionState.TransitionIn;
 
@@ -163,7 +184,9 @@ namespace ProjectZ.InGame.GameSystems
 
                 // Update the position of the player to walk into the new room.
                 var percentage = MathHelper.Clamp(_changeMapCount / ChangeMapTime, 0, 1);
-                MapManager.ObjLink.UpdateMapTransitionIn(1 - (float)(Math.Sin(percentage * 1.1) / Math.Sin(1.1)));
+                MapManager.ObjLink.UpdateMapTransitionIn(
+                    1 - (float)(Math.Sin(percentage * 1.1) / Math.Sin(1.1))
+                );
 
                 // Slowly increase the volume of the music; the music is only playing.
                 var newVolume = 1 - percentage;
@@ -176,7 +199,13 @@ namespace ProjectZ.InGame.GameSystems
                 if (_wobbleTransitionOut)
                 {
                     // Fade out to a white screen.
-                    var wobblePercentage = 1 - MathHelper.Clamp((_wobbleTransitionTime - _changeMapCount) / ChangeMapTime, 0, 1);
+                    var wobblePercentage =
+                        1
+                        - MathHelper.Clamp(
+                            (_wobbleTransitionTime - _changeMapCount) / ChangeMapTime,
+                            0,
+                            1
+                        );
                     _transitionObject.Brightness = wobblePercentage;
                     _transitionObject.WobblePercentage = _changeMapCount / _wobbleTransitionTime;
                 }
@@ -193,7 +222,11 @@ namespace ProjectZ.InGame.GameSystems
 
             if (_knockoutTransition)
             {
-                var percentage = MathHelper.Clamp((_changeMapCount - 100) / (ChangeMapTime - 100), 0, 1);
+                var percentage = MathHelper.Clamp(
+                    (_changeMapCount - 100) / (ChangeMapTime - 100),
+                    0,
+                    1
+                );
                 _transitionObject.TransitionColor = _nextMapColor * percentage;
                 _transitionObject.Percentage = 1;
 
@@ -208,7 +241,8 @@ namespace ProjectZ.InGame.GameSystems
             }
             else if (!_knockoutTransition)
             {
-                _transitionObject.Percentage = (float)Math.Sin(TransitionPercentage() * Math.PI / 2);
+                _transitionObject.Percentage = (float)
+                    Math.Sin(TransitionPercentage() * Math.PI / 2);
             }
         }
 
@@ -218,7 +252,11 @@ namespace ProjectZ.InGame.GameSystems
                 return;
 
             // Hide Link behind the circle shader effect if Classic Camera, Modern Camera + Only Overworld, or on the first load into the world.
-            if (GameSettings.ClassicCamera || (!GameSettings.ClassicCamera && GameSettings.ModernOverworld) || MapManager.ObjLink.BlackScreenOverride)
+            if (
+                GameSettings.ClassicCamera
+                || (!GameSettings.ClassicCamera && GameSettings.ModernOverworld)
+                || MapManager.ObjLink.BlackScreenOverride
+            )
                 Game1.GameManager.DrawPlayerOnTopPercentage = 0;
 
             _transitionObject.Draw(spriteBatch);
@@ -258,7 +296,11 @@ namespace ProjectZ.InGame.GameSystems
             if (!_introTransition)
                 Game1.GameManager.DrawPlayerOnTopPercentage = 1.0f;
 
-            if (Camera.ClassicMode || (GameSettings.ClassicCamera && GameSettings.ClassicDungeon) || (!GameSettings.ClassicCamera && GameSettings.ModernOverworld))
+            if (
+                Camera.ClassicMode
+                || (GameSettings.ClassicCamera && GameSettings.ClassicDungeon)
+                || (!GameSettings.ClassicCamera && GameSettings.ModernOverworld)
+            )
                 Camera.SnapCamera = true;
         }
 
@@ -285,7 +327,14 @@ namespace ProjectZ.InGame.GameSystems
             AppendMapChange(mapName, position, false, false, Values.MapTransitionColor, false);
         }
 
-        public void AppendMapChange(string mapName, string position, bool centerCamera, bool startFromMiddle, Color transitionColor, bool colorMode)
+        public void AppendMapChange(
+            string mapName,
+            string position,
+            bool centerCamera,
+            bool startFromMiddle,
+            Color transitionColor,
+            bool colorMode
+        )
         {
             _nextMapName = mapName;
             _nextMapPosition = position;
@@ -297,7 +346,13 @@ namespace ProjectZ.InGame.GameSystems
             MapManager.ObjLink.OnAppendMapChange();
         }
 
-        public void LoadMapFromFile(string mapFileName, bool centerCamera, bool startFromMiddle, Color transitionColor, bool colorMode)
+        public void LoadMapFromFile(
+            string mapFileName,
+            bool centerCamera,
+            bool startFromMiddle,
+            Color transitionColor,
+            bool colorMode
+        )
         {
             // abort the old loading thread if it is still running
             // TODO: thread abort is not supported so it just waits till the loading is finished
@@ -452,7 +507,7 @@ namespace ProjectZ.InGame.GameSystems
 
             if (currentTrack != nextTrack)
                 Game1.GbsPlayer.Pause();
-            
+
             Game1.GameManager.ResetMusic();
 
             // finish loading map

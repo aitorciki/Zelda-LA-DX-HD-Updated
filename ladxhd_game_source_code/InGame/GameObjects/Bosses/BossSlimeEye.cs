@@ -36,11 +36,23 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private int _fallHeight = 256;
         private int _lives = EnemyLives.SlimeEye;
 
-        public BossSlimeEye() : base("slime_eye") { }
+        public BossSlimeEye()
+            : base("slime_eye") { }
 
-        public BossSlimeEye(Map.Map map, int posX, int posY, string enterKey, string triggerKey, string saveKey) : base(map)
+        public BossSlimeEye(
+            Map.Map map,
+            int posX,
+            int posY,
+            string enterKey,
+            string triggerKey,
+            string saveKey
+        )
+            : base(map)
         {
-            if (!string.IsNullOrWhiteSpace(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrWhiteSpace(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -73,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 Bounciness = 0.25f,
                 Drag = 0.85f,
                 IgnoresZ = true,
-                IsGrounded = false
+                IsGrounded = false,
             };
 
             var hittableRectangle = new CBox(EntityPosition, -8, -16, 16, 16, 8);
@@ -101,36 +113,55 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_body.BodyBox, Values.CollisionTypes.Enemy));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(_body.BodyBox, Values.CollisionTypes.Enemy)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite)
-            {
-                ShadowWidth = 42,
-                ShadowHeight = 12,
-                OffsetY = -1,
-                Height = Map.ShadowHeight * 1.25f,
-                IsActive = false
-            });
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, _sprite)
+                {
+                    ShadowWidth = 42,
+                    ShadowHeight = 12,
+                    OffsetY = -1,
+                    Height = Map.ShadowHeight * 1.25f,
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
         }
 
         private void OnKeyChange()
         {
-            if (!string.IsNullOrEmpty(_enterKey) &&
-                Game1.GameManager.SaveManager.GetString(_enterKey) == "1" &&
-                _aiComponent.CurrentStateId == "waiting")
+            if (
+                !string.IsNullOrEmpty(_enterKey)
+                && Game1.GameManager.SaveManager.GetString(_enterKey) == "1"
+                && _aiComponent.CurrentStateId == "waiting"
+            )
             {
                 Game1.GameManager.StartDialogPath("d3_boss");
                 _aiComponent.ChangeState("slimes");
             }
 
-            if (!string.IsNullOrEmpty(_triggerKey) &&
-                Game1.GameManager.SaveManager.GetString(_triggerKey) == "1" &&
-                _aiComponent.CurrentStateId == "slimes")
+            if (
+                !string.IsNullOrEmpty(_triggerKey)
+                && Game1.GameManager.SaveManager.GetString(_triggerKey) == "1"
+                && _aiComponent.CurrentStateId == "slimes"
+            )
             {
                 ToFalling();
             }
@@ -150,7 +181,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
                     var position = new Vector2(
                         _body.FieldRectangle.X + posX * 16,
-                        _body.FieldRectangle.Y + posY * 16);
+                        _body.FieldRectangle.Y + posY * 16
+                    );
 
                     _zols[i] = new EnemyGreenZol(Map, (int)position.X, (int)position.Y, 100, true);
                     Map.Objects.SpawnObject(_zols[i]);
@@ -192,7 +224,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("moving");
 
             var direction = _startPosition - EntityPosition.Position;
-            var radius = MathF.Atan2(direction.Y, direction.X) + Game1.RandomNumber.Next(-25, 25) / 100f;
+            var radius =
+                MathF.Atan2(direction.Y, direction.X) + Game1.RandomNumber.Next(-25, 25) / 100f;
             _body.VelocityTarget = new Vector2(MathF.Cos(radius), MathF.Sin(radius)) * 0.1f;
 
             _moveDistance = Game1.RandomNumber.Next(0, 40) / 10f;
@@ -237,7 +270,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _animator.Play(strAnimation);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -253,8 +292,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             // break apart
             if (_damageCounter > 4200 && hitType == HitType.PegasusBootsSword)
             {
-                var slimeHalfLeft = new BossSlimeEyeHalf(Map, new Vector2(EntityPosition.X - 18, EntityPosition.Y), "left", _saveKey);
-                var slimeHalfRight = new BossSlimeEyeHalf(Map, new Vector2(EntityPosition.X + 18, EntityPosition.Y), "right", _saveKey);
+                var slimeHalfLeft = new BossSlimeEyeHalf(
+                    Map,
+                    new Vector2(EntityPosition.X - 18, EntityPosition.Y),
+                    "left",
+                    _saveKey
+                );
+                var slimeHalfRight = new BossSlimeEyeHalf(
+                    Map,
+                    new Vector2(EntityPosition.X + 18, EntityPosition.Y),
+                    "right",
+                    _saveKey
+                );
 
                 Map.Objects.SpawnObject(slimeHalfLeft);
                 Map.Objects.SpawnObject(slimeHalfRight);

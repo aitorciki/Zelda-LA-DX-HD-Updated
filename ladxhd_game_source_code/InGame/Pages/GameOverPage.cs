@@ -15,20 +15,50 @@ namespace ProjectZ.InGame.Pages
 
         public GameOverPage(int width, int height)
         {
-            _pageLayout = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
+            _pageLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, height),
+                Selectable = true,
+            };
 
-            _layout0 = new InterfaceListLayout { Size = new Point(width, 75), ContentAlignment = InterfaceElement.Gravities.Bottom };
+            _layout0 = new InterfaceListLayout
+            {
+                Size = new Point(width, 75),
+                ContentAlignment = InterfaceElement.Gravities.Bottom,
+            };
             var layout1 = new InterfaceListLayout { Size = new Point(width - 10, 55) };
-            var layout2 = new InterfaceListLayout { Size = new Point(width, 75), ContentAlignment = InterfaceElement.Gravities.Top, Selectable = true };
+            var layout2 = new InterfaceListLayout
+            {
+                Size = new Point(width, 75),
+                ContentAlignment = InterfaceElement.Gravities.Top,
+                Selectable = true,
+            };
 
             _pageLayout.AddElement(_layout0);
             _pageLayout.AddElement(layout1);
             _pageLayout.AddElement(layout2);
 
             // yes no layout
-            _layout0.AddElement(new InterfaceImage(Resources.GetSprite("ui game over"), Point.Zero));
-            layout2.AddElement(new InterfaceButton(new Point(85, 20), Point.Zero, "gameover_continue", OnClickContinue) { Margin = new Point(2, 2) });
-            layout2.AddElement(new InterfaceButton(new Point(85, 20), Point.Zero, "gameover_quit", OnClickQuit) { Margin = new Point(2, 2) });
+            _layout0.AddElement(
+                new InterfaceImage(Resources.GetSprite("ui game over"), Point.Zero)
+            );
+            layout2.AddElement(
+                new InterfaceButton(
+                    new Point(85, 20),
+                    Point.Zero,
+                    "gameover_continue",
+                    OnClickContinue
+                )
+                {
+                    Margin = new Point(2, 2),
+                }
+            );
+            layout2.AddElement(
+                new InterfaceButton(new Point(85, 20), Point.Zero, "gameover_quit", OnClickQuit)
+                {
+                    Margin = new Point(2, 2),
+                }
+            );
 
             PageLayout = _pageLayout;
         }
@@ -67,7 +97,12 @@ namespace ProjectZ.InGame.Pages
             Game1.ScreenManager.ChangeScreen(Values.ScreenNameMenu);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int scale,
+            float transparency
+        )
         {
             PageLayout?.Draw(spriteBatch, position, scale, transparency);
         }

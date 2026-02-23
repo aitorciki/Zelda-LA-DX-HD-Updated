@@ -17,7 +17,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         private string _strKey;
         private int _activeValue;
 
-        public ObjButtonPush(Map.Map map, int posX, int posY, string strKey, int activeValue, int pushDirection, int buttonWidth, int buttonHeight) : base(map)
+        public ObjButtonPush(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            int activeValue,
+            int pushDirection,
+            int buttonWidth,
+            int buttonHeight
+        )
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -42,8 +52,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             // The player walked into the push button collision box.
-            if (currentValue == _activeValue && 
-                _collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
+            if (
+                currentValue == _activeValue
+                && _collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box)
+            )
             {
                 // Shorten the reference.
                 var Link = MapManager.ObjLink;

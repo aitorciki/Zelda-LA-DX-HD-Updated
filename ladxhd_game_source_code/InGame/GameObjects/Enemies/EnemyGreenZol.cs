@@ -31,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public bool IsVisible { get; private set; }
 
-        public EnemyGreenZol() : base("green zol") { }
+        public EnemyGreenZol()
+            : base("green zol") { }
 
-        public EnemyGreenZol(Map.Map map, int posX, int posY, int posZ, bool fallMode) : base(map)
+        public EnemyGreenZol(Map.Map map, int posX, int posY, int posZ, bool fallMode)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 13, posZ);
-            ResetPosition  = new CPosition(posX + 8, posY + 13, posZ);
+            ResetPosition = new CPosition(posX + 8, posY + 13, posZ);
             EntitySize = new Rectangle(-8, -24, 16, 24);
             CanReset = true;
             OnReset = Reset;
@@ -54,20 +56,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 AbsorbPercentage = 1,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.DeepWater,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.NPCWall | Values.CollisionTypes.DeepWater,
                 Gravity = -0.15f,
                 Bounciness = 0f,
-                Drag = 0.85f
+                Drag = 0.85f,
             };
 
             var stateInit = new AiState();
             // small delay before possibility of spawning; needed for situation where the enemy is directly at the door
-            stateInit.Trigger.Add(new AiTriggerCountdown(450, null, () => _aiComponent.ChangeState("notSpawned")));
+            stateInit.Trigger.Add(
+                new AiTriggerCountdown(450, null, () => _aiComponent.ChangeState("notSpawned"))
+            );
             var stateHidden = new AiState();
-            stateHidden.Trigger.Add(new AiTriggerCountdown(2000, null, () => _aiComponent.ChangeState("notSpawned")));
+            stateHidden.Trigger.Add(
+                new AiTriggerCountdown(2000, null, () => _aiComponent.ChangeState("notSpawned"))
+            );
             var stateNotSpawned = new AiState(UpdateNotSpawned);
             var stateSpawning = new AiState(UpdateSpawning);
             var stateFalling = new AiState(UpdateFalling);
@@ -91,7 +95,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("shaking", stateShaking);
             _aiComponent.States.Add("despawning", stateDespawning);
             _aiComponent.States.Add("spawnDelay", stateSpawnDelay);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             new AiFallState(_aiComponent, _body, null, null, 250);
             new AiDeepWaterState(_body);
 
@@ -100,13 +107,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -6, -11, 0, 12, 11, 4);
             var hittableBox = new CBox(EntityPosition, -6, -11, 0, 12, 11, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             if (_fallMode)
@@ -304,7 +323,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

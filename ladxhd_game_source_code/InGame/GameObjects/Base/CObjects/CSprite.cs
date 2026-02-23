@@ -34,7 +34,12 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             SourceRectangle = sourceRectangle;
         }
 
-        public CSprite(Texture2D sprTexture, CPosition position, Rectangle sourceRectangle, Vector2 drawOffset)
+        public CSprite(
+            Texture2D sprTexture,
+            CPosition position,
+            Rectangle sourceRectangle,
+            Vector2 drawOffset
+        )
         {
             SprTexture = sprTexture;
             Position = position;
@@ -48,8 +53,8 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             Position = position;
         }
 
-        public CSprite(string spriteId, CPosition position) : this(Resources.GetSprite(spriteId), position)
-        { }
+        public CSprite(string spriteId, CPosition position)
+            : this(Resources.GetSprite(spriteId), position) { }
 
         // @REMOVE: drawOffset should probably be the center in most cases?
         public CSprite(DictAtlasEntry sprite, CPosition position, Vector2 drawOffset)
@@ -60,9 +65,8 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
         }
 
         // @REMOVE: drawOffset should probably be the center in most cases?
-        public CSprite(string spriteId, CPosition position, Vector2 drawOffset) :
-            this(Resources.GetSprite(spriteId), position, drawOffset)
-        { }
+        public CSprite(string spriteId, CPosition position, Vector2 drawOffset)
+            : this(Resources.GetSprite(spriteId), position, drawOffset) { }
 
         public void SetSprite(DictAtlasEntry sprite)
         {
@@ -78,8 +82,13 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
                 return;
 
             // this is used to align the sprite to avoid holes
-            var normX = (float)Math.Round((Position.X + DrawOffset.X) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
-            var normY = (float)Math.Round((Position.Y + DrawOffset.Y - Position.Z) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normX =
+                (float)Math.Round((Position.X + DrawOffset.X) * MapManager.Camera.Scale)
+                / MapManager.Camera.Scale;
+            var normY =
+                (float)
+                    Math.Round((Position.Y + DrawOffset.Y - Position.Z) * MapManager.Camera.Scale)
+                / MapManager.Camera.Scale;
 
             // change the draw effect
             if (SpriteShader != null)
@@ -88,7 +97,17 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
                 ObjectManager.SpriteBatchBegin(spriteBatch, SpriteShader);
             }
 
-            spriteBatch.Draw(SprTexture, new Vector2(normX, normY), SourceRectangle, Color, Rotation, Center * Scale, new Vector2(Scale), SpriteEffect, 0);
+            spriteBatch.Draw(
+                SprTexture,
+                new Vector2(normX, normY),
+                SourceRectangle,
+                Color,
+                Rotation,
+                Center * Scale,
+                new Vector2(Scale),
+                SpriteEffect,
+                0
+            );
 
             // change the draw effect
             // this would not be very efficient if a lot of sprite used effects
@@ -99,18 +118,39 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             }
         }
 
-        public void DrawShadow(SpriteBatch spriteBatch, Color color, int offsetY, float height, float rotation)
+        public void DrawShadow(
+            SpriteBatch spriteBatch,
+            Color color,
+            int offsetY,
+            float height,
+            float rotation
+        )
         {
             if (!IsVisible)
                 return;
 
-            var normX = (float)Math.Round((Position.X + DrawOffset.X - Center.X) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
-            var normY = (float)Math.Round((Position.Y + DrawOffset.Y - Center.Y - Position.Z * 0.5f + offsetY) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normX =
+                (float)Math.Round((Position.X + DrawOffset.X - Center.X) * MapManager.Camera.Scale)
+                / MapManager.Camera.Scale;
+            var normY =
+                (float)
+                    Math.Round(
+                        (Position.Y + DrawOffset.Y - Center.Y - Position.Z * 0.5f + offsetY)
+                            * MapManager.Camera.Scale
+                    ) / MapManager.Camera.Scale;
 
             // TODO_OPT: this does currently not support FlipVertically
-            DrawHelper.DrawShadow(SprTexture, new Vector2(normX, normY),
-                SourceRectangle, SourceRectangle.Width, SourceRectangle.Height,
-                SpriteEffect == SpriteEffects.FlipHorizontally, height, rotation, color);
+            DrawHelper.DrawShadow(
+                SprTexture,
+                new Vector2(normX, normY),
+                SourceRectangle,
+                SourceRectangle.Width,
+                SourceRectangle.Height,
+                SpriteEffect == SpriteEffects.FlipHorizontally,
+                height,
+                rotation,
+                color
+            );
         }
     }
 }

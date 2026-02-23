@@ -58,49 +58,160 @@ namespace ProjectZ.Editor
             var dist = 5;
             var bigDist = 16;
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight),
-            Resources.EditorFont, "import tilemap", "bt1", Values.EditorUiTileEditor, null, ui => { SaveLoadMap.ImportTilemap(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "import tilemap",
+                    "bt1",
+                    Values.EditorUiTileEditor,
+                    null,
+                    ui =>
+                    {
+                        SaveLoadMap.ImportTilemap();
+                    }
+                )
+            );
 
             posY += 11;
             for (var i = 0; i < 3; i++)
             {
                 var layer = i;
-                Game1.UiManager.AddElement(new UiButton(
-                    new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight), Resources.EditorFont,
-                    "layer " + layer, "bt1", Values.EditorUiTileEditor,
-                    ui => { ((UiButton)ui).Marked = _currentLayer == layer; },
-                    ui => { ButtonPressedLayer(layer); }));
+                Game1.UiManager.AddElement(
+                    new UiButton(
+                        new Rectangle(5, posY += buttonHeight + dist, buttonQWidth, buttonHeight),
+                        Resources.EditorFont,
+                        "layer " + layer,
+                        "bt1",
+                        Values.EditorUiTileEditor,
+                        ui =>
+                        {
+                            ((UiButton)ui).Marked = _currentLayer == layer;
+                        },
+                        ui =>
+                        {
+                            ButtonPressedLayer(layer);
+                        }
+                    )
+                );
 
-                Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
-                        Resources.EditorFont, "", "bt1", Values.EditorUiTileEditor, null, ui => ButtonUpdate(ui, layer))
-                { ButtonIcon = LayerVisibility[i] ? Resources.EditorEyeOpen : Resources.EditorEyeClosed });
+                Game1.UiManager.AddElement(
+                    new UiButton(
+                        new Rectangle(5 + buttonQWidth + dist, posY, buttonHeight, buttonHeight),
+                        Resources.EditorFont,
+                        "",
+                        "bt1",
+                        Values.EditorUiTileEditor,
+                        null,
+                        ui => ButtonUpdate(ui, layer)
+                    )
+                    {
+                        ButtonIcon = LayerVisibility[i]
+                            ? Resources.EditorEyeOpen
+                            : Resources.EditorEyeClosed,
+                    }
+                );
 
-                Game1.UiManager.AddElement(new UiButton(new Rectangle(5 + buttonQWidth + dist * 2 + buttonHeight, posY, buttonHeight, buttonHeight),
-                        Resources.EditorFont, "", "bt1", Values.EditorUiTileEditor, null, ui => RemoveTileContent(layer))
-                { ButtonIcon = Resources.EditorIconDelete });
+                Game1.UiManager.AddElement(
+                    new UiButton(
+                        new Rectangle(
+                            5 + buttonQWidth + dist * 2 + buttonHeight,
+                            posY,
+                            buttonHeight,
+                            buttonHeight
+                        ),
+                        Resources.EditorFont,
+                        "",
+                        "bt1",
+                        Values.EditorUiTileEditor,
+                        null,
+                        ui => RemoveTileContent(layer)
+                    )
+                    {
+                        ButtonIcon = Resources.EditorIconDelete,
+                    }
+                );
             }
 
-            Game1.UiManager.AddElement(new UiCheckBox(
-                new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "mark selected tiles", "cb", Values.EditorUiTileEditor, false, null,
-                ui => { MarkSelectedTiles = ((UiCheckBox)ui).CurrentState; }));
+            Game1.UiManager.AddElement(
+                new UiCheckBox(
+                    new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "mark selected tiles",
+                    "cb",
+                    Values.EditorUiTileEditor,
+                    false,
+                    null,
+                    ui =>
+                    {
+                        MarkSelectedTiles = ((UiCheckBox)ui).CurrentState;
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonHeight + bigDist, buttonHalfWidth, buttonHeight), "from:", Values.EditorUiTileEditor));
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(5, posY += buttonHeight + bigDist, buttonHalfWidth, buttonHeight),
+                    "from:",
+                    Values.EditorUiTileEditor
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiImage(null,
-                new Rectangle(10 + buttonHalfWidth, posY, 16 * 2, 16 * 2),
-                new Rectangle(0, 0, 16, 16), "from", Values.EditorUiTileEditor, Color.White, UpdateImageFrom));
+            Game1.UiManager.AddElement(
+                new UiImage(
+                    null,
+                    new Rectangle(10 + buttonHalfWidth, posY, 16 * 2, 16 * 2),
+                    new Rectangle(0, 0, 16, 16),
+                    "from",
+                    Values.EditorUiTileEditor,
+                    Color.White,
+                    UpdateImageFrom
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "change tiles", "bt1", Values.EditorUiTileEditor, null, ui => { ReplaceTiles(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + bigDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "change tiles",
+                    "bt1",
+                    Values.EditorUiTileEditor,
+                    null,
+                    ui =>
+                    {
+                        ReplaceTiles();
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "create blur map", "bt1", Values.EditorUiTileEditor, null, ui => { CreateBlurMap(); }));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
-                Resources.EditorFont,
-                "create blur sides", "bt1", Values.EditorUiTileEditor, null, ui => { CreateBlurMapSides(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "create blur map",
+                    "bt1",
+                    Values.EditorUiTileEditor,
+                    null,
+                    ui =>
+                    {
+                        CreateBlurMap();
+                    }
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + dist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "create blur sides",
+                    "bt1",
+                    Values.EditorUiTileEditor,
+                    null,
+                    ui =>
+                    {
+                        CreateBlurMapSides();
+                    }
+                )
+            );
         }
 
         public void UpdateTileSelection(GameTime gameTime)
@@ -127,7 +238,10 @@ namespace ProjectZ.Editor
             if (InputHandler.KeyPressed(Keys.Space))
             {
                 var selection = GetSelection(Selection);
-                _tileSelectionScreen.SelectedTiles = new[,] { { selection } };
+                _tileSelectionScreen.SelectedTiles = new[,]
+                {
+                    { selection },
+                };
 
                 _replaceSelections = selection;
             }
@@ -162,11 +276,21 @@ namespace ProjectZ.Editor
                 }
             }
 
-            if ((DrawMode && (InputHandler.MouseLeftDown() || InputHandler.MouseLeftReleased()) ||
-                 !DrawMode && (InputHandler.MouseRightDown() || InputHandler.MouseRightReleased())) && Drawing)
+            if (
+                (
+                    DrawMode && (InputHandler.MouseLeftDown() || InputHandler.MouseLeftReleased())
+                    || !DrawMode
+                        && (InputHandler.MouseRightDown() || InputHandler.MouseRightReleased())
+                ) && Drawing
+            )
             {
-                if ((InputHandler.KeyDown(Keys.LeftShift) || InputHandler.KeyDown(Keys.Space)) &&
-                    (DrawMode && InputHandler.MouseLeftDown() || !DrawMode && InputHandler.MouseRightDown()))
+                if (
+                    (InputHandler.KeyDown(Keys.LeftShift) || InputHandler.KeyDown(Keys.Space))
+                    && (
+                        DrawMode && InputHandler.MouseLeftDown()
+                        || !DrawMode && InputHandler.MouseRightDown()
+                    )
+                )
                 {
                     MultiSelect = true;
                 }
@@ -202,13 +326,16 @@ namespace ProjectZ.Editor
                 if (_tileSelectionScreen.SelectedTiles != null)
                 {
                     for (int z = 0; z < TileMap.ArrayTileMap.GetLength(2); z++)
-                        for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
-                            for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
-                            {
-                                if (TileMap.ArrayTileMap[x, y, z] >= 0 &&
-                                    TileMap.ArrayTileMap[x, y, z] == _tileSelectionScreen.SelectedTiles[0, 0])
-                                    TileMap.ArrayTileMap[x, y, z] = -1;
-                            }
+                    for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
+                    for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
+                    {
+                        if (
+                            TileMap.ArrayTileMap[x, y, z] >= 0
+                            && TileMap.ArrayTileMap[x, y, z]
+                                == _tileSelectionScreen.SelectedTiles[0, 0]
+                        )
+                            TileMap.ArrayTileMap[x, y, z] = -1;
+                    }
                 }
             }
 
@@ -219,7 +346,10 @@ namespace ProjectZ.Editor
         public void DrawTileSelection(SpriteBatch spriteBatch)
         {
             // draw the tileset
-            _tileSelectionScreen.Draw(spriteBatch, _currentLayer == TileMap.ArrayTileMap.GetLength(2) - 1);
+            _tileSelectionScreen.Draw(
+                spriteBatch,
+                _currentLayer == TileMap.ArrayTileMap.GetLength(2) - 1
+            );
         }
 
         public void Draw(SpriteBatch spriteBatch, bool drawCursor)
@@ -235,9 +365,16 @@ namespace ProjectZ.Editor
             // draw the cursor
             // only draw the cursor when the update function was called
             if (drawCursor)
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Rectangle(Selection.X * Values.TileSize, Selection.Y * Values.TileSize,
-                        Values.TileSize, Values.TileSize), Color.Red * 0.75f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(
+                        Selection.X * Values.TileSize,
+                        Selection.Y * Values.TileSize,
+                        Values.TileSize,
+                        Values.TileSize
+                    ),
+                    Color.Red * 0.75f
+                );
 
             // draw the selection
             if (MultiSelect)
@@ -247,84 +384,162 @@ namespace ProjectZ.Editor
                 var top = Math.Min(SelectionStart.Y, SelectionEnd.Y);
                 var down = Math.Max(SelectionStart.Y, SelectionEnd.Y);
 
-                spriteBatch.Draw(Resources.SprWhite,
+                spriteBatch.Draw(
+                    Resources.SprWhite,
                     new Rectangle(
                         left * Values.TileSize,
                         top * Values.TileSize,
                         (right - left + 1) * Values.TileSize,
-                        (down - top + 1) * Values.TileSize), Color.White * 0.5f);
+                        (down - top + 1) * Values.TileSize
+                    ),
+                    Color.White * 0.5f
+                );
 
                 // draw the preview
                 for (var y = top; y <= down; y++)
-                    for (var x = left; x <= right; x++)
-                        if (!DrawMode)
-                        {
-                            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                                    x * Values.TileSize, y * Values.TileSize,
-                                    Values.TileSize, Values.TileSize), Color.Red * 0.5f);
-                        }
+                for (var x = left; x <= right; x++)
+                    if (!DrawMode)
+                    {
+                        spriteBatch.Draw(
+                            Resources.SprWhite,
+                            new Rectangle(
+                                x * Values.TileSize,
+                                y * Values.TileSize,
+                                Values.TileSize,
+                                Values.TileSize
+                            ),
+                            Color.Red * 0.5f
+                        );
+                    }
             }
         }
 
         private void DrawLayer(SpriteBatch spriteBatch, int layer)
         {
             // only draw the visible tiles
-            var startX = Math.Max(0, (int)(-_camera.Location.X / (_camera.Scale * Values.TileSize)));
-            var startY = Math.Max(0, (int)(-_camera.Location.Y / (_camera.Scale * Values.TileSize)));
-            var endX = Math.Min(TileMap.ArrayTileMap.GetLength(0),
-                (int)((Game1.WindowWidth - _camera.Location.X) / (_camera.Scale * Values.TileSize)) + 1);
-            var endY = Math.Min(TileMap.ArrayTileMap.GetLength(1),
-                (int)((Game1.WindowHeight - _camera.Location.Y) / (_camera.Scale * Values.TileSize)) + 1);
+            var startX = Math.Max(
+                0,
+                (int)(-_camera.Location.X / (_camera.Scale * Values.TileSize))
+            );
+            var startY = Math.Max(
+                0,
+                (int)(-_camera.Location.Y / (_camera.Scale * Values.TileSize))
+            );
+            var endX = Math.Min(
+                TileMap.ArrayTileMap.GetLength(0),
+                (int)((Game1.WindowWidth - _camera.Location.X) / (_camera.Scale * Values.TileSize))
+                    + 1
+            );
+            var endY = Math.Min(
+                TileMap.ArrayTileMap.GetLength(1),
+                (int)((Game1.WindowHeight - _camera.Location.Y) / (_camera.Scale * Values.TileSize))
+                    + 1
+            );
 
             // draw the tilemap
             for (var y = startY; y < endY; y++)
-                for (var x = startX; x < endX; x++)
-                    if (TileMap.ArrayTileMap[x, y, layer] >= 0)
-                    {
-                        var tileset = layer + 1 == TileMap.ArrayTileMap.GetLength(2) ? TileMap.SprTilesetBlur : TileMap.SprTileset;
-                        spriteBatch.Draw(tileset,
-                            new Rectangle(x * Values.TileSize, y * Values.TileSize, Values.TileSize, Values.TileSize),
-                            new Rectangle(
-                                TileMap.ArrayTileMap[x, y, layer] % (TileMap.SprTileset.Width / TileMap.TileSize) * TileMap.TileSize,
-                                TileMap.ArrayTileMap[x, y, layer] / (TileMap.SprTileset.Width / TileMap.TileSize) * TileMap.TileSize, TileMap.TileSize, TileMap.TileSize), Color.White);
+            for (var x = startX; x < endX; x++)
+                if (TileMap.ArrayTileMap[x, y, layer] >= 0)
+                {
+                    var tileset =
+                        layer + 1 == TileMap.ArrayTileMap.GetLength(2)
+                            ? TileMap.SprTilesetBlur
+                            : TileMap.SprTileset;
+                    spriteBatch.Draw(
+                        tileset,
+                        new Rectangle(
+                            x * Values.TileSize,
+                            y * Values.TileSize,
+                            Values.TileSize,
+                            Values.TileSize
+                        ),
+                        new Rectangle(
+                            TileMap.ArrayTileMap[x, y, layer]
+                                % (TileMap.SprTileset.Width / TileMap.TileSize)
+                                * TileMap.TileSize,
+                            TileMap.ArrayTileMap[x, y, layer]
+                                / (TileMap.SprTileset.Width / TileMap.TileSize)
+                                * TileMap.TileSize,
+                            TileMap.TileSize,
+                            TileMap.TileSize
+                        ),
+                        Color.White
+                    );
 
-                        if (MarkSelectedTiles && _tileSelectionScreen.SelectedTiles != null &&
-                            TileMap.ArrayTileMap[x, y, layer] == _tileSelectionScreen.SelectedTiles[0, 0])
-                            spriteBatch.Draw(Resources.SprWhite,
-                                new Rectangle(x * Values.TileSize, y * Values.TileSize,
-                                    Values.TileSize, Values.TileSize), Color.Red * (float)(Math.Sin(Game1.TotalGameTime / 100f) * 0.25f + 0.5f));
-                    }
+                    if (
+                        MarkSelectedTiles
+                        && _tileSelectionScreen.SelectedTiles != null
+                        && TileMap.ArrayTileMap[x, y, layer]
+                            == _tileSelectionScreen.SelectedTiles[0, 0]
+                    )
+                        spriteBatch.Draw(
+                            Resources.SprWhite,
+                            new Rectangle(
+                                x * Values.TileSize,
+                                y * Values.TileSize,
+                                Values.TileSize,
+                                Values.TileSize
+                            ),
+                            Color.Red * (float)(Math.Sin(Game1.TotalGameTime / 100f) * 0.25f + 0.5f)
+                        );
+                }
         }
 
         public void DrawTop(SpriteBatch spriteBatch)
         {
             // draw the background
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    0, Game1.WindowHeight - _toolBarWidth, _toolBarWidth, _toolBarWidth), Color.White * 0.25f);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(0, Game1.WindowHeight - _toolBarWidth, _toolBarWidth, _toolBarWidth),
+                Color.White * 0.25f
+            );
 
             if (_tileSelectionScreen.SelectedTiles == null)
                 return;
 
             var width = _toolBarWidth - 10;
             var height = _toolBarWidth - 10;
-            var max = MathHelper.Max(_tileSelectionScreen.SelectedTiles.GetLength(0), _tileSelectionScreen.SelectedTiles.GetLength(1));
+            var max = MathHelper.Max(
+                _tileSelectionScreen.SelectedTiles.GetLength(0),
+                _tileSelectionScreen.SelectedTiles.GetLength(1)
+            );
             var tileWidth = width / max;
             var tileHeight = height / max;
 
-            var posX = width / 2 - (_tileSelectionScreen.SelectedTiles.GetLength(0) * tileWidth) / 2;
-            var posY = width / 2 - (_tileSelectionScreen.SelectedTiles.GetLength(1) * tileHeight) / 2;
+            var posX =
+                width / 2 - (_tileSelectionScreen.SelectedTiles.GetLength(0) * tileWidth) / 2;
+            var posY =
+                width / 2 - (_tileSelectionScreen.SelectedTiles.GetLength(1) * tileHeight) / 2;
 
             for (var y = 0; y < _tileSelectionScreen.SelectedTiles.GetLength(1); y++)
-                for (var x = 0; x < _tileSelectionScreen.SelectedTiles.GetLength(0); x++)
-                {
-                    var tileset = _currentLayer + 1 == TileMap.ArrayTileMap.GetLength(2) ? TileMap.SprTilesetBlur : TileMap.SprTileset;
-                    if (_tileSelectionScreen.SelectedTiles[x, y] >= 0)
-                        spriteBatch.Draw(tileset, new Rectangle(
-                            5 + posX + x * tileWidth, Game1.WindowHeight - _toolBarWidth + posY + 5 + y * tileHeight, tileWidth, tileHeight), new Rectangle(
-                                               _tileSelectionScreen.SelectedTiles[x, y] % (TileMap.SprTileset.Width / Values.TileSize) * Values.TileSize,
-                                               _tileSelectionScreen.SelectedTiles[x, y] / (TileMap.SprTileset.Width / Values.TileSize) * Values.TileSize,
-                                               Values.TileSize, Values.TileSize), Color.White);
-                }
+            for (var x = 0; x < _tileSelectionScreen.SelectedTiles.GetLength(0); x++)
+            {
+                var tileset =
+                    _currentLayer + 1 == TileMap.ArrayTileMap.GetLength(2)
+                        ? TileMap.SprTilesetBlur
+                        : TileMap.SprTileset;
+                if (_tileSelectionScreen.SelectedTiles[x, y] >= 0)
+                    spriteBatch.Draw(
+                        tileset,
+                        new Rectangle(
+                            5 + posX + x * tileWidth,
+                            Game1.WindowHeight - _toolBarWidth + posY + 5 + y * tileHeight,
+                            tileWidth,
+                            tileHeight
+                        ),
+                        new Rectangle(
+                            _tileSelectionScreen.SelectedTiles[x, y]
+                                % (TileMap.SprTileset.Width / Values.TileSize)
+                                * Values.TileSize,
+                            _tileSelectionScreen.SelectedTiles[x, y]
+                                / (TileMap.SprTileset.Width / Values.TileSize)
+                                * Values.TileSize,
+                            Values.TileSize,
+                            Values.TileSize
+                        ),
+                        Color.White
+                    );
+            }
         }
 
         private void ResizeMap()
@@ -360,16 +575,22 @@ namespace ProjectZ.Editor
 
         private bool IsInsideTileMap(Point selection)
         {
-            return 0 <= selection.X && selection.X < TileMap.ArrayTileMap.GetLength(0) &&
-                   0 <= selection.Y && selection.Y < TileMap.ArrayTileMap.GetLength(1);
+            return 0 <= selection.X
+                && selection.X < TileMap.ArrayTileMap.GetLength(0)
+                && 0 <= selection.Y
+                && selection.Y < TileMap.ArrayTileMap.GetLength(1);
         }
 
         private bool InsideEditor()
         {
-            return InputHandler.MouseIntersect(new Rectangle(
-                _toolBarWidth, Values.ToolBarHeight,
-                Game1.WindowWidth - _toolBarWidth * 2,
-                Game1.WindowHeight - Values.ToolBarHeight));
+            return InputHandler.MouseIntersect(
+                new Rectangle(
+                    _toolBarWidth,
+                    Values.ToolBarHeight,
+                    Game1.WindowWidth - _toolBarWidth * 2,
+                    Game1.WindowHeight - Values.ToolBarHeight
+                )
+            );
         }
 
         private int GetSelection(Point position)
@@ -384,7 +605,8 @@ namespace ProjectZ.Editor
         {
             var position = new Point(
                 (int)((_mousePosition.X - _camera.Location.X) / (Values.TileSize * _camera.Scale)),
-                (int)((_mousePosition.Y - _camera.Location.Y) / (Values.TileSize * _camera.Scale)));
+                (int)((_mousePosition.Y - _camera.Location.Y) / (Values.TileSize * _camera.Scale))
+            );
 
             // fix
             if (_mousePosition.X - _camera.Location.X < 0)
@@ -401,58 +623,95 @@ namespace ProjectZ.Editor
         private void ReplaceTiles()
         {
             // return if no tile is select
-            if (_tileSelectionScreen.SelectedTiles == null ||
-               _tileSelectionScreen.SelectedTiles.GetLength(0) <= 0 ||
-               _tileSelectionScreen.SelectedTiles.GetLength(1) <= 0)
+            if (
+                _tileSelectionScreen.SelectedTiles == null
+                || _tileSelectionScreen.SelectedTiles.GetLength(0) <= 0
+                || _tileSelectionScreen.SelectedTiles.GetLength(1) <= 0
+            )
                 return;
 
             var toSelection = _tileSelectionScreen.SelectedTiles[0, 0];
 
             for (var z = 0; z < TileMap.ArrayTileMap.GetLength(2); z++)
-                for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
-                    for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
-                        if (TileMap.ArrayTileMap[x, y, z] == _replaceSelections)
-                            TileMap.ArrayTileMap[x, y, z] = toSelection;
+            for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
+            for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
+                if (TileMap.ArrayTileMap[x, y, z] == _replaceSelections)
+                    TileMap.ArrayTileMap[x, y, z] = toSelection;
         }
 
         private void CreateBlurMap()
         {
             for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
-                for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
+            for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
+            {
+                if (
+                    TileMap.ArrayTileMap[x, y, 0] == -1
+                    && (
+                        TileNotEmpty(x - 1, y, 0)
+                        || TileNotEmpty(x + 1, y, 0)
+                        || TileNotEmpty(x, y - 1, 0)
+                        || TileNotEmpty(x, y + 1, 0)
+                        || TileNotEmpty(x - 1, y - 1, 0)
+                        || TileNotEmpty(x + 1, y - 1, 0)
+                        || TileNotEmpty(x - 1, y + 1, 0)
+                        || TileNotEmpty(x + 1, y + 1, 0)
+                    )
+                )
                 {
-                    if (TileMap.ArrayTileMap[x, y, 0] == -1 && (
-                        TileNotEmpty(x - 1, y, 0) || TileNotEmpty(x + 1, y, 0) || TileNotEmpty(x, y - 1, 0) || TileNotEmpty(x, y + 1, 0) ||
-                        TileNotEmpty(x - 1, y - 1, 0) || TileNotEmpty(x + 1, y - 1, 0) || TileNotEmpty(x - 1, y + 1, 0) || TileNotEmpty(x + 1, y + 1, 0)))
-                    {
-                        TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 0;
-                    }
+                    TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 0;
                 }
+            }
         }
 
         private void CreateBlurMapSides()
         {
             for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
-                for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
-                {
-                    if (TileMap.ArrayTileMap[x, y, 0] == -1)
-                        continue;
+            for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
+            {
+                if (TileMap.ArrayTileMap[x, y, 0] == -1)
+                    continue;
 
-                    if (!TileNotEmpty(x - 1, y, 0) && !TileNotEmpty(x, y - 1, 0) && TileNotEmpty(x + 1, y, 0) && TileNotEmpty(x, y + 1, 0))
-                        TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 3;
-                    if (!TileNotEmpty(x - 1, y, 0) && TileNotEmpty(x, y - 1, 0) && TileNotEmpty(x + 1, y, 0) && !TileNotEmpty(x, y + 1, 0))
-                        TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 1;
-                    if (TileNotEmpty(x - 1, y, 0) && !TileNotEmpty(x, y - 1, 0) && !TileNotEmpty(x + 1, y, 0) && TileNotEmpty(x, y + 1, 0))
-                        TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 4;
-                    if (TileNotEmpty(x - 1, y, 0) && TileNotEmpty(x, y - 1, 0) && !TileNotEmpty(x + 1, y, 0) && !TileNotEmpty(x, y + 1, 0))
-                        TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 2;
-                }
+                if (
+                    !TileNotEmpty(x - 1, y, 0)
+                    && !TileNotEmpty(x, y - 1, 0)
+                    && TileNotEmpty(x + 1, y, 0)
+                    && TileNotEmpty(x, y + 1, 0)
+                )
+                    TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 3;
+                if (
+                    !TileNotEmpty(x - 1, y, 0)
+                    && TileNotEmpty(x, y - 1, 0)
+                    && TileNotEmpty(x + 1, y, 0)
+                    && !TileNotEmpty(x, y + 1, 0)
+                )
+                    TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 1;
+                if (
+                    TileNotEmpty(x - 1, y, 0)
+                    && !TileNotEmpty(x, y - 1, 0)
+                    && !TileNotEmpty(x + 1, y, 0)
+                    && TileNotEmpty(x, y + 1, 0)
+                )
+                    TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 4;
+                if (
+                    TileNotEmpty(x - 1, y, 0)
+                    && TileNotEmpty(x, y - 1, 0)
+                    && !TileNotEmpty(x + 1, y, 0)
+                    && !TileNotEmpty(x, y + 1, 0)
+                )
+                    TileMap.ArrayTileMap[x, y, TileMap.ArrayTileMap.GetLength(2) - 1] = 2;
+            }
         }
 
         private bool TileNotEmpty(int x, int y, int z)
         {
-            if (x < 0 || TileMap.ArrayTileMap.GetLength(0) <= x ||
-                y < 0 || TileMap.ArrayTileMap.GetLength(1) <= y ||
-                z < 0 || TileMap.ArrayTileMap.GetLength(2) <= z)
+            if (
+                x < 0
+                || TileMap.ArrayTileMap.GetLength(0) <= x
+                || y < 0
+                || TileMap.ArrayTileMap.GetLength(1) <= y
+                || z < 0
+                || TileMap.ArrayTileMap.GetLength(2) <= z
+            )
                 return false;
 
             return TileMap.ArrayTileMap[x, y, z] >= 0;
@@ -468,10 +727,12 @@ namespace ProjectZ.Editor
             _tileSelectionScreen.SelectedTiles = new int[right - left + 1, down - top + 1];
 
             for (var y = top; y <= down; y++)
-                for (var x = left; x <= right; x++)
-                {
-                    _tileSelectionScreen.SelectedTiles[x - left, y - top] = GetSelection(new Point(x, y));
-                }
+            for (var x = left; x <= right; x++)
+            {
+                _tileSelectionScreen.SelectedTiles[x - left, y - top] = GetSelection(
+                    new Point(x, y)
+                );
+            }
         }
 
         private void FillMultiSelection()
@@ -485,26 +746,34 @@ namespace ProjectZ.Editor
             var down = Math.Max(SelectionStart.Y, SelectionEnd.Y);
 
             for (var y = top; y <= down; y++)
-                for (var x = left; x <= right; x++)
-                {
-                    var index = DrawMode ? _tileSelectionScreen.SelectedTiles[
+            for (var x = left; x <= right; x++)
+            {
+                var index = DrawMode
+                    ? _tileSelectionScreen.SelectedTiles[
                         (x - left) % _tileSelectionScreen.SelectedTiles.GetLength(0),
-                        (y - top) % _tileSelectionScreen.SelectedTiles.GetLength(1)] : -1;
+                        (y - top) % _tileSelectionScreen.SelectedTiles.GetLength(1)
+                    ]
+                    : -1;
 
-                    // do not erase stuff in draw mode
-                    if (DrawMode && index < 0)
-                        continue;
+                // do not erase stuff in draw mode
+                if (DrawMode && index < 0)
+                    continue;
 
-                    DrawTileAt(x, y, _currentLayer, index);
-                }
+                DrawTileAt(x, y, _currentLayer, index);
+            }
         }
 
         private void DrawTileAt(int x, int y, int z, int index)
         {
             // check if the position is inside the tilemap
-            if (x < 0 || x >= TileMap.ArrayTileMap.GetLength(0) ||
-                y < 0 || y >= TileMap.ArrayTileMap.GetLength(1) ||
-                z < 0 || z >= TileMap.ArrayTileMap.GetLength(2))
+            if (
+                x < 0
+                || x >= TileMap.ArrayTileMap.GetLength(0)
+                || y < 0
+                || y >= TileMap.ArrayTileMap.GetLength(1)
+                || z < 0
+                || z >= TileMap.ArrayTileMap.GetLength(2)
+            )
                 return;
 
             if (index < 0)
@@ -542,9 +811,12 @@ namespace ProjectZ.Editor
             }
 
             // did not change the size?
-            if (posX == 0 && posY == 0 &&
-                newWidth == TileMap.ArrayTileMap.GetLength(0) &&
-                newHeight == TileMap.ArrayTileMap.GetLength(1))
+            if (
+                posX == 0
+                && posY == 0
+                && newWidth == TileMap.ArrayTileMap.GetLength(0)
+                && newHeight == TileMap.ArrayTileMap.GetLength(1)
+            )
                 return false;
 
             newWidth -= posX;
@@ -569,10 +841,15 @@ namespace ProjectZ.Editor
                 var down = SelectionEnd.Y + _tileSelectionScreen.SelectedTiles.GetLength(1);
 
                 for (var y = top; y < down; y++)
-                    for (var x = left; x < right; x++)
-                        // do not erase stuff in draw mode
-                        if (_tileSelectionScreen.SelectedTiles[x - left, y - top] >= 0)
-                            DrawTileAt(x, y, _currentLayer, _tileSelectionScreen.SelectedTiles[x - left, y - top]);
+                for (var x = left; x < right; x++)
+                    // do not erase stuff in draw mode
+                    if (_tileSelectionScreen.SelectedTiles[x - left, y - top] >= 0)
+                        DrawTileAt(
+                            x,
+                            y,
+                            _currentLayer,
+                            _tileSelectionScreen.SelectedTiles[x - left, y - top]
+                        );
             }
             else if (!DrawMode)
             {
@@ -589,23 +866,28 @@ namespace ProjectZ.Editor
         private void ButtonUpdate(UiElement ui, int layer)
         {
             LayerVisibility[layer] = !LayerVisibility[layer];
-            ((UiButton)ui).ButtonIcon = LayerVisibility[layer] ? Resources.EditorEyeOpen : Resources.EditorEyeClosed;
+            ((UiButton)ui).ButtonIcon = LayerVisibility[layer]
+                ? Resources.EditorEyeOpen
+                : Resources.EditorEyeClosed;
         }
 
         private void RemoveTileContent(int layer)
         {
-            if (layer >= TileMap.ArrayTileMap.GetLength(2) ||
-                TileMap.ArrayTileMap.GetLength(2) <= 0)
+            if (
+                layer >= TileMap.ArrayTileMap.GetLength(2)
+                || TileMap.ArrayTileMap.GetLength(2) <= 0
+            )
                 return;
 
             for (var y = 0; y < TileMap.ArrayTileMap.GetLength(1); y++)
-                for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
-                    TileMap.ArrayTileMap[x, y, layer] = -1;
+            for (var x = 0; x < TileMap.ArrayTileMap.GetLength(0); x++)
+                TileMap.ArrayTileMap[x, y, layer] = -1;
         }
 
         private void UpdateImageFrom(UiElement ui)
         {
-            if (TileMap.SprTileset == null) return;
+            if (TileMap.SprTileset == null)
+                return;
 
             if (_replaceSelections < 0)
             {
@@ -614,10 +896,12 @@ namespace ProjectZ.Editor
             }
 
             ((UiImage)ui).SprImage = TileMap.SprTileset;
-            ((UiImage)ui).SourceRectangle =
-                new Rectangle(
-                    _replaceSelections % (TileMap.SprTileset.Width / Values.TileSize) * Values.TileSize,
-                    _replaceSelections / (TileMap.SprTileset.Width / Values.TileSize) * Values.TileSize, Values.TileSize, Values.TileSize);
+            ((UiImage)ui).SourceRectangle = new Rectangle(
+                _replaceSelections % (TileMap.SprTileset.Width / Values.TileSize) * Values.TileSize,
+                _replaceSelections / (TileMap.SprTileset.Width / Values.TileSize) * Values.TileSize,
+                Values.TileSize,
+                Values.TileSize
+            );
         }
 
         public void OffsetTileMap(int offsetX, int offsetY)
@@ -627,17 +911,28 @@ namespace ProjectZ.Editor
 
             for (var z = 0; z < TileMap.ArrayTileMap.GetLength(2); z++)
             {
-                for (var y = dirY == 1 ? 0 : TileMap.ArrayTileMap.GetLength(1) - 1;
-                    (dirY == 1 && y < TileMap.ArrayTileMap.GetLength(1)) || (dirY == -1 && y >= 0); y += dirY)
+                for (
+                    var y = dirY == 1 ? 0 : TileMap.ArrayTileMap.GetLength(1) - 1;
+                    (dirY == 1 && y < TileMap.ArrayTileMap.GetLength(1)) || (dirY == -1 && y >= 0);
+                    y += dirY
+                )
                 {
-                    for (var x = dirX == 1 ? 0 : TileMap.ArrayTileMap.GetLength(0) - 1;
-                        (dirX == 1 && x < TileMap.ArrayTileMap.GetLength(0)) || (dirX == -1 && x >= 0); x += dirX)
+                    for (
+                        var x = dirX == 1 ? 0 : TileMap.ArrayTileMap.GetLength(0) - 1;
+                        (dirX == 1 && x < TileMap.ArrayTileMap.GetLength(0))
+                            || (dirX == -1 && x >= 0);
+                        x += dirX
+                    )
                     {
                         var newX = x - offsetX;
                         var newY = y - offsetY;
 
-                        if (0 <= newX && newX < TileMap.ArrayTileMap.GetLength(0) &&
-                            0 <= newY && newY < TileMap.ArrayTileMap.GetLength(1))
+                        if (
+                            0 <= newX
+                            && newX < TileMap.ArrayTileMap.GetLength(0)
+                            && 0 <= newY
+                            && newY < TileMap.ArrayTileMap.GetLength(1)
+                        )
                             TileMap.ArrayTileMap[x, y, z] = TileMap.ArrayTileMap[newX, newY, z];
                         else
                             TileMap.ArrayTileMap[x, y, z] = -1;

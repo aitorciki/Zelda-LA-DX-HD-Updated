@@ -16,9 +16,17 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private int _lastFieldTime;
 
-        public ObjEnemyRespawner() : base("editor object respawner") { }
+        public ObjEnemyRespawner()
+            : base("editor object respawner") { }
 
-        public ObjEnemyRespawner(Map.Map map, int posX, int posY, string strSpawnObjectId, string strSpawnParameter) : base(map)
+        public ObjEnemyRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strSpawnObjectId,
+            string strSpawnParameter
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -61,7 +69,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
 
             SpawnObject();
-
         }
 
         private void SpawnObject()

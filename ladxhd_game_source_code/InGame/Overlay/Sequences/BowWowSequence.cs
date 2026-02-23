@@ -73,22 +73,72 @@ namespace ProjectZ.InGame.Overlay.Sequences
             // background
             Sprites.Add(new SeqSprite("bowWow_background", position, 0));
 
-            Sprites.Add(_spritePhoto = new SeqSprite("photo_6", position, 5, true) { Color = Color.Transparent });
+            Sprites.Add(
+                _spritePhoto = new SeqSprite("photo_6", position, 5, true)
+                {
+                    Color = Color.Transparent,
+                }
+            );
 
             _chainStartPosition = new Vector2(position.X + 90, position.Y + 103 - 6);
             for (var i = 0; i < _chain.Length; i++)
-                Sprites.Add(_chain[i] = new SeqSprite("seqBowWowChain", _chainStartPosition, 1) { Color = Color.White * 0.75f });
+                Sprites.Add(
+                    _chain[i] = new SeqSprite("seqBowWowChain", _chainStartPosition, 1)
+                    {
+                        Color = Color.White * 0.75f,
+                    }
+                );
 
             // link and marin
-            Sprites.Add(_aniLink = new SeqAnimation("Sequences/bowWow link", "stand", new Vector2(position.X + 134, position.Y + 104), 3) { Shader = Resources.ColorShader, Color = Game1.GameManager.CloakColor });
-            Sprites.Add(_aniBowWow = new SeqAnimation("Sequences/bowWow", "idle_-1", new Vector2(position.X + 95, position.Y + 103), 2));
+            Sprites.Add(
+                _aniLink = new SeqAnimation(
+                    "Sequences/bowWow link",
+                    "stand",
+                    new Vector2(position.X + 134, position.Y + 104),
+                    3
+                )
+                {
+                    Shader = Resources.ColorShader,
+                    Color = Game1.GameManager.CloakColor,
+                }
+            );
+            Sprites.Add(
+                _aniBowWow = new SeqAnimation(
+                    "Sequences/bowWow",
+                    "idle_-1",
+                    new Vector2(position.X + 95, position.Y + 103),
+                    2
+                )
+            );
 
             // block particle
-            Sprites.Add(_spriteParticle = new SeqSprite("seqBowWowParticle", _chainStartPosition, 4) { Color = Color.Transparent });
-            Sprites.Add(_spriteSmoke0 = new SeqSprite("seqBowWowSmoke", _chainStartPosition, 4) { Color = Color.Transparent });
-            Sprites.Add(_spriteSmoke1 = new SeqSprite("seqBowWowSmoke", _chainStartPosition, 4) { Color = Color.Transparent, SpriteEffect = SpriteEffects.FlipHorizontally });
+            Sprites.Add(
+                _spriteParticle = new SeqSprite("seqBowWowParticle", _chainStartPosition, 4)
+                {
+                    Color = Color.Transparent,
+                }
+            );
+            Sprites.Add(
+                _spriteSmoke0 = new SeqSprite("seqBowWowSmoke", _chainStartPosition, 4)
+                {
+                    Color = Color.Transparent,
+                }
+            );
+            Sprites.Add(
+                _spriteSmoke1 = new SeqSprite("seqBowWowSmoke", _chainStartPosition, 4)
+                {
+                    Color = Color.Transparent,
+                    SpriteEffect = SpriteEffects.FlipHorizontally,
+                }
+            );
 
-            Sprites.Add(_spritePhotoFlash = new SeqColor(new Rectangle((int)position.X, (int)position.Y, 160, 144), Color.Transparent, 5));
+            Sprites.Add(
+                _spritePhotoFlash = new SeqColor(
+                    new Rectangle((int)position.X, (int)position.Y, 160, 144),
+                    Color.Transparent,
+                    5
+                )
+            );
 
             // start the sequence path
             Game1.GameManager.StartDialogPath("photo_sequence_3");
@@ -102,7 +152,11 @@ namespace ProjectZ.InGame.Overlay.Sequences
         public override void Update()
         {
             if (_flashPercentage > 0 && _counter > 125)
-                _flashPercentage = AnimationHelper.MoveToTarget(_flashPercentage, 0, Game1.TimeMultiplier * 0.075f);
+                _flashPercentage = AnimationHelper.MoveToTarget(
+                    _flashPercentage,
+                    0,
+                    Game1.TimeMultiplier * 0.075f
+                );
             _spritePhotoFlash.Color = Color.White * _flashPercentage;
 
             // do not update the sceen while the dialog box is open
@@ -144,8 +198,14 @@ namespace ProjectZ.InGame.Overlay.Sequences
             {
                 if (_counter > 250)
                 {
-                    _spriteSmoke0.Position = new Vector2(_aniBowWow.Position.X - 17, _aniBowWow.Position.Y - 30);
-                    _spriteSmoke1.Position = new Vector2(_aniBowWow.Position.X + 17, _aniBowWow.Position.Y - 30);
+                    _spriteSmoke0.Position = new Vector2(
+                        _aniBowWow.Position.X - 17,
+                        _aniBowWow.Position.Y - 30
+                    );
+                    _spriteSmoke1.Position = new Vector2(
+                        _aniBowWow.Position.X + 17,
+                        _aniBowWow.Position.Y - 30
+                    );
                 }
 
                 if (_counter > 500)
@@ -174,7 +234,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 if (_counter > 2500)
                 {
                     // move up
-                    _aniBowWow.Position.X = _bowWowAttackPosition + MathF.Sin(((float)_counter - 2500) / 75);
+                    _aniBowWow.Position.X =
+                        _bowWowAttackPosition + MathF.Sin(((float)_counter - 2500) / 75);
                     _aniBowWow.Position.Y -= 0.25f * Game1.TimeMultiplier;
 
                     if (_aniBowWow.Animator.CurrentAnimation.Id != "pre_attack")
@@ -185,9 +246,15 @@ namespace ProjectZ.InGame.Overlay.Sequences
                         _counter = 0;
                         _aniBowWow.Animator.Play("attack");
                         _spriteSmoke0.Color = Color.White;
-                        _spriteSmoke0.Position = new Vector2(_aniBowWow.Position.X - 15, _aniBowWow.Position.Y - 28);
+                        _spriteSmoke0.Position = new Vector2(
+                            _aniBowWow.Position.X - 15,
+                            _aniBowWow.Position.Y - 28
+                        );
                         _spriteSmoke1.Color = Color.White;
-                        _spriteSmoke1.Position = new Vector2(_aniBowWow.Position.X + 15, _aniBowWow.Position.Y - 28);
+                        _spriteSmoke1.Position = new Vector2(
+                            _aniBowWow.Position.X + 15,
+                            _aniBowWow.Position.Y - 28
+                        );
                     }
                 }
                 else
@@ -242,9 +309,18 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 else
                     _aniLink.Position.X += _linkVelocity * Game1.TimeMultiplier;
 
-                _linkVelocity = AnimationHelper.MoveToTarget(_linkVelocity, 0, 0.065f * Game1.TimeMultiplier);
+                _linkVelocity = AnimationHelper.MoveToTarget(
+                    _linkVelocity,
+                    0,
+                    0.065f * Game1.TimeMultiplier
+                );
 
-                if (_blocked && _aniBowWow.Position.Y == 103 && !_aniBowWow.Animator.IsPlaying && _blockCount <= 3)
+                if (
+                    _blocked
+                    && _aniBowWow.Position.Y == 103
+                    && !_aniBowWow.Animator.IsPlaying
+                    && _blockCount <= 3
+                )
                 {
                     _blocked = false;
                     Game1.GameManager.StartDialogPath("photo_sequence_3");
@@ -261,7 +337,10 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
                         // show block particle
                         _particleCounter = 175;
-                        _spriteParticle.Position = new Vector2(_aniLink.Position.X - 12, _aniLink.Position.Y - 14);
+                        _spriteParticle.Position = new Vector2(
+                            _aniLink.Position.X - 12,
+                            _aniLink.Position.Y - 14
+                        );
 
                         _aniBowWow.Animator.Play("idle_-1");
                         if (_blockCount < 3)
@@ -306,7 +385,10 @@ namespace ProjectZ.InGame.Overlay.Sequences
                     _chain[i].Position.Y = _chainStartPosition.Y;
             }
 
-            var lastPosition = new Vector2(_aniBowWow.Position.X + _bowWowDirection * 4, _aniBowWow.Position.Y - 8);
+            var lastPosition = new Vector2(
+                _aniBowWow.Position.X + _bowWowDirection * 4,
+                _aniBowWow.Position.Y - 8
+            );
             for (var i = _chain.Length - 1; i > 0; i--)
             {
                 var direction = _chain[i].Position - lastPosition;

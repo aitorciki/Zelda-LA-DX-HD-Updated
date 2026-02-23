@@ -30,6 +30,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const float FlySpeed = 1.5f;
 
         private readonly string _strFly = "fly";
+
         // we use the key and the index to indicate when the tile should start moving
         private readonly string _strKey;
         private readonly int _index;
@@ -43,9 +44,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _stringSet;
         private bool _wasActivated;
 
-        public EnemyFlyingTile() : base("flying tile") { }
+        public EnemyFlyingTile()
+            : base("flying tile") { }
 
-        public EnemyFlyingTile(Map.Map map, int posX, int posY, string strKey, int index, int mode) : base(map)
+        public EnemyFlyingTile(Map.Map map, int posX, int posY, string strKey, int index, int mode)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -63,9 +66,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Gravity = -0.15f,
                 IgnoresZ = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                MoveCollision = OnCollision
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                MoveCollision = OnCollision,
             };
 
             // the player needs to be inside the room
@@ -82,7 +84,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var stateIdle = new AiState(UpdateIdle);
             var stateAscent = new AiState(UpdateAscent) { Init = InitAscent };
             var stateWait = new AiState();
-            stateWait.Trigger.Add(new AiTriggerCountdown(700, null, () => _aiComponent.ChangeState("flying")));
+            stateWait.Trigger.Add(
+                new AiTriggerCountdown(700, null, () => _aiComponent.ChangeState("flying"))
+            );
             var stateFlying = new AiState(UpdateFlying) { Init = InitFlying };
 
             _aiComponent = new AiComponent();
@@ -90,25 +94,56 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("ascent", stateAscent);
             _aiComponent.States.Add("wait", stateWait);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn, FlameOffset = new Point(0, 7), ExplosionOffsetY = 7 };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+                FlameOffset = new Point(0, 7),
+                ExplosionOffsetY = 7,
+            };
             _aiComponent.ChangeState("idle");
 
             var damageCollider = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4, true);
             var hittableBox = new CBox(EntityPosition, -5, -5, 0, 10, 10, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { OnDamagedPlayer = OnDamagePlayer, IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    OnDamagedPlayer = OnDamagePlayer,
+                    IsActive = false,
+                }
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(hittableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(hittableBox, OnPush)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(sprite, Values.LayerBottom));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, sprite) { IsActive = false, OffsetY = 5 });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawCSpriteComponent(sprite, Values.LayerBottom)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, sprite)
+                {
+                    IsActive = false,
+                    OffsetY = 5,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
 
             if (!string.IsNullOrEmpty(_strKey))
             {
                 if (_index != 0)
-                    AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                    AddComponent(
+                        KeyChangeListenerComponent.Index,
+                        new KeyChangeListenerComponent(OnKeyChange)
+                    );
                 else
                     Game1.GameManager.SaveManager.SetString(_strKey, "0");
             }
@@ -130,8 +165,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // get the hole that is under the tile
             var holeList = new List<GameObject>();
-            Map.Objects.GetGameObjectsWithTag(holeList, Values.GameObjectTag.Hole,
-                (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, 16, 16);
+            Map.Objects.GetGameObjectsWithTag(
+                holeList,
+                Values.GameObjectTag.Hole,
+                (int)EntityPosition.X - 8,
+                (int)EntityPosition.Y - 8,
+                16,
+                16
+            );
 
             if (holeList.Count > 0)
             {
@@ -172,7 +213,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateIdle()
         {
             // check if the player is inside the room
-            if ((_index == 0 || _wasActivated) && _triggerField.Contains(MapManager.ObjLink.BodyRectangle))
+            if (
+                (_index == 0 || _wasActivated)
+                && _triggerField.Contains(MapManager.ObjLink.BodyRectangle)
+            )
             {
                 _activationCounter -= Game1.DeltaTime;
 
@@ -212,7 +256,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void InitFlying()
         {
             // start flying towards the player
-            var velocity = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
+            var velocity =
+                MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 4);
             if (velocity != Vector2.Zero)
                 velocity.Normalize();
 
@@ -267,15 +312,51 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var rndMax = 75;
             var diff = 200f;
 
-            var vector0 = new Vector3(-1, -1, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff + bodyVelocity;
-            var vector1 = new Vector3(-1, 0, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff + bodyVelocity;
-            var vector2 = new Vector3(1, -1, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff + bodyVelocity;
-            var vector3 = new Vector3(1, 0, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff + bodyVelocity;
+            var vector0 =
+                new Vector3(-1, -1, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff
+                + bodyVelocity;
+            var vector1 =
+                new Vector3(-1, 0, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff
+                + bodyVelocity;
+            var vector2 =
+                new Vector3(1, -1, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff
+                + bodyVelocity;
+            var vector3 =
+                new Vector3(1, 0, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff
+                + bodyVelocity;
 
-            var stone0 = new ObjSmallStone(Map, (int)EntityPosition.X - 2, (int)EntityPosition.Y - 7, (int)EntityPosition.Z, vector0, true);
-            var stone1 = new ObjSmallStone(Map, (int)EntityPosition.X - 2, (int)EntityPosition.Y - 2, (int)EntityPosition.Z, vector1, true);
-            var stone2 = new ObjSmallStone(Map, (int)EntityPosition.X + 3, (int)EntityPosition.Y - 7, (int)EntityPosition.Z, vector2, false);
-            var stone3 = new ObjSmallStone(Map, (int)EntityPosition.X + 3, (int)EntityPosition.Y - 2, (int)EntityPosition.Z, vector3, false);
+            var stone0 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X - 2,
+                (int)EntityPosition.Y - 7,
+                (int)EntityPosition.Z,
+                vector0,
+                true
+            );
+            var stone1 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X - 2,
+                (int)EntityPosition.Y - 2,
+                (int)EntityPosition.Z,
+                vector1,
+                true
+            );
+            var stone2 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X + 3,
+                (int)EntityPosition.Y - 7,
+                (int)EntityPosition.Z,
+                vector2,
+                false
+            );
+            var stone3 = new ObjSmallStone(
+                Map,
+                (int)EntityPosition.X + 3,
+                (int)EntityPosition.Y - 2,
+                (int)EntityPosition.Z,
+                vector3,
+                false
+            );
 
             Map.Objects.SpawnObject(stone0);
             Map.Objects.SpawnObject(stone1);
@@ -286,7 +367,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

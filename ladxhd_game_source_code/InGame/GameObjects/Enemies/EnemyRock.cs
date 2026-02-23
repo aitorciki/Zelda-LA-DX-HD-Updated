@@ -17,7 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private double _liveTime = 125;
 
-        public EnemyRock(Map.Map map, Vector2 position) : base(map)
+        public EnemyRock(Map.Map map, Vector2 position)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -37,20 +38,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -5, -5, 10, 10, 8)
             {
                 Gravity = -0.125f,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             var damageBox = new CBox(EntityPosition, -6, -6, 0, 12, 12, 8, true);
             var hittableBox = new CBox(EntityPosition, -7, -7, 0, 14, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(damageBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 10, ShadowHeight = 6 });
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 10, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -83,11 +90,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 var length = Game1.RandomNumber.Next(75, 150) / 150f;
                 var direction = (-100 + Game1.RandomNumber.Next(0, 200)) / 100f;
-                _body.VelocityTarget = new Vector2(MathF.Sin(direction), MathF.Cos(direction)) * length;
+                _body.VelocityTarget =
+                    new Vector2(MathF.Sin(direction), MathF.Cos(direction)) * length;
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

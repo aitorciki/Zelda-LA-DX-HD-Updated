@@ -22,11 +22,41 @@ namespace ProjectZ.InGame.Overlay.Sequences
             Sprites.Add(new SeqSprite("seqGravestoneBackground", position, 0));
 
             // characters
-            AddDrawable("graveLink", new SeqAnimation("Sequences/link grave", "look", new Vector2(position.X + 75, position.Y + 101), 1) { Shader = Resources.ColorShader, Color = Game1.GameManager.CloakColor });
-            AddDrawable("graveMouse", new SeqAnimation("NPCs/photo_mouse", "stand_0", new Vector2(position.X + 173, position.Y + 102), 1));
+            AddDrawable(
+                "graveLink",
+                new SeqAnimation(
+                    "Sequences/link grave",
+                    "look",
+                    new Vector2(position.X + 75, position.Y + 101),
+                    1
+                )
+                {
+                    Shader = Resources.ColorShader,
+                    Color = Game1.GameManager.CloakColor,
+                }
+            );
+            AddDrawable(
+                "graveMouse",
+                new SeqAnimation(
+                    "NPCs/photo_mouse",
+                    "stand_0",
+                    new Vector2(position.X + 173, position.Y + 102),
+                    1
+                )
+            );
 
-            AddDrawable("gravePhotoFlash", new SeqColor(new Rectangle((int)position.X, (int)position.Y, 160, 144), Color.Transparent, 2));
-            AddDrawable("gravePhoto", new SeqSprite("photo_11", position, 1, true) { Color = Color.Transparent });
+            AddDrawable(
+                "gravePhotoFlash",
+                new SeqColor(
+                    new Rectangle((int)position.X, (int)position.Y, 160, 144),
+                    Color.Transparent,
+                    2
+                )
+            );
+            AddDrawable(
+                "gravePhoto",
+                new SeqSprite("photo_11", position, 1, true) { Color = Color.Transparent }
+            );
 
             Game1.GameManager.StartDialogPath("seq_gravestone");
 

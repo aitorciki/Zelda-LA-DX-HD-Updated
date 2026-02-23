@@ -19,8 +19,18 @@ namespace ProjectZ.Base.UI
         private readonly float _stepSize;
         private int _mouseWheel;
 
-        public UiNumberInput(Rectangle rectangle, SpriteFont font, float value, float minValue, float maxValue,
-            float stepSize, string elementId, string screen, UiFunction update, UiFunction onNumberUpdate)
+        public UiNumberInput(
+            Rectangle rectangle,
+            SpriteFont font,
+            float value,
+            float minValue,
+            float maxValue,
+            float stepSize,
+            string elementId,
+            string screen,
+            UiFunction update,
+            UiFunction onNumberUpdate
+        )
             : base(elementId, screen)
         {
             Rectangle = rectangle;
@@ -62,23 +72,58 @@ namespace ProjectZ.Base.UI
                     _strNewValue = "0";
 
                 // add .
-                if (_stepSize % 1 > 0 && (InputHandler.KeyPressed(Keys.OemPeriod) || InputHandler.KeyPressed(Keys.OemComma)) && !_strValue.Contains("."))
+                if (
+                    _stepSize % 1 > 0
+                    && (
+                        InputHandler.KeyPressed(Keys.OemPeriod)
+                        || InputHandler.KeyPressed(Keys.OemComma)
+                    )
+                    && !_strValue.Contains(".")
+                )
                     _strNewValue += ".";
 
                 // change value when scrolling
-                if (InputHandler.MouseState.ScrollWheelValue > _mouseWheel && float.Parse(_strNewValue, CultureInfo.InvariantCulture) + _stepSize <= MaxValue)
-                    _strNewValue = (float.Parse(_strNewValue, CultureInfo.InvariantCulture) + _stepSize).ToString(CultureInfo.InvariantCulture);
-                if (InputHandler.MouseState.ScrollWheelValue < _mouseWheel && float.Parse(_strNewValue, CultureInfo.InvariantCulture) - _stepSize >= MinValue)
-                    _strNewValue = (float.Parse(_strNewValue, CultureInfo.InvariantCulture) - _stepSize).ToString(CultureInfo.InvariantCulture);
+                if (
+                    InputHandler.MouseState.ScrollWheelValue > _mouseWheel
+                    && float.Parse(_strNewValue, CultureInfo.InvariantCulture) + _stepSize
+                        <= MaxValue
+                )
+                    _strNewValue = (
+                        float.Parse(_strNewValue, CultureInfo.InvariantCulture) + _stepSize
+                    ).ToString(CultureInfo.InvariantCulture);
+                if (
+                    InputHandler.MouseState.ScrollWheelValue < _mouseWheel
+                    && float.Parse(_strNewValue, CultureInfo.InvariantCulture) - _stepSize
+                        >= MinValue
+                )
+                    _strNewValue = (
+                        float.Parse(_strNewValue, CultureInfo.InvariantCulture) - _stepSize
+                    ).ToString(CultureInfo.InvariantCulture);
 
                 InputHandler.ResetInputState();
 
-                float.TryParse(_strNewValue, NumberStyles.Float, CultureInfo.InvariantCulture, out var newValue);
-                if (newValue <= MaxValue &&
-                    (!_strNewValue.Contains(".") || _strNewValue.Split('.')[1].Length <= (_stepSize % 1).ToString(CultureInfo.InvariantCulture).Length - 2))
+                float.TryParse(
+                    _strNewValue,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out var newValue
+                );
+                if (
+                    newValue <= MaxValue
+                    && (
+                        !_strNewValue.Contains(".")
+                        || _strNewValue.Split('.')[1].Length
+                            <= (_stepSize % 1).ToString(CultureInfo.InvariantCulture).Length - 2
+                    )
+                )
                     _strValue = _strNewValue;
 
-                float.TryParse(_strValue, NumberStyles.Float, CultureInfo.InvariantCulture, out Value);
+                float.TryParse(
+                    _strValue,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out Value
+                );
 
                 if (OldValue != Value && Value >= MinValue)
                     _onNumberUpdate?.Invoke(this);
@@ -104,7 +149,10 @@ namespace ProjectZ.Base.UI
             Label = _strValue + (Selected ? "|" : "");
 
             // draw the value
-            var textPosition = new Vector2(Rectangle.X + 5, (int)(Rectangle.Y + Rectangle.Height / 2 - Font.MeasureString(Label).Y / 2));
+            var textPosition = new Vector2(
+                Rectangle.X + 5,
+                (int)(Rectangle.Y + Rectangle.Height / 2 - Font.MeasureString(Label).Y / 2)
+            );
             spriteBatch.DrawString(Font, Label, textPosition, FontColor);
         }
     }

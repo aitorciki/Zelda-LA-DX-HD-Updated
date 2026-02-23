@@ -25,16 +25,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _linkOcarinaAnimation;
         private bool _drawInstruments = true;
 
-        public ObjDoorEgg() : base("egg_entry") { }
+        public ObjDoorEgg()
+            : base("egg_entry") { }
 
-        public ObjDoorEgg(Map.Map map, int posX, int posY, string saveId) : base(map)
+        public ObjDoorEgg(Map.Map map, int posX, int posY, string saveId)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             _saveKey = saveId;
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -50,10 +54,25 @@ namespace ProjectZ.InGame.GameObjects.Things
             _relicOffsets[4] = new Vector2(-16, 48);
             _relicOffsets[3] = new Vector2(16, 48);
 
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(EntityPosition, -8, -16, 16, 16, 8), Values.CollisionTypes.Normal));
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed) { InteractRect = new Rectangle(-62, -62, 124, 124) } );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(EntityPosition, -8, -16, 16, 16, 8),
+                    Values.CollisionTypes.Normal
+                )
+            );
+            AddComponent(
+                OcarinaListenerComponent.Index,
+                new OcarinaListenerComponent(OnSongPlayed)
+                {
+                    InteractRect = new Rectangle(-62, -62, 124, 124),
+                }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         private void OnSongPlayed(int songIndex)
@@ -136,16 +155,96 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _linkOcarinaAnimation = false;
                 MapManager.ObjLink.StopOcarinaDuo();
 
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X - 4, (int)EntityPosition.Y - 20, (int)EntityPosition.Z, new Vector3(-1.05f, 0.25f, 3), true, 650));
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X - 4, (int)EntityPosition.Y - 16, (int)EntityPosition.Z, new Vector3(-1.25f, 0.75f, 3), true, 650));
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X - 4, (int)EntityPosition.Y - 12, (int)EntityPosition.Z, new Vector3(-0.85f, 1.25f, 3), true, 650));
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X - 4,
+                        (int)EntityPosition.Y - 20,
+                        (int)EntityPosition.Z,
+                        new Vector3(-1.05f, 0.25f, 3),
+                        true,
+                        650
+                    )
+                );
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X - 4,
+                        (int)EntityPosition.Y - 16,
+                        (int)EntityPosition.Z,
+                        new Vector3(-1.25f, 0.75f, 3),
+                        true,
+                        650
+                    )
+                );
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X - 4,
+                        (int)EntityPosition.Y - 12,
+                        (int)EntityPosition.Z,
+                        new Vector3(-0.85f, 1.25f, 3),
+                        true,
+                        650
+                    )
+                );
 
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X - 0, (int)EntityPosition.Y - 22, (int)EntityPosition.Z, new Vector3(-0.3f, 0.05f, 3), true, 650));
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X - 0, (int)EntityPosition.Y - 12, (int)EntityPosition.Z, new Vector3(0.35f, 1.45f, 3), true, 650));
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X - 0,
+                        (int)EntityPosition.Y - 22,
+                        (int)EntityPosition.Z,
+                        new Vector3(-0.3f, 0.05f, 3),
+                        true,
+                        650
+                    )
+                );
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X - 0,
+                        (int)EntityPosition.Y - 12,
+                        (int)EntityPosition.Z,
+                        new Vector3(0.35f, 1.45f, 3),
+                        true,
+                        650
+                    )
+                );
 
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X + 4, (int)EntityPosition.Y - 20, (int)EntityPosition.Z, new Vector3(1.0f, 0.25f, 3), true, 650));
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X + 4, (int)EntityPosition.Y - 16, (int)EntityPosition.Z, new Vector3(1.25f, 0.75f, 3), true, 650));
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, (int)EntityPosition.X + 4, (int)EntityPosition.Y - 12, (int)EntityPosition.Z, new Vector3(0.9f, 1.25f, 3), true, 650));
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X + 4,
+                        (int)EntityPosition.Y - 20,
+                        (int)EntityPosition.Z,
+                        new Vector3(1.0f, 0.25f, 3),
+                        true,
+                        650
+                    )
+                );
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X + 4,
+                        (int)EntityPosition.Y - 16,
+                        (int)EntityPosition.Z,
+                        new Vector3(1.25f, 0.75f, 3),
+                        true,
+                        650
+                    )
+                );
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(
+                        Map,
+                        (int)EntityPosition.X + 4,
+                        (int)EntityPosition.Y - 12,
+                        (int)EntityPosition.Z,
+                        new Vector3(0.9f, 1.25f, 3),
+                        true,
+                        650
+                    )
+                );
 
                 if (!string.IsNullOrEmpty(_saveKey))
                     Game1.GameManager.SaveManager.SetString(_saveKey, "1");
@@ -162,7 +261,12 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Draw(SpriteBatch spriteBatch)
         {
             // draw the door
-            DrawHelper.DrawNormalized(spriteBatch, _doorSprite, EntityPosition.Position, Color.White);
+            DrawHelper.DrawNormalized(
+                spriteBatch,
+                _doorSprite,
+                EntityPosition.Position,
+                Color.White
+            );
 
             // draw the instruments
             if (_drawInstruments)
@@ -175,17 +279,33 @@ namespace ProjectZ.InGame.GameObjects.Things
                     var counterMod = _instrumentCounter % length;
 
                     // blink
-                    if (_instrumentCounter < i * 500 ||
-                        (i * 250 < counterMod && counterMod < i * 250 + 200) ||
-                        (((length / 2.95f) + i * 250) % length < counterMod && counterMod < ((length / 2.95f) + i * 250 + 200) % length) ||
-                        (((length / 2.95f) * 2 + i * 250) % length < counterMod && counterMod < ((length / 2.95f) * 2 + i * 250 + 200) % length))
+                    if (
+                        _instrumentCounter < i * 500
+                        || (i * 250 < counterMod && counterMod < i * 250 + 200)
+                        || (
+                            ((length / 2.95f) + i * 250) % length < counterMod
+                            && counterMod < ((length / 2.95f) + i * 250 + 200) % length
+                        )
+                        || (
+                            ((length / 2.95f) * 2 + i * 250) % length < counterMod
+                            && counterMod < ((length / 2.95f) * 2 + i * 250 + 200) % length
+                        )
+                    )
                         continue;
 
                     var itemName = "instrument" + i;
                     var itemInstrument = Game1.GameManager.ItemManager[itemName];
-                    var position = new Vector2(EntityPosition.X - 8, EntityPosition.Y - 8) + _relicOffsets[i];
+                    var position =
+                        new Vector2(EntityPosition.X - 8, EntityPosition.Y - 8) + _relicOffsets[i];
 
-                    ItemDrawHelper.DrawItem(spriteBatch, itemInstrument, position, Color.White, 1, true);
+                    ItemDrawHelper.DrawItem(
+                        spriteBatch,
+                        itemInstrument,
+                        position,
+                        Color.White,
+                        1,
+                        true
+                    );
                 }
         }
     }

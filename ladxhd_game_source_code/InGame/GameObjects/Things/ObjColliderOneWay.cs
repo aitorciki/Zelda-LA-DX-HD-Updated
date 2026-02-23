@@ -15,20 +15,44 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _direction;
         private readonly bool _isPusher;
 
-        public ObjColliderOneWay(Map.Map map, int posX, int posY, Rectangle collisionRectangle, Values.CollisionTypes type, int direction, bool isPusher) : base(map)
+        public ObjColliderOneWay(
+            Map.Map map,
+            int posX,
+            int posY,
+            Rectangle collisionRectangle,
+            Values.CollisionTypes type,
+            int direction,
+            bool isPusher
+        )
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
-            EditorIconSource = new Rectangle(0, 0, collisionRectangle.Width, collisionRectangle.Height);
+            EditorIconSource = new Rectangle(
+                0,
+                0,
+                collisionRectangle.Width,
+                collisionRectangle.Height
+            );
             EditorColor = Color.DeepPink;
 
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = collisionRectangle;
 
-            _collisionBox = new Box(posX + collisionRectangle.X, posY + collisionRectangle.Y, 0, collisionRectangle.Width, collisionRectangle.Height, 3.25f);
+            _collisionBox = new Box(
+                posX + collisionRectangle.X,
+                posY + collisionRectangle.Y,
+                0,
+                collisionRectangle.Width,
+                collisionRectangle.Height,
+                3.25f
+            );
             _direction = direction;
             _isPusher = isPusher;
 
-            AddComponent(CollisionComponent.Index, new CollisionComponent(CollisionCheck) { CollisionType = type });
+            AddComponent(
+                CollisionComponent.Index,
+                new CollisionComponent(CollisionCheck) { CollisionType = type }
+            );
         }
 
         private bool CollisionCheck(Box box, int dir, int level, ref Box collidingBox)
@@ -49,7 +73,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_isPusher)
             {
                 // When used on 3D maps, it acts as collision in a single direction.
-                if (!Link.Is2DMode || Link.EntityPosition.Y <= _collisionBox.Y || Body.Velocity.Y <= 0)
+                if (
+                    !Link.Is2DMode
+                    || Link.EntityPosition.Y <= _collisionBox.Y
+                    || Body.Velocity.Y <= 0
+                )
                 {
                     collidingBox = _collisionBox;
                     return true;

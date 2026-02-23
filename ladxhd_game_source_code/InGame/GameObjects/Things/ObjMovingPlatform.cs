@@ -41,9 +41,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _wasStandingOnTop;
         private bool _isMoving;
 
-        public ObjMovingPlatform() : base("moving_platform") { }
+        public ObjMovingPlatform()
+            : base("moving_platform") { }
 
-        public ObjMovingPlatform(Map.Map map, int posX, int posY, int offsetX, int offsetY, float state, int time, int mode) : base(map)
+        public ObjMovingPlatform(
+            Map.Map map,
+            int posX,
+            int posY,
+            int offsetX,
+            int offsetY,
+            float state,
+            int time,
+            int mode
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 32, 16);
@@ -62,10 +73,24 @@ namespace ProjectZ.InGame.GameObjects.Things
             _moveBox = new CBox(EntityPosition, 0, -8, 0, 32, 16, 16);
             _collisionBox = new CBox(EntityPosition, 0, 0, 32, 16, 16);
 
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.MovingPlatform));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    _collisionBox,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.MovingPlatform
+                )
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _spriteComponent = new DrawSpriteComponent(
-                Resources.SprObjects, EntityPosition, _sprite.SourceRectangle, Vector2.Zero, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                _spriteComponent = new DrawSpriteComponent(
+                    Resources.SprObjects,
+                    EntityPosition,
+                    _sprite.SourceRectangle,
+                    Vector2.Zero,
+                    Values.LayerBottom
+                )
+            );
         }
 
         private void Update()
@@ -121,10 +146,16 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void UpdateMode1()
         {
             // is the player standing on the platform?
-            _isStandingOnTop = (_state == _time || (MapManager.ObjLink._body.BodyBox.Box.Left >= _moveBox.Box.Left &&
-                                                    MapManager.ObjLink._body.BodyBox.Box.Right < _moveBox.Box.Right)) &&
-                               MapManager.ObjLink._body.IsGrounded &&
-                               MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box);
+            _isStandingOnTop =
+                (
+                    _state == _time
+                    || (
+                        MapManager.ObjLink._body.BodyBox.Box.Left >= _moveBox.Box.Left
+                        && MapManager.ObjLink._body.BodyBox.Box.Right < _moveBox.Box.Right
+                    )
+                )
+                && MapManager.ObjLink._body.IsGrounded
+                && MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box);
 
             if (!_isMoving && _isStandingOnTop)
                 _isMoving = true;
@@ -169,16 +200,24 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void UpdateMode2()
         {
             // is the player standing on the platform?
-            var intersection = MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box) &&
-                               MapManager.ObjLink._body.IsGrounded;
-            _isStandingOnTop = MapManager.ObjLink._body.BodyBox.Box.Left >= _moveBox.Box.Left &&
-                               MapManager.ObjLink._body.BodyBox.Box.Right < _moveBox.Box.Right && intersection;
+            var intersection =
+                MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box)
+                && MapManager.ObjLink._body.IsGrounded;
+            _isStandingOnTop =
+                MapManager.ObjLink._body.BodyBox.Box.Left >= _moveBox.Box.Left
+                && MapManager.ObjLink._body.BodyBox.Box.Right < _moveBox.Box.Right
+                && intersection;
 
             // set/unset the face
-            _spriteComponent.Sprite.SourceRectangle.Y = _sprite.SourceRectangle.Y + (intersection ? 16 : 0);
+            _spriteComponent.Sprite.SourceRectangle.Y =
+                _sprite.SourceRectangle.Y + (intersection ? 16 : 0);
 
             // start moving if the player is standing on the platform and is carrying something
-            if (!_isMoving && _isStandingOnTop && MapManager.ObjLink.CurrentState == ObjLink.State.Carrying)
+            if (
+                !_isMoving
+                && _isStandingOnTop
+                && MapManager.ObjLink.CurrentState == ObjLink.State.Carrying
+            )
             {
                 if (_state < _time)
                     Game1.GameManager.PlaySoundEffect("D378-17-11");
@@ -203,14 +242,23 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // check for colliding bodies and push them forward
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)_lastBox.Left, (int)_lastBox.Back - 8, (int)_lastBox.Width, (int)_lastBox.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)_lastBox.Left,
+                (int)_lastBox.Back - 8,
+                (int)_lastBox.Width,
+                (int)_lastBox.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {
                 var body = (BodyComponent)collidingObject.Components[BodyComponent.Index];
 
-                if (body.BodyBox.Box.Front <= _lastCollisionBox.Back && body.BodyBox.Box.Intersects(_lastBox))
+                if (
+                    body.BodyBox.Box.Front <= _lastCollisionBox.Back
+                    && body.BodyBox.Box.Intersects(_lastBox)
+                )
                 {
                     var offset = Vector2.Zero;
 
@@ -220,10 +268,18 @@ namespace ProjectZ.InGame.GameObjects.Things
                         var add = Vector2.Zero;
 
                         // align the body with the platform so that the body is not wobbling around
-                        if (Math.Abs(body.VelocityTarget.X) < 0.1f && Math.Abs(body.Velocity.X) < 0.1f)
+                        if (
+                            Math.Abs(body.VelocityTarget.X) < 0.1f
+                            && Math.Abs(body.Velocity.X) < 0.1f
+                        )
                         {
                             var distance = (body.Position.X + direction.X) - EntityPosition.X;
-                            var distanceNormal = (int)Math.Round(distance * MapManager.Camera.Scale, MidpointRounding.AwayFromZero) / MapManager.Camera.Scale;
+                            var distanceNormal =
+                                (int)
+                                    Math.Round(
+                                        distance * MapManager.Camera.Scale,
+                                        MidpointRounding.AwayFromZero
+                                    ) / MapManager.Camera.Scale;
 
                             var dir = distanceNormal - distance;
                             if (Math.Abs(dir) > 0.005)

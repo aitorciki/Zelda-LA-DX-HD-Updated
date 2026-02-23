@@ -12,7 +12,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
     {
         private readonly BodyComponent _body;
 
-        public BossGenieFireball(Map.Map map, Vector3 position) : base(map)
+        public BossGenieFireball(Map.Map map, Vector3 position)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -31,7 +32,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             };
 
             var damageCollider = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));

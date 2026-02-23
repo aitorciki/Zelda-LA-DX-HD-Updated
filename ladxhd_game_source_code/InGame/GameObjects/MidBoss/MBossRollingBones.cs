@@ -39,9 +39,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _burstCounter;
         private int _jumpCount;
 
-        public MBossRollingBones() : base("rolling bones") { }
+        public MBossRollingBones()
+            : base("rolling bones") { }
 
-        public MBossRollingBones(Map.Map map, int posX, int posY, string triggerKey, string saveKey) : base(map)
+        public MBossRollingBones(Map.Map map, int posX, int posY, string triggerKey, string saveKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -51,8 +53,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _triggerKey = triggerKey;
             _saveKey = saveKey;
 
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -62,7 +66,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animator.Play("walk");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-10, -23));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-10, -23)
+            );
 
             _body = new BodyComponent(EntityPosition, -9, -12, 18, 12, 8)
             {
@@ -70,20 +78,24 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 DragAir = 0.75f,
                 Gravity = -0.15f,
                 MoveCollision = OnMoveCollision,
-                FieldRectangle = map.GetField(posX, posY)
+                FieldRectangle = map.GetField(posX, posY),
             };
             _roomMiddle = _body.FieldRectangle.Center.Y + 4;
 
             var stateWaiting = new AiState();
             var stateInitJump = new AiState(UpdateInitJump);
             var stateIdle = new AiState(UpdateIdle);
-            stateIdle.Trigger.Add(new AiTriggerCountdown(300, null, () => _aiComponent.ChangeState("jumping")));
+            stateIdle.Trigger.Add(
+                new AiTriggerCountdown(300, null, () => _aiComponent.ChangeState("jumping"))
+            );
             var stateJumping = new AiState(UpdateJumping) { Init = InitJump };
             var statePushing = new AiState();
             statePushing.Trigger.Add(new AiTriggerCountdown(500, null, ToPushed));
             var statePushed = new AiState(UpdatePushed);
             var stateBlink = new AiState();
-            stateBlink.Trigger.Add(new AiTriggerCountdown(1000, UpdateBlink, () => _aiComponent.ChangeState("death")));
+            stateBlink.Trigger.Add(
+                new AiTriggerCountdown(1000, UpdateBlink, () => _aiComponent.ChangeState("death"))
+            );
             var stateDeath = new AiState(UpdateDeath);
             stateDeath.Trigger.Add(new AiTriggerCountdown(2000, UpdateBlink, RemoveObject));
 
@@ -96,10 +108,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("pushed", statePushed);
             _aiComponent.States.Add("blink", stateBlink);
             _aiComponent.States.Add("death", stateDeath);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false) 
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            )
             {
                 OnDeath = OnDeath,
-                BossHitSound = true
+                BossHitSound = true,
             };
             _aiComponent.ChangeState("waiting");
 
@@ -107,15 +127,33 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var hittableBox = new CBox(EntityPosition, -8, -14, 0, 16, 14, 8, true);
 
             if (!string.IsNullOrEmpty(_triggerKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false });
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false }
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 16, ShadowHeight = 6 }
+            );
 
             // check if we are on the left or the right side of the room
             int boneOffset = 0;
@@ -148,7 +186,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void KeyChanged()
         {
             // activate the boss after entering the room
-            if (_aiComponent.CurrentStateId == "waiting" && Game1.GameManager.SaveManager.GetString(_triggerKey) == "1")
+            if (
+                _aiComponent.CurrentStateId == "waiting"
+                && Game1.GameManager.SaveManager.GetString(_triggerKey) == "1"
+            )
             {
                 // start boss music
                 Game1.GameManager.SetMusic(79, 2);
@@ -167,7 +208,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -219,7 +266,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                         _moveDirection.Y = 0.5f;
 
                     _body.DragAir = 1.0f;
-                    _body.Velocity = new Vector3(_moveDirection.X * 0.375f, _moveDirection.Y * 0.375f, 1.0f);
+                    _body.Velocity = new Vector3(
+                        _moveDirection.X * 0.375f,
+                        _moveDirection.Y * 0.375f,
+                        1.0f
+                    );
                     _body.IsGrounded = false;
                 }
                 else
@@ -234,8 +285,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // landed after a jump?
             if (_body.IsGrounded)
             {
-                if ((_body.LastVelocityCollision & Values.BodyCollision.Horizontal) != 0 &&
-                    Math.Sign(_body.Velocity.X) == Math.Sign(_moveDirection.X))
+                if (
+                    (_body.LastVelocityCollision & Values.BodyCollision.Horizontal) != 0
+                    && Math.Sign(_body.Velocity.X) == Math.Sign(_moveDirection.X)
+                )
                 {
                     _aiComponent.ChangeState("pushing");
                     _moveDirection.X = -_moveDirection.X;
@@ -285,10 +338,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return;
 
             var posX = (int)EntityPosition.X + Game1.RandomNumber.Next(0, 32) - 8 - 16;
-            var posY = (int)EntityPosition.Y - (int)EntityPosition.Z + Game1.RandomNumber.Next(0, 32) - 16 - 16;
+            var posY =
+                (int)EntityPosition.Y
+                - (int)EntityPosition.Z
+                + Game1.RandomNumber.Next(0, 32)
+                - 16
+                - 16;
 
             // spawn explosion effect
-            Map.Objects.SpawnObject(new ObjAnimator(Map, posX, posY, Values.LayerBottom, "Particles/spawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(Map, posX, posY, Values.LayerBottom, "Particles/spawn", "run", true)
+            );
         }
 
         private void RemoveObject()
@@ -300,7 +360,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Game1.GameManager.SetMusic(-1, 2);
 
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
             _bone.Delete();

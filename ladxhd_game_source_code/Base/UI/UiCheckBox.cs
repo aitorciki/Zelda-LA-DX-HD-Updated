@@ -13,15 +13,32 @@ namespace ProjectZ.Base.UI
         private readonly Vector2 _textBoxPosition;
         private int _border = 4;
 
-        public UiCheckBox(Rectangle rectangle, SpriteFont font, string text, string elementId, string screen, bool currentState, UiFunction update, UiFunction click)
+        public UiCheckBox(
+            Rectangle rectangle,
+            SpriteFont font,
+            string text,
+            string elementId,
+            string screen,
+            bool currentState,
+            UiFunction update,
+            UiFunction click
+        )
             : base(elementId, screen)
         {
-            Rectangle = new Rectangle(rectangle.X + rectangle.Height + 5, rectangle.Y, rectangle.Width - rectangle.Height - 5, rectangle.Height);
+            Rectangle = new Rectangle(
+                rectangle.X + rectangle.Height + 5,
+                rectangle.Y,
+                rectangle.Width - rectangle.Height - 5,
+                rectangle.Height
+            );
             _checkBox = new Rectangle(rectangle.X, rectangle.Y, rectangle.Height, rectangle.Height);
 
             _checkBoxFill = new Rectangle(
-                _checkBox.X + _border, _checkBox.Y + _border,
-                _checkBox.Width - _border * 2, _checkBox.Height - _border * 2);
+                _checkBox.X + _border,
+                _checkBox.Y + _border,
+                _checkBox.Width - _border * 2,
+                _checkBox.Height - _border * 2
+            );
 
             Label = text;
             CurrentState = currentState;
@@ -33,7 +50,8 @@ namespace ProjectZ.Base.UI
             var labelSize = Font.MeasureString(Label);
             _textBoxPosition = new Vector2(
                 (int)(Rectangle.X + Rectangle.Width / 2 - labelSize.X / 2),
-                (int)(Rectangle.Y + Rectangle.Height / 2 - labelSize.Y / 2));
+                (int)(Rectangle.Y + Rectangle.Height / 2 - labelSize.Y / 2)
+            );
         }
 
         public override void Update()
@@ -59,7 +77,12 @@ namespace ProjectZ.Base.UI
                 spriteBatch.Draw(Resources.SprWhite, _checkBoxFill, FontColor);
 
             // draw the label
-            spriteBatch.DrawString(Font, Label, _textBoxPosition, Selected ? BackgroundColor : FontColor);
+            spriteBatch.DrawString(
+                Font,
+                Label,
+                _textBoxPosition,
+                Selected ? BackgroundColor : FontColor
+            );
         }
     }
 }

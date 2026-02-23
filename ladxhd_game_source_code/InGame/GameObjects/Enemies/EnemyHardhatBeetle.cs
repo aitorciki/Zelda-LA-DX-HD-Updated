@@ -30,14 +30,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private float speedChange;
 
-        public EnemyHardhatBeetle() : base("hardHatBeetle") { }
+        public EnemyHardhatBeetle()
+            : base("hardHatBeetle") { }
 
-        public EnemyHardhatBeetle(Map.Map map, int posX, int posY) : base(map)
+        public EnemyHardhatBeetle(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -54,13 +56,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 Drag = 0.875f,
-                CollisionTypes = Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.DeepWater,
-                FieldRectangle = fieldRectangle
+                CollisionTypes =
+                    Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field,
+                AvoidTypes =
+                    Values.CollisionTypes.Hole
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.DeepWater,
+                FieldRectangle = fieldRectangle,
             };
 
             _aiComponent = new AiComponent();
@@ -71,7 +75,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
-            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false, ReturnState = "waiting" };
+            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900)
+            {
+                SilentStateChange = false,
+                ReturnState = "waiting",
+            };
             _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives);
             new AiDeepWaterState(_body);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, OnHoleDeath);
@@ -82,13 +90,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageCollider = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableRectangle = new CBox(EntityPosition, -8, -14, 16, 14, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { PushMultiplier = 2.00f });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+                {
+                    PushMultiplier = 2.00f,
+                }
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableRectangle, OnHit));
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.05f });
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 2.05f }
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -124,8 +144,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_vecDirection != Vector2.Zero)
             {
                 var oldPercentage = (float)Math.Pow(0.9f, Game1.TimeMultiplier);
-                var newDirection = _body.VelocityTarget * oldPercentage +
-                                   _vecDirection * (1 - oldPercentage);
+                var newDirection =
+                    _body.VelocityTarget * oldPercentage + _vecDirection * (1 - oldPercentage);
                 newDirection.Normalize();
 
                 _body.VelocityTarget = newDirection * _maxSpeed;
@@ -136,11 +156,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _isFollowing = MapManager.ObjLink.BodyRectangle.Intersects(_body.FieldRectangle);
 
             if (_isFollowing)
-                _vecDirection = new Vector2(MapManager.ObjLink.EntityPosition.X - EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - EntityPosition.Y);
+                _vecDirection = new Vector2(
+                    MapManager.ObjLink.EntityPosition.X - EntityPosition.X,
+                    MapManager.ObjLink.EntityPosition.Y - EntityPosition.Y
+                );
             else
-                _vecDirection = new Vector2(ResetPosition.X - EntityPosition.X, ResetPosition.Y - EntityPosition.Y);
+                _vecDirection = new Vector2(
+                    ResetPosition.X - EntityPosition.X,
+                    ResetPosition.Y - EntityPosition.Y
+                );
 
-            if (!_isFollowing && (int)EntityPosition.X == (int)ResetPosition.X && (int)EntityPosition.Y == (int)ResetPosition.Y)
+            if (
+                !_isFollowing
+                && (int)EntityPosition.X == (int)ResetPosition.X
+                && (int)EntityPosition.Y == (int)ResetPosition.Y
+            )
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _aiComponent.ChangeState("waiting");
@@ -157,7 +187,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -205,10 +239,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnHoleDeath()
         {
-            Map.Objects.SpawnObject(new EnemyHardhatBeetleRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 16, _body.FieldRectangle));
+            Map.Objects.SpawnObject(
+                new EnemyHardhatBeetleRespawner(
+                    Map,
+                    (int)ResetPosition.X - 8,
+                    (int)ResetPosition.Y - 16,
+                    _body.FieldRectangle
+                )
+            );
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

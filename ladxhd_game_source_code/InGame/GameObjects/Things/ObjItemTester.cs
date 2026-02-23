@@ -4,9 +4,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjItemTester : GameObject
     {
-        public ObjItemTester() : base("item") { }
+        public ObjItemTester()
+            : base("item") { }
 
-        public ObjItemTester(Map.Map map, int posX, int posY, int width) : base(map)
+        public ObjItemTester(Map.Map map, int posX, int posY, int width)
+            : base(map)
         {
             IsDead = true;
 

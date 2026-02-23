@@ -22,9 +22,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private float _recheckTimer;
 
-        public ObjEnemyTrigger() : base("editor enemy trigger") { }
+        public ObjEnemyTrigger()
+            : base("editor enemy trigger") { }
 
-        public ObjEnemyTrigger(Map.Map map, int posX, int posY, string triggerKey, bool respawn) : base(map)
+        public ObjEnemyTrigger(Map.Map map, int posX, int posY, string triggerKey, bool respawn)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
 
@@ -59,15 +61,25 @@ namespace ProjectZ.InGame.GameObjects.Things
                     _recheckTimer = 0;
 
                     // A previous loop iteration will note if enemies are alive.
-                    if (_enemiesAlive & _triggerField.Contains(MapManager.ObjLink.CenterPosition.Position));
-                        Game1.GameManager.SaveManager.SetString(_triggerKey, "0");
+                    if (
+                        _enemiesAlive
+                        & _triggerField.Contains(MapManager.ObjLink.CenterPosition.Position)
+                    )
+                        ;
+                    Game1.GameManager.SaveManager.SetString(_triggerKey, "0");
                 }
             }
             // Find any enemies in the current field.
             if (_findEnemies)
             {
-                Map.Objects.GetGameObjectsWithTag(EnemyTriggerList, Values.GameObjectTag.Enemy,
-                    _triggerField.X, _triggerField.Y, _triggerField.Width, _triggerField.Height);
+                Map.Objects.GetGameObjectsWithTag(
+                    EnemyTriggerList,
+                    Values.GameObjectTag.Enemy,
+                    _triggerField.X,
+                    _triggerField.Y,
+                    _triggerField.Width,
+                    _triggerField.Height
+                );
                 _findEnemies = false;
             }
             // Assume all enemies are defeated.
@@ -90,7 +102,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // If it's a persistent enemy trigger respawn a new one.
             if (_respawn)
-                Map.Objects.SpawnObject(new ObjEnemyTrigger(Map, _posX, _posY, _triggerKey, _respawn));
+                Map.Objects.SpawnObject(
+                    new ObjEnemyTrigger(Map, _posX, _posY, _triggerKey, _respawn)
+                );
         }
     }
 }

@@ -18,9 +18,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly float _topLeafDivider;
         private readonly float _bottomLeafDivider;
 
-        public ObjAquaticPlant() : base("aquatic_plant") { }
+        public ObjAquaticPlant()
+            : base("aquatic_plant") { }
 
-        public ObjAquaticPlant(Map.Map map, int posX, int posY) : base(map)
+        public ObjAquaticPlant(Map.Map map, int posX, int posY)
+            : base(map)
         {
             var sourceTop = Resources.SourceRectangle("aquatic_plant_top");
             var sourceBottom = Resources.SourceRectangle("aquatic_plant_bottom");
@@ -28,8 +30,18 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
-            _topPlant = new CSprite(Resources.SprObjects, new CPosition(posX + 1, posY, 0), sourceTop, Vector2.Zero);
-            _bottomPlant = new CSprite(Resources.SprObjects, new CPosition(posX + 7, posY + 10, 0), sourceBottom, Vector2.Zero);
+            _topPlant = new CSprite(
+                Resources.SprObjects,
+                new CPosition(posX + 1, posY, 0),
+                sourceTop,
+                Vector2.Zero
+            );
+            _bottomPlant = new CSprite(
+                Resources.SprObjects,
+                new CPosition(posX + 7, posY + 10, 0),
+                sourceBottom,
+                Vector2.Zero
+            );
 
             // so not all leafs move in parallel
             _counter = Game1.RandomNumber.Next(0, 450);
@@ -37,7 +49,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _bottomLeafDivider = Game1.RandomNumber.Next(250, 350);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         public void Update()

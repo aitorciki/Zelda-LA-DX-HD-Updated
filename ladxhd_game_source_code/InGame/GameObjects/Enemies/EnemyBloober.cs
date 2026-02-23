@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -22,14 +22,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private int _lives = EnemyLives.Bloober;
 
-        public EnemyBloober() : base("bloober") { }
+        public EnemyBloober()
+            : base("bloober") { }
 
-        public EnemyBloober(Map.Map map, int posX, int posY) : base(map)
+        public EnemyBloober(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -39,16 +41,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/bloober");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -13, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.NPCWall,
                 Gravity2DWater = 0.035f,
-                DeepWaterOffset = -9
+                DeepWaterOffset = -9,
             };
 
             var stateUp = new AiState(UpdateUp);
@@ -59,19 +64,34 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("moveUp", stateUp);
             _aiComponent.States.Add("moveDown", stateDown);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { HitMultiplierX = 2.0f, HitMultiplierY = 2.0f, FlameOffset = new Point(0, 3), OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                HitMultiplierX = 2.0f,
+                HitMultiplierY = 2.0f,
+                FlameOffset = new Point(0, 3),
+                OnBurn = OnBurn,
+            };
 
             ToMoveUp();
 
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 12, 8);
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 12, 4);
-            
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, _damageState.OnHit));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, _damageState.OnHit)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
         }
 
         private void Reset()
@@ -95,8 +115,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void MoveTowardPosition(Vector2 position, float speed)
         {
             // do not change to move up state if the player is below the enemy
-            if (EntityPosition.Y - 6 < position.Y &&
-                (_body.LastVelocityCollision & Values.BodyCollision.Bottom) == 0)
+            if (
+                EntityPosition.Y - 6 < position.Y
+                && (_body.LastVelocityCollision & Values.BodyCollision.Bottom) == 0
+            )
             {
                 _aiComponent.ChangeState("moveDown");
                 return;
@@ -138,14 +160,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _hitComponent.IsActive = false;
         }
 
-        private void UpdateDown()
-        {
+        private void UpdateDown() { }
 
-        }
-
-        private void OnCollision(Values.BodyCollision collision)
-        {
-
-        }
+        private void OnCollision(Values.BodyCollision collision) { }
     }
 }

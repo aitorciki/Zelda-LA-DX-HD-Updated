@@ -21,8 +21,7 @@ namespace ProjectZ.Base.UI
 
         private IEnumerable<UiElement> AllElements => _elementList.Concat(_elementListNoHide);
 
-        private static void RemoveMarked(List<UiElement> list) =>
-            list.RemoveAll(e => e.Remove);
+        private static void RemoveMarked(List<UiElement> list) => list.RemoveAll(e => e.Remove);
 
         private void UpdateElements(List<UiElement> list)
         {
@@ -53,7 +52,8 @@ namespace ProjectZ.Base.UI
                 if (element.Screens.Contains(_currentScreen) && element.IsVisible)
                     element.DrawBlur(spriteBatch);
 
-            if (HideOverlay) return;
+            if (HideOverlay)
+                return;
 
             // Draw normal elements if the overlay is not hidden.
             foreach (var element in _elementList)
@@ -66,9 +66,11 @@ namespace ProjectZ.Base.UI
             foreach (var uiElement in AllElements)
                 uiElement.SizeUpdate?.Invoke(uiElement);
         }
+
         public UiElement AddElement(UiElement element, bool alwaysDraw = false)
         {
-            if (element == null) return null;
+            if (element == null)
+                return null;
 
             if (alwaysDraw)
                 _elementListNoHide.Add(element);

@@ -31,9 +31,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _showThunder;
         private bool _soundEffect;
 
-        public ObjShopkeeper() : base("shopkeeper") { }
+        public ObjShopkeeper()
+            : base("shopkeeper") { }
 
-        public ObjShopkeeper(Map.Map map, int posX, int posY) : base(map)
+        public ObjShopkeeper(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -52,19 +54,38 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("stand_0");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8);
             _bodyDrawComponent = new BodyDrawComponent(_body, sprite, 1);
             var interactionBox = new CBox(EntityPosition, -7, -14, 14, 14, 8);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, new InteractComponent(interactionBox, OnInteract));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    _body,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(interactionBox, OnInteract)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -73,7 +94,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_punishMode)
             {
                 Game1.GameManager.SaveManager.SetString("punishActive", "1");
-                MapManager.ObjLink.NextMapPositionEnd = new Vector2(MapManager.ObjLink.NextMapPositionEnd.Value.X, MapManager.ObjLink.NextMapPositionEnd.Value.Y - 5);
+                MapManager.ObjLink.NextMapPositionEnd = new Vector2(
+                    MapManager.ObjLink.NextMapPositionEnd.Value.X,
+                    MapManager.ObjLink.NextMapPositionEnd.Value.Y - 5
+                );
             }
         }
 
@@ -89,7 +113,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             var playerDistance = new Vector2(
                 MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
-                MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
+                MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4)
+            );
 
             // Rotate in the direction of the player.
             var dir = AnimationHelper.GetDirection(playerDistance);
@@ -99,7 +124,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _directionChange -= Game1.DeltaTime;
 
-                // If the direction has changed. 
+                // If the direction has changed.
                 if (_directionChange <= 0)
                 {
                     // Delay the shopkeeper turn facing by a value between 0ms and 2500ms.
@@ -162,7 +187,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.UseShockEffect = false;
                 Game1.GameManager.SaveManager.SetString("punishActive", "0");
                 Game1.GameManager.SaveManager.DisableHistory();
-                ((GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]).StartDeath();
+                (
+                    (GameOverSystem)Game1.GameManager.GameSystems[typeof(GameOverSystem)]
+                ).StartDeath();
             }
             // Make sure to update the player so the death can take place.
             if (MapManager.ObjLink.IsTransitioning || _showThunder)
@@ -181,14 +208,41 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             var offsetY = -5;
             var animationOffset = _punishCount % 133 < 66;
             if (_punishCount > 0)
-                spriteBatch.Draw(Resources.SprNpCs, new Vector2(EntityPosition.X - 8, EntityPosition.Y + offsetY),
-                    new Rectangle(_thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0), _thunderTop.Y, _thunderTop.Width, _thunderTop.Height), Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNpCs,
+                    new Vector2(EntityPosition.X - 8, EntityPosition.Y + offsetY),
+                    new Rectangle(
+                        _thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0),
+                        _thunderTop.Y,
+                        _thunderTop.Width,
+                        _thunderTop.Height
+                    ),
+                    Color.White
+                );
             if (_punishCount > 66)
-                spriteBatch.Draw(Resources.SprNpCs, new Vector2(EntityPosition.X - 8, EntityPosition.Y + offsetY + 16),
-                    new Rectangle(_thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0), _thunderTop.Y, _thunderTop.Width, _thunderTop.Height), Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNpCs,
+                    new Vector2(EntityPosition.X - 8, EntityPosition.Y + offsetY + 16),
+                    new Rectangle(
+                        _thunderTop.X + (animationOffset ? _thunderTop.Width + 1 : 0),
+                        _thunderTop.Y,
+                        _thunderTop.Width,
+                        _thunderTop.Height
+                    ),
+                    Color.White
+                );
             if (_punishCount > 133)
-                spriteBatch.Draw(Resources.SprNpCs, new Vector2(EntityPosition.X - 17, EntityPosition.Y + offsetY + 32),
-                    new Rectangle(_thunderBottom.X + (animationOffset ? _thunderBottom.Width + 1 : 0), _thunderBottom.Y, _thunderBottom.Width, _thunderBottom.Height), Color.White);
+                spriteBatch.Draw(
+                    Resources.SprNpCs,
+                    new Vector2(EntityPosition.X - 17, EntityPosition.Y + offsetY + 32),
+                    new Rectangle(
+                        _thunderBottom.X + (animationOffset ? _thunderBottom.Width + 1 : 0),
+                        _thunderBottom.Y,
+                        _thunderBottom.Width,
+                        _thunderBottom.Height
+                    ),
+                    Color.White
+                );
         }
 
         private void OnKeyChange()

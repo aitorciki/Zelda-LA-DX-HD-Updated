@@ -33,7 +33,9 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             Rectangle = new RectangleF(
                 position.X + OffsetSize.X,
                 position.Y + OffsetSize.Y + (MoveZ ? -position.Z : 0),
-                OffsetSize.Width, OffsetSize.Height);
+                OffsetSize.Width,
+                OffsetSize.Height
+            );
         }
     }
 }

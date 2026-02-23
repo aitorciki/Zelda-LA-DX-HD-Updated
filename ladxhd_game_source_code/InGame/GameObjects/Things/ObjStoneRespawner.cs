@@ -22,7 +22,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _respawnTimer;
         private bool _respawnedStone;
 
-        public ObjStoneRespawner(Map.Map map, int posX, int posY, string spriteId, string spawnItem, string pickupKey, string dialogPath, bool isHeavy, bool potMessage, bool fromSpawner) : base(map)
+        public ObjStoneRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spriteId,
+            string spawnItem,
+            string pickupKey,
+            string dialogPath,
+            bool isHeavy,
+            bool potMessage,
+            bool fromSpawner
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -96,7 +108,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.DeleteObjects.Add(this);
 
             // Respawn original stone type
-            Map.Objects.SpawnObject(new ObjStone(Map, (int)EntityPosition.X, (int)EntityPosition.Y, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage));
+            Map.Objects.SpawnObject(
+                new ObjStone(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    _spriteId,
+                    _spawnItem,
+                    _pickupKey,
+                    _dialogPath,
+                    _isHeavy,
+                    _potMessage
+                )
+            );
         }
     }
 }

@@ -7,9 +7,18 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 {
     internal class ObjDungeon : GameObject
     {
-        public ObjDungeon() : base("editor dungeon") { }
+        public ObjDungeon()
+            : base("editor dungeon") { }
 
-        public ObjDungeon(Map.Map map, int posX, int posY, string dungeonName, bool updatePosition, int dungeonLevel) : base(map)
+        public ObjDungeon(
+            Map.Map map,
+            int posX,
+            int posY,
+            string dungeonName,
+            bool updatePosition,
+            int dungeonLevel
+        )
+            : base(map)
         {
             if (!string.IsNullOrEmpty(dungeonName))
                 Game1.GameManager.SetDungeon(dungeonName, dungeonLevel);
@@ -24,7 +33,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             var playerPosition = new Point(
                 (int)(MapManager.ObjLink.PosX - Map.MapOffsetX * 16) / 160,
-                (int)(MapManager.ObjLink.PosY - Map.MapOffsetY * 16) / 128);
+                (int)(MapManager.ObjLink.PosY - Map.MapOffsetY * 16) / 128
+            );
 
             // update the player position on the dungeon map
             Game1.GameManager.DungeonUpdatePlayerPosition(playerPosition);

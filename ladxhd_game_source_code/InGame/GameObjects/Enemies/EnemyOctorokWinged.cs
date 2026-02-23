@@ -28,8 +28,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Vector2[] _shotOffset =
         {
-            new Vector2(-8, -1),new Vector2(0, -6),
-            new Vector2(8, -1),new Vector2(0, 11)
+            new Vector2(-8, -1),
+            new Vector2(0, -6),
+            new Vector2(8, -1),
+            new Vector2(0, 11),
         };
 
         private readonly Rectangle _fieldRectangle;
@@ -40,14 +42,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = EnemyLives.OctorokWinged;
         private float _shotCooldown = 2000;
 
-        public EnemyOctorokWinged() : base("winged octorok") { }
+        public EnemyOctorokWinged()
+            : base("winged octorok") { }
 
-        public EnemyOctorokWinged(Map.Map map, int posX, int posY) : base(map)
+        public EnemyOctorokWinged(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 15, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 15, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 15, 0);
             EntitySize = new Rectangle(-8, -15 - 16, 16, 32);
             CanReset = true;
             OnReset = Reset;
@@ -56,17 +60,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _fieldRectangle = map.GetField(posX, posY);
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -15));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -15)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
                 MoveCollision = OnCollision,
                 AbsorbPercentage = 0.85f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = _fieldRectangle,
                 Bounciness = 0.25f,
                 Drag = 0.85f,
@@ -74,16 +82,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
 
             var stateIdle = new AiState { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 250, 500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 250, 500)
+            );
             var stateWalking = new AiState { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1000));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1000)
+            );
             var stateFlying = new AiState(UpdateFlying) { Init = InitFlying };
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("flying", stateFlying);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.Trigger.Add(_damageSwitch = new AiTriggerSwitch(350));
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
 
@@ -98,14 +113,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _bodyDrawComponent = new BodyDrawComponent(_body, sprite, Values.LayerPlayer);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { Height = 1.0f, Rotation = 0.1f, ShadowWidth = 10, ShadowHeight = 5 });
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite)
+                {
+                    Height = 1.0f,
+                    Rotation = 0.1f,
+                    ShadowWidth = 10,
+                    ShadowHeight = 5,
+                }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
             var spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -153,11 +189,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 {
                     // shoot
                     _shotCooldown = 2000;
-                    var shot = new EnemyOctorokShot(Map,
+                    var shot = new EnemyOctorokShot(
+                        Map,
                         EntityPosition.X + _shotOffset[_direction].X,
                         EntityPosition.Y + _shotOffset[_direction].Y,
                         AnimationHelper.DirectionOffset[_direction] * 2f,
-                        _direction);
+                        _direction
+                    );
                     Map.Objects.SpawnObject(shot);
                 }
             }
@@ -200,8 +238,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _flyCounter = 0;
                 _aiComponent.ChangeState("idle");
                 _damageSwitch.Reset();
-                _body.AvoidTypes = Values.CollisionTypes.Hole |
-                                   Values.CollisionTypes.NPCWall;
+                _body.AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall;
                 _body.FieldRectangle = _fieldRectangle;
             }
         }
@@ -209,12 +246,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Draw(SpriteBatch spriteBatch)
         {
             // draw the wings
-            spriteBatch.Draw(Resources.SprEnemies, new Vector2(EntityPosition.X - _wingRectangle.Width - 5, EntityPosition.Y - 8 - EntityPosition.Z),
-                _wingRectangle, Color.White, 0, new Vector2(0, 9), Vector2.One,
-                (int)_flyCounter % 132 < 66 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprEnemies, new Vector2(EntityPosition.X + 5, EntityPosition.Y - 8 - EntityPosition.Z),
-                _wingRectangle, Color.White, 0, new Vector2(0, 9), Vector2.One,
-                ((int)_flyCounter % 132 < 66 ? SpriteEffects.FlipVertically : SpriteEffects.None) | SpriteEffects.FlipHorizontally, 0);
+            spriteBatch.Draw(
+                Resources.SprEnemies,
+                new Vector2(
+                    EntityPosition.X - _wingRectangle.Width - 5,
+                    EntityPosition.Y - 8 - EntityPosition.Z
+                ),
+                _wingRectangle,
+                Color.White,
+                0,
+                new Vector2(0, 9),
+                Vector2.One,
+                (int)_flyCounter % 132 < 66 ? SpriteEffects.FlipVertically : SpriteEffects.None,
+                0
+            );
+            spriteBatch.Draw(
+                Resources.SprEnemies,
+                new Vector2(EntityPosition.X + 5, EntityPosition.Y - 8 - EntityPosition.Z),
+                _wingRectangle,
+                Color.White,
+                0,
+                new Vector2(0, 9),
+                Vector2.One,
+                ((int)_flyCounter % 132 < 66 ? SpriteEffects.FlipVertically : SpriteEffects.None)
+                    | SpriteEffects.FlipHorizontally,
+                0
+            );
 
             // draw the body
             _bodyDrawComponent.Draw(spriteBatch);
@@ -223,7 +280,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -240,7 +301,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk_" + _direction);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -262,16 +329,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // Fly over the player if the octorok is facing Link.
             var playerDirection = AnimationHelper.GetDirection(
-                MapManager.ObjLink.Position - EntityPosition.Position);
+                MapManager.ObjLink.Position - EntityPosition.Position
+            );
 
-            if (_direction != (playerDirection + 2) % 4 && _damageSwitch.State &&
-                (_aiComponent.CurrentStateId == "walking" || _aiComponent.CurrentStateId == "idle") &&
-                hitType != HitType.PegasusBootsSword &&
-                hitType != HitType.Bow &&
-                hitType != HitType.Hookshot &&
-                hitType != HitType.MagicRod &&
-                hitType != HitType.MagicPowder &&
-                hitType != HitType.Boomerang)
+            if (
+                _direction != (playerDirection + 2) % 4
+                && _damageSwitch.State
+                && (
+                    _aiComponent.CurrentStateId == "walking"
+                    || _aiComponent.CurrentStateId == "idle"
+                )
+                && hitType != HitType.PegasusBootsSword
+                && hitType != HitType.Bow
+                && hitType != HitType.Hookshot
+                && hitType != HitType.MagicRod
+                && hitType != HitType.MagicPowder
+                && hitType != HitType.Boomerang
+            )
             {
                 _aiComponent.ChangeState("flying");
                 return Values.HitCollision.None;

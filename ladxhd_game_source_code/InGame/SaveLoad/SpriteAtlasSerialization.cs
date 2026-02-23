@@ -39,13 +39,15 @@ namespace ProjectZ.InGame.SaveLoad
             {
                 var rectangle = spriteAtlas.Data[i].SourceRectangle;
                 var origin = spriteAtlas.Data[i].Origin;
-                writer.WriteLine($"{spriteAtlas.Data[i].EntryId}:" +
-                                 $"{rectangle.X / spriteAtlas.Scale}," +
-                                 $"{rectangle.Y / spriteAtlas.Scale}," +
-                                 $"{rectangle.Width / spriteAtlas.Scale}," +
-                                 $"{rectangle.Height / spriteAtlas.Scale}," +
-                                 $"{origin.X / spriteAtlas.Scale}," +
-                                 $"{origin.Y / spriteAtlas.Scale}");
+                writer.WriteLine(
+                    $"{spriteAtlas.Data[i].EntryId}:"
+                        + $"{rectangle.X / spriteAtlas.Scale},"
+                        + $"{rectangle.Y / spriteAtlas.Scale},"
+                        + $"{rectangle.Width / spriteAtlas.Scale},"
+                        + $"{rectangle.Height / spriteAtlas.Scale},"
+                        + $"{origin.X / spriteAtlas.Scale},"
+                        + $"{origin.Y / spriteAtlas.Scale}"
+                );
             }
         }
 
@@ -72,14 +74,22 @@ namespace ProjectZ.InGame.SaveLoad
                     var newEntry = new AtlasEntry
                     {
                         EntryId = split[0],
-                        SourceRectangle = rectangleData.Length >= 4
-                            ? new Rectangle(
-                                int.Parse(rectangleData[0]), int.Parse(rectangleData[1]),
-                                int.Parse(rectangleData[2]), int.Parse(rectangleData[3]))
-                            : default,
-                        Origin = rectangleData.Length >= 6
-                            ? new Vector2(int.Parse(rectangleData[4]), int.Parse(rectangleData[5]))
-                            : default
+                        SourceRectangle =
+                            rectangleData.Length >= 4
+                                ? new Rectangle(
+                                    int.Parse(rectangleData[0]),
+                                    int.Parse(rectangleData[1]),
+                                    int.Parse(rectangleData[2]),
+                                    int.Parse(rectangleData[3])
+                                )
+                                : default,
+                        Origin =
+                            rectangleData.Length >= 6
+                                ? new Vector2(
+                                    int.Parse(rectangleData[4]),
+                                    int.Parse(rectangleData[5])
+                                )
+                                : default,
                     };
                     spriteAtlas.Data.Add(newEntry);
                 }
@@ -88,7 +98,11 @@ namespace ProjectZ.InGame.SaveLoad
             return true;
         }
 
-        public static void LoadSourceDictionary(Texture2D texture, string fileName, Dictionary<string, DictAtlasEntry> dictionary)
+        public static void LoadSourceDictionary(
+            Texture2D texture,
+            string fileName,
+            Dictionary<string, DictAtlasEntry> dictionary
+        )
         {
             var spriteAtlas = new SpriteAtlas();
 
@@ -97,7 +111,12 @@ namespace ProjectZ.InGame.SaveLoad
 
             for (var i = 0; i < spriteAtlas.Data.Count; i++)
             {
-                var newEntry = new DictAtlasEntry(texture, spriteAtlas.Data[i].SourceRectangle, spriteAtlas.Data[i].Origin, spriteAtlas.Scale);
+                var newEntry = new DictAtlasEntry(
+                    texture,
+                    spriteAtlas.Data[i].SourceRectangle,
+                    spriteAtlas.Data[i].Origin,
+                    spriteAtlas.Scale
+                );
                 dictionary.TryAdd(spriteAtlas.Data[i].EntryId, newEntry);
             }
         }

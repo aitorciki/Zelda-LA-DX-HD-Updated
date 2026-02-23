@@ -41,13 +41,26 @@ namespace ProjectZ.InGame.GameObjects.Things
         //  7: Falling
         //----------------------------------------
 
-        public ObjDoor() : base("editor door")
+        public ObjDoor()
+            : base("editor door")
         {
             EditorColor = Color.Yellow * 0.65f;
         }
 
-        public ObjDoor(Map.Map map, int posX, int posY, int width, int height,
-            string entryId, string nextMapId, string exitId, int direction, int mode, bool savePosition) : base(map)
+        public ObjDoor(
+            Map.Map map,
+            int posX,
+            int posY,
+            int width,
+            int height,
+            string entryId,
+            string nextMapId,
+            string exitId,
+            int direction,
+            int mode,
+            bool savePosition
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, width, height);
@@ -73,7 +86,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             // level 8 through a backdoor, activate the backdoor hack.
             if (_entryId != null && MapManager.ObjLink.NextMapPositionId == _entryId)
             {
-                if (map.MapName == "dungeon8.map" && (entryId == "d8_left" || entryId == "d8_right"))
+                if (
+                    map.MapName == "dungeon8.map"
+                    && (entryId == "d8_left" || entryId == "d8_right")
+                )
                     _backdoorLevel8 = true;
 
                 PlacePlayer();
@@ -83,12 +99,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var collisionBox = new CBox(EntityPosition, 0, 0, 0, width, height, 4, true);
 
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Passageway) { });
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Passageway) { }
+            );
 
             if (!string.IsNullOrEmpty(_nextMap) && !string.IsNullOrEmpty(_exitId))
             {
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-                AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(_collisionRectangle, OnCollision));
+                AddComponent(
+                    ObjectCollisionComponent.Index,
+                    new ObjectCollisionComponent(_collisionRectangle, OnCollision)
+                );
             }
         }
 
@@ -113,14 +135,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             _isColliding = true;
 
             // first step on the door?
-            if (MapManager.ObjLink.WasHoleReset || MapManager.ObjLink.IsDying() || _wasColliding || _isTransitioning)
+            if (
+                MapManager.ObjLink.WasHoleReset
+                || MapManager.ObjLink.IsDying()
+                || _wasColliding
+                || _isTransitioning
+            )
                 return;
 
             _isTransitioning = true;
 
             var transitionEnd = new Vector2(
                 _collisionRectangle.X + _collisionRectangle.Width / 2f,
-                _collisionRectangle.Y + _collisionRectangle.Height / 2f + MapManager.ObjLink._body.Height / 2f);
+                _collisionRectangle.Y
+                    + _collisionRectangle.Height / 2f
+                    + MapManager.ObjLink._body.Height / 2f
+            );
             var color = Values.MapTransitionColor;
             var colorMode = false;
 
@@ -147,7 +177,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                     else if (_direction == 2)
                         transitionEnd = MapManager.ObjLink.Position + new Vector2(-8, 0);
                     else if (_direction == 3)
-                        transitionEnd = MapManager.ObjLink.Position + new Vector2(MapManager.ObjLink.GetSwimVelocity().X * 8, -8);
+                        transitionEnd =
+                            MapManager.ObjLink.Position
+                            + new Vector2(MapManager.ObjLink.GetSwimVelocity().X * 8, -8);
 
                     // look at the camera
                     MapManager.ObjLink.Direction = 3;
@@ -158,7 +190,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             else if (_mode == 5)
             {
-                transitionEnd = MapManager.ObjLink.Position + MapManager.ObjLink._body.VelocityTarget * 60 * (MapTransitionSystem.ChangeMapTime / 1000f);
+                transitionEnd =
+                    MapManager.ObjLink.Position
+                    + MapManager.ObjLink._body.VelocityTarget
+                        * 60
+                        * (MapTransitionSystem.ChangeMapTime / 1000f);
                 color = Color.White;
                 colorMode = true;
             }
@@ -170,7 +206,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             MapManager.ObjLink.TransitionOutWalking = MapManager.ObjLink.Position != transitionEnd;
 
             // Append a map change.
-            var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+            var transitionSystem = (MapTransitionSystem)
+                Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
             transitionSystem.AppendMapChange(_nextMap, _exitId, false, false, color, colorMode);
         }
 
@@ -181,7 +218,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var transitionStart = new Vector2(
                 _collisionRectangle.X + _collisionRectangle.Width / 2f,
-                _collisionRectangle.Y + _collisionRectangle.Height / 2f + MapManager.ObjLink._body.Height / 2f);
+                _collisionRectangle.Y
+                    + _collisionRectangle.Height / 2f
+                    + MapManager.ObjLink._body.Height / 2f
+            );
             var transitionEnd = transitionStart;
 
             if (_mode == 0 || _mode == 1)
@@ -189,13 +229,24 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport)
                 {
                     if (_direction == 0)
-                        transitionEnd.X = _collisionRectangle.X - MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) - _positionOffset;
+                        transitionEnd.X =
+                            _collisionRectangle.X
+                            - MathF.Ceiling(MapManager.ObjLink._body.Width / 2f)
+                            - _positionOffset;
                     else if (_direction == 1)
                         transitionEnd.Y = _collisionRectangle.Y - _positionOffset;
                     else if (_direction == 2)
-                        transitionEnd.X = _collisionRectangle.X + _collisionRectangle.Width + MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) + _positionOffset;
+                        transitionEnd.X =
+                            _collisionRectangle.X
+                            + _collisionRectangle.Width
+                            + MathF.Ceiling(MapManager.ObjLink._body.Width / 2f)
+                            + _positionOffset;
                     else if (_direction == 3)
-                        transitionEnd.Y = _collisionRectangle.Y + _collisionRectangle.Height + MapManager.ObjLink._body.Height + _positionOffset;
+                        transitionEnd.Y =
+                            _collisionRectangle.Y
+                            + _collisionRectangle.Height
+                            + MapManager.ObjLink._body.Height
+                            + _positionOffset;
                 }
                 // walk on the ground
                 if (Map.Is2dMap)
@@ -214,17 +265,27 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             else if (_mode == 2)
                 MapManager.ObjLink.NextMapFallStart = true;
-
             else if (_mode == 3)
             {
                 if (_direction == 0)
-                    transitionEnd.X = _collisionRectangle.X - MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) - _positionOffset;
+                    transitionEnd.X =
+                        _collisionRectangle.X
+                        - MathF.Ceiling(MapManager.ObjLink._body.Width / 2f)
+                        - _positionOffset;
                 else if (_direction == 1)
                     transitionEnd.Y = _collisionRectangle.Y - _positionOffset;
                 else if (_direction == 2)
-                    transitionEnd.X = _collisionRectangle.X + _collisionRectangle.Width + MathF.Ceiling(MapManager.ObjLink._body.Width / 2f) + _positionOffset;
+                    transitionEnd.X =
+                        _collisionRectangle.X
+                        + _collisionRectangle.Width
+                        + MathF.Ceiling(MapManager.ObjLink._body.Width / 2f)
+                        + _positionOffset;
                 else if (_direction == 3)
-                    transitionEnd.Y = _collisionRectangle.Y + _collisionRectangle.Height + MapManager.ObjLink._body.Height + _positionOffset;
+                    transitionEnd.Y =
+                        _collisionRectangle.Y
+                        + _collisionRectangle.Height
+                        + MapManager.ObjLink._body.Height
+                        + _positionOffset;
             }
             else if (_mode == 4)
             {
@@ -232,8 +293,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 //transitionEnd.Y = _collisionRectangle.Y + _collisionRectangle.Height + MapManager.ObjLink._body.Height - _positionOffset;
             }
             else if (_mode == 5)
-                transitionEnd = transitionStart + new Vector2(0, -0.5f) * 60 * (MapTransitionSystem.ChangeMapTime / 1000f);
-
+                transitionEnd =
+                    transitionStart
+                    + new Vector2(0, -0.5f) * 60 * (MapTransitionSystem.ChangeMapTime / 1000f);
             else if (_mode == 6)
                 MapManager.ObjLink.NextMapFallRotateStart = true;
 

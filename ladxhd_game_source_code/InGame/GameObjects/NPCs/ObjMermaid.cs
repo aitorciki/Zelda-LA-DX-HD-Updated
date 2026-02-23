@@ -30,11 +30,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _jumpCounter = 4;
         private bool _leave;
 
-        public ObjMermaid() : base("mermaid") { }
+        public ObjMermaid()
+            : base("mermaid") { }
 
-        public ObjMermaid(Map.Map map, int posX, int posY, string spawnCondition) : base(map)
+        public ObjMermaid(Map.Map map, int posX, int posY, string spawnCondition)
+            : base(map)
         {
-            if (!string.IsNullOrEmpty(spawnCondition) && !SaveCondition.CheckCondition(spawnCondition))
+            if (
+                !string.IsNullOrEmpty(spawnCondition)
+                && !SaveCondition.CheckCondition(spawnCondition)
+            )
             {
                 IsDead = true;
                 return;
@@ -51,10 +56,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _sprite = new CSprite(EntityPosition);
             _animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
 
-            _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8)
-            {
-                Gravity = -0.075f,
-            };
+            _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8) { Gravity = -0.075f };
 
             _aiComponent = new AiComponent();
 
@@ -80,13 +82,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("sitJump", stateSitJump);
             _aiComponent.States.Add("sit", stateSit);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_body.BodyBox, Values.CollisionTypes.Enemy));
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    _body.BodyBox,
+                    Values.CollisionTypes.Enemy
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             //AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
 
             if (Game1.GameManager.SaveManager.GetString("mermaid_state", "0") == "0")
@@ -123,7 +137,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateSitJump()
         {
             // move upwards to the sitting position
-            var newPosition = Vector2.Lerp(EntityPosition.Position, _sitPosition, 0.075f * Game1.TimeMultiplier);
+            var newPosition = Vector2.Lerp(
+                EntityPosition.Position,
+                _sitPosition,
+                0.075f * Game1.TimeMultiplier
+            );
             EntityPosition.Set(newPosition);
 
             if (_body.IsGrounded)
@@ -175,10 +193,28 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 velocity = new Vector2(MathF.Sin(dirRadiant), MathF.Cos(dirRadiant));
 
                 // is there water at the target position?
-                if ((Map.GetFieldState(EntityPosition.Position + new Vector2(-3, -6) + velocity * 14) & MapStates.FieldStates.DeepWater) != 0 &&
-                    (Map.GetFieldState(EntityPosition.Position + new Vector2(3, -6) + velocity * 14) & MapStates.FieldStates.DeepWater) != 0 &&
-                    (Map.GetFieldState(EntityPosition.Position + new Vector2(-3, 0) + velocity * 14) & MapStates.FieldStates.DeepWater) != 0 &&
-                    (Map.GetFieldState(EntityPosition.Position + new Vector2(3, 0) + velocity * 14) & MapStates.FieldStates.DeepWater) != 0)
+                if (
+                    (
+                        Map.GetFieldState(
+                            EntityPosition.Position + new Vector2(-3, -6) + velocity * 14
+                        ) & MapStates.FieldStates.DeepWater
+                    ) != 0
+                    && (
+                        Map.GetFieldState(
+                            EntityPosition.Position + new Vector2(3, -6) + velocity * 14
+                        ) & MapStates.FieldStates.DeepWater
+                    ) != 0
+                    && (
+                        Map.GetFieldState(
+                            EntityPosition.Position + new Vector2(-3, 0) + velocity * 14
+                        ) & MapStates.FieldStates.DeepWater
+                    ) != 0
+                    && (
+                        Map.GetFieldState(
+                            EntityPosition.Position + new Vector2(3, 0) + velocity * 14
+                        ) & MapStates.FieldStates.DeepWater
+                    ) != 0
+                )
                     break;
 
                 dirRadiant += MathF.PI / 5;
@@ -292,7 +328,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void Splash()
         {
-            var objSplash = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0, Values.LayerBottom, "Particles/fishingSplash", "idle", true);
+            var objSplash = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                0,
+                0,
+                Values.LayerBottom,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             Map.Objects.SpawnObject(objSplash);
         }
     }

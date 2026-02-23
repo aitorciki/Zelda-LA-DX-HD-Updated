@@ -32,13 +32,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _swarmSpawn;
         private int _hitCounter;
 
-        public ObjBird() : base("bird") { }
+        public ObjBird()
+            : base("bird") { }
 
-        public ObjBird(Map.Map map, int posX, int posY, bool swarmSpawn) : base(map)
+        public ObjBird(Map.Map map, int posX, int posY, bool swarmSpawn)
+            : base(map)
         {
             var rectangle = new Rectangle(0, 0, 14, 8);
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
 
             CanReset = true;
@@ -51,29 +53,43 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Drag = 0.15f,
                 DragAir = 1.0f,
                 Gravity = -0.1f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Player,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Player,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Player,
+                AvoidTypes =
+                    Values.CollisionTypes.Hole
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Player,
             };
             _swarmSpawn = swarmSpawn;
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/bird");
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -15));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -15)
+            );
 
             var stateIdle = new AiState() { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500)
+            );
             var stateWalking = new AiState(UpdateWalking) { Init = InitWalk };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1500));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1500)
+            );
             stateWalking.Trigger.Add(_changeDirectionSwitch = new AiTriggerSwitch(250));
             var stateFleeIdle = new AiState(UpdateFleeState) { Init = InitIdle };
-            stateFleeIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("fleeingWalking"), 500, 1500));
+            stateFleeIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("fleeingWalking"), 500, 1500)
+            );
             var stateFleeWalking = new AiState(UpdateFleeState) { Init = InitWalk };
-            stateFleeWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("fleeingIdle"), 750, 1500));
+            stateFleeWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("fleeingIdle"), 750, 1500)
+            );
             var stateFleeing = new AiState(UpdateFleeing);
             var stateAttack = new AiState(UpdateAttack);
             var stateThrown = new AiState(UpdateThrown);
@@ -88,21 +104,43 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("thrown", stateThrown);
             _aiComponent.States.Add("pickedUp", statePickedUp);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 2)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState(Game1.RandomNumber.Next(0, 10) < 5 ? "idle" : "walking");
 
             var box = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
 
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(
-                new CRectangle(EntityPosition, new Rectangle(-6, -14, 12, 14)), CarryInit, CarryUpdate, CarryThrow));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false });
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableComponent = new CarriableComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-6, -14, 12, 14)),
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(box, HitType.Enemy, 2) { IsActive = false }
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -131,7 +169,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _damageField.IsActive = true;
 
-            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 16);
+            var direction =
+                MapManager.ObjLink.Position
+                - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 16);
             if (direction != Vector2.Zero)
                 direction.Normalize();
             _body.VelocityTarget = direction * 1.5f;
@@ -149,7 +189,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _attackingCounter += Game1.DeltaTime;
 
             var target = _attackingCounter < 2000 ? 1 : 0;
-            _attackTransparency = AnimationHelper.MoveToTarget(_attackTransparency, target, 0.1f * Game1.TimeMultiplier);
+            _attackTransparency = AnimationHelper.MoveToTarget(
+                _attackTransparency,
+                target,
+                0.1f * Game1.TimeMultiplier
+            );
             _sprite.Color = Color.White * _attackTransparency;
 
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
@@ -170,8 +214,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _hitCounter = 0;
 
                 // change back into the normal mode
-                if (_aiComponent.CurrentStateId != "idle" &&
-                    _aiComponent.CurrentStateId != "walking")
+                if (
+                    _aiComponent.CurrentStateId != "idle"
+                    && _aiComponent.CurrentStateId != "walking"
+                )
                     _aiComponent.ChangeState("idle");
             }
 
@@ -209,9 +255,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             // change the direction
             var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-            _body.VelocityTarget = new Vector2(
-                                       (float)Math.Sin(rotation),
-                                       (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 100f;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation))
+                * Game1.RandomNumber.Next(25, 40)
+                / 100f;
 
             UpdateAnimation();
         }
@@ -300,7 +347,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             UpdateAnimation();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -326,7 +379,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return Values.HitCollision.None;
 
             _damageState.SetDamageState();
-            
+
             // start spawning other birds
             _hitCounter++;
             if (_hitCounter > 35)
@@ -357,12 +410,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 _aiComponent.ChangeState("walking");
 
-                var offsetAngle = MathHelper.ToRadians(Game1.RandomNumber.Next(45, 85) * (_direction * 2 - 1));
-                var newDirection = new Vector2(
-                                       direction.X * (float)Math.Cos(offsetAngle) -
-                                       direction.Y * (float)Math.Sin(offsetAngle),
-                                       direction.X * (float)Math.Sin(offsetAngle) +
-                                       direction.Y * (float)Math.Cos(offsetAngle)) * 0.5f;
+                var offsetAngle = MathHelper.ToRadians(
+                    Game1.RandomNumber.Next(45, 85) * (_direction * 2 - 1)
+                );
+                var newDirection =
+                    new Vector2(
+                        direction.X * (float)Math.Cos(offsetAngle)
+                            - direction.Y * (float)Math.Sin(offsetAngle),
+                        direction.X * (float)Math.Sin(offsetAngle)
+                            + direction.Y * (float)Math.Cos(offsetAngle)
+                    ) * 0.5f;
                 _body.VelocityTarget = newDirection;
 
                 UpdateAnimation();

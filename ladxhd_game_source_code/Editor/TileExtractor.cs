@@ -59,7 +59,10 @@ namespace ProjectZ.Editor
             set
             {
                 _distance = value;
-                _distance = new Point((int)MathHelper.Clamp(_distance.X, -TileSize.X, TileSize.X), (int)MathHelper.Clamp(_distance.Y, -TileSize.Y, TileSize.Y));
+                _distance = new Point(
+                    (int)MathHelper.Clamp(_distance.X, -TileSize.X, TileSize.X),
+                    (int)MathHelper.Clamp(_distance.Y, -TileSize.Y, TileSize.Y)
+                );
                 LoadOutput();
             }
         }
@@ -75,7 +78,8 @@ namespace ProjectZ.Editor
             }
         }
 
-        public TileExtractor(string screenId) : base(screenId) { }
+        public TileExtractor(string screenId)
+            : base(screenId) { }
 
         public override void Load(ContentManager content)
         {
@@ -92,38 +96,232 @@ namespace ProjectZ.Editor
             _camera.Location = new Point(_toolBarWidth + 10, Values.ToolBarHeight + 10 + 20);
 
             // left background bar
-            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0), "left", Values.EditorUiTileExtractor, Color.Transparent, Color.Black * 0.5f,
-                ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0),
+                    "left",
+                    Values.EditorUiTileExtractor,
+                    Color.Transparent,
+                    Color.Black * 0.5f,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            0,
+                            Values.ToolBarHeight,
+                            _toolBarWidth,
+                            Game1.WindowHeight - Values.ToolBarHeight
+                        );
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY, buttonWidth, buttonHeight), Resources.EditorFont, "load image", "default", Values.EditorUiTileExtractor, null, Button_LoadImage));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save tileSet", "default", Values.EditorUiTileExtractor, null, ButtonSaveTileset));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save removed", "default", Values.EditorUiTileExtractor, null, ButtonSaveRemoveTileset));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight), Resources.EditorFont, "save .txt", "default", Values.EditorUiTileExtractor, null, ButtonSaveTilemap));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(buttonDist, posY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "load image",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    Button_LoadImage
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "save tileSet",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ButtonSaveTileset
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "save removed",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ButtonSaveRemoveTileset
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(buttonDist, posY += buttonDistY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "save .txt",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ButtonSaveTilemap
+                )
+            );
 
             //output width
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "output width", "default", Values.EditorUiTileExtractor, null));
-            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, _maxWidth, 5, 25, 1,
-                "outputWidth", Values.EditorUiTileExtractor, null, ui => { MaxWidth = (int)((UiNumberInput)ui).Value; }));
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(5, posY += buttonDistY, buttonWidth, 25),
+                    Resources.EditorFont,
+                    "output width",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(5, posY += buttonDistY, buttonWidth, 25),
+                    Resources.EditorFont,
+                    _maxWidth,
+                    5,
+                    25,
+                    1,
+                    "outputWidth",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ui =>
+                    {
+                        MaxWidth = (int)((UiNumberInput)ui).Value;
+                    }
+                )
+            );
 
             // padding
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "padding", "default", Values.EditorUiTileExtractor, null));
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += 15, buttonWidthHalf, 25), Resources.EditorFont, "x", "default", Values.EditorUiTileExtractor, null));
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, "y", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(5, posY += buttonDistY, buttonWidth, 25),
+                    Resources.EditorFont,
+                    "padding",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(5, posY += 15, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    "x",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    "y",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25), Resources.EditorFont, _distance.X, -10, 10, 1,
-                "outputWidth", Values.EditorUiTileExtractor, null, ui => { Distance = new Point((int)((UiNumberInput)ui).Value, _distance.Y); }));
-            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, _distance.Y, -10, 10, 1,
-                "outputWidth", Values.EditorUiTileExtractor, null, ui => { Distance = new Point(_distance.X, (int)((UiNumberInput)ui).Value); }));
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    _distance.X,
+                    -10,
+                    10,
+                    1,
+                    "outputWidth",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ui =>
+                    {
+                        Distance = new Point((int)((UiNumberInput)ui).Value, _distance.Y);
+                    }
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    _distance.Y,
+                    -10,
+                    10,
+                    1,
+                    "outputWidth",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ui =>
+                    {
+                        Distance = new Point(_distance.X, (int)((UiNumberInput)ui).Value);
+                    }
+                )
+            );
 
             // tilesize
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += buttonDistY, buttonWidth, 25), Resources.EditorFont, "tile size", "default", Values.EditorUiTileExtractor, null));
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(5, posY += 15, buttonWidthHalf, 25), Resources.EditorFont, "x", "default", Values.EditorUiTileExtractor, null));
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, "y", "default", Values.EditorUiTileExtractor, null));
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(5, posY += buttonDistY, buttonWidth, 25),
+                    Resources.EditorFont,
+                    "tile size",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(5, posY += 15, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    "x",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    "y",
+                    "default",
+                    Values.EditorUiTileExtractor,
+                    null
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25), Resources.EditorFont, _tileSize.X, 1, 200, 1,
-                "outputWidth", Values.EditorUiTileExtractor, null, ui => { TileSize = new Point((int)((UiNumberInput)ui).Value, _tileSize.Y); }));
-            Game1.UiManager.AddElement(new UiNumberInput(new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25), Resources.EditorFont, _tileSize.Y, 1, 200, 1,
-                "outputWidth", Values.EditorUiTileExtractor, null, ui => { TileSize = new Point(_tileSize.X, (int)((UiNumberInput)ui).Value); }));
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(5, posY += buttonDistY, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    _tileSize.X,
+                    1,
+                    200,
+                    1,
+                    "outputWidth",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ui =>
+                    {
+                        TileSize = new Point((int)((UiNumberInput)ui).Value, _tileSize.Y);
+                    }
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiNumberInput(
+                    new Rectangle(10 + buttonWidthHalf, posY, buttonWidthHalf, 25),
+                    Resources.EditorFont,
+                    _tileSize.Y,
+                    1,
+                    200,
+                    1,
+                    "outputWidth",
+                    Values.EditorUiTileExtractor,
+                    null,
+                    ui =>
+                    {
+                        TileSize = new Point(_tileSize.X, (int)((UiNumberInput)ui).Value);
+                    }
+                )
+            );
         }
 
         public override void Update(GameTime gameTime)
@@ -137,29 +335,46 @@ namespace ProjectZ.Editor
             {
                 _camera.Scale += 0.25f;
                 var scale = _camera.Scale / (_camera.Scale - 0.25f);
-                _camera.Location.X = InputHandler.MousePosition().X - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
-                _camera.Location.Y = InputHandler.MousePosition().Y - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
+                _camera.Location.X =
+                    InputHandler.MousePosition().X
+                    - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
+                _camera.Location.Y =
+                    InputHandler.MousePosition().Y
+                    - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
             }
             if (InputHandler.MouseWheelDown() && _camera.Scale > 0.25f)
             {
                 _camera.Scale -= 0.25f;
                 var scale = _camera.Scale / (_camera.Scale + 0.25f);
-                _camera.Location.X = InputHandler.MousePosition().X - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
-                _camera.Location.Y = InputHandler.MousePosition().Y - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
+                _camera.Location.X =
+                    InputHandler.MousePosition().X
+                    - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
+                _camera.Location.Y =
+                    InputHandler.MousePosition().Y
+                    - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
             }
 
             // move the tileset
             if (!InputHandler.MouseMiddleStart() && InputHandler.MouseMiddleDown())
                 _camera.Location += mousePosition - InputHandler.LastMousePosition();
 
-
             //select a tile from the input texture
-            if (_inputTexture != null &&
-                InputHandler.MouseIntersect(new Rectangle(_camera.Location.X, _camera.Location.Y,
-                    (int)(_inputTexture.Width * _camera.Scale), (int)(_inputTexture.Height * _camera.Scale))))
+            if (
+                _inputTexture != null
+                && InputHandler.MouseIntersect(
+                    new Rectangle(
+                        _camera.Location.X,
+                        _camera.Location.Y,
+                        (int)(_inputTexture.Width * _camera.Scale),
+                        (int)(_inputTexture.Height * _camera.Scale)
+                    )
+                )
+            )
             {
-                _selectedInputTile = (int)((mousePosition.X - _camera.Location.X) / (TileSize.X * _camera.Scale)) +
-                                    (int)((mousePosition.Y - _camera.Location.Y) / (TileSize.Y * _camera.Scale)) * (_inputTexture.Width / TileSize.X);
+                _selectedInputTile =
+                    (int)((mousePosition.X - _camera.Location.X) / (TileSize.X * _camera.Scale))
+                    + (int)((mousePosition.Y - _camera.Location.Y) / (TileSize.Y * _camera.Scale))
+                        * (_inputTexture.Width / TileSize.X);
             }
             else
                 _selectedInputTile = -1;
@@ -172,48 +387,95 @@ namespace ProjectZ.Editor
                 _tilesetPosition.Y += _inputTexture.Height + 40;
 
             //select a tile from the output texture
-            if (_outputTexture != null &&
-                InputHandler.MouseIntersect(new Rectangle(
-                    _camera.Location.X + (int)(_tilesetPosition.X * _camera.Scale),
-                    _camera.Location.Y + (int)(_tilesetPosition.Y * _camera.Scale),
-                    (int)(_outputTexture.Width * _camera.Scale), (int)(_outputTexture.Height * _camera.Scale))))
+            if (
+                _outputTexture != null
+                && InputHandler.MouseIntersect(
+                    new Rectangle(
+                        _camera.Location.X + (int)(_tilesetPosition.X * _camera.Scale),
+                        _camera.Location.Y + (int)(_tilesetPosition.Y * _camera.Scale),
+                        (int)(_outputTexture.Width * _camera.Scale),
+                        (int)(_outputTexture.Height * _camera.Scale)
+                    )
+                )
+            )
             {
-                _selectedOutputTile = (int)((mousePosition.X - _camera.Location.X - (int)(_tilesetPosition.X * _camera.Scale)) / ((TileSize.X + Distance.X) * _camera.Scale)) +
-                                     (int)((mousePosition.Y - _camera.Location.Y - (int)(_tilesetPosition.Y * _camera.Scale)) / ((TileSize.Y + Distance.Y) * _camera.Scale)) *
-                                     (_outputTexture.Width / (TileSize.X + Distance.X));
+                _selectedOutputTile =
+                    (int)(
+                        (
+                            mousePosition.X
+                            - _camera.Location.X
+                            - (int)(_tilesetPosition.X * _camera.Scale)
+                        ) / ((TileSize.X + Distance.X) * _camera.Scale)
+                    )
+                    + (int)(
+                        (
+                            mousePosition.Y
+                            - _camera.Location.Y
+                            - (int)(_tilesetPosition.Y * _camera.Scale)
+                        ) / ((TileSize.Y + Distance.Y) * _camera.Scale)
+                    ) * (_outputTexture.Width / (TileSize.X + Distance.X));
             }
             else
                 _selectedOutputTile = -1;
 
             // remove selected tile
-            if (InputHandler.MouseLeftPressed() && _selectedOutputTile >= 0 && _selectedOutputTile < _sprTiled.Count)
+            if (
+                InputHandler.MouseLeftPressed()
+                && _selectedOutputTile >= 0
+                && _selectedOutputTile < _sprTiled.Count
+            )
                 RemoveSelectedTile();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, _camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _camera.TransformMatrix
+            );
 
             //draw input
             if (_inputTexture != null)
             {
                 // draw the header
-                spriteBatch.DrawString(Resources.EditorFont, "input", new Vector2(0, 0 - Resources.EditorFont.MeasureString("input").Y), Color.White);
+                spriteBatch.DrawString(
+                    Resources.EditorFont,
+                    "input",
+                    new Vector2(0, 0 - Resources.EditorFont.MeasureString("input").Y),
+                    Color.White
+                );
                 // draw the texture
                 spriteBatch.Draw(_inputTexture, Vector2.Zero, Color.White);
 
                 // draw selection
                 if (_selectedInputTile >= 0)
-                    Game1.SpriteBatch.Draw(Resources.SprWhite, new Rectangle(
+                    Game1.SpriteBatch.Draw(
+                        Resources.SprWhite,
+                        new Rectangle(
                             _selectedInputTile % (_inputTexture.Width / _tileSize.X) * _tileSize.X,
-                            _selectedInputTile / (_inputTexture.Width / _tileSize.Y) * _tileSize.Y, _tileSize.X, _tileSize.Y), Color.Red * 0.5f);
+                            _selectedInputTile / (_inputTexture.Width / _tileSize.Y) * _tileSize.Y,
+                            _tileSize.X,
+                            _tileSize.Y
+                        ),
+                        Color.Red * 0.5f
+                    );
             }
 
             //draw output as texture
             if (_outputTexture != null)
             {
                 // draw the header
-                spriteBatch.DrawString(Resources.EditorFont, "tileset", _tilesetPosition - new Vector2(0, Resources.EditorFont.MeasureString("A").Y), Color.White);
+                spriteBatch.DrawString(
+                    Resources.EditorFont,
+                    "tileset",
+                    _tilesetPosition - new Vector2(0, Resources.EditorFont.MeasureString("A").Y),
+                    Color.White
+                );
                 // draw the texture
                 spriteBatch.Draw(_outputTexture, _tilesetPosition, Color.White);
 
@@ -221,10 +483,23 @@ namespace ProjectZ.Editor
                 if (_selectedOutputTile >= 0)
                 {
                     var rectangle = new Rectangle(
-                        (int)_tilesetPosition.X + _selectedOutputTile % (_outputTexture.Width / (_tileSize.X + _distance.X)) * (_tileSize.X + _distance.X),
-                        (int)_tilesetPosition.Y + _selectedOutputTile / (_outputTexture.Width / (_tileSize.X + _distance.X)) * (_tileSize.Y + _distance.Y),
-                        (_tileSize.X + _distance.X), (_tileSize.Y + _distance.Y));
-                    Game1.SpriteBatch.Draw(Resources.SprWhite, rectangle, new Rectangle(0, 0, 1, 1), Color.Red * 0.5f);
+                        (int)_tilesetPosition.X
+                            + _selectedOutputTile
+                                % (_outputTexture.Width / (_tileSize.X + _distance.X))
+                                * (_tileSize.X + _distance.X),
+                        (int)_tilesetPosition.Y
+                            + _selectedOutputTile
+                                / (_outputTexture.Width / (_tileSize.X + _distance.X))
+                                * (_tileSize.Y + _distance.Y),
+                        (_tileSize.X + _distance.X),
+                        (_tileSize.Y + _distance.Y)
+                    );
+                    Game1.SpriteBatch.Draw(
+                        Resources.SprWhite,
+                        rectangle,
+                        new Rectangle(0, 0, 1, 1),
+                        Color.Red * 0.5f
+                    );
                 }
 
                 _tilesetPosition.Y += _outputTexture.Height + 10;
@@ -234,7 +509,12 @@ namespace ProjectZ.Editor
             if (_outputTextureUntiled != null)
             {
                 // draw the header
-                spriteBatch.DrawString(Resources.EditorFont, "tileset untiled", _tilesetPosition, Color.White);
+                spriteBatch.DrawString(
+                    Resources.EditorFont,
+                    "tileset untiled",
+                    _tilesetPosition,
+                    Color.White
+                );
                 _tilesetPosition.Y += Resources.EditorFont.MeasureString("A").Y;
                 // draw the untiled output
                 spriteBatch.Draw(_outputTextureUntiled, _tilesetPosition, Color.White);
@@ -245,7 +525,12 @@ namespace ProjectZ.Editor
             if (_outputTextureRemoved != null)
             {
                 // draw the header
-                spriteBatch.DrawString(Resources.EditorFont, "removed", _tilesetPosition, Color.White);
+                spriteBatch.DrawString(
+                    Resources.EditorFont,
+                    "removed",
+                    _tilesetPosition,
+                    Color.White
+                );
                 _tilesetPosition.Y += Resources.EditorFont.MeasureString("A").Y;
                 // draw the removed tiles
                 spriteBatch.Draw(_outputTextureRemoved, _tilesetPosition, Color.White);
@@ -261,7 +546,8 @@ namespace ProjectZ.Editor
         private void Button_LoadImage(UiElement element)
         {
 #if WINDOWS
-            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog openFileDialog =
+                new System.Windows.Forms.OpenFileDialog();
             openFileDialog.Filter = "(*.png)|*.png";
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -275,7 +561,6 @@ namespace ProjectZ.Editor
                     // get the file name
                     var info = new FileInfo(path);
                     _imageName = info.Name.Replace(".png", "");
-
                 }
                 catch { }
 
@@ -295,7 +580,11 @@ namespace ProjectZ.Editor
             if (_inputTexture == null)
                 return null;
 
-            var tileMap = new int[_inputTexture.Width / _tileSize.X, _inputTexture.Height / _tileSize.Y, 2];
+            var tileMap = new int[
+                _inputTexture.Width / _tileSize.X,
+                _inputTexture.Height / _tileSize.Y,
+                2
+            ];
 
             var colorTexture = new Color[_inputTexture.Width * _inputTexture.Height];
             _inputTexture.GetData(colorTexture);
@@ -303,7 +592,13 @@ namespace ProjectZ.Editor
             _sprTiledRemoved = new List<Texture2D>();
 
             _tiledInput = new List<Color[]>();
-            _tiledInput = ExtractTiles(colorTexture, _inputTexture.Width, _inputTexture.Height, _tileSize.X, _tileSize.Y);
+            _tiledInput = ExtractTiles(
+                colorTexture,
+                _inputTexture.Width,
+                _inputTexture.Height,
+                _tileSize.X,
+                _tileSize.Y
+            );
             _tiledInput = RemoveDuplicates(_tiledInput, ref tileMap);
 
             _sprTiled = new List<Texture2D>();
@@ -317,21 +612,29 @@ namespace ProjectZ.Editor
             return tileMap;
         }
 
-        private List<Color[]> ExtractTiles(Color[] colorInput, int textureWidth, int textureHeight, int sizeX, int sizeY)
+        private List<Color[]> ExtractTiles(
+            Color[] colorInput,
+            int textureWidth,
+            int textureHeight,
+            int sizeX,
+            int sizeY
+        )
         {
             var tiledOutput = new List<Color[]>();
 
             for (var y = 0; y <= textureHeight - sizeY; y += sizeY)
-                for (var x = 0; x <= textureWidth - sizeX; x += sizeX)
-                {
-                    var colorTile = new Color[sizeX * sizeY];
+            for (var x = 0; x <= textureWidth - sizeX; x += sizeX)
+            {
+                var colorTile = new Color[sizeX * sizeY];
 
-                    for (var height = 0; height < sizeY; height++)
-                        for (var width = 0; width < sizeX; width++)
-                            colorTile[width + sizeX * height] = (colorInput[x + width + (y + height) * textureWidth]);
+                for (var height = 0; height < sizeY; height++)
+                for (var width = 0; width < sizeX; width++)
+                    colorTile[width + sizeX * height] = (
+                        colorInput[x + width + (y + height) * textureWidth]
+                    );
 
-                    tiledOutput.Add(colorTile);
-                }
+                tiledOutput.Add(colorTile);
+            }
 
             return tiledOutput;
         }
@@ -342,7 +645,8 @@ namespace ProjectZ.Editor
 
             for (var i = 0; i < tileList.Count; i++)
             {
-                tileMap[i % tileMap.GetLength(0), i / tileMap.GetLength(0), 0] = outputTileList.Count;
+                tileMap[i % tileMap.GetLength(0), i / tileMap.GetLength(0), 0] =
+                    outputTileList.Count;
 
                 //look if there is already one
                 var used = false;
@@ -378,17 +682,36 @@ namespace ProjectZ.Editor
 
         private void LoadOutput()
         {
-            _outputTexture = RenderTileTexture(Game1.Graphics.GraphicsDevice, _sprTiled, _tileSize.X, _tileSize.Y, _distance);
-            _outputTextureRemoved = RenderTileTexture(Game1.Graphics.GraphicsDevice, _sprTiledRemoved, _tileSize.X, _tileSize.Y, _distance);
+            _outputTexture = RenderTileTexture(
+                Game1.Graphics.GraphicsDevice,
+                _sprTiled,
+                _tileSize.X,
+                _tileSize.Y,
+                _distance
+            );
+            _outputTextureRemoved = RenderTileTexture(
+                Game1.Graphics.GraphicsDevice,
+                _sprTiledRemoved,
+                _tileSize.X,
+                _tileSize.Y,
+                _distance
+            );
             RenderUntiledTexture(Game1.Graphics.GraphicsDevice);
         }
 
-        private Texture2D RenderTileTexture(GraphicsDevice graphicDevice, List<Texture2D> tiledInput, int tileWidth, int tileHeight, Point tilePadding)
+        private Texture2D RenderTileTexture(
+            GraphicsDevice graphicDevice,
+            List<Texture2D> tiledInput,
+            int tileWidth,
+            int tileHeight,
+            Point tilePadding
+        )
         {
             try
             {
                 var newTextureWidth = tiledInput.Count <= _maxWidth ? tiledInput.Count : _maxWidth;
-                var newTextureHeight = (int)Math.Ceiling((double)tiledInput.Count / (double)_maxWidth);
+                var newTextureHeight = (int)
+                    Math.Ceiling((double)tiledInput.Count / (double)_maxWidth);
 
                 var sizeWidth = (tileWidth + tilePadding.X) * newTextureWidth;
                 var sizeHeight = (tileHeight + tilePadding.Y) * newTextureHeight;
@@ -399,15 +722,21 @@ namespace ProjectZ.Editor
                 Game1.SpriteBatch.Begin();
 
                 for (int y = 0; y < newTextureHeight; y++)
-                    for (int x = 0; x < newTextureWidth; x++)
-                    {
-                        if (x + newTextureWidth * y >= tiledInput.Count)
-                            break;
+                for (int x = 0; x < newTextureWidth; x++)
+                {
+                    if (x + newTextureWidth * y >= tiledInput.Count)
+                        break;
 
-                        //draw the tile
-                        Game1.SpriteBatch.Draw(tiledInput[x + y * newTextureWidth], new Vector2(x * (tileWidth + tilePadding.X),
-                            y * (tileHeight + tilePadding.Y)), Color.White);
-                    }
+                    //draw the tile
+                    Game1.SpriteBatch.Draw(
+                        tiledInput[x + y * newTextureWidth],
+                        new Vector2(
+                            x * (tileWidth + tilePadding.X),
+                            y * (tileHeight + tilePadding.Y)
+                        ),
+                        Color.White
+                    );
+                }
 
                 Game1.SpriteBatch.End();
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -447,7 +776,12 @@ namespace ProjectZ.Editor
             for (var i = 0; i < _untiledParts.Count; i++)
             {
                 //draw the tile
-                Game1.SpriteBatch.Draw(_inputTexture, new Rectangle(pos, 0, _untiledParts[i].Width, _untiledParts[i].Height), _untiledParts[i], Color.White);
+                Game1.SpriteBatch.Draw(
+                    _inputTexture,
+                    new Rectangle(pos, 0, _untiledParts[i].Width, _untiledParts[i].Height),
+                    _untiledParts[i],
+                    Color.White
+                );
 
                 pos += _untiledParts[i].Width;
             }
@@ -461,14 +795,14 @@ namespace ProjectZ.Editor
         private void RemoveSelectedTile()
         {
             for (var y = 0; y < _tileMap.GetLength(1); y++)
-                for (var x = 0; x < _tileMap.GetLength(0); x++)
-                {
-                    if (_tileMap[x, y, 0] == _selectedOutputTile)
-                        _tileMap[x, y, 1] = _sprTiledRemoved.Count + 1;
+            for (var x = 0; x < _tileMap.GetLength(0); x++)
+            {
+                if (_tileMap[x, y, 0] == _selectedOutputTile)
+                    _tileMap[x, y, 1] = _sprTiledRemoved.Count + 1;
 
-                    if (_tileMap[x, y, 0] >= _selectedOutputTile)
-                        _tileMap[x, y, 0]--;
-                }
+                if (_tileMap[x, y, 0] >= _selectedOutputTile)
+                    _tileMap[x, y, 0]--;
+            }
 
             _sprTiledRemoved.Add(_sprTiled[_selectedOutputTile]);
             _sprTiled.Remove(_sprTiled[_selectedOutputTile]);
@@ -511,7 +845,11 @@ namespace ProjectZ.Editor
 
             // save the map
             var saveFile = File.Create(filePath);
-            _outputTextureRemoved.SaveAsPng(saveFile, _outputTextureRemoved.Width, _outputTextureRemoved.Height);
+            _outputTextureRemoved.SaveAsPng(
+                saveFile,
+                _outputTextureRemoved.Width,
+                _outputTextureRemoved.Height
+            );
             saveFile.Close();
 #endif
         }
