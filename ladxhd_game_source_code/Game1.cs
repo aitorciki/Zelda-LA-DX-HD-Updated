@@ -150,6 +150,8 @@ namespace ProjectZ
             // Allow the user to resize the window.
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += (_, __) => OnResize();
+            Window.AllowAltF4 = true;
+            Window.KeyDown += OnWindowKeyDown;
 
             // Store any command line parameters if available.
             IsMouseVisible = EditorMode;
@@ -158,6 +160,31 @@ namespace ProjectZ
 
             // Set the content directory.
             Content.RootDirectory = "Content";
+        }
+
+        private void OnWindowKeyDown(object? sender, InputKeyEventArgs e)
+        {
+            // Check if the "Alt" key is held.
+            var keyState = Keyboard.GetState();
+            bool altDown = keyState.IsKeyDown(Keys.LeftAlt) || keyState.IsKeyDown(Keys.RightAlt);
+
+            // No sense in doing more than we need to.
+            if (!altDown)
+                return;
+
+            // Alt+F4: Close the game. Windows DirectX build doesn't do it reliably by default.
+            if (e.Key == Keys.F4)
+            {
+                InputHandler.ResetInputState();
+                Exit();
+            }
+            // Alt+Enter: Toggles fullscreen mode.
+            else if (e.Key == Keys.Enter)
+            {
+                ToggleFullscreen();
+                InputHandler.ResetInputState();
+                SettingsSaveLoad.SaveSettings();
+            }
         }
 
         protected override void Initialize()
@@ -299,6 +326,7 @@ namespace ProjectZ
                 }
                 _fullscreenWasSet = true;
             }
+
             // Prevent input when window is in background (do we even want this?).
             WasActive = IsActive;
 
@@ -308,13 +336,6 @@ namespace ProjectZ
             // Updates the FPS counter.
             _fpsCounter.Update(gameTime);
 
-            // Toggles fullscreen mode.
-            if ((InputHandler.KeyDown(Keys.LeftAlt) || InputHandler.KeyDown(Keys.RightAlt)) && InputHandler.KeyPressed(Keys.Enter))
-            {
-                ToggleFullscreen();
-                InputHandler.ResetInputState();
-                SettingsSaveLoad.SaveSettings();
-            }
             // Initialize render targets if thread is finished loading resources and they have not been initialized yet. 
             if (_finishedLoading && !_initRenderTargets)
             {
@@ -336,11 +357,11 @@ namespace ProjectZ
                 UpdateFpsSettings();
                 FpsSettingChanged = false;
             }
-            // Update all render targets.
-            UpdateRenderTargets();
-
             // Update input from any input devices (controller/keyboard).
             ControlHandler.Update();
+
+            // Update all render targets.
+            UpdateRenderTargets();
 
             // When the content thread is finished loading.
             if (_finishedLoading)
