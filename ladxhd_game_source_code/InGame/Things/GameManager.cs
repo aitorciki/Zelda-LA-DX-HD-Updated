@@ -689,8 +689,6 @@ namespace ProjectZ.InGame.Things
             Game1.RenderHeight = (int)(Game1.WindowHeight * _scaleMultiplier);
 
             MapManager.Camera.SetBounds(Game1.RenderWidth, Game1.RenderHeight);
-
-            // center the player
             MapManager.Camera.ForceUpdate(MapManager.GetCameraTarget());
 
             UpdateRenderTargets();
@@ -699,12 +697,11 @@ namespace ProjectZ.InGame.Things
         public void OnResizeEnd()
         {
             InGameOverlay.UpdateRenderTarget();
-
             UpdateRenderTargets();
         }
 
-         public void UpdateRenderTargets()
-         {
+        public void UpdateRenderTargets()
+        {
             // If sizes didn't change or sizes invalid, skip
             if ((CurrentRenderWidth == Game1.RenderWidth &&
                  CurrentRenderHeight == Game1.RenderHeight &&

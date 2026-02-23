@@ -61,11 +61,12 @@ namespace ProjectZ.Base.UI
                     element.DrawBlur(spriteBatch);
         }
 
-        public void SizeChanged()
+        public void OnResize()
         {
             foreach (var uiElement in AllElements)
                 uiElement.SizeUpdate?.Invoke(uiElement);
         }
+
         public UiElement AddElement(UiElement element, bool alwaysDraw = false)
         {
             if (element == null) return null;

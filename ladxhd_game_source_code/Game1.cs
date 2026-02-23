@@ -645,9 +645,10 @@ namespace ProjectZ
                     h = Window.ClientBounds.Height;
                 }
             }
-
             WindowWidth = w;
             WindowHeight = h;
+
+            // Trigger scale and layout recompute.
             ScaleChanged = true;
         }
 
@@ -710,9 +711,11 @@ namespace ProjectZ
                     ? interfaceScale 
                     : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
 
-            UiManager.SizeChanged();
-            ScreenManager.OnResize(WindowWidth, WindowHeight);
-            UiPageManager.OnResize(WindowWidth, WindowHeight);
+            // Call all of the "OnResize" methods to recalculate render targets.
+            GameManager?.OnResize();
+            UiManager?.OnResize();
+            ScreenManager?.OnResize(WindowWidth, WindowHeight);
+            UiPageManager?.OnResize(WindowWidth, WindowHeight);
 
             // This needs to go false or it will run every loop.
             ScaleChanged = false;
@@ -729,6 +732,7 @@ namespace ProjectZ
             UpdateRenderTargetSizes(WindowWidth, WindowHeight);
 
             ScreenManager.OnResizeEnd(WindowWidth, WindowHeight);
+            GameManager?.OnResizeEnd();
         }
 
         private void UpdateRenderTargetSizes(int width, int height)
