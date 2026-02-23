@@ -537,37 +537,28 @@ namespace ProjectZ
 
         public static void ToggleFullscreen()
         {
+            var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+
             // Switch to fullscreen mode.
             if (!GameSettings.IsFullscreen)
             {
                 // Set fullscreen mode to true.
                 FullScreen = GameSettings.IsFullscreen = true;
-#if WINDOWS
-                var screenBounds = Forms.Screen.GetBounds(_windowForm);
 
+#if WINDOWS
                 // Save current window state for restoration.
                 _lastWindowState = _windowForm.WindowState;
                 _lastWindowBounds = _windowForm.Bounds;
-                _lastWindowWidth = Graphics.PreferredBackBufferWidth;
-                _lastWindowHeight = Graphics.PreferredBackBufferHeight;
-#else
-                var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
-
-                _lastWindowWidth = Graphics.PreferredBackBufferWidth;
-                _lastWindowHeight = Graphics.PreferredBackBufferHeight;
 #endif
+                _lastWindowWidth = Graphics.PreferredBackBufferWidth;
+                _lastWindowHeight = Graphics.PreferredBackBufferHeight;
 
                 // Exclusive fullscreen mode.
                 if (GameSettings.ExFullscreen)
                 {
-#if WINDOWS
-                    Graphics.PreferredBackBufferWidth = screenBounds.Width;
-                    Graphics.PreferredBackBufferHeight = screenBounds.Height;
-#else
                     Graphics.PreferredBackBufferWidth = displayMode.Width;
                     Graphics.PreferredBackBufferHeight = displayMode.Height;
                     Graphics.HardwareModeSwitch = true;
-#endif
                     Graphics.ToggleFullScreen();
                     WasExclusive = true;
                 }
@@ -577,7 +568,7 @@ namespace ProjectZ
 #if WINDOWS
                     _windowForm.FormBorderStyle = Forms.FormBorderStyle.None;
                     _windowForm.WindowState = Forms.FormWindowState.Normal;
-                    _windowForm.Bounds = screenBounds;
+                    _windowForm.Bounds = new System.Drawing.Rectangle(0, 0, displayMode.Width, displayMode.Height);
 #else
                     Graphics.PreferredBackBufferWidth = displayMode.Width;
                     Graphics.PreferredBackBufferHeight = displayMode.Height;
@@ -597,14 +588,10 @@ namespace ProjectZ
                 if ((GameSettings.ExFullscreen || WasExclusive) && Graphics.IsFullScreen)
                 {
                     Graphics.ToggleFullScreen();
-#if WINDOWS
                     Graphics.PreferredBackBufferWidth = _lastWindowWidth;
                     Graphics.PreferredBackBufferHeight = _lastWindowHeight;
-#else
-                    Graphics.PreferredBackBufferWidth = _lastWindowWidth;
-                    Graphics.PreferredBackBufferHeight = _lastWindowHeight;
-#endif
                 }
+
 #if WINDOWS
                 // Restore the windowed settings.
                 _windowForm.FormBorderStyle = Forms.FormBorderStyle.Sizable;
