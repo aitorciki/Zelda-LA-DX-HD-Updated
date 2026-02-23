@@ -64,6 +64,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+    
+  <ItemGroup>
+    <None Include="Resources\icon.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Data\icon.bmp</Link>
+    </None>
+  </ItemGroup>
 
   <PropertyGroup>
     <StartupObject>ProjectZ.Program</StartupObject>

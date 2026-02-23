@@ -108,6 +108,9 @@ namespace ProjectZ
 
         public static bool FinishedLoading => _finishedLoading;
 
+        // Used to know when the icon was set.
+        private bool _windowIconSet;
+
         public static Matrix GetMatrix => Matrix.CreateScale(new Vector3(
             (float)Graphics.PreferredBackBufferWidth / WindowWidth,
             (float)Graphics.PreferredBackBufferHeight / WindowHeight, 0));
@@ -162,6 +165,16 @@ namespace ProjectZ
             Content.RootDirectory = "Content";
         }
 
+        protected override void Initialize()
+        {
+            // Store an instance so it can be referenced.
+            Instance = this;
+
+            // Initialize the editor.
+            EditorManager = new EditorManager(this);
+            base.Initialize();
+        }
+
         private void OnWindowKeyDown(object? sender, InputKeyEventArgs e)
         {
             // Check if the "Alt" key is held.
@@ -187,59 +200,6 @@ namespace ProjectZ
             }
         }
 
-        protected override void Initialize()
-        {
-            // Store an instance so it can be referenced.
-            Instance = this;
-
-            // Initialize the editor.
-            EditorManager = new EditorManager(this);
-            base.Initialize();
-        }
-
-        private void OnGameExiting(object? sender, EventArgs e)
-        {
-            // Stop the game loop so it doesn't do anything new.
-            UpdateGame = false;
-
-            // Shut down the GBS Player when closing.
-            GbsPlayer.OnExit();
-
-            // Try to prevent a crash with OpenGL disposing textures.
-            try
-            {
-                // Dispose all render targets.
-                DisposeRenderTargets();
-                GameManager?.DisposeRenderTargets();
-
-                // Destroy the sprite batch.
-                SpriteBatch?.Dispose();
-                SpriteBatch = null;
-
-                // Unload all content.
-                Content?.Unload();
-            }
-            catch {  }
-
-            // Try forcing garbage collection if on Windows.
-            #if !WINDOWS
-                try
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
-                }
-                catch { }
-            #endif
-        }
-
-        private void OnDeviceReset(object sender, EventArgs e)
-        {
-            // Update render targets when device resets.
-            GameManager?.UpdateRenderTargets();
-            UpdateRenderTargetSizes(WindowWidth, WindowHeight);
-        }
-
         protected override void LoadContent()
         {
             // Hook device reset function & create a new SpriteBatch to draw textures.
@@ -259,12 +219,12 @@ namespace ProjectZ
             ScreenManager.LoadIntro(Content);
 
             // Start loading the resources that are needed after the intro.
-#if WINDOWS
+            #if WINDOWS
                 ThreadPool.QueueUserWorkItem(LoadContentThreaded);
-#else
+            #else
                 // OpenGL: must load GPU resources on the main thread
                 LoadContentThreaded(null);
-#endif
+            #endif
 
             // Initialize the GBS Player and load in the Link's Awakening GBS file.
             GbsPlayer.LoadFile(Path.Combine(Values.PathContentFolder, "Music", "awakening.gbs"));
@@ -282,8 +242,9 @@ namespace ProjectZ
                 GameSettings.IsFullscreen = false;
                 ToggleFullscreen();
             }
-            // Set the icon if using OpenGL.
-            SetSdlWindowIcon();
+            #if !WINDOWS
+                TrySetWindowIconBmp();
+            #endif
         }
 
         private void LoadContentThreaded(Object obj)
@@ -313,8 +274,30 @@ namespace ProjectZ
             Resources.RefreshDynamicResources();
         }
 
+        private void TrySetWindowIconBmp()
+        {
+            if (_windowIconSet)
+                return;
+
+            if (Window?.Handle == IntPtr.Zero)
+                return;
+
+            try
+            {
+                using var stream = TitleContainer.OpenStream("Data/icon.bmp");
+                if (WindowIcon.SetFromStream(Window.Handle, stream))
+                    _windowIconSet = true;
+            }
+            catch { }
+        }
+
         protected override void Update(GameTime gameTime)
         {
+            // If OpenGL renderer we need to jump through some hoops for the icon.
+            #if !WINDOWS
+                TrySetWindowIconBmp();
+            #endif
+
             // If exclusive fullscreen mode is enabled.
             if (_firstFrameDrawn && !_fullscreenWasSet)
             {
@@ -613,38 +596,11 @@ namespace ProjectZ
             GameManager?.UpdateRenderTargets();
         }
 
-        private void SetSdlWindowIcon()
+        public void UpdateFpsSettings()
         {
-        #if !WINDOWS
-            try
-            {
-                var iconTexture = Content.Load<Texture2D>("WindowIcon");
-
-                // Get pixel data
-                int width = iconTexture.Width;
-                int height = iconTexture.Height;
-                var pixels = new Color[width * height];
-                iconTexture.GetData(pixels);
-
-                // Convert to byte array (RGBA)
-                byte[] bytePixels = new byte[width * height * 4];
-                for (int i = 0; i < pixels.Length; i++)
-                {
-                    bytePixels[i * 4 + 0] = pixels[i].R;
-                    bytePixels[i * 4 + 1] = pixels[i].G;
-                    bytePixels[i * 4 + 2] = pixels[i].B;
-                    bytePixels[i * 4 + 3] = pixels[i].A;
-                }
-
-                // Use SDL via reflection (KNI exposes SDL window internally)
-                var sdlWindowHandle = Window.Handle;
-
-                // You may need SDL2-CS if direct access isn't exposed
-                // I will adjust based on what KNI exposes in your build
-
-            }
-            catch { }
-        #endif
+            IsFixedTimeStep = false;
+            Graphics.SynchronizeWithVerticalRetrace = GameSettings.VerticalSync;
+            Graphics.ApplyChanges();
         }
 
         public void DebugTextBackground()
@@ -668,11 +624,11 @@ namespace ProjectZ
             TextHelper.DrawString(SpriteBatch, DebugText, new Vector2(10), Color.White, 0, Vector2.Zero, 2f, SpriteEffects.None, 0);
         }
 
-        public void UpdateFpsSettings()
+        private void OnDeviceReset(object sender, EventArgs e)
         {
-            IsFixedTimeStep = false;
-            Graphics.SynchronizeWithVerticalRetrace = GameSettings.VerticalSync;
-            Graphics.ApplyChanges();
+            // Update render targets when device resets.
+            GameManager?.UpdateRenderTargets();
+            UpdateRenderTargetSizes(WindowWidth, WindowHeight);
         }
 
         private void OnResize()
@@ -875,6 +831,42 @@ namespace ProjectZ
             // Dispose rendter target 2.
             _renderTarget2?.Dispose();
             _renderTarget2 = null;
+        }
+
+        private void OnGameExiting(object? sender, EventArgs e)
+        {
+            // Stop the game loop so it doesn't do anything new.
+            UpdateGame = false;
+
+            // Shut down the GBS Player when closing.
+            GbsPlayer.OnExit();
+
+            // Try to prevent a crash with OpenGL disposing textures.
+            try
+            {
+                // Dispose all render targets.
+                DisposeRenderTargets();
+                GameManager?.DisposeRenderTargets();
+
+                // Destroy the sprite batch.
+                SpriteBatch?.Dispose();
+                SpriteBatch = null;
+
+                // Unload all content.
+                Content?.Unload();
+            }
+            catch {  }
+
+            // Try forcing garbage collection if on Windows.
+            #if !WINDOWS
+                try
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+                }
+                catch { }
+            #endif
         }
     }
 }
