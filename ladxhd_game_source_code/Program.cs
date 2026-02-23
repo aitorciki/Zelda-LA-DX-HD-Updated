@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ
 {
     public static class Program
     {
-        [STAThread]
+        public static Game1 game;
+
         static void Main(string[] args)
         {
             var editorMode = false;
@@ -18,13 +18,10 @@ namespace ProjectZ
                 var arg = args[i];
 
                 if (arg.Equals("editor", StringComparison.OrdinalIgnoreCase))
-                {
                     editorMode = true;
-                }
                 else if (arg.Equals("loadSave", StringComparison.OrdinalIgnoreCase))
                 {
                     loadSave = true;
-
                     if (i + 1 < args.Length && int.TryParse(args[i + 1], out int parsedSlot))
                     {
                         saveSlot = parsedSlot;
@@ -32,20 +29,20 @@ namespace ProjectZ
                     }
                 }
                 else if (arg.Equals("exclusive", StringComparison.OrdinalIgnoreCase))
-                {
                     GameSettings.ExFullscreen = true;
-                }
             }
 
             try
             {
-                using (var game = new Game1(editorMode, loadSave, saveSlot))
-                    game.Run();
+                game = new Game1(editorMode, loadSave, saveSlot);
+                game.Run();
             }
-
             catch (Exception exception)
             {
-                MessageBox.Show(exception.StackTrace, exception.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Cross-platform: write to stderr + optionally a file
+                Console.Error.WriteLine(exception.ToString());
+                System.IO.File.WriteAllText("crash.txt", exception.ToString());
+
                 throw;
             }
         }

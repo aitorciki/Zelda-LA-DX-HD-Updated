@@ -350,8 +350,8 @@ namespace ProjectZ.InGame.Things
                 Resources.LightShader.Parameters["sprLight"].SetValue(_lightRenderTarget);
                 Resources.LightShader.Parameters["lightState"].SetValue(MapManager.CurrentMap.LightState);
                 Resources.LightShader.Parameters["mode"].SetValue(0);
-                Resources.LightShader.Parameters["width"].SetValue(_lightRenderTarget.Width);
-                Resources.LightShader.Parameters["height"].SetValue(_lightRenderTarget.Height);
+        //        Resources.LightShader.Parameters["width"].SetValue(_lightRenderTarget.Width);
+        //        Resources.LightShader.Parameters["height"].SetValue(_lightRenderTarget.Height);
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp, null, null, Resources.LightShader);
                 spriteBatch.Draw(_inactiveRenderTarget2, Vector2.Zero, Color.White);
@@ -367,8 +367,8 @@ namespace ProjectZ.InGame.Things
                 Resources.LightShader.Parameters["sprLight"].SetValue(_lightRenderTarget);
                 Resources.LightShader.Parameters["lightState"].SetValue(DrawPlayerOnTopPercentage);
                 Resources.LightShader.Parameters["mode"].SetValue(1);
-                Resources.LightShader.Parameters["width"].SetValue(_lightRenderTarget.Width);
-                Resources.LightShader.Parameters["height"].SetValue(_lightRenderTarget.Height);
+        //        Resources.LightShader.Parameters["width"].SetValue(_lightRenderTarget.Width);
+        //        Resources.LightShader.Parameters["height"].SetValue(_lightRenderTarget.Height);
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, Resources.LightShader, MapManager.Camera.TransformMatrix);
                 Link.DrawTransition(spriteBatch);

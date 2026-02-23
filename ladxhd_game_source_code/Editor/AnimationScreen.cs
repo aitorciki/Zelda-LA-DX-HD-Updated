@@ -31,8 +31,6 @@ namespace ProjectZ.Editor
 
         private string _sprPath;
         private string _lastFileName;
-        private const float MinScale = 1;
-        private const float MaxScale = 10;
         private const int LeftBarWidth = 200;
         private const int RightBarWidth = 300;
         private const int TileSize = 2;

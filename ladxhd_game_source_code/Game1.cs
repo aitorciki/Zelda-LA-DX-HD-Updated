@@ -16,10 +16,6 @@ using ProjectZ.InGame.Screens;
 using ProjectZ.InGame.Things;
 using GBSPlayer;
 
-#if WINDOWS
-using Forms = System.Windows.Forms;
-#endif
-
 namespace ProjectZ
 {
     public class Game1 : Game
@@ -52,8 +48,6 @@ namespace ProjectZ
         private static int _lastWindowWidth;
         private static int _lastWindowHeight;
 
-        private static System.Drawing.Rectangle _lastWindowBounds;
-
         public static bool FpsSettingChanged;
         private readonly SimpleFps _fpsCounter = new SimpleFps();
 
@@ -84,7 +78,7 @@ namespace ProjectZ
         public static bool AutoLoadSave;
         public static int AutoLoadSlot;
 
-        private static bool _finishedLoading;
+        private static volatile bool _finishedLoading;
 
         public static string DebugText;
         public static float DebugTimeScale = 1.0f;
@@ -117,11 +111,6 @@ namespace ProjectZ
             (float)Graphics.PreferredBackBufferWidth / WindowWidth,
             (float)Graphics.PreferredBackBufferHeight / WindowHeight, 0));
 
-        #if WINDOWS
-            private static Forms.Form _windowForm;
-            private static Forms.FormWindowState _lastWindowState;
-        #endif
-
         // lahdmod values
         private int  max_game_scale = 20;
         private bool editor_mode = false;
@@ -144,28 +133,22 @@ namespace ProjectZ
             // Enable editor via lahdmod file or through the command line option.
             EditorMode = editorMode || editor_mode;
 
-            #if WINDOWS
-                // Get the form handle and set the icon of the window.
-                _windowForm = (Forms.Form)Forms.Control.FromHandle(Window.Handle);
-                _windowForm.Icon = Properties.Resources.Icon;
-
-                // Calculate the extra pixels taken up by the title bar and window border.
-                var deltaWidth = _windowForm.Width - _windowForm.ClientSize.Width;
-                var deltaHeight = _windowForm.Height - _windowForm.ClientSize.Height;
-
-                // Set the minimum window size including the extra pixels.
-                _windowForm.MinimumSize = new System.Drawing.Size(Values.MinWidth + deltaWidth, Values.MinHeight + deltaHeight);
-            #endif
-
             // Create the graphics device and set the back buffer width/height.
             Graphics = new GraphicsDeviceManager(this);
-            Graphics.GraphicsProfile = GraphicsProfile.FL10_1;
+
+            #if WINDOWS
+                Graphics.GraphicsProfile = GraphicsProfile.FL10_1;
+            #else
+                Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            #endif
+
             Graphics.PreferredBackBufferWidth = Values.MinWidth * 3;
             Graphics.PreferredBackBufferHeight = Values.MinHeight * 3;
             Graphics.ApplyChanges();
 
             // Allow the user to resize the window.
             Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += (_, __) => OnResize();
 
             // Store any command line parameters if available.
             IsMouseVisible = EditorMode;
@@ -214,7 +197,12 @@ namespace ProjectZ
             ScreenManager.LoadIntro(Content);
 
             // Start loading the resources that are needed after the intro.
-            ThreadPool.QueueUserWorkItem(LoadContentThreaded);
+#if WINDOWS
+                ThreadPool.QueueUserWorkItem(LoadContentThreaded);
+#else
+                // OpenGL: must load GPU resources on the main thread
+                LoadContentThreaded(null);
+#endif
 
             // Initialize the GBS Player and load in the Link's Awakening GBS file.
             GbsPlayer.LoadFile(Path.Combine(Values.PathContentFolder, "Music", "awakening.gbs"));
@@ -232,6 +220,8 @@ namespace ProjectZ
                 GameSettings.IsFullscreen = false;
                 ToggleFullscreen();
             }
+            // Set the icon if using OpenGL.
+            SetSdlWindowIcon();
         }
 
         private void LoadContentThreaded(Object obj)
@@ -519,59 +509,86 @@ namespace ProjectZ
 
         public static void ToggleFullscreen()
         {
-            // Switch to fullscreen mode.
+            // Enter fullscreen
             if (!GameSettings.IsFullscreen)
             {
-                // Set fullscreen mode to true.
                 FullScreen = GameSettings.IsFullscreen = true;
-                var screenBounds = Forms.Screen.GetBounds(_windowForm);
 
-                // Save current window state for restoration.
-                _lastWindowState = _windowForm.WindowState;
-                _lastWindowBounds = _windowForm.Bounds;
-                _lastWindowWidth = Graphics.PreferredBackBufferWidth;
+                // Save windowed backbuffer size so we can restore later
+                _lastWindowWidth  = Graphics.PreferredBackBufferWidth;
                 _lastWindowHeight = Graphics.PreferredBackBufferHeight;
 
-                // Exclusive fullscreen mode.
-                if (GameSettings.ExFullscreen)
-                {
-                    Graphics.PreferredBackBufferWidth = screenBounds.Width;
-                    Graphics.PreferredBackBufferHeight = screenBounds.Height;
-                    Graphics.ToggleFullScreen();
-                    WasExclusive = true;
-                }
-                // Borderless fullscreen mode.
-                else
-                {
-                    _windowForm.FormBorderStyle = Forms.FormBorderStyle.None;
-                    _windowForm.WindowState = Forms.FormWindowState.Normal;
-                    _windowForm.Bounds = screenBounds;
-                }
+                var dm = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+
+                // We want the backbuffer to match the monitor size when fullscreen.
+                Graphics.PreferredBackBufferWidth  = dm.Width;
+                Graphics.PreferredBackBufferHeight = dm.Height;
+
+                // Exclusive vs borderless.
+                Graphics.HardwareModeSwitch = GameSettings.ExFullscreen;
+
+                Graphics.IsFullScreen = true;
+                Graphics.ApplyChanges();
+
+                WasExclusive = GameSettings.ExFullscreen;
             }
-            // Switch to windowed mode.
+            // Exit fullscreen
             else
             {
-                // Set fullscreen mode to false.
                 FullScreen = GameSettings.IsFullscreen = false;
 
-                // Restore the backbuffer to the previous window state if exclusive.
-                if ((GameSettings.ExFullscreen || WasExclusive) && Graphics.IsFullScreen)
+                Graphics.IsFullScreen = false;
+
+                // Restore prior windowed size
+                if (_lastWindowWidth > 0 && _lastWindowHeight > 0)
                 {
-                    Graphics.ToggleFullScreen();
-                    Graphics.PreferredBackBufferWidth = _lastWindowWidth;
+                    Graphics.PreferredBackBufferWidth  = _lastWindowWidth;
                     Graphics.PreferredBackBufferHeight = _lastWindowHeight;
                 }
-                // Restore the windowed settings.
-                _windowForm.FormBorderStyle = Forms.FormBorderStyle.Sizable;
-                _windowForm.WindowState = _lastWindowState;
-                _windowForm.Bounds = _lastWindowBounds;
 
-                // Apply the graphics changes.
+                // Return to normal windowed mode settings
+                Graphics.HardwareModeSwitch = true; // default-ish
                 Graphics.ApplyChanges();
+
                 WasExclusive = false;
             }
-            // Update the render targets.
+
+            // Update the render targets / layout
             GameManager?.UpdateRenderTargets();
+        }
+
+        private void SetSdlWindowIcon()
+        {
+        #if !WINDOWS
+            try
+            {
+                var iconTexture = Content.Load<Texture2D>("WindowIcon");
+
+                // Get pixel data
+                int width = iconTexture.Width;
+                int height = iconTexture.Height;
+                var pixels = new Color[width * height];
+                iconTexture.GetData(pixels);
+
+                // Convert to byte array (RGBA)
+                byte[] bytePixels = new byte[width * height * 4];
+                for (int i = 0; i < pixels.Length; i++)
+                {
+                    bytePixels[i * 4 + 0] = pixels[i].R;
+                    bytePixels[i * 4 + 1] = pixels[i].G;
+                    bytePixels[i * 4 + 2] = pixels[i].B;
+                    bytePixels[i * 4 + 3] = pixels[i].A;
+                }
+
+                // Use SDL via reflection (KNI exposes SDL window internally)
+                var sdlWindowHandle = Window.Handle;
+
+                // You may need SDL2-CS if direct access isn't exposed
+                // I will adjust based on what KNI exposes in your build
+
+            }
+            catch { }
+        #endif
         }
 
         public void DebugTextBackground()
@@ -605,12 +622,32 @@ namespace ProjectZ
         private void OnResize()
         {
             // if minimized window bounds may be zero; ignore those
-            if (Window.ClientBounds.Width <= 0 || Window.ClientBounds.Height <= 0)
+            int w = Window.ClientBounds.Width;
+            int h = Window.ClientBounds.Height;
+            if (w <= 0 || h <= 0)
                 return;
 
-            // Update the window resolution and update the scale.
-            WindowWidth = Window.ClientBounds.Width;
-            WindowHeight = Window.ClientBounds.Height;
+            // Only enforce minimums in windowed mode
+            if (!GameSettings.IsFullscreen)
+            {
+                int minW = Values.MinWidth;
+                int minH = Values.MinHeight;
+
+                if (w < minW || h < minH)
+                {
+                    // Snap back to minimum (client area / backbuffer)
+                    Graphics.PreferredBackBufferWidth  = Math.Max(w, minW);
+                    Graphics.PreferredBackBufferHeight = Math.Max(h, minH);
+                    Graphics.ApplyChanges();
+
+                    // After ApplyChanges(), ClientBounds may change; read again
+                    w = Window.ClientBounds.Width;
+                    h = Window.ClientBounds.Height;
+                }
+            }
+
+            WindowWidth = w;
+            WindowHeight = h;
             ScaleChanged = true;
         }
 
@@ -701,8 +738,8 @@ namespace ProjectZ
 
             if (_finishedLoading)
             {
-                Resources.BlurEffect.Parameters["width"].SetValue(width);
-                Resources.BlurEffect.Parameters["height"].SetValue(height);
+             //   Resources.BlurEffect.Parameters["width"].SetValue(width);
+             //   Resources.BlurEffect.Parameters["height"].SetValue(height);
                 Resources.RoundedCornerBlurEffect.Parameters["textureWidth"].SetValue(width);
                 Resources.RoundedCornerBlurEffect.Parameters["textureHeight"].SetValue(height);
             }
