@@ -112,19 +112,19 @@ namespace ProjectZ.InGame.Overlay
         public void Load(ContentManager content)
         {
             // Add all game sequences to the stack.
-            _gameSequences.Add("map", new MapOverlaySequence());
-            _gameSequences.Add("marinBeach", new MarinBeachSequence());
-            _gameSequences.Add("marinCliff", new MarinCliffSequence());
-            _gameSequences.Add("towerCollapse", new TowerCollapseSequence());
-            _gameSequences.Add("shrine", new ShrineSequence());
-            _gameSequences.Add("picture", new PictureSequence());
-            _gameSequences.Add("photo", new PhotoSequence());
-            _gameSequences.Add("bowWow", new BowWowSequence());
-            _gameSequences.Add("castle", new CastleSequence());
-            _gameSequences.Add("gravestone", new GravestoneSequence());
-            _gameSequences.Add("weatherBird", new WeatherBirdSequence());
-            _gameSequences.Add("final", new FinalSequence());
-            _gameSequences.Add("painting", new PaintingSequence());
+            _gameSequences["map"] = new MapOverlaySequence();
+            _gameSequences["marinBeach"] = new MapOverlaySequence();
+            _gameSequences["marinCliff"] = new MapOverlaySequence();
+            _gameSequences["towerCollapse"] = new MapOverlaySequence();
+            _gameSequences["shrine"] = new MapOverlaySequence();
+            _gameSequences["picture"] = new MapOverlaySequence();
+            _gameSequences["photo"] = new MapOverlaySequence();
+            _gameSequences["bowWow"] = new MapOverlaySequence();
+            _gameSequences["castle"] = new MapOverlaySequence();
+            _gameSequences["gravestone"] = new MapOverlaySequence();
+            _gameSequences["weatherBird"] = new MapOverlaySequence();
+            _gameSequences["final"] = new MapOverlaySequence();
+            _gameSequences["painting"] = new MapOverlaySequence();
 
             // Set the size of the UI elements.
             _mapSize = new Point(144 + 2 * _marginMap, 144 + 2 * _marginMap);

@@ -329,10 +329,10 @@ namespace ProjectZ.InGame.Screens
 
             Game1.GbsPlayer.SetVolumeMultiplier(1.0f);
             Game1.GbsPlayer.Play();
+
             // play track for 52sec
-#if WINDOWS
             Game1.GbsPlayer.SoundGenerator.SetStopTime(51.25f);
-#endif
+
         }
 
         public override void Update(GameTime gameTime)
@@ -355,13 +355,11 @@ namespace ProjectZ.InGame.Screens
                 }
             }
 
-#if WINDOWS
             if (Game1.GbsPlayer.SoundGenerator.WasStopped && Game1.GbsPlayer.SoundGenerator.FinishedPlaying())
             {
                 Game1.GameManager.SetMusic(0, 0);
                 Game1.GbsPlayer.Play();
             }
-#endif
 
             if (Game1.FinishedLoading &&
                 (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) || ControlHandler.ButtonPressed(CButtons.Start)))

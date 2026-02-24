@@ -79,6 +79,7 @@ namespace ProjectZ
         public static int AutoLoadSlot;
 
         private static volatile bool _finishedLoading;
+        private static volatile bool _isExiting;
 
         public static string DebugText;
         public static float DebugTimeScale = 1.0f;
@@ -250,6 +251,9 @@ namespace ProjectZ
 
         private void LoadContentThreaded(Object obj)
         {
+            // Works around a strange bug that crashes when the game closes.
+            if (_isExiting) return;
+
             // Load all of the game's resources.
             Resources.LoadBlurEffect(Content);
             Resources.LoadTextures(Graphics.GraphicsDevice, Content);
@@ -287,7 +291,7 @@ namespace ProjectZ
 
             try
             {
-                using var stream = TitleContainer.OpenStream("Data/icon.bmp");
+                using var stream = TitleContainer.OpenStream("Data/Icon/icon.bmp");
                 if (WindowIcon.SetFromStream(Window.Handle, stream))
                     _windowIconSet = true;
             }
@@ -843,6 +847,7 @@ namespace ProjectZ
         {
             // Stop the game loop so it doesn't do anything new.
             UpdateGame = false;
+            _isExiting = true;
 
             // Shut down the GBS Player when closing.
             GbsPlayer.OnExit();
@@ -862,17 +867,6 @@ namespace ProjectZ
                 Content?.Unload();
             }
             catch {  }
-
-            // Try forcing garbage collection if on Windows.
-            #if !WINDOWS
-                try
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
-                }
-                catch { }
-            #endif
         }
     }
 }

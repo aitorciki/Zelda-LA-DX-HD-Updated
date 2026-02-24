@@ -19,7 +19,7 @@ namespace GBSPlayer
         private float _volumeMultiplier = 1.0f;
 
         private readonly object _updateLock = new object();
-        private bool _exitThread;
+        private volatile bool _exitThread;
 
         private Thread _updateThread;
 
@@ -34,6 +34,13 @@ namespace GBSPlayer
         public void OnExit()
         {
             _exitThread = true;
+
+            try
+            {
+                if (_updateThread != null && _updateThread.IsAlive)
+                    _updateThread.Join(1000);
+            }
+            catch { }
         }
 
         public void LoadFile(string path)
@@ -149,18 +156,25 @@ namespace GBSPlayer
 
         public void StartThread()
         {
-            // thread is used to run the cpu and playback
-            _updateThread = new Thread(UpdateThread);
+            // Don’t start twice
+            if (_updateThread != null && _updateThread.IsAlive)
+                return;
+
+            _exitThread = false;
+
+            _updateThread = new Thread(UpdateThread)
+            {
+                IsBackground = true,
+                Name = "GBSPlayer.UpdateThread"
+            };
+
             _updateThread.Start();
         }
 
         public void UpdateThread()
         {
-            while (true)
+            while (!_exitThread)
             {
-                if (_exitThread)
-                    return;
-
                 lock (_updateLock)
                     Cpu.Update();
 
