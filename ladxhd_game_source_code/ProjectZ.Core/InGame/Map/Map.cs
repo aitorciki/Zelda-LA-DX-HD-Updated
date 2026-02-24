@@ -236,9 +236,7 @@ namespace ProjectZ.InGame.Map
             OffsetDigMap(newWidth, newHeight, posX, posY);
 
             // offset the objects
-            #if DESKTOP_EDITOR
-                ObjectEditorScreen.OffsetObjects(this, posX * Values.TileSize, posY * Values.TileSize);
-            #endif
+            Game1.EditorManager?.OffsetObjects(this, posX * Values.TileSize, posY * Values.TileSize);
         }
 
         private void OffsetDigMap(int newWidth, int newHeight, int posX, int posY)

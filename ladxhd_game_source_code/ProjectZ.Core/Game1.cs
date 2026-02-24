@@ -30,7 +30,7 @@ namespace ProjectZ
         public static GbsPlayer GbsPlayer = new GbsPlayer();
         public static Random RandomNumber = new Random();
         public static CameraField ClassicCamera = new CameraField();
-        public static object? EditorManager;
+        public static IEditorManager? EditorManager;
   
         public static int WindowWidth;
         public static int WindowHeight;
@@ -137,6 +137,10 @@ namespace ProjectZ
             // Enable editor via lahdmod file or through the command line option.
             EditorMode = editorMode || editor_mode;
 
+            #if DEBUG
+                EditorMode = true;
+            #endif
+
             // Create the graphics device and set the back buffer width/height.
             Graphics = new GraphicsDeviceManager(this);
 
@@ -169,11 +173,6 @@ namespace ProjectZ
         {
             // Store an instance so it can be referenced.
             Instance = this;
-
-            // Initialize the editor.
-            #if DESKTOP_EDITOR
-                EditorManager = ProjectZ.Editor.EditorBootstrap.Create(this);
-            #endif
             base.Initialize();
         }
 
@@ -268,11 +267,9 @@ namespace ProjectZ
             LanguageManager.Load();
             UiPageManager.Load(Content);
 
-            #if DESKTOP_EDITOR
-                // Set up the editor if enabled.
-                if (EditorMode)
-                    EditorManager.SetUpEditorUi();
-            #endif
+            // Set up the editor if enabled.
+            if (EditorMode)
+                EditorManager?.SetUpEditorUi();
 
             // Flag that the thread has finished loading in content.
             _finishedLoading = true;
@@ -356,15 +353,11 @@ namespace ProjectZ
             // When the content thread is finished loading.
             if (_finishedLoading)
             {
-                #if DESKTOP_EDITOR
-                    // Update the editor UI.
-                    if (EditorMode)
-                    {
-                        UiManager.Update();
-                        EditorManager.EditorUpdate(gameTime);
-                    }
-                #endif
-
+                if (EditorMode && EditorManager != null)
+                {
+                    UiManager.Update();
+                    EditorManager.EditorUpdate(gameTime);
+                }
                 // Update the UI.
                 UiManager.CurrentScreen = "";
                 UiPageManager.Update(gameTime);

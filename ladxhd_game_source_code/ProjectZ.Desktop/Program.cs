@@ -35,7 +35,10 @@ namespace ProjectZ
             try
             {
                 using (var game = new Game1(editorMode, loadSave, saveSlot))
+                {
+                    Game1.EditorManager = ProjectZ.Editor.EditorBootstrap.Create(game);
                     game.Run();
+                }
             }
 
             catch (Exception exception)
@@ -43,7 +46,6 @@ namespace ProjectZ
                 // Cross-platform: write to stderr + optionally a file
                 Console.Error.WriteLine(exception.ToString());
                 System.IO.File.WriteAllText("crash.txt", exception.ToString());
-
                 throw;
             }
         }

@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using ProjectZ.Base;
 using ProjectZ.Base.UI;
+using ProjectZ.InGame.GameObjects;
+using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
+using ProjectZ.InGame.Screens;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.Editor
 {
-    public class EditorManager
+    public class EditorManager : IEditorManager
     {
         private string _lastGameScreen = Values.ScreenNameGame;
         private string _lastEditorScreen = Values.ScreenNameEditor;
@@ -32,6 +36,49 @@ namespace ProjectZ.Editor
         public EditorManager(Game1 game)
         {
             _game = game;
+        }
+
+        public void OffsetObjects(Map map, int offsetX, int offsetY)
+        {
+            ObjectEditorScreen.OffsetObjects(map, offsetX, offsetY);
+        }
+
+        public void RegisterEditorScreens(List<Screen> screens)
+        {
+            screens.Add(new MapEditorScreen(Values.ScreenNameEditor));
+            screens.Add(new TilesetEdit(Values.ScreenNameEditorTileset));
+            screens.Add(new TileExtractor(Values.ScreenNameEditorTilesetExtractor));
+            screens.Add(new AnimationScreen(Values.ScreenNameEditorAnimation));
+            screens.Add(new SpriteAtlasScreen(Values.ScreenNameSpriteAtlasEditor));
+        }
+
+        public void PopulateEditorObjectTemplates(Dictionary<string, GameObjectTemplate> templates, Func<object[], Map, int, int, object[]> addPositionFunc)
+        {
+            var editorMap = Map.CreateEmptyMap();
+
+            foreach (var template in templates)
+            {
+                if (template.Value == null)
+                    continue;
+
+                if (template.Value.ObjectType.GetConstructor(Type.EmptyTypes) != null)
+                {
+                    ObjectEditorScreen.EditorObjectTemplates.Add(
+                        template.Key,
+                        (GameObject)Activator.CreateInstance(template.Value.ObjectType));
+                }
+                else
+                {
+                    ObjectEditorScreen.EditorObjectTemplates.Add(
+                        template.Key,
+                        ObjectManager.GetGameObject(
+                            editorMap,
+                            template.Key,
+                            addPositionFunc(template.Value.Parameter, editorMap, 0, 0)
+                        )
+                    );
+                }
+            }
         }
 
         public void EditorUpdate(GameTime gameTime)

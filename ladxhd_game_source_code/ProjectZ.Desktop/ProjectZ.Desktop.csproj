@@ -14,20 +14,14 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <PublishSingleFile>true</PublishSingleFile>
-  </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-    <DefineConstants>$(DefineConstants);WINDOWS;DESKTOP_EDITOR</DefineConstants>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<DefineConstants>$(DefineConstants);DESKTOP_EDITOR</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <UseWindowsForms>false</UseWindowsForms>
-	</PropertyGroup>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<Compile Remove="Content\bin\**" />

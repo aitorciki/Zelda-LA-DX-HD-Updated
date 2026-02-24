@@ -13,6 +13,7 @@ using ProjectZ.InGame.GameObjects.NPCs;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
+using ProjectZ.InGame.Screens;
 
 namespace ProjectZ.InGame.GameObjects
 {
@@ -738,39 +739,15 @@ namespace ProjectZ.InGame.GameObjects
                             break;
                         }
                     }
-
                     if (!correctParameter)
                         continue;
 
                     ObjectSpawner.Add(name, ObjActivator.GetActivator<GameObject>(constructor));
-
-                    // parameter
                     GameObjectParameter.Add(name, constructor.GetParameters());
                 }
             }
-
-            #if DESKTOP_EDITOR
-                if (Game1.EditorMode)
-                {
-                    // create the gameObjects used in the editor
-                    var editorMap = Map.Map.CreateEmptyMap();
-                    foreach (var template in GameObjectTemplates.ObjectTemplates)
-                    {
-                        if (template.Value == null)
-                            continue;
-
-                        if (template.Value.ObjectType.GetConstructor(Type.EmptyTypes) != null)
-                            ProjectZ.Editor.ObjectEditorScreen.EditorObjectTemplates.Add(
-                                template.Key,
-                                (GameObject)Activator.CreateInstance(template.Value.ObjectType));
-                        else
-                            ProjectZ.Editor.ObjectEditorScreen.EditorObjectTemplates.Add(
-                                template.Key,
-                                ObjectManager.GetGameObject(editorMap, template.Key,
-                                    AddPositionToParameterArray(template.Value.Parameter, editorMap, 0, 0)));
-                    }
-                }
-            #endif
+            if (Game1.EditorMode)
+                Game1.EditorManager?.PopulateEditorObjectTemplates(ObjectTemplates, AddPositionToParameterArray);
         }
 
         private static object[] AddPositionToParameterArray(object[] objParameter, Map.Map map, int posX, int posY)
