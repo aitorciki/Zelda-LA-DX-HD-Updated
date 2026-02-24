@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -96,7 +96,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Map Teleport
             _sliderMapTeleporter = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_redux_dungeonteleport",
                 buttonWidth,
                 sliderHeight,

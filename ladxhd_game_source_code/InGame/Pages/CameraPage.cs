@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -146,7 +146,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Camera Border
             _sliderCameraBorder = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_camera_camborder",
                 buttonWidth,
                 sliderHeight,
@@ -168,7 +167,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Blackout Amount
             _sliderBorderOpacity = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_camera_blackpercent",
                 buttonWidth,
                 sliderHeight,

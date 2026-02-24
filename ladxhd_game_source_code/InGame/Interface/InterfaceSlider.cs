@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -13,8 +13,6 @@ namespace ProjectZ.InGame.Interface
 
         public delegate string StringFunction(int number);
         public StringFunction SetString;
-
-        private SpriteFont Font => Resources.GameFont;
 
         public Color TextColor = Color.White;
 
@@ -61,7 +59,6 @@ namespace ProjectZ.InGame.Interface
         }
 
         public InterfaceSlider(
-            SpriteFont font,
             string key,
             int width,
             int baseHeight,
@@ -197,7 +194,7 @@ namespace ProjectZ.InGame.Interface
             if (SetString != null)
                 TextPostfix = SetString(Start + CurrentStep);
 
-            _textSize = Font.MeasureString(Text + TextPostfix);
+            _textSize = TextHelper.MeasureString(Text + TextPostfix);
 
             if (Size != Point.Zero)
                 _drawOffset = new Vector2(Size.X / 2 - _textSize.X / 2, _textSize.Y);
@@ -324,8 +321,8 @@ namespace ProjectZ.InGame.Interface
                 return;
 
             // draw the text
-            spriteBatch.DrawString(
-                Font,
+            TextHelper.DrawString(
+                spriteBatch,
                 Text + TextPostfix,
                 new Vector2(
                     (int)(drawPosition.X + _drawOffset.X * scale),
@@ -334,7 +331,7 @@ namespace ProjectZ.InGame.Interface
                 TextColor * transparency,
                 0,
                 Vector2.Zero,
-                new Vector2(scale),
+                scale,
                 SpriteEffects.None,
                 0
             );

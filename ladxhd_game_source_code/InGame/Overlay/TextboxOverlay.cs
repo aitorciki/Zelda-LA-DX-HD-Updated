@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -178,8 +178,7 @@ namespace ProjectZ.InGame.Overlay
                 for (var i = 0; i < _choices.Length; i++)
                 {
                     var width =
-                        ((int)Resources.GameFont.MeasureString("" + _choices[i] + "").X + 8)
-                        * _uiScale;
+                        ((int)TextHelper.MeasureString("" + _choices[i] + "").X + 8) * _uiScale;
                     if (_choiceWidth < width)
                         _choiceWidth = width;
                 }
@@ -271,8 +270,8 @@ namespace ProjectZ.InGame.Overlay
                 var scrollPercentage = _scrollCounter / ScrollTime;
                 scrollOffset = scrollPercentage * Resources.GameFontHeight * _uiScale;
 
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     _scrollText,
                     new Vector2(
                         DialogBoxTextBox.X,
@@ -294,8 +293,8 @@ namespace ProjectZ.InGame.Overlay
             }
 
             // draw the dialog box
-            spriteBatch.DrawString(
-                Resources.GameFont,
+            TextHelper.DrawString(
+                spriteBatch,
                 _strDialog,
                 new Vector2(
                     DialogBoxTextBox.X,
@@ -327,7 +326,7 @@ namespace ProjectZ.InGame.Overlay
             {
                 for (var i = 0; i < _choices.Length; i++)
                 {
-                    var textSize = Resources.GameFont.MeasureString(_choices[i]);
+                    var textSize = TextHelper.MeasureString(_choices[i]);
                     var color = Color.Lerp(
                         Values.TextboxFontColor,
                         Values.TextboxBackgroundColor,
@@ -343,8 +342,8 @@ namespace ProjectZ.InGame.Overlay
                         - (textSize.Y * _uiScale) / 2
                         + _uiScale;
 
-                    spriteBatch.DrawString(
-                        Resources.GameFont,
+                    TextHelper.DrawString(
+                        spriteBatch,
                         _choices[i],
                         new Vector2((int)posX, (int)posY),
                         color * _currentOpacity * _textboxChoice[i].Percentage,
@@ -577,8 +576,8 @@ namespace ProjectZ.InGame.Overlay
         {
             // only works if every letter has the same size
             _letterSize = new Point(
-                (int)Resources.GameFont.MeasureString("A").X,
-                (int)Resources.GameFont.MeasureString("A").Y
+                (int)TextHelper.MeasureString("A").X,
+                (int)TextHelper.MeasureString("A").Y
             );
 
             _dialogBoxWidth = _letterSize.X * MaxCharacters + _paddingLeft + _paddingRight;

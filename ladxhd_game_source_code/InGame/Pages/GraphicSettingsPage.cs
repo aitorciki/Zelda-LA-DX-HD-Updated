@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -81,7 +81,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Game Scale
             _sliderGameScale = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_graphics_game_scale",
                 buttonWidth,
                 sliderHeight,
@@ -103,7 +102,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: UI Scale
             _sliderUIScale = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_graphics_ui_scale",
                 buttonWidth,
                 sliderHeight,

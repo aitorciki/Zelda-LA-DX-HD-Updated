@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -155,14 +155,14 @@ namespace ProjectZ.InGame.Screens
 
                 var strType = Game1.LanguageManager.GetString("main_menu_back", "error");
                 var backHelp = backStr + " " + strType;
-                var backTextSize = Resources.GameFont.MeasureString(backHelp);
+                var backTextSize = TextHelper.MeasureString(backHelp);
                 var backPos = new Vector2(
                     _menuRectangle.X + 2 * _scale,
                     _menuRectangle.Bottom - backTextSize.Y * _scale
                 );
 
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     backHelp,
                     backPos,
                     Color.White,
@@ -196,14 +196,14 @@ namespace ProjectZ.InGame.Screens
 
                 var strType = Game1.LanguageManager.GetString("main_menu_select", "error");
                 var inputHelp = selectStr + " " + strType;
-                var selectTextSize = Resources.GameFont.MeasureString(inputHelp);
+                var selectTextSize = TextHelper.MeasureString(inputHelp);
                 var selectPos = new Vector2(
                     _menuRectangle.Right - (selectTextSize.X + 2) * _scale,
                     _menuRectangle.Bottom - selectTextSize.Y * _scale
                 );
 
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     inputHelp,
                     selectPos,
                     Color.White,
@@ -234,14 +234,14 @@ namespace ProjectZ.InGame.Screens
 
                 var tooltipType = Game1.LanguageManager.GetString("main_menu_tooltip", "error");
                 var tooltipHelp = tooltipStr + " " + tooltipType;
-                var tooltipTextSize = Resources.GameFont.MeasureString(tooltipHelp);
+                var tooltipTextSize = TextHelper.MeasureString(tooltipHelp);
                 var tooltipPos = new Vector2(
                     _menuRectangle.X + (_menuRectangle.Width - tooltipTextSize.X * _scale) / 2f,
                     _menuRectangle.Bottom - tooltipTextSize.Y * _scale
                 );
 
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     tooltipHelp,
                     tooltipPos,
                     Color.White,

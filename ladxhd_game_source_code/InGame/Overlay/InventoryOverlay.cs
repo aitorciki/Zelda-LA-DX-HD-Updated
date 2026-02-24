@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -537,8 +537,8 @@ namespace ProjectZ.InGame.Overlay
                     Color.White
                 );
 
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     _itemSlotString[i],
                     new Vector2(
                         offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4,

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -84,7 +84,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Extra Enemy HP
             _sliderEnemyHitPoints = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_mods_enemy_hp",
                 buttonWidth,
                 sliderHeight,
@@ -105,7 +104,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Damage Taken Multiplier
             _sliderDamageTaken = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_mods_damage",
                 buttonWidth,
                 sliderHeight,
@@ -126,7 +124,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Damage Cooldown (Invincibility Frames)
             _sliderDamageCooldown = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_mods_damagecd",
                 buttonWidth,
                 sliderHeight,
@@ -147,7 +144,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Movement Speed
             _sliderMovementSpeed = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_mods_movespeed",
                 buttonWidth,
                 sliderHeight,

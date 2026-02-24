@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -71,7 +71,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Music Volume
             _sliderMusicVolume = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_audio_music_volume",
                 buttonWidth,
                 11,
@@ -92,7 +91,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Sound Effects Volume
             _sliderSoundVolume = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_audio_effect_volume",
                 buttonWidth,
                 11,

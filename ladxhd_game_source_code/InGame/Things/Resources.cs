@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.BitmapFonts;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Screens;
 
@@ -64,22 +65,17 @@ namespace ProjectZ.InGame.Things
         public static SpriteFont smallFont,
             smallFont_redux,
             smallFont_vwf,
-            smallFont_vwf_redux,
-            smallFont_chn,
+            smallFont_vwf_redux;
+        public static BitmapFont smallFont_chn,
             smallFont_chn_redux;
+
+        public static BitmapFont ChinaFont =>
+            GameSettings.Uncensored ? smallFont_chn_redux : smallFont_chn;
 
         public static SpriteFont GameFont
         {
             get
             {
-                // Chinese font uses a special font added by the patcher already compiled into XNB. It also doesn't
-                // have any variants so we can just load it directly without worrying about variants.
-                if (Game1.LanguageManager.CurrentLanguageCode == "chn")
-                    if (GameSettings.Uncensored)
-                        return smallFont_chn_redux;
-                    else
-                        return smallFont_chn;
-
                 // Other languages use the "normal" fonts provided. Depending on certain settings there is variations.
                 return (GameSettings.VarWidthFont, GameSettings.Uncensored) switch
                 {
@@ -559,8 +555,8 @@ namespace ProjectZ.InGame.Things
             smallFont_redux = content.Load<SpriteFont>("Fonts/smallFont_redux");
             smallFont_vwf = content.Load<SpriteFont>("Fonts/smallFont_vwf");
             smallFont_vwf_redux = content.Load<SpriteFont>("Fonts/smallFont_vwf_redux");
-            smallFont_chn = content.Load<SpriteFont>("Fonts/smallFont_chn");
-            smallFont_chn_redux = content.Load<SpriteFont>("Fonts/smallFont_chn_redux");
+            smallFont_chn = content.Load<BitmapFont>("Fonts/smallFont_chn");
+            smallFont_chn_redux = content.Load<BitmapFont>("Fonts/smallFont_chn_redux");
 
             // load textures
             SprTiledBlock = new Texture2D(graphics, 2, 2);

@@ -29,21 +29,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="ChineseFonts\*.xnb">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Link>Content\Fonts\%(Filename)%(Extension)</Link>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Remove="ChineseFonts\**" />
         <Compile Remove="Content\bin\**" />
         <Compile Remove="Content\obj\**" />
         <Compile Remove="Fix\**" />
         <EmbeddedResource Remove="Content\bin\**" />
         <EmbeddedResource Remove="Content\obj\**" />
         <EmbeddedResource Remove="Fix\**" />
-        <EmbeddedResource Remove="ChineseFonts\**" />
         <None Remove="Content\bin\**" />
         <None Remove="Content\obj\**" />
         <None Remove="Fix\**" />
@@ -74,6 +65,10 @@
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <MonoGameExtendedPipelineReferencePath>$(MSBuildThisFileDirectory)pipeline-references</MonoGameExtendedPipelineReferencePath>
+    </PropertyGroup>
 
     <ItemGroup>
         <Content Include="Data\**">

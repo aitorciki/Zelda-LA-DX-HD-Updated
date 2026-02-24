@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -521,8 +521,8 @@ namespace ProjectZ.InGame.Overlay
                         Game1.WindowHeight - 16 * Game1.UiScale
                     );
 
-                    spriteBatch.DrawString(
-                        Resources.GameFont,
+                    TextHelper.DrawString(
+                        spriteBatch,
                         mapString,
                         mapDrawPos,
                         Color.White * _fadeAnimationPercentage,
@@ -578,15 +578,15 @@ namespace ProjectZ.InGame.Overlay
                             teleStart
                             + ": "
                             + Game1.LanguageManager.GetString("overlay_teleport", "error");
-                        var teleTextSize = Resources.GameFont.MeasureString(teleString);
+                        var teleTextSize = TextHelper.MeasureString(teleString);
                         var teleDrawPos = new Vector2(
                             Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale,
                             Game1.WindowHeight - 16 * Game1.UiScale
                         );
 
                         // Draw the teleport button and label.
-                        spriteBatch.DrawString(
-                            Resources.GameFont,
+                        TextHelper.DrawString(
+                            spriteBatch,
                             teleString,
                             teleDrawPos,
                             Color.White * _fadeAnimationPercentage,

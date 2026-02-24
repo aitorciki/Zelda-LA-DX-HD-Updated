@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -151,7 +151,6 @@ namespace ProjectZ.InGame.Pages
                 Selectable = true,
             };
             _gameTypeSlider = new InterfaceSlider(
-                Resources.GameFont,
                 "new_game_menu_game_type",
                 260,
                 11,

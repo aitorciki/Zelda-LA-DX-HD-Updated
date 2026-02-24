@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -89,7 +89,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Sub-Language
             _sliderSubLanguage = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_game_sublanguage",
                 buttonWidth,
                 11,
@@ -110,7 +109,6 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Menu Brick Border
             _sliderMenuBricks = new InterfaceSlider(
-                Resources.GameFont,
                 "settings_game_menubricks",
                 buttonWidth,
                 11,

@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Map;
@@ -103,8 +103,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var inputHelper =
                 selectStr + ": " + Game1.LanguageManager.GetString("map_overlay_close", "error");
 
-            spriteBatch.DrawString(
-                Resources.GameFont,
+            TextHelper.DrawString(
+                spriteBatch,
                 inputHelper,
                 new Vector2(8 * Game1.UiScale, Game1.WindowHeight - 16 * Game1.UiScale),
                 Color.White * transparency,
@@ -158,15 +158,15 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 // Set up the string to display.
                 var teleString =
                     teleStart + ": " + Game1.LanguageManager.GetString("overlay_teleport", "error");
-                var teleTextSize = Resources.GameFont.MeasureString(teleString);
+                var teleTextSize = TextHelper.MeasureString(teleString);
                 var teleDrawPos = new Vector2(
                     Game1.WindowWidth - (teleTextSize.X + 6) * Game1.UiScale,
                     Game1.WindowHeight - 16 * Game1.UiScale
                 );
 
                 // Draw the teleport button and label.
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     teleString,
                     teleDrawPos,
                     Color.White,

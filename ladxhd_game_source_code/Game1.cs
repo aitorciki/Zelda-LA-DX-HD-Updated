@@ -698,7 +698,7 @@ namespace ProjectZ
             if (!ShowDebugText)
                 return;
 
-            _debugTextSize = Resources.GameFont.MeasureString(DebugText);
+            _debugTextSize = TextHelper.MeasureString(DebugText);
 
             SpriteBatch.Draw(
                 _renderTarget2,
@@ -728,14 +728,14 @@ namespace ProjectZ
                 Color.Black * 0.75f
             );
 
-            SpriteBatch.DrawString(
-                Resources.GameFont,
+            TextHelper.DrawString(
+                SpriteBatch,
                 DebugText,
                 new Vector2(10),
                 Color.White,
                 0,
                 Vector2.Zero,
-                new Vector2(2f),
+                2f,
                 SpriteEffects.None,
                 0
             );

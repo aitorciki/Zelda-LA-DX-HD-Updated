@@ -143,8 +143,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (_itemCount > 1)
             {
-                spriteBatch.DrawString(
-                    Resources.GameFont,
+                TextHelper.DrawString(
+                    spriteBatch,
                     "x",
                     new Vector2(
                         (int)(_itemPosition.X + _sourceRectangle.Width),
