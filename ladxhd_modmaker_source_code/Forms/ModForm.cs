@@ -31,12 +31,20 @@ namespace LADXHD_ModMaker
 
         private void Form_ModForm_Load(object sender, EventArgs e)
         {
-            string pngPath = Path.Combine(Config.BaseFolder, "image.png");
+            string[] validExt = { ".png", ".jpg", ".bmp" };
+            string imagePath = "";
 
-            if (pngPath.TestPath())
+            foreach (string ext in validExt) 
             {
-                Image pngImage = Image.FromFile(pngPath);
-                picturebox_Mod.Image = pngImage;
+                string testImage = Path.Combine(Config.BaseFolder, "image" + ext);
+
+                if (File.Exists(testImage))
+                    imagePath = testImage;
+            }
+            if (imagePath.TestPath())
+            {
+                Image uiImage = Image.FromFile(imagePath);
+                picturebox_Mod.Image = uiImage;
                 picturebox_Mod.SizeMode = PictureBoxSizeMode.StretchImage;
             }
         }

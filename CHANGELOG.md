@@ -3,7 +3,7 @@
 ## **v1.6.3**
 ### The "Very Quick Maintenance" Update
   * Fix some maps not automatically scaling correctly when the camera option "Modern Overworld" is enabled.
-  * Fix Link's animation speed returning to normal when using "Pegasus Boots" into a map transition.
+  * Fix Link's animation speed returning to normal when using "Pegasus Boots" into a map transitions.
 
 ## **v1.6.2**
 ### The "Lunar New Year" Update

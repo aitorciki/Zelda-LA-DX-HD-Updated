@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace LADXHD_ModMaker
@@ -22,14 +23,16 @@ namespace LADXHD_ModMaker
 
         private void EnableComponents(bool toggle)
         {
-            textBox_ModName.Enabled = toggle;
-            richTextBox_Description.Enabled = toggle;
-            textBox_GamePath.Enabled = toggle;
-            button_GamePath.Enabled = toggle;
-            textBox_OutputPath.Enabled = toggle;
-            button_OutputPath.Enabled = toggle;
-            button_CreateMod.Enabled = toggle;
-            button_Close.Enabled = toggle;
+            this.textBox_ModName.Enabled = toggle;
+            this.richTextBox_Description.Enabled = toggle;
+            this.textBox_GamePath.Enabled = toggle;
+            this.button_GamePath.Enabled = toggle;
+            this.textBox_OutputPath.Enabled = toggle;
+            this.button_OutputPath.Enabled = toggle;
+            this.textBox_Image.Enabled = toggle;
+            this.button_Image.Enabled = toggle;
+            this.button_CreateMod.Enabled = toggle;
+            this.button_Close.Enabled = toggle;
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,6 +152,66 @@ namespace LADXHD_ModMaker
             }
         }
 
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        IMAGE FILE PATH
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+        private void textBox_Image_TextChanged(object sender, EventArgs e)
+        {
+            Config.ImagePath = this.textBox_Image.Text;
+        }
+        private void textBox_Image_Leave(object sender, EventArgs e)
+        {
+            if (_outputPath != "" && _outputPath.TestPath())
+                Config.ImagePath = this.textBox_Image.Text;
+            else
+                this.textBox_Image.Text = Config.ImagePath;
+        }
+        private void textBox_Image_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+        private void textBox_Image_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] DroppedPath = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                if (DroppedPath[0] != "" && DroppedPath[0].TestPath())
+                {
+                    FileItem dropItem = new FileItem(DroppedPath[0]);
+                    string[] validExt = {".png", ".jpg", ".bmp"};
+
+                    if (validExt.Contains(dropItem.Extension))
+                    {
+                        _outputPath = DroppedPath[0];
+                        Config.ImagePath = DroppedPath[0];
+                        this.textBox_Image.Text = Config.ImagePath;
+                    }
+                }
+            }
+        }
+        private void button_Image_Click(object sender, EventArgs e)
+        {
+            string selectedPath = Config.BaseFolder.ShowFileDialog(new string[]{"*.*"}, new string[]{"Image File"});
+
+            if (selectedPath != "" && selectedPath.TestPath())
+            {
+                FileItem selectItem = new FileItem(selectedPath);
+                string[] validExt = {".png", ".jpg", ".bmp"};
+
+                if (validExt.Contains(selectItem.Extension))
+                {
+                    _outputPath = selectedPath;
+                    Config.ImagePath = selectedPath;
+                    this.textBox_Image.Text = Config.ImagePath;
+                }
+            }
+        }
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         PROGRESS BAR
@@ -226,5 +289,6 @@ namespace LADXHD_ModMaker
         {
             this.Close();
         }
+
     }
 }
