@@ -21,7 +21,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _respawnStart;
         private float _respawnTimer;
 
-        public EnemySpinyBeetleRespawner(Map.Map map, int posX, int posY, int type, RectangleF field) : base(map)
+        public EnemySpinyBeetleRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            int type,
+            RectangleF field
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -68,9 +75,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.DeleteObjects.Add(this);
 
             // If not in classic camera, spawn a smoke effect.
-            if (!Camera.ClassicMode) 
+            if (!Camera.ClassicMode)
             {
-                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/spawn", "run", true);
+                var explosionAnimation = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                );
                 Map.Objects.SpawnObject(explosionAnimation);
                 Game1.GameManager.PlaySoundEffect("D360-47-2F");
             }

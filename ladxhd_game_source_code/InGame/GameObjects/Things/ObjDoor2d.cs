@@ -22,12 +22,23 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _wasColliding;
         private bool _isTransitioning;
 
-        public ObjDoor2d() : base("editor door")
+        public ObjDoor2d()
+            : base("editor door")
         {
             EditorColor = Color.Orange * 0.65f;
         }
 
-        public ObjDoor2d(Map.Map map, int posX, int posY, int width, int height, string entryId, string nextMapId, string exitId) : base(map)
+        public ObjDoor2d(
+            Map.Map map,
+            int posX,
+            int posY,
+            int width,
+            int height,
+            string entryId,
+            string nextMapId,
+            string exitId
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, width, height);
@@ -47,8 +58,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!string.IsNullOrEmpty(_nextMap) && !string.IsNullOrEmpty(_exitId))
             {
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-                AddComponent(ObjectCollisionComponent.Index,
-                    new ObjectCollisionComponent(_collisionRectangle, OnCollision));
+                AddComponent(
+                    ObjectCollisionComponent.Index,
+                    new ObjectCollisionComponent(_collisionRectangle, OnCollision)
+                );
             }
         }
 
@@ -61,7 +74,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             _isColliding = false;
 
             // first step on the door?
-            if (MapManager.ObjLink.IsGrounded() && !MapManager.ObjLink.IsTransitioning && _wasColliding && ControlHandler.GetMoveVector2().Y < 0)
+            if (
+                MapManager.ObjLink.IsGrounded()
+                && !MapManager.ObjLink.IsTransitioning
+                && _wasColliding
+                && ControlHandler.GetMoveVector2().Y < 0
+            )
             {
                 _isTransitioning = true;
 
@@ -73,8 +91,16 @@ namespace ProjectZ.InGame.GameObjects.Things
                 MapManager.ObjLink.Direction = 1;
 
                 // append a map change
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
-                transitionSystem.AppendMapChange(_nextMap, _exitId, false, false, Values.MapTransitionColor, false);
+                var transitionSystem = (MapTransitionSystem)
+                    Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.AppendMapChange(
+                    _nextMap,
+                    _exitId,
+                    false,
+                    false,
+                    Values.MapTransitionColor,
+                    false
+                );
             }
         }
 

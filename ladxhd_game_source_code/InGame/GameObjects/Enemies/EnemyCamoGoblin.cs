@@ -26,15 +26,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly string _strColor;
         private int _lives = EnemyLives.CamoGoblin;
 
-        public EnemyCamoGoblin() : base("camo goblin") { }
+        public EnemyCamoGoblin()
+            : base("camo goblin") { }
 
         // color: 0 = red, 1 = green, 2 = blue
-        public EnemyCamoGoblin(Map.Map map, int posX, int posY, int color) : base(map)
+        public EnemyCamoGoblin(Map.Map map, int posX, int posY, int color)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -24, 16, 24);
             CanReset = true;
             OnReset = Reset;
@@ -64,10 +66,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 HoleOnPull = OnHolePull,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY, 16),
                 Bounciness = 0.25f,
                 AbsorbPercentage = 0.75f,
@@ -81,7 +81,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var stateWobble = new AiState(UpdateWobble) { Init = InitWobble };
             var stateDespawn = new AiState(UpdateDespawn) { Init = InitDespawn };
             var stateHolePull = new AiState();
-            stateHolePull.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("idle")));
+            stateHolePull.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("idle"))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
@@ -90,21 +92,42 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("wobble", stateWobble);
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.States.Add("holePull", stateHolePull);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             new AiFallState(_aiComponent, _body, null, null, 0);
 
             var damageBox = new CBox(EntityPosition, -6, -20, 0, 12, 20, 4);
             var hittableBox = new CBox(EntityPosition, -6, -20, 0, 12, 20, 8);
             var pushableBox = new CBox(EntityPosition, -6, -20, 0, 12, 20, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+                {
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new DrawShadowCSpriteComponent(sprite));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                _bodyDrawComponent = new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new DrawShadowCSpriteComponent(sprite)
+            );
 
             _aiComponent.ChangeState("idle");
         }
@@ -137,7 +160,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateIdle()
         {
             var distance = MapManager.ObjLink.Position - EntityPosition.Position;
-            if (distance.Length() < 36 && _body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
+            if (
+                distance.Length() < 36
+                && _body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle)
+            )
                 _aiComponent.ChangeState("move");
         }
 
@@ -211,17 +237,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             // can only be pushed in the wobble state
-            if (_aiComponent.CurrentStateId != "spawn" &&
-                _aiComponent.CurrentStateId != "wobble")
+            if (_aiComponent.CurrentStateId != "spawn" && _aiComponent.CurrentStateId != "wobble")
                 return false;
 
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -233,8 +268,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
-            if (_aiComponent.CurrentStateId != "spawn" &&
-                _aiComponent.CurrentStateId != "wobble")
+            if (_aiComponent.CurrentStateId != "spawn" && _aiComponent.CurrentStateId != "wobble")
                 return Values.HitCollision.None;
 
             return _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);

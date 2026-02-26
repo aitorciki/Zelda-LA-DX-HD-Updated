@@ -14,7 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool _playedSoundEffect;
 
-        public BossFacadeHole(Map.Map map, Vector2 position) : base(map)
+        public BossFacadeHole(Map.Map map, Vector2 position)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Hole;
 
@@ -28,7 +29,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(0, 8));
 
-            _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, -7, -7 + 8, 0, 14, 14, 16), Values.CollisionTypes.Hole);
+            _collisionComponent = new BoxCollisionComponent(
+                new CBox(EntityPosition, -7, -7 + 8, 0, 14, 14, 16),
+                Values.CollisionTypes.Hole
+            );
             AddComponent(CollisionComponent.Index, _collisionComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -50,7 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _collisionComponent.IsActive = false;
 
             // finished animation => delete the object
-            if(!_animator.IsPlaying)
+            if (!_animator.IsPlaying)
                 Map.Objects.DeleteObjects.Add(this);
         }
     }

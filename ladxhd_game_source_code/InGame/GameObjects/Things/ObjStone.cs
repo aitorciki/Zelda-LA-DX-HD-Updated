@@ -41,12 +41,28 @@ namespace ProjectZ.InGame.GameObjects.Things
         public bool NoRespawn = false;
         public bool FromObjSpawner = false;
 
-        public ObjStone(Map.Map map, int posX, int posY, string spriteId, string spawnItem, string pickupKey, string dialogPath, bool isHeavy, bool potMessage) : base(map, spriteId)
+        public ObjStone(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spriteId,
+            string spawnItem,
+            string pickupKey,
+            string dialogPath,
+            bool isHeavy,
+            bool potMessage
+        )
+            : base(map, spriteId)
         {
             var sprite = Resources.GetSprite(spriteId);
 
             EntityPosition = new CPosition(posX + 8, posY + 16 - _offsetY, 0);
-            EntitySize = new Rectangle(-sprite.SourceRectangle.Width / 2, _offsetY - sprite.SourceRectangle.Height * 2, sprite.SourceRectangle.Width, sprite.SourceRectangle.Height * 2 + 4);
+            EntitySize = new Rectangle(
+                -sprite.SourceRectangle.Width / 2,
+                _offsetY - sprite.SourceRectangle.Height * 2,
+                sprite.SourceRectangle.Width,
+                sprite.SourceRectangle.Height * 2 + 4
+            );
             _spawnPosition = new Point(posX, posY + 2);
 
             _baseX = posX;
@@ -70,7 +86,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var height = map.Is2dMap ? 15 : 13;
             var heightOffset = map.Is2dMap ? 0 : 2;
-            var collisionBox = new CBox(EntityPosition, -sprite.SourceRectangle.Width / 2, -height + _offsetY, 0, sprite.SourceRectangle.Width, height - heightOffset, 12, true);
+            var collisionBox = new CBox(
+                EntityPosition,
+                -sprite.SourceRectangle.Width / 2,
+                -height + _offsetY,
+                0,
+                sprite.SourceRectangle.Width,
+                height - heightOffset,
+                12,
+                true
+            );
 
             _body = new BodyComponent(EntityPosition, -4, -8 + _offsetY, 8, 8, 12)
             {
@@ -79,26 +104,67 @@ namespace ProjectZ.InGame.GameObjects.Things
                 HoleAbsorb = OnHoleAbsorb,
                 DragAir = 1.0f,
                 Gravity = -0.125f,
-                IgnoreHeight = true
+                IgnoreHeight = true,
             };
 
-            var cSprite = new CSprite(spriteId, EntityPosition, new Vector2(-sprite.SourceRectangle.Width / 2, -sprite.SourceRectangle.Height + _offsetY));
-            var carryRect = new CRectangle(EntityPosition, new Rectangle(-sprite.SourceRectangle.Width / 2, -13 + _offsetY, sprite.SourceRectangle.Width, 13));
+            var cSprite = new CSprite(
+                spriteId,
+                EntityPosition,
+                new Vector2(
+                    -sprite.SourceRectangle.Width / 2,
+                    -sprite.SourceRectangle.Height + _offsetY
+                )
+            );
+            var carryRect = new CRectangle(
+                EntityPosition,
+                new Rectangle(
+                    -sprite.SourceRectangle.Width / 2,
+                    -13 + _offsetY,
+                    sprite.SourceRectangle.Width,
+                    13
+                )
+            );
 
             if (!string.IsNullOrEmpty(_dialogPath))
-                AddComponent(PushableComponent.Index, new PushableComponent(collisionBox, OnPush) { InertiaTime = 50 });
+                AddComponent(
+                    PushableComponent.Index,
+                    new PushableComponent(collisionBox, OnPush) { InertiaTime = 50 }
+                );
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(carryRect, CarryInit, CarryUpdate, CarryThrow) {IsHeavy = _isHeavy});
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableComponent = new CarriableComponent(
+                    carryRect,
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+                {
+                    IsHeavy = _isHeavy,
+                }
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    collisionBox,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot
+                )
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(cSprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(cSprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, cSprite));
 
             if (_isPot || _isSkull)
             {
                 var hittableBox = new CBox(EntityPosition, -8, -16, 0, 16, 16, 8);
-                AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(collisionBox, OnHit));
+                AddComponent(
+                    HittableComponent.Index,
+                    _hitComponent = new HittableComponent(collisionBox, OnHit)
+                );
             }
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -114,7 +180,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _carriableComponent.IsActive = false;
 
             var damageBox = new CBox(EntityPosition, -6, -13, 0, 12, 20, 8, true);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 3) { OnDamage = DamagePlayer });
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Enemy, 3) { OnDamage = DamagePlayer }
+            );
 
             // deal damage to the player
             _damagePlayer = true;
@@ -172,20 +241,45 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // This is used because the normal collision detection looks strang when throwing directly towards a lower wall.
             var outBox = Box.Empty;
-            if (!Map.Is2dMap &&
-                Map.Objects.Collision(_upperBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox) &&
-                Map.Objects.Collision(_lowerBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox))
+            if (
+                !Map.Is2dMap
+                && Map.Objects.Collision(
+                    _upperBox.Box,
+                    Box.Empty,
+                    collisionType,
+                    0,
+                    _body.Level,
+                    ref outBox
+                )
+                && Map.Objects.Collision(
+                    _lowerBox.Box,
+                    Box.Empty,
+                    collisionType,
+                    0,
+                    _body.Level,
+                    ref outBox
+                )
+            )
                 OnCollision();
 
             if (_damagePlayer)
                 return;
 
             // Find the right hittype with the correct amount of damage or create a extra one?
-            var hitCollision = Map.Objects.Hit(this, _damageBox.Box.Center, _damageBox.Box, HitType.ThrownObject, 2, false);
+            var hitCollision = Map.Objects.Hit(
+                this,
+                _damageBox.Box.Center,
+                _damageBox.Box,
+                HitType.ThrownObject,
+                2,
+                false
+            );
 
             // hit something?
-            if (hitCollision != Values.HitCollision.None &&
-                hitCollision != Values.HitCollision.NoneBlocking)
+            if (
+                hitCollision != Values.HitCollision.None
+                && hitCollision != Values.HitCollision.NoneBlocking
+            )
             {
                 OnCollision();
             }
@@ -196,13 +290,26 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_spawnItem != null)
             {
                 // spawn item
-                var objItem = new ObjItem(Map, _spawnPosition.X, _spawnPosition.Y, "j", _pickupKey, _spawnItem, "");
+                var objItem = new ObjItem(
+                    Map,
+                    _spawnPosition.X,
+                    _spawnPosition.Y,
+                    "j",
+                    _pickupKey,
+                    _spawnItem,
+                    ""
+                );
                 if (!objItem.IsDead)
                     Map.Objects.SpawnObject(objItem);
                 else if (_spawnItem == "fairy")
                 {
                     // spawn fairy
-                    var objFairy = new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0);
+                    var objFairy = new ObjDungeonFairy(
+                        Map,
+                        (int)EntityPosition.X,
+                        (int)EntityPosition.Y,
+                        0
+                    );
                     Map.Objects.SpawnObject(objFairy);
                 }
             }
@@ -271,10 +378,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater))
             {
                 // spawn splash effect
-                var fallAnimation = new ObjAnimator(Map,
+                var fallAnimation = new ObjAnimator(
+                    Map,
                     (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
                     (int)(_body.Position.Y + _body.OffsetY + _body.Height / 2.0f),
-                    Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                    Values.LayerPlayer,
+                    "Particles/fishingSplash",
+                    "idle",
+                    true
+                );
                 Map.Objects.SpawnObject(fallAnimation);
             }
             else
@@ -288,16 +400,36 @@ namespace ProjectZ.InGame.GameObjects.Things
                 SpawnParticles(EntityPosition.ToVector3());
 
                 if (_isHeavy)
-                    SpawnParticles(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z + 12));
+                    SpawnParticles(
+                        new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z + 12)
+                    );
             }
             // If not on a spiny beetle, create a respawner on the object.
             if (!NoRespawn)
-                Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage, FromObjSpawner));
+                Map.Objects.SpawnObject(
+                    new ObjStoneRespawner(
+                        Map,
+                        _baseX,
+                        _baseY,
+                        _spriteId,
+                        _spawnItem,
+                        _pickupKey,
+                        _dialogPath,
+                        _isHeavy,
+                        _potMessage,
+                        FromObjSpawner
+                    )
+                );
 
             // Skulls have a 20% chance to spawn a fairy and must have come from a spiny beetle.
-            if (_isSkull && NoRespawn && Game1.RandomNumber.Next(0,5) == 0)
+            if (_isSkull && NoRespawn && Game1.RandomNumber.Next(0, 5) == 0)
             {
-                var objFairy = new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0);
+                var objFairy = new ObjDungeonFairy(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    0
+                );
                 Map.Objects.SpawnObject(objFairy);
             }
             // Delete the stone.
@@ -313,17 +445,41 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Remove the stone and create a respawner.
             if (!NoRespawn)
-                Map.Objects.SpawnObject(new ObjStoneRespawner(Map, _baseX, _baseY, _spriteId, _spawnItem, _pickupKey, _dialogPath, _isHeavy, _potMessage, FromObjSpawner));
+                Map.Objects.SpawnObject(
+                    new ObjStoneRespawner(
+                        Map,
+                        _baseX,
+                        _baseY,
+                        _spriteId,
+                        _spawnItem,
+                        _pickupKey,
+                        _dialogPath,
+                        _isHeavy,
+                        _potMessage,
+                        FromObjSpawner
+                    )
+                );
 
             Map.Objects.DeleteObjects.Add(this);
 
             // play sound effect
             Game1.GameManager.PlaySoundEffect("D360-24-18");
 
-            var fallAnimation = new ObjAnimator(Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
-            fallAnimation.EntityPosition.Set(new Vector2(
-                _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
-                _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
+            var fallAnimation = new ObjAnimator(
+                Map,
+                0,
+                0,
+                Values.LayerBottom,
+                "Particles/fall",
+                "idle",
+                true
+            );
+            fallAnimation.EntityPosition.Set(
+                new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
+                    _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5
+                )
+            );
             Map.Objects.SpawnObject(fallAnimation);
 
             _isAlive = false;
@@ -334,8 +490,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var diff = 200f;
 
             var mult = 0.125f;
-            var bodyVelocity = new Vector3(
-                _body.Velocity.X * mult, _body.Velocity.Y * mult, 1.25f);
+            var bodyVelocity = new Vector3(_body.Velocity.X * mult, _body.Velocity.Y * mult, 1.25f);
 
             if (Map.Is2dMap)
             {
@@ -358,10 +513,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 bodyVelocity.Y = 0;
                 bodyVelocity.Z = 0;
                 rndMin = 55;
-                vector0 = new Vector3(-0.25f, -3, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
-                vector1 = new Vector3(-0.75f, -2.75f, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
-                vector2 = new Vector3(0.25f, -3, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
-                vector3 = new Vector3(0.75f, -2.75f, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
+                vector0 =
+                    new Vector3(-0.25f, -3, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
+                vector1 =
+                    new Vector3(-0.75f, -2.75f, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
+                vector2 =
+                    new Vector3(0.25f, -3, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
+                vector3 =
+                    new Vector3(0.75f, -2.75f, 0) * Game1.RandomNumber.Next(rndMin, rndMax) / diff;
             }
             else
             {
@@ -376,10 +535,38 @@ namespace ProjectZ.InGame.GameObjects.Things
             vector2 += bodyVelocity;
             vector3 += bodyVelocity;
 
-            var stone0 = new ObjSmallStone(Map, (int)position.X - 2, (int)position.Y - 13 + _offsetY, (int)position.Z, vector0, true);
-            var stone1 = new ObjSmallStone(Map, (int)position.X - 1, (int)position.Y - 8 + _offsetY, (int)position.Z, vector1, true);
-            var stone2 = new ObjSmallStone(Map, (int)position.X + 3, (int)position.Y - 13 + _offsetY, (int)position.Z, vector2, false);
-            var stone3 = new ObjSmallStone(Map, (int)position.X + 2, (int)position.Y - 8 + _offsetY, (int)position.Z, vector3, false);
+            var stone0 = new ObjSmallStone(
+                Map,
+                (int)position.X - 2,
+                (int)position.Y - 13 + _offsetY,
+                (int)position.Z,
+                vector0,
+                true
+            );
+            var stone1 = new ObjSmallStone(
+                Map,
+                (int)position.X - 1,
+                (int)position.Y - 8 + _offsetY,
+                (int)position.Z,
+                vector1,
+                true
+            );
+            var stone2 = new ObjSmallStone(
+                Map,
+                (int)position.X + 3,
+                (int)position.Y - 13 + _offsetY,
+                (int)position.Z,
+                vector2,
+                false
+            );
+            var stone3 = new ObjSmallStone(
+                Map,
+                (int)position.X + 2,
+                (int)position.Y - 8 + _offsetY,
+                (int)position.Z,
+                vector3,
+                false
+            );
 
             Map.Objects.SpawnObject(stone0);
             Map.Objects.SpawnObject(stone1);
@@ -387,17 +574,32 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.SpawnObject(stone3);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
-            if (GameSettings.SwBreakPots && ((hitType & HitType.Sword2) != 0 || 
-                Game1.GameManager.GetItem("sword2") != null && ((hitType & HitType.SwordShot) != 0 || (hitType & HitType.PegasusBootsSword) != 0)))
+            if (
+                GameSettings.SwBreakPots
+                && (
+                    (hitType & HitType.Sword2) != 0
+                    || Game1.GameManager.GetItem("sword2") != null
+                        && (
+                            (hitType & HitType.SwordShot) != 0
+                            || (hitType & HitType.PegasusBootsSword) != 0
+                        )
+                )
+            )
             {
                 OnCollision();
                 SpawnItem();
                 IsDead = true;
                 return Values.HitCollision.Enemy;
             }
-            return Values.HitCollision.None; 
+            return Values.HitCollision.None;
         }
     }
 }

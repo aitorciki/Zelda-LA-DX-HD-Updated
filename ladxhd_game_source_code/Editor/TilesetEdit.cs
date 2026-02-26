@@ -48,7 +48,8 @@ namespace ProjectZ.Editor
         private int _outputWidth = 15;
         private int _outputHeight;
 
-        public TilesetEdit(string screenId) : base(screenId) { }
+        public TilesetEdit(string screenId)
+            : base(screenId) { }
 
         public override void Load(ContentManager content)
         {
@@ -58,17 +59,79 @@ namespace ProjectZ.Editor
             var buttonHeight = 30;
             var posY = Values.ToolBarHeight + buttonDist;
 
-            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0), "left", Values.EditorUiTilesetEditor, Color.Transparent, Color.Black * 0.5f,
-                ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    new Rectangle(0, Values.ToolBarHeight, _toolBarWidth, 0),
+                    "left",
+                    Values.EditorUiTilesetEditor,
+                    Color.Transparent,
+                    Color.Black * 0.5f,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            0,
+                            Values.ToolBarHeight,
+                            _toolBarWidth,
+                            Game1.WindowHeight - Values.ToolBarHeight
+                        );
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY, buttonWidth, buttonHeight), Resources.EditorFont,
-                "add map", "bt1", Values.EditorUiTilesetEditor, null, ui => { LoadMaps(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(buttonDist, posY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "add map",
+                    "bt1",
+                    Values.EditorUiTilesetEditor,
+                    null,
+                    ui =>
+                    {
+                        LoadMaps();
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "save", "bt1", Values.EditorUiTilesetEditor, null, ui => { SaveChanges(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidth,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "save",
+                    "bt1",
+                    Values.EditorUiTilesetEditor,
+                    null,
+                    ui =>
+                    {
+                        SaveChanges();
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "remove all", "bt1", Values.EditorUiTilesetEditor, null, ui => { RemoveAll(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidth,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "remove all",
+                    "bt1",
+                    Values.EditorUiTilesetEditor,
+                    null,
+                    ui =>
+                    {
+                        RemoveAll();
+                    }
+                )
+            );
 
             _camera.Location = new Point(400, 250);
         }
@@ -84,15 +147,23 @@ namespace ProjectZ.Editor
             {
                 _camera.Scale += 0.25f;
                 var scale = _camera.Scale / (_camera.Scale - 0.25f);
-                _camera.Location.X = InputHandler.MousePosition().X - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
-                _camera.Location.Y = InputHandler.MousePosition().Y - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
+                _camera.Location.X =
+                    InputHandler.MousePosition().X
+                    - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
+                _camera.Location.Y =
+                    InputHandler.MousePosition().Y
+                    - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
             }
             if (InputHandler.MouseWheelDown() && _camera.Scale > 0.25f)
             {
                 _camera.Scale -= 0.25f;
                 var scale = _camera.Scale / (_camera.Scale + 0.25f);
-                _camera.Location.X = InputHandler.MousePosition().X - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
-                _camera.Location.Y = InputHandler.MousePosition().Y - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
+                _camera.Location.X =
+                    InputHandler.MousePosition().X
+                    - (int)((InputHandler.MousePosition().X - _camera.Location.X) * scale);
+                _camera.Location.Y =
+                    InputHandler.MousePosition().Y
+                    - (int)((InputHandler.MousePosition().Y - _camera.Location.Y) * scale);
             }
 
             // move the tileset
@@ -100,13 +171,22 @@ namespace ProjectZ.Editor
                 _camera.Location += position - InputHandler.LastMousePosition();
 
             // update currentSelection
-            if (InputHandler.MouseIntersect(new Rectangle(_camera.Location.X, _camera.Location.Y,
-                (int)(_outputWidth * _tileSize * _camera.Scale),
-                (int)(_outputHeight * _tileSize * _camera.Scale))))
+            if (
+                InputHandler.MouseIntersect(
+                    new Rectangle(
+                        _camera.Location.X,
+                        _camera.Location.Y,
+                        (int)(_outputWidth * _tileSize * _camera.Scale),
+                        (int)(_outputHeight * _tileSize * _camera.Scale)
+                    )
+                )
+            )
             {
                 _currentSelection =
-                    ((position.X - _camera.Location.X) / (int)(_tileSize * _camera.Scale)) % _outputWidth +
-                    ((position.Y - _camera.Location.Y) / (int)(_tileSize * _camera.Scale)) * _outputWidth;
+                    ((position.X - _camera.Location.X) / (int)(_tileSize * _camera.Scale))
+                        % _outputWidth
+                    + ((position.Y - _camera.Location.Y) / (int)(_tileSize * _camera.Scale))
+                        * _outputWidth;
 
                 if (_currentSelection >= _tileSetData.Count)
                     _currentSelection = -1;
@@ -117,28 +197,54 @@ namespace ProjectZ.Editor
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, _camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _camera.TransformMatrix
+            );
 
             // draw the tiled background
-            spriteBatch.Draw(Resources.SprTiledBlock, new Rectangle(0, 0,
-                    _outputWidth * _tileSize, _outputHeight * _tileSize),
-                new Rectangle(0, 0,
+            spriteBatch.Draw(
+                Resources.SprTiledBlock,
+                new Rectangle(0, 0, _outputWidth * _tileSize, _outputHeight * _tileSize),
+                new Rectangle(
+                    0,
+                    0,
                     (_outputWidth * _tileSize) / _tileSize * 2,
-                    (_outputHeight * _tileSize) / _tileSize * 2), Color.White);
+                    (_outputHeight * _tileSize) / _tileSize * 2
+                ),
+                Color.White
+            );
 
             // draw all the tiles
             for (var i = 0; i < _tileSetData.Count; i++)
-                spriteBatch.Draw(_tileSetData[i].SprTile, new Rectangle(
-                    i % _outputWidth * _tileSize, i / _outputWidth * _tileSize,
-                    _tileSetData[i].SprTile.Width, _tileSetData[i].SprTile.Height), Color.White);
+                spriteBatch.Draw(
+                    _tileSetData[i].SprTile,
+                    new Rectangle(
+                        i % _outputWidth * _tileSize,
+                        i / _outputWidth * _tileSize,
+                        _tileSetData[i].SprTile.Width,
+                        _tileSetData[i].SprTile.Height
+                    ),
+                    Color.White
+                );
 
             // draw the current selection
             if (_currentSelection >= 0)
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(
                         _currentSelection % _outputWidth * _tileSize,
                         _currentSelection / _outputWidth * _tileSize,
-                    _tileSize, _tileSize), Color.Red * 0.5f);
-
+                        _tileSize,
+                        _tileSize
+                    ),
+                    Color.Red * 0.5f
+                );
 
             // draw all the loaded tilemap
             var posY = 0;
@@ -146,12 +252,22 @@ namespace ProjectZ.Editor
             {
                 var tileMap = map.Map.TileMap;
 
-                for (var z = 0; z < tileMap.ArrayTileMap.GetLength(2) - (tileMap.BlurLayer ? 1 : 0); z++)
-                    for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
-                        for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
-                            if (tileMap.ArrayTileMap[x, y, z] >= 0)
-                                spriteBatch.Draw(_tileSetData[tileMap.ArrayTileMap[x, y, z]].SprTile,
-                                    new Vector2(x * _tileSize + _outputWidth * 16 + 8, posY + y * _tileSize), Color.White);
+                for (
+                    var z = 0;
+                    z < tileMap.ArrayTileMap.GetLength(2) - (tileMap.BlurLayer ? 1 : 0);
+                    z++
+                )
+                for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
+                for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
+                    if (tileMap.ArrayTileMap[x, y, z] >= 0)
+                        spriteBatch.Draw(
+                            _tileSetData[tileMap.ArrayTileMap[x, y, z]].SprTile,
+                            new Vector2(
+                                x * _tileSize + _outputWidth * 16 + 8,
+                                posY + y * _tileSize
+                            ),
+                            Color.White
+                        );
 
                 posY += tileMap.ArrayTileMap.GetLength(1) * 16 + 8;
             }
@@ -170,10 +286,11 @@ namespace ProjectZ.Editor
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Map file (*.map)|*.map",
-                Multiselect = true
+                Multiselect = true,
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             // add the selected maps
             foreach (var fileName in openFileDialog.FileNames)
@@ -191,12 +308,10 @@ namespace ProjectZ.Editor
         public void SaveChanges()
         {
 #if WINDOWS
-            var saveFileDialog = new SaveFileDialog()
-            {
-                Filter = "Map file (*.png)|*.png"
-            };
+            var saveFileDialog = new SaveFileDialog() { Filter = "Map file (*.png)|*.png" };
 
-            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (saveFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             var filePath = saveFileDialog.FileName;
             var fileName = Path.GetFileName(filePath);
@@ -217,16 +332,27 @@ namespace ProjectZ.Editor
 
         public void SaveTileset(string path)
         {
-            _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _outputWidth * _tileSize, _outputHeight * _tileSize);
+            _renderTarget = new RenderTarget2D(
+                Game1.Graphics.GraphicsDevice,
+                _outputWidth * _tileSize,
+                _outputHeight * _tileSize
+            );
 
             Game1.Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
             Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
             Game1.SpriteBatch.Begin();
 
             for (var i = 0; i < _tileSetData.Count; i++)
-                Game1.SpriteBatch.Draw(_tileSetData[i].SprTile, new Rectangle(
-                    i % _outputWidth * _tileSize, i / _outputWidth * _tileSize,
-                    _tileSetData[i].SprTile.Width, _tileSetData[i].SprTile.Height), Color.White);
+                Game1.SpriteBatch.Draw(
+                    _tileSetData[i].SprTile,
+                    new Rectangle(
+                        i % _outputWidth * _tileSize,
+                        i / _outputWidth * _tileSize,
+                        _tileSetData[i].SprTile.Width,
+                        _tileSetData[i].SprTile.Height
+                    ),
+                    Color.White
+                );
 
             Game1.SpriteBatch.End();
             Game1.Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -282,22 +408,30 @@ namespace ProjectZ.Editor
 
         private bool IsTileUsed(TileMap tileMap, int index)
         {
-            for (var z = 0; z < tileMap.ArrayTileMap.GetLength(2) - (tileMap.BlurLayer ? 1 : 0); z++)
-                for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
-                    for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
-                        if (tileMap.ArrayTileMap[x, y, z] == index)
-                            return true;
+            for (
+                var z = 0;
+                z < tileMap.ArrayTileMap.GetLength(2) - (tileMap.BlurLayer ? 1 : 0);
+                z++
+            )
+            for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
+            for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
+                if (tileMap.ArrayTileMap[x, y, z] == index)
+                    return true;
 
             return false;
         }
 
         public void MapTileArray(TileMap tileMap, int[] mapping)
         {
-            for (var z = 0; z < tileMap.ArrayTileMap.GetLength(2) - (tileMap.BlurLayer ? 1 : 0); z++)
-                for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
-                    for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
-                        if (tileMap.ArrayTileMap[x, y, z] >= 0)
-                            tileMap.ArrayTileMap[x, y, z] = mapping[tileMap.ArrayTileMap[x, y, z]];
+            for (
+                var z = 0;
+                z < tileMap.ArrayTileMap.GetLength(2) - (tileMap.BlurLayer ? 1 : 0);
+                z++
+            )
+            for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
+            for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
+                if (tileMap.ArrayTileMap[x, y, z] >= 0)
+                    tileMap.ArrayTileMap[x, y, z] = mapping[tileMap.ArrayTileMap[x, y, z]];
         }
 
         public List<Color[]> SplitTileset(Texture2D sprTexture)
@@ -308,20 +442,25 @@ namespace ProjectZ.Editor
             var tileDataList = new List<Color[]>();
 
             for (var y = 0; y < sprTexture.Height / _tileSize; y++)
-                for (var x = 0; x < sprTexture.Width / _tileSize; x++)
+            for (var x = 0; x < sprTexture.Width / _tileSize; x++)
+            {
+                var data = new Color[_tileSize * _tileSize];
+
+                for (var iy = 0; iy < _tileSize; iy++)
                 {
-                    var data = new Color[_tileSize * _tileSize];
-
-                    for (var iy = 0; iy < _tileSize; iy++)
+                    for (var ix = 0; ix < _tileSize; ix++)
                     {
-                        for (var ix = 0; ix < _tileSize; ix++)
-                        {
-                            data[ix + iy * _tileSize] = colorData[y * _tileSize * sprTexture.Width + x * _tileSize + ix + iy * sprTexture.Width];
-                        }
+                        data[ix + iy * _tileSize] = colorData[
+                            y * _tileSize * sprTexture.Width
+                                + x * _tileSize
+                                + ix
+                                + iy * sprTexture.Width
+                        ];
                     }
-
-                    tileDataList.Add(data);
                 }
+
+                tileDataList.Add(data);
+            }
 
             return tileDataList;
         }
@@ -356,13 +495,21 @@ namespace ProjectZ.Editor
             // only works when the tiles are 16x16
             uint max = 255 * 16 * 16;
             uint value =
-                ((uint)(r / (float)max * 256) << 0) +
-                ((uint)(g / (float)max * 256) << 8) +
-                ((uint)(b / (float)max * 256) << 16) +
-                ((uint)(a / (float)max * 256) << 24);
+                ((uint)(r / (float)max * 256) << 0)
+                + ((uint)(g / (float)max * 256) << 8)
+                + ((uint)(b / (float)max * 256) << 16)
+                + ((uint)(a / (float)max * 256) << 24);
 
             texture.SetData(data);
-            _tileSetData.Add(new Tile { Data = data, SprTile = texture, Value = value, Position = _tileSetData.Count });
+            _tileSetData.Add(
+                new Tile
+                {
+                    Data = data,
+                    SprTile = texture,
+                    Value = value,
+                    Position = _tileSetData.Count,
+                }
+            );
 
             return _tileSetData.Count - 1;
         }
@@ -385,10 +532,10 @@ namespace ProjectZ.Editor
 
         public int ColorDiff(Color first, Color second)
         {
-            return Math.Abs(first.R - second.R) +
-                   Math.Abs(first.G - second.G) +
-                   Math.Abs(first.B - second.B) +
-                   Math.Abs(first.A - second.A);
+            return Math.Abs(first.R - second.R)
+                + Math.Abs(first.G - second.G)
+                + Math.Abs(first.B - second.B)
+                + Math.Abs(first.A - second.A);
         }
     }
 }

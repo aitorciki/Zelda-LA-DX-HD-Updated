@@ -26,12 +26,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _spawnParticles;
         private float _particleCounter;
 
-        public ObjDungeonSixEntry() : base("dungeonSixEntry") { }
+        public ObjDungeonSixEntry()
+            : base("dungeonSixEntry") { }
 
-        public ObjDungeonSixEntry(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public ObjDungeonSixEntry(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             // do not spawn the entrance if it is already open
-            if (!string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(strKey)
+                && Game1.GameManager.SaveManager.GetString(strKey) == "1"
+            )
             {
                 _isOpen = true;
             }
@@ -41,14 +46,23 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 80, 64);
 
-            _sprite = new CSprite("dungeonSixEntry", EntityPosition, Vector2.Zero) { IsVisible = _isOpen };
+            _sprite = new CSprite("dungeonSixEntry", EntityPosition, Vector2.Zero)
+            {
+                IsVisible = _isOpen,
+            };
 
             if (!_isOpen)
             {
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             }
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void Update()
@@ -56,8 +70,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             if (!_init)
             {
                 _init = true;
-                // deactivate the objects at the position of the entry 
-                _objectList = Map.Objects.GetObjects((int)EntityPosition.X, (int)EntityPosition.Y + 16, 80, 48);
+                // deactivate the objects at the position of the entry
+                _objectList = Map.Objects.GetObjects(
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y + 16,
+                    80,
+                    48
+                );
                 SetObjectState(false);
             }
 
@@ -76,8 +95,22 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 {
                     _particleCounter -= 75;
                     var posX = (int)EntityPosition.X + Game1.RandomNumber.Next(0, 64);
-                    var posY = (int)EntityPosition.Y + _sprite.SourceRectangle.Height - 12 + Game1.RandomNumber.Next(0, 8);
-                    Map.Objects.SpawnObject(new ObjAnimator(Map, posX, posY, Values.LayerPlayer, "Particles/spawn", "run", true));
+                    var posY =
+                        (int)EntityPosition.Y
+                        + _sprite.SourceRectangle.Height
+                        - 12
+                        + Game1.RandomNumber.Next(0, 8);
+                    Map.Objects.SpawnObject(
+                        new ObjAnimator(
+                            Map,
+                            posX,
+                            posY,
+                            Values.LayerPlayer,
+                            "Particles/spawn",
+                            "run",
+                            true
+                        )
+                    );
                 }
             }
 
@@ -136,7 +169,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void OnKeyChange()
         {
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
                 Open();
         }
     }

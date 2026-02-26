@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
-using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -33,14 +33,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _lives = EnemyLives.BombiteGreen;
         private bool _wasStunned;
 
-        public EnemyBombiteGreen() : base("bombiteGreen") { }
+        public EnemyBombiteGreen()
+            : base("bombiteGreen") { }
 
-        public EnemyBombiteGreen(Map.Map map, int posX, int posY) : base(map)
+        public EnemyBombiteGreen(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -48,15 +50,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/bombiteGreen");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-7, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-7, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 11, 8)
             {
                 AbsorbPercentage = 0.9f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 Bounciness = 0.25f,
                 Drag = 0.85f,
             };
@@ -71,7 +75,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("follow", stateFollow);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false);
-            _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { SilentStateChange = false };
+            _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900)
+            {
+                SilentStateChange = false,
+            };
 
             _aiComponent.Trigger.Add(_damageCooldown = new AiTriggerSwitch(250));
 
@@ -80,14 +87,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var damageCollider = new CBox(EntityPosition, -6, -13, 0, 12, 12, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite) { Height = 1.0f, Rotation = 0.1f });
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new DrawShadowCSpriteComponent(_sprite) { Height = 1.0f, Rotation = 0.1f }
+            );
         }
 
         private void Reset()
@@ -139,7 +161,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 else if (_animator.CurrentFrameIndex > 2)
                 {
                     // blink
-                    _sprite.SpriteShader = Game1.TotalGameTime % (AiDamageState.BlinkTime * 2) < AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
+                    _sprite.SpriteShader =
+                        Game1.TotalGameTime % (AiDamageState.BlinkTime * 2)
+                        < AiDamageState.BlinkTime
+                            ? Resources.DamageSpriteShader0
+                            : null;
                 }
 
                 // move towards the player
@@ -168,14 +194,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var objExplosion = new ObjBomb(Map, EntityPosition.X, EntityPosition.Y, false, false);
             objExplosion.Explode();
             Map.Objects.SpawnObject(objExplosion);
-            Map.Objects.SpawnObject(new EnemyBombiteRespawner(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 16, _fieldRect, true));
+            Map.Objects.SpawnObject(
+                new EnemyBombiteRespawner(
+                    Map,
+                    (int)ResetPosition.X - 8,
+                    (int)ResetPosition.Y - 16,
+                    _fieldRect,
+                    true
+                )
+            );
             Map.Objects.DeleteObjects.Add(this);
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -186,7 +224,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

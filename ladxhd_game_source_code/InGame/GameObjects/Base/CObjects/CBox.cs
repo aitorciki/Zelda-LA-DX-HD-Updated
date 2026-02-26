@@ -17,7 +17,16 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             Box = new Box(posX, posY, posZ, width, height, depth);
         }
 
-        public CBox(CPosition position, float offsetX, float offsetY, float offsetZ, float width, float height, float depth, bool followZ = false)
+        public CBox(
+            CPosition position,
+            float offsetX,
+            float offsetY,
+            float offsetZ,
+            float width,
+            float height,
+            float depth,
+            bool followZ = false
+        )
         {
             OffsetX = offsetX;
             OffsetY = offsetY;
@@ -31,9 +40,15 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             Set(position);
         }
 
-        public CBox(CPosition position, float offsetX, float offsetY, float width, float height, float depth) :
-            this(position, offsetX, offsetY, 0, width, height, depth)
-        { }
+        public CBox(
+            CPosition position,
+            float offsetX,
+            float offsetY,
+            float width,
+            float height,
+            float depth
+        )
+            : this(position, offsetX, offsetY, 0, width, height, depth) { }
 
         public void Set(CPosition position)
         {
@@ -55,7 +70,10 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
                 position.X + OffsetX,
                 position.Y + OffsetY - position.Z,
                 OffsetZ,
-                Box.Width, Box.Height, Box.Depth);
+                Box.Width,
+                Box.Height,
+                Box.Depth
+            );
         }
 
         private void UpdateBox(CPosition position)
@@ -64,7 +82,10 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
                 position.X + OffsetX,
                 position.Y + OffsetY,
                 position.Z + OffsetZ,
-                Box.Width, Box.Height, Box.Depth);
+                Box.Width,
+                Box.Height,
+                Box.Depth
+            );
         }
     }
 }

@@ -29,9 +29,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _freezePlayer;
         private bool _startEating;
 
-        public ObjAlligator() : base("alligator") { }
+        public ObjAlligator()
+            : base("alligator") { }
 
-        public ObjAlligator(Map.Map map, int posX, int posY) : base(map)
+        public ObjAlligator(Map.Map map, int posX, int posY)
+            : base(map)
         {
             _canSprite = Resources.GetSprite("trade2");
 
@@ -42,18 +44,36 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             EntitySize = new Rectangle(-16, -24, 32, 24);
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-13, -23));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-13, -23)
+            );
 
             var body = new BodyComponent(EntityPosition, -12, -16, 20, 16, 8);
             _bodyDrawComponent = new BodyDrawComponent(body, sprite, 1);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
 
             SpawnBanana();
@@ -65,7 +85,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             _gameObjectBanana = ObjectManager.GetGameObject(Map, "banana", null);
-            _gameObjectBanana.EntityPosition.Set(new Vector2((int)EntityPosition.X - 8, (int)EntityPosition.Y + 20));
+            _gameObjectBanana.EntityPosition.Set(
+                new Vector2((int)EntityPosition.X - 8, (int)EntityPosition.Y + 20)
+            );
             Map.Objects.SpawnObject(_gameObjectBanana);
         }
 
@@ -113,7 +135,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _isCanActive = true;
             _canPosition = new Vector2(
                 EntityPosition.X - 2 - _canSprite.ScaledRectangle.Width,
-                EntityPosition.Y - 10 - _canSprite.ScaledRectangle.Height);
+                EntityPosition.Y - 10 - _canSprite.ScaledRectangle.Height
+            );
             _canVelocity = new Vector2(0, _canSpeed);
 
             Game1.GameManager.PlaySoundEffect("D360-36-24");

@@ -15,8 +15,8 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _bottomBar;
         private readonly ContentManager _content;
 
-        private readonly InterfaceSlider     _sliderSubLanguage;
-        private readonly InterfaceSlider     _sliderMenuBricks;
+        private readonly InterfaceSlider _sliderSubLanguage;
+        private readonly InterfaceSlider _sliderMenuBricks;
         private readonly InterfaceListLayout _toggleClassicSword;
         private readonly InterfaceListLayout _toggleSavePosition;
         private readonly InterfaceListLayout _toggleAutosave;
@@ -25,12 +25,26 @@ namespace ProjectZ.InGame.Pages
 
         private bool _showTooltip;
 
-        public void SetMenuBricks(int value) { ((InterfaceSlider)_sliderMenuBricks).CurrentStep = value; Resources.RefreshMenuBorderTexture(_content, value); }
-        public void SetClassicSword(bool state) => ((InterfaceToggle)_toggleClassicSword.Elements[1]).ToggleState = state;
-        public void SetSavePosition(bool state) => ((InterfaceToggle)_toggleSavePosition.Elements[1]).ToggleState = state;
-        public void SetAutoSave(bool state) => ((InterfaceToggle)_toggleAutosave.Elements[1]).ToggleState = state;
-        public void SetItemSlotRight(bool state) => ((InterfaceToggle)_toggleItemSlotSide.Elements[1]).ToggleState = state;
-        public void SetEpilepsySafe(bool state) => ((InterfaceToggle)_toggleEpilepsySafe.Elements[1]).ToggleState = state;
+        public void SetMenuBricks(int value)
+        {
+            ((InterfaceSlider)_sliderMenuBricks).CurrentStep = value;
+            Resources.RefreshMenuBorderTexture(_content, value);
+        }
+
+        public void SetClassicSword(bool state) =>
+            ((InterfaceToggle)_toggleClassicSword.Elements[1]).ToggleState = state;
+
+        public void SetSavePosition(bool state) =>
+            ((InterfaceToggle)_toggleSavePosition.Elements[1]).ToggleState = state;
+
+        public void SetAutoSave(bool state) =>
+            ((InterfaceToggle)_toggleAutosave.Elements[1]).ToggleState = state;
+
+        public void SetItemSlotRight(bool state) =>
+            ((InterfaceToggle)_toggleItemSlotSide.Elements[1]).ToggleState = state;
+
+        public void SetEpilepsySafe(bool state) =>
+            ((InterfaceToggle)_toggleEpilepsySafe.Elements[1]).ToggleState = state;
 
         public GameSettingsPage(int width, int height, ContentManager content)
         {
@@ -38,66 +52,166 @@ namespace ProjectZ.InGame.Pages
             _content = content;
 
             // Game Settings Layout
-            _gameSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _gameSettingsList = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Selectable = true,
+            };
 
             var buttonWidth = 320;
             var buttonHeight = 14;
 
-            _gameSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_game_header",
-                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
+            _gameSettingsList.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_game_header",
+                    new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
 
-            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _contentLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize) - 12),
+                Selectable = true,
+                ContentAlignment = InterfaceElement.Gravities.Top,
+            };
 
             // Button: Language
-            _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(buttonWidth, buttonHeight),
+                    new Point(0, 2),
+                    "settings_game_language",
+                    PressButtonLanguageChange
+                )
+            );
 
             // Slider: Sub-Language
-            _sliderSubLanguage = new InterfaceSlider(Resources.GameFont, "settings_game_sublanguage",
-                buttonWidth, 11, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
-                number => { Game1.LanguageManager.CurrentSubLanguageIndex = number; })
-                { SetString = number => LangSliderAdjustment(number) };
+            _sliderSubLanguage = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_game_sublanguage",
+                buttonWidth,
+                11,
+                new Point(1, 2),
+                0,
+                2,
+                1,
+                Game1.LanguageManager.CurrentSubLanguageIndex,
+                number =>
+                {
+                    Game1.LanguageManager.CurrentSubLanguageIndex = number;
+                }
+            )
+            {
+                SetString = number => LangSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderSubLanguage);
 
             // Slider: Menu Brick Border
-            _sliderMenuBricks = new InterfaceSlider(Resources.GameFont, "settings_game_menubricks",
-                buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
-                number => { GameSettings.MenuBorder = number; })
-                { SetString = number => MenuBorderScaleSliderAdjustment(number) };
+            _sliderMenuBricks = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_game_menubricks",
+                buttonWidth,
+                11,
+                new Point(1, 2),
+                0,
+                2,
+                1,
+                GameSettings.MenuBorder,
+                number =>
+                {
+                    GameSettings.MenuBorder = number;
+                }
+            )
+            {
+                SetString = number => MenuBorderScaleSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderMenuBricks);
 
             // Toggle: Classic Sword
-            _toggleClassicSword = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_game_classicsword", GameSettings.ClassicSword, 
-                newState => { GameSettings.ClassicSword = newState; });
+            _toggleClassicSword = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_game_classicsword",
+                GameSettings.ClassicSword,
+                newState =>
+                {
+                    GameSettings.ClassicSword = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleClassicSword);
 
             // Toggle: Save Position
-            _toggleSavePosition = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_game_saveposition", GameSettings.StoreSavePos, 
-                newState => { GameSettings.StoreSavePos = newState; });
+            _toggleSavePosition = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_game_saveposition",
+                GameSettings.StoreSavePos,
+                newState =>
+                {
+                    GameSettings.StoreSavePos = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleSavePosition);
 
             // Toggle: AutoSave
-            _toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_game_autosave", GameSettings.Autosave, 
-                newState => { GameSettings.Autosave = newState; });
+            _toggleAutosave = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_game_autosave",
+                GameSettings.Autosave,
+                newState =>
+                {
+                    GameSettings.Autosave = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleAutosave);
 
             // Toggle: Items on Right
-            _toggleItemSlotSide = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_game_items_on_right", GameSettings.ItemsOnRight, 
-                newState => { GameSettings.ItemsOnRight = newState; });
+            _toggleItemSlotSide = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_game_items_on_right",
+                GameSettings.ItemsOnRight,
+                newState =>
+                {
+                    GameSettings.ItemsOnRight = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleItemSlotSide);
 
             // Toggle: Epilepsy Safe
-            _toggleEpilepsySafe = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_game_epilepsysafe", GameSettings.EpilepsySafe,
-                newState => { GameSettings.EpilepsySafe = newState; });
+            _toggleEpilepsySafe = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_game_epilepsysafe",
+                GameSettings.EpilepsySafe,
+                newState =>
+                {
+                    GameSettings.EpilepsySafe = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleEpilepsySafe);
 
             // Bottom Bar / Back Button:
-            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(100, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             _gameSettingsList.AddElement(_contentLayout);
             _gameSettingsList.AddElement(_bottomBar);
             PageLayout = _gameSettingsList;
@@ -140,7 +254,7 @@ namespace ProjectZ.InGame.Pages
             {
                 1 => "settings_game_sublanguage_02",
                 2 => "settings_game_sublanguage_03",
-                _ => "settings_game_sublanguage_01"
+                _ => "settings_game_sublanguage_01",
             };
             return " " + Game1.LanguageManager.GetString(langKey, "error");
         }
@@ -154,12 +268,22 @@ namespace ProjectZ.InGame.Pages
             Resources.RefreshDynamicResources();
 
             // If the language is changed, then stored "OverrideText" also needs to be changed for any button that uses it.
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(CameraSettingsPage),
+                    out var camPage
+                )
+            )
             {
                 var CameraSettingsPage = (CameraSettingsPage)camPage;
                 CameraSettingsPage.UpdateCameraOverrideText();
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ControlSettingsPage), out var controlPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(ControlSettingsPage),
+                    out var controlPage
+                )
+            )
             {
                 var ControlSettingsPage = (ControlSettingsPage)controlPage;
                 ControlSettingsPage.UpdateControllerOverrideText();
@@ -171,15 +295,21 @@ namespace ProjectZ.InGame.Pages
             // Swap out the menu border with it's replacement.
             Resources.RefreshMenuBorderTexture(_content, number);
 
-            return ": " + number switch
-            {
-                0 => Game1.LanguageManager.GetString("settings_game_menubricksA", "error"),
-                1 => Game1.LanguageManager.GetString("settings_game_menubricksB", "error"),
-                2 => Game1.LanguageManager.GetString("settings_game_menubricksC", "error")
-            };
+            return ": "
+                + number switch
+                {
+                    0 => Game1.LanguageManager.GetString("settings_game_menubricksA", "error"),
+                    1 => Game1.LanguageManager.GetString("settings_game_menubricksB", "error"),
+                    2 => Game1.LanguageManager.GetString("settings_game_menubricksC", "error"),
+                };
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -196,23 +326,55 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_gameSettingsList.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
             string tooltip = "Select an option to view its tooltip.";
 
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 0: { tooltip = Game1.LanguageManager.GetString("tooltip_game_language", "error"); break; }
-                case 1: { tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error"); break; }
-                case 2: { tooltip = Game1.LanguageManager.GetString("tooltip_game_menubricks", "error"); break; }
-                case 3: { tooltip = Game1.LanguageManager.GetString("tooltip_game_classicsword", "error"); break; }
-                case 4: { tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error"); break; }
-                case 5: { tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error"); break; }
-                case 6: { tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error"); break; }
-                case 7: { tooltip = Game1.LanguageManager.GetString("tooltip_game_epilepsysafe", "error"); break; }
+                case 0:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_language", "error");
+                    break;
+                }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_sublanguage", "error");
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_menubricks", "error");
+                    break;
+                }
+                case 3:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_classicsword", "error");
+                    break;
+                }
+                case 4:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_saveposition", "error");
+                    break;
+                }
+                case 5:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_autosave", "error");
+                    break;
+                }
+                case 6:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_itemsonright", "error");
+                    break;
+                }
+                case 7:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_game_epilepsysafe", "error");
+                    break;
+                }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

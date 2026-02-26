@@ -9,7 +9,10 @@ namespace ProjectZ.InGame.SaveLoad
 {
     class DialogPathLoader
     {
-        public static void LoadScripts(string filePath, Dictionary<string, List<DialogPath>> dialogPaths)
+        public static void LoadScripts(
+            string filePath,
+            Dictionary<string, List<DialogPath>> dialogPaths
+        )
         {
             var reader = new StreamReader(filePath);
 
@@ -24,7 +27,8 @@ namespace ProjectZ.InGame.SaveLoad
 
                 var split = strLine.Split(new[] { "->" }, StringSplitOptions.None);
 
-                if (split.Length <= 1) continue;
+                if (split.Length <= 1)
+                    continue;
 
                 var splitKey = split[0].Split(':');
 
@@ -97,10 +101,15 @@ namespace ProjectZ.InGame.SaveLoad
             }
             else if (stringSplit[0] == "shake" && stringSplit.Length == 6)
             {
-                path.Action.Add(new DialogActionShake(
-                    int.Parse(stringSplit[1]), int.Parse(stringSplit[2]), int.Parse(stringSplit[3]),
-                    float.Parse(stringSplit[4], CultureInfo.InvariantCulture),
-                    float.Parse(stringSplit[5], CultureInfo.InvariantCulture)));
+                path.Action.Add(
+                    new DialogActionShake(
+                        int.Parse(stringSplit[1]),
+                        int.Parse(stringSplit[2]),
+                        int.Parse(stringSplit[3]),
+                        float.Parse(stringSplit[4], CultureInfo.InvariantCulture),
+                        float.Parse(stringSplit[5], CultureInfo.InvariantCulture)
+                    )
+                );
             }
             else if (stringSplit[0] == "set")
             {
@@ -111,7 +120,9 @@ namespace ProjectZ.InGame.SaveLoad
             }
             else if (stringSplit[0] == "get")
             {
-                path.Action.Add(new DialogActionGetVariable(stringSplit[1], stringSplit[2], stringSplit[3]));
+                path.Action.Add(
+                    new DialogActionGetVariable(stringSplit[1], stringSplit[2], stringSplit[3])
+                );
             }
             else if (stringSplit[0] == "cloak")
             {
@@ -120,7 +131,9 @@ namespace ProjectZ.InGame.SaveLoad
             else if (stringSplit[0] == "check_item")
             {
                 var itemCount = int.Parse(stringSplit[2]);
-                path.Action.Add(new DialogActionCheckItem(stringSplit[1], itemCount, stringSplit[3]));
+                path.Action.Add(
+                    new DialogActionCheckItem(stringSplit[1], itemCount, stringSplit[3])
+                );
             }
             else if (stringSplit[0] == "cooldown")
             {
@@ -140,12 +153,19 @@ namespace ProjectZ.InGame.SaveLoad
             else if (stringSplit[0] == "remove_item")
             {
                 var itemCount = int.Parse(stringSplit[2]);
-                path.Action.Add(new DialogActionRemoveItem(stringSplit[1], itemCount, stringSplit[3]));
+                path.Action.Add(
+                    new DialogActionRemoveItem(stringSplit[1], itemCount, stringSplit[3])
+                );
             }
             else if (stringSplit[0] == "stop_music")
             {
                 if (stringSplit.Length == 3)
-                    path.Action.Add(new DialogActionStopMusicTime(int.Parse(stringSplit[1]), int.Parse(stringSplit[2])));
+                    path.Action.Add(
+                        new DialogActionStopMusicTime(
+                            int.Parse(stringSplit[1]),
+                            int.Parse(stringSplit[2])
+                        )
+                    );
                 else
                     path.Action.Add(new DialogActionStopMusic());
             }
@@ -157,8 +177,11 @@ namespace ProjectZ.InGame.SaveLoad
             }
             else if (stringSplit[0] == "music_speed")
             {
-                path.Action.Add(new DialogActionMusicSpeed(
-                    float.Parse(stringSplit[1], CultureInfo.InvariantCulture)));
+                path.Action.Add(
+                    new DialogActionMusicSpeed(
+                        float.Parse(stringSplit[1], CultureInfo.InvariantCulture)
+                    )
+                );
             }
             else if (stringSplit[0] == "sound")
             {
@@ -191,14 +214,18 @@ namespace ProjectZ.InGame.SaveLoad
             {
                 var posX = int.Parse(stringSplit[2]);
                 var posY = int.Parse(stringSplit[3]);
-                path.Action.Add(new DialogActionSeqSetPosition(stringSplit[1], new Vector2(posX, posY)));
+                path.Action.Add(
+                    new DialogActionSeqSetPosition(stringSplit[1], new Vector2(posX, posY))
+                );
             }
             else if (stringSplit[0] == "seq_lerp")
             {
                 var posX = int.Parse(stringSplit[2]);
                 var posY = int.Parse(stringSplit[3]);
                 var time = float.Parse(stringSplit[4], CultureInfo.InvariantCulture);
-                path.Action.Add(new DialogActionSeqLerp(stringSplit[1], new Vector2(posX, posY), time));
+                path.Action.Add(
+                    new DialogActionSeqLerp(stringSplit[1], new Vector2(posX, posY), time)
+                );
             }
             else if (stringSplit[0] == "seq_color")
             {
@@ -207,7 +234,13 @@ namespace ProjectZ.InGame.SaveLoad
                 var colorB = byte.Parse(stringSplit[4]);
                 var colorA = byte.Parse(stringSplit[5]);
                 var time = int.Parse(stringSplit[6]);
-                path.Action.Add(new DialogActionSeqColorLerp(stringSplit[1], new Color(colorR, colorG, colorB, colorA), time));
+                path.Action.Add(
+                    new DialogActionSeqColorLerp(
+                        stringSplit[1],
+                        new Color(colorR, colorG, colorB, colorA),
+                        time
+                    )
+                );
             }
             else if (stringSplit[0] == "seq_play")
             {

@@ -39,9 +39,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private ObjItem _necklace;
 
-        public ObjBoat() : base("boat") { }
+        public ObjBoat()
+            : base("boat") { }
 
-        public ObjBoat(Map.Map map, int posX, int posY) : base(map)
+        public ObjBoat(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 20, posY + 15, 0);
             EntitySize = new Rectangle(-20, -15, 40, 15);
@@ -52,16 +54,42 @@ namespace ProjectZ.InGame.GameObjects.Things
             _currentPosition = _topPosition;
 
             _collisionBox = new CBox(EntityPosition, -16, -14, 32, 14, 16);
-            _moveBox = new CBox(EntityPosition,
-                _collisionBox.OffsetX, _collisionBox.OffsetY - 8, _collisionBox.OffsetZ,
-                _collisionBox.Box.Width, _collisionBox.Box.Height, _collisionBox.Box.Depth);
+            _moveBox = new CBox(
+                EntityPosition,
+                _collisionBox.OffsetX,
+                _collisionBox.OffsetY - 8,
+                _collisionBox.OffsetZ,
+                _collisionBox.Box.Width,
+                _collisionBox.Box.Height,
+                _collisionBox.Box.Depth
+            );
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Normal) { DirectionFlag = 8 });
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Normal)
+                {
+                    DirectionFlag = 8,
+                }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent("boat", EntityPosition, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent("boat", EntityPosition, Values.LayerBottom)
+            );
 
-            _objFisherman = new ObjFishermanBoat(map, posX + 1, posY - 16, null, "npc_fisherman", "npc_bridge", new Rectangle(0, 1, 14, 20));
+            _objFisherman = new ObjFishermanBoat(
+                map,
+                posX + 1,
+                posY - 16,
+                null,
+                "npc_fisherman",
+                "npc_bridge",
+                new Rectangle(0, 1, 14, 20)
+            );
             map.Objects.SpawnObject(_objFisherman);
         }
 
@@ -74,12 +102,27 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var spawnPosition = new Vector2(EntityPosition.X - 48, EntityPosition.Y - 16);
                 Game1.GameManager.SaveManager.RemoveString(spawnKey);
 
-                _necklace = new ObjItem(Map, (int)spawnPosition.X, (int)spawnPosition.Y, null, null, "trade11", null);
+                _necklace = new ObjItem(
+                    Map,
+                    (int)spawnPosition.X,
+                    (int)spawnPosition.Y,
+                    null,
+                    null,
+                    "trade11",
+                    null
+                );
                 _necklace.SpawnBoatSequence();
                 Map.Objects.SpawnObject(_necklace);
 
-                var fallAnimation = new ObjAnimator(Map, (int)(spawnPosition.X + 8), (int)(spawnPosition.Y + 5),
-                    Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                var fallAnimation = new ObjAnimator(
+                    Map,
+                    (int)(spawnPosition.X + 8),
+                    (int)(spawnPosition.Y + 5),
+                    Values.LayerPlayer,
+                    "Particles/fishingSplash",
+                    "idle",
+                    true
+                );
                 Map.Objects.SpawnObject(fallAnimation);
             }
         }
@@ -99,12 +142,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             // If the player traded the hook but didn't grab the necklace/bra before leaving, respawn it on the boat.
             var fishHook = Game1.GameManager.GetItem("trade10")?.Count;
             var necklace = Game1.GameManager.GetItem("trade11")?.Count;
-            var mermaid  = Game1.GameManager.GetItem("trade12")?.Count;
-            var magnify  = Game1.GameManager.GetItem("trade13")?.Count;
+            var mermaid = Game1.GameManager.GetItem("trade12")?.Count;
+            var magnify = Game1.GameManager.GetItem("trade13")?.Count;
             var traded11 = Game1.GameManager.SaveManager.GetString("npc_bridge");
 
             // Check: necklace already spawned, does not have trade item or future ones, and trade sequence has been completed.
-            if (_necklace == null && fishHook != 1 && necklace != 1  && mermaid != 1 && magnify != 1 && traded11 == "1")
+            if (
+                _necklace == null
+                && fishHook != 1
+                && necklace != 1
+                && mermaid != 1
+                && magnify != 1
+                && traded11 == "1"
+            )
             {
                 _necklace = new ObjItem(Map, 96, 40, null, null, "trade11", null);
                 Map.Objects.SpawnObject(_necklace);
@@ -116,8 +166,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // is the player standing on the platform?
             var wasStandingOnTop = _isStandingOnTop;
-            _isStandingOnTop = MapManager.ObjLink.IsGrounded() &&
-                               MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box);
+            _isStandingOnTop =
+                MapManager.ObjLink.IsGrounded()
+                && MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box);
 
             // jumped ontop of the boat?
             if (_isStandingOnTop && !wasStandingOnTop)
@@ -146,15 +197,27 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_isStandingOnTop && _currentPosition.Y < _topPosition.Y + 1)
                 target = 0.05f;
 
-            _velocity = AnimationHelper.MoveToTarget(_velocity, target, 0.05f * Game1.TimeMultiplier);
+            _velocity = AnimationHelper.MoveToTarget(
+                _velocity,
+                target,
+                0.05f * Game1.TimeMultiplier
+            );
 
             if (!_offset)
             {
                 // move up or down
                 if (_isStandingOnTop)
-                    _currentPosition.Y = AnimationHelper.MoveToTarget(_currentPosition.Y, _bottomPosition.Y, _velocity * Game1.TimeMultiplier);
+                    _currentPosition.Y = AnimationHelper.MoveToTarget(
+                        _currentPosition.Y,
+                        _bottomPosition.Y,
+                        _velocity * Game1.TimeMultiplier
+                    );
                 else
-                    _currentPosition.Y = AnimationHelper.MoveToTarget(_currentPosition.Y, _topPosition.Y, _velocity * Game1.TimeMultiplier);
+                    _currentPosition.Y = AnimationHelper.MoveToTarget(
+                        _currentPosition.Y,
+                        _topPosition.Y,
+                        _velocity * Game1.TimeMultiplier
+                    );
 
                 if (_currentPosition.Y == _topPosition.Y)
                 {
@@ -198,14 +261,23 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // check for colliding bodies and push them forward
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)_lastBox.Left, (int)_lastBox.Back - 8, (int)_lastBox.Width, (int)_lastBox.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)_lastBox.Left,
+                (int)_lastBox.Back - 8,
+                (int)_lastBox.Width,
+                (int)_lastBox.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {
                 var body = (BodyComponent)collidingObject.Components[BodyComponent.Index];
 
-                if (body.BodyBox.Box.Front <= _lastCollisionBox.Back && body.BodyBox.Box.Intersects(_lastBox))
+                if (
+                    body.BodyBox.Box.Front <= _lastCollisionBox.Back
+                    && body.BodyBox.Box.Intersects(_lastBox)
+                )
                 {
                     var offset = Vector2.Zero;
 
@@ -215,10 +287,18 @@ namespace ProjectZ.InGame.GameObjects.Things
                         var add = Vector2.Zero;
 
                         // align the body with the platform so that the body is not wobbling around
-                        if (Math.Abs(body.VelocityTarget.X) < 0.1f && Math.Abs(body.Velocity.X) < 0.1f)
+                        if (
+                            Math.Abs(body.VelocityTarget.X) < 0.1f
+                            && Math.Abs(body.Velocity.X) < 0.1f
+                        )
                         {
                             var distance = (body.Position.X + direction.X) - EntityPosition.X;
-                            var distanceNormal = (int)Math.Round(distance * MapManager.Camera.Scale, MidpointRounding.AwayFromZero) / MapManager.Camera.Scale;
+                            var distanceNormal =
+                                (int)
+                                    Math.Round(
+                                        distance * MapManager.Camera.Scale,
+                                        MidpointRounding.AwayFromZero
+                                    ) / MapManager.Camera.Scale;
 
                             var dir = distanceNormal - distance;
                             if (Math.Abs(dir) > 0.005)

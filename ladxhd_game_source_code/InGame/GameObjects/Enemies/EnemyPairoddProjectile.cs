@@ -17,7 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private DamageFieldComponent _damageField;
         private CSprite _sprite;
 
-        public EnemyPairoddProjectile(Map.Map map, Vector2 position, float speed) : base(map)
+        public EnemyPairoddProjectile(Map.Map map, Vector2 position, float speed)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Damage;
 
@@ -36,9 +37,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                MoveCollision = OnCollision
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                MoveCollision = OnCollision,
             };
 
             var velocity = MapManager.ObjLink.Position - EntityPosition.Position;
@@ -49,10 +49,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageCollider = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4);
 
             AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { OnDamagedPlayer = DamagedPlayer });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    OnDamagedPlayer = DamagedPlayer,
+                }
+            );
             AddComponent(BodyComponent.Index, body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
         }
 
         private void Reset()
@@ -82,7 +91,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Despawn()
         {
             // spawn despawn effect
-            var animation = new ObjSparkingEffect(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0);
+            var animation = new ObjSparkingEffect(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                0,
+                0
+            );
             Map.Objects.SpawnObject(animation);
             Map.Objects.DeleteObjects.Add(this);
         }

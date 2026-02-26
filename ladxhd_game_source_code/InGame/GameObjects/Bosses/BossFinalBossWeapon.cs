@@ -1,13 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using Microsoft.Xna.Framework.Graphics;
-using ProjectZ.InGame.Map;
-using ProjectZ.Base;
 
 namespace ProjectZ.InGame.GameObjects.Bosses
 {
@@ -22,7 +22,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private float _soundCounter;
 
-        public BossFinalBossWeapon(Map.Map map, BossFinalBoss owner, int posX, int posY, int dir) : base(map)
+        public BossFinalBossWeapon(Map.Map map, BossFinalBoss owner, int posX, int posY, int dir)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -41,13 +42,15 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             _aiComponent = new AiComponent();
 
             var stateForward = new AiState(UpdateForward) { Init = InitForward };
-            stateForward.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("backward")));
+            stateForward.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("backward"))
+            );
             var stateBackward = new AiState(UpdateBackward) { Init = InitBackward };
 
             _aiComponent.States.Add("forward", stateForward);
@@ -59,7 +62,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
@@ -73,19 +79,15 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
         }
 
-        private void UpdateForward()
-        {
+        private void UpdateForward() { }
 
-        }
-
-        private void InitBackward()
-        {
-
-        }
+        private void InitBackward() { }
 
         private void UpdateBackward()
         {
-            var direction = new Vector2(_owner.EntityPosition.X, _owner.EntityPosition.Y - 24) - EntityPosition.Position;
+            var direction =
+                new Vector2(_owner.EntityPosition.X, _owner.EntityPosition.Y - 24)
+                - EntityPosition.Position;
 
             if (direction.Length() < 4)
             {
@@ -97,7 +99,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (direction != Vector2.Zero)
                 direction.Normalize();
 
-            _body.VelocityTarget = AnimationHelper.MoveToTarget(_body.VelocityTarget, direction * 1.25f, 0.075f * Game1.TimeMultiplier);
+            _body.VelocityTarget = AnimationHelper.MoveToTarget(
+                _body.VelocityTarget,
+                direction * 1.25f,
+                0.075f * Game1.TimeMultiplier
+            );
         }
 
         private void Update()
@@ -111,8 +117,22 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var rectangle = _animator.CollisionRectangle;
 
             // Collision box is mirrored because the animation only supports one collider.
-            var collisionBox0 = new Box(EntityPosition.X + rectangle.X, EntityPosition.Y + rectangle.Y, 0, rectangle.Width, rectangle.Height, 8);
-            var collisionBox1 = new Box(EntityPosition.X - rectangle.X - rectangle.Width, EntityPosition.Y - rectangle.Y - rectangle.Height, 0, rectangle.Width, rectangle.Height, 8);
+            var collisionBox0 = new Box(
+                EntityPosition.X + rectangle.X,
+                EntityPosition.Y + rectangle.Y,
+                0,
+                rectangle.Width,
+                rectangle.Height,
+                8
+            );
+            var collisionBox1 = new Box(
+                EntityPosition.X - rectangle.X - rectangle.Width,
+                EntityPosition.Y - rectangle.Y - rectangle.Height,
+                0,
+                rectangle.Width,
+                rectangle.Height,
+                8
+            );
 
             // Check to see if the player collides with either hitbox.
             Box bodyBox = MapManager.ObjLink._body.BodyBox.Box;
@@ -123,7 +143,6 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void Draw(SpriteBatch spriteBatch)
         {
             _sprite.Draw(spriteBatch);
-
         }
 
         private void Despawn()

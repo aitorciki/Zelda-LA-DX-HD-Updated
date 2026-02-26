@@ -11,16 +11,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     class EnemyFlameFountain : GameObject
     {
         private readonly Animator _animator;
-        
+
         private int _lastFrameIndex;
 
-        bool  sprite_shader = true;
-        bool  light_source = true;
-        int   light_red = 255;
-        int   light_grn = 200;
-        int   light_blu = 200;
+        bool sprite_shader = true;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 200;
+        int light_blu = 200;
         float light_bright = 0.35f;
-        int   light_size = 32;
+        int light_size = 32;
 
         public struct LightSettings
         {
@@ -32,11 +32,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             public float Brightness;
             public int Size;
         }
+
         private LightSettings _light = new LightSettings();
 
-        public EnemyFlameFountain() : base("flame fountain") { }
+        public EnemyFlameFountain()
+            : base("flame fountain") { }
 
-        public EnemyFlameFountain(Map.Map map, int posX, int posY) : base(map)
+        public EnemyFlameFountain(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "EnemyFlameFountain.lahdmod");
@@ -72,8 +75,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // spawn a fireball
             if (_animator.CurrentFrameIndex == 1 && _lastFrameIndex == 0)
-                Map.Objects.SpawnObject(new EnemyFlameFountainFireball(Map, new Vector2(EntityPosition.X, EntityPosition.Y + 8), new Vector2(0, 1), _light));
-            
+                Map.Objects.SpawnObject(
+                    new EnemyFlameFountainFireball(
+                        Map,
+                        new Vector2(EntityPosition.X, EntityPosition.Y + 8),
+                        new Vector2(0, 1),
+                        _light
+                    )
+                );
+
             _lastFrameIndex = _animator.CurrentFrameIndex;
         }
     }

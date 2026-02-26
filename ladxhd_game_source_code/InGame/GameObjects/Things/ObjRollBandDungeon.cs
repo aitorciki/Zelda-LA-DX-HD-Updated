@@ -24,9 +24,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _animationCount;
         private float _animationSpeed = 60f / 5;
 
-        public ObjRollBandDungeon() : base("rollband_1") { }
+        public ObjRollBandDungeon()
+            : base("rollband_1") { }
 
-        public ObjRollBandDungeon(Map.Map map, int posX, int posY, int direction) : base(map)
+        public ObjRollBandDungeon(Map.Map map, int posX, int posY, int direction)
+            : base(map)
         {
             _sourceRectangle = Resources.SourceRectangle("rollband_1");
 
@@ -41,10 +43,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var marginX = direction == 0 || direction == 2 ? 0 : 3;
             var marginY = direction == 0 || direction == 2 ? 3 : 0;
-            _collisionBox = new Box(posX + marginX, posY + marginY, 0, 16 - marginX * 2, 16 - marginY * 2, 8);
+            _collisionBox = new Box(
+                posX + marginX,
+                posY + marginY,
+                0,
+                16 - marginX * 2,
+                16 - marginY * 2,
+                8
+            );
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         private void Update()
@@ -53,25 +65,63 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // get and move the components colliding with the rollband
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)_collisionBox.Left, (int)_collisionBox.Back, (int)_collisionBox.Width, (int)_collisionBox.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)_collisionBox.Left,
+                (int)_collisionBox.Back,
+                (int)_collisionBox.Width,
+                (int)_collisionBox.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var gameObject in _collidingObjects)
             {
                 // Pairodds or Keese should not be pushed by conveyor belts.
-                if (gameObject is EnemyPairodd) { continue; }
-                if (gameObject is EnemyKeese) { continue; }
+                if (gameObject is EnemyPairodd)
+                {
+                    continue;
+                }
+                if (gameObject is EnemyKeese)
+                {
+                    continue;
+                }
 
                 var gameObjectBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
-                if (gameObjectBody.IsActive && gameObjectBody.IsGrounded && _collisionBox.Intersects(gameObjectBody.BodyBox.Box))
+                if (
+                    gameObjectBody.IsActive
+                    && gameObjectBody.IsGrounded
+                    && _collisionBox.Intersects(gameObjectBody.BodyBox.Box)
+                )
                 {
-                    if (gameObjectBody.LastAdditionalMovementVT == Vector2.Zero ||
-                        gameObjectBody.LastAdditionalMovementVT == _vecRollBand && (
-                            _vecRollBand.X != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Horizontal) == 0 ||
-                            _vecRollBand.Y != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Vertical) == 0) ||
-                        gameObjectBody.LastAdditionalMovementVT != _vecRollBand && (
-                            _vecRollBand.X != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Vertical) != 0 ||
-                            _vecRollBand.Y != 0 && (gameObjectBody.LastVelocityCollision & Values.BodyCollision.Horizontal) != 0))
+                    if (
+                        gameObjectBody.LastAdditionalMovementVT == Vector2.Zero
+                        || gameObjectBody.LastAdditionalMovementVT == _vecRollBand
+                            && (
+                                _vecRollBand.X != 0
+                                    && (
+                                        gameObjectBody.LastVelocityCollision
+                                        & Values.BodyCollision.Horizontal
+                                    ) == 0
+                                || _vecRollBand.Y != 0
+                                    && (
+                                        gameObjectBody.LastVelocityCollision
+                                        & Values.BodyCollision.Vertical
+                                    ) == 0
+                            )
+                        || gameObjectBody.LastAdditionalMovementVT != _vecRollBand
+                            && (
+                                _vecRollBand.X != 0
+                                    && (
+                                        gameObjectBody.LastVelocityCollision
+                                        & Values.BodyCollision.Vertical
+                                    ) != 0
+                                || _vecRollBand.Y != 0
+                                    && (
+                                        gameObjectBody.LastVelocityCollision
+                                        & Values.BodyCollision.Horizontal
+                                    ) != 0
+                            )
+                    )
                     {
                         gameObjectBody.AdditionalMovementVT = _vecRollBand;
                     }
@@ -81,9 +131,22 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Resources.SprObjects, _drawPosition,
-                new Rectangle(_sourceRectangle.X + (int)_animationCount % 16, _sourceRectangle.Y, 16, _sourceRectangle.Height),
-                Color.White, _direction, new Vector2(8, 8), Vector2.One, (_direction % 2) != 0 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                Resources.SprObjects,
+                _drawPosition,
+                new Rectangle(
+                    _sourceRectangle.X + (int)_animationCount % 16,
+                    _sourceRectangle.Y,
+                    16,
+                    _sourceRectangle.Height
+                ),
+                Color.White,
+                _direction,
+                new Vector2(8, 8),
+                Vector2.One,
+                (_direction % 2) != 0 ? SpriteEffects.FlipVertically : SpriteEffects.None,
+                0
+            );
         }
     }
 }

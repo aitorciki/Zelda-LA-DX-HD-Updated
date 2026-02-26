@@ -1,6 +1,6 @@
 using System;
-using System.IO;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,9 +23,22 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         bool light_source = true;
 
-        public ObjLightSprite() : base("editor light") { }
+        public ObjLightSprite()
+            : base("editor light") { }
 
-        public ObjLightSprite(Map.Map map, int posX, int posY, string spriteId, int colorR, int colorG, int colorB, int colorA, int layer, int rotation) : base(map)
+        public ObjLightSprite(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spriteId,
+            int colorR,
+            int colorG,
+            int colorB,
+            int colorA,
+            int layer,
+            int rotation
+        )
+            : base(map)
         {
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjLightSprite.lahdmod");
 
@@ -43,21 +56,41 @@ namespace ProjectZ.InGame.GameObjects.Things
                 IsDead = true;
                 return;
             }
-            EntitySize = new Rectangle(0, 0, _sprite.SourceRectangle.Width, _sprite.SourceRectangle.Height);
+            EntitySize = new Rectangle(
+                0,
+                0,
+                _sprite.SourceRectangle.Width,
+                _sprite.SourceRectangle.Height
+            );
 
-            _position = new Vector2(EntityPosition.X + _sprite.Origin.X, EntityPosition.Y + _sprite.Origin.Y);
+            _position = new Vector2(
+                EntityPosition.X + _sprite.Origin.X,
+                EntityPosition.Y + _sprite.Origin.Y
+            );
             _lightColor = new Color(colorR, colorG, colorB) * (colorA / 255f);
             _rotation = rotation * MathF.PI / 2;
 
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = layer });
+            AddComponent(
+                LightDrawComponent.Index,
+                new LightDrawComponent(DrawLight) { Layer = layer }
+            );
         }
 
         public void DrawLight(SpriteBatch spriteBatch)
         {
             if (light_source && GameSettings.ObjectLights)
             {
-                spriteBatch.Draw(_sprite.Texture, _position, _sprite.ScaledRectangle, 
-                    _lightColor, _rotation, _sprite.ScaledOrigin, _sprite.Scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprite.Texture,
+                    _position,
+                    _sprite.ScaledRectangle,
+                    _lightColor,
+                    _rotation,
+                    _sprite.ScaledOrigin,
+                    _sprite.Scale,
+                    SpriteEffects.None,
+                    0
+                );
             }
         }
     }

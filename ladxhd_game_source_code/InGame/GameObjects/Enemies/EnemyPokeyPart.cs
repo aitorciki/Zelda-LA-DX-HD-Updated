@@ -20,8 +20,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _collisionCount;
         private int _lives = EnemyLives.PokeyPart;
 
-
-        public EnemyPokeyPart(Map.Map map, float posX, float posY, Vector2 velocityTarget, Vector3 velocity) : base(map)
+        public EnemyPokeyPart(
+            Map.Map map,
+            float posX,
+            float posY,
+            Vector2 velocityTarget,
+            Vector3 velocity
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -29,12 +35,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntitySize = new Rectangle(-7, -14, 14, 14);
             CanReset = false;
 
-            var sprite = new CSprite(Resources.SprEnemies, EntityPosition, new Rectangle(18, 369, 14, 14), new Vector2(-7, -14));
+            var sprite = new CSprite(
+                Resources.SprEnemies,
+                EntityPosition,
+                new Rectangle(18, 369, 14, 14),
+                new Vector2(-7, -14)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 Velocity = velocity,
                 VelocityTarget = velocityTarget,
@@ -51,15 +61,30 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("spawning", stateSpawning);
             _aiComponent.States.Add("moving", stateMoving);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { IsActive = false };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                IsActive = false,
+            };
             _aiComponent.ChangeState("spawning");
 
             var damageCollider = new CBox(EntityPosition, -6, -13, 0, 12, 12, 4, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { OnDamage = OnDamage });
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, _aiDamageState.OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    OnDamage = OnDamage,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                new HittableComponent(_body.BodyBox, _aiDamageState.OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
             AddComponent(DrawShadowComponent.Index, new ShadowBodyDrawComponent(EntityPosition));
@@ -111,7 +136,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void Despawn()
         {
             Map.Objects.DeleteObjects.Add(this);
-            Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, Values.LayerPlayer, "Particles/spawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y - 16,
+                    Values.LayerPlayer,
+                    "Particles/spawn",
+                    "run",
+                    true
+                )
+            );
         }
     }
 }

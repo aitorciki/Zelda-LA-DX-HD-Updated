@@ -15,9 +15,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly string _triggerKey;
         private int _currentState;
 
-        public ObjKillTrigger() : base("editor kill trigger") { }
+        public ObjKillTrigger()
+            : base("editor kill trigger") { }
 
-        public ObjKillTrigger(Map.Map map, int posX, int posY, string triggerKey) : base(map)
+        public ObjKillTrigger(Map.Map map, int posX, int posY, string triggerKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.None;
 
@@ -39,8 +41,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void Update()
         {
             // get the enemies the object should watch over
-            Map.Objects.GetGameObjectsWithTag(_enemyList, Values.GameObjectTag.Enemy,
-                _triggerField.X, _triggerField.Y, _triggerField.Width, _triggerField.Height);
+            Map.Objects.GetGameObjectsWithTag(
+                _enemyList,
+                Values.GameObjectTag.Enemy,
+                _triggerField.X,
+                _triggerField.Y,
+                _triggerField.Width,
+                _triggerField.Height
+            );
 
             var enemy0Alive = false;
             var enemy1Alive = false;

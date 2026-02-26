@@ -31,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _multipleHits = false;
         private int _lives = EnemyLives.RedZol;
 
-        public EnemyRedZol() : base("red zol") { }
+        public EnemyRedZol()
+            : base("red zol") { }
 
-        public EnemyRedZol(Map.Map map, int posX, int posY) : base(map)
+        public EnemyRedZol(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 13, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 13, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 13, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -52,20 +54,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.DeepWater,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.NPCWall | Values.CollisionTypes.DeepWater,
                 FieldRectangle = map.GetField(posX, posY),
                 Gravity = -0.15f,
                 Bounciness = 0.25f,
-                Drag = 0.85f
+                Drag = 0.85f,
             };
 
             var stateWaiting = new AiState { Init = InitWaiting };
             stateWaiting.Trigger.Add(new AiTriggerRandomTime(EndWaiting, 200, 200));
             var stateWalking = new AiState(StateWalking) { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("waiting"), 132, 132));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("waiting"), 132, 132)
+            );
             var stateShaking = new AiState();
             stateShaking.Trigger.Add(new AiTriggerCountdown(1000, TickShake, ShakeEnd));
             var stateJumping = new AiState { Init = InitJumping };
@@ -75,7 +77,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("shaking", stateShaking);
             _aiComponent.States.Add("jumping", stateJumping);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnDeath = OnDeath, OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnDeath = OnDeath,
+                OnBurn = OnBurn,
+            };
             new AiFallState(_aiComponent, _body, null, null, 100);
             new AiDeepWaterState(_body);
 
@@ -84,16 +90,28 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -6, -10, 0, 12, 10, 4);
             var hittableBox = new CBox(EntityPosition, -6, -10, 12, 10, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
-            // Spawn gels but inactive which is required for "Enemy Triggers" inside dungeons. Enemy Triggers are 
+            // Spawn gels but inactive which is required for "Enemy Triggers" inside dungeons. Enemy Triggers are
             // used for things such as spawning chest or opening doors when all enemies in the field are defeated.
             _gel0 = new EnemyGel(Map, posX, posY) { IsActive = false };
             Map.Objects.SpawnObject(_gel0);
@@ -185,7 +203,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -201,7 +223,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var vecDirection = new Vector2(
                 MapManager.ObjLink.PosX - EntityPosition.X,
-                MapManager.ObjLink.PosY - EntityPosition.Y);
+                MapManager.ObjLink.PosY - EntityPosition.Y
+            );
 
             if (vecDirection == Vector2.Zero)
                 return;
@@ -221,15 +244,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return;
             }
             // positions are set so that the gels are inside of the body to not collide with stuff
-            _gel0.EntityPosition.Set(new Vector2(EntityPosition.X - 1.9f - Game1.RandomNumber.Next(0, 2), EntityPosition.Y - Game1.RandomNumber.Next(0, 2)));
+            _gel0.EntityPosition.Set(
+                new Vector2(
+                    EntityPosition.X - 1.9f - Game1.RandomNumber.Next(0, 2),
+                    EntityPosition.Y - Game1.RandomNumber.Next(0, 2)
+                )
+            );
             _gel0.IsActive = true;
             _gel0.InitSpawn();
-            _gel1.EntityPosition.Set(new Vector2(EntityPosition.X + 2.9f + Game1.RandomNumber.Next(0, 2), EntityPosition.Y - Game1.RandomNumber.Next(0, 2)));
+            _gel1.EntityPosition.Set(
+                new Vector2(
+                    EntityPosition.X + 2.9f + Game1.RandomNumber.Next(0, 2),
+                    EntityPosition.Y - Game1.RandomNumber.Next(0, 2)
+                )
+            );
             _gel1.IsActive = true;
             _gel1.InitSpawn();
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -260,7 +299,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public void AddToEnemyTriggerGroup(ObjEnemyTrigger etrigger)
         {
-            // If respawned in a room with an enemy trigger, this is a means 
+            // If respawned in a room with an enemy trigger, this is a means
             // to adding the two Gels spawned with the Zol to the trigger list.
             etrigger.EnemyTriggerList.Add(_gel0);
             etrigger.EnemyTriggerList.Add(_gel1);

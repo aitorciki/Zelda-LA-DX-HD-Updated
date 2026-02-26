@@ -4,9 +4,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 {
     public class Obj2DMode : GameObject
     {
-        public Obj2DMode() : base("editor 2d mode") { }
+        public Obj2DMode()
+            : base("editor 2d mode") { }
 
-        public Obj2DMode(Map.Map map, int posX, int posY) : base(map)
+        public Obj2DMode(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // @HACK: value gets set while adding the object to the ObjectList
 

@@ -20,14 +20,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private float _circleSize;
 
-        public ObjTransition(Map.Map map) : base(map)
+        public ObjTransition(Map.Map map)
+            : base(map)
         {
             SprEditorImage = Resources.SprObjects;
             EditorIconSource = new Rectangle(240, 16, 16, 16);
 
             // should be on top of every other object,
             // except the player object but only while transitioning
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerTop, new CPosition(0, 0, 0)));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerTop, new CPosition(0, 0, 0))
+            );
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -37,11 +41,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             if (!WobbleTransition)
             {
-                _circleSize = (1 - Percentage) * (float)Math.Sqrt(gameWidth * gameWidth + gameHeight * gameHeight) / 2;
+                _circleSize =
+                    (1 - Percentage)
+                    * (float)Math.Sqrt(gameWidth * gameWidth + gameHeight * gameHeight)
+                    / 2;
 
                 var playerPosition = new Vector2(
                     MapManager.ObjLink.PosX * MapManager.Camera.Scale,
-                    (MapManager.ObjLink.PosY - 8 - MapManager.ObjLink.PosZ) * MapManager.Camera.Scale);
+                    (MapManager.ObjLink.PosY - 8 - MapManager.ObjLink.PosZ)
+                        * MapManager.Camera.Scale
+                );
                 var centerX = gameWidth / 2.0f - (MapManager.Camera.Location.X - playerPosition.X);
                 var centerY = gameHeight / 2.0f - (MapManager.Camera.Location.Y - playerPosition.Y);
 
@@ -53,8 +62,20 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Resources.CircleShader.Parameters["height"].SetValue(gameHeight);
 
                 // draw the circle
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointWrap, null, null, Resources.CircleShader, Game1.GetMatrix);
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, gameWidth, gameHeight), TransitionColor);
+                spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    Resources.CircleShader,
+                    Game1.GetMatrix
+                );
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(0, 0, gameWidth, gameHeight),
+                    TransitionColor
+                );
                 spriteBatch.End();
             }
             else
@@ -68,11 +89,24 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Resources.WobbleEffect.Parameters["brightness"].SetValue(Brightness);
 
                 Resources.WobbleEffect.Parameters["offset"].SetValue(WobblePercentage * 30);
-                Resources.WobbleEffect.Parameters["offsetWidth"].SetValue((0.5f - MathF.Cos(WobblePercentage * 4) / 2) * 3);
+                Resources
+                    .WobbleEffect.Parameters["offsetWidth"]
+                    .SetValue((0.5f - MathF.Cos(WobblePercentage * 4) / 2) * 3);
                 Resources.WobbleEffect.Parameters["offsetHeight"].SetValue(16);
 
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, Resources.WobbleEffect);
-                spriteBatch.Draw(Game1.GameManager.GetLastRenderTarget(), Vector2.Zero, Color.White);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    Resources.WobbleEffect
+                );
+                spriteBatch.Draw(
+                    Game1.GameManager.GetLastRenderTarget(),
+                    Vector2.Zero,
+                    Color.White
+                );
                 spriteBatch.End();
             }
         }

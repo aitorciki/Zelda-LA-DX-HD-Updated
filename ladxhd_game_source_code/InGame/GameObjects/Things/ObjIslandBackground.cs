@@ -51,9 +51,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         int ocean_color_grn = 89;
         int ocean_color_blu = 255;
 
-        public ObjIslandBackground() : base("water_3") { }
+        public ObjIslandBackground()
+            : base("water_3") { }
 
-        public ObjIslandBackground(Map.Map map, int posX, int posY) : base(map)
+        public ObjIslandBackground(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjIslandBackground.lahdmod");
@@ -81,12 +83,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             for (var i = 0; i < _clouds.Length; i++)
             {
                 var index = Game1.RandomNumber.Next(0, cloudSourceRectangles.Length);
-                _clouds[i] = new Cloud(index, new Vector2(positionX, 32 - cloudSourceRectangles[index].Height));
-                positionX += cloudSourceRectangles[index].Width + Game1.RandomNumber.Next(1, 7) * 16;
+                _clouds[i] = new Cloud(
+                    index,
+                    new Vector2(positionX, 32 - cloudSourceRectangles[index].Height)
+                );
+                positionX +=
+                    cloudSourceRectangles[index].Width + Game1.RandomNumber.Next(1, 7) * 16;
             }
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBackground, new CPosition(posX, posY, 0)));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBackground, new CPosition(posX, posY, 0))
+            );
         }
 
         public void Update()
@@ -97,7 +106,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             // move the clouds
             foreach (var cloud in _clouds)
             {
-                var cloudSpeed = (Math.Sin(cloud.Position.X / 100) * 0.125 + 1) * 0.015 * Game1.TimeMultiplier;
+                var cloudSpeed =
+                    (Math.Sin(cloud.Position.X / 100) * 0.125 + 1) * 0.015 * Game1.TimeMultiplier;
                 cloud.Position.X -= (float)cloudSpeed;
 
                 // set the cloud to the right position
@@ -107,7 +117,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                     foreach (var cloud1 in _clouds)
                     {
                         if (cloud1.Position.X > rightPosition)
-                            rightPosition = cloud1.Position.X + cloudSourceRectangles[cloud1.Index].Width;
+                            rightPosition =
+                                cloud1.Position.X + cloudSourceRectangles[cloud1.Index].Width;
                     }
                     cloud.Position.X = rightPosition + Game1.RandomNumber.Next(1, 7) * 16;
                 }
@@ -122,9 +133,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             var cameraRectangle = MapManager.Camera.GetCameraRectangle();
 
             var left = (int)(cameraRectangle.X / _waveSource.Width / MapManager.Camera.Scale) - 1;
-            var right = (int)(cameraRectangle.Right / _waveSource.Width / MapManager.Camera.Scale) + 1;
+            var right =
+                (int)(cameraRectangle.Right / _waveSource.Width / MapManager.Camera.Scale) + 1;
             var top = (int)(cameraRectangle.Y / _waveSource.Height / MapManager.Camera.Scale);
-            var bottom = (int)(cameraRectangle.Bottom / _waveSource.Height / MapManager.Camera.Scale) + 1;
+            var bottom =
+                (int)(cameraRectangle.Bottom / _waveSource.Height / MapManager.Camera.Scale) + 1;
 
             if (cameraRectangle.X < 0)
             {
@@ -141,11 +154,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (top <= 2 && bottom > 2)
                 for (var x = left; x < right + 1; x++)
                 {
-                    spriteBatch.Draw(Resources.SprObjects, new Rectangle(
-                            x * _topWaveSource.Width, 2 * _topWaveSource.Height, _topWaveSource.Width, _topWaveSource.Height),
+                    spriteBatch.Draw(
+                        Resources.SprObjects,
                         new Rectangle(
-                            _topWaveSource.X + _topWaveSource.Width * _topWaveFrame, _topWaveSource.Y,
-                            _topWaveSource.Width, _topWaveSource.Height), Color.White);
+                            x * _topWaveSource.Width,
+                            2 * _topWaveSource.Height,
+                            _topWaveSource.Width,
+                            _topWaveSource.Height
+                        ),
+                        new Rectangle(
+                            _topWaveSource.X + _topWaveSource.Width * _topWaveFrame,
+                            _topWaveSource.Y,
+                            _topWaveSource.Width,
+                            _topWaveSource.Height
+                        ),
+                        Color.White
+                    );
                 }
 
             // change context to have smooth gradient transition
@@ -155,9 +179,21 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (top <= 10 && bottom >= 4)
                 DrawGradient(spriteBatch, left, right, 3, 11);
             if (left < 1)
-                DrawGradient(spriteBatch, left, 2, Math.Max(3, top), Math.Min(bottom, GradientHeight + 3));
+                DrawGradient(
+                    spriteBatch,
+                    left,
+                    2,
+                    Math.Max(3, top),
+                    Math.Min(bottom, GradientHeight + 3)
+                );
             if (right > 16 * 10)
-                DrawGradient(spriteBatch, 16 * 10, right, Math.Max(3, top), Math.Min(bottom, GradientHeight + 3));
+                DrawGradient(
+                    spriteBatch,
+                    16 * 10,
+                    right,
+                    Math.Max(3, top),
+                    Math.Min(bottom, GradientHeight + 3)
+                );
 
             spriteBatch.End();
             ObjectManager.SpriteBatchBegin(spriteBatch, null);
@@ -165,37 +201,66 @@ namespace ProjectZ.InGame.GameObjects.Things
             var oceanBottomTop = Math.Max(3 + GradientHeight, top);
             var oceanBottomBottom = Math.Max(3 + GradientHeight, bottom);
 
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    left * Values.TileSize, oceanBottomTop * Values.TileSize, (right - left + 1) * Values.TileSize, (oceanBottomBottom - oceanBottomTop + 1) * Values.TileSize), _colorOceanBright);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(
+                    left * Values.TileSize,
+                    oceanBottomTop * Values.TileSize,
+                    (right - left + 1) * Values.TileSize,
+                    (oceanBottomBottom - oceanBottomTop + 1) * Values.TileSize
+                ),
+                _colorOceanBright
+            );
 
             // draw the sky
             if (top < 2)
             {
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    left * 16, (top - 1) * 16,
-                    (right - left + 1) * 16, (-top + 3) * 16), _colorSky);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(
+                        left * 16,
+                        (top - 1) * 16,
+                        (right - left + 1) * 16,
+                        (-top + 3) * 16
+                    ),
+                    _colorSky
+                );
             }
 
             // draw the clouds
             foreach (var cloud in _clouds)
             {
-                DrawHelper.DrawNormalized(spriteBatch, Resources.SprObjects, cloud.Position, cloudSourceRectangles[cloud.Index], Color.White * cloud.Transparency);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    Resources.SprObjects,
+                    cloud.Position,
+                    cloudSourceRectangles[cloud.Index],
+                    Color.White * cloud.Transparency
+                );
             }
         }
 
         private void DrawGradient(SpriteBatch spriteBatch, int left, int right, int top, int bottom)
         {
             Rectangle rect1 = new Rectangle(
-                left * Values.TileSize, 
-                top * Values.TileSize, 
-                (right - left) * Values.TileSize, 
-                (bottom - top) * Values.TileSize);
+                left * Values.TileSize,
+                top * Values.TileSize,
+                (right - left) * Values.TileSize,
+                (bottom - top) * Values.TileSize
+            );
 
             Rectangle rect2 = new Rectangle(
                 _oceanGradient.ScaledRectangle.X,
-                _oceanGradient.ScaledRectangle.Y + (int)(_oceanGradient.ScaledRectangle.Height * ((top + 0) / (float)GradientHeight)),
+                _oceanGradient.ScaledRectangle.Y
+                    + (int)(
+                        _oceanGradient.ScaledRectangle.Height * ((top + 0) / (float)GradientHeight)
+                    ),
                 _oceanGradient.ScaledRectangle.Width,
-                (int)(_oceanGradient.ScaledRectangle.Height * ((bottom - (top + 3)) / (float)GradientHeight)));
+                (int)(
+                    _oceanGradient.ScaledRectangle.Height
+                    * ((bottom - (top + 3)) / (float)GradientHeight)
+                )
+            );
 
             spriteBatch.Draw(_oceanGradient.Texture, rect1, rect2, Color.White);
         }

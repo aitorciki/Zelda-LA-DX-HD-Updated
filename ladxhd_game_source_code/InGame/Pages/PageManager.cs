@@ -17,10 +17,11 @@ namespace ProjectZ.InGame.Pages
             LeftToRight,
             RightToLeft,
             TopToBottom,
-            BottomToTop
+            BottomToTop,
         }
 
-        public Dictionary<Type, InterfacePage> InsideElement = new Dictionary<Type, InterfacePage>();
+        public Dictionary<Type, InterfacePage> InsideElement =
+            new Dictionary<Type, InterfacePage>();
         public List<Type> PageStack = new List<Type>();
 
         private TransitionAnimation _transitionOutAnimation;
@@ -93,8 +94,13 @@ namespace ProjectZ.InGame.Pages
         {
             // not a good place
             _menuPosition = new Vector2(
-                (Game1.WindowWidth / 2 - _width * Game1.UiScale / 2) / Game1.UiScale * Game1.UiScale,
-                (Game1.WindowHeight / 2 - _height * Game1.UiScale / 2) / Game1.UiScale * Game1.UiScale);
+                (Game1.WindowWidth / 2 - _width * Game1.UiScale / 2)
+                    / Game1.UiScale
+                    * Game1.UiScale,
+                (Game1.WindowHeight / 2 - _height * Game1.UiScale / 2)
+                    / Game1.UiScale
+                    * Game1.UiScale
+            );
 
             if (_isTransitioning)
             {
@@ -121,28 +127,43 @@ namespace ProjectZ.InGame.Pages
             }
 
             if (!_isTransitioning && PageStack.Count > _currentPage)
-                InsideElement[PageStack[_currentPage]].Update(ControlHandler.GetPressedButtons(), gameTime);
+                InsideElement[PageStack[_currentPage]]
+                    .Update(ControlHandler.GetPressedButtons(), gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            _transitionState = (float)(Math.Sin(_transitionCount / _transitionTime * Math.PI - Math.PI / 2) + 1) / 2f;
+            _transitionState =
+                (float)(Math.Sin(_transitionCount / _transitionTime * Math.PI - Math.PI / 2) + 1)
+                / 2f;
 
             // draw the current page
             if (PageStack.Count > _currentPage)
             {
                 var directionX =
-                    _transitionOutAnimation == TransitionAnimation.RightToLeft ? _transitionDirection :
-                    _transitionOutAnimation == TransitionAnimation.LeftToRight ? -_transitionDirection : 0;
+                    _transitionOutAnimation == TransitionAnimation.RightToLeft
+                        ? _transitionDirection
+                    : _transitionOutAnimation == TransitionAnimation.LeftToRight
+                        ? -_transitionDirection
+                    : 0;
                 var directionY =
-                    _transitionOutAnimation == TransitionAnimation.TopToBottom ? -_transitionDirection :
-                    _transitionOutAnimation == TransitionAnimation.BottomToTop ? _transitionDirection : 0;
+                    _transitionOutAnimation == TransitionAnimation.TopToBottom
+                        ? -_transitionDirection
+                    : _transitionOutAnimation == TransitionAnimation.BottomToTop
+                        ? _transitionDirection
+                    : 0;
                 var transitionOffset = new Vector2(
                     _width * 0.65f * _transitionState * directionX * Game1.UiScale,
-                    _height * 0.65f * _transitionState * directionY * Game1.UiScale);
+                    _height * 0.65f * _transitionState * directionY * Game1.UiScale
+                );
 
-                InsideElement[PageStack[_currentPage]].Draw(spriteBatch,
-                    _menuPosition + transitionOffset, Game1.UiScale, 1 - _transitionState);
+                InsideElement[PageStack[_currentPage]]
+                    .Draw(
+                        spriteBatch,
+                        _menuPosition + transitionOffset,
+                        Game1.UiScale,
+                        1 - _transitionState
+                    );
             }
 
             if (!_isTransitioning || PageStack.Count <= _nextPage)
@@ -150,17 +171,25 @@ namespace ProjectZ.InGame.Pages
 
             // draw the next page while transitioning
             var directionXNext =
-                _transitionInAnimation == TransitionAnimation.RightToLeft ? -_transitionDirection :
-                _transitionInAnimation == TransitionAnimation.LeftToRight ? _transitionDirection : 0;
+                _transitionInAnimation == TransitionAnimation.RightToLeft ? -_transitionDirection
+                : _transitionInAnimation == TransitionAnimation.LeftToRight ? _transitionDirection
+                : 0;
             var directionYNext =
-                _transitionInAnimation == TransitionAnimation.TopToBottom ? _transitionDirection :
-                _transitionInAnimation == TransitionAnimation.BottomToTop ? -_transitionDirection : 0;
+                _transitionInAnimation == TransitionAnimation.TopToBottom ? _transitionDirection
+                : _transitionInAnimation == TransitionAnimation.BottomToTop ? -_transitionDirection
+                : 0;
             var transitionOffsetNext = new Vector2(
                 _width * 0.65f * (1 - _transitionState) * directionXNext * Game1.UiScale,
-                _height * 0.65f * (1 - _transitionState) * directionYNext * Game1.UiScale);
+                _height * 0.65f * (1 - _transitionState) * directionYNext * Game1.UiScale
+            );
 
-            InsideElement[PageStack[_nextPage]].Draw(spriteBatch,
-                _menuPosition + transitionOffsetNext, Game1.UiScale, _transitionState);
+            InsideElement[PageStack[_nextPage]]
+                .Draw(
+                    spriteBatch,
+                    _menuPosition + transitionOffsetNext,
+                    Game1.UiScale,
+                    _transitionState
+                );
         }
 
         private void AddPage(InterfacePage element)
@@ -168,7 +197,12 @@ namespace ProjectZ.InGame.Pages
             InsideElement.Add(element.GetType(), element);
         }
 
-        public bool ChangePage(Type nextPage, Dictionary<string, object> intent, TransitionAnimation animationIn = TransitionAnimation.RightToLeft, TransitionAnimation animationOut = TransitionAnimation.RightToLeft)
+        public bool ChangePage(
+            Type nextPage,
+            Dictionary<string, object> intent,
+            TransitionAnimation animationIn = TransitionAnimation.RightToLeft,
+            TransitionAnimation animationOut = TransitionAnimation.RightToLeft
+        )
         {
             // do not add the page/restart the animation if it is transitioning out of the page
             if (!_isTransitioning || PageStack.Count <= 0 || nextPage != PageStack[0])
@@ -195,7 +229,10 @@ namespace ProjectZ.InGame.Pages
             _transitionOutAnimation = animationOut;
 
             // @HACK
-            _transitionTime = _transitionInAnimation == TransitionAnimation.Fade ? TransitionFade : TransitionNormal;
+            _transitionTime =
+                _transitionInAnimation == TransitionAnimation.Fade
+                    ? TransitionFade
+                    : TransitionNormal;
 
             return true;
         }
@@ -218,7 +255,12 @@ namespace ProjectZ.InGame.Pages
             return ChangePage(nextPage, null);
         }
 
-        public void PopPage(Dictionary<string, object> intent = null, TransitionAnimation animationIn = TransitionAnimation.RightToLeft, TransitionAnimation animationOut = TransitionAnimation.RightToLeft, bool SkipSound = false)
+        public void PopPage(
+            Dictionary<string, object> intent = null,
+            TransitionAnimation animationIn = TransitionAnimation.RightToLeft,
+            TransitionAnimation animationOut = TransitionAnimation.RightToLeft,
+            bool SkipSound = false
+        )
         {
             if (PageStack.Count <= 0)
                 return;
@@ -249,13 +291,19 @@ namespace ProjectZ.InGame.Pages
             _transitionOutAnimation = animationOut;
 
             // @HACK
-            _transitionTime = _transitionInAnimation == TransitionAnimation.Fade ? TransitionFade : TransitionNormal;
+            _transitionTime =
+                _transitionInAnimation == TransitionAnimation.Fade
+                    ? TransitionFade
+                    : TransitionNormal;
 
             if (!SkipSound)
                 Game1.GameManager.PlaySoundEffect("D360-18-12");
         }
 
-        public void PopAllPages(TransitionAnimation animationIn = TransitionAnimation.RightToLeft, TransitionAnimation animationOut = TransitionAnimation.RightToLeft)
+        public void PopAllPages(
+            TransitionAnimation animationIn = TransitionAnimation.RightToLeft,
+            TransitionAnimation animationOut = TransitionAnimation.RightToLeft
+        )
         {
             PopPage(null, animationIn, animationOut, true);
 
@@ -288,6 +336,5 @@ namespace ProjectZ.InGame.Pages
                 page.OnResize(newWidth, newHeight);
             }
         }
-
     }
 }

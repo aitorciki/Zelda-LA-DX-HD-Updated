@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.Overlay.Sequences
 {
@@ -40,7 +40,9 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var center = 160;
 
             // sky background
-            Sprites.Add(new SeqColor(new Rectangle(0, 0, _sequenceWidth, top), new Color(66, 89, 254), 0));
+            Sprites.Add(
+                new SeqColor(new Rectangle(0, 0, _sequenceWidth, top), new Color(66, 89, 254), 0)
+            );
 
             // beach
             Sprites.Add(new SeqSprite("beach_background", new Vector2(0, top), 0));
@@ -50,14 +52,37 @@ namespace ProjectZ.InGame.Overlay.Sequences
             // waves
             for (int i = 0; i < 20; i++)
             {
-                Sprites.Add(new SeqAnimation("Sequences/beach_water", "top", new Vector2(i * 16, top + 56), 1));
-                Sprites.Add(new SeqAnimation("Sequences/beach_water", "bottom", new Vector2(i * 16, top + 72), 1));
+                Sprites.Add(
+                    new SeqAnimation(
+                        "Sequences/beach_water",
+                        "top",
+                        new Vector2(i * 16, top + 56),
+                        1
+                    )
+                );
+                Sprites.Add(
+                    new SeqAnimation(
+                        "Sequences/beach_water",
+                        "bottom",
+                        new Vector2(i * 16, top + 72),
+                        1
+                    )
+                );
             }
 
             // link and marin
-            _aniLink = new SeqAnimation("link0", "ocean_sit", new Vector2(center - 14, top + 92), 1) { Shader = Resources.ColorShader, Color = Game1.GameManager.CloakColor };
+            _aniLink = new SeqAnimation("link0", "ocean_sit", new Vector2(center - 14, top + 92), 1)
+            {
+                Shader = Resources.ColorShader,
+                Color = Game1.GameManager.CloakColor,
+            };
             AddDrawable("link", _aniLink);
-            _aniMarin = new SeqAnimation("NPCs/marin", "ocean_sit", new Vector2(center + 1, top + 92), 1);
+            _aniMarin = new SeqAnimation(
+                "NPCs/marin",
+                "ocean_sit",
+                new Vector2(center + 1, top + 92),
+                1
+            );
             AddDrawable("marin", _aniMarin);
 
             _seagulls[0] = new Seagull()
@@ -73,8 +98,22 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 GlideCounter = 2500,
             };
 
-            Sprites.Add(_seagulls[0].Animation = new SeqAnimation("Sequences/seagull", "glide", _seagulls[0].Position, 1));
-            Sprites.Add(_seagulls[1].Animation = new SeqAnimation("Sequences/seagull", "glide", _seagulls[1].Position, 1));
+            Sprites.Add(
+                _seagulls[0].Animation = new SeqAnimation(
+                    "Sequences/seagull",
+                    "glide",
+                    _seagulls[0].Position,
+                    1
+                )
+            );
+            Sprites.Add(
+                _seagulls[1].Animation = new SeqAnimation(
+                    "Sequences/seagull",
+                    "glide",
+                    _seagulls[1].Position,
+                    1
+                )
+            );
 
             _seagullCenter = new Vector2(center, top + 38);
 
@@ -90,8 +129,24 @@ namespace ProjectZ.InGame.Overlay.Sequences
                     //GlideCounter = Game1.RandomNumber.Next(0, 5000),
                 };
 
-                Sprites.Add(_smallSeagulls[i].Animation = new SeqAnimation("Sequences/seagull small", "idle", _smallSeagulls[i].Position, i + 1) { RoundPosition = true });
-                _smallSeagulls[i].Animation.Animator.SetTime(Game1.RandomNumber.Next(0, _smallSeagulls[i].Animation.Animator.CurrentFrame.FrameTime));
+                Sprites.Add(
+                    _smallSeagulls[i].Animation = new SeqAnimation(
+                        "Sequences/seagull small",
+                        "idle",
+                        _smallSeagulls[i].Position,
+                        i + 1
+                    )
+                    {
+                        RoundPosition = true,
+                    }
+                );
+                _smallSeagulls[i]
+                    .Animation.Animator.SetTime(
+                        Game1.RandomNumber.Next(
+                            0,
+                            _smallSeagulls[i].Animation.Animator.CurrentFrame.FrameTime
+                        )
+                    );
             }
 
             // start the sequence path
@@ -145,10 +200,18 @@ namespace ProjectZ.InGame.Overlay.Sequences
                         var centerDirection = _seagullCenter - _smallSeagulls[i].Position;
                         if (centerDirection != Vector2.Zero)
                         {
-                            var distance = MathHelper.Clamp(1 - centerDirection.Length() / 48, 0, 1);
-                            var radiant = MathF.Atan2(centerDirection.Y, centerDirection.X) + (MathF.PI - Game1.RandomNumber.Next(0, 628) / 100f) * distance;
+                            var distance = MathHelper.Clamp(
+                                1 - centerDirection.Length() / 48,
+                                0,
+                                1
+                            );
+                            var radiant =
+                                MathF.Atan2(centerDirection.Y, centerDirection.X)
+                                + (MathF.PI - Game1.RandomNumber.Next(0, 628) / 100f) * distance;
 
-                            _smallSeagulls[i].Direction = new Vector2(MathF.Cos(radiant), MathF.Sin(radiant)) * (Game1.RandomNumber.Next(8, 15) / 100f);
+                            _smallSeagulls[i].Direction =
+                                new Vector2(MathF.Cos(radiant), MathF.Sin(radiant))
+                                * (Game1.RandomNumber.Next(8, 15) / 100f);
                         }
 
                         _smallSeagulls[i].Animation.Animator.Play("idle");
@@ -159,7 +222,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 _smallSeagulls[i].Position += _smallSeagulls[i].Direction * Game1.TimeMultiplier;
                 _smallSeagulls[i].Animation.Position = _smallSeagulls[i].Position;
             }
-
 
             // update the closer seagulls
             for (int i = 0; i < _seagulls.Length; i++)

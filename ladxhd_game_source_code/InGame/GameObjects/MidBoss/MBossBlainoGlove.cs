@@ -20,15 +20,29 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _knockoutMode;
         private bool _stunMode;
 
-        public MBossBlainoGlove(Map.Map map, MBossBlaino blaino, Vector2 position, string resetDoor) : base(map)
+        public MBossBlainoGlove(Map.Map map, MBossBlaino blaino, Vector2 position, string resetDoor)
+            : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(0, 0, 11, 11);
 
             var damageCollider = new CBox(EntityPosition, 0, 0, 0, 11, 11, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { OnDamage = DamagePlayer, PushMultiplier = 2.25f });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(damageCollider, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+                {
+                    OnDamage = DamagePlayer,
+                    PushMultiplier = 2.25f,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(damageCollider, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(damageCollider, OnPush)
+            );
 
             _blaino = blaino;
             _resetDoor = resetDoor;
@@ -52,9 +66,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool DamagePlayer()
         {
             // is the player blocking?
-            if (_stunMode && (MapManager.ObjLink.IsBlockingState()) &&
-                ((_hitDirection == -1 && MapManager.ObjLink.Direction != 0) ||
-                (_hitDirection == 1 && MapManager.ObjLink.Direction != 2)))
+            if (
+                _stunMode
+                && (MapManager.ObjLink.IsBlockingState())
+                && (
+                    (_hitDirection == -1 && MapManager.ObjLink.Direction != 0)
+                    || (_hitDirection == 1 && MapManager.ObjLink.Direction != 2)
+                )
+            )
             {
                 _blaino.GlovePush(new Vector2(-_hitDirection * 3.5f, 0));
 
@@ -86,7 +105,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             EntityPosition.Set(newPosition);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

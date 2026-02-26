@@ -43,15 +43,28 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         enum State
         {
-            Idle, MoveX, IdleY, WaitY, MoveY,
-            Grab0, Grab1, Grab2, Grab3,
-            BackY, BackX, BackWait, ResetClaw 
+            Idle,
+            MoveX,
+            IdleY,
+            WaitY,
+            MoveY,
+            Grab0,
+            Grab1,
+            Grab2,
+            Grab3,
+            BackY,
+            BackX,
+            BackWait,
+            ResetClaw,
         }
+
         private State _currentState = State.Idle;
 
-        public ObjCandyGrabber() : base("candy_grabber") { }
+        public ObjCandyGrabber()
+            : base("candy_grabber") { }
 
-        public ObjCandyGrabber(Map.Map map, int posX, int posY) : base(map)
+        public ObjCandyGrabber(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 38, 0);
 
@@ -65,16 +78,32 @@ namespace ProjectZ.InGame.GameObjects.Things
             _fieldRectangle = Map.GetField(posX, posY);
 
             var shadowSourceRectangle = new Rectangle(0, 0, 65, 66);
-            var shadowComponent = new DrawShadowSpriteComponent(Resources.SprShadow, EntityPosition, shadowSourceRectangle, new Vector2(0, -5), 1.0f, 0.0f);
+            var shadowComponent = new DrawShadowSpriteComponent(
+                Resources.SprShadow,
+                EntityPosition,
+                shadowSourceRectangle,
+                new Vector2(0, -5),
+                1.0f,
+                0.0f
+            );
             shadowComponent.Width = 16;
             shadowComponent.Height = 8;
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, shadowComponent);
 
-            new ObjSpriteShadow(Map, this, 0, -14, Values.LayerPlayer, "sprshadowl") { ForceDraw = true };
+            new ObjSpriteShadow(Map, this, 0, -14, Values.LayerPlayer, "sprshadowl")
+            {
+                ForceDraw = true,
+            };
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
@@ -82,11 +111,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // Get all objects with the "Utility" game tag.
             var objectList = new List<GameObject>();
-            Map.Objects.GetGameObjectsWithTag(objectList, Values.GameObjectTag.Item | Values.GameObjectTag.Utility,
-                _fieldRectangle.X, _fieldRectangle.Y, _fieldRectangle.Width, _fieldRectangle.Height);
+            Map.Objects.GetGameObjectsWithTag(
+                objectList,
+                Values.GameObjectTag.Item | Values.GameObjectTag.Utility,
+                _fieldRectangle.X,
+                _fieldRectangle.Y,
+                _fieldRectangle.Width,
+                _fieldRectangle.Height
+            );
 
             // Loop through the list of objects.
-            foreach (var obj in objectList) 
+            foreach (var obj in objectList)
             {
                 // Always animate both the items and roll bands.
                 if (obj is ObjItem or ObjRollBand)
@@ -110,21 +145,21 @@ namespace ProjectZ.InGame.GameObjects.Things
             _grabberRectangle = new Box(EntityPosition.X + 6, EntityPosition.Y - 3, 0, 4, 4, 2);
 
             _currentState = _currentState switch
-            { 
-                State.Idle      => HandleIdle(),
-                State.MoveX     => HandleMoveX(),
-                State.IdleY     => HandleIdleY(),
-                State.WaitY     => HandleWaitY(),
-                State.MoveY     => HandleMoveY(),
-                State.Grab0     => HandleGrab0(),
-                State.Grab1     => HandleGrab1(),
-                State.Grab2     => HandleGrab2(),
-                State.Grab3     => HandleGrab3(),
-                State.BackY     => HandleBackY(),
-                State.BackX     => HandleBackX(),
-                State.BackWait  => HandleBackWait(),
+            {
+                State.Idle => HandleIdle(),
+                State.MoveX => HandleMoveX(),
+                State.IdleY => HandleIdleY(),
+                State.WaitY => HandleWaitY(),
+                State.MoveY => HandleMoveY(),
+                State.Grab0 => HandleGrab0(),
+                State.Grab1 => HandleGrab1(),
+                State.Grab2 => HandleGrab2(),
+                State.Grab3 => HandleGrab3(),
+                State.BackY => HandleBackY(),
+                State.BackX => HandleBackX(),
+                State.BackWait => HandleBackWait(),
                 State.ResetClaw => HandleResetClaw(),
-                _               => _currentState
+                _ => _currentState,
             };
 
             if (_currentState != State.Idle && (int)_currentState < 5)
@@ -141,8 +176,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleMoveX()
             {
-                if ((_marinGame || ControlHandler.TrendyButtonDown(ControlHandler.CancelButton)) &&
-                    EntityPosition.X < _vecStart.X + 112)
+                if (
+                    (_marinGame || ControlHandler.TrendyButtonDown(ControlHandler.CancelButton))
+                    && EntityPosition.X < _vecStart.X + 112
+                )
                 {
                     Game1.GameManager.PlaySoundEffect("D378-32-20", false);
                     EntityPosition.Move(new Vector2(MoveSpeed, 0));
@@ -160,7 +197,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleIdleY()
             {
-                return ControlHandler.TrendyButtonDown(ControlHandler.ConfirmButton) ? State.MoveY : _currentState;
+                return ControlHandler.TrendyButtonDown(ControlHandler.ConfirmButton)
+                    ? State.MoveY
+                    : _currentState;
             }
 
             State HandleWaitY()
@@ -171,8 +210,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             State HandleMoveY()
             {
-                if ((_marinGame || ControlHandler.TrendyButtonDown(ControlHandler.ConfirmButton)) &&
-                    EntityPosition.Y < _vecStart.Y + 64)
+                if (
+                    (_marinGame || ControlHandler.TrendyButtonDown(ControlHandler.ConfirmButton))
+                    && EntityPosition.Y < _vecStart.Y + 64
+                )
                 {
                     Game1.GameManager.PlaySoundEffect("D378-32-20", false);
                     EntityPosition.Move(new Vector2(0, MoveSpeed));
@@ -318,16 +359,25 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)_grabberRectangle.Left, (int)_grabberRectangle.Back, (int)_grabberRectangle.Width, (int)_grabberRectangle.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)_grabberRectangle.Left,
+                (int)_grabberRectangle.Back,
+                (int)_grabberRectangle.Width,
+                (int)_grabberRectangle.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var gameObject in _collidingObjects)
             {
                 var objBody = ((BodyComponent)gameObject.Components[BodyComponent.Index]);
-                if ((gameObject is ObjItem || _marinGame) && objBody.BodyBox.Box.Intersects(_grabberRectangle))
+                if (
+                    (gameObject is ObjItem || _marinGame)
+                    && objBody.BodyBox.Box.Intersects(_grabberRectangle)
+                )
                 {
-                    // When grabbing an item, set the item's save key so the game knows when to end. The 
-                    // exception is when the item is the Yoshi Doll. If setting the key and leaving it would 
+                    // When grabbing an item, set the item's save key so the game knows when to end. The
+                    // exception is when the item is the Yoshi Doll. If setting the key and leaving it would
                     // disappear forever so we also use an alternate key "trendy_5" which is set when grabbed.
                     if (gameObject is ObjItem objitem)
                     {
@@ -353,8 +403,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void UpdateItemPos()
         {
-            _grabbedBody?.Position.Set(new Vector3(
-                EntityPosition.X + 8, EntityPosition.Y + 0.001f, 13 - _grabState));
+            _grabbedBody?.Position.Set(
+                new Vector3(EntityPosition.X + 8, EntityPosition.Y + 0.001f, 13 - _grabState)
+            );
         }
 
         private void EndGrabbing()
@@ -378,18 +429,43 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Resources.SprObjects, new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 38),
-                new Rectangle(_recTop.X, _recTop.Y + (_blinkCount >= 250 ? _recTop.Height : 0), _recTop.Width, _recTop.Height), Color.White);
-            spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                EntityPosition.X + 6, EntityPosition.Y - 38 + _recTop.Height),
-                new Rectangle(_recLine.X, _recLine.Y, _recLine.Width, (int)Math.Ceiling(_grabState)), Color.White);
-            spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                EntityPosition.X, EntityPosition.Y - 38 + _recTop.Height + _grabState),
-                _grab2Count > 1000 ? _recGrabberLeftClosed : _recGrabberLeft, Color.White);
-            spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                EntityPosition.X + _recGrabberLeft.Width,
-                EntityPosition.Y - 38 + _recTop.Height + _grabState),
-                _grab2Count > 2000 ? _recGrabberRightClosed : _recGrabberRight, Color.White);
+            spriteBatch.Draw(
+                Resources.SprObjects,
+                new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 38),
+                new Rectangle(
+                    _recTop.X,
+                    _recTop.Y + (_blinkCount >= 250 ? _recTop.Height : 0),
+                    _recTop.Width,
+                    _recTop.Height
+                ),
+                Color.White
+            );
+            spriteBatch.Draw(
+                Resources.SprObjects,
+                new Vector2(EntityPosition.X + 6, EntityPosition.Y - 38 + _recTop.Height),
+                new Rectangle(
+                    _recLine.X,
+                    _recLine.Y,
+                    _recLine.Width,
+                    (int)Math.Ceiling(_grabState)
+                ),
+                Color.White
+            );
+            spriteBatch.Draw(
+                Resources.SprObjects,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 38 + _recTop.Height + _grabState),
+                _grab2Count > 1000 ? _recGrabberLeftClosed : _recGrabberLeft,
+                Color.White
+            );
+            spriteBatch.Draw(
+                Resources.SprObjects,
+                new Vector2(
+                    EntityPosition.X + _recGrabberLeft.Width,
+                    EntityPosition.Y - 38 + _recTop.Height + _grabState
+                ),
+                _grab2Count > 2000 ? _recGrabberRightClosed : _recGrabberRight,
+                Color.White
+            );
         }
     }
 }

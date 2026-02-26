@@ -41,10 +41,15 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             Game1.GameManager.PlaySoundEffect("D360-14-0E");
 
             // spawn splash effect
-            var fallAnimation = new ObjAnimator(_body.Owner.Map,
+            var fallAnimation = new ObjAnimator(
+                _body.Owner.Map,
                 (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
                 (int)(_body.Position.Y + _body.OffsetY + _body.Height / 2.0f),
-                Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                Values.LayerPlayer,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             _body.Owner.Map.Objects.SpawnObject(fallAnimation);
 
             _body.Owner.Map.Objects.DeleteObjects.Add(_body.Owner);

@@ -14,15 +14,49 @@ namespace ProjectZ.InGame.Pages
         {
             var margin = 6;
 
-            var hLayout = new InterfaceListLayout() { Size = new Point(150, 25), Margin = new Point(0, 2), Selectable = true, HorizontalMode = true };
-            hLayout.AddElement(new InterfaceButton(new Point(74, 25), Point.Zero, "game_menu_exit_yes", OnClickYes) { Margin = new Point(2, 0) });
-            hLayout.AddElement(new InterfaceButton(new Point(74, 25), Point.Zero, "game_menu_exit_no", OnClickNo) { Margin = new Point(2, 0) });
+            var hLayout = new InterfaceListLayout()
+            {
+                Size = new Point(150, 25),
+                Margin = new Point(0, 2),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            hLayout.AddElement(
+                new InterfaceButton(new Point(74, 25), Point.Zero, "game_menu_exit_yes", OnClickYes)
+                {
+                    Margin = new Point(2, 0),
+                }
+            );
+            hLayout.AddElement(
+                new InterfaceButton(new Point(74, 25), Point.Zero, "game_menu_exit_no", OnClickNo)
+                {
+                    Margin = new Point(2, 0),
+                }
+            );
 
-            var yesNoLayoutInside = new InterfaceListLayout() { Size = new Point(150 + margin * 2, 55), Selectable = true };
-            yesNoLayoutInside.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_exit_header", new Point(150, 30), new Point(1, 2)) { TextColor = Color.White });
+            var yesNoLayoutInside = new InterfaceListLayout()
+            {
+                Size = new Point(150 + margin * 2, 55),
+                Selectable = true,
+            };
+            yesNoLayoutInside.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "game_menu_exit_header",
+                    new Point(150, 30),
+                    new Point(1, 2)
+                )
+                {
+                    TextColor = Color.White,
+                }
+            );
             yesNoLayoutInside.AddElement(hLayout);
 
-            var yesNoLayout = new InterfaceListLayout() { Size = new Point(width, height), Selectable = true };
+            var yesNoLayout = new InterfaceListLayout()
+            {
+                Size = new Point(width, height),
+                Selectable = true,
+            };
             yesNoLayout.AddElement(yesNoLayoutInside);
 
             PageLayout = yesNoLayout;
@@ -30,8 +64,11 @@ namespace ProjectZ.InGame.Pages
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
-            if (ControlHandler.ButtonPressed(CButtons.Up)  | ControlHandler.ButtonDown(CButtons.Up) || 
-                ControlHandler.ButtonPressed(CButtons.Down) || ControlHandler.ButtonDown(CButtons.Down))
+            if (
+                ControlHandler.ButtonPressed(CButtons.Up) | ControlHandler.ButtonDown(CButtons.Up)
+                || ControlHandler.ButtonPressed(CButtons.Down)
+                || ControlHandler.ButtonDown(CButtons.Down)
+            )
                 return;
 
             base.Update(pressedButtons, gameTime);

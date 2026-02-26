@@ -39,9 +39,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _holeX;
         private int _holeY;
 
-        public ObjStoneSpawner() : base("small_stones") { }
+        public ObjStoneSpawner()
+            : base("small_stones") { }
 
-        public ObjStoneSpawner(Map.Map map, int posX, int posY) : base(map)
+        public ObjStoneSpawner(Map.Map map, int posX, int posY)
+            : base(map)
         {
             _stoneRectangleSource[0] = Resources.GetSprite("small_stone_0");
             _stoneRectangleSource[1] = Resources.GetSprite("small_stone_1");
@@ -68,15 +70,23 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // deterministic offset of the stones depending on the position of the stone
                 // i really do not know if this is a good way of doing this...
                 var offsetIndex = (position.X + position.Y) / 8 + i;
-                var offsetX = offsetIndex % (8 - _stoneRectangleSource[stoneIndex].SourceRectangle.Width);
-                var offsetY = offsetIndex % (8 - _stoneRectangleSource[stoneIndex].SourceRectangle.Height);
+                var offsetX =
+                    offsetIndex % (8 - _stoneRectangleSource[stoneIndex].SourceRectangle.Width);
+                var offsetY =
+                    offsetIndex % (8 - _stoneRectangleSource[stoneIndex].SourceRectangle.Height);
                 var stonePosition = new Vector2(fieldX + offsetX, fieldY + offsetY);
                 var centerX = (int)(_stoneRectangleSource[stoneIndex].ScaledRectangle.Width / 2);
                 var strStoneSprite = "small_stone_" + stoneIndex;
 
-                _objSprites[i] = new ObjSprite(Map,
-                    position.X + (int)stonePosition.X + centerX, position.Y + 5 + (int)stonePosition.Y,
-                    strStoneSprite, Vector2.Zero, Values.LayerBottom, null);
+                _objSprites[i] = new ObjSprite(
+                    Map,
+                    position.X + (int)stonePosition.X + centerX,
+                    position.Y + 5 + (int)stonePosition.Y,
+                    strStoneSprite,
+                    Vector2.Zero,
+                    Values.LayerBottom,
+                    null
+                );
 
                 Map.Objects.SpawnObject(_objSprites[i]);
             }
@@ -86,11 +96,9 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Update()
         {
             // hide rocks when there has been dug at the tile
-            if (!Hidden && Map.HoleMap != null &&
-                Map.HoleMap.ArrayTileMap[_holeX, _holeY, 0] != -1)
+            if (!Hidden && Map.HoleMap != null && Map.HoleMap.ArrayTileMap[_holeX, _holeY, 0] != -1)
                 Hidden = true;
-            if (Hidden && Map.HoleMap != null &&
-                Map.HoleMap.ArrayTileMap[_holeX, _holeY, 0] == -1)
+            if (Hidden && Map.HoleMap != null && Map.HoleMap.ArrayTileMap[_holeX, _holeY, 0] == -1)
                 Hidden = false;
         }
     }

@@ -29,23 +29,297 @@ namespace ProjectZ.InGame.Overlay
 
         private readonly int[,] _mapIcons = new int[16, 16];
 
-        private readonly string[,] _mapDialog = new string[,] {
-        { "map_tal_tal", "map_tal_tal", "map_tal_tal", "map_tal_tal", "map_tal_tal", "map_tal_tal", "map_wind_fishs_egg", "map_mt_tamaranch", "map_owl_bridge", "map_tal_tal", "map_hen_house", "map_tal_tal", "map_tal_tal", "map_tal_tal", "map_level_7", "map_tal_tal" },
-        { "map_level_8","map_telephone_booth","map_tal_tal","map_tal_tal","map_tal_tal","map_tal_tal","map_owl_fish","map_owl_mountain","map_tal_tal","map_tal_tal","map_tal_tal","map_tal_tal","map_tal_tal","map_tal_tal","map_tal_tal","map_tal_tal" },
-        { "map_goponga_swamp","map_goponga_swamp","map_goponga_swamp","map_goponga_swamp","map_level_2","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_level_4","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights" },
-        { "map_weird_mr_write","map_telephone_booth","map_goponga_swamp","map_goponga_swamp","map_goponga_swamp","map_tal_tal_heights","map_owl_tal_tal_heights","map_photo_both","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_tal_tal_heights","map_raft_shop" },
-        { "map_mysterious_woods","map_owl_woods","map_mysterious_woods","map_mysterious_woods","map_koholint_prairie","map_crazy_tracy","map_tabahl_wasteland","map_tabahl_wasteland","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_telephone_booth","map_rapids_ride","map_rapids_ride","map_rapids_ride","map_rapids_ride" },
-        { "map_mysterious_woods","map_mysterious_woods","map_mysterious_woods","map_mysterious_woods","map_koholint_prairie","map_koholint_prairie","map_tabahl_wasteland","map_tabahl_wasteland","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_rapids_ride","map_rapids_ride","map_rapids_ride","map_rapids_ride" },
-        { "map_mysterious_woods","map_mysterious_woods","map_mysterious_woods","map_mysterious_woods","map_owl_prairie","map_witchs_hut","map_cementry","map_cementry","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_rapids_ride","map_rapids_ride","map_rapids_ride","map_rapids_ride" },
-        { "map_mysterious_woods","map_mysterious_woods","map_mysterious_woods","map_mysterious_woods","map_koholint_prairie","map_koholint_prairie","map_cementry","map_cementry","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_kanalet_castle","map_rapids_ride","map_rapids_ride","map_rapids_ride","map_rapids_ride" },
-        { "map_owl_woods_entry","map_fishing_pond","map_quadruplets_house","map_dream_shrine","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_telephone_booth","map_ukuku_prairie","map_seashell_mansion","map_ukuku_prairie","map_level_6","map_face_shrine","map_rapids_ride","map_rapids_ride" },
-        { "map_mysterious_woods","map_mysterious_woods","map_mabe_village","map_town_tool_shop","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_owl_level_6_post","map_owl_level_6","map_rapids_ride","map_rapids_ride"},
-        { "map_mabe_village","map_madam_meow","map_marin_tarin","map_mabe_village","map_telephone_booth","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_owl_shrine","map_face_shrine","map_face_shrine","map_face_shrine" },
-        { "map_village_library","map_old_man_house","map_telephone_booth","map_trendy_game","map_ukuku_prairie","map_level_3","map_owl_level_3","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_ukuku_prairie","map_face_shrine","map_face_shrine","map_face_shrine","map_face_shrine"},
-        { "map_south_village","map_south_village","map_south_village","map_south_village","map_signpost_maze","map_signpost_maze","map_pothole_field","map_pothole_field","map_maraths_bay","map_maraths_bay","map_maraths_bay","map_maraths_bay","map_animal_village","map_animal_village","map_yarna_desert","map_yarna_desert"},
-        { "map_south_village","map_south_village","map_owl_level_1","map_level_1","map_signpost_maze","map_signpost_maze","map_richards_villa","map_pothole_field","map_maraths_bay","map_level_5","map_maraths_bay","map_telephone_booth","map_animal_village","map_animal_village","map_yarna_desert","map_yarna_desert"},
-        { "map_toronbo_shores","map_toronbo_shores","map_toronbo_shores","map_banana_house","map_toronbo_shores","map_toronbo_shores","map_maraths_bay","map_maraths_bay","map_telephone_booth","map_maraths_bay","map_maraths_bay","map_maraths_bay","map_bay_east","map_bay_east","map_owl_desert","map_yarna_desert"},
-        { "map_toronbo_shores","map_toronbo_shores","map_owl_shore","map_toronbo_shores","map_toronbo_shores","map_toronbo_shores","map_house_bay","map_maraths_bay","map_maraths_bay","map_maraths_bay","map_maraths_bay","map_maraths_bay","map_bay_east","map_bay_east","map_yarna_desert","map_yarna_desert"}};
+        private readonly string[,] _mapDialog = new string[,]
+        {
+            {
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_wind_fishs_egg",
+                "map_mt_tamaranch",
+                "map_owl_bridge",
+                "map_tal_tal",
+                "map_hen_house",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_level_7",
+                "map_tal_tal",
+            },
+            {
+                "map_level_8",
+                "map_telephone_booth",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_owl_fish",
+                "map_owl_mountain",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+                "map_tal_tal",
+            },
+            {
+                "map_goponga_swamp",
+                "map_goponga_swamp",
+                "map_goponga_swamp",
+                "map_goponga_swamp",
+                "map_level_2",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_level_4",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+            },
+            {
+                "map_weird_mr_write",
+                "map_telephone_booth",
+                "map_goponga_swamp",
+                "map_goponga_swamp",
+                "map_goponga_swamp",
+                "map_tal_tal_heights",
+                "map_owl_tal_tal_heights",
+                "map_photo_both",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_tal_tal_heights",
+                "map_raft_shop",
+            },
+            {
+                "map_mysterious_woods",
+                "map_owl_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_koholint_prairie",
+                "map_crazy_tracy",
+                "map_tabahl_wasteland",
+                "map_tabahl_wasteland",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_telephone_booth",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+            },
+            {
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_koholint_prairie",
+                "map_koholint_prairie",
+                "map_tabahl_wasteland",
+                "map_tabahl_wasteland",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+            },
+            {
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_owl_prairie",
+                "map_witchs_hut",
+                "map_cementry",
+                "map_cementry",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+            },
+            {
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_koholint_prairie",
+                "map_koholint_prairie",
+                "map_cementry",
+                "map_cementry",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_kanalet_castle",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+                "map_rapids_ride",
+            },
+            {
+                "map_owl_woods_entry",
+                "map_fishing_pond",
+                "map_quadruplets_house",
+                "map_dream_shrine",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_telephone_booth",
+                "map_ukuku_prairie",
+                "map_seashell_mansion",
+                "map_ukuku_prairie",
+                "map_level_6",
+                "map_face_shrine",
+                "map_rapids_ride",
+                "map_rapids_ride",
+            },
+            {
+                "map_mysterious_woods",
+                "map_mysterious_woods",
+                "map_mabe_village",
+                "map_town_tool_shop",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_owl_level_6_post",
+                "map_owl_level_6",
+                "map_rapids_ride",
+                "map_rapids_ride",
+            },
+            {
+                "map_mabe_village",
+                "map_madam_meow",
+                "map_marin_tarin",
+                "map_mabe_village",
+                "map_telephone_booth",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_owl_shrine",
+                "map_face_shrine",
+                "map_face_shrine",
+                "map_face_shrine",
+            },
+            {
+                "map_village_library",
+                "map_old_man_house",
+                "map_telephone_booth",
+                "map_trendy_game",
+                "map_ukuku_prairie",
+                "map_level_3",
+                "map_owl_level_3",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_ukuku_prairie",
+                "map_face_shrine",
+                "map_face_shrine",
+                "map_face_shrine",
+                "map_face_shrine",
+            },
+            {
+                "map_south_village",
+                "map_south_village",
+                "map_south_village",
+                "map_south_village",
+                "map_signpost_maze",
+                "map_signpost_maze",
+                "map_pothole_field",
+                "map_pothole_field",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_animal_village",
+                "map_animal_village",
+                "map_yarna_desert",
+                "map_yarna_desert",
+            },
+            {
+                "map_south_village",
+                "map_south_village",
+                "map_owl_level_1",
+                "map_level_1",
+                "map_signpost_maze",
+                "map_signpost_maze",
+                "map_richards_villa",
+                "map_pothole_field",
+                "map_maraths_bay",
+                "map_level_5",
+                "map_maraths_bay",
+                "map_telephone_booth",
+                "map_animal_village",
+                "map_animal_village",
+                "map_yarna_desert",
+                "map_yarna_desert",
+            },
+            {
+                "map_toronbo_shores",
+                "map_toronbo_shores",
+                "map_toronbo_shores",
+                "map_banana_house",
+                "map_toronbo_shores",
+                "map_toronbo_shores",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_telephone_booth",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_bay_east",
+                "map_bay_east",
+                "map_owl_desert",
+                "map_yarna_desert",
+            },
+            {
+                "map_toronbo_shores",
+                "map_toronbo_shores",
+                "map_owl_shore",
+                "map_toronbo_shores",
+                "map_toronbo_shores",
+                "map_toronbo_shores",
+                "map_house_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_maraths_bay",
+                "map_bay_east",
+                "map_bay_east",
+                "map_yarna_desert",
+                "map_yarna_desert",
+            },
+        };
 
         private float _animationCount;
         private float _animationState;
@@ -68,7 +342,10 @@ namespace ProjectZ.InGame.Overlay
         Animator _manboPond = new Animator();
         Point _manboPosition = new Point(5, 4);
 
-        public Point SelectionPosition { get => _selectionPosition; }
+        public Point SelectionPosition
+        {
+            get => _selectionPosition;
+        }
 
         public MapOverlay(int width, int height, int margin, bool fullMap)
         {
@@ -174,7 +451,11 @@ namespace ProjectZ.InGame.Overlay
 
         public void UpdateRenderTarget()
         {
-            if (_renderTarget == null || _renderTarget.Width != _width || _renderTarget.Height != _height)
+            if (
+                _renderTarget == null
+                || _renderTarget.Width != _width
+                || _renderTarget.Height != _height
+            )
                 _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width, _height);
         }
 
@@ -195,10 +476,19 @@ namespace ProjectZ.InGame.Overlay
             var mapIcon = _mapIcons[_selectionPosition.X, _selectionPosition.Y];
 
             // for owl icons we only show the icon if the owl key was already set
-            if (mapIcon == 4 && Game1.GameManager.SaveManager.GetString(_mapDialog[_selectionPosition.Y, _selectionPosition.X], "0") != "1")
+            if (
+                mapIcon == 4
+                && Game1.GameManager.SaveManager.GetString(
+                    _mapDialog[_selectionPosition.Y, _selectionPosition.X],
+                    "0"
+                ) != "1"
+            )
                 mapIcon = 0;
 
-            if ((mapIcon != _shownSelection || (mapIcon != 0 && !IsSelected)) && !_iconAnimationRunning)
+            if (
+                (mapIcon != _shownSelection || (mapIcon != 0 && !IsSelected))
+                && !_iconAnimationRunning
+            )
             {
                 if (mapIcon != 0 && _shownSelection == 0 && IsSelected)
                     PlayStartAnimation();
@@ -232,28 +522,44 @@ namespace ProjectZ.InGame.Overlay
 
         private void UpdateInput()
         {
-            if (ControlHandler.ButtonDown(CButtons.Left) || ControlHandler.ButtonDown(CButtons.Right) ||
-                ControlHandler.ButtonDown(CButtons.Up) || ControlHandler.ButtonDown(CButtons.Down))
+            if (
+                ControlHandler.ButtonDown(CButtons.Left)
+                || ControlHandler.ButtonDown(CButtons.Right)
+                || ControlHandler.ButtonDown(CButtons.Up)
+                || ControlHandler.ButtonDown(CButtons.Down)
+            )
                 _buttonDownCounter -= Game1.DeltaTime;
             else
                 _buttonDownCounter = 225;
 
-            if (ControlHandler.ButtonPressed(CButtons.Left) || (ControlHandler.ButtonDown(CButtons.Left) && _buttonDownCounter < 0))
+            if (
+                ControlHandler.ButtonPressed(CButtons.Left)
+                || (ControlHandler.ButtonDown(CButtons.Left) && _buttonDownCounter < 0)
+            )
             {
                 _buttonDownCounter += 50;
                 MoveSelection(_selectionPosition + new Point(-1, 0));
             }
-            if (ControlHandler.ButtonPressed(CButtons.Right) || (ControlHandler.ButtonDown(CButtons.Right) && _buttonDownCounter < 0))
+            if (
+                ControlHandler.ButtonPressed(CButtons.Right)
+                || (ControlHandler.ButtonDown(CButtons.Right) && _buttonDownCounter < 0)
+            )
             {
                 _buttonDownCounter += 50;
                 MoveSelection(_selectionPosition + new Point(1, 0));
             }
-            if (ControlHandler.ButtonPressed(CButtons.Up) || (ControlHandler.ButtonDown(CButtons.Up) && _buttonDownCounter < 0))
+            if (
+                ControlHandler.ButtonPressed(CButtons.Up)
+                || (ControlHandler.ButtonDown(CButtons.Up) && _buttonDownCounter < 0)
+            )
             {
                 _buttonDownCounter += 50;
                 MoveSelection(_selectionPosition + new Point(0, -1));
             }
-            if (ControlHandler.ButtonPressed(CButtons.Down) || (ControlHandler.ButtonDown(CButtons.Down) && _buttonDownCounter < 0))
+            if (
+                ControlHandler.ButtonPressed(CButtons.Down)
+                || (ControlHandler.ButtonDown(CButtons.Down) && _buttonDownCounter < 0)
+            )
             {
                 _buttonDownCounter += 50;
                 MoveSelection(_selectionPosition + new Point(0, 1));
@@ -261,26 +567,46 @@ namespace ProjectZ.InGame.Overlay
 
             if (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
             {
-                if (0 <= _selectionPosition.X && _selectionPosition.X < _mapDialog.GetLength(1) &&
-                    0 <= _selectionPosition.Y && _selectionPosition.Y < _mapDialog.GetLength(0))
-                    Game1.GameManager.RunDialog(_mapDialog[_selectionPosition.Y, _selectionPosition.X]);
+                if (
+                    0 <= _selectionPosition.X
+                    && _selectionPosition.X < _mapDialog.GetLength(1)
+                    && 0 <= _selectionPosition.Y
+                    && _selectionPosition.Y < _mapDialog.GetLength(0)
+                )
+                    Game1.GameManager.RunDialog(
+                        _mapDialog[_selectionPosition.Y, _selectionPosition.X]
+                    );
             }
 
             if (ControlHandler.ButtonPressed(CButtons.X))
             {
                 // Get various states to determine if the user will be teleported or not.
-                var validOptions  = GameSettings.MapTeleport != 0 && (GameSettings.MapTeleport != 2 || MapManager.ObjLink.ManboTeleport);
-                var validMapState = Game1.GameManager.InGameOverlay.InventoryState || _fullMap; 
-                var validPosition = Game1.GameManager.InGameOverlay.TeleportMap.TryGetValue(_selectionPosition, out (int Level, Vector2 Teleport) teleportData);
-                var dungeonLevel  = teleportData.Level - 1;
+                var validOptions =
+                    GameSettings.MapTeleport != 0
+                    && (GameSettings.MapTeleport != 2 || MapManager.ObjLink.ManboTeleport);
+                var validMapState = Game1.GameManager.InGameOverlay.InventoryState || _fullMap;
+                var validPosition = Game1.GameManager.InGameOverlay.TeleportMap.TryGetValue(
+                    _selectionPosition,
+                    out (int Level, Vector2 Teleport) teleportData
+                );
+                var dungeonLevel = teleportData.Level - 1;
                 var teleportPoint = teleportData.Teleport;
                 var theInstrument = Game1.GameManager.GetItem("instrument" + dungeonLevel);
                 var hasInstrument = theInstrument != null && theInstrument.Count > 0;
-                var isManbosPond  = dungeonLevel < 0 && MapManager.ObjLink.ManboTeleport && GameSettings.MapTeleport >= 2;
-                var mapOverworld  = MapManager.ObjLink.Map.IsOverworld;
+                var isManbosPond =
+                    dungeonLevel < 0
+                    && MapManager.ObjLink.ManboTeleport
+                    && GameSettings.MapTeleport >= 2;
+                var mapOverworld = MapManager.ObjLink.Map.IsOverworld;
 
                 // Check the various conditions to see if the teleport should not go through.
-                if (!validOptions || !validMapState || !validPosition || !mapOverworld || (!hasInstrument && !isManbosPond))
+                if (
+                    !validOptions
+                    || !validMapState
+                    || !validPosition
+                    || !mapOverworld
+                    || (!hasInstrument && !isManbosPond)
+                )
                     return;
 
                 // We'll need this to teleport Link later.
@@ -300,7 +626,15 @@ namespace ProjectZ.InGame.Overlay
                 MapManager.ObjLink.Direction = 3;
 
                 // Play an animation and a sound effect.
-                var explosionAnimation = new ObjAnimator(MapManager.ObjLink.Map, (int)teleportPoint.X, (int)teleportPoint.Y - 8, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
+                var explosionAnimation = new ObjAnimator(
+                    MapManager.ObjLink.Map,
+                    (int)teleportPoint.X,
+                    (int)teleportPoint.Y - 8,
+                    Values.LayerTop,
+                    "Particles/pieceOfPowerExplosion",
+                    "run",
+                    true
+                );
                 MapManager.ObjLink.Map.Objects.SpawnObject(explosionAnimation);
                 Game1.GameManager.PlaySoundEffect("D360-27-1B");
                 MapManager.ObjLink.ManboTeleport = false;
@@ -311,8 +645,14 @@ namespace ProjectZ.InGame.Overlay
         {
             _iconPosition = new Point(8, 8);
 
-            _iconPosition.X += _selectionPosition.X >= _mapIcons.GetLength(0) / 2 ? 8 : _mapIcons.GetLength(0) * 8 - _recIcon.Width - 8;
-            _iconPosition.Y += _selectionPosition.Y >= _mapIcons.GetLength(1) / 2 ? _mapIcons.GetLength(1) * 8 - _recIcon.Height - 8 : 8;
+            _iconPosition.X +=
+                _selectionPosition.X >= _mapIcons.GetLength(0) / 2
+                    ? 8
+                    : _mapIcons.GetLength(0) * 8 - _recIcon.Width - 8;
+            _iconPosition.Y +=
+                _selectionPosition.Y >= _mapIcons.GetLength(1) / 2
+                    ? _mapIcons.GetLength(1) * 8 - _recIcon.Height - 8
+                    : 8;
 
             _animationCount = 0;
             _iconAnimationDirection = 1;
@@ -348,10 +688,13 @@ namespace ProjectZ.InGame.Overlay
                 newPosition.Y -= Game1.GameManager.MapVisibility.GetLength(1);
 
             // only move the selection if the new position is visible
-            if (newPosition.X >= 0 && newPosition.Y >= 0 &&
-                newPosition.X < Game1.GameManager.MapVisibility.GetLength(0) &&
-                newPosition.Y < Game1.GameManager.MapVisibility.GetLength(1) &&
-                (_fullMap || Game1.GameManager.MapVisibility[newPosition.X, newPosition.Y]))
+            if (
+                newPosition.X >= 0
+                && newPosition.Y >= 0
+                && newPosition.X < Game1.GameManager.MapVisibility.GetLength(0)
+                && newPosition.Y < Game1.GameManager.MapVisibility.GetLength(1)
+                && (_fullMap || Game1.GameManager.MapVisibility[newPosition.X, newPosition.Y])
+            )
             {
                 Game1.GameManager.PlaySoundEffect("D360-10-0A");
                 _selectionPosition = newPosition;
@@ -364,7 +707,12 @@ namespace ProjectZ.InGame.Overlay
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color, Matrix? matrix = null)
+        public void Draw(
+            SpriteBatch spriteBatch,
+            Rectangle drawPosition,
+            Color color,
+            Matrix? matrix = null
+        )
         {
             if (_renderTarget == null)
                 return;
@@ -376,19 +724,52 @@ namespace ProjectZ.InGame.Overlay
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_height);
 
             // Draw the render target with the shader.
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, Resources.RoundedCornerEffect, matrix);
-            spriteBatch.Draw(_renderTarget, drawPosition.Location.ToVector2(), null, color, 0f, Vector2.Zero, Game1.UiScale, SpriteEffects.None, 0f);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                Resources.RoundedCornerEffect,
+                matrix
+            );
+            spriteBatch.Draw(
+                _renderTarget,
+                drawPosition.Location.ToVector2(),
+                null,
+                color,
+                0f,
+                Vector2.Zero,
+                Game1.UiScale,
+                SpriteEffects.None,
+                0f
+            );
             spriteBatch.End();
 
             // Draw overlay icons.
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, matrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                null,
+                matrix
+            );
 
             if (Game1.GameManager.PlayerMapPosition != null)
             {
                 var mapRectangle = new Point(drawPosition.X + _margin, drawPosition.Y + _margin);
 
                 // Draw the dungeon icons if enabled.
-                if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && IsSelected && MapManager.ObjLink.Map.IsOverworld)
+                if (
+                    (
+                        (GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3)
+                        || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)
+                    )
+                    && IsSelected
+                    && MapManager.ObjLink.Map.IsOverworld
+                )
                 {
                     for (int i = 0; i < 8; i++)
                     {
@@ -397,8 +778,9 @@ namespace ProjectZ.InGame.Overlay
                             continue;
 
                         Vector2 animLocation = new Vector2(
-                            mapRectangle.X + (8 + animPosition[i].X * 8 + 1) * Game1.UiScale, 
-                            mapRectangle.Y + (8 + animPosition[i].Y * 8 + 1) * Game1.UiScale);
+                            mapRectangle.X + (8 + animPosition[i].X * 8 + 1) * Game1.UiScale,
+                            mapRectangle.Y + (8 + animPosition[i].Y * 8 + 1) * Game1.UiScale
+                        );
                         animDungeons[i].DrawBasic(spriteBatch, animLocation, color, Game1.UiScale);
                     }
                 }
@@ -406,14 +788,18 @@ namespace ProjectZ.InGame.Overlay
                 if (GameSettings.MapTeleport >= 2 && MapManager.ObjLink.ManboTeleport)
                 {
                     Vector2 manboLocation = new Vector2(
-                            mapRectangle.X + (8 + _manboPosition.X * 8 + 1) * Game1.UiScale,
-                            mapRectangle.Y + (8 + _manboPosition.Y * 8 + 1) * Game1.UiScale);
+                        mapRectangle.X + (8 + _manboPosition.X * 8 + 1) * Game1.UiScale,
+                        mapRectangle.Y + (8 + _manboPosition.Y * 8 + 1) * Game1.UiScale
+                    );
                     _manboPond.DrawBasic(spriteBatch, manboLocation, color, Game1.UiScale);
                 }
                 // Draw the player icon.
                 var position = new Vector2(
-                    mapRectangle.X + (8 + Game1.GameManager.PlayerMapPosition.Value.X * 8 + 2) * Game1.UiScale,
-                    mapRectangle.Y + (8 + Game1.GameManager.PlayerMapPosition.Value.Y * 8 + 2) * Game1.UiScale);
+                    mapRectangle.X
+                        + (8 + Game1.GameManager.PlayerMapPosition.Value.X * 8 + 2) * Game1.UiScale,
+                    mapRectangle.Y
+                        + (8 + Game1.GameManager.PlayerMapPosition.Value.Y * 8 + 2) * Game1.UiScale
+                );
                 _animationPlayer.DrawBasic(spriteBatch, position, color, Game1.UiScale);
 
                 // Draw the selection icon.
@@ -421,7 +807,8 @@ namespace ProjectZ.InGame.Overlay
                 {
                     position = new Vector2(
                         mapRectangle.X + (8 + _selectionPosition.X * 8 + 1) * Game1.UiScale,
-                        mapRectangle.Y + (8 + _selectionPosition.Y * 8 + 1) * Game1.UiScale);
+                        mapRectangle.Y + (8 + _selectionPosition.Y * 8 + 1) * Game1.UiScale
+                    );
                     _animationSelection.DrawBasic(spriteBatch, position, color, Game1.UiScale);
                 }
             }
@@ -434,7 +821,14 @@ namespace ProjectZ.InGame.Overlay
             Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
             // Draw the map.
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                null
+            );
             DrawMap(spriteBatch);
             spriteBatch.End();
         }
@@ -444,8 +838,12 @@ namespace ProjectZ.InGame.Overlay
             var mapRectangle = new Point(_margin, _margin);
 
             // draw the map
-            spriteBatch.Draw(Resources.SprMiniMap,
-                new Rectangle(mapRectangle.X, mapRectangle.Y, _recMap.Width, _recMap.Height), _recMap, Color.White);
+            spriteBatch.Draw(
+                Resources.SprMiniMap,
+                new Rectangle(mapRectangle.X, mapRectangle.Y, _recMap.Width, _recMap.Height),
+                _recMap,
+                Color.White
+            );
 
             // overlay the not discovered parts of the map
             if (!_fullMap)
@@ -454,28 +852,55 @@ namespace ProjectZ.InGame.Overlay
                     for (var y = 0; y < 16; y++)
                     {
                         if (!Game1.GameManager.MapVisibility[x, y])
-                            spriteBatch.Draw(Resources.SprMiniMap, new Rectangle(
-                                mapRectangle.X + 8 + x * 8,
-                                mapRectangle.Y + 8 + y * 8,
-                                _recHide.Width, _recHide.Height), _recHide, Color.White);
+                            spriteBatch.Draw(
+                                Resources.SprMiniMap,
+                                new Rectangle(
+                                    mapRectangle.X + 8 + x * 8,
+                                    mapRectangle.Y + 8 + y * 8,
+                                    _recHide.Width,
+                                    _recHide.Height
+                                ),
+                                _recHide,
+                                Color.White
+                            );
                     }
                 }
 
             // draw icon of the selection
             if (_shownSelection > 0)
-                DrawIcon(spriteBatch, new Point(mapRectangle.X + _iconPosition.X, mapRectangle.Y + _iconPosition.Y), _shownSelection, 1, _animationState);
+                DrawIcon(
+                    spriteBatch,
+                    new Point(mapRectangle.X + _iconPosition.X, mapRectangle.Y + _iconPosition.Y),
+                    _shownSelection,
+                    1,
+                    _animationState
+                );
         }
 
-        public void DrawIcon(SpriteBatch spriteBatch, Point position, int icon, int scale, float animationPercentage)
+        public void DrawIcon(
+            SpriteBatch spriteBatch,
+            Point position,
+            int icon,
+            int scale,
+            float animationPercentage
+        )
         {
             var width = (int)(_recIcon.Width * animationPercentage) / 2;
             var height = (int)(_recIcon.Height * animationPercentage) / 2;
             var posX = position.X + (_recIcon.Width / 2 - width);
             var posY = position.Y + (_recIcon.Height / 2 - height);
 
-            spriteBatch.Draw(Resources.SprMiniMap, new Rectangle(posX, posY, width * 2, height * 2),
-                new Rectangle(_recIcon.X + _recIcon.Width * (icon - 1),
-                    _recIcon.Y, _recIcon.Width, _recIcon.Height), Color.White);
+            spriteBatch.Draw(
+                Resources.SprMiniMap,
+                new Rectangle(posX, posY, width * 2, height * 2),
+                new Rectangle(
+                    _recIcon.X + _recIcon.Width * (icon - 1),
+                    _recIcon.Y,
+                    _recIcon.Width,
+                    _recIcon.Height
+                ),
+                Color.White
+            );
         }
     }
 }

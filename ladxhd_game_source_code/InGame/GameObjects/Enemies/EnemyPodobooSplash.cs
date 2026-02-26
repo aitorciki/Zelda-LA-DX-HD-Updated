@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Base.Components.AI;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -15,7 +15,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
         private readonly CSprite _sprite;
 
-        public EnemyPodobooSplash(Map.Map map, Vector2 position, Vector2 velocity) : base(map)
+        public EnemyPodobooSplash(Map.Map map, Vector2 position, Vector2 velocity)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -34,13 +35,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Gravity2D = 0.065f,
                 CollisionTypes = Values.CollisionTypes.None,
                 Velocity = new Vector3(velocity.X, velocity.Y, 0),
-                SplashEffect = false
+                SplashEffect = false,
             };
 
             _aiComponent = new AiComponent();
 
             var stateFlying = new AiState();
-            stateFlying.Trigger.Add(new AiTriggerCountdown(500, DespawnTick, () => Map.Objects.DeleteObjects.Add(this)));
+            stateFlying.Trigger.Add(
+                new AiTriggerCountdown(500, DespawnTick, () => Map.Objects.DeleteObjects.Add(this))
+            );
 
             _aiComponent.States.Add("flying", stateFlying);
 
@@ -49,13 +52,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void DespawnTick(double time)
         {
             // 4 frame blink effect
-            _sprite.SpriteShader = Game1.TotalGameTime % (8000 / 60f) >= (4000 / 60f) ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                Game1.TotalGameTime % (8000 / 60f) >= (4000 / 60f)
+                    ? Resources.DamageSpriteShader0
+                    : null;
 
             // fade out
             if (time < 75)

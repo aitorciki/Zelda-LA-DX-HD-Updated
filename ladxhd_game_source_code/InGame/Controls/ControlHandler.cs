@@ -10,11 +10,12 @@ namespace ProjectZ.InGame.Controls
 {
     public class ControlHandler
     {
-        public static Dictionary<CButtons, ButtonMapper> ButtonDictionary = new Dictionary<CButtons, ButtonMapper>();
+        public static Dictionary<CButtons, ButtonMapper> ButtonDictionary =
+            new Dictionary<CButtons, ButtonMapper>();
 
         public static CButtons DebugButtons;
         public static CButtons ConfirmButton = CButtons.A;
-        public static CButtons CancelButton  = CButtons.B;
+        public static CButtons CancelButton = CButtons.B;
 
         public static bool LastKeyboardDown;
         public static bool LastDirectionDPad;
@@ -34,15 +35,15 @@ namespace ProjectZ.InGame.Controls
             ResetControls();
 
             // A simple array to reference the names by index.
-            ControllerNames = new string[]{ "XBox", "Nintendo", "Playstation" };
+            ControllerNames = new string[] { "XBox", "Nintendo", "Playstation" };
 
             // A rectangular 2D array is used to easily reference the button labels.
-            ControllerLabels = new string[,] 
-            { 
-                { "A", "B", "X", "Y", "LB", "RB", "LT", "RT",   "Back",   "Start" },  // XBox
-                { "B", "A", "Y", "X",  "L",  "R", "ZL", "ZR", "Select",   "Start" },  // Nintendo
-                { "Χ", "Ο", "Γ", "Δ", "L1", "R1", "L2", "R2",  "Share", "Options" }   // Playstation
-            }; 
+            ControllerLabels = new string[,]
+            {
+                { "A", "B", "X", "Y", "LB", "RB", "LT", "RT", "Back", "Start" }, // XBox
+                { "B", "A", "Y", "X", "L", "R", "ZL", "ZR", "Select", "Start" }, // Nintendo
+                { "Χ", "Ο", "Γ", "Δ", "L1", "R1", "L2", "R2", "Share", "Options" }, // Playstation
+            };
         }
 
         public static void SetControllerIndex()
@@ -53,20 +54,20 @@ namespace ProjectZ.InGame.Controls
 
         private static readonly Dictionary<string, int> ButtonIndexMap = new()
         {
-            // This serves as a lookup table to translate the MonoGame button name to the 
+            // This serves as a lookup table to translate the MonoGame button name to the
             // selected controller. The value references the button position in the 2D array.
-            ["A"]             = 0,
-            ["B"]             = 1,
-            ["X"]             = 2,
-            ["Y"]             = 3,
-            ["LeftShoulder"]  = 4,
+            ["A"] = 0,
+            ["B"] = 1,
+            ["X"] = 2,
+            ["Y"] = 3,
+            ["LeftShoulder"] = 4,
             ["RightShoulder"] = 5,
-            ["LeftTrigger"]   = 6,
-            ["RightTrigger"]  = 7,
-            ["Back"]          = 8,
-            ["Start"]         = 9
+            ["LeftTrigger"] = 6,
+            ["RightTrigger"] = 7,
+            ["Back"] = 8,
+            ["Start"] = 9,
         };
-        
+
         public static string GetButtonName(Buttons button)
         {
             // This method should be used anywhere a button name is displayed in-game.
@@ -80,22 +81,70 @@ namespace ProjectZ.InGame.Controls
         public static void ResetControls()
         {
             ButtonDictionary.Clear();
-            ButtonDictionary.Add(CButtons.Up, new ButtonMapper(new[] { Keys.Up }, new[] { Buttons.DPadUp }));
-            ButtonDictionary.Add(CButtons.Down, new ButtonMapper(new[] { Keys.Down }, new[] { Buttons.DPadDown }));
-            ButtonDictionary.Add(CButtons.Left, new ButtonMapper(new[] { Keys.Left }, new[] { Buttons.DPadLeft }));
-            ButtonDictionary.Add(CButtons.Right, new ButtonMapper(new[] { Keys.Right }, new[] { Buttons.DPadRight }));
-            ButtonDictionary.Add(CButtons.A, new ButtonMapper(new[] { Keys.S }, new[] { Buttons.A }));
-            ButtonDictionary.Add(CButtons.B, new ButtonMapper(new[] { Keys.D }, new[] { Buttons.B }));
-            ButtonDictionary.Add(CButtons.X, new ButtonMapper(new[] { Keys.A }, new[] { Buttons.X }));
-            ButtonDictionary.Add(CButtons.Y, new ButtonMapper(new[] { Keys.W }, new[] { Buttons.Y }));
-            ButtonDictionary.Add(CButtons.LB, new ButtonMapper(new[] { Keys.OemMinus }, new[] { Buttons.LeftShoulder }));
-            ButtonDictionary.Add(CButtons.RB, new ButtonMapper(new[] { Keys.OemPlus }, new[] { Buttons.RightShoulder }));
-            ButtonDictionary.Add(CButtons.LT, new ButtonMapper(new[] { Keys.OemOpenBrackets }, new[] { Buttons.LeftTrigger }));
-            ButtonDictionary.Add(CButtons.RT, new ButtonMapper(new[] { Keys.OemCloseBrackets }, new[] { Buttons.RightTrigger }));
-            ButtonDictionary.Add(CButtons.Select, new ButtonMapper(new[] { Keys.Space }, new[] { Buttons.Back }));
-            ButtonDictionary.Add(CButtons.Start, new ButtonMapper(new[] { Keys.Enter }, new[] { Buttons.Start }));
-            ButtonDictionary.Add(CButtons.LS, new ButtonMapper(new[] { Keys.Q }, new[] { Buttons.LeftStick }));
-            ButtonDictionary.Add(CButtons.RS, new ButtonMapper(new[] { Keys.W }, new[] { Buttons.RightStick }));
+            ButtonDictionary.Add(
+                CButtons.Up,
+                new ButtonMapper(new[] { Keys.Up }, new[] { Buttons.DPadUp })
+            );
+            ButtonDictionary.Add(
+                CButtons.Down,
+                new ButtonMapper(new[] { Keys.Down }, new[] { Buttons.DPadDown })
+            );
+            ButtonDictionary.Add(
+                CButtons.Left,
+                new ButtonMapper(new[] { Keys.Left }, new[] { Buttons.DPadLeft })
+            );
+            ButtonDictionary.Add(
+                CButtons.Right,
+                new ButtonMapper(new[] { Keys.Right }, new[] { Buttons.DPadRight })
+            );
+            ButtonDictionary.Add(
+                CButtons.A,
+                new ButtonMapper(new[] { Keys.S }, new[] { Buttons.A })
+            );
+            ButtonDictionary.Add(
+                CButtons.B,
+                new ButtonMapper(new[] { Keys.D }, new[] { Buttons.B })
+            );
+            ButtonDictionary.Add(
+                CButtons.X,
+                new ButtonMapper(new[] { Keys.A }, new[] { Buttons.X })
+            );
+            ButtonDictionary.Add(
+                CButtons.Y,
+                new ButtonMapper(new[] { Keys.W }, new[] { Buttons.Y })
+            );
+            ButtonDictionary.Add(
+                CButtons.LB,
+                new ButtonMapper(new[] { Keys.OemMinus }, new[] { Buttons.LeftShoulder })
+            );
+            ButtonDictionary.Add(
+                CButtons.RB,
+                new ButtonMapper(new[] { Keys.OemPlus }, new[] { Buttons.RightShoulder })
+            );
+            ButtonDictionary.Add(
+                CButtons.LT,
+                new ButtonMapper(new[] { Keys.OemOpenBrackets }, new[] { Buttons.LeftTrigger })
+            );
+            ButtonDictionary.Add(
+                CButtons.RT,
+                new ButtonMapper(new[] { Keys.OemCloseBrackets }, new[] { Buttons.RightTrigger })
+            );
+            ButtonDictionary.Add(
+                CButtons.Select,
+                new ButtonMapper(new[] { Keys.Space }, new[] { Buttons.Back })
+            );
+            ButtonDictionary.Add(
+                CButtons.Start,
+                new ButtonMapper(new[] { Keys.Enter }, new[] { Buttons.Start })
+            );
+            ButtonDictionary.Add(
+                CButtons.LS,
+                new ButtonMapper(new[] { Keys.Q }, new[] { Buttons.LeftStick })
+            );
+            ButtonDictionary.Add(
+                CButtons.RS,
+                new ButtonMapper(new[] { Keys.W }, new[] { Buttons.RightStick })
+            );
             SetConfirmCancelButtons();
         }
 
@@ -106,10 +155,16 @@ namespace ProjectZ.InGame.Controls
             {
                 // save the keyboard buttons
                 for (var i = 0; i < buttonMap.Value.Keys.Length; i++)
-                    saveManager.SetInt("control" + buttonMap.Key + "key" + i, (int)buttonMap.Value.Keys[i]);
+                    saveManager.SetInt(
+                        "control" + buttonMap.Key + "key" + i,
+                        (int)buttonMap.Value.Keys[i]
+                    );
                 // save the gamepad buttons
                 for (var i = 0; i < buttonMap.Value.Buttons.Length; i++)
-                    saveManager.SetInt("control" + buttonMap.Key + "button" + i, (int)buttonMap.Value.Buttons[i]);
+                    saveManager.SetInt(
+                        "control" + buttonMap.Key + "button" + i,
+                        (int)buttonMap.Value.Buttons[i]
+                    );
             }
         }
 
@@ -122,7 +177,9 @@ namespace ProjectZ.InGame.Controls
                 var index = 0;
                 int key;
                 var keys = new List<Keys>();
-                while ((key = saveManager.GetInt("control" + buttonMap.Key + "key" + index, -1)) >= 0)
+                while (
+                    (key = saveManager.GetInt("control" + buttonMap.Key + "key" + index, -1)) >= 0
+                )
                 {
                     keys.Add((Keys)key);
                     index++;
@@ -136,7 +193,10 @@ namespace ProjectZ.InGame.Controls
                 index = 0;
                 int button;
                 var gamepadButtons = new List<Buttons>();
-                while ((button = saveManager.GetInt("control" + buttonMap.Key + "button" + index, -1)) >= 0)
+                while (
+                    (button = saveManager.GetInt("control" + buttonMap.Key + "button" + index, -1))
+                    >= 0
+                )
                 {
                     gamepadButtons.Add((Buttons)button);
                     index++;
@@ -154,19 +214,22 @@ namespace ProjectZ.InGame.Controls
             if (GameSettings.SwapButtons)
             {
                 ConfirmButton = CButtons.B;
-                CancelButton  = CButtons.A;
+                CancelButton = CButtons.A;
             }
             else
             {
                 ConfirmButton = CButtons.A;
-                CancelButton  = CButtons.B;
+                CancelButton = CButtons.B;
             }
         }
 
         public static Vector2 GetCamVector2()
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
-            var vec = new Vector2(gamepadState.ThumbSticks.Right.X, -gamepadState.ThumbSticks.Right.Y);
+            var vec = new Vector2(
+                gamepadState.ThumbSticks.Right.X,
+                -gamepadState.ThumbSticks.Right.Y
+            );
             return vec;
         }
 
@@ -222,9 +285,15 @@ namespace ProjectZ.InGame.Controls
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
 
-            Vector2 vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+            Vector2 vec = new Vector2(
+                gamepadState.ThumbSticks.Left.X,
+                -gamepadState.ThumbSticks.Left.Y
+            );
 
-            if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
+            if (
+                Math.Abs(vec.X) <= GameSettings.DeadZone
+                && Math.Abs(vec.Y) <= GameSettings.DeadZone
+            )
                 vec = Vector2.Zero;
             else if (GameSettings.DigitalAnalog)
                 vec = Digitalize(vec);
@@ -248,9 +317,15 @@ namespace ProjectZ.InGame.Controls
         {
             var gamepadState = GamePad.GetState(PlayerIndex.One);
 
-            var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+            var vec = new Vector2(
+                gamepadState.ThumbSticks.Left.X,
+                -gamepadState.ThumbSticks.Left.Y
+            );
 
-            if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
+            if (
+                Math.Abs(vec.X) <= GameSettings.DeadZone
+                && Math.Abs(vec.Y) <= GameSettings.DeadZone
+            )
                 vec = Vector2.Zero;
 
             return vec;
@@ -278,8 +353,12 @@ namespace ProjectZ.InGame.Controls
             if (_initDirection && direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
-                if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
-                    (dir == 2 && button == CButtons.Right) || (dir == 3 && button == CButtons.Down))
+                if (
+                    (dir == 0 && button == CButtons.Left)
+                    || (dir == 1 && button == CButtons.Up)
+                    || (dir == 2 && button == CButtons.Right)
+                    || (dir == 3 && button == CButtons.Down)
+                )
                     return true;
             }
 
@@ -303,8 +382,12 @@ namespace ProjectZ.InGame.Controls
             if (_initDirection && direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
-                if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
-                    (dir == 2 && button == CButtons.Right) || (dir == 3 && button == CButtons.Down))
+                if (
+                    (dir == 0 && button == CButtons.Left)
+                    || (dir == 1 && button == CButtons.Up)
+                    || (dir == 2 && button == CButtons.Right)
+                    || (dir == 3 && button == CButtons.Down)
+                )
                     return true;
             }
 
@@ -329,11 +412,15 @@ namespace ProjectZ.InGame.Controls
         public static bool ButtonReleased(CButtons button)
         {
             var direction = GetAnalogDirection();
-            if  (direction != Vector2.Zero)
+            if (direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
-                if ((dir == 0 && button == CButtons.Left) || (dir == 1 && button == CButtons.Up) ||
-                    (dir == 2 && button == CButtons.Right) || (dir == 3 && button == CButtons.Down))
+                if (
+                    (dir == 0 && button == CButtons.Left)
+                    || (dir == 1 && button == CButtons.Up)
+                    || (dir == 2 && button == CButtons.Right)
+                    || (dir == 3 && button == CButtons.Down)
+                )
                     return true;
             }
 
@@ -357,11 +444,14 @@ namespace ProjectZ.InGame.Controls
             if (direction != Vector2.Zero)
             {
                 var dir = AnimationHelper.GetDirection(direction);
-                if (((dir == 0 && button == CButtons.Left) || 
-                    (dir == 1 && button == CButtons.Up) ||
-                    (dir == 2 && button == CButtons.Right) || 
-                    (dir == 3 && button == CButtons.Down)) && 
-                    (_scrollCounter < 0 || _initDirection))
+                if (
+                    (
+                        (dir == 0 && button == CButtons.Left)
+                        || (dir == 1 && button == CButtons.Up)
+                        || (dir == 2 && button == CButtons.Right)
+                        || (dir == 3 && button == CButtons.Down)
+                    ) && (_scrollCounter < 0 || _initDirection)
+                )
                     return true;
             }
 

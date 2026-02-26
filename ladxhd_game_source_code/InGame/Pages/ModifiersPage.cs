@@ -15,23 +15,43 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
 
-        private readonly InterfaceSlider     _sliderEnemyHitPoints;
-        private readonly InterfaceSlider     _sliderDamageTaken;
-        private readonly InterfaceSlider     _sliderDamageCooldown;
-        private readonly InterfaceSlider     _sliderMovementSpeed;
+        private readonly InterfaceSlider _sliderEnemyHitPoints;
+        private readonly InterfaceSlider _sliderDamageTaken;
+        private readonly InterfaceSlider _sliderDamageCooldown;
+        private readonly InterfaceSlider _sliderMovementSpeed;
         private readonly InterfaceListLayout _toggleNoHeartDrops;
         private readonly InterfaceListLayout _toggleNoDmgLaunch;
         private readonly InterfaceListLayout _toggleMirrorReflects;
 
         private bool _showTooltip;
 
-        public void SetEnemyHitPoints(int value) { ((InterfaceSlider)_sliderEnemyHitPoints).CurrentStep = value; EnemyLives.RestoreDefaultHP(); EnemyLives.AddToEnemyHP(value); }
-        public void SetDamageTaken(int value) => ((InterfaceSlider)_sliderDamageTaken).CurrentStep = value;
-        public void SetDamageCooldown(int value) { ((InterfaceSlider)_sliderDamageCooldown).CurrentStep = value; ObjLink.CooldownTime = ObjLink.BlinkTime * GameSettings.DmgCooldown; }
-        public void SetMovementSpeed(int value) => ((InterfaceSlider)_sliderMovementSpeed).CurrentStep = value;
-        public void SetNoHeartDrops(bool state) => ((InterfaceToggle)_toggleNoHeartDrops.Elements[1]).ToggleState = state;
-        public void SetNoDamageLaunch(bool state) => ((InterfaceToggle)_toggleNoDmgLaunch.Elements[1]).ToggleState = state;
-        public void SetMirrorReflects(bool state) => ((InterfaceToggle)_toggleMirrorReflects.Elements[1]).ToggleState = state;
+        public void SetEnemyHitPoints(int value)
+        {
+            ((InterfaceSlider)_sliderEnemyHitPoints).CurrentStep = value;
+            EnemyLives.RestoreDefaultHP();
+            EnemyLives.AddToEnemyHP(value);
+        }
+
+        public void SetDamageTaken(int value) =>
+            ((InterfaceSlider)_sliderDamageTaken).CurrentStep = value;
+
+        public void SetDamageCooldown(int value)
+        {
+            ((InterfaceSlider)_sliderDamageCooldown).CurrentStep = value;
+            ObjLink.CooldownTime = ObjLink.BlinkTime * GameSettings.DmgCooldown;
+        }
+
+        public void SetMovementSpeed(int value) =>
+            ((InterfaceSlider)_sliderMovementSpeed).CurrentStep = value;
+
+        public void SetNoHeartDrops(bool state) =>
+            ((InterfaceToggle)_toggleNoHeartDrops.Elements[1]).ToggleState = state;
+
+        public void SetNoDamageLaunch(bool state) =>
+            ((InterfaceToggle)_toggleNoDmgLaunch.Elements[1]).ToggleState = state;
+
+        public void SetMirrorReflects(bool state) =>
+            ((InterfaceToggle)_toggleMirrorReflects.Elements[1]).ToggleState = state;
 
         public ModifiersPage(int width, int height)
         {
@@ -42,64 +62,180 @@ namespace ProjectZ.InGame.Pages
             var sliderHeight = 11;
 
             // Modifiers Settings Layout
-            _modifiersLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-            _modifiersLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_mods_header",
-                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _modifiersLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Selectable = true,
+            };
+            _modifiersLayout.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_mods_header",
+                    new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
+            _contentLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize) - 12),
+                Selectable = true,
+                ContentAlignment = InterfaceElement.Gravities.Top,
+            };
 
             // Slider: Extra Enemy HP
-            _sliderEnemyHitPoints = new InterfaceSlider(Resources.GameFont, "settings_mods_enemy_hp",
-                buttonWidth, sliderHeight, new Point(1, 1), 0, 30, 1, GameSettings.EnemyBonusHP,
-                number => { GameSettings.EnemyBonusHP = number; })
-                { SetString = number => EnemyHPSliderAdjustment(number) };
+            _sliderEnemyHitPoints = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_mods_enemy_hp",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 1),
+                0,
+                30,
+                1,
+                GameSettings.EnemyBonusHP,
+                number =>
+                {
+                    GameSettings.EnemyBonusHP = number;
+                }
+            )
+            {
+                SetString = number => EnemyHPSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderEnemyHitPoints);
 
             // Slider: Damage Taken Multiplier
-            _sliderDamageTaken = new InterfaceSlider(Resources.GameFont, "settings_mods_damage",
-                buttonWidth, sliderHeight, new Point(1, 1), 0, 40, 1, GameSettings.DamageFactor,
-                number => { GameSettings.DamageFactor = number; })
-                { SetString = number => DamageTakenSliderAdjustment(number) };
+            _sliderDamageTaken = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_mods_damage",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 1),
+                0,
+                40,
+                1,
+                GameSettings.DamageFactor,
+                number =>
+                {
+                    GameSettings.DamageFactor = number;
+                }
+            )
+            {
+                SetString = number => DamageTakenSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderDamageTaken);
 
             // Slider: Damage Cooldown (Invincibility Frames)
-            _sliderDamageCooldown = new InterfaceSlider(Resources.GameFont, "settings_mods_damagecd",
-                buttonWidth, sliderHeight, new Point(1, 1), 0, 100, 1, GameSettings.DmgCooldown,
-                number => { GameSettings.DmgCooldown = number; })
-                { SetString = number => DamageCooldownSliderAdjustment(number) };
+            _sliderDamageCooldown = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_mods_damagecd",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 1),
+                0,
+                100,
+                1,
+                GameSettings.DmgCooldown,
+                number =>
+                {
+                    GameSettings.DmgCooldown = number;
+                }
+            )
+            {
+                SetString = number => DamageCooldownSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderDamageCooldown);
 
             // Slider: Movement Speed
-            _sliderMovementSpeed = new InterfaceSlider(Resources.GameFont, "settings_mods_movespeed",
-                buttonWidth, sliderHeight, new Point(1, 1), 0, 10, 1, (int)(GameSettings.MoveSpeedAdded * 10),
-                number => { GameSettings.MoveSpeedAdded = number / 10f; })
-                { SetString = number => AddedMoveSpeedSliderAdjustment(number) };
+            _sliderMovementSpeed = new InterfaceSlider(
+                Resources.GameFont,
+                "settings_mods_movespeed",
+                buttonWidth,
+                sliderHeight,
+                new Point(1, 1),
+                0,
+                10,
+                1,
+                (int)(GameSettings.MoveSpeedAdded * 10),
+                number =>
+                {
+                    GameSettings.MoveSpeedAdded = number / 10f;
+                }
+            )
+            {
+                SetString = number => AddedMoveSpeedSliderAdjustment(number),
+            };
             _contentLayout.AddElement(_sliderMovementSpeed);
 
             // Toggle: No Heart Drops
-            _toggleNoHeartDrops = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_mods_nohearts", GameSettings.NoHeartDrops, 
-                newState => { GameSettings.NoHeartDrops = newState; });
+            _toggleNoHeartDrops = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_mods_nohearts",
+                GameSettings.NoHeartDrops,
+                newState =>
+                {
+                    GameSettings.NoHeartDrops = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleNoHeartDrops);
 
             // Toggle: No Damage Launch
-            _toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_mods_dmglaunch", GameSettings.NoDamageLaunch, 
-                newState => { GameSettings.NoDamageLaunch = newState; });
+            _toggleNoDmgLaunch = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_mods_dmglaunch",
+                GameSettings.NoDamageLaunch,
+                newState =>
+                {
+                    GameSettings.NoDamageLaunch = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleNoDmgLaunch);
 
             // Button: Extra Sword Interactions
-            _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
-                "settings_mods_swordinteract", element => { Game1.UiPageManager.ChangePage(typeof(SwordInteractPage)); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(buttonWidth, buttonHeight),
+                    new Point(1, 2),
+                    "settings_mods_swordinteract",
+                    element =>
+                    {
+                        Game1.UiPageManager.ChangePage(typeof(SwordInteractPage));
+                    }
+                )
+            );
 
             // Toggle: Mirror Shield Reflects
-            _toggleMirrorReflects = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_mods_mirrorreflect", GameSettings.MirrorReflects, 
-                newState => { GameSettings.MirrorReflects = newState; });
+            _toggleMirrorReflects = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight),
+                new Point(5, 2),
+                "settings_mods_mirrorreflect",
+                GameSettings.MirrorReflects,
+                newState =>
+                {
+                    GameSettings.MirrorReflects = newState;
+                }
+            );
             _contentLayout.AddElement(_toggleMirrorReflects);
 
             // Bottom Bar / Back Button:
-            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(100, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             _modifiersLayout.AddElement(_contentLayout);
             _modifiersLayout.AddElement(_bottomBar);
             PageLayout = _modifiersLayout;
@@ -166,7 +302,12 @@ namespace ProjectZ.InGame.Pages
             return ": " + percent + "%";
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -183,23 +324,61 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_modifiersLayout.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
             string tooltip = "Select an option to view its tooltip.";
 
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_enemy_hp", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_damage", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_damagecd", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_movespeed", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_swordinteract", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_mods_mirrorreflect", "error"); break; }
+                case 0:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_mods_enemy_hp", "error");
+                    break;
+                }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_mods_damage", "error");
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_mods_damagecd", "error");
+                    break;
+                }
+                case 3:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_mods_movespeed", "error");
+                    break;
+                }
+                case 4:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_mods_nohearts", "error");
+                    break;
+                }
+                case 5:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_mods_dmglaunch", "error");
+                    break;
+                }
+                case 6:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_mods_swordinteract",
+                        "error"
+                    );
+                    break;
+                }
+                case 7:
+                {
+                    tooltip = Game1.LanguageManager.GetString(
+                        "tooltip_mods_mirrorreflect",
+                        "error"
+                    );
+                    break;
+                }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

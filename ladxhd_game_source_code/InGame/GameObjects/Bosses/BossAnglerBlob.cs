@@ -14,7 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private float _counter;
         private bool _init;
 
-        public BossAnglerBlob(Map.Map map, int posX, int posY) : base(map)
+        public BossAnglerBlob(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-2, -2, 5, 5);
@@ -24,11 +25,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 CollisionTypes = Values.CollisionTypes.None,
                 DeepWaterOffset = -6,
                 IgnoresZ = true,
-                SplashEffect = false
+                SplashEffect = false,
             };
             _body.VelocityTarget.Y = -0.65f;
 
-            var sprite = new CSprite(Resources.SprNightmares, EntityPosition, new Rectangle(37, 101, 5, 5), new Vector2(-2, -2));
+            var sprite = new CSprite(
+                Resources.SprNightmares,
+                EntityPosition,
+                new Rectangle(37, 101, 5, 5),
+                new Vector2(-2, -2)
+            );
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(BodyComponent.Index, _body);

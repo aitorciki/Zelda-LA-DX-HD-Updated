@@ -37,7 +37,8 @@ namespace ProjectZ.InGame.GameSystems
             Game1.GameManager.InGameOverlay.DisableOverlayToggle = true;
 
             // draw the player on top of everything
-            (MapManager.ObjLink.Components[DrawComponent.Index] as DrawComponent).Layer = Values.LayerTop;
+            (MapManager.ObjLink.Components[DrawComponent.Index] as DrawComponent).Layer =
+                Values.LayerTop;
 
             if (_dyingCount < DyingTime)
                 _dyingCount += Game1.DeltaTime;
@@ -55,11 +56,18 @@ namespace ProjectZ.InGame.GameSystems
                 Game1.UpdateGame = false;
                 _dyingCount = DyingTime;
 
-                if (Game1.UiPageManager.GetCurrentPage() == null ||
-                    Game1.UiPageManager.GetCurrentPage().GetType() != typeof(GameOverPage))
+                if (
+                    Game1.UiPageManager.GetCurrentPage() == null
+                    || Game1.UiPageManager.GetCurrentPage().GetType() != typeof(GameOverPage)
+                )
                 {
                     Game1.UiPageManager.ClearStack();
-                    Game1.UiPageManager.ChangePage(typeof(GameOverPage), null, PageManager.TransitionAnimation.Fade, PageManager.TransitionAnimation.Fade);
+                    Game1.UiPageManager.ChangePage(
+                        typeof(GameOverPage),
+                        null,
+                        PageManager.TransitionAnimation.Fade,
+                        PageManager.TransitionAnimation.Fade
+                    );
                 }
             }
         }
@@ -69,8 +77,19 @@ namespace ProjectZ.InGame.GameSystems
             if (!_isRunning && _percentage > 0)
                 return;
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null);
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, Game1.RenderWidth, Game1.RenderHeight), Color.White * _percentage);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null
+            );
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(0, 0, Game1.RenderWidth, Game1.RenderHeight),
+                Color.White * _percentage
+            );
             spriteBatch.End();
         }
     }

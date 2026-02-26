@@ -16,16 +16,25 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _percentage = 1;
         private bool _fullScreen;
 
-        public ObjPhotoFlash(Map.Map map) : base(map)
+        public ObjPhotoFlash(Map.Map map)
+            : base(map)
         {
-            _rectangle = new Rectangle(0, 0, Map.MapWidth * Values.TileSize, Map.MapHeight * Values.TileSize);
+            _rectangle = new Rectangle(
+                0,
+                0,
+                Map.MapWidth * Values.TileSize,
+                Map.MapHeight * Values.TileSize
+            );
 
             // on the overworld we use a fullscreen flash
             if (map.MapWidth >= 4 || map.MapHeight >= 4)
                 _fullScreen = true;
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerTop, new CPosition(0, 0, 0)));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerTop, new CPosition(0, 0, 0))
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
@@ -48,7 +57,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Draw(SpriteBatch spriteBatch)
         {
             if (_fullScreen)
-                spriteBatch.Draw(Resources.SprWhite, MapManager.Camera.GetGameView(), Color.White * _percentage);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    MapManager.Camera.GetGameView(),
+                    Color.White * _percentage
+                );
             else
                 spriteBatch.Draw(Resources.SprWhite, _rectangle, Color.White * _percentage);
         }
@@ -58,7 +71,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (GameSettings.ObjectLights)
             {
                 if (_fullScreen)
-                    spriteBatch.Draw(Resources.SprWhite, MapManager.Camera.GetGameView(), Color.White * _percentage);
+                    spriteBatch.Draw(
+                        Resources.SprWhite,
+                        MapManager.Camera.GetGameView(),
+                        Color.White * _percentage
+                    );
                 else
                     spriteBatch.Draw(Resources.SprWhite, _rectangle, Color.White * _percentage);
             }

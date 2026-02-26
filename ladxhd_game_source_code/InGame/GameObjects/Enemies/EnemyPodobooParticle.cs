@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -12,7 +12,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly CSprite _sprite;
 
-        public EnemyPodobooParticle(Map.Map map, Vector2 position, bool mirrored) : base(map)
+        public EnemyPodobooParticle(Map.Map map, Vector2 position, bool mirrored)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -29,13 +30,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void Update()
         {
             // 4 frame blink effect
-            _sprite.SpriteShader = Game1.TotalGameTime % (8000 / 60f) >= (4000 / 60f) ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                Game1.TotalGameTime % (8000 / 60f) >= (4000 / 60f)
+                    ? Resources.DamageSpriteShader0
+                    : null;
 
             // delete after finishing the animation
             if (!_animator.IsPlaying)

@@ -65,9 +65,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public bool IsVisible { get; internal set; }
 
-        public MBossMasterStalfos() : base("ms_shield") { }
+        public MBossMasterStalfos()
+            : base("ms_shield") { }
 
-        public MBossMasterStalfos(Map.Map map, int posX, int posY, string saveKey, int encounterNumber) : base(map)
+        public MBossMasterStalfos(
+            Map.Map map,
+            int posX,
+            int posY,
+            string saveKey,
+            int encounterNumber
+        )
+            : base(map)
         {
             IsVisible = false;
             EntityPosition = new CPosition(posX + 16, posY + 32, 100);
@@ -78,30 +86,166 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             _animator = new SheetAnimator();
 
-            var aniStandLeft = new SheetAnimation("stand-1", 0,
-                new AFrame(16, new ASprite(-15, -16), new ASprite(-14, -32, false, true), new ASprite(-24, -24), new ASprite(8, -37), null));
-            var aniStandRight = new SheetAnimation("stand1", 0,
-                new AFrame(16, new ASprite(-15, -16), new ASprite(-13, -32), new ASprite(-16, -24), new ASprite(8, -40), null));
-            var aniPreJumpLeft = new SheetAnimation("preJump-1", 0,
-                new AFrame(16, new ASprite(-15, -16), new ASprite(-14, -30, false, true), new ASprite(-24, -22), new ASprite(8, -35), null));
-            var aniPreJumpRight = new SheetAnimation("preJump1", 0,
-                new AFrame(16, new ASprite(-15, -16), new ASprite(-13, -30), new ASprite(-16, -22), new ASprite(8, -38), null));
-            var aniWalkLeft = new SheetAnimation("walk-1", -1,
-                new AFrame(16, new ASprite(-15, -16), new ASprite(-14, -32, false, true), new ASprite(-24, -24), new ASprite(8, -37), null),
-                new AFrame(16, new ASprite(-15, -16, false, true), new ASprite(-14, -32, false, true), new ASprite(-24, -24), new ASprite(8, -37), null));
-            var aniWalkRight = new SheetAnimation("walk1", -1,
-                new AFrame(16, new ASprite(-15, -16), new ASprite(-13, -32), new ASprite(-16, -24), new ASprite(8, -40), null),
-                new AFrame(16, new ASprite(-15, -16, false, true), new ASprite(-13, -32), new ASprite(-16, -24), new ASprite(8, -40), null));
-            var aniHitLeft = new SheetAnimation("hit-1", 0,
-                new AFrame(24, new ASprite(-15, -16, false, true), new ASprite(-14, -32, false, true), new ASprite(-24, -24), new ASprite(-16, -48), null),
-                new AFrame(8, new ASprite(-15, -16, false, true), new ASprite(-14, -32), new ASprite(-24, -32), null, new ASprite(-24, -24)),
-                new AFrame(8, new ASprite(-15, -16, false, true), new ASprite(-14, -32), new ASprite(-24, -36), new ASprite(8, -8, true), new ASprite(-24, -24)),
-                new AFrame(40, new ASprite(-15, -16, false, true), new ASprite(-14, -32), new ASprite(-24, -36), new ASprite(8, -8, true), null));
-            var aniHitRight = new SheetAnimation("hit1", 0,
-                new AFrame(24, new ASprite(-15, -16), new ASprite(-13, -32), new ASprite(-16, -24), new ASprite(1, -56, false, true), null),
-                new AFrame(8, new ASprite(-15, -16), new ASprite(-14, -32, false, true), new ASprite(-24, -28), null, new ASprite(-8, -24, false, true)),
-                new AFrame(8, new ASprite(-15, -16), new ASprite(-14, -32, false, true), new ASprite(-24, -32), new ASprite(-15, -8, true, true), new ASprite(-8, -24, false, true)),
-                new AFrame(40, new ASprite(-15, -16), new ASprite(-14, -32, false, true), new ASprite(-24, -32), new ASprite(-15, -8, true, true), null));
+            var aniStandLeft = new SheetAnimation(
+                "stand-1",
+                0,
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -24),
+                    new ASprite(8, -37),
+                    null
+                )
+            );
+            var aniStandRight = new SheetAnimation(
+                "stand1",
+                0,
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16),
+                    new ASprite(-13, -32),
+                    new ASprite(-16, -24),
+                    new ASprite(8, -40),
+                    null
+                )
+            );
+            var aniPreJumpLeft = new SheetAnimation(
+                "preJump-1",
+                0,
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16),
+                    new ASprite(-14, -30, false, true),
+                    new ASprite(-24, -22),
+                    new ASprite(8, -35),
+                    null
+                )
+            );
+            var aniPreJumpRight = new SheetAnimation(
+                "preJump1",
+                0,
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16),
+                    new ASprite(-13, -30),
+                    new ASprite(-16, -22),
+                    new ASprite(8, -38),
+                    null
+                )
+            );
+            var aniWalkLeft = new SheetAnimation(
+                "walk-1",
+                -1,
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -24),
+                    new ASprite(8, -37),
+                    null
+                ),
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16, false, true),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -24),
+                    new ASprite(8, -37),
+                    null
+                )
+            );
+            var aniWalkRight = new SheetAnimation(
+                "walk1",
+                -1,
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16),
+                    new ASprite(-13, -32),
+                    new ASprite(-16, -24),
+                    new ASprite(8, -40),
+                    null
+                ),
+                new AFrame(
+                    16,
+                    new ASprite(-15, -16, false, true),
+                    new ASprite(-13, -32),
+                    new ASprite(-16, -24),
+                    new ASprite(8, -40),
+                    null
+                )
+            );
+            var aniHitLeft = new SheetAnimation(
+                "hit-1",
+                0,
+                new AFrame(
+                    24,
+                    new ASprite(-15, -16, false, true),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -24),
+                    new ASprite(-16, -48),
+                    null
+                ),
+                new AFrame(
+                    8,
+                    new ASprite(-15, -16, false, true),
+                    new ASprite(-14, -32),
+                    new ASprite(-24, -32),
+                    null,
+                    new ASprite(-24, -24)
+                ),
+                new AFrame(
+                    8,
+                    new ASprite(-15, -16, false, true),
+                    new ASprite(-14, -32),
+                    new ASprite(-24, -36),
+                    new ASprite(8, -8, true),
+                    new ASprite(-24, -24)
+                ),
+                new AFrame(
+                    40,
+                    new ASprite(-15, -16, false, true),
+                    new ASprite(-14, -32),
+                    new ASprite(-24, -36),
+                    new ASprite(8, -8, true),
+                    null
+                )
+            );
+            var aniHitRight = new SheetAnimation(
+                "hit1",
+                0,
+                new AFrame(
+                    24,
+                    new ASprite(-15, -16),
+                    new ASprite(-13, -32),
+                    new ASprite(-16, -24),
+                    new ASprite(1, -56, false, true),
+                    null
+                ),
+                new AFrame(
+                    8,
+                    new ASprite(-15, -16),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -28),
+                    null,
+                    new ASprite(-8, -24, false, true)
+                ),
+                new AFrame(
+                    8,
+                    new ASprite(-15, -16),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -32),
+                    new ASprite(-15, -8, true, true),
+                    new ASprite(-8, -24, false, true)
+                ),
+                new AFrame(
+                    40,
+                    new ASprite(-15, -16),
+                    new ASprite(-14, -32, false, true),
+                    new ASprite(-24, -32),
+                    new ASprite(-15, -8, true, true),
+                    null
+                )
+            );
 
             _animator.Animations.Add(aniStandLeft);
             _animator.Animations.Add(aniStandRight);
@@ -131,7 +275,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 IgnoreHoles = true,
                 Gravity = -0.125f,
                 FieldRectangle = Map.GetField(posX, posY, 16),
-                IsActive = false
+                IsActive = false,
             };
 
             _aiComponent = new AiComponent();
@@ -139,29 +283,41 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var stateHidden = new AiState(UpdateHidden);
             var statePreFall = new AiState();
-            statePreFall.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("fall")));
+            statePreFall.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("fall"))
+            );
             var stateFall = new AiState(UpdateFall) { Init = InitFall };
             var statePostFall = new AiState();
-            statePostFall.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("idle")));
+            statePostFall.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("idle"))
+            );
             var stateIdle = new AiState { Init = InitIdle };
             stateIdle.Trigger.Add(new AiTriggerCountdown(400, null, EndIdle));
             var stateWalk = new AiState(UpdateWalking) { Init = InitWalk };
             stateWalk.Trigger.Add(new AiTriggerCountdown(1000, null, EndWalking));
             var statePreDamaged = new AiState(UpdatePreDamaged) { Init = InitPreDamageState };
             var stateDamaged = new AiState(UpdateDamaged) { Init = InitDamageState };
-            stateDamaged.Trigger.Add(new AiTriggerCountdown(3000, null, () => _aiComponent.ChangeState("wobble")));
+            stateDamaged.Trigger.Add(
+                new AiTriggerCountdown(3000, null, () => _aiComponent.ChangeState("wobble"))
+            );
             var stateWobble = new AiState();
             stateWobble.Trigger.Add(new AiTriggerCountdown(WobbleTime, WobbleTick, WobbleEnd));
             var stateStandingUp = new AiState { Init = InitStandingUp };
             stateStandingUp.Trigger.Add(new AiTriggerCountdown(750, StandUpTick, StandUpEnd));
             var statePreJump = new AiState { Init = InitPreJump };
-            statePreJump.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("jump")));
+            statePreJump.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("jump"))
+            );
             var stateJump = new AiState(UpdateJump) { Init = InitJump };
             var statePostJump = new AiState { Init = InitPostJump };
-            statePostJump.Trigger.Add(new AiTriggerCountdown(300, null, () => _aiComponent.ChangeState("idle")));
+            statePostJump.Trigger.Add(
+                new AiTriggerCountdown(300, null, () => _aiComponent.ChangeState("idle"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             var statePreFlee = new AiState { Init = InitPreJump };
-            statePreFlee.Trigger.Add(new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("flee")));
+            statePreFlee.Trigger.Add(
+                new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("flee"))
+            );
             var stateFlee = new AiState { Init = InitFlee };
             stateFlee.Trigger.Add(new AiTriggerCountdown(FleeTime, FleeTick, FleeEnd));
 
@@ -186,12 +342,22 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _sprite = new CSprite(EntityPosition);
 
             // Four encounters: less lives on middle encounters, more lives on first and last encounters.
-            int lives = (_encounterNumber == 1 || _encounterNumber == 2) 
-                ? _livesMid 
-                : _lives;
+            int lives = (_encounterNumber == 1 || _encounterNumber == 2) ? _livesMid : _lives;
 
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, lives, false, false)
-            { BossHitSound = true, HitMultiplierX = 3, HitMultiplierY = 3 };
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                lives,
+                false,
+                false
+            )
+            {
+                BossHitSound = true,
+                HitMultiplierX = 3,
+                HitMultiplierY = 3,
+            };
             if (_encounterNumber != 3)
                 _aiDamageState.OnDeath = OnDeath;
             else
@@ -202,20 +368,43 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             var damageCollider = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
             var hittableBox = new CBox(EntityPosition, -12, -26, 0, 24, 24, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageCollider, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(damageCollider, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition) { IsActive = false, ShadowWidth = 22, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new ShadowBodyDrawComponent(EntityPosition)
+                {
+                    IsActive = false,
+                    ShadowWidth = 22,
+                    ShadowHeight = 6,
+                }
+            );
 
             if (!string.IsNullOrEmpty(_saveKey))
             {
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
 
-                // spawn the hookshot if the player did not collect it after 
+                // spawn the hookshot if the player did not collect it after
                 var encounterState = Game1.GameManager.SaveManager.GetString(_saveKey);
                 if (encounterState == "4" && _encounterNumber == 3)
                     SpawnHookshot();
@@ -255,7 +444,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void FleeEnd()
         {
             if (!string.IsNullOrEmpty(_saveKey))
-                Game1.GameManager.SaveManager.SetString(_saveKey, (_encounterNumber + 1).ToString());
+                Game1.GameManager.SaveManager.SetString(
+                    _saveKey,
+                    (_encounterNumber + 1).ToString()
+                );
 
             Map.Objects.DeleteObjects.Add(this);
             IsVisible = false;
@@ -264,8 +456,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void UpdateHidden()
         {
             // player entered the room? => fall down
-            if (_encounterState == _encounterNumber.ToString() &&
-                _body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle))
+            if (
+                _encounterState == _encounterNumber.ToString()
+                && _body.FieldRectangle.Contains(MapManager.ObjLink.BodyRectangle)
+            )
             {
                 Game1.GameManager.SetMusic(79, 2);
                 _aiComponent.ChangeState("preFall");
@@ -311,7 +505,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 }
 
                 // attack the player
-                var damageBox = new Box(EntityPosition.X - 16 + (_direction == -1 ? -6 : 6), EntityPosition.Y - 22, 0, 32, 38, 8);
+                var damageBox = new Box(
+                    EntityPosition.X - 16 + (_direction == -1 ? -6 : 6),
+                    EntityPosition.Y - 22,
+                    0,
+                    32,
+                    38,
+                    8
+                );
                 if (damageBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
                 {
                     var direction = MapManager.ObjLink.Position - EntityPosition.Position;
@@ -349,7 +550,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (_encounterNumber > 0 && !_shownIntroText)
             {
                 _shownIntroText = true;
-                Game1.GameManager.StartDialogPath(_encounterNumber == 3 ? "master_stalfos_2" : "master_stalfos_1");
+                Game1.GameManager.StartDialogPath(
+                    _encounterNumber == 3 ? "master_stalfos_2" : "master_stalfos_1"
+                );
             }
 
             var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
@@ -357,7 +560,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // player is standing in front of the boss? => attack
             if (Math.Abs(playerDirection.X) < 24 && 0 < playerDirection.Y && playerDirection.Y < 18)
                 _aiComponent.ChangeState("attack");
-            else if (Math.Abs(playerDirection.X) < 28 && 0 < playerDirection.Y && playerDirection.Y < 48)
+            else if (
+                Math.Abs(playerDirection.X) < 28
+                && 0 < playerDirection.Y
+                && playerDirection.Y < 48
+            )
                 _aiComponent.ChangeState("walk");
             else
                 _aiComponent.ChangeState("preJump");
@@ -443,9 +650,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void UpdatePreDamaged()
         {
-            if (_body.IsGrounded &&
-                !_aiDamageState.IsInDamageState() &&
-                _body.Velocity.Length() < 0.1f)
+            if (
+                _body.IsGrounded
+                && !_aiDamageState.IsInDamageState()
+                && _body.Velocity.Length() < 0.1f
+            )
                 _aiComponent.ChangeState("damaged");
         }
 
@@ -492,7 +701,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                         _partVelocity[i] += _partGravity * Game1.TimeMultiplier;
                         var velocityOffset = _partVelocity[i] * Game1.TimeMultiplier;
 
-                        if (_positions[i].Z - velocityOffset > _sprites[i].SourceRectangle.Height - _partOffset[i])
+                        if (
+                            _positions[i].Z - velocityOffset
+                            > _sprites[i].SourceRectangle.Height - _partOffset[i]
+                        )
                             _positions[i].Z -= velocityOffset;
                         else
                             _positions[i].Z = _sprites[i].SourceRectangle.Height - _partOffset[i];
@@ -505,8 +717,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // move the upper body up and down
             // 4 frames to go up/down
-            _positions[1].Z = _sprites[1].SourceRectangle.Height + 1 -
-                              MathF.Sin(MathF.PI / 2 + MathF.PI * ((WobbleTime - (float)counter) / 1000 * (60 / 4f)));
+            _positions[1].Z =
+                _sprites[1].SourceRectangle.Height
+                + 1
+                - MathF.Sin(
+                    MathF.PI / 2 + MathF.PI * ((WobbleTime - (float)counter) / 1000 * (60 / 4f))
+                );
         }
 
         private void WobbleEnd()
@@ -562,7 +778,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void OnBossDeath()
         {
             if (!string.IsNullOrEmpty(_saveKey))
-                Game1.GameManager.SaveManager.SetString(_saveKey, (_encounterNumber + 1).ToString());
+                Game1.GameManager.SaveManager.SetString(
+                    _saveKey,
+                    (_encounterNumber + 1).ToString()
+                );
 
             // stop the music
             Game1.GameManager.SetMusic(-1, 2);
@@ -574,7 +793,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private void SpawnHookshot()
         {
-            var objItem = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, "j", "hookshot_collected", "hookshot", null);
+            var objItem = new ObjItem(
+                Map,
+                (int)EntityPosition.X - 8,
+                (int)EntityPosition.Y - 16,
+                "j",
+                "hookshot_collected",
+                "hookshot",
+                null
+            );
             Map.Objects.SpawnObject(objItem);
         }
 
@@ -597,16 +824,27 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 if (_animator.CurrentFrame.Sprites[spriteIndex] == null)
                     continue;
 
-                _positions[spriteIndex].X = EntityPosition.X + _animator.CurrentFrame.Sprites[spriteIndex].Offset.X;
+                _positions[spriteIndex].X =
+                    EntityPosition.X + _animator.CurrentFrame.Sprites[spriteIndex].Offset.X;
                 _positions[spriteIndex].Y = EntityPosition.Y;
 
                 // only update the animation if the boss is not in the damaged state
                 if (!_damageState)
                 {
-                    _positions[spriteIndex].Z = EntityPosition.Z - _animator.CurrentFrame.Sprites[spriteIndex].Offset.Y;
+                    _positions[spriteIndex].Z =
+                        EntityPosition.Z - _animator.CurrentFrame.Sprites[spriteIndex].Offset.Y;
 
-                    _sprites[spriteIndex].SpriteEffect = (_animator.CurrentFrame.Sprites[spriteIndex].MirroredV ? SpriteEffects.FlipVertically : 0) |
-                                                         (_animator.CurrentFrame.Sprites[spriteIndex].MirroredH ? SpriteEffects.FlipHorizontally : 0);
+                    _sprites[spriteIndex].SpriteEffect =
+                        (
+                            _animator.CurrentFrame.Sprites[spriteIndex].MirroredV
+                                ? SpriteEffects.FlipVertically
+                                : 0
+                        )
+                        | (
+                            _animator.CurrentFrame.Sprites[spriteIndex].MirroredH
+                                ? SpriteEffects.FlipHorizontally
+                                : 0
+                        );
                 }
                 _sprites[spriteIndex].Color = Color.White * _transparency;
                 _sprites[spriteIndex].Draw(spriteBatch);
@@ -631,7 +869,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -643,7 +887,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // Do small damage with the sword beam.
             if ((hitType & HitType.SwordShot) != 0)
             {
-                damage = GameMath.GetRandomInt(0,1);
+                damage = GameMath.GetRandomInt(0, 1);
                 _instantFall = true;
                 _aiComponent.ChangeState("damaged");
                 _aiDamageState.MoveBody = false;
@@ -653,9 +897,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             // Fall into a pile of bones.
-            if (_vulnerable || (_damageCooldown.State &&
-                _aiComponent.CurrentStateId != "preDamaged" && _aiComponent.CurrentStateId != "damaged" &&
-                _aiComponent.CurrentStateId != "attack" && _aiComponent.CurrentStateId != "wobble" && _aiComponent.CurrentStateId != "standUp"))
+            if (
+                _vulnerable
+                || (
+                    _damageCooldown.State
+                    && _aiComponent.CurrentStateId != "preDamaged"
+                    && _aiComponent.CurrentStateId != "damaged"
+                    && _aiComponent.CurrentStateId != "attack"
+                    && _aiComponent.CurrentStateId != "wobble"
+                    && _aiComponent.CurrentStateId != "standUp"
+                )
+            )
             {
                 _shownIntroText = true;
                 _aiComponent.ChangeState("preDamaged");
@@ -670,13 +922,18 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             // Can be damaged on the floor with bombs.
-            if ((_aiComponent.CurrentStateId == "damaged" || _aiComponent.CurrentStateId == "wobble") && hitType == HitType.Bomb)
+            if (
+                (
+                    _aiComponent.CurrentStateId == "damaged"
+                    || _aiComponent.CurrentStateId == "wobble"
+                )
+                && hitType == HitType.Bomb
+            )
             {
                 _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
             }
 
             return Values.HitCollision.RepellingParticle;
         }
-
     }
 }

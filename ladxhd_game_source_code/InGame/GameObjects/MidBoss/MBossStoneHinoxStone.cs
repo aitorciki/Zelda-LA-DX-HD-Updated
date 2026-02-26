@@ -19,10 +19,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private readonly int _centerX;
         private readonly int _spawnY;
-        
+
         private int _collisionCount;
 
-        public MBossStoneHinoxStone(Map.Map map, MBossStoneHinox owner, Vector3 position, Vector3 direction, int centerX) : base(map)
+        public MBossStoneHinoxStone(
+            Map.Map map,
+            MBossStoneHinox owner,
+            Vector3 position,
+            Vector3 direction,
+            int centerX
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -41,7 +48,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 CollisionTypes = Values.CollisionTypes.None,
                 Gravity = -0.1f,
                 DragAir = 1.0f,
-                Bounciness = 0.85f
+                Bounciness = 0.85f,
             };
             _body.Velocity = direction;
 
@@ -49,12 +56,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _sprite.SpriteEffect = (SpriteEffects)Game1.RandomNumber.Next(0, 4);
 
             var hitBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8, true);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(hitBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(hitBox, HitType.Enemy, 2)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
 
-            var shadow = new DrawShadowSpriteComponent(Resources.SprShadow, EntityPosition, new Rectangle(0, 0, 65, 66), new Vector2(-6, -6), 12, 6);
+            var shadow = new DrawShadowSpriteComponent(
+                Resources.SprShadow,
+                EntityPosition,
+                new Rectangle(0, 0, 65, 66),
+                new Vector2(-6, -6),
+                12,
+                6
+            );
             AddComponent(DrawShadowComponent.Index, shadow);
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -89,13 +109,27 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public void DestroyStone()
         {
-            var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X-8, (int)EntityPosition.Y-26, Values.LayerTop, "Particles/spawn", "run", true);
+            var explosionAnimation = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X - 8,
+                (int)EntityPosition.Y - 26,
+                Values.LayerTop,
+                "Particles/spawn",
+                "run",
+                true
+            );
             Map.Objects.SpawnObject(explosionAnimation);
             Map.Objects.DeleteObjects.Add(this);
             _owner.HinoxStones.Remove(this);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

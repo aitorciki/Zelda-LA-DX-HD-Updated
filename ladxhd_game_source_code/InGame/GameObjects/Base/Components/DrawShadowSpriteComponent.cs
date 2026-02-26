@@ -21,7 +21,12 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         private float? ShadowHeight;
         private float? ShadowRotation;
 
-        public DrawShadowSpriteComponent(string spriteId, CPosition position, float? shadowHeight = null, float? shadowRotation = null)
+        public DrawShadowSpriteComponent(
+            string spriteId,
+            CPosition position,
+            float? shadowHeight = null,
+            float? shadowRotation = null
+        )
         {
             var sprite = Resources.GetSprite(spriteId);
             Texture = sprite.Texture;
@@ -38,7 +43,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             Draw = DrawShadow;
         }
 
-        public DrawShadowSpriteComponent(Texture2D texture, CPosition position, Rectangle sourceRectangle, Vector2 drawOffset, float? shadowHeight = null, float? shadowRotation = null)
+        public DrawShadowSpriteComponent(
+            Texture2D texture,
+            CPosition position,
+            Rectangle sourceRectangle,
+            Vector2 drawOffset,
+            float? shadowHeight = null,
+            float? shadowRotation = null
+        )
         {
             Texture = texture;
             Position = position;
@@ -54,7 +66,14 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             Draw = DrawShadow;
         }
 
-        public DrawShadowSpriteComponent(Texture2D texture, CPosition position, Rectangle sourceRectangle, Vector2 drawOffset, int width, int height)
+        public DrawShadowSpriteComponent(
+            Texture2D texture,
+            CPosition position,
+            Rectangle sourceRectangle,
+            Vector2 drawOffset,
+            int width,
+            int height
+        )
         {
             Texture = texture;
             Position = position;
@@ -76,8 +95,17 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
                 return;
 
             var position = new Vector2(Position.X + DrawOffset.X, Position.Y + DrawOffset.Y);
-            DrawHelper.DrawShadow(Texture, position, SourceRectangle, Width, Height, false,
-                ShadowHeight ?? Owner.Map.ShadowHeight, ShadowRotation ?? Owner.Map.ShadowRotation, Color);
+            DrawHelper.DrawShadow(
+                Texture,
+                position,
+                SourceRectangle,
+                Width,
+                Height,
+                false,
+                ShadowHeight ?? Owner.Map.ShadowHeight,
+                ShadowRotation ?? Owner.Map.ShadowRotation,
+                Color
+            );
         }
     }
 }

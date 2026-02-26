@@ -18,12 +18,20 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private float _changeCount;
         private float _percentage;
-        
+
         private int _changeTime = 66;
-        
+
         private bool _isTransitioning;
 
-        public ObjDungeonBlackRoom(Map.Map map, int posX, int posY, string saveId, int width, int height) : base(map)
+        public ObjDungeonBlackRoom(
+            Map.Map map,
+            int posX,
+            int posY,
+            string saveId,
+            int width,
+            int height
+        )
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -31,7 +39,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _saveId = saveId;
 
-            if (!string.IsNullOrEmpty(_saveId) && Game1.GameManager.SaveManager.GetString(saveId) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveId)
+                && Game1.GameManager.SaveManager.GetString(saveId) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -45,10 +56,16 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             // room can also get uncovered by setting a key
             if (!string.IsNullOrEmpty(_saveId))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = Values.LightLayer2 });
+            AddComponent(
+                LightDrawComponent.Index,
+                new LightDrawComponent(DrawLight) { Layer = Values.LightLayer2 }
+            );
             AddComponent(BlurDrawComponent.Index, new BlurDrawComponent(DrawBlur));
         }
 
@@ -61,7 +78,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void Update()
         {
-            if (!_isTransitioning && _collisionRectangle.Intersects(MapManager.ObjLink.BodyRectangle))
+            if (
+                !_isTransitioning
+                && _collisionRectangle.Intersects(MapManager.ObjLink.BodyRectangle)
+            )
                 _isTransitioning = true;
 
             if (_isTransitioning)

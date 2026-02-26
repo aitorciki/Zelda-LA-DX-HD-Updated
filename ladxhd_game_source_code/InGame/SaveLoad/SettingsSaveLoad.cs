@@ -13,83 +13,203 @@ namespace ProjectZ.InGame.SaveLoad
                 return;
 
             // Game Settings
-            Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt("CurrentLanguage", Game1.LanguageManager.CurrentLanguageIndex);
-            Game1.LanguageManager.CurrentSubLanguageIndex = saveManager.GetInt("CurrentSubLanguage", Game1.LanguageManager.CurrentSubLanguageIndex);
+            Game1.LanguageManager.CurrentLanguageIndex = saveManager.GetInt(
+                "CurrentLanguage",
+                Game1.LanguageManager.CurrentLanguageIndex
+            );
+            Game1.LanguageManager.CurrentSubLanguageIndex = saveManager.GetInt(
+                "CurrentSubLanguage",
+                Game1.LanguageManager.CurrentSubLanguageIndex
+            );
             GameSettings.MenuBorder = saveManager.GetInt("MenuBorder", GameSettings.MenuBorder);
-            GameSettings.ClassicSword = saveManager.GetBool("ClassicSword", GameSettings.ClassicSword);
-            GameSettings.StoreSavePos = saveManager.GetBool("StoreSavePos", GameSettings.StoreSavePos);
+            GameSettings.ClassicSword = saveManager.GetBool(
+                "ClassicSword",
+                GameSettings.ClassicSword
+            );
+            GameSettings.StoreSavePos = saveManager.GetBool(
+                "StoreSavePos",
+                GameSettings.StoreSavePos
+            );
             GameSettings.LastSavePos = saveManager.GetInt("LastSavePos", GameSettings.LastSavePos);
             GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
-            GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
-            GameSettings.EpilepsySafe = saveManager.GetBool("EpilepsySafe", GameSettings.EpilepsySafe);
+            GameSettings.ItemsOnRight = saveManager.GetBool(
+                "ItemsOnRight",
+                GameSettings.ItemsOnRight
+            );
+            GameSettings.EpilepsySafe = saveManager.GetBool(
+                "EpilepsySafe",
+                GameSettings.EpilepsySafe
+            );
 
             // Redux Settings
-            GameSettings.VarWidthFont = saveManager.GetBool("VarWidthFont", GameSettings.VarWidthFont);
-            GameSettings.NoHelperText = saveManager.GetBool("NoHelperText", GameSettings.NoHelperText);
+            GameSettings.VarWidthFont = saveManager.GetBool(
+                "VarWidthFont",
+                GameSettings.VarWidthFont
+            );
+            GameSettings.NoHelperText = saveManager.GetBool(
+                "NoHelperText",
+                GameSettings.NoHelperText
+            );
             GameSettings.DialogSkip = saveManager.GetBool("DialogSkip", GameSettings.DialogSkip);
             GameSettings.Uncensored = saveManager.GetBool("Uncensored", GameSettings.Uncensored);
             GameSettings.Unmissables = saveManager.GetBool("Unmissables", GameSettings.Unmissables);
             GameSettings.PhotosColor = saveManager.GetBool("PhotosColor", GameSettings.PhotosColor);
-            GameSettings.NoAnimalDamage = saveManager.GetBool("NoAnimalDamage", GameSettings.NoAnimalDamage);
+            GameSettings.NoAnimalDamage = saveManager.GetBool(
+                "NoAnimalDamage",
+                GameSettings.NoAnimalDamage
+            );
             GameSettings.MapTeleport = saveManager.GetInt("MapTeleport", GameSettings.MapTeleport);
 
             // Camera Settings
-            GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
-            GameSettings.ModernOverworld = saveManager.GetBool("ModernOverworld", GameSettings.ModernOverworld);
-            GameSettings.ClassicDungeon = saveManager.GetBool("ClassicDungeon", GameSettings.ClassicDungeon);
-            GameSettings.ClassicBorders = saveManager.GetInt("ClassicBorders", GameSettings.ClassicBorders);
-            GameSettings.ClassicAlpha = saveManager.GetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
+            GameSettings.ClassicCamera = saveManager.GetBool(
+                "ClassicCamera",
+                GameSettings.ClassicCamera
+            );
+            GameSettings.ModernOverworld = saveManager.GetBool(
+                "ModernOverworld",
+                GameSettings.ModernOverworld
+            );
+            GameSettings.ClassicDungeon = saveManager.GetBool(
+                "ClassicDungeon",
+                GameSettings.ClassicDungeon
+            );
+            GameSettings.ClassicBorders = saveManager.GetInt(
+                "ClassicBorders",
+                GameSettings.ClassicBorders
+            );
+            GameSettings.ClassicAlpha = saveManager.GetFloat(
+                "ClassicAlpha",
+                GameSettings.ClassicAlpha
+            );
             GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
-            GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
+            GameSettings.SmoothCamera = saveManager.GetBool(
+                "SmoothCamera",
+                GameSettings.SmoothCamera
+            );
             GameSettings.ScreenShake = saveManager.GetBool("ScreenShake", GameSettings.ScreenShake);
-            GameSettings.ExScreenShake = saveManager.GetBool("ExScreenShake", GameSettings.ExScreenShake);
+            GameSettings.ExScreenShake = saveManager.GetBool(
+                "ExScreenShake",
+                GameSettings.ExScreenShake
+            );
 
             // Video Settings
             GameSettings.GameScale = saveManager.GetInt("GameScale", GameSettings.GameScale);
             GameSettings.UiScale = saveManager.GetInt("UIScale", GameSettings.UiScale);
-            GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
-            GameSettings.ExFullscreen = saveManager.GetBool("ExFullscreen", GameSettings.ExFullscreen);
-            GameSettings.GlobalLights = saveManager.GetBool("GlobalLights", GameSettings.GlobalLights);
-            GameSettings.ObjectLights = saveManager.GetBool("ObjectLights", GameSettings.ObjectLights);
-            GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
-            GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
+            GameSettings.IsFullscreen = saveManager.GetBool(
+                "IsFullscreen",
+                GameSettings.IsFullscreen
+            );
+            GameSettings.ExFullscreen = saveManager.GetBool(
+                "ExFullscreen",
+                GameSettings.ExFullscreen
+            );
+            GameSettings.GlobalLights = saveManager.GetBool(
+                "GlobalLights",
+                GameSettings.GlobalLights
+            );
+            GameSettings.ObjectLights = saveManager.GetBool(
+                "ObjectLights",
+                GameSettings.ObjectLights
+            );
+            GameSettings.EnableShadows = saveManager.GetBool(
+                "EnableShadows",
+                GameSettings.EnableShadows
+            );
+            GameSettings.VerticalSync = saveManager.GetBool(
+                "VerticalSync",
+                GameSettings.VerticalSync
+            );
 
             // Audio Settings
             GameSettings.MusicVolume = saveManager.GetInt("MusicVolume", GameSettings.MusicVolume);
-            GameSettings.EffectVolume = saveManager.GetInt("EffectVolume", GameSettings.EffectVolume);
-            GameSettings.ClassicMusic = saveManager.GetBool("ClassicMusic", GameSettings.ClassicMusic);
-            GameSettings.MuteInactive = saveManager.GetBool("MuteInactive", GameSettings.MuteInactive);
+            GameSettings.EffectVolume = saveManager.GetInt(
+                "EffectVolume",
+                GameSettings.EffectVolume
+            );
+            GameSettings.ClassicMusic = saveManager.GetBool(
+                "ClassicMusic",
+                GameSettings.ClassicMusic
+            );
+            GameSettings.MuteInactive = saveManager.GetBool(
+                "MuteInactive",
+                GameSettings.MuteInactive
+            );
             GameSettings.HeartBeep = saveManager.GetBool("HeartBeep", GameSettings.HeartBeep);
-            GameSettings.MutePowerups = saveManager.GetBool("MutePowerups", GameSettings.MutePowerups);
+            GameSettings.MutePowerups = saveManager.GetBool(
+                "MutePowerups",
+                GameSettings.MutePowerups
+            );
 
             // Controls Settings
             GameSettings.DeadZone = saveManager.GetFloat("DeadZone", GameSettings.DeadZone);
             GameSettings.Controller = saveManager.GetString("Controller", GameSettings.Controller);
-            GameSettings.TriggersScale = saveManager.GetBool("TriggersScale", GameSettings.TriggersScale);
+            GameSettings.TriggersScale = saveManager.GetBool(
+                "TriggersScale",
+                GameSettings.TriggersScale
+            );
             GameSettings.SixButtons = saveManager.GetBool("SixButtons", GameSettings.SixButtons);
             GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
             GameSettings.OldMovement = saveManager.GetBool("OldMovement", GameSettings.OldMovement);
-            GameSettings.DigitalAnalog = saveManager.GetBool("DigitalAnalog", GameSettings.DigitalAnalog);
+            GameSettings.DigitalAnalog = saveManager.GetBool(
+                "DigitalAnalog",
+                GameSettings.DigitalAnalog
+            );
 
             // Modifiers Settings
-            GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
-            GameSettings.DamageFactor = saveManager.GetInt("DamageFactor", GameSettings.DamageFactor);
+            GameSettings.EnemyBonusHP = saveManager.GetInt(
+                "EnemyBonusHP",
+                GameSettings.EnemyBonusHP
+            );
+            GameSettings.DamageFactor = saveManager.GetInt(
+                "DamageFactor",
+                GameSettings.DamageFactor
+            );
             GameSettings.DmgCooldown = saveManager.GetInt("DmgCooldown", GameSettings.DmgCooldown);
-            GameSettings.MoveSpeedAdded = saveManager.GetFloat("MoveSpeedAdded", GameSettings.MoveSpeedAdded);
-            GameSettings.NoHeartDrops = saveManager.GetBool("NoHeartDrops", GameSettings.NoHeartDrops);
-            GameSettings.NoDamageLaunch = saveManager.GetBool("NoDamageLaunch", GameSettings.NoDamageLaunch);
-            GameSettings.MirrorReflects = saveManager.GetBool("MirrorReflects", GameSettings.MirrorReflects);
+            GameSettings.MoveSpeedAdded = saveManager.GetFloat(
+                "MoveSpeedAdded",
+                GameSettings.MoveSpeedAdded
+            );
+            GameSettings.NoHeartDrops = saveManager.GetBool(
+                "NoHeartDrops",
+                GameSettings.NoHeartDrops
+            );
+            GameSettings.NoDamageLaunch = saveManager.GetBool(
+                "NoDamageLaunch",
+                GameSettings.NoDamageLaunch
+            );
+            GameSettings.MirrorReflects = saveManager.GetBool(
+                "MirrorReflects",
+                GameSettings.MirrorReflects
+            );
 
             // Sword Interact Settings
-            GameSettings.SwGrabNormal = saveManager.GetBool("SwGrabNormal", GameSettings.SwGrabNormal);
-            GameSettings.SwGrabWorldItem = saveManager.GetBool("SwGrabWorldItem", GameSettings.SwGrabWorldItem);
+            GameSettings.SwGrabNormal = saveManager.GetBool(
+                "SwGrabNormal",
+                GameSettings.SwGrabNormal
+            );
+            GameSettings.SwGrabWorldItem = saveManager.GetBool(
+                "SwGrabWorldItem",
+                GameSettings.SwGrabWorldItem
+            );
             GameSettings.SwGrabFairy = saveManager.GetBool("SwGrabFairy", GameSettings.SwGrabFairy);
-            GameSettings.SwGrabSmallKey = saveManager.GetBool("SwGrabSmallKey", GameSettings.SwGrabSmallKey);
+            GameSettings.SwGrabSmallKey = saveManager.GetBool(
+                "SwGrabSmallKey",
+                GameSettings.SwGrabSmallKey
+            );
             GameSettings.SwBoomerang = saveManager.GetBool("SwBoomerang", GameSettings.SwBoomerang);
-            GameSettings.SwSmackBombs = saveManager.GetBool("SwSmackBombs", GameSettings.SwSmackBombs);
-            GameSettings.SwMissileBlock = saveManager.GetBool("SwMissileBlock", GameSettings.SwMissileBlock);
+            GameSettings.SwSmackBombs = saveManager.GetBool(
+                "SwSmackBombs",
+                GameSettings.SwSmackBombs
+            );
+            GameSettings.SwMissileBlock = saveManager.GetBool(
+                "SwMissileBlock",
+                GameSettings.SwMissileBlock
+            );
             GameSettings.SwBreakPots = saveManager.GetBool("SwBreakPots", GameSettings.SwBreakPots);
-            GameSettings.SwBeamShrubs = saveManager.GetBool("SwBeamShrubs", GameSettings.SwBeamShrubs);
+            GameSettings.SwBeamShrubs = saveManager.GetBool(
+                "SwBeamShrubs",
+                GameSettings.SwBeamShrubs
+            );
 
             ControlHandler.LoadButtonMap(saveManager);
             ControlHandler.SetControllerIndex();

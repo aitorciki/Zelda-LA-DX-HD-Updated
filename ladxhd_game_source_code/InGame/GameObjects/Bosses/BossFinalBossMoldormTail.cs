@@ -11,11 +11,21 @@ namespace ProjectZ.InGame.GameObjects.Bosses
     {
         public readonly CSprite Sprite;
 
-        public BossFinalBossMoldormTail(Map.Map map, BossFinalBoss nightmare, string animationId, bool hittable) : base(map)
+        public BossFinalBossMoldormTail(
+            Map.Map map,
+            BossFinalBoss nightmare,
+            string animationId,
+            bool hittable
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
-            EntityPosition = new CPosition(nightmare.EntityPosition.X, nightmare.EntityPosition.Y, 0);
+            EntityPosition = new CPosition(
+                nightmare.EntityPosition.X,
+                nightmare.EntityPosition.Y,
+                0
+            );
             EntitySize = new Rectangle(-8, -8, 16, 16);
 
             var animator = AnimatorSaveLoad.LoadAnimator("Nightmares/nightmare");
@@ -26,10 +36,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (hittable)
             {
                 var hittableBox = new CBox(EntityPosition, -6, -6, 12, 12, 8);
-                AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, nightmare.HitTail));
+                AddComponent(
+                    HittableComponent.Index,
+                    new HittableComponent(hittableBox, nightmare.HitTail)
+                );
             }
 
-            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(animator, Sprite, Vector2.Zero));
+            AddComponent(
+                BaseAnimationComponent.Index,
+                new AnimationComponent(animator, Sprite, Vector2.Zero)
+            );
         }
     }
 }

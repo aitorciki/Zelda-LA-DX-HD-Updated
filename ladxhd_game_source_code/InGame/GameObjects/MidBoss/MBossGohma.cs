@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -46,7 +46,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _isOnTop;
         private bool _isDying;
 
-        public MBossGohma(Map.Map map, int posX, int posY, string saveKey, bool onTop) : base(map, "gohma")
+        public MBossGohma(Map.Map map, int posX, int posY, string saveKey, bool onTop)
+            : base(map, "gohma")
         {
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-16, -16, 32, 16);
@@ -69,7 +70,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                     Game1.GameManager.SaveManager.SetInt(_saveKey, 0);
                 }
 
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
             }
 
             _animator = AnimatorSaveLoad.LoadAnimator("MidBoss/gohma");
@@ -81,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 IgnoreHoles = true,
                 MoveCollision = OnCollision,
-                FieldRectangle = Map.GetField(posX, posY, 16)
+                FieldRectangle = Map.GetField(posX, posY, 16),
             };
 
             _aiComponent = new AiComponent();
@@ -95,7 +99,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             stateShake.Trigger.Add(new AiTriggerCountdown(ShakeTime, ShakeTick, ShakeEnd));
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             // this trigger is used to abort the attack with a little delay so to not directly return
-            stateAttack.Trigger.Add(_attackAbortTrigger = new AiTriggerCountdown(65, null, () => _aiComponent.ChangeState("attackReturn"), false));
+            stateAttack.Trigger.Add(
+                _attackAbortTrigger = new AiTriggerCountdown(
+                    65,
+                    null,
+                    () => _aiComponent.ChangeState("attackReturn"),
+                    false
+                )
+            );
             var stateAttackReturn = new AiState(UpdateAttackRevert) { Init = InitAttackReturn };
             var stateWait = new AiState();
 
@@ -106,7 +117,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var stateEye2 = new AiState();
             stateEye2.Trigger.Add(new AiTriggerCountdown(350, null, ToEye3));
             var stateEye3 = new AiState();
-            stateEye3.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("walk")));
+            stateEye3.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("walk"))
+            );
 
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("walk", stateWalk);
@@ -120,28 +133,51 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("eye2", stateEye2);
             _aiComponent.States.Add("eye3", stateEye3);
 
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            )
             {
                 BossHitSound = true,
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
-                ExplosionOffsetY = 8
+                ExplosionOffsetY = 8,
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 
             _aiComponent.ChangeState("idle");
 
             var damageCollider = new CBox(EntityPosition, -14, -14, 0, 28, 14, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
             // RepelMultiplier needs to be high so that the player does not end in the boss
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+            AddComponent(
+                OcarinaListenerComponent.Index,
+                new OcarinaListenerComponent(OnSongPlayed)
+            );
         }
 
         private void OnSongPlayed(int songIndex)
@@ -162,8 +198,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animator.SpeedMultiplier = 1f;
 
             // 25% chance to start walking
-            var changeState = Game1.RandomNumber.Next(0, 4) < 3 &&
-                              MapManager.ObjLink.Position.Y < EntityPosition.Position.Y + 40;
+            var changeState =
+                Game1.RandomNumber.Next(0, 4) < 3
+                && MapManager.ObjLink.Position.Y < EntityPosition.Position.Y + 40;
 
             if (changeState)
             {
@@ -215,7 +252,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void ToEye2()
         {
             // spawn a fireball
-            Map.Objects.SpawnObject(new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 1.25f));
+            Map.Objects.SpawnObject(
+                new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 1.25f)
+            );
 
             _aiComponent.ChangeState("eye2");
         }
@@ -249,7 +288,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void ShakeTick(double counter)
         {
             // 5 frames to go left/right
-            _animationComponent.SpriteOffset.X = MathF.Sin(MathF.PI * ((ShakeTime - (float)counter) / 1000 * (60 / 5f)));
+            _animationComponent.SpriteOffset.X = MathF.Sin(
+                MathF.PI * ((ShakeTime - (float)counter) / 1000 * (60 / 5f))
+            );
             _animationComponent.UpdateSprite();
         }
 
@@ -269,15 +310,22 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             _attackStartPosition = EntityPosition.Position;
             // 45 if the top is the last one alive
-            _attackTargetPosition = EntityPosition.Position + new Vector2(0, _bossState == 1 ? 45 : 25);
+            _attackTargetPosition =
+                EntityPosition.Position + new Vector2(0, _bossState == 1 ? 45 : 25);
 
             var playerDirection = MapManager.ObjLink.Position - EntityPosition.Position;
 
             var offset = 44;
             // make sure to not leave the room
-            if (playerDirection.X < -22 && _body.FieldRectangle.Left <= EntityPosition.Position.X - BodyWidth / 2 - offset)
+            if (
+                playerDirection.X < -22
+                && _body.FieldRectangle.Left <= EntityPosition.Position.X - BodyWidth / 2 - offset
+            )
                 _attackTargetPosition.X -= offset;
-            if (playerDirection.X > 22 && EntityPosition.Position.X + BodyWidth / 2 + offset <= _body.FieldRectangle.Right)
+            if (
+                playerDirection.X > 22
+                && EntityPosition.Position.X + BodyWidth / 2 + offset <= _body.FieldRectangle.Right
+            )
                 _attackTargetPosition.X += offset;
         }
 
@@ -327,7 +375,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // Spawn a heart if not disabled.
             if (!GameSettings.NoHeartDrops)
-                Map.Objects.SpawnObject(new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, "j", null, "heart", null));
+                Map.Objects.SpawnObject(
+                    new ObjItem(
+                        Map,
+                        (int)EntityPosition.X - 8,
+                        (int)EntityPosition.Y - 16,
+                        "j",
+                        null,
+                        "heart",
+                        null
+                    )
+                );
 
             Game1.GameManager.SaveManager.SetInt(_saveKey, _bossState + 1);
 
@@ -359,16 +417,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can only hit the boss with the hookshot or an arrow
-            if ((hitType & (HitType.Hookshot | HitType.Bow | HitType.MagicRod | HitType.Boomerang)) == 0 ||
-                (_aiComponent.CurrentStateId != "eye1" && _aiComponent.CurrentStateId != "eye2") ||
-                _aiDamageState.IsInDamageState())
+            if (
+                (hitType & (HitType.Hookshot | HitType.Bow | HitType.MagicRod | HitType.Boomerang))
+                    == 0
+                || (_aiComponent.CurrentStateId != "eye1" && _aiComponent.CurrentStateId != "eye2")
+                || _aiDamageState.IsInDamageState()
+            )
             {
                 return Values.HitCollision.RepellingParticle;
             }

@@ -20,12 +20,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isColliding;
         private bool _isActivated;
 
-        public ObjButton() : base("button") { }
+        public ObjButton()
+            : base("button") { }
 
-        public ObjButton(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public ObjButton(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             // Do not spawn the upstairs Kanalet Castle button unless the player specifically wants unmissables enabled.
-            if (strKey == "ow_castle_button_2" && !GameSettings.Unmissables)  
+            if (strKey == "ow_castle_button_2" && !GameSettings.Unmissables)
                 return;
 
             EntityPosition = new CPosition(posX, posY, 0);
@@ -33,20 +35,37 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _strKey = strKey;
 
-            _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, 5, 3, 6, 3, 2), Values.CollisionTypes.Normal);
-            _sprite = new DrawSpriteComponent("button", EntityPosition, Vector2.Zero, Values.LayerBottom);
+            _collisionComponent = new BoxCollisionComponent(
+                new CBox(EntityPosition, 5, 3, 6, 3, 2),
+                Values.CollisionTypes.Normal
+            );
+            _sprite = new DrawSpriteComponent(
+                "button",
+                EntityPosition,
+                Vector2.Zero,
+                Values.LayerBottom
+            );
 
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX + 3, posY + 3, 10, 10), OnCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(new Rectangle(posX + 3, posY + 3, 10, 10), OnCollision)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(CollisionComponent.Index, _collisionComponent);
             AddComponent(DrawComponent.Index, _sprite);
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
         }
 
         private void OnKeyChange()
         {
             // was the button already pressed before?
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
                 Activate();
         }
 

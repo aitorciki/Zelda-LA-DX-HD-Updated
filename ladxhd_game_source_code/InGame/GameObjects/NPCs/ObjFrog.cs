@@ -19,7 +19,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private int _direction;
 
-        public ObjFrog(Map.Map map, int posX, int posY) : base(map)
+        public ObjFrog(Map.Map map, int posX, int posY)
+            : base(map)
         {
             SprEditorImage = Resources.SprNpCs;
             EditorIconSource = new Rectangle(84, 28, 14, 12);
@@ -30,18 +31,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -6, -8, 12, 8, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 MaxJumpHeight = 4f,
                 DragAir = 0.99f,
                 Drag = 0.85f,
-                Gravity = -0.15f
+                Gravity = -0.15f,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/frog");
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-7, -12));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-7, -12)
+            );
 
             _hitCooldown = new AiTriggerSwitch(250);
 
@@ -70,7 +74,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             //AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -92,13 +99,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // change the direction
             var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-            var direction = new Vector2(
-                (float)Math.Sin(rotation),
-                (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
+            var direction =
+                new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation))
+                * Game1.RandomNumber.Next(25, 40)
+                / 50f;
             _direction = AnimationHelper.GetDirection(direction);
 
             _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, 1.75f);
-            
+
             _animator.Play("jump_" + _direction);
         }
 
@@ -109,7 +117,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 ToSit();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

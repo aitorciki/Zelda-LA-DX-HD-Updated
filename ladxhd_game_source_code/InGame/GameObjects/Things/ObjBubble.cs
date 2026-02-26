@@ -11,7 +11,8 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private readonly Animator _animator;
 
-        public ObjBubble(Map.Map map, Vector3 position, Vector3 velocity) : base(map)
+        public ObjBubble(Map.Map map, Vector3 position, Vector3 velocity)
+            : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, position.Z);
             EntitySize = new Rectangle(-3, -32, 6, 35);
@@ -26,7 +27,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 Velocity = velocity,
                 Gravity = 0,
-                DragAir = 0.975f
+                DragAir = 0.975f,
                 //IgnoresZ = true
             };
 

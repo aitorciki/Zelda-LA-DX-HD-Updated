@@ -14,7 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private const string SWF = "waterFall";
         private const string SPW = "stoneSpawner";
 
-        private readonly string[,] _spawnObjects = {
+        private readonly string[,] _spawnObjects =
+        {
             { null, null, null, null, null, null, null, SW2, null },
             { null, SWF, null, null, null, null, null, SW2, SW2 },
             { null, SWF, null, null, null, SWF, null, SW2, SW2 },
@@ -28,7 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             { null, null, SW1, SW1, SW1, SW1, null, null, null },
         };
 
-        private readonly string[,] _stoneMap = {
+        private readonly string[,] _stoneMap =
+        {
             { null, null, null, null, null, null, null, null, null },
             { null, null, null, null, null, null, null, null, null },
             { null, null, null, null, null, null, null, null, null },
@@ -46,17 +48,17 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly int[,] _despawnTime =
         {
-            {0, 0, 0, 0, 0, 0, 0, 5, 0},
-            {0, 1, 0, 0, 0, 0, 0, 5, 5},
-            {0, 2, 0, 0, 0, 1, 0, 4, 5},
-            {3, 3, 3, 3, 3, 3, 3, 4, 4},
-            {0, 0, 5, 5, 5, 0, 0, 4, 4},
-            {0, 0, 6, 6, 6, 0, 0, 0, 0},
-            {0, 0, 7, 7, 7, 0, 0, 0, 0},
-            {0, 0, 8, 8, 8, 0, 0, 0, 0},
-            {0, 9, 9, 9, 9, 9, 0, 0, 0},
-            {0, 11, 11, 10, 10, 10, 0, 0, 0},
-            {0, 0, 11, 11, 11, 11, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 5, 0 },
+            { 0, 1, 0, 0, 0, 0, 0, 5, 5 },
+            { 0, 2, 0, 0, 0, 1, 0, 4, 5 },
+            { 3, 3, 3, 3, 3, 3, 3, 4, 4 },
+            { 0, 0, 5, 5, 5, 0, 0, 4, 4 },
+            { 0, 0, 6, 6, 6, 0, 0, 0, 0 },
+            { 0, 0, 7, 7, 7, 0, 0, 0, 0 },
+            { 0, 0, 8, 8, 8, 0, 0, 0, 0 },
+            { 0, 9, 9, 9, 9, 9, 0, 0, 0 },
+            { 0, 11, 11, 10, 10, 10, 0, 0, 0 },
+            { 0, 0, 11, 11, 11, 11, 0, 0, 0 },
         };
 
         private GameObject[,] _gameObjects;
@@ -68,15 +70,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _isDespawning;
         private bool _wasUpdated;
 
-        public ObjWaterfall() : base("waterfall") { }
+        public ObjWaterfall()
+            : base("waterfall") { }
 
-        public ObjWaterfall(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public ObjWaterfall(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             _strKey = strKey;
             _position = new Point(posX, posY);
 
-            if (!string.IsNullOrEmpty(_strKey) &&
-                Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
             {
                 SpawnStones();
                 IsDead = true;
@@ -87,7 +93,10 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // add key change listener
             if (!string.IsNullOrEmpty(_strKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
@@ -119,12 +128,16 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void SpawnStones()
         {
             for (var y = 0; y < _stoneMap.GetLength(0); y++)
-                for (var x = 0; x < _stoneMap.GetLength(1); x++)
-                    if (_stoneMap[y, x] != null)
-                    {
-                        var objStones = new ObjStoneSpawner(Map, _position.X + x * 16, _position.Y + y * 16);
-                        Map.Objects.SpawnObject(objStones);
-                    }
+            for (var x = 0; x < _stoneMap.GetLength(1); x++)
+                if (_stoneMap[y, x] != null)
+                {
+                    var objStones = new ObjStoneSpawner(
+                        Map,
+                        _position.X + x * 16,
+                        _position.Y + y * 16
+                    );
+                    Map.Objects.SpawnObject(objStones);
+                }
         }
 
         private void SpawnObjects(Vector2 spawnPosition)
@@ -154,13 +167,22 @@ namespace ProjectZ.InGame.GameObjects.Things
                     // spawn deep water
                     if (objName == SW1)
                     {
-                        var objWater = new ObjWaterDeep(Map, _position.X + x * 16, _position.Y + y * 16);
+                        var objWater = new ObjWaterDeep(
+                            Map,
+                            _position.X + x * 16,
+                            _position.Y + y * 16
+                        );
                         Map.Objects.SpawnObject(objWater);
                         _waterObjects.Add(objWater);
                     }
                     else if (objName == SW2)
                     {
-                        var objWater = new ObjWater(Map, _position.X + x * 16, _position.Y + y * 16, -2);
+                        var objWater = new ObjWater(
+                            Map,
+                            _position.X + x * 16,
+                            _position.Y + y * 16,
+                            -2
+                        );
                         Map.Objects.SpawnObject(objWater);
                         _waterObjects.Add(objWater);
                     }
@@ -181,7 +203,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (_despawnTime[y, x] - 0.5f < timeStep)
                     {
                         var animatedTile = _gameObjects[x, y] as ObjAnimatedTile;
-                        if (animatedTile != null && animatedTile.Sprite.SourceRectangle.Height * animatedTile.Sprite.Scale == 16)
+                        if (
+                            animatedTile != null
+                            && animatedTile.Sprite.SourceRectangle.Height
+                                * animatedTile.Sprite.Scale
+                                == 16
+                        )
                         {
                             animatedTile.Sprite.SourceRectangle.Y += 8;
                             animatedTile.Sprite.SourceRectangle.Height = 8;
@@ -198,8 +225,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                     // spawn stones
                     if (_stoneMap[y, x] != null)
                     {
-                        var objStoneSpawn = new ObjStoneSpawner(Map,
-                            _position.X + x * 16, _position.Y + y * 16);
+                        var objStoneSpawn = new ObjStoneSpawner(
+                            Map,
+                            _position.X + x * 16,
+                            _position.Y + y * 16
+                        );
                         Map.Objects.SpawnObject(objStoneSpawn);
                     }
                 }
@@ -214,7 +244,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (objWater is ObjWater)
                     Map.SetFieldState(fieldX, fieldY, currentState & ~MapStates.FieldStates.Water);
                 if (objWater is ObjWaterDeep)
-                    Map.SetFieldState(fieldX, fieldY, currentState & ~MapStates.FieldStates.DeepWater);
+                    Map.SetFieldState(
+                        fieldX,
+                        fieldY,
+                        currentState & ~MapStates.FieldStates.DeepWater
+                    );
 
                 Map.Objects.DeleteObjects.Add(objWater);
             }

@@ -1,10 +1,10 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
-using ProjectZ.InGame.Things;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
-using System.Collections.Generic;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -12,7 +12,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
     {
         private readonly List<GameObject> _underlyingObjects = new List<GameObject>();
 
-        public EnemyFloorLayerFloor(Map.Map map, int posX, int posY) : base(map)
+        public EnemyFloorLayerFloor(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -22,10 +23,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // Remove the underlying objects.
             _underlyingObjects.Clear();
-            Map.Objects.GetGameObjectsWithTag(_underlyingObjects, Values.GameObjectTag.Hole | Values.GameObjectTag.Trap, posX, posY, 16, 16);
+            Map.Objects.GetGameObjectsWithTag(
+                _underlyingObjects,
+                Values.GameObjectTag.Hole | Values.GameObjectTag.Trap,
+                posX,
+                posY,
+                16,
+                16
+            );
             SetHoleState(false);
 
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent("d8 floor", EntityPosition, Vector2.Zero, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent(
+                    "d8 floor",
+                    EntityPosition,
+                    Vector2.Zero,
+                    Values.LayerBottom
+                )
+            );
         }
 
         public void SetHoleState(bool active)

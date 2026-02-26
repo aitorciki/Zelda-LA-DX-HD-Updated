@@ -28,9 +28,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool _fleeing;
 
-        public EnemyMonkey() : base("monkey enemy") { }
+        public EnemyMonkey()
+            : base("monkey enemy") { }
 
-        public EnemyMonkey(Map.Map map, int posX, int posY) : base(map)
+        public EnemyMonkey(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -49,15 +51,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoresZ = true,
                 DragAir = 1,
                 Gravity = -0.125f,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             var stateIdle = new AiState { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("throwL"), 1000, 1500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("throwL"), 1000, 1500)
+            );
             var stateThrowL = new AiState { Init = InitThrow };
-            stateThrowL.Trigger.Add(new AiTriggerCountdown(666, null, () => _aiComponent.ChangeState("throwR")));
+            stateThrowL.Trigger.Add(
+                new AiTriggerCountdown(666, null, () => _aiComponent.ChangeState("throwR"))
+            );
             var stateThrowR = new AiState { Init = InitThrow };
-            stateThrowR.Trigger.Add(new AiTriggerCountdown(666, null, () => _aiComponent.ChangeState("idle")));
+            stateThrowR.Trigger.Add(
+                new AiTriggerCountdown(666, null, () => _aiComponent.ChangeState("idle"))
+            );
             var stateFall = new AiState(UpdateFall) { Init = InitFall };
             var stateJump = new AiState(UpdateJump) { Init = InitJump };
             var stateFlee = new AiState(UpdateFlee);
@@ -79,7 +87,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
         }
 
@@ -89,7 +100,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Map.Objects.DeleteObjects.Add(_objBomb);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if ((hitType & HitType.BowWow) != 0)
                 return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
@@ -134,7 +151,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_bombCountdown >= 0)
             {
                 // spawn a nut
-                Map.Objects.SpawnObject(new EnemyNut(Map, new Vector3(EntityPosition.X, EntityPosition.Y, 20), throwDirection));
+                Map.Objects.SpawnObject(
+                    new EnemyNut(
+                        Map,
+                        new Vector3(EntityPosition.X, EntityPosition.Y, 20),
+                        throwDirection
+                    )
+                );
             }
             else
             {

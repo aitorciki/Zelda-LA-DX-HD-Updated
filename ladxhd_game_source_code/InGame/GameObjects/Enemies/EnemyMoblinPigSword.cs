@@ -35,7 +35,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public BodyComponent Body;
         public int Direction => _direction;
-        public string AiState { get => _aiComponent.CurrentStateId; }
+        public string AiState
+        {
+            get => _aiComponent.CurrentStateId;
+        }
         public CBox HittableBox
         {
             get => _hitComponent.HittableBox;
@@ -51,14 +54,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             get => _isActive;
         }
 
-        public EnemyMoblinPigSword() : base("moblinPigSword") { }
+        public EnemyMoblinPigSword()
+            : base("moblinPigSword") { }
 
-        public EnemyMoblinPigSword(Map.Map map, int posX, int posY) : base(map)
+        public EnemyMoblinPigSword(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -67,28 +72,34 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk_1");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _fieldRectangle = map.GetField(posX, posY);
 
             Body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = _fieldRectangle,
                 Bounciness = 0.25f,
                 AbsorbPercentage = 0.75f,
-                Drag = 0.85f
+                Drag = 0.85f,
             };
 
             var stateIdle = new AiState { Init = InitIdle };
             stateIdle.Trigger.Add(new AiTriggerRandomTime(EndIdle, 300, 500));
             var stateWalk = new AiState { Init = InitWalking };
-            stateWalk.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 550, 850));
+            stateWalk.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 550, 850)
+            );
             var stateAttack = new AiState(UpdateAttack);
 
             _aiComponent = new AiComponent();
@@ -100,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState = new AiDamageState(this, Body, _aiComponent, _sprite, _lives)
             {
                 OnDeath = OnDeath,
-                OnBurn = OnBurn
+                OnBurn = OnBurn,
             };
 
             var damageBox = new CBox(EntityPosition, -8, -12, 0, 16, 12, 4);
@@ -109,13 +120,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _drawComponent = new BodyDrawComponent(Body, _sprite, Values.LayerPlayer);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, Body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             _sword = new EnemyMoblinPigSwordSword(Map, this);
@@ -184,7 +207,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             var distance = EntityPosition.Position - MapManager.ObjLink.Position;
 
-            if (_fieldRectangle.Contains(MapManager.ObjLink.Position) && distance.Length() < AttackRange)
+            if (
+                _fieldRectangle.Contains(MapManager.ObjLink.Position)
+                && distance.Length() < AttackRange
+            )
                 _aiComponent.ChangeState("attack");
             else
                 _aiComponent.ChangeState("walking");
@@ -209,9 +235,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateAttack()
         {
-            var playerDirection = (MapManager.ObjLink.Position + AnimationHelper.DirectionOffset[_direction] * 3) - EntityPosition.Position;
+            var playerDirection =
+                (MapManager.ObjLink.Position + AnimationHelper.DirectionOffset[_direction] * 3)
+                - EntityPosition.Position;
 
-            if (!_fieldRectangle.Contains(MapManager.ObjLink.Position) || playerDirection.Length() > FollowRange)
+            if (
+                !_fieldRectangle.Contains(MapManager.ObjLink.Position)
+                || playerDirection.Length() > FollowRange
+            )
             {
                 _aiComponent.ChangeState("idle");
                 return;
@@ -239,7 +270,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                Body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, Body.Velocity.Z);
+                Body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    Body.Velocity.Z
+                );
 
             return true;
         }
@@ -278,7 +313,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 ((DrawComponent)_sword.Components[DrawComponent.Index]).Draw(spriteBatch);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

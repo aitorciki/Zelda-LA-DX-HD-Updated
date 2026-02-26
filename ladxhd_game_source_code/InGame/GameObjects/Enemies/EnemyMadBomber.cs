@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
-using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -19,9 +19,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiStunnedState _aiStunnedState;
         private readonly DamageFieldComponent _damageField;
 
-        private readonly Vector2[] _holeOffsets = {
-            new Vector2(0, 0), new Vector2(3, -1), new Vector2(-3, -1),
-            new Vector2(0, -3), new Vector2(-2, 2), new Vector2(2, 2)
+        private readonly Vector2[] _holeOffsets =
+        {
+            new Vector2(0, 0),
+            new Vector2(3, -1),
+            new Vector2(-3, -1),
+            new Vector2(0, -3),
+            new Vector2(-2, 2),
+            new Vector2(2, 2),
         };
 
         private const string _leafSaveKey = "ow_goldLeafMadBomber";
@@ -30,9 +35,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _wasHit;
         private int _lives = EnemyLives.MadBomber;
 
-        public EnemyMadBomber() : base("madBomber") { }
+        public EnemyMadBomber()
+            : base("madBomber") { }
 
-        public EnemyMadBomber(Map.Map map, int posX, int posY) : base(map)
+        public EnemyMadBomber(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // abort spawn if the player already has the leaf
             if (Game1.GameManager.SaveManager.GetString(_leafSaveKey) == "1")
@@ -44,7 +51,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 15, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 15, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 15, 0);
             EntitySize = new Rectangle(-8, -15, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -54,16 +61,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/mad bomber");
 
             _sprite = new CSprite(EntityPosition) { IsVisible = false };
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -15));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -15)
+            );
 
             var body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 8)
             {
                 CollisionTypes = Values.CollisionTypes.Field,
-                IgnoreHoles = true
+                IgnoreHoles = true,
             };
 
             var stateCooldown = new AiState();
-            stateCooldown.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("hidden"), 1000, 1500));
+            stateCooldown.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("hidden"), 1000, 1500)
+            );
             var stateHidden = new AiState(UpdateHidden);
             var stateComing = new AiState(UpdateComing);
             var stateLeaving = new AiState(UpdateLeaving);
@@ -84,16 +97,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 SpawnItems = false,
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
-                OnDeath = OnDeath
+                OnDeath = OnDeath,
             };
 
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(body.BodyBox, OnHit));
             AddComponent(BodyComponent.Index, body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(body, _sprite, Values.LayerPlayer)
+            );
         }
 
         private void Reset()
@@ -135,7 +154,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateHidden()
         {
             // only spawn if the player is close enough
-            var playerDirection = MapManager.ObjLink.Position - new Vector2(_spawnPosition.X, _spawnPosition.Y - 15);
+            var playerDirection =
+                MapManager.ObjLink.Position - new Vector2(_spawnPosition.X, _spawnPosition.Y - 15);
             if (playerDirection.Length() < 64)
                 ToComing();
 
@@ -222,7 +242,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             TryReleaseStun();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -251,7 +277,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.MagicPowder || hitType == HitType.Boomerang)
                 damage = 0;
 
-            var hitReturn = _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
+            var hitReturn = _damageState.OnHit(
+                gameObject,
+                direction,
+                hitType,
+                damage,
+                pieceOfPower
+            );
 
             // make sure to not disapear while moving out of the hole with piece of power active
             if (_damageState.CurrentLives <= 0)

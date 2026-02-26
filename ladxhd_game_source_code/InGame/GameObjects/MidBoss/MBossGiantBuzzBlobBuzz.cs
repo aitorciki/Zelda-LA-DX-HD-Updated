@@ -11,7 +11,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly CSprite _sprite;
         private float _liveCounter = 2000;
 
-        public MBossGiantBuzzBlobBuzz(Map.Map map, Vector2 position, Vector2 velocity, string spriteId, float spriteRotation) : base(map)
+        public MBossGiantBuzzBlobBuzz(
+            Map.Map map,
+            Vector2 position,
+            Vector2 velocity,
+            string spriteId,
+            float spriteRotation
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -30,7 +37,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 IgnoresZ = true,
                 IgnoreHoles = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             body.VelocityTarget = velocity;
@@ -38,7 +45,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageCollider = new CBox(EntityPosition, -5, -5, 10, 10, 8);
             var hittableBox = new CBox(EntityPosition, -5, -5, 10, 10, 8);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, body);
             //AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -50,7 +60,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void Update()
         {
             // blink 8 frame interval
-            _sprite.SpriteShader = (Game1.TotalGameTime % (8 / 60f * 1000) < 4 / 60f * 1000) ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                (Game1.TotalGameTime % (8 / 60f * 1000) < 4 / 60f * 1000)
+                    ? Resources.DamageSpriteShader0
+                    : null;
 
             // fade out/ delete object
             _liveCounter -= Game1.DeltaTime;
@@ -60,7 +73,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

@@ -27,9 +27,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _messageShown;
         private bool _spawnedTarin;
 
-        public ObjRaccoon() : base("raccoon") { }
+        public ObjRaccoon()
+            : base("raccoon") { }
 
-        public ObjRaccoon(Map.Map map, int posX, int posY) : base(map)
+        public ObjRaccoon(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -48,20 +50,34 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _animator.Play("idle");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8)
             {
                 IgnoresZ = true,
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
             };
             _bodyDrawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerPlayer);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    _body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
@@ -130,7 +146,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 // spawn explosion with sound effect
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
-                Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8 - 13, Values.LayerTop, "Particles/explosionRaccoon", "run", true));
+                Map.Objects.SpawnObject(
+                    new ObjAnimator(
+                        Map,
+                        (int)EntityPosition.X,
+                        (int)EntityPosition.Y - 8 - 13,
+                        Values.LayerTop,
+                        "Particles/explosionRaccoon",
+                        "run",
+                        true
+                    )
+                );
             }
 
             // spawn tarin
@@ -139,8 +165,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _spawnedTarin = true;
 
                 // the size cant be bigger than the size of the raccon; otherwise tarin could land on a wall
-                var npcTarin = new ObjPersonNew(Map, (int)EntityPosition.X, (int)EntityPosition.Y, null, "tarin", "tarin_healed", null, new Rectangle(0, 0, 10, 10));
-                npcTarin.EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z - 4));
+                var npcTarin = new ObjPersonNew(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    null,
+                    "tarin",
+                    "tarin_healed",
+                    null,
+                    new Rectangle(0, 0, 10, 10)
+                );
+                npcTarin.EntityPosition.Set(
+                    new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z - 4)
+                );
                 npcTarin.Body.Gravity = -0.175f;
                 Map.Objects.SpawnObject(npcTarin);
 
@@ -164,7 +201,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (_isRotating)
                 return Values.HitCollision.None;

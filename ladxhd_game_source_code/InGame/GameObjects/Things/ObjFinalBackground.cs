@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -6,7 +7,6 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System.Collections.Generic;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -39,9 +39,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _movePosition;
         private bool _moveStars;
 
-        public ObjFinalBackground() : base("final_cloud") { }
+        public ObjFinalBackground()
+            : base("final_cloud") { }
 
-        public ObjFinalBackground(Map.Map map, int posX, int posY, string moveStarsKey) : base(map)
+        public ObjFinalBackground(Map.Map map, int posX, int posY, string moveStarsKey)
+            : base(map)
         {
             _spawnPosition = new CPosition(posX, posY, 0);
             _moveStarKeys = moveStarsKey;
@@ -65,9 +67,33 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var cloudY = posY + 56;
                 var offset0 = 0.8f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY), color0 = colorRed0, color1 = colorRed1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset0 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset0,
+                    }
+                );
             }
 
             {
@@ -75,9 +101,33 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var cloudY = posY - 32;
                 var offset0 = 0.8f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 8), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 8), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 8),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 8),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
             }
 
             {
@@ -85,10 +135,42 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var cloudY = posY + 40;
                 var offset0 = 0.8f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 8), color0 = colorLila0, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY), color0 = colorLila0, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 8), color0 = colorLila0, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY), color0 = colorLila0, color1 = colorWhite, offset = offset0 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 8),
+                        color0 = colorLila0,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY),
+                        color0 = colorLila0,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 8),
+                        color0 = colorLila0,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY),
+                        color0 = colorLila0,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
             }
 
             {
@@ -97,14 +179,78 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var offset0 = 0.8f;
                 var offset1 = 0.75f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 16), color0 = colorRed0, color1 = colorRed1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 16), color0 = colorRed0, color1 = colorRed1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 16),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 16),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
             }
 
             {
@@ -113,17 +259,105 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var offset0 = 1;
                 var offset1 = 0.925f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 16), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY + 8), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 16), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 8), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY + 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 24), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 8), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 48, cloudY + 8), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 56, cloudY + 16), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 16),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY + 8),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 16),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 8),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 24),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 8),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 48, cloudY + 8),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 56, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
             }
 
             {
@@ -132,20 +366,132 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var offset0 = 0.65f;
                 var offset1 = 0.7f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY + 8), color0 = colorBlue2, color1 = colorBlue3, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY), color0 = colorBlue2, color1 = colorBlue3, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 8), color0 = colorWhite, color1 = colorYellow, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY), color0 = colorWhite, color1 = colorYellow, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 8), color0 = colorWhite, color1 = colorYellow, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 32), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 24), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY + 32), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY + 16), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 24), color0 = colorWhite, color1 = colorYellow, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 48, cloudY + 16), color0 = colorWhite, color1 = colorYellow, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 56, cloudY + 24), color0 = colorWhite, color1 = colorYellow, offset = offset1 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY + 8),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 8),
+                        color0 = colorWhite,
+                        color1 = colorYellow,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY),
+                        color0 = colorWhite,
+                        color1 = colorYellow,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 8),
+                        color0 = colorWhite,
+                        color1 = colorYellow,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 32),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 24),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY + 32),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY + 16),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 24),
+                        color0 = colorWhite,
+                        color1 = colorYellow,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 48, cloudY + 16),
+                        color0 = colorWhite,
+                        color1 = colorYellow,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 56, cloudY + 24),
+                        color0 = colorWhite,
+                        color1 = colorYellow,
+                        offset = offset1,
+                    }
+                );
             }
 
             {
@@ -154,18 +500,114 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var offset = 0.9f;
                 var offset1 = 0.925f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY + 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY + 8), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 8), color0 = colorWhite, color1 = colorLila0, offset = offset });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 8), color0 = colorWhite, color1 = colorLila0, offset = offset });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY + 16), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 24), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 48, cloudY + 16), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 56, cloudY + 24), color0 = colorBlue2, color1 = colorWhite, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 24), color0 = colorWhite, color1 = colorLila1, offset = offset });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY + 32), color0 = colorWhite, color1 = colorLila1, offset = offset });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY + 8),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 8),
+                        color0 = colorWhite,
+                        color1 = colorLila0,
+                        offset = offset,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 8),
+                        color0 = colorWhite,
+                        color1 = colorLila0,
+                        offset = offset,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 24),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 48, cloudY + 16),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 56, cloudY + 24),
+                        color0 = colorBlue2,
+                        color1 = colorWhite,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 24),
+                        color0 = colorWhite,
+                        color1 = colorLila1,
+                        offset = offset,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY + 32),
+                        color0 = colorWhite,
+                        color1 = colorLila1,
+                        offset = offset,
+                    }
+                );
             }
 
             {
@@ -175,15 +617,87 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var offset1 = 0.825f;
                 var offset2 = 0.8f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY), color0 = colorRed0, color1 = colorRed1, offset = offset2 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY - 16), color0 = colorBlue0, color1 = colorBlue1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY - 8), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY - 8), color0 = colorRed0, color1 = colorRed1, offset = offset2 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY - 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY - 8), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 48, cloudY - 16), color0 = colorBlue2, color1 = colorBlue3, offset = offset1 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset2,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY - 16),
+                        color0 = colorBlue0,
+                        color1 = colorBlue1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY - 8),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY - 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset2,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY - 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY - 8),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 48, cloudY - 16),
+                        color0 = colorBlue2,
+                        color1 = colorBlue3,
+                        offset = offset1,
+                    }
+                );
             }
 
             {
@@ -192,19 +706,123 @@ namespace ProjectZ.InGame.GameObjects.Things
                 var offset0 = 0.85f;
                 var offset1 = 0.8f;
 
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX, cloudY), color0 = colorBlue0, color1 = colorBlue1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY - 8), color0 = colorBlue0, color1 = colorBlue1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 8, cloudY + 24), color0 = colorBlue0, color1 = colorBlue1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY + 16), color0 = colorBlue0, color1 = colorBlue1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY - 8), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY), color0 = colorYellow, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 8), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 24, cloudY + 24), color0 = colorRed0, color1 = colorRed1, offset = offset1 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 16, cloudY), color0 = colorBlue0, color1 = colorBlue1, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 32, cloudY + 16), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 36, cloudY + 8), color0 = colorGreen, color1 = colorWhite, offset = offset0 });
-                _clouds.Add(new CloudPart() { position = new Vector2(cloudX + 40, cloudY + 16), color0 = colorYellow, color1 = colorWhite, offset = offset0 });
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX, cloudY),
+                        color0 = colorBlue0,
+                        color1 = colorBlue1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY - 8),
+                        color0 = colorBlue0,
+                        color1 = colorBlue1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 8, cloudY + 24),
+                        color0 = colorBlue0,
+                        color1 = colorBlue1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY + 16),
+                        color0 = colorBlue0,
+                        color1 = colorBlue1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY - 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY),
+                        color0 = colorYellow,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 8),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 24, cloudY + 24),
+                        color0 = colorRed0,
+                        color1 = colorRed1,
+                        offset = offset1,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 16, cloudY),
+                        color0 = colorBlue0,
+                        color1 = colorBlue1,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 32, cloudY + 16),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 36, cloudY + 8),
+                        color0 = colorGreen,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
+                _clouds.Add(
+                    new CloudPart()
+                    {
+                        position = new Vector2(cloudX + 40, cloudY + 16),
+                        color0 = colorYellow,
+                        color1 = colorWhite,
+                        offset = offset0,
+                    }
+                );
             }
 
             var randomDist = 16;
@@ -219,16 +837,24 @@ namespace ProjectZ.InGame.GameObjects.Things
                     if (Game1.RandomNumber.Next(0, 6) == 0)
                         continue;
 
-                    var position = new Vector2(posX + (x - 10) * halfOffset * 2 + (y % 2) * halfOffset, posY + (y - 10) * halfOffset * 2);
+                    var position = new Vector2(
+                        posX + (x - 10) * halfOffset * 2 + (y % 2) * halfOffset,
+                        posY + (y - 10) * halfOffset * 2
+                    );
 
-                    _stars.Add(new StarAnimation()
-                    {
-                        position = position + new Vector2(
-                            Game1.RandomNumber.Next(0, randomDist * 2) - randomDist,
-                            Game1.RandomNumber.Next(0, randomDist * 2) - randomDist),
-                        animator = AnimatorSaveLoad.LoadAnimator("Sequences/final star"),
-                        color = Color.White * (Game1.RandomNumber.Next(50, 75) / 100f)
-                    });
+                    _stars.Add(
+                        new StarAnimation()
+                        {
+                            position =
+                                position
+                                + new Vector2(
+                                    Game1.RandomNumber.Next(0, randomDist * 2) - randomDist,
+                                    Game1.RandomNumber.Next(0, randomDist * 2) - randomDist
+                                ),
+                            animator = AnimatorSaveLoad.LoadAnimator("Sequences/final star"),
+                            color = Color.White * (Game1.RandomNumber.Next(50, 75) / 100f),
+                        }
+                    );
                 }
             }
 
@@ -238,9 +864,15 @@ namespace ProjectZ.InGame.GameObjects.Things
                 star.animator.SetFrame(Game1.RandomNumber.Next(0, 4));
             }
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBackground, new CPosition(posX, posY - 512, 0)));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBackground, new CPosition(posX, posY - 512, 0))
+            );
 
             Game1.GameManager.SetFinalMap();
         }
@@ -268,7 +900,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // we offset the background objects in relation to the camera so that the move slower than the actuall objects
             // draw the start
-            var starOffset = -(_spawnPosition.Position - (new Vector2(MapManager.Camera.X, MapManager.Camera.Y) / MapManager.Camera.Scale)) * new Vector2(1.0f, 0.75f);
+            var starOffset =
+                -(
+                    _spawnPosition.Position
+                    - (
+                        new Vector2(MapManager.Camera.X, MapManager.Camera.Y)
+                        / MapManager.Camera.Scale
+                    )
+                ) * new Vector2(1.0f, 0.75f);
             foreach (var star in _stars)
             {
                 var offsetPosition = star.position;
@@ -281,7 +920,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             // this is all way too complicated but I dont know how this can be done simpler
             // looking right on resize makes hard
             // not so sure how the position value in the shader works
-            var shaderOffset = (new Vector2(MapManager.Camera.Location.X + 4000, MapManager.Camera.Location.Y) * 0.85f - new Vector2(Game1.RenderWidth, Game1.RenderHeight) / 2);
+            var shaderOffset = (
+                new Vector2(MapManager.Camera.Location.X + 4000, MapManager.Camera.Location.Y)
+                    * 0.85f
+                - new Vector2(Game1.RenderWidth, Game1.RenderHeight) / 2
+            );
             Resources.CloudShader.Effect.Parameters["offset"].SetValue(shaderOffset);
             Resources.CloudShader.FloatParameter["scale"] = MapManager.Camera.Scale;
             Resources.CloudShader.FloatParameter["scaleX"] = MapManager.Camera.Scale;
@@ -294,7 +937,16 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Resources.CloudShader.Effect.Parameters["color0"].SetValue(cloud.color0);
                 Resources.CloudShader.Effect.Parameters["color1"].SetValue(cloud.color1);
 
-                var offset = -(_spawnPosition.Position - (new Vector2(MapManager.Camera.X, MapManager.Camera.Y) / MapManager.Camera.Scale)) * new Vector2(1.0f, 0.35f) * cloud.offset;
+                var offset =
+                    -(
+                        _spawnPosition.Position
+                        - (
+                            new Vector2(MapManager.Camera.X, MapManager.Camera.Y)
+                            / MapManager.Camera.Scale
+                        )
+                    )
+                    * new Vector2(1.0f, 0.35f)
+                    * cloud.offset;
                 var position = cloud.position + offset;
                 position.Y += _movePosition;
                 var cameraView = MapManager.Camera.GetGameView();

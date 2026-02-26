@@ -32,7 +32,11 @@ namespace ProjectZ.InGame.SaveLoad
             {
                 var saveManager = new SaveManager();
 
-                if (saveManager.LoadFile(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + i)))
+                if (
+                    saveManager.LoadFile(
+                        Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + i)
+                    )
+                )
                 {
                     SaveStates[i] = new SaveState();
                     SaveStates[i].Name = saveManager.GetString("savename");

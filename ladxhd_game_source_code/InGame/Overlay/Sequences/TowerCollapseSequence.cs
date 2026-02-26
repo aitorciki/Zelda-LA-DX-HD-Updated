@@ -42,7 +42,14 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 Game1.GameManager.PlaySoundEffect("D378-12-0C");
                 if (GameSettings.ScreenShake)
                     Game1.GameManager.ShakeScreen(shakeTime, 0, 1, 0, shakePeriod);
-                Sprites.Add(_aniDust = new SeqAnimation("Sequences/tower dust", "idle", new Vector2(56, 88), 1));
+                Sprites.Add(
+                    _aniDust = new SeqAnimation(
+                        "Sequences/tower dust",
+                        "idle",
+                        new Vector2(56, 88),
+                        1
+                    )
+                );
                 _sprTower.Position.Y += 8;
                 _state = 2;
             }

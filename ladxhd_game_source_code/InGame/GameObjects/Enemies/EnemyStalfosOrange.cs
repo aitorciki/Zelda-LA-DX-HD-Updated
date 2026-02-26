@@ -37,16 +37,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public bool WasSpawned;
 
-        public EnemyStalfosOrange() : base("stalfos orange") { }
+        public EnemyStalfosOrange()
+            : base("stalfos orange") { }
 
-        public EnemyStalfosOrange(Map.Map map, int posX, int posY, bool isBoneThrower) : base(map)
+        public EnemyStalfosOrange(Map.Map map, int posX, int posY, bool isBoneThrower)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             _isBoneThrower = isBoneThrower;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = true;
             OnReset = Reset;
@@ -63,12 +65,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 Gravity = -0.1f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
-                FieldRectangle = fieldRectangle
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                FieldRectangle = fieldRectangle,
             };
 
             _aiComponent = new AiComponent();
@@ -80,21 +82,39 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("jumping", stateJumping);
             new AiFallState(_aiComponent, _body, null, null, 200);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState("walking");
 
             var damageBox = new CBox(EntityPosition, -7, -15, 2, 13, 15, 4);
             var hittableBox = new CBox(EntityPosition, -7, -15, 2, 13, 15, 8, true);
             var pushableBox = new CBox(EntityPosition, -6, -14, 2, 12, 14, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -106,16 +126,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 List<GameObject> enemyTriggers = new List<GameObject>();
 
-                // Respawn the Gibdo if the Stalfos is still alive. 
-                var newGibdo = new EnemyGibdo(Map, (int)ResetPosition.X - 8, (int)ResetPosition.Y - 16);
+                // Respawn the Gibdo if the Stalfos is still alive.
+                var newGibdo = new EnemyGibdo(
+                    Map,
+                    (int)ResetPosition.X - 8,
+                    (int)ResetPosition.Y - 16
+                );
                 Map.Objects.SpawnObject(newGibdo);
 
                 // If there is utility objects in the room find them.
-                Map.Objects.GetGameObjectsWithTag(enemyTriggers, Values.GameObjectTag.Utility,
-                    (int)_body.FieldRectangle.X, (int)_body.FieldRectangle.Y, (int)_body.FieldRectangle.Width, (int)_body.FieldRectangle.Height);
+                Map.Objects.GetGameObjectsWithTag(
+                    enemyTriggers,
+                    Values.GameObjectTag.Utility,
+                    (int)_body.FieldRectangle.X,
+                    (int)_body.FieldRectangle.Y,
+                    (int)_body.FieldRectangle.Width,
+                    (int)_body.FieldRectangle.Height
+                );
 
                 // Loop through the list of utility objects.
-                foreach (var trigger in enemyTriggers) 
+                foreach (var trigger in enemyTriggers)
                 {
                     // If it's an enemy trigger add the Gibdo.
                     if (trigger is ObjEnemyTrigger etrig)
@@ -157,7 +187,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     _throwBone = false;
 
                     // throw a bone towards the player
-                    Map.Objects.SpawnObject(new EnemyBone(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 1.5f));
+                    Map.Objects.SpawnObject(
+                        new EnemyBone(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 1.5f)
+                    );
                 }
             }
 
@@ -212,7 +244,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -223,7 +259,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 ChangeDirection();
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

@@ -8,12 +8,22 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 {
     internal class ObjDungeonBlacker : GameObject
     {
-        public ObjDungeonBlacker() : base("editor dungeon blacker")
+        public ObjDungeonBlacker()
+            : base("editor dungeon blacker")
         {
             EditorColor = Color.DarkRed * 0.75f;
         }
 
-        public ObjDungeonBlacker(Map.Map map, int posX, int posY, int colorR, int colorG, int colorB, int colorA) : base(map)
+        public ObjDungeonBlacker(
+            Map.Map map,
+            int posX,
+            int posY,
+            int colorR,
+            int colorG,
+            int colorB,
+            int colorA
+        )
+            : base(map)
         {
             // Check for the existence of "ObjDungeonBlacker.lahdmod" in folder "Data\Mods".
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjDungeonBlacker.lahdmod");
@@ -24,7 +34,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 // If the map name was in the file then load its values.
                 string[] values = ParseModFile(modFile, map.MapName);
 
-                if (values != null) 
+                if (values != null)
                 {
                     colorR = Convert.ToInt32(values[1]);
                     colorG = Convert.ToInt32(values[2]);
@@ -43,11 +53,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             foreach (string line in File.ReadAllLines(modFile))
             {
                 // Ignore empty lines and comment lines.
-                if (string.IsNullOrEmpty(line) || line.Substring(0,2) == "//") 
+                if (string.IsNullOrEmpty(line) || line.Substring(0, 2) == "//")
                     continue;
 
                 // Split string on semicolons and same line comments.
-                string[] splitLine = line.Split(new char[] {';','/'});
+                string[] splitLine = line.Split(new char[] { ';', '/' });
 
                 // If the line contains the map name.
                 if (splitLine[0] == mapName)

@@ -23,9 +23,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _jumpVelocity = 1.0f;
         private int _lives = EnemyLives.PolsVoice;
 
-        public EnemyPolsVoice() : base("pols voice") { }
+        public EnemyPolsVoice()
+            : base("pols voice") { }
 
-        public EnemyPolsVoice(Map.Map map, int posX, int posY) : base(map)
+        public EnemyPolsVoice(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -39,19 +41,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("jump");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 MaxJumpHeight = 8f,
                 Gravity = -0.05f,
                 Drag = 0.75f,
-                DragAir = 0.8f
+                DragAir = 0.8f,
             };
 
             var stateWaiting = new AiState { Init = InitWaiting };
@@ -61,24 +65,49 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("jumping", stateJumping);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false);
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                sprite,
+                _lives,
+                true,
+                false
+            );
             new AiFallState(_aiComponent, _body, null, null, 100);
-            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "waiting" };
+            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900)
+            {
+                ShakeOffset = 1,
+                SilentStateChange = false,
+                ReturnState = "waiting",
+            };
 
             _aiComponent.ChangeState("jumping");
 
             var damageBox = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
             var hittableBox = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 1));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 1)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 }
+            );
+            AddComponent(
+                OcarinaListenerComponent.Index,
+                new OcarinaListenerComponent(OnSongPlayed)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -132,7 +161,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 // jump towards the player
                 var direction = new Vector2(
                     MapManager.ObjLink.PosX - EntityPosition.X,
-                    MapManager.ObjLink.PosY - EntityPosition.Y);
+                    MapManager.ObjLink.PosY - EntityPosition.Y
+                );
 
                 if (direction != Vector2.Zero)
                 {
@@ -143,7 +173,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             else
             {
                 var randomDirection = Game1.RandomNumber.Next(0, 100) / 100f * Math.PI * 2;
-                jumpDirection = new Vector2((float)Math.Sin(randomDirection), (float)Math.Cos(randomDirection));
+                jumpDirection = new Vector2(
+                    (float)Math.Sin(randomDirection),
+                    (float)Math.Cos(randomDirection)
+                );
             }
             _body.VelocityTarget = jumpDirection * 0.75f;
         }
@@ -169,7 +202,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -184,13 +223,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (hitType == HitType.ThrownObject || hitType == HitType.Bomb)
                 return _damageState.OnHit(gameObject, direction, hitType, 4, pieceOfPower);
 
-            if (hitType == HitType.MagicPowder || hitType == HitType.Hookshot || hitType == HitType.Boomerang)
+            if (
+                hitType == HitType.MagicPowder
+                || hitType == HitType.Hookshot
+                || hitType == HitType.Boomerang
+            )
             {
                 direction *= 0.25f;
 
                 StartStun();
 
-                var hitState = _damageState.HitKnockBack(gameObject, direction, hitType, pieceOfPower, false);
+                var hitState = _damageState.HitKnockBack(
+                    gameObject,
+                    direction,
+                    hitType,
+                    pieceOfPower,
+                    false
+                );
 
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
 
@@ -211,7 +260,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (type == PushableComponent.PushType.Impact)
             {
                 _body.VelocityTarget = Vector2.Zero;
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
             }
 
             return true;

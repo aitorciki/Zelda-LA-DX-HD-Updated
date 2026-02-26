@@ -20,13 +20,27 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly bool _ignoreCollision;
         private readonly bool _moveOnTop;
 
-        public ObjJump() : base("editor jump")
+        public ObjJump()
+            : base("editor jump")
         {
             EditorColor = Color.Pink * 0.5f;
         }
 
-        public ObjJump(Map.Map map, int posX, int posY, int offsetX, int offsetY, int fieldWidth, int fieldHeight,
-            float height, float speed, int inertiaTime, bool ignoreCollision, bool moveOnTop) : base(map)
+        public ObjJump(
+            Map.Map map,
+            int posX,
+            int posY,
+            int offsetX,
+            int offsetY,
+            int fieldWidth,
+            int fieldHeight,
+            float height,
+            float speed,
+            int inertiaTime,
+            bool ignoreCollision,
+            bool moveOnTop
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, fieldWidth, fieldHeight);
@@ -41,7 +55,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             _direction = AnimationHelper.GetDirection(_offset);
 
             var box = new CBox(EntityPosition, 0, 0, fieldWidth, fieldHeight, 16);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(box, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(box, OnPush)
+            );
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -76,7 +93,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return false;
 
             if (pushDir == 0)
-                goalPosition.X = EntityPosition.Position.X + EntitySize.Width + _offset.X - playerBody.Width / 2;
+                goalPosition.X =
+                    EntityPosition.Position.X + EntitySize.Width + _offset.X - playerBody.Width / 2;
             else if (pushDir == 2)
                 goalPosition.X = EntityPosition.Position.X + _offset.X + playerBody.Width / 2;
             else if (pushDir == 1)
@@ -95,10 +113,23 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!_ignoreCollision || _moveOnTop)
             {
                 var collidingBox = Box.Empty;
-                if (Map.Objects.Collision(
-                    new Box(goalPosition.X + playerBody.OffsetX, goalPosition.Y + playerBody.OffsetY, 0,
-                        playerBody.Width, playerBody.Height, 8),
-                    Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref collidingBox))
+                if (
+                    Map.Objects.Collision(
+                        new Box(
+                            goalPosition.X + playerBody.OffsetX,
+                            goalPosition.Y + playerBody.OffsetY,
+                            0,
+                            playerBody.Width,
+                            playerBody.Height,
+                            8
+                        ),
+                        Box.Empty,
+                        Values.CollisionTypes.Normal,
+                        0,
+                        0,
+                        ref collidingBox
+                    )
+                )
                 {
                     if (!_moveOnTop || collidingBox.Z + collidingBox.Depth > 8)
                         return true;
@@ -121,7 +152,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (offsetLength > 16)
                 speedMult = 1 - (offsetLength - 16) / 80;
 
-            MapManager.ObjLink.StartRailJump(goalPosition, jumpMult * _height, speedMult * _speed, goalPositionZ);
+            MapManager.ObjLink.StartRailJump(
+                goalPosition,
+                jumpMult * _height,
+                speedMult * _speed,
+                goalPositionZ
+            );
 
             return true;
         }

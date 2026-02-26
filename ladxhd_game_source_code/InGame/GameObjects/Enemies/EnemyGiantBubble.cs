@@ -17,16 +17,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _flashState;
         private double _lastFlashTime;
 
-        bool  light_source = true;
-        int   light_red = 255;
-        int   light_grn = 255;
-        int   light_blu = 255;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 255;
+        int light_blu = 255;
         float light_bright = 0.50f;
-        int   light_size = 64;
+        int light_size = 64;
 
-        public EnemyGiantBubble() : base("giant bubble") { }
+        public EnemyGiantBubble()
+            : base("giant bubble") { }
 
-        public EnemyGiantBubble(Map.Map map, int posX, int posY) : base(map)
+        public EnemyGiantBubble(Map.Map map, int posX, int posY)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "EnemyGiantBubble.lahdmod");
@@ -38,7 +40,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Damage;
 
             EntityPosition = new CPosition(posX + 16, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 16, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 16, posY + 16, 0);
             EntitySize = new Rectangle(-32, -32, 64, 64);
             CanReset = true;
 
@@ -52,22 +54,32 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 IgnoresZ = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall,
             };
 
             // start with a random direction
-            _body.VelocityTarget = new Vector2(
-                Game1.RandomNumber.Next(0, 2) * 2 - 1, Game1.RandomNumber.Next(0, 2) * 2 - 1) * 0.7f;
+            _body.VelocityTarget =
+                new Vector2(
+                    Game1.RandomNumber.Next(0, 2) * 2 - 1,
+                    Game1.RandomNumber.Next(0, 2) * 2 - 1
+                ) * 0.7f;
 
             var damageCollider = new CBox(EntityPosition, -12, -12, 0, 24, 24, 8);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
@@ -82,7 +94,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Update()
         {
-            var animationFramePercentage = _animator.FrameCounter / _animator.CurrentFrame.FrameTime;
+            var animationFramePercentage =
+                _animator.FrameCounter / _animator.CurrentFrame.FrameTime;
             bool state = animationFramePercentage % 0.5 < 0.25;
 
             if (GameSettings.EpilepsySafe)
@@ -102,7 +115,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (light_source && GameSettings.ObjectLights)
                 if (_sprite.SpriteShader != null)
-                    DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size), new Color(light_red, light_grn, light_blu) * light_bright);
+                    DrawHelper.DrawLight(
+                        spriteBatch,
+                        new Rectangle(
+                            (int)EntityPosition.X - light_size / 2,
+                            (int)EntityPosition.Y - light_size / 2,
+                            light_size,
+                            light_size
+                        ),
+                        new Color(light_red, light_grn, light_blu) * light_bright
+                    );
         }
     }
 }

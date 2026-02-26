@@ -19,9 +19,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _transitionCounter = TransitionTime;
         private int _lightState;
 
-        public ObjBed() : base("editor bed") { }
+        public ObjBed()
+            : base("editor bed") { }
 
-        public ObjBed(Map.Map map, int posX, int posY, string nextMap, string lampKey) : base(map)
+        public ObjBed(Map.Map map, int posX, int posY, string nextMap, string lampKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 32);
@@ -29,7 +31,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             _nextMap = nextMap;
             _lampKey = lampKey;
 
-            var boxPushable = new CBox(EntityPosition, 0, 0, 16, 32 - MapManager.ObjLink.BodyRectangle.Height, 8);
+            var boxPushable = new CBox(
+                EntityPosition,
+                0,
+                0,
+                16,
+                32 - MapManager.ObjLink.BodyRectangle.Height,
+                8
+            );
 
             AddComponent(PushableComponent.Index, new PushableComponent(boxPushable, OnPush));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -37,10 +46,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool IsStateValid()
         {
-            return !(MapManager.ObjLink.IsAttackingState() || 
-                    MapManager.ObjLink.IsChargingState() || 
-                    MapManager.ObjLink.IsBlockingState() || 
-                    MapManager.ObjLink.IsJumpingState());
+            return !(
+                MapManager.ObjLink.IsAttackingState()
+                || MapManager.ObjLink.IsChargingState()
+                || MapManager.ObjLink.IsBlockingState()
+                || MapManager.ObjLink.IsJumpingState()
+            );
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
@@ -51,7 +62,11 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // Jump into the bed and start the transition.
                 _startBed = true;
                 Game1.GameManager.SetMusic(29, 2);
-                MapManager.ObjLink.StartRailJump(new Vector2(EntityPosition.X + 8, EntityPosition.Y + 21), 1, 1);
+                MapManager.ObjLink.StartRailJump(
+                    new Vector2(EntityPosition.X + 8, EntityPosition.Y + 21),
+                    1,
+                    1
+                );
                 MapManager.ObjLink.StartBedTransition();
             }
             return false;
@@ -81,7 +96,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 MapManager.ObjLink.MapTransitionStart = MapManager.ObjLink.Position;
                 MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.Position;
 
-                var transitionSystem = ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]);
+                var transitionSystem = (
+                    (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+                );
                 transitionSystem.AppendMapChange(_nextMap, "bed");
                 transitionSystem.StartDreamTransition = true;
             }

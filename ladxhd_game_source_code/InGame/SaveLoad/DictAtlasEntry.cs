@@ -15,14 +15,22 @@ namespace ProjectZ.InGame.SaveLoad
         public readonly int TextureScale;
         public readonly float Scale;
 
-        public DictAtlasEntry(Texture2D texture, Rectangle sourceRectangle, Vector2 origin, int textureScale)
+        public DictAtlasEntry(
+            Texture2D texture,
+            Rectangle sourceRectangle,
+            Vector2 origin,
+            int textureScale
+        )
         {
             Texture = texture;
 
             SourceRectangle = sourceRectangle;
             ScaledRectangle = new Rectangle(
-                sourceRectangle.X * textureScale, sourceRectangle.Y * textureScale,
-                sourceRectangle.Width * textureScale, sourceRectangle.Height * textureScale);
+                sourceRectangle.X * textureScale,
+                sourceRectangle.Y * textureScale,
+                sourceRectangle.Width * textureScale,
+                sourceRectangle.Height * textureScale
+            );
 
             Origin = origin;
             ScaledOrigin = new Vector2(origin.X * textureScale, origin.Y * textureScale);

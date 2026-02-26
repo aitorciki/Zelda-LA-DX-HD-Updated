@@ -27,14 +27,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _wasColliding;
         private int _lives = EnemyLives.ArmMimic;
 
-        public EnemyArmMimic() : base("armMimic") { }
+        public EnemyArmMimic()
+            : base("armMimic") { }
 
-        public EnemyArmMimic(Map.Map map, int posX, int posY) : base(map)
+        public EnemyArmMimic(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -47,14 +49,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body = new BodyComponent(EntityPosition, -7, -14, 14, 14, 4)
             {
                 FieldRectangle = map.GetField(posX, posY),
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 IsSlider = true,
                 AbsorbPercentage = 0.75f,
-                MaxSlideDistance = 4.0f
+                MaxSlideDistance = 4.0f,
             };
             var stateUpdate = new AiState(Update);
 
@@ -63,22 +65,37 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _aiComponent.States.Add("idle", stateUpdate);
             new AiFallState(_aiComponent, _body, null, null, 300);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiStunnedState = new AiStunnedState(_aiComponent, animatorComponent, 3300, 900);
 
             _aiComponent.ChangeState("idle");
 
             var hittableBox = new CBox(EntityPosition, -6, -12, 0, 12, 12, 4);
-            var damageBox   = new CBox(EntityPosition, -4, -8,  0,  8,  8, 4);
+            var damageBox = new CBox(EntityPosition, -4, -8, 0, 8, 8, 4);
             var pushableBox = new CBox(EntityPosition, -5, -10, 0, 10, 10, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 12));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(hittableBox, HitType.Enemy, 12)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
         }
 
@@ -121,8 +138,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                     // Stops the enemy if the player runs into an obstacle.
                     moveVelocity = new Vector2(
-                        Math.Min(Math.Abs(moveVelocity.X), Math.Abs(diff.X)) * Math.Sign(moveVelocity.X),
-                        Math.Min(Math.Abs(moveVelocity.Y), Math.Abs(diff.Y)) * Math.Sign(moveVelocity.Y));
+                        Math.Min(Math.Abs(moveVelocity.X), Math.Abs(diff.X))
+                            * Math.Sign(moveVelocity.X),
+                        Math.Min(Math.Abs(moveVelocity.Y), Math.Abs(diff.Y))
+                            * Math.Sign(moveVelocity.Y)
+                    );
 
                     _body.VelocityTarget = moveVelocity;
 
@@ -156,12 +176,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -178,7 +208,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // stun state
-            if (hitType == HitType.Hookshot || hitType == HitType.Boomerang || hitType == HitType.ThrownObject)
+            if (
+                hitType == HitType.Hookshot
+                || hitType == HitType.Boomerang
+                || hitType == HitType.ThrownObject
+            )
             {
                 _body.VelocityTarget = Vector2.Zero;
                 _damageField.IsActive = false;
@@ -192,7 +226,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // damaged not from the front; piece of power or while using pegasus boots
-            if (hitType != HitType.PegasusBootsSword && hitType != HitType.SwordShot && (hitType & HitType.SwordSpin) == 0 && !pieceOfPower)
+            if (
+                hitType != HitType.PegasusBootsSword
+                && hitType != HitType.SwordShot
+                && (hitType & HitType.SwordSpin) == 0
+                && !pieceOfPower
+            )
                 damage = 0;
 
             if (_damageState.CurrentLives <= 0)

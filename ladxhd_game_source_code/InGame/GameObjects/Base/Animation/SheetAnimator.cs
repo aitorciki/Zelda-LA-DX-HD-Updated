@@ -40,15 +40,22 @@ namespace ProjectZ.InGame.GameObjects.Base
             {
                 _frameCounter += Game1.DeltaTime * SpeedMultiplier;
 
-                while (_frameCounter > Animations[_currentAnimation].Frames[CurrentFrameIndex].FrameTime)
+                while (
+                    _frameCounter
+                    > Animations[_currentAnimation].Frames[CurrentFrameIndex].FrameTime
+                )
                 {
-                    _frameCounter -= Animations[_currentAnimation].Frames[CurrentFrameIndex].FrameTime;
+                    _frameCounter -= Animations[_currentAnimation]
+                        .Frames[CurrentFrameIndex]
+                        .FrameTime;
 
                     if (CurrentFrameIndex + 1 >= Animations[_currentAnimation].Frames.Length)
                     {
                         // stop playing
-                        if (Animations[_currentAnimation].LoopCount >= 0 &&
-                            Animations[_currentAnimation].LoopCount <= _currentLoop)
+                        if (
+                            Animations[_currentAnimation].LoopCount >= 0
+                            && Animations[_currentAnimation].LoopCount <= _currentLoop
+                        )
                         {
                             IsPlaying = false;
                             OnAnimationFinished?.Invoke();

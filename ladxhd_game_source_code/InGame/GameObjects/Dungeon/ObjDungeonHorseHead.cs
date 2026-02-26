@@ -37,12 +37,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _chessBounces;
         private bool _reversal;
 
-        public ObjDungeonHorseHead() : base("horse_head_up") { }
+        public ObjDungeonHorseHead()
+            : base("horse_head_up") { }
 
-        public ObjDungeonHorseHead(Map.Map map, int posX, int posY, string strKey, int direction) : base(map)
+        public ObjDungeonHorseHead(Map.Map map, int posX, int posY, string strKey, int direction)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 13, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 13, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 13, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
 
@@ -61,7 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 MoveCollision = Collision,
                 DragAir = 0.95f,
                 Gravity = -0.125f,
-                FieldRectangle = map.GetField(posX, posY, 16)
+                FieldRectangle = map.GetField(posX, posY, 16),
             };
 
             _spriteHeadUp = Resources.GetSprite("horse_head_up");
@@ -70,11 +72,22 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _cSprite = new CSprite(_spriteHeadDown, EntityPosition, new Vector2(-8, -13));
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)), CarryInit, CarryUpdate, CarryThrow));
+            AddComponent(
+                CarriableComponent.Index,
+                new CarriableComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)),
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+            );
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_cSprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_cSprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _cSprite));
 
             DecrementUpState();
@@ -136,14 +149,36 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             // Prvents the horse head from being able to be thrown through a wall.
             var outBox = Box.Empty;
-            if (!Map.Is2dMap &&
-                Map.Objects.Collision(_upperBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox) &&
-                Map.Objects.Collision(_lowerBox.Box, Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref outBox))
+            if (
+                !Map.Is2dMap
+                && Map.Objects.Collision(
+                    _upperBox.Box,
+                    Box.Empty,
+                    Values.CollisionTypes.Normal,
+                    0,
+                    _body.Level,
+                    ref outBox
+                )
+                && Map.Objects.Collision(
+                    _lowerBox.Box,
+                    Box.Empty,
+                    Values.CollisionTypes.Normal,
+                    0,
+                    _body.Level,
+                    ref outBox
+                )
+            )
             {
                 switch (_throwDirection)
                 {
-                    case 0: case 2: _body.Velocity.X = -_body.Velocity.X; break;
-                    case 1: case 3: _body.Velocity.Y = -_body.Velocity.Y; break;
+                    case 0:
+                    case 2:
+                        _body.Velocity.X = -_body.Velocity.X;
+                        break;
+                    case 1:
+                    case 3:
+                        _body.Velocity.Y = -_body.Velocity.Y;
+                        break;
                 }
                 _reversal = true;
                 _throwDirection = AnimationHelper.OffsetDirection(_throwDirection, 2);
@@ -202,7 +237,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _wasThrown = false;
                 _bounceCount++;
 
-                _direction = AnimationHelper.OffsetDirection(_direction, _throwDirection > 2 ? 1 : -1);
+                _direction = AnimationHelper.OffsetDirection(
+                    _direction,
+                    _throwDirection > 2 ? 1 : -1
+                );
 
                 // jump to the left or right after the second bounce
                 var velocityDirection = _throwDirection;
@@ -210,7 +248,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 {
                     _chessBounces = false;
                     _body.Bounciness = 0;
-                    velocityDirection = AnimationHelper.OffsetDirection(velocityDirection, Game1.RandomNumber.Next(0, 2) * 2 - 1);
+                    velocityDirection = AnimationHelper.OffsetDirection(
+                        velocityDirection,
+                        Game1.RandomNumber.Next(0, 2) * 2 - 1
+                    );
 
                     // 50% chance that the horse head will stand up after the throw
                     if (Game1.RandomNumber.Next(0, 4) <= 1 || _wasUp)
@@ -246,7 +287,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             }
 
             // make sure that the throw direction gets changed so the next bounce will not go towards the wall
-            if ((direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
+            if (
+                (direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0
+            )
                 _throwDirection = AnimationHelper.OffsetDirection(_throwDirection, 2);
 
             if ((direction & Values.BodyCollision.Horizontal) != 0)
@@ -255,7 +298,13 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _body.Velocity.Y = -_body.Velocity.Y * 0.65f;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

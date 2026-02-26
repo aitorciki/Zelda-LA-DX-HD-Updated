@@ -87,7 +87,7 @@ namespace ProjectZ.InGame.Overlay
         private const int ScrollTime = 125;
         private bool _textScrolling;
 
-        // Mod File Values 
+        // Mod File Values
         int textbox_scale = 0;
 
         public TextboxOverlay()
@@ -100,12 +100,32 @@ namespace ProjectZ.InGame.Overlay
 
             _animator = AnimatorSaveLoad.LoadAnimator("dialog_arrow");
 
-            _textboxBackground = new UiRectangle(Rectangle.Empty, "textboxblur", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
+            _textboxBackground = new UiRectangle(
+                Rectangle.Empty,
+                "textboxblur",
+                Values.ScreenNameGame,
+                Color.Transparent,
+                Color.Transparent,
+                null
+            )
+            {
+                Radius = Values.UiTextboxRadius,
+            };
             Game1.UiManager.AddElement(_textboxBackground, true);
 
             for (var i = 0; i < _textboxBackgroundChoice.Length; i++)
             {
-                _textboxBackgroundChoice[i] = new UiRectangle(Rectangle.Empty, "", Values.ScreenNameGame, Color.Transparent, Color.Transparent, null) { Radius = Values.UiTextboxRadius };
+                _textboxBackgroundChoice[i] = new UiRectangle(
+                    Rectangle.Empty,
+                    "",
+                    Values.ScreenNameGame,
+                    Color.Transparent,
+                    Color.Transparent,
+                    null
+                )
+                {
+                    Radius = Values.UiTextboxRadius,
+                };
                 Game1.UiManager.AddElement(_textboxBackgroundChoice[i], true);
             }
         }
@@ -148,12 +168,18 @@ namespace ProjectZ.InGame.Overlay
             // Update choice display animations when needed.
             if (_isChoice && !_running && _end)
             {
-                _choicePercentage = AnimationHelper.MoveToTarget(_choicePercentage, 1, 0.075f * Game1.TimeMultiplier);
+                _choicePercentage = AnimationHelper.MoveToTarget(
+                    _choicePercentage,
+                    1,
+                    0.075f * Game1.TimeMultiplier
+                );
 
                 _choiceWidth = 0;
                 for (var i = 0; i < _choices.Length; i++)
                 {
-                    var width = ((int)Resources.GameFont.MeasureString("" + _choices[i] + "").X + 8) * _uiScale;
+                    var width =
+                        ((int)Resources.GameFont.MeasureString("" + _choices[i] + "").X + 8)
+                        * _uiScale;
                     if (_choiceWidth < width)
                         _choiceWidth = width;
                 }
@@ -161,20 +187,51 @@ namespace ProjectZ.InGame.Overlay
                 for (var i = 0; i < _choices.Length; i++)
                 {
                     if (_choicePercentage >= i * 0.25f)
-                        _textboxChoice[i].Percentage = AnimationHelper.MoveToTarget(_textboxChoice[i].Percentage, 1, TransitionSpeed * Game1.TimeMultiplier);
+                        _textboxChoice[i].Percentage = AnimationHelper.MoveToTarget(
+                            _textboxChoice[i].Percentage,
+                            1,
+                            TransitionSpeed * Game1.TimeMultiplier
+                        );
 
-                    _textboxChoice[i].SelectionPercentage = AnimationHelper.MoveToTarget(_textboxChoice[i].SelectionPercentage, _currentChoiceSelection == i ? 1 : 0, TransitionSpeed * Game1.TimeMultiplier);
+                    _textboxChoice[i].SelectionPercentage = AnimationHelper.MoveToTarget(
+                        _textboxChoice[i].SelectionPercentage,
+                        _currentChoiceSelection == i ? 1 : 0,
+                        TransitionSpeed * Game1.TimeMultiplier
+                    );
 
                     var choicePositionY = _dialogBoxHeight + 1;
                     var padding = (int)(_textboxChoice[i].SelectionPercentage * _uiScale);
 
-                    _textboxBackgroundChoice[i].BackgroundColor = Color.Lerp(Values.TextboxBackgroundColor, Values.TextboxFontColor, _textboxChoice[i].SelectionPercentage) * 0.85f * _currentOpacity * _textboxChoice[i].Percentage;
-                    _textboxBackgroundChoice[i].BlurColor = Values.TextboxBlurColor * _currentOpacity * _textboxChoice[i].Percentage;
+                    _textboxBackgroundChoice[i].BackgroundColor =
+                        Color.Lerp(
+                            Values.TextboxBackgroundColor,
+                            Values.TextboxFontColor,
+                            _textboxChoice[i].SelectionPercentage
+                        )
+                        * 0.85f
+                        * _currentOpacity
+                        * _textboxChoice[i].Percentage;
+                    _textboxBackgroundChoice[i].BlurColor =
+                        Values.TextboxBlurColor * _currentOpacity * _textboxChoice[i].Percentage;
                     _textboxBackgroundChoice[i].Rectangle = new Rectangle(
-                        _dialogBoxRectangle.X + _dialogBoxRectangle.Width - _choiceWidth * (_choices.Length - i) - (3 * _uiScale) * (_choices.Length - 1 - i) - padding - _uiScale,
-                        _dialogBoxRectangle.Y + choicePositionY * _uiScale + (int)_textboxOffsetY - padding + (int)(Math.Sin((1 - _textboxChoice[i].Percentage) * Math.PI / 2) * 4 * _uiScale),
-                        _choiceWidth + 2 * padding, (Resources.GameFontHeight + 4) * _uiScale + 2 * padding);
-
+                        _dialogBoxRectangle.X
+                            + _dialogBoxRectangle.Width
+                            - _choiceWidth * (_choices.Length - i)
+                            - (3 * _uiScale) * (_choices.Length - 1 - i)
+                            - padding
+                            - _uiScale,
+                        _dialogBoxRectangle.Y
+                            + choicePositionY * _uiScale
+                            + (int)_textboxOffsetY
+                            - padding
+                            + (int)(
+                                Math.Sin((1 - _textboxChoice[i].Percentage) * Math.PI / 2)
+                                * 4
+                                * _uiScale
+                            ),
+                        _choiceWidth + 2 * padding,
+                        (Resources.GameFontHeight + 4) * _uiScale + 2 * padding
+                    );
                 }
             }
             // Freeze or unfreeze game logic as needed.
@@ -214,19 +271,55 @@ namespace ProjectZ.InGame.Overlay
                 var scrollPercentage = _scrollCounter / ScrollTime;
                 scrollOffset = scrollPercentage * Resources.GameFontHeight * _uiScale;
 
-                spriteBatch.DrawString(Resources.GameFont, _scrollText,
-                    new Vector2(DialogBoxTextBox.X, DialogBoxTextBox.Y + _textboxOffsetY - Resources.GameFontHeight * _uiScale + scrollOffset + _textOffsetY * _uiScale),
-                    Values.TextboxFontColor * _currentOpacity * Math.Clamp(scrollPercentage * 2f - 1f, 0, 1), 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
+                spriteBatch.DrawString(
+                    Resources.GameFont,
+                    _scrollText,
+                    new Vector2(
+                        DialogBoxTextBox.X,
+                        DialogBoxTextBox.Y
+                            + _textboxOffsetY
+                            - Resources.GameFontHeight * _uiScale
+                            + scrollOffset
+                            + _textOffsetY * _uiScale
+                    ),
+                    Values.TextboxFontColor
+                        * _currentOpacity
+                        * Math.Clamp(scrollPercentage * 2f - 1f, 0, 1),
+                    0,
+                    Vector2.Zero,
+                    _uiScale,
+                    SpriteEffects.None,
+                    0
+                );
             }
 
             // draw the dialog box
-            spriteBatch.DrawString(Resources.GameFont, _strDialog,
-                new Vector2(DialogBoxTextBox.X, DialogBoxTextBox.Y + _textboxOffsetY + scrollOffset + _textOffsetY * _uiScale),
-                Values.TextboxFontColor * _currentOpacity, 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(
+                Resources.GameFont,
+                _strDialog,
+                new Vector2(
+                    DialogBoxTextBox.X,
+                    DialogBoxTextBox.Y + _textboxOffsetY + scrollOffset + _textOffsetY * _uiScale
+                ),
+                Values.TextboxFontColor * _currentOpacity,
+                0,
+                Vector2.Zero,
+                _uiScale,
+                SpriteEffects.None,
+                0
+            );
 
             if (!_running && !_end)
             {
-                _animator.DrawBasic(spriteBatch, new Vector2(_dialogBoxRectangle.Right - _uiScale * 2, _dialogBoxRectangle.Bottom - _uiScale * 2), Color.White, _uiScale);
+                _animator.DrawBasic(
+                    spriteBatch,
+                    new Vector2(
+                        _dialogBoxRectangle.Right - _uiScale * 2,
+                        _dialogBoxRectangle.Bottom - _uiScale * 2
+                    ),
+                    Color.White,
+                    _uiScale
+                );
             }
 
             // show the choices if the text is fully shown
@@ -235,12 +328,32 @@ namespace ProjectZ.InGame.Overlay
                 for (var i = 0; i < _choices.Length; i++)
                 {
                     var textSize = Resources.GameFont.MeasureString(_choices[i]);
-                    var color = Color.Lerp(Values.TextboxFontColor, Values.TextboxBackgroundColor, _textboxChoice[i].SelectionPercentage);
-                    var posX = _textboxBackgroundChoice[i].Rectangle.X + _textboxBackgroundChoice[i].Rectangle.Width / 2 - (textSize.X * _uiScale) / 2;
-                    var posY = _textboxBackgroundChoice[i].Rectangle.Y + _textboxBackgroundChoice[i].Rectangle.Height / 2 - (textSize.Y * _uiScale) / 2 + _uiScale;
+                    var color = Color.Lerp(
+                        Values.TextboxFontColor,
+                        Values.TextboxBackgroundColor,
+                        _textboxChoice[i].SelectionPercentage
+                    );
+                    var posX =
+                        _textboxBackgroundChoice[i].Rectangle.X
+                        + _textboxBackgroundChoice[i].Rectangle.Width / 2
+                        - (textSize.X * _uiScale) / 2;
+                    var posY =
+                        _textboxBackgroundChoice[i].Rectangle.Y
+                        + _textboxBackgroundChoice[i].Rectangle.Height / 2
+                        - (textSize.Y * _uiScale) / 2
+                        + _uiScale;
 
-                    spriteBatch.DrawString(Resources.GameFont, _choices[i],
-                        new Vector2((int)posX, (int)posY), color * _currentOpacity * _textboxChoice[i].Percentage, 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(
+                        Resources.GameFont,
+                        _choices[i],
+                        new Vector2((int)posX, (int)posY),
+                        color * _currentOpacity * _textboxChoice[i].Percentage,
+                        0,
+                        Vector2.Zero,
+                        _uiScale,
+                        SpriteEffects.None,
+                        0
+                    );
                 }
             }
         }
@@ -269,7 +382,8 @@ namespace ProjectZ.InGame.Overlay
             // Detect confirm, cancel, and potentially start button if dialog skip is enabled in options.
             var confirmPressed = ControlHandler.ButtonPressed(ControlHandler.ConfirmButton);
             var cancelPressed = ControlHandler.ButtonPressed(ControlHandler.CancelButton);
-            var startPressed = ControlHandler.ButtonPressed(CButtons.Start) && GameSettings.DialogSkip;
+            var startPressed =
+                ControlHandler.ButtonPressed(CButtons.Start) && GameSettings.DialogSkip;
 
             // If pressing the start button rapidly skip through the text.
             if (startPressed)
@@ -292,7 +406,10 @@ namespace ProjectZ.InGame.Overlay
 
                         // Save the current choice (key value pair) to the SaveManager dictionary.
                         if (_isChoice && confirmPressed)
-                            Game1.GameManager.SaveManager.SetString(_choiceKey, _currentChoiceSelection.ToString());
+                            Game1.GameManager.SaveManager.SetString(
+                                _choiceKey,
+                                _currentChoiceSelection.ToString()
+                            );
 
                         // Fix for stuck block/shield button
                         MapManager.ObjLink.ToggleBlockButton(false);
@@ -333,7 +450,11 @@ namespace ProjectZ.InGame.Overlay
 
             // If there is room print the next letter (I think).
             var updated = false;
-            while (_running && _currentState + _currentDialogCount < _strFullText.Length && _textScrollCounter > _scrollSpeed)
+            while (
+                _running
+                && _currentState + _currentDialogCount < _strFullText.Length
+                && _textScrollCounter > _scrollSpeed
+            )
             {
                 updated = true;
                 _textScrollCounter -= _scrollSpeed;
@@ -369,7 +490,7 @@ namespace ProjectZ.InGame.Overlay
             if (_strFullText[_currentState + _currentDialogCount] == '\n')
             {
                 if (_currentLine + 1 < MaxLines)
-                    _currentLine++; 
+                    _currentLine++;
                 else if (_currentLineAddition < MaxLines)
                 {
                     _currentLineAddition++;
@@ -401,10 +522,8 @@ namespace ProjectZ.InGame.Overlay
 
             if (!fastForward && isMonkey && _running && _currentDialogCount % 7 == 0)
                 Game1.GameManager.PlaySoundEffect("D370-20-14", true);
-
             else if (!fastForward && !OwlMode && _running && _currentDialogCount % 6 == 0)
                 Game1.GameManager.PlaySoundEffect("D370-15-0F", true);
-
             else if (!fastForward && OwlMode && _running && _currentDialogCount % 28 == 0)
                 Game1.GameManager.PlaySoundEffect("D370-25-19", true);
 
@@ -457,20 +576,27 @@ namespace ProjectZ.InGame.Overlay
         public void SetUpDialogBox()
         {
             // only works if every letter has the same size
-            _letterSize = new Point((int)Resources.GameFont.MeasureString("A").X, (int)Resources.GameFont.MeasureString("A").Y);
+            _letterSize = new Point(
+                (int)Resources.GameFont.MeasureString("A").X,
+                (int)Resources.GameFont.MeasureString("A").Y
+            );
 
             _dialogBoxWidth = _letterSize.X * MaxCharacters + _paddingLeft + _paddingRight;
             _dialogBoxHeight = _letterSize.Y * MaxLines + _paddingV * 2;
 
             _dialogBoxRectangle = new Rectangle(
                 Game1.WindowWidth / 2 - _dialogBoxWidth * _uiScale / 2,
-                Game1.WindowHeight - (_uiScale * _dialogBoxHeight) - _uiScale * _textboxMargin, _dialogBoxWidth * _uiScale, _dialogBoxHeight * _uiScale);
+                Game1.WindowHeight - (_uiScale * _dialogBoxHeight) - _uiScale * _textboxMargin,
+                _dialogBoxWidth * _uiScale,
+                _dialogBoxHeight * _uiScale
+            );
 
             DialogBoxTextBox = new Rectangle(
                 _dialogBoxRectangle.X + _paddingLeft * _uiScale,
                 _dialogBoxRectangle.Y + _paddingV * _uiScale,
                 _dialogBoxRectangle.Width - (_paddingLeft + _paddingRight) * _uiScale,
-                _dialogBoxRectangle.Height - (_paddingV * 2) * _uiScale);
+                _dialogBoxRectangle.Height - (_paddingV * 2) * _uiScale
+            );
 
             _textboxBackground.Rectangle = _dialogBoxRectangle;
         }
@@ -565,7 +691,10 @@ namespace ProjectZ.InGame.Overlay
                     closeIndex = inputString.IndexOf(']', closeIndex + 1);
                     if (closeIndex != -1)
                     {
-                        var stringKey = inputString.Substring(openIndex + 1, closeIndex - openIndex - 1);
+                        var stringKey = inputString.Substring(
+                            openIndex + 1,
+                            closeIndex - openIndex - 1
+                        );
                         var value = Game1.GameManager.SaveManager.GetString(stringKey);
                         if (value != null)
                         {
@@ -620,7 +749,10 @@ namespace ProjectZ.InGame.Overlay
             while (currentState < inputString.Length)
             {
                 lines++;
-                var subString = inputString.Substring(currentState, Math.Min(MaxCharacters, inputString.Length - currentState));
+                var subString = inputString.Substring(
+                    currentState,
+                    Math.Min(MaxCharacters, inputString.Length - currentState)
+                );
 
                 var indexN = subString.IndexOf('\n');
                 var indexF = subString.IndexOf('\f');
@@ -650,8 +782,10 @@ namespace ProjectZ.InGame.Overlay
 
                         outString += strCenter;
                         // new line when there is still text and no new textbox
-                        if (currentState + closeIndex + 1 < inputString.Length &&
-                            inputString[currentState + closeIndex + 1] != '\f')
+                        if (
+                            currentState + closeIndex + 1 < inputString.Length
+                            && inputString[currentState + closeIndex + 1] != '\f'
+                        )
                             outString += "\n";
 
                         currentState += closeIndex + 1;
@@ -689,7 +823,8 @@ namespace ProjectZ.InGame.Overlay
                         if (inputString[currentState + MaxCharacters - i] == ' ')
                         {
                             splitString = true;
-                            outString += inputString.Substring(currentState, MaxCharacters - i) + "\n";
+                            outString +=
+                                inputString.Substring(currentState, MaxCharacters - i) + "\n";
                             currentState = currentState + MaxCharacters - i + 1;
                             break;
                         }

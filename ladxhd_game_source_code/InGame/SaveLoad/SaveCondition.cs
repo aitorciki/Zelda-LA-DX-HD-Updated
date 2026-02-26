@@ -7,7 +7,8 @@ namespace ProjectZ.InGame.SaveLoad
     // I never wrote something like this before and did not look into how it is normally done...
     class SaveCondition
     {
-        private static readonly Dictionary<int, string> BracketDictionary = new Dictionary<int, string>();
+        private static readonly Dictionary<int, string> BracketDictionary =
+            new Dictionary<int, string>();
 
         public static void TestCondition()
         {
@@ -71,7 +72,8 @@ namespace ProjectZ.InGame.SaveLoad
 
                 var condition = new CNodeOr(
                     ParseCondition(subString[0]),
-                    ParseCondition(subString[1]));
+                    ParseCondition(subString[1])
+                );
 
                 return condition;
             }
@@ -82,7 +84,8 @@ namespace ProjectZ.InGame.SaveLoad
 
                 var condition = new CNodeAnd(
                     ParseCondition(subString[0]),
-                    ParseCondition(subString[1]));
+                    ParseCondition(subString[1])
+                );
 
                 return condition;
             }

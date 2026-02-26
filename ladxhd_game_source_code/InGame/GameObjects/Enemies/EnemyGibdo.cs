@@ -27,14 +27,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _direction;
         private int _lives = EnemyLives.Gibdo;
 
-        public EnemyGibdo() : base("gibdo") { }
+        public EnemyGibdo()
+            : base("gibdo") { }
 
-        public EnemyGibdo(Map.Map map, int posX, int posY) : base(map)
+        public EnemyGibdo(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -43,23 +45,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
-                Drag = 0.85f
+                Drag = 0.85f,
             };
 
             var stateWalking = new AiState { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walk"), 550, 850));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walk"), 550, 850)
+            );
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("walk", stateWalking);
 
@@ -68,25 +76,46 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 HitMultiplierX = 1.0f,
                 HitMultiplierY = 1.0f,
                 OnDeath = OnDeath,
-                OnBurn = OnBurn
+                OnBurn = OnBurn,
             };
-            _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "walk" };
+            _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900)
+            {
+                ShakeOffset = 1,
+                SilentStateChange = false,
+                ReturnState = "walk",
+            };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
 
             var damageBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 4);
             var pushableBox = new CBox(EntityPosition, -6, -13, 0, 12, 13, 4);
             var hittableBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
 
-            _stalfos = new EnemyStalfosOrange(Map, posX, posY, true) { IsActive = false, WasSpawned = true };
+            _stalfos = new EnemyStalfosOrange(Map, posX, posY, true)
+            {
+                IsActive = false,
+                WasSpawned = true,
+            };
             Map.Objects.SpawnObject(_stalfos);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
 
             _aiComponent.ChangeState("walk");
@@ -161,7 +190,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 3f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -194,7 +229,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public void AddToEnemyTriggerGroup(ObjEnemyTrigger etrigger)
         {
-            // If respawned in a room with an enemy trigger, this is a means 
+            // If respawned in a room with an enemy trigger, this is a means
             // to adding the Stalfos spawned with the Gibdo to the trigger list.
             etrigger.EnemyTriggerList.Add(_stalfos);
         }

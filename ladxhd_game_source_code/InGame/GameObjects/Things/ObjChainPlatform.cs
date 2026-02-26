@@ -39,7 +39,15 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _wasMoved;
         private bool _resettingPlatforms;
 
-        public ObjChainPlatform(Map.Map map, int posX, int posY, string strPlatformKey, int bottom, int chainTop) : base(map)
+        public ObjChainPlatform(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strPlatformKey,
+            int bottom,
+            int chainTop
+        )
+            : base(map)
         {
             _spritePlatform = Resources.GetSprite("small_platform");
             _spriteChain = Resources.GetSprite("platformchain");
@@ -54,7 +62,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, chainTop, 16, -chainTop + bottom + 16);
 
-            _chainPosition = new Vector2(posX + 8 - _spriteChain.SourceRectangle.Width / 2, posY + chainTop);
+            _chainPosition = new Vector2(
+                posX + 8 - _spriteChain.SourceRectangle.Width / 2,
+                posY + chainTop
+            );
 
             _startPosition = new Vector2(posX, posY);
             _bottomPosition = new Vector2(posX, posY + bottom);
@@ -62,20 +73,38 @@ namespace ProjectZ.InGame.GameObjects.Things
             _moveBox = new CBox(EntityPosition, 0, -1, 0, 16, 16, 16);
             _collisionBox = new CBox(EntityPosition, 0, 0, 16, 16, 16);
 
-            AddComponent(CollisionComponent.Index, _cBoxCollision = new BoxCollisionComponent(_collisionBox, Values.CollisionTypes.Normal) { DirectionFlag = 8 });
+            AddComponent(
+                CollisionComponent.Index,
+                _cBoxCollision = new BoxCollisionComponent(
+                    _collisionBox,
+                    Values.CollisionTypes.Normal
+                )
+                {
+                    DirectionFlag = 8,
+                }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
 
             if (_strPlatformKey != null)
             {
                 Game1.GameManager.SaveManager.SetString(_strPlatformKey, "0");
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
             }
         }
 
         private void OnKeyChange()
         {
-            if (!_wasMoved && Game1.GameManager.SaveManager.GetString(_strPlatformMovedKey) == "true")
+            if (
+                !_wasMoved
+                && Game1.GameManager.SaveManager.GetString(_strPlatformMovedKey) == "true"
+            )
             {
                 var strPlatformOffset = Game1.GameManager.SaveManager.GetString(_strPlatformKey);
                 if (!string.IsNullOrEmpty(strPlatformOffset))
@@ -101,7 +130,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             _wasMoved = false;
 
             // is the player standing on the platform?
-            var standingOnTop = MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box) && MapManager.ObjLink.IsGrounded();
+            var standingOnTop =
+                MapManager.ObjLink._body.BodyBox.Box.Intersects(_moveBox.Box)
+                && MapManager.ObjLink.IsGrounded();
 
             if (standingOnTop && PlayerIsMovable())
             {
@@ -124,13 +155,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_resettingPlatforms)
             {
                 var offset = _startPosition.Y - EntityPosition.Y;
-                
+
                 _resetVelocity += 0.035f * Game1.TimeMultiplier;
                 _resetVelocity = MathHelper.Clamp(_resetVelocity, 0, 0.4f);
 
                 if (Math.Abs(offset) > _resetVelocity)
                 {
-                    offset = Math.Sign(offset) * MathHelper.Clamp(Math.Abs(offset), 0, _resetVelocity * Game1.TimeMultiplier);
+                    offset =
+                        Math.Sign(offset)
+                        * MathHelper.Clamp(
+                            Math.Abs(offset),
+                            0,
+                            _resetVelocity * Game1.TimeMultiplier
+                        );
                     SetPosition(EntityPosition.Y + offset);
                 }
                 else
@@ -151,7 +188,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition.Set(new Vector2(EntityPosition.X, newPositionY));
 
             var platformOffset = _startPosition.Y - EntityPosition.Position.Y;
-            Game1.GameManager.SaveManager.SetString(_strPlatformKey, platformOffset.ToString(CultureInfo.InvariantCulture));
+            Game1.GameManager.SaveManager.SetString(
+                _strPlatformKey,
+                platformOffset.ToString(CultureInfo.InvariantCulture)
+            );
             Game1.GameManager.SaveManager.SetString(_strPlatformMovedKey, "true");
         }
 
@@ -168,15 +208,24 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition.Move(offset);
 
             // move the player down
-            SystemBody.MoveBody(MapManager.ObjLink._body, offset * Game1.TimeMultiplier,
-                    Values.CollisionTypes.Normal, false, false, false);
+            SystemBody.MoveBody(
+                MapManager.ObjLink._body,
+                offset * Game1.TimeMultiplier,
+                Values.CollisionTypes.Normal,
+                false,
+                false,
+                false
+            );
 
             _wasMoved = true;
             if (_strPlatformKey != null)
             {
                 // make sure other linked platforms will also be moved
                 var platformOffset = _startPosition.Y - EntityPosition.Position.Y;
-                Game1.GameManager.SaveManager.SetString(_strPlatformKey, platformOffset.ToString(CultureInfo.InvariantCulture));
+                Game1.GameManager.SaveManager.SetString(
+                    _strPlatformKey,
+                    platformOffset.ToString(CultureInfo.InvariantCulture)
+                );
                 Game1.GameManager.SaveManager.SetString(_strPlatformMovedKey, "true");
             }
         }
@@ -188,7 +237,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             var lastPosition = MapManager.ObjLink.Position;
 
             _cBoxCollision.IsActive = false;
-            SystemBody.MoveBody(MapManager.ObjLink._body, new Vector2(0, 1), Values.CollisionTypes.Normal, false, false, false);
+            SystemBody.MoveBody(
+                MapManager.ObjLink._body,
+                new Vector2(0, 1),
+                Values.CollisionTypes.Normal,
+                false,
+                false,
+                false
+            );
             _cBoxCollision.IsActive = true;
 
             // check if the player was moved
@@ -205,10 +261,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             // draw the chain
             var chainLinkCount = (int)Math.Ceiling((EntityPosition.Y - _chainPosition.Y) / 16);
             for (var i = 0; i < chainLinkCount; i++)
-                spriteBatch.Draw(_spriteChain.Texture, new Vector2(_chainPosition.X, _chainPosition.Y + i * 16), _spriteChain.ScaledRectangle, Color.White);
+                spriteBatch.Draw(
+                    _spriteChain.Texture,
+                    new Vector2(_chainPosition.X, _chainPosition.Y + i * 16),
+                    _spriteChain.ScaledRectangle,
+                    Color.White
+                );
 
             // draw the platform
-            spriteBatch.Draw(_spritePlatform.Texture, EntityPosition.Position, _spritePlatform.ScaledRectangle, Color.White);
+            spriteBatch.Draw(
+                _spritePlatform.Texture,
+                EntityPosition.Position,
+                _spritePlatform.ScaledRectangle,
+                Color.White
+            );
         }
     }
 }

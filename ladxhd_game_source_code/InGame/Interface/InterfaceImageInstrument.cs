@@ -14,7 +14,12 @@ class InterfaceImageInstrument : InterfaceElement
         Size = new Point(sprite.ScaledRectangle.Width, sprite.ScaledRectangle.Height);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+    public override void Draw(
+        SpriteBatch spriteBatch,
+        Vector2 drawPosition,
+        float scale,
+        float transparency
+    )
     {
         // The size of the instruments can be changed here.
         scale = scale * 0.90f;

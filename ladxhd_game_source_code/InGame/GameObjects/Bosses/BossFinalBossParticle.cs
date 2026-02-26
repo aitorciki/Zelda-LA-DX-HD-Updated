@@ -15,7 +15,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private float _transparency = 1;
 
-        public BossFinalBossParticle(Map.Map map, Vector2 position, Vector2 velocity) : base(map)
+        public BossFinalBossParticle(Map.Map map, Vector2 position, Vector2 velocity)
+            : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
@@ -30,13 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 Velocity = new Vector3(velocity, 0),
                 Drag = 0.94f,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 

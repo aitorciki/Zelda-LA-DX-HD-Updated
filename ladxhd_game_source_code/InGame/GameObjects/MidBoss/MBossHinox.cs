@@ -14,7 +14,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 {
     class MBossHinox : GameObject
     {
-        private readonly Color[] _colors = new Color[] { new Color(248, 120, 8), new Color(248, 8, 40), new Color(24, 128, 248) };
+        private readonly Color[] _colors = new Color[]
+        {
+            new Color(248, 120, 8),
+            new Color(248, 8, 40),
+            new Color(24, 128, 248),
+        };
 
         private readonly Animator _animator;
         private readonly BodyComponent _body;
@@ -35,12 +40,16 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private float _runParticleCount;
         private bool _playerInRoom;
 
-        public MBossHinox() : base("hinox") { }
+        public MBossHinox()
+            : base("hinox") { }
 
-        public MBossHinox(Map.Map map, int posX, int posY, string saveKey, int color) : base(map)
+        public MBossHinox(Map.Map map, int posX, int posY, string saveKey, int color)
+            : base(map)
         {
-            if (!string.IsNullOrEmpty(saveKey) &&
-                Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -58,13 +67,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _animator.Play("idle_0");
 
             color = MathHelper.Clamp(color, 0, _colors.Length - 1);
-            var sprite = new CSprite(EntityPosition) { SpriteShader = Resources.ColorShader, Color = _colors[color] };
+            var sprite = new CSprite(EntityPosition)
+            {
+                SpriteShader = Resources.ColorShader,
+                Color = _colors[color],
+            };
             var animationComponent = new AnimationComponent(_animator, sprite, Vector2.Zero);
 
             _body = new BodyComponent(EntityPosition, -14, -20, 28, 20, 8)
             {
                 IgnoreHoles = true,
-                FieldRectangle = Map.GetField(posX, posY)
+                FieldRectangle = Map.GetField(posX, posY),
             };
 
             _aiComponent = new AiComponent();
@@ -75,7 +88,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var stateWalk = new AiState { Init = InitWalking };
             stateWalk.Trigger.Add(new AiTriggerRandomTime(EndWalking, 750, 1250));
             var statePreRun = new AiState(UpdatePreRun) { Init = InitPreRun };
-            statePreRun.Trigger.Add(new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("run")));
+            statePreRun.Trigger.Add(
+                new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("run"))
+            );
             var stateRun = new AiState(UpdateRunning) { Init = InitRun };
             stateRun.Trigger.Add(new AiTriggerRandomTime(EndRun, 500, 750));
             var stateThrowLink = new AiState();
@@ -83,11 +98,21 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             stateThrowBomb.Trigger.Add(new AiTriggerCountdown(250, null, ThrowBomb));
             var stateThrownBomb = new AiState(UpdateThrownBomb);
             var stateGrab = new AiState { Init = InitGrab };
-            stateGrab.Trigger.Add(new AiTriggerCountdown(GrabTime, GrabTick, () => _aiComponent.ChangeState("grabbed")));
+            stateGrab.Trigger.Add(
+                new AiTriggerCountdown(
+                    GrabTime,
+                    GrabTick,
+                    () => _aiComponent.ChangeState("grabbed")
+                )
+            );
             var stateGrabbed = new AiState();
-            stateGrabbed.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("throw")));
+            stateGrabbed.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("throw"))
+            );
             var stateThrow = new AiState { Init = InitThrow };
-            stateThrow.Trigger.Add(new AiTriggerCountdown(600, null, () => _aiComponent.ChangeState("walk")));
+            stateThrow.Trigger.Add(
+                new AiTriggerCountdown(600, null, () => _aiComponent.ChangeState("walk"))
+            );
 
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("wait", stateWait);
@@ -100,9 +125,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("grab", stateGrab);
             _aiComponent.States.Add("grabbed", stateGrabbed);
             _aiComponent.States.Add("throw", stateThrow);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false)
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                sprite,
+                _lives,
+                true,
+                false
+            )
             {
-                BossHitSound = true
+                BossHitSound = true,
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 
@@ -111,13 +144,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _grabBox = new CBox(EntityPosition, -20, -20, 0, 40, 24, 8);
             var damageCollider = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
             var hittableBox = new CBox(EntityPosition, -14, -28, 0, 28, 28, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
@@ -138,7 +183,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // Adjust the rect slightly when classic camera is enabled.
             if (Camera.ClassicMode)
-                currentField = new Rectangle(currentField.X + 1, currentField.Y + 1, currentField.Width - 2, currentField.Height - 2);
+                currentField = new Rectangle(
+                    currentField.X + 1,
+                    currentField.Y + 1,
+                    currentField.Width - 2,
+                    currentField.Height - 2
+                );
 
             // Start music when player enters room. Room boolean is used to not reset aiComponent state every loop iteration.
             if (!_playerInRoom && currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
@@ -157,7 +207,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _hitComponent.IsActive = true;
             }
             // Stop the music when the player leaves the room.
-            else if (_playerInRoom && !currentField.Contains(MapManager.ObjLink.CenterPosition.Position))
+            else if (
+                _playerInRoom && !currentField.Contains(MapManager.ObjLink.CenterPosition.Position)
+            )
             {
                 Game1.GameManager.SetMusic(-1, 2);
                 _playerInRoom = false;
@@ -192,7 +244,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void GrabTick(double counter)
         {
             var percentage = 1 - (float)(counter / GrabTime);
-            var grabEndPosition = new Vector3(EntityPosition.X + 16 * _grabDirection, EntityPosition.Y + 1, 26);
+            var grabEndPosition = new Vector3(
+                EntityPosition.X + 16 * _grabDirection,
+                EntityPosition.Y + 1,
+                26
+            );
             var newPosition = Vector3.Lerp(_grabStartPosition, grabEndPosition, percentage);
             MapManager.ObjLink.EntityPosition.Set(newPosition);
         }
@@ -202,7 +258,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Game1.GameManager.PlaySoundEffect("D360-08-08");
 
             // set the position to be inside of the hinox body to not start throwing the player into a collider
-            var grabEndPosition = new Vector3(EntityPosition.X + 16 * _grabDirection, EntityPosition.Y, 25);
+            var grabEndPosition = new Vector3(
+                EntityPosition.X + 16 * _grabDirection,
+                EntityPosition.Y,
+                25
+            );
             MapManager.ObjLink.EntityPosition.Set(grabEndPosition);
             MapManager.ObjLink.EndGrab();
             MapManager.ObjLink.StartThrow(new Vector3(-4.5f * _grabDirection, 2.5f, 0));
@@ -219,7 +279,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // set the animation to the next frame
             _animator.ResetFrameCounter();
-            _animator.SetFrame((_animator.CurrentFrameIndex + 1) % _animator.CurrentAnimation.Frames.Length);
+            _animator.SetFrame(
+                (_animator.CurrentFrameIndex + 1) % _animator.CurrentAnimation.Frames.Length
+            );
         }
 
         private void InitWait()
@@ -272,8 +334,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void UpdateRunning()
         {
             // grab the player
-            if (Game1.GameManager.CurrentHealth > 0 &&
-                _grabBox.Box.Rectangle().Intersects(MapManager.ObjLink.BodyRectangle))
+            if (
+                Game1.GameManager.CurrentHealth > 0
+                && _grabBox.Box.Rectangle().Intersects(MapManager.ObjLink.BodyRectangle)
+            )
                 _aiComponent.ChangeState("grab");
 
             // spawn run particle
@@ -282,9 +346,17 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 _runParticleCount = 133;
 
-                var animator = new ObjAnimator(Map,
-                    (int)EntityPosition.X, (int)(EntityPosition.Y + 1),
-                    0, -1 - (int)EntityPosition.Z, Values.LayerPlayer, "Particles/run", "spawn", true);
+                var animator = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)(EntityPosition.Y + 1),
+                    0,
+                    -1 - (int)EntityPosition.Z,
+                    Values.LayerPlayer,
+                    "Particles/run",
+                    "spawn",
+                    true
+                );
                 Map.Objects.SpawnObject(animator);
             }
         }
@@ -352,7 +424,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // spawns a fairy
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }
@@ -365,7 +439,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -378,10 +458,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 ThrowBomb();
 
             // the boss will throw a bomb right after getting damaged
-            if (!_aiDamageState.IsInDamageState() &&
-                _aiComponent.CurrentStateId != "deathBoss" &&
-                _aiComponent.CurrentStateId != "preRun" &&
-                _aiComponent.CurrentStateId != "run")
+            if (
+                !_aiDamageState.IsInDamageState()
+                && _aiComponent.CurrentStateId != "deathBoss"
+                && _aiComponent.CurrentStateId != "preRun"
+                && _aiComponent.CurrentStateId != "run"
+            )
                 _aiComponent.ChangeState("throwBomb");
 
             if (hitType == HitType.Bow || hitType == HitType.Bomb || hitType == HitType.MagicRod)
@@ -390,7 +472,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (hitType == HitType.Boomerang)
                 damage = 2;
 
-            var hitCollision = _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
+            var hitCollision = _aiDamageState.OnHit(
+                gameObject,
+                direction,
+                hitType,
+                damage,
+                pieceOfPower
+            );
 
             // Stop walking and stop the animation when dead.
             if (_aiDamageState.CurrentLives <= 0)

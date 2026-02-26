@@ -1,14 +1,14 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.GameObjects.Dungeon;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.Map;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {
@@ -61,12 +61,16 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         private bool _drawGlove;
 
-        public MBossBlaino() : base("blaino") { }
+        public MBossBlaino()
+            : base("blaino") { }
 
-        public MBossBlaino(Map.Map map, int posX, int posY, string saveKey, string resetDoor) : base(map)
+        public MBossBlaino(Map.Map map, int posX, int posY, string saveKey, string resetDoor)
+            : base(map)
         {
-            if (!string.IsNullOrEmpty(saveKey) &&
-                Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -111,14 +115,22 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var stateHit3 = new AiState() { Init = InitHit3 };
             stateHit3.Trigger.Add(new AiTriggerCountdown(HitTime3, TickHit3, () => TickHit3(0)));
             var stateHitBlocked = new AiState();
-            stateHitBlocked.Trigger.Add(new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("hit3")));
+            stateHitBlocked.Trigger.Add(
+                new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("hit3"))
+            );
 
             var stateSwing0 = new AiState() { Init = InitSwing0 };
-            stateSwing0.Trigger.Add(new AiTriggerCountdown(TimeSwing0, TickSwing0, () => TickSwing0(0)));
+            stateSwing0.Trigger.Add(
+                new AiTriggerCountdown(TimeSwing0, TickSwing0, () => TickSwing0(0))
+            );
             var stateSwing1 = new AiState();
-            stateSwing1.Trigger.Add(new AiTriggerCountdown(TimeSwing1, null, () => _aiComponent.ChangeState("swing2")));
+            stateSwing1.Trigger.Add(
+                new AiTriggerCountdown(TimeSwing1, null, () => _aiComponent.ChangeState("swing2"))
+            );
             var stateSwing2 = new AiState() { Init = InitSwing2 };
-            stateSwing2.Trigger.Add(new AiTriggerCountdown(TimeSwing2, TickSwing2, () => TickSwing2(0)));
+            stateSwing2.Trigger.Add(
+                new AiTriggerCountdown(TimeSwing2, TickSwing2, () => TickSwing2(0))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("waiting", stateWaiting);
@@ -132,7 +144,15 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("swing0", stateSwing0);
             _aiComponent.States.Add("swing1", stateSwing1);
             _aiComponent.States.Add("swing2", stateSwing2);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                true,
+                false
+            );
             _damageState.AddBossDamageState(OnDeath);
             _damageState.ExplosionOffsetY = 8;
             _aiComponent.ChangeState("waiting");
@@ -140,13 +160,25 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var hittableBox = new CBox(EntityPosition, -6, -16, 0, 12, 16, 8, true);
             var damageBox = new CBox(EntityPosition, -8, -14, 0, 16, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageBox, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageFieldComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(damageBox, OnPush)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, Draw, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, Draw, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             _objGlove = new MBossBlainoGlove(map, this, EntityPosition.Position, resetDoor);
@@ -193,10 +225,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var playerPosition = MapManager.ObjLink.Position;
 
             // jump infront of the player
-            var verticalDistance = Math.Abs(EntityPosition.Y - MapManager.ObjLink.EntityPosition.Y) / 2;
+            var verticalDistance =
+                Math.Abs(EntityPosition.Y - MapManager.ObjLink.EntityPosition.Y) / 2;
             var sinDist = MathF.Sin((float)Game1.TotalGameTime / 500);
             var distanceToPlayer = 26 + sinDist * 2 + verticalDistance;
-            var targetPosition = new Vector2(EntityPosition.X + _direction * distanceToPlayer, EntityPosition.Y);
+            var targetPosition = new Vector2(
+                EntityPosition.X + _direction * distanceToPlayer,
+                EntityPosition.Y
+            );
             var targetDirection = playerPosition - targetPosition;
             var distance = targetDirection.Length();
 
@@ -266,7 +302,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var targetPosition = Vector2.Lerp(_startPosition, _targetPosition, percentage);
 
             // body movement does not work well because the steps are too big in lower framerates
-            targetPosition.X = MathHelper.Clamp(targetPosition.X, _body.FieldRectangle.X + 7, _body.FieldRectangle.Right - 7);
+            targetPosition.X = MathHelper.Clamp(
+                targetPosition.X,
+                _body.FieldRectangle.X + 7,
+                _body.FieldRectangle.Right - 7
+            );
             EntityPosition.Set(targetPosition);
 
             _lastPosition = targetPosition;
@@ -275,9 +315,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private void SetGlovePosition(Vector2 newPosition)
         {
             _glovePosition = newPosition;
-            _objGlove.EntityPosition.Set(new Vector2(
-                EntityPosition.X + _glovePosition.X * -_direction - (_direction == 1 ? 11 : 0),
-                EntityPosition.Y - EntityPosition.Z + _glovePosition.Y));
+            _objGlove.EntityPosition.Set(
+                new Vector2(
+                    EntityPosition.X + _glovePosition.X * -_direction - (_direction == 1 ? 11 : 0),
+                    EntityPosition.Y - EntityPosition.Z + _glovePosition.Y
+                )
+            );
         }
 
         private void InitSwing0()
@@ -300,7 +343,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var percentage = (float)(TimeSwing0 - counter) / 75 + MathF.PI / 2 - MathF.Asin(3 / 4f);
 
             var finishedSwing = false;
-            if ((_lastSwingRotation % MathF.PI) > (percentage % MathF.PI) && percentage / MathF.PI >= 5)
+            if (
+                (_lastSwingRotation % MathF.PI) > (percentage % MathF.PI)
+                && percentage / MathF.PI >= 5
+            )
             {
                 percentage = MathF.PI;
                 finishedSwing = true;
@@ -311,7 +357,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             BodyMove(MathF.Sin(movePercentage * MathF.PI / 2));
 
             // update the glove position
-            var offset = new Vector2(2 - MathF.Cos(percentage) * 4 + MathF.Sin(percentage) * 2, -6 + MathF.Sin(percentage) * 8);
+            var offset = new Vector2(
+                2 - MathF.Cos(percentage) * 4 + MathF.Sin(percentage) * 2,
+                -6 + MathF.Sin(percentage) * 8
+            );
             SetGlovePosition(new Vector2(5, -14) + offset);
 
             if (counter == 0 || finishedSwing)
@@ -328,20 +377,33 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _targetPosition = _startPosition + new Vector2(_direction * 36, 0);
             _lastPosition = Vector2.Zero;
 
-            var originDirection = new Vector2(_glovePosition.X + 5.5f, _glovePosition.Y + 5.5f) - _swingOrigin;
+            var originDirection =
+                new Vector2(_glovePosition.X + 5.5f, _glovePosition.Y + 5.5f) - _swingOrigin;
             _swingStartDistance = originDirection.Length();
             _swingStartRotation = MathF.Atan2(originDirection.Y, originDirection.X);
         }
 
         private void TickSwing2(double counter)
         {
-            var percentage = MathHelper.Clamp((float)((TimeSwing2 - counter) / (TimeSwing2 - 75)), 0, 1);
-            var newRotation = MathHelper.Lerp(_swingStartRotation, _swingStartRotation + 3.75f, percentage);
+            var percentage = MathHelper.Clamp(
+                (float)((TimeSwing2 - counter) / (TimeSwing2 - 75)),
+                0,
+                1
+            );
+            var newRotation = MathHelper.Lerp(
+                _swingStartRotation,
+                _swingStartRotation + 3.75f,
+                percentage
+            );
 
             // moving forward
             BodyMove(MathF.Sin(percentage * MathF.PI / 2));
 
-            SetGlovePosition(new Vector2(_swingOrigin.X - 5.5f, _swingOrigin.Y - 5.5f) + new Vector2(MathF.Cos(newRotation), MathF.Sin(newRotation)) * _swingStartDistance);
+            SetGlovePosition(
+                new Vector2(_swingOrigin.X - 5.5f, _swingOrigin.Y - 5.5f)
+                    + new Vector2(MathF.Cos(newRotation), MathF.Sin(newRotation))
+                        * _swingStartDistance
+            );
 
             // change animation frame
             if (newRotation > _swingStartRotation + 1.85f)
@@ -415,7 +477,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             BodyMove(sPercentage);
 
             // update the glove position
-            SetGlovePosition(Vector2.Lerp(new Vector2(-15, -11), new Vector2(-15 - 16, -11), sPercentageGlove));
+            SetGlovePosition(
+                Vector2.Lerp(new Vector2(-15, -11), new Vector2(-15 - 16, -11), sPercentageGlove)
+            );
 
             if (time == 0)
                 _aiComponent.ChangeState("hit3");
@@ -487,8 +551,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             if (_animator.CollisionRectangle != Rectangle.Empty)
             {
                 _objGlove.IsActive = true;
-                _objGlove.EntityPosition.Set(EntityPosition.Position +
-                    new Vector2(_animator.CollisionRectangle.X * -_direction - (_direction == 1 ? 11 : 0), _animator.CollisionRectangle.Y));
+                _objGlove.EntityPosition.Set(
+                    EntityPosition.Position
+                        + new Vector2(
+                            _animator.CollisionRectangle.X * -_direction
+                                - (_direction == 1 ? 11 : 0),
+                            _animator.CollisionRectangle.Y
+                        )
+                );
             }
             else
             {
@@ -503,16 +573,27 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             // draw the glove
             if (_drawGlove)
             {
-                DrawHelper.DrawNormalized(spriteBatch, _gloveSprite,
-                    new Vector2(EntityPosition.X + _glovePosition.X * -_direction - (_direction == 1 ? 11 : 0), EntityPosition.Y - EntityPosition.Z + _glovePosition.Y), Color.White);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    _gloveSprite,
+                    new Vector2(
+                        EntityPosition.X
+                            + _glovePosition.X * -_direction
+                            - (_direction == 1 ? 11 : 0),
+                        EntityPosition.Y - EntityPosition.Z + _glovePosition.Y
+                    ),
+                    Color.White
+                );
             }
         }
 
         private void OnMoveCollision(Values.BodyCollision collision)
         {
             // make sure to not continuesly jump into the wall
-            if ((collision & Values.BodyCollision.Horizontal) != 0 &&
-                _aiComponent.CurrentStateId == "jumping")
+            if (
+                (collision & Values.BodyCollision.Horizontal) != 0
+                && _aiComponent.CurrentStateId == "jumping"
+            )
             {
                 _direction = -_direction;
             }
@@ -525,7 +606,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _jumpFollowDelay = 2;
 
                 var mult = 2.25f;
-                _body.Velocity = new Vector3(direction.X * mult, direction.Y * mult, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * mult,
+                    direction.Y * mult,
+                    _body.Velocity.Z
+                );
                 _body.VelocityTarget = direction * 0.125f;
             }
 
@@ -540,14 +625,23 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body.Velocity = new Vector3(direction.X, direction.Y, _body.Velocity.Z);
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (_damageState.IsInDamageState() ||
-                _aiComponent.CurrentStateId == "damage" || _aiComponent.CurrentStateId == "dying")
+            if (
+                _damageState.IsInDamageState()
+                || _aiComponent.CurrentStateId == "damage"
+                || _aiComponent.CurrentStateId == "dying"
+            )
                 return Values.HitCollision.None;
 
             if (hitType == HitType.Bomb || hitType == HitType.Bow || hitType == HitType.MagicRod)
@@ -587,7 +681,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             Game1.GameManager.SetMusic(-1, 2);
 
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }

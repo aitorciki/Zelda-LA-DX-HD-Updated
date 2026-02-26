@@ -22,12 +22,26 @@ namespace ProjectZ.Editor
         private Animator _overlayAnimator;
         private Texture2D _sprAnimator;
 
-        private Point _currentPosition, _selectionStart, _selectionEnd;
-        private UiNumberInput _animationInput, _frameInput, _numberInputX, _numberInputY, _numberInputWidth, _numberInputHeight;
-        private UiNumberInput _niOffsetX, _niOffsetY, _niAnOffsetX, _niAnOffsetY, _fpsInput, _loopCountInput;
-        private UiTextInput _animationName, _nextAnimationName;
+        private Point _currentPosition,
+            _selectionStart,
+            _selectionEnd;
+        private UiNumberInput _animationInput,
+            _frameInput,
+            _numberInputX,
+            _numberInputY,
+            _numberInputWidth,
+            _numberInputHeight;
+        private UiNumberInput _niOffsetX,
+            _niOffsetY,
+            _niAnOffsetX,
+            _niAnOffsetY,
+            _fpsInput,
+            _loopCountInput;
+        private UiTextInput _animationName,
+            _nextAnimationName;
         private UiLabel _animationUiLabel;
-        private UiCheckBox _cbFrameMirroredV, _cbFrameMirroredH;
+        private UiCheckBox _cbFrameMirroredV,
+            _cbFrameMirroredH;
 
         private string _sprPath;
         private string _lastFileName;
@@ -36,13 +50,15 @@ namespace ProjectZ.Editor
         private const int LeftBarWidth = 200;
         private const int RightBarWidth = 300;
         private const int TileSize = 2;
-        private int _selectedAnimation, _selectedFrame;
+        private int _selectedAnimation,
+            _selectedFrame;
         private bool _selecting;
         private bool _collisionRectangleMode;
         private bool _isPlaying;
         private bool _showAllSelections;
 
-        public AnimationScreen(string screenId) : base(screenId) { }
+        public AnimationScreen(string screenId)
+            : base(screenId) { }
 
         public override void Load(ContentManager content)
         {
@@ -56,197 +72,895 @@ namespace ProjectZ.Editor
 
             var screenId = Values.EditorUiAnimation;
 
-            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "leftBackground", screenId, Values.ColorBackgroundLight, Color.White,
-                ui => { ui.Rectangle = new Rectangle(0, Values.ToolBarHeight, LeftBarWidth, Game1.WindowHeight - Values.ToolBarHeight); }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    new Rectangle(0, 0, 0, 0),
+                    "leftBackground",
+                    screenId,
+                    Values.ColorBackgroundLight,
+                    Color.White,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            0,
+                            Values.ToolBarHeight,
+                            LeftBarWidth,
+                            Game1.WindowHeight - Values.ToolBarHeight
+                        );
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightBackground", screenId, Values.ColorBackgroundLight, Color.White,
-                ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth, Values.ToolBarHeight, RightBarWidth, Game1.WindowHeight - Values.ToolBarHeight - RightBarWidth); }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    new Rectangle(0, 0, 0, 0),
+                    "rightBackground",
+                    screenId,
+                    Values.ColorBackgroundLight,
+                    Color.White,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            Game1.WindowWidth - RightBarWidth,
+                            Values.ToolBarHeight,
+                            RightBarWidth,
+                            Game1.WindowHeight - Values.ToolBarHeight - RightBarWidth
+                        );
+                    }
+                )
+            );
             // animation background
-            Game1.UiManager.AddElement(new UiRectangle(new Rectangle(0, 0, 0, 0), "rightAnimationBackground", screenId, Color.White * 0.5f, Color.White,
-                ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth, Game1.WindowHeight - RightBarWidth, RightBarWidth, RightBarWidth); }));
+            Game1.UiManager.AddElement(
+                new UiRectangle(
+                    new Rectangle(0, 0, 0, 0),
+                    "rightAnimationBackground",
+                    screenId,
+                    Color.White * 0.5f,
+                    Color.White,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            Game1.WindowWidth - RightBarWidth,
+                            Game1.WindowHeight - RightBarWidth,
+                            RightBarWidth,
+                            RightBarWidth
+                        );
+                    }
+                )
+            );
 
             // right toolbar
-            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "load overlay", "bt1", screenId,
-                ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + 5, Values.ToolBarHeight + buttonDist, buttonWidth, buttonHeight); },
-                ui => { LoadOverlayAnimation(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    Rectangle.Empty,
+                    Resources.EditorFont,
+                    "load overlay",
+                    "bt1",
+                    screenId,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            Game1.WindowWidth - RightBarWidth + 5,
+                            Values.ToolBarHeight + buttonDist,
+                            buttonWidth,
+                            buttonHeight
+                        );
+                    },
+                    ui =>
+                    {
+                        LoadOverlayAnimation();
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(Rectangle.Empty, Resources.EditorFont, "play/pause", "bt1", screenId,
-                ui => { ui.Rectangle = new Rectangle(Game1.WindowWidth - RightBarWidth + 5, Values.ToolBarHeight + buttonDist * 2 + buttonHeight, buttonWidth, buttonHeight); },
-                ui => { _isPlaying = !_isPlaying; }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    Rectangle.Empty,
+                    Resources.EditorFont,
+                    "play/pause",
+                    "bt1",
+                    screenId,
+                    ui =>
+                    {
+                        ui.Rectangle = new Rectangle(
+                            Game1.WindowWidth - RightBarWidth + 5,
+                            Values.ToolBarHeight + buttonDist * 2 + buttonHeight,
+                            buttonWidth,
+                            buttonHeight
+                        );
+                    },
+                    ui =>
+                    {
+                        _isPlaying = !_isPlaying;
+                    }
+                )
+            );
 
             posY = Values.ToolBarHeight + buttonDist;
 
             // load button
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY, buttonWidth, buttonHeight), Resources.EditorFont,
-                "load", "bt1", screenId, null, ui => { LoadAnimation(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "load",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        LoadAnimation();
+                    }
+                )
+            );
 
             // save button
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "save as...", "bt1", screenId, null, ui => { SaveAnimationDialog(); }));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "save...", "bt1", screenId, null, ui => { SaveAnimation(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "save as...",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        SaveAnimationDialog();
+                    }
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "save...",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        SaveAnimation();
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "updated animations", "bt1", screenId, null, ui => { UpdateAnimations(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "updated animations",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        UpdateAnimations();
+                    }
+                )
+            );
 
             // load image
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "load image", "bt1", screenId, null, ui => { LoadImage(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "load image",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        LoadImage();
+                    }
+                )
+            );
             // clear animation
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "clear animator", "bt1", screenId, null, ui => { CreateAnimator(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "clear animator",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        CreateAnimator();
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
-                Resources.EditorFont, "show all selections", "showAllSelections", screenId, false, null,
-                ui => { _showAllSelections = ((UiCheckBox)ui).CurrentState; }));
+            Game1.UiManager.AddElement(
+                new UiCheckBox(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "show all selections",
+                    "showAllSelections",
+                    screenId,
+                    false,
+                    null,
+                    ui =>
+                    {
+                        _showAllSelections = ((UiCheckBox)ui).CurrentState;
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
-                Resources.EditorFont, "Animation", "frameHeader", screenId, null));
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist * 3,
+                        buttonWidth,
+                        labelHeight
+                    ),
+                    Resources.EditorFont,
+                    "Animation",
+                    "frameHeader",
+                    screenId,
+                    null
+                )
+            );
 
-            _animationUiLabel = new UiLabel(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, "animation", "flable", screenId, ui => { ui.Label = "[" + (_selectedAnimation + 1) + "/" + _animator.Animations.Count + "]"; });
+            _animationUiLabel = new UiLabel(
+                new Rectangle(
+                    buttonDist,
+                    posY += labelHeight + buttonDist,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                "animation",
+                "flable",
+                screenId,
+                ui =>
+                {
+                    ui.Label =
+                        "[" + (_selectedAnimation + 1) + "/" + _animator.Animations.Count + "]";
+                }
+            );
             Game1.UiManager.AddElement(_animationUiLabel);
-            _animationInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 1, 1, 1, 1, "numberX", screenId,
-                ui => { ((UiNumberInput)ui).MaxValue = _animator.Animations.Count; },
-                ui => { ChangeAnimation((int)((UiNumberInput)ui).Value - 1); });
+            _animationInput = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                1,
+                1,
+                1,
+                1,
+                "numberX",
+                screenId,
+                ui =>
+                {
+                    ((UiNumberInput)ui).MaxValue = _animator.Animations.Count;
+                },
+                ui =>
+                {
+                    ChangeAnimation((int)((UiNumberInput)ui).Value - 1);
+                }
+            );
             Game1.UiManager.AddElement(_animationInput);
 
             // add animation
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, "add", "bt1", screenId, null, ui => { AddAnimation(); }));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, "remove", "bt1", screenId, null, ui => { RemoveAnimation(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "add",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        AddAnimation();
+                    }
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist * 2 + buttonWidthHalf,
+                        posY,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "remove",
+                    "bt1",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        RemoveAnimation();
+                    }
+                )
+            );
 
             // animation name
-            var animationNameLabel = new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, labelHeight),
-                Resources.EditorFont, "name", "lableX", screenId, null);
+            var animationNameLabel = new UiLabel(
+                new Rectangle(
+                    buttonDist,
+                    posY += buttonHeight + buttonDist,
+                    buttonWidth,
+                    labelHeight
+                ),
+                Resources.EditorFont,
+                "name",
+                "lableX",
+                screenId,
+                null
+            );
             Game1.UiManager.AddElement(animationNameLabel);
-            _animationName = new UiTextInput(new Rectangle(buttonDist, posY += labelHeight, buttonWidth, buttonHeight),
-                Resources.EditorFontMonoSpace, 20, "animationName", screenId, null, ui => { _animator.Animations[_selectedAnimation].Id = ((UiTextInput)ui).StrValue; });
+            _animationName = new UiTextInput(
+                new Rectangle(buttonDist, posY += labelHeight, buttonWidth, buttonHeight),
+                Resources.EditorFontMonoSpace,
+                20,
+                "animationName",
+                screenId,
+                null,
+                ui =>
+                {
+                    _animator.Animations[_selectedAnimation].Id = ((UiTextInput)ui).StrValue;
+                }
+            );
             Game1.UiManager.AddElement(_animationName);
 
             // next animation
-            var nextAnimationLabel = new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidth, labelHeight),
-                Resources.EditorFont, "next animation", "lableX", screenId, null);
+            var nextAnimationLabel = new UiLabel(
+                new Rectangle(
+                    buttonDist,
+                    posY += buttonHeight + buttonDist,
+                    buttonWidth,
+                    labelHeight
+                ),
+                Resources.EditorFont,
+                "next animation",
+                "lableX",
+                screenId,
+                null
+            );
             Game1.UiManager.AddElement(nextAnimationLabel);
-            _nextAnimationName = new UiTextInput(new Rectangle(buttonDist, posY += labelHeight, buttonWidth, buttonHeight),
-                Resources.EditorFontMonoSpace, 20, "nextAnimationName", screenId, null,
-                ui => { _animator.Animations[_selectedAnimation].NextAnimation = ((UiTextInput)ui).StrValue; });
+            _nextAnimationName = new UiTextInput(
+                new Rectangle(buttonDist, posY += labelHeight, buttonWidth, buttonHeight),
+                Resources.EditorFontMonoSpace,
+                20,
+                "nextAnimationName",
+                screenId,
+                null,
+                ui =>
+                {
+                    _animator.Animations[_selectedAnimation].NextAnimation = (
+                        (UiTextInput)ui
+                    ).StrValue;
+                }
+            );
             Game1.UiManager.AddElement(_nextAnimationName);
 
             // collision
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight), Resources.EditorFont,
-                "collision mode", "bt1", screenId, ui => { ((UiButton)ui).Marked = _collisionRectangleMode; },
-                ui => { _collisionRectangleMode = !_collisionRectangleMode; }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "collision mode",
+                    "bt1",
+                    screenId,
+                    ui =>
+                    {
+                        ((UiButton)ui).Marked = _collisionRectangleMode;
+                    },
+                    ui =>
+                    {
+                        _collisionRectangleMode = !_collisionRectangleMode;
+                    }
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, "Loops", "flable", screenId, null));
-            _loopCountInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 1, -1, 999, 1, "loopCount", screenId, null,
-                ui => _animator.Animations[_selectedAnimation].LoopCount = (int)((UiNumberInput)ui).Value);
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "Loops",
+                    "flable",
+                    screenId,
+                    null
+                )
+            );
+            _loopCountInput = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                1,
+                -1,
+                999,
+                1,
+                "loopCount",
+                screenId,
+                null,
+                ui =>
+                    _animator.Animations[_selectedAnimation].LoopCount = (int)
+                        ((UiNumberInput)ui).Value
+            );
             Game1.UiManager.AddElement(_loopCountInput);
 
-
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 3, buttonWidth, labelHeight),
-                Resources.EditorFont, "Frame", "frameHeader", screenId, null));
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist * 3,
+                        buttonWidth,
+                        labelHeight
+                    ),
+                    Resources.EditorFont,
+                    "Frame",
+                    "frameHeader",
+                    screenId,
+                    null
+                )
+            );
 
             // frame information
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, "frame", "flable", screenId,
-                ui => { ui.Label = "frame [" + (_selectedFrame + 1) + "/" + _animator.Animations[_selectedAnimation].Frames.Length + "]"; }));
-            _frameInput = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 1, 1, 1, 1, "numberX", screenId,
-                ui => { ((UiNumberInput)ui).MaxValue = _animator.Animations[_selectedAnimation].Frames.Length; },
-                ui => { ChangeFrame((int)((UiNumberInput)ui).Value - 1); });
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += labelHeight + buttonDist,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "frame",
+                    "flable",
+                    screenId,
+                    ui =>
+                    {
+                        ui.Label =
+                            "frame ["
+                            + (_selectedFrame + 1)
+                            + "/"
+                            + _animator.Animations[_selectedAnimation].Frames.Length
+                            + "]";
+                    }
+                )
+            );
+            _frameInput = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                1,
+                1,
+                1,
+                1,
+                "numberX",
+                screenId,
+                ui =>
+                {
+                    ((UiNumberInput)ui).MaxValue = _animator
+                        .Animations[_selectedAnimation]
+                        .Frames
+                        .Length;
+                },
+                ui =>
+                {
+                    ChangeFrame((int)((UiNumberInput)ui).Value - 1);
+                }
+            );
             Game1.UiManager.AddElement(_frameInput);
 
             // add remove frame
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight), Resources.EditorFont,
-                "add", "addFrame", screenId, null, ui => { AddFrame(); }));
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight), Resources.EditorFont,
-                "delete", "deleteFrame", screenId, null, ui => { DeleteFrame(); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "add",
+                    "addFrame",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        AddFrame();
+                    }
+                )
+            );
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist * 2 + buttonWidthHalf,
+                        posY,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "delete",
+                    "deleteFrame",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        DeleteFrame();
+                    }
+                )
+            );
 
-            _cbFrameMirroredV = (UiCheckBox)Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
-                Resources.EditorFont, "mirrored V", "cbmirrored", screenId, false, null,
-                ui => { _animator.Animations[_selectedAnimation].Frames[_selectedFrame].MirroredV = ((UiCheckBox)ui).CurrentState; }));
-            _cbFrameMirroredH = (UiCheckBox)Game1.UiManager.AddElement(new UiCheckBox(new Rectangle(5, posY += buttonHeight + buttonDist, buttonWidth, buttonHeight),
-                Resources.EditorFont, "mirrored H", "cbmirrored", screenId, false, null,
-                ui => { _animator.Animations[_selectedAnimation].Frames[_selectedFrame].MirroredH = ((UiCheckBox)ui).CurrentState; }));
+            _cbFrameMirroredV = (UiCheckBox)
+                Game1.UiManager.AddElement(
+                    new UiCheckBox(
+                        new Rectangle(
+                            5,
+                            posY += buttonHeight + buttonDist,
+                            buttonWidth,
+                            buttonHeight
+                        ),
+                        Resources.EditorFont,
+                        "mirrored V",
+                        "cbmirrored",
+                        screenId,
+                        false,
+                        null,
+                        ui =>
+                        {
+                            _animator
+                                .Animations[_selectedAnimation]
+                                .Frames[_selectedFrame]
+                                .MirroredV = ((UiCheckBox)ui).CurrentState;
+                        }
+                    )
+                );
+            _cbFrameMirroredH = (UiCheckBox)
+                Game1.UiManager.AddElement(
+                    new UiCheckBox(
+                        new Rectangle(
+                            5,
+                            posY += buttonHeight + buttonDist,
+                            buttonWidth,
+                            buttonHeight
+                        ),
+                        Resources.EditorFont,
+                        "mirrored H",
+                        "cbmirrored",
+                        screenId,
+                        false,
+                        null,
+                        ui =>
+                        {
+                            _animator
+                                .Animations[_selectedAnimation]
+                                .Frames[_selectedFrame]
+                                .MirroredH = ((UiCheckBox)ui).CurrentState;
+                        }
+                    )
+                );
 
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist * 2, buttonWidth, labelHeight),
-                Resources.EditorFont, "fps", "flable", screenId, null));
-            _fpsInput = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 1, 1, 1000, 1, "numberX", screenId, null,
-                ui => { _animator.SetFrameFps(_selectedAnimation, _selectedFrame, (int)((UiNumberInput)ui).Value); });
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist * 2,
+                        buttonWidth,
+                        labelHeight
+                    ),
+                    Resources.EditorFont,
+                    "fps",
+                    "flable",
+                    screenId,
+                    null
+                )
+            );
+            _fpsInput = new UiNumberInput(
+                new Rectangle(
+                    buttonDist,
+                    posY += labelHeight + buttonDist,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                1,
+                1,
+                1000,
+                1,
+                "numberX",
+                screenId,
+                null,
+                ui =>
+                {
+                    _animator.SetFrameFps(
+                        _selectedAnimation,
+                        _selectedFrame,
+                        (int)((UiNumberInput)ui).Value
+                    );
+                }
+            );
             Game1.UiManager.AddElement(_fpsInput);
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, "to all", "toall", screenId, null,
-                ui => { _animator.SetAnimationFps(_selectedAnimation, (int)_fpsInput.Value); }));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(
+                        buttonDist * 2 + buttonWidthHalf,
+                        posY,
+                        buttonWidthHalf,
+                        buttonHeight
+                    ),
+                    Resources.EditorFont,
+                    "to all",
+                    "toall",
+                    screenId,
+                    null,
+                    ui =>
+                    {
+                        _animator.SetAnimationFps(_selectedAnimation, (int)_fpsInput.Value);
+                    }
+                )
+            );
 
             // animation offset
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
-                buttonWidth, labelHeight), Resources.EditorFont, "animation offset", "lableX", screenId, null));
-            _niAnOffsetX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, -100, 100, 1, "animationWidth", screenId, null,
-                ui => { _animator.Animations[_selectedAnimation].Offset.X = (int)((UiNumberInput)ui).Value; });
-            _niAnOffsetY = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, -100, 100, 1, "animationWidth", screenId, null,
-                ui => { _animator.Animations[_selectedAnimation].Offset.Y = (int)((UiNumberInput)ui).Value; });
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidth,
+                        labelHeight
+                    ),
+                    Resources.EditorFont,
+                    "animation offset",
+                    "lableX",
+                    screenId,
+                    null
+                )
+            );
+            _niAnOffsetX = new UiNumberInput(
+                new Rectangle(
+                    buttonDist,
+                    posY += labelHeight + buttonDist,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                -100,
+                100,
+                1,
+                "animationWidth",
+                screenId,
+                null,
+                ui =>
+                {
+                    _animator.Animations[_selectedAnimation].Offset.X = (int)
+                        ((UiNumberInput)ui).Value;
+                }
+            );
+            _niAnOffsetY = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                -100,
+                100,
+                1,
+                "animationWidth",
+                screenId,
+                null,
+                ui =>
+                {
+                    _animator.Animations[_selectedAnimation].Offset.Y = (int)
+                        ((UiNumberInput)ui).Value;
+                }
+            );
             Game1.UiManager.AddElement(_niAnOffsetX);
             Game1.UiManager.AddElement(_niAnOffsetY);
 
             // rectangle
             // labels
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
-                buttonWidth, labelHeight), Resources.EditorFont, "rectangle", "rectangle", screenId, null));
-            _numberInputX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, 0, 1000, 1, "numberX", screenId, null,
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidth,
+                        labelHeight
+                    ),
+                    Resources.EditorFont,
+                    "rectangle",
+                    "rectangle",
+                    screenId,
+                    null
+                )
+            );
+            _numberInputX = new UiNumberInput(
+                new Rectangle(
+                    buttonDist,
+                    posY += labelHeight + buttonDist,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                0,
+                1000,
+                1,
+                "numberX",
+                screenId,
+                null,
                 ui =>
                 {
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.X = (int)((UiNumberInput)ui).Value;
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .SourceRectangle
+                        .X = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
-                });
-            _numberInputY = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, 0, 1000, 1, "numberY", screenId, null,
+                }
+            );
+            _numberInputY = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                0,
+                1000,
+                1,
+                "numberY",
+                screenId,
+                null,
                 ui =>
                 {
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Y = (int)((UiNumberInput)ui).Value;
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .SourceRectangle
+                        .Y = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
-                });
+                }
+            );
             Game1.UiManager.AddElement(_numberInputX);
             Game1.UiManager.AddElement(_numberInputY);
-            _numberInputWidth = new UiNumberInput(new Rectangle(buttonDist, posY += buttonHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, 0, 1000, 1, "numberWidth", screenId, null, ui =>
+            _numberInputWidth = new UiNumberInput(
+                new Rectangle(
+                    buttonDist,
+                    posY += buttonHeight + buttonDist,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                0,
+                1000,
+                1,
+                "numberWidth",
+                screenId,
+                null,
+                ui =>
                 {
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Width = (int)((UiNumberInput)ui).Value;
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .SourceRectangle
+                        .Width = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
-                });
-            _numberInputHeight = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, 0, 1000, 1, "numberHeight", screenId, null, ui =>
+                }
+            );
+            _numberInputHeight = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                0,
+                1000,
+                1,
+                "numberHeight",
+                screenId,
+                null,
+                ui =>
                 {
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Height = (int)((UiNumberInput)ui).Value;
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .SourceRectangle
+                        .Height = (int)((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
-                });
+                }
+            );
             Game1.UiManager.AddElement(_numberInputWidth);
             Game1.UiManager.AddElement(_numberInputHeight);
 
             // offset
             // labels
-            Game1.UiManager.AddElement(new UiLabel(new Rectangle(buttonDist, posY += buttonHeight + buttonDist,
-                buttonWidth, labelHeight), Resources.EditorFont, "frame offset", "lableX", screenId, null));
-            _niOffsetX = new UiNumberInput(new Rectangle(buttonDist, posY += labelHeight + buttonDist, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, -100, 100, 1, "numberX", screenId, null, ui =>
+            Game1.UiManager.AddElement(
+                new UiLabel(
+                    new Rectangle(
+                        buttonDist,
+                        posY += buttonHeight + buttonDist,
+                        buttonWidth,
+                        labelHeight
+                    ),
+                    Resources.EditorFont,
+                    "frame offset",
+                    "lableX",
+                    screenId,
+                    null
+                )
+            );
+            _niOffsetX = new UiNumberInput(
+                new Rectangle(
+                    buttonDist,
+                    posY += labelHeight + buttonDist,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                -100,
+                100,
+                1,
+                "numberX",
+                screenId,
+                null,
+                ui =>
                 {
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.X = (int)((UiNumberInput)ui).Value;
+                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.X = (int)
+                        ((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
-                });
-            _niOffsetY = new UiNumberInput(new Rectangle(buttonDist * 2 + buttonWidthHalf, posY, buttonWidthHalf, buttonHeight),
-                Resources.EditorFont, 0, -100, 100, 1, "numberY", screenId, null, ui =>
+                }
+            );
+            _niOffsetY = new UiNumberInput(
+                new Rectangle(
+                    buttonDist * 2 + buttonWidthHalf,
+                    posY,
+                    buttonWidthHalf,
+                    buttonHeight
+                ),
+                Resources.EditorFont,
+                0,
+                -100,
+                100,
+                1,
+                "numberY",
+                screenId,
+                null,
+                ui =>
                 {
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.Y = (int)((UiNumberInput)ui).Value;
+                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.Y = (int)
+                        ((UiNumberInput)ui).Value;
                     UpdateCurrentFrame();
-                });
+                }
+            );
             Game1.UiManager.AddElement(_niOffsetX);
             Game1.UiManager.AddElement(_niOffsetY);
 
@@ -276,12 +990,21 @@ namespace ProjectZ.Editor
             }
 
             // update tileset scale
-            if (InputHandler.MouseIntersect(new Rectangle(LeftBarWidth, Values.ToolBarHeight,
-                Game1.WindowWidth - LeftBarWidth - RightBarWidth, Game1.WindowHeight - Values.ToolBarHeight)))
+            if (
+                InputHandler.MouseIntersect(
+                    new Rectangle(
+                        LeftBarWidth,
+                        Values.ToolBarHeight,
+                        Game1.WindowWidth - LeftBarWidth - RightBarWidth,
+                        Game1.WindowHeight - Values.ToolBarHeight
+                    )
+                )
+            )
             {
                 _currentPosition = new Point(
                     (int)((InputHandler.MousePosition().X - _camera.Location.X) / _camera.Scale),
-                    (int)((InputHandler.MousePosition().Y - _camera.Location.Y) / _camera.Scale));
+                    (int)((InputHandler.MousePosition().Y - _camera.Location.Y) / _camera.Scale)
+                );
 
                 if (InputHandler.MouseLeftStart())
                 {
@@ -292,20 +1015,46 @@ namespace ProjectZ.Editor
                 {
                     _selectionEnd = _currentPosition;
 
-                    var selectionStart1 = new Point(Math.Min(_selectionStart.X, _selectionEnd.X), Math.Min(_selectionStart.Y, _selectionEnd.Y));
-                    var selectionEnd1 = new Point(Math.Max(_selectionStart.X, _selectionEnd.X) + 1, Math.Max(_selectionStart.Y, _selectionEnd.Y) + 1);
+                    var selectionStart1 = new Point(
+                        Math.Min(_selectionStart.X, _selectionEnd.X),
+                        Math.Min(_selectionStart.Y, _selectionEnd.Y)
+                    );
+                    var selectionEnd1 = new Point(
+                        Math.Max(_selectionStart.X, _selectionEnd.X) + 1,
+                        Math.Max(_selectionStart.Y, _selectionEnd.Y) + 1
+                    );
 
                     if (_collisionRectangleMode)
-                        _animator.Animations[_selectedAnimation].Frames[_selectedFrame].CollisionRectangle =
-                            new Rectangle(
-                                selectionStart1.X - _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.X,
-                                selectionStart1.Y - _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Y,
-                                selectionEnd1.X - selectionStart1.X, selectionEnd1.Y - selectionStart1.Y);
+                        _animator
+                            .Animations[_selectedAnimation]
+                            .Frames[_selectedFrame]
+                            .CollisionRectangle = new Rectangle(
+                            selectionStart1.X
+                                - _animator
+                                    .Animations[_selectedAnimation]
+                                    .Frames[_selectedFrame]
+                                    .SourceRectangle
+                                    .X,
+                            selectionStart1.Y
+                                - _animator
+                                    .Animations[_selectedAnimation]
+                                    .Frames[_selectedFrame]
+                                    .SourceRectangle
+                                    .Y,
+                            selectionEnd1.X - selectionStart1.X,
+                            selectionEnd1.Y - selectionStart1.Y
+                        );
                     else
                     {
-                        _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle =
-                            new Rectangle(selectionStart1.X, selectionStart1.Y, selectionEnd1.X - selectionStart1.X,
-                                selectionEnd1.Y - selectionStart1.Y);
+                        _animator
+                            .Animations[_selectedAnimation]
+                            .Frames[_selectedFrame]
+                            .SourceRectangle = new Rectangle(
+                            selectionStart1.X,
+                            selectionStart1.Y,
+                            selectionEnd1.X - selectionStart1.X,
+                            selectionEnd1.Y - selectionStart1.Y
+                        );
                         UpdateCurrentFrame();
                     }
 
@@ -319,7 +1068,10 @@ namespace ProjectZ.Editor
                 if (InputHandler.MouseRightPressed())
                 {
                     if (_collisionRectangleMode)
-                        _animator.Animations[_selectedAnimation].Frames[_selectedFrame].CollisionRectangle = Rectangle.Empty;
+                        _animator
+                            .Animations[_selectedAnimation]
+                            .Frames[_selectedFrame]
+                            .CollisionRectangle = Rectangle.Empty;
                 }
 
                 if (InputHandler.MouseWheelUp())
@@ -337,41 +1089,101 @@ namespace ProjectZ.Editor
             if (_sprAnimator == null)
                 return;
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, _camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                _camera.TransformMatrix
+            );
 
             // draw the tiled background
-            spriteBatch.Draw(Resources.SprTiledBlock, new Rectangle(0, 0, _sprAnimator.Width, _sprAnimator.Height),
-                new Rectangle(0, 0,
+            spriteBatch.Draw(
+                Resources.SprTiledBlock,
+                new Rectangle(0, 0, _sprAnimator.Width, _sprAnimator.Height),
+                new Rectangle(
+                    0,
+                    0,
                     (int)(_sprAnimator.Width / (float)TileSize * 2),
-                    (int)(_sprAnimator.Height / (float)TileSize * 2)), Color.White);
+                    (int)(_sprAnimator.Height / (float)TileSize * 2)
+                ),
+                Color.White
+            );
 
             // draw the sprite
-            spriteBatch.Draw(_sprAnimator, new Rectangle(0, 0, _sprAnimator.Width, _sprAnimator.Height), Color.White);
+            spriteBatch.Draw(
+                _sprAnimator,
+                new Rectangle(0, 0, _sprAnimator.Width, _sprAnimator.Height),
+                Color.White
+            );
 
             // draw current position of the mouse
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(_currentPosition.X, _currentPosition.Y, 1, 1), Color.Red * 0.5f);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(_currentPosition.X, _currentPosition.Y, 1, 1),
+                Color.Red * 0.5f
+            );
 
             // show all source rectangles of all animations
             if (_showAllSelections)
             {
                 foreach (var animation in _animator.Animations)
                     for (var i = 0; i < animation.Frames.Length; i++)
-                        spriteBatch.Draw(Resources.SprWhite, animation.Frames[i].SourceRectangle, Color.HotPink * 0.25f);
+                        spriteBatch.Draw(
+                            Resources.SprWhite,
+                            animation.Frames[i].SourceRectangle,
+                            Color.HotPink * 0.25f
+                        );
             }
 
             // draw the selection
             for (var i = 0; i < _animator.Animations[_selectedAnimation].Frames.Length; i++)
             {
-                spriteBatch.Draw(Resources.SprWhite, _animator.Animations[_selectedAnimation].Frames[i].SourceRectangle, _selectedFrame == i ? Color.Red * 0.5f : Color.Red * 0.25f);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    _animator.Animations[_selectedAnimation].Frames[i].SourceRectangle,
+                    _selectedFrame == i ? Color.Red * 0.5f : Color.Red * 0.25f
+                );
             }
 
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].CollisionRectangle.X +
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.X,
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].CollisionRectangle.Y +
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Y,
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].CollisionRectangle.Width,
-                    _animator.Animations[_selectedAnimation].Frames[_selectedFrame].CollisionRectangle.Height), Color.Green * 0.5f);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .CollisionRectangle
+                        .X
+                        + _animator
+                            .Animations[_selectedAnimation]
+                            .Frames[_selectedFrame]
+                            .SourceRectangle
+                            .X,
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .CollisionRectangle
+                        .Y
+                        + _animator
+                            .Animations[_selectedAnimation]
+                            .Frames[_selectedFrame]
+                            .SourceRectangle
+                            .Y,
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .CollisionRectangle
+                        .Width,
+                    _animator
+                        .Animations[_selectedAnimation]
+                        .Frames[_selectedFrame]
+                        .CollisionRectangle
+                        .Height
+                ),
+                Color.Green * 0.5f
+            );
 
             spriteBatch.End();
         }
@@ -383,53 +1195,128 @@ namespace ProjectZ.Editor
 
             float drawScale = 2;
 
-            if (_animator.CurrentAnimation.AnimationWidth > 0 && _animator.CurrentAnimation.AnimationHeight > 0)
+            if (
+                _animator.CurrentAnimation.AnimationWidth > 0
+                && _animator.CurrentAnimation.AnimationHeight > 0
+            )
             {
-                if (_animator.CurrentAnimation.AnimationWidth > _animator.CurrentAnimation.AnimationHeight)
-                    drawScale = (int)(RightBarWidth / (float)(_animator.CurrentAnimation.AnimationWidth + 2));
+                if (
+                    _animator.CurrentAnimation.AnimationWidth
+                    > _animator.CurrentAnimation.AnimationHeight
+                )
+                    drawScale = (int)(
+                        RightBarWidth / (float)(_animator.CurrentAnimation.AnimationWidth + 2)
+                    );
                 else
-                    drawScale = (int)(RightBarWidth / (float)(_animator.CurrentAnimation.AnimationHeight + 2));
+                    drawScale = (int)(
+                        RightBarWidth / (float)(_animator.CurrentAnimation.AnimationHeight + 2)
+                    );
             }
 
-            var drawOffsetX = Game1.WindowWidth - RightBarWidth / 2 -
-                              (int)((_animator.CurrentAnimation.AnimationWidth + 2) * drawScale) / 2;
-            var drawOffsetY = Game1.WindowHeight - RightBarWidth / 2 -
-                              (int)((_animator.CurrentAnimation.AnimationHeight + 2) * drawScale) / 2;
+            var drawOffsetX =
+                Game1.WindowWidth
+                - RightBarWidth / 2
+                - (int)((_animator.CurrentAnimation.AnimationWidth + 2) * drawScale) / 2;
+            var drawOffsetY =
+                Game1.WindowHeight
+                - RightBarWidth / 2
+                - (int)((_animator.CurrentAnimation.AnimationHeight + 2) * drawScale) / 2;
 
-            var drawPositionX = drawOffsetX + (int)drawScale +
-                                (int)((_animator.CurrentFrame.Offset.X - _animator.CurrentAnimation.AnimationLeft) * drawScale);
-            var drawPositionY = drawOffsetY + (int)drawScale +
-                                (int)((_animator.CurrentFrame.Offset.Y - _animator.CurrentAnimation.AnimationTop) * drawScale);
+            var drawPositionX =
+                drawOffsetX
+                + (int)drawScale
+                + (int)(
+                    (_animator.CurrentFrame.Offset.X - _animator.CurrentAnimation.AnimationLeft)
+                    * drawScale
+                );
+            var drawPositionY =
+                drawOffsetY
+                + (int)drawScale
+                + (int)(
+                    (_animator.CurrentFrame.Offset.Y - _animator.CurrentAnimation.AnimationTop)
+                    * drawScale
+                );
 
             // draw the tiled background
-            spriteBatch.Draw(Resources.SprTiledBlock, new Rectangle(
-                    drawOffsetX, drawOffsetY,
+            spriteBatch.Draw(
+                Resources.SprTiledBlock,
+                new Rectangle(
+                    drawOffsetX,
+                    drawOffsetY,
                     (int)((_animator.CurrentAnimation.AnimationWidth + 2) * drawScale),
-                    (int)((_animator.CurrentAnimation.AnimationHeight + 2) * drawScale)),
-                new Rectangle(0, 0,
+                    (int)((_animator.CurrentAnimation.AnimationHeight + 2) * drawScale)
+                ),
+                new Rectangle(
+                    0,
+                    0,
                     (int)((_animator.CurrentAnimation.AnimationWidth + 2) / (float)TileSize * 2),
-                    (int)((_animator.CurrentAnimation.AnimationHeight + 2) / (float)TileSize * 2)), Color.White * 0.5f);
+                    (int)((_animator.CurrentAnimation.AnimationHeight + 2) / (float)TileSize * 2)
+                ),
+                Color.White * 0.5f
+            );
 
             DrawOverlayAnimation(spriteBatch, drawOffsetX, drawOffsetY, drawScale);
 
             // draw the current animation sprite
-            spriteBatch.Draw(_sprAnimator, new Rectangle(
-                drawPositionX, drawPositionY, (int)(drawScale * _animator.FrameWidth), (int)(drawScale * _animator.FrameHeight)),
-                _animator.CurrentFrame.SourceRectangle, Color.White, 0, Vector2.Zero,
-                (_animator.CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
-                (_animator.CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
+            spriteBatch.Draw(
+                _sprAnimator,
+                new Rectangle(
+                    drawPositionX,
+                    drawPositionY,
+                    (int)(drawScale * _animator.FrameWidth),
+                    (int)(drawScale * _animator.FrameHeight)
+                ),
+                _animator.CurrentFrame.SourceRectangle,
+                Color.White,
+                0,
+                Vector2.Zero,
+                (
+                    _animator.CurrentFrame.MirroredV
+                        ? SpriteEffects.FlipVertically
+                        : SpriteEffects.None
+                )
+                    | (
+                        _animator.CurrentFrame.MirroredH
+                            ? SpriteEffects.FlipHorizontally
+                            : SpriteEffects.None
+                    ),
+                0
+            );
 
             // draw the origin xy axis
             var originPosition = new Vector2(
-                drawPositionX + (-_animator.CurrentAnimation.Offset.X - _animator.CurrentFrame.Offset.X) * drawScale,
-                drawPositionY + (-_animator.CurrentAnimation.Offset.Y - _animator.CurrentFrame.Offset.Y) * drawScale);
-            spriteBatch.Draw(Resources.SprWhite, new Vector2(originPosition.X - 1, originPosition.Y - 10), new Rectangle(0, 0, 2, 20), Color.Green);
-            spriteBatch.Draw(Resources.SprWhite, new Vector2(originPosition.X - 10, originPosition.Y - 1), new Rectangle(0, 0, 20, 2), Color.Red);
+                drawPositionX
+                    + (-_animator.CurrentAnimation.Offset.X - _animator.CurrentFrame.Offset.X)
+                        * drawScale,
+                drawPositionY
+                    + (-_animator.CurrentAnimation.Offset.Y - _animator.CurrentFrame.Offset.Y)
+                        * drawScale
+            );
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Vector2(originPosition.X - 1, originPosition.Y - 10),
+                new Rectangle(0, 0, 2, 20),
+                Color.Green
+            );
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Vector2(originPosition.X - 10, originPosition.Y - 1),
+                new Rectangle(0, 0, 20, 2),
+                Color.Red
+            );
         }
 
-        private void DrawOverlayAnimation(SpriteBatch spriteBatch, int drawOffsetX, int drawOffsetY, float drawScale)
+        private void DrawOverlayAnimation(
+            SpriteBatch spriteBatch,
+            int drawOffsetX,
+            int drawOffsetY,
+            float drawScale
+        )
         {
-            if (_overlayAnimator != null && _overlayAnimator.GetAnimationIndex(_animator.CurrentAnimation.Id) >= 0)
+            if (
+                _overlayAnimator != null
+                && _overlayAnimator.GetAnimationIndex(_animator.CurrentAnimation.Id) >= 0
+            )
             {
                 _overlayAnimator.Play(_animator.CurrentAnimation.Id);
                 // find the matching frame
@@ -437,23 +1324,53 @@ namespace ProjectZ.Editor
 
                 _overlayAnimator.SetFrame(frameIndex);
 
-                var drawPositionX = drawOffsetX + (int)drawScale +
-                                    (int)((_overlayAnimator.CurrentFrame.Offset.X -
-                                           _animator.CurrentAnimation.AnimationLeft +
-                                           _overlayAnimator.CurrentAnimation.Offset.X -
-                                           _animator.CurrentAnimation.Offset.X) * drawScale);
-                var drawPositionY = drawOffsetY + (int)drawScale +
-                                    (int)((_overlayAnimator.CurrentFrame.Offset.Y -
-                                           _animator.CurrentAnimation.AnimationTop +
-                                           _overlayAnimator.CurrentAnimation.Offset.Y -
-                                           _animator.CurrentAnimation.Offset.Y) * drawScale);
+                var drawPositionX =
+                    drawOffsetX
+                    + (int)drawScale
+                    + (int)(
+                        (
+                            _overlayAnimator.CurrentFrame.Offset.X
+                            - _animator.CurrentAnimation.AnimationLeft
+                            + _overlayAnimator.CurrentAnimation.Offset.X
+                            - _animator.CurrentAnimation.Offset.X
+                        ) * drawScale
+                    );
+                var drawPositionY =
+                    drawOffsetY
+                    + (int)drawScale
+                    + (int)(
+                        (
+                            _overlayAnimator.CurrentFrame.Offset.Y
+                            - _animator.CurrentAnimation.AnimationTop
+                            + _overlayAnimator.CurrentAnimation.Offset.Y
+                            - _animator.CurrentAnimation.Offset.Y
+                        ) * drawScale
+                    );
 
-                spriteBatch.Draw(_overlayAnimator.SprTexture, new Rectangle(
-                        drawPositionX, drawPositionY, (int)(drawScale * _overlayAnimator.FrameWidth),
-                        (int)(drawScale * _overlayAnimator.FrameHeight)),
-                    _overlayAnimator.CurrentFrame.SourceRectangle, Color.White, 0, Vector2.Zero,
-                    (_overlayAnimator.CurrentFrame.MirroredV ? SpriteEffects.FlipVertically : SpriteEffects.None) |
-                    (_overlayAnimator.CurrentFrame.MirroredH ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
+                spriteBatch.Draw(
+                    _overlayAnimator.SprTexture,
+                    new Rectangle(
+                        drawPositionX,
+                        drawPositionY,
+                        (int)(drawScale * _overlayAnimator.FrameWidth),
+                        (int)(drawScale * _overlayAnimator.FrameHeight)
+                    ),
+                    _overlayAnimator.CurrentFrame.SourceRectangle,
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    (
+                        _overlayAnimator.CurrentFrame.MirroredV
+                            ? SpriteEffects.FlipVertically
+                            : SpriteEffects.None
+                    )
+                        | (
+                            _overlayAnimator.CurrentFrame.MirroredH
+                                ? SpriteEffects.FlipHorizontally
+                                : SpriteEffects.None
+                        ),
+                    0
+                );
             }
         }
 
@@ -501,7 +1418,10 @@ namespace ProjectZ.Editor
 
         public void AddAnimation()
         {
-            var newAnimation = new Animation("a" + _animator.Animations.Count) { NextAnimation = "" };
+            var newAnimation = new Animation("a" + _animator.Animations.Count)
+            {
+                NextAnimation = "",
+            };
 
             _animator.AddAnimation(newAnimation);
             _animator.AddFrame(_animator.Animations.Count - 1, 0, new Frame() { FrameTimeFps = 5 });
@@ -522,9 +1442,12 @@ namespace ProjectZ.Editor
         {
             var newFrame = new Frame()
             {
-                SourceRectangle = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle,
+                SourceRectangle = _animator
+                    .Animations[_selectedAnimation]
+                    .Frames[_selectedFrame]
+                    .SourceRectangle,
                 Offset = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset,
-                FrameTimeFps = 5
+                FrameTimeFps = 5,
             };
 
             _animator.AddFrame(_selectedAnimation, _selectedFrame + 1, newFrame);
@@ -579,7 +1502,10 @@ namespace ProjectZ.Editor
             _frameInput.Value = _selectedFrame + 1;
 
             _loopCountInput.Value = _animator.Animations[_selectedAnimation].LoopCount;
-            _fpsInput.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].FrameTimeFps;
+            _fpsInput.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .FrameTimeFps;
 
             _animationName.StrValue = _animator.Animations[_selectedAnimation].Id;
             _nextAnimationName.StrValue = _animator.Animations[_selectedAnimation].NextAnimation;
@@ -587,16 +1513,46 @@ namespace ProjectZ.Editor
             _niAnOffsetX.Value = _animator.CurrentAnimation.Offset.X;
             _niAnOffsetY.Value = _animator.CurrentAnimation.Offset.Y;
 
-            _numberInputX.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.X;
-            _numberInputY.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Y;
-            _numberInputWidth.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Width;
-            _numberInputHeight.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].SourceRectangle.Height;
+            _numberInputX.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .SourceRectangle
+                .X;
+            _numberInputY.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .SourceRectangle
+                .Y;
+            _numberInputWidth.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .SourceRectangle
+                .Width;
+            _numberInputHeight.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .SourceRectangle
+                .Height;
 
-            _niOffsetX.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.X;
-            _niOffsetY.Value = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].Offset.Y;
+            _niOffsetX.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .Offset
+                .X;
+            _niOffsetY.Value = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .Offset
+                .Y;
 
-            _cbFrameMirroredV.CurrentState = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].MirroredV;
-            _cbFrameMirroredH.CurrentState = _animator.Animations[_selectedAnimation].Frames[_selectedFrame].MirroredH;
+            _cbFrameMirroredV.CurrentState = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .MirroredV;
+            _cbFrameMirroredH.CurrentState = _animator
+                .Animations[_selectedAnimation]
+                .Frames[_selectedFrame]
+                .MirroredH;
         }
 
         public void SaveAnimationDialog()
@@ -611,7 +1567,9 @@ namespace ProjectZ.Editor
             if (_lastFileName != null)
             {
                 saveFileDialog.FileName = Path.GetFileName(_lastFileName);
-                saveFileDialog.InitialDirectory = Path.GetFullPath(Path.GetDirectoryName(_lastFileName));
+                saveFileDialog.InitialDirectory = Path.GetFullPath(
+                    Path.GetDirectoryName(_lastFileName)
+                );
             }
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -627,10 +1585,7 @@ namespace ProjectZ.Editor
         public void LoadAnimation()
         {
 #if WINDOWS
-            var openFileDialog = new OpenFileDialog()
-            {
-                Filter = "animator files (*.ani)|*.ani"
-            };
+            var openFileDialog = new OpenFileDialog() { Filter = "animator files (*.ani)|*.ani" };
 
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -653,12 +1608,10 @@ namespace ProjectZ.Editor
         private void LoadOverlayAnimation()
         {
 #if WINDOWS
-            var openFileDialog = new OpenFileDialog()
-            {
-                Filter = "animator files (*.ani)|*.ani"
-            };
+            var openFileDialog = new OpenFileDialog() { Filter = "animator files (*.ani)|*.ani" };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             _overlayAnimator = AnimatorSaveLoad.LoadAnimatorFile(openFileDialog.FileName);
 #endif
@@ -670,10 +1623,11 @@ namespace ProjectZ.Editor
             var openFileDialog = new OpenFileDialog()
             {
                 Filter = "animator files (*.ani)|*.ani",
-                Multiselect = true
+                Multiselect = true,
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             foreach (var fileName in openFileDialog.FileNames)
             {
@@ -686,12 +1640,10 @@ namespace ProjectZ.Editor
         public void LoadImage()
         {
 #if WINDOWS
-            var openFileDialog = new OpenFileDialog()
-            {
-                Filter = "png files (*.png)|*.png"
-            };
+            var openFileDialog = new OpenFileDialog() { Filter = "png files (*.png)|*.png" };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             try
             {
@@ -705,6 +1657,5 @@ namespace ProjectZ.Editor
             catch { }
 #endif
         }
-
     }
 }

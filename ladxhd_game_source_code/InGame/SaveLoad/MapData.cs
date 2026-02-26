@@ -47,7 +47,10 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static object[] StringToParameter(string objectIndex, string[] parameters)
         {
-            if (objectIndex == null || !GameObjectTemplates.ObjectTemplates.ContainsKey(objectIndex))
+            if (
+                objectIndex == null
+                || !GameObjectTemplates.ObjectTemplates.ContainsKey(objectIndex)
+            )
                 return null;
 
             var parameterArray = GetParameterArray(objectIndex);
@@ -62,14 +65,20 @@ namespace ProjectZ.InGame.SaveLoad
             var parCount = Math.Min(parameters.Length, parameterArray.Length);
             for (var i = 3; i < parCount; i++)
                 if (parameters[i].Length > 0)
-                    parameterArray[i] = ConvertToObject(parameters[i], GameObjectTemplates.GameObjectParameter[objectIndex][i].ParameterType);
+                    parameterArray[i] = ConvertToObject(
+                        parameters[i],
+                        GameObjectTemplates.GameObjectParameter[objectIndex][i].ParameterType
+                    );
 
             return parameterArray;
         }
 
         public static object[] GetParameter(string objectIndex, string[] parameters)
         {
-            if (objectIndex == null || !GameObjectTemplates.ObjectTemplates.ContainsKey(objectIndex))
+            if (
+                objectIndex == null
+                || !GameObjectTemplates.ObjectTemplates.ContainsKey(objectIndex)
+            )
                 return null;
 
             var parameterArray = GetParameterArray(objectIndex);
@@ -80,7 +89,10 @@ namespace ProjectZ.InGame.SaveLoad
             var length = MathHelper.Min(parameters.Length, parameterArray.Length - 3);
             for (var i = 0; i < length; i++)
                 if (parameters[i].Length > 0)
-                    parameterArray[i + 3] = ConvertToObject(parameters[i], GameObjectTemplates.GameObjectParameter[objectIndex][i + 3].ParameterType);
+                    parameterArray[i + 3] = ConvertToObject(
+                        parameters[i],
+                        GameObjectTemplates.GameObjectParameter[objectIndex][i + 3].ParameterType
+                    );
 
             return parameterArray;
         }
@@ -101,7 +113,12 @@ namespace ProjectZ.InGame.SaveLoad
             }
             else if (outputType == typeof(float))
             {
-                float.TryParse(strInput, NumberStyles.Float, CultureInfo.InvariantCulture, out var floatOutput);
+                float.TryParse(
+                    strInput,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out var floatOutput
+                );
                 output = floatOutput;
             }
             else if (outputType == typeof(string))
@@ -148,9 +165,16 @@ namespace ProjectZ.InGame.SaveLoad
                     if (parameter[i] is bool || parameter[i] is int || parameter[i] is string)
                         strOutput += parameter[i];
                     else if (parameter[i] is float)
-                        strOutput += ((float) parameter[i]).ToString(CultureInfo.InvariantCulture);
+                        strOutput += ((float)parameter[i]).ToString(CultureInfo.InvariantCulture);
                     else if (parameter[i] is Rectangle rectangle)
-                        strOutput += rectangle.X + "." + rectangle.Y + "." + rectangle.Width + "." + rectangle.Height;
+                        strOutput +=
+                            rectangle.X
+                            + "."
+                            + rectangle.Y
+                            + "."
+                            + rectangle.Width
+                            + "."
+                            + rectangle.Height;
                 }
 
                 // saves space
@@ -174,8 +198,17 @@ namespace ProjectZ.InGame.SaveLoad
             if (parameterOne.GetType() != parameterTwo.GetType())
                 return false;
 
-            if (parameterOne is bool || parameterOne is int || parameterOne is float || parameterOne is string ||
-                parameterOne is Vector2 || parameterOne is Rectangle || parameterOne is Color || parameterOne is Texture2D || parameterOne is Values.CollisionTypes)
+            if (
+                parameterOne is bool
+                || parameterOne is int
+                || parameterOne is float
+                || parameterOne is string
+                || parameterOne is Vector2
+                || parameterOne is Rectangle
+                || parameterOne is Color
+                || parameterOne is Texture2D
+                || parameterOne is Values.CollisionTypes
+            )
                 return parameterOne.Equals(parameterTwo);
             else if (parameterOne is Rectangle[])
             {

@@ -21,9 +21,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _fixDuplicate;
 
-        public ObjObjectSpawner() : base("editor object spawner") { }
+        public ObjObjectSpawner()
+            : base("editor object spawner") { }
 
-        public ObjObjectSpawner(Map.Map map, int posX, int posY, string strKey, string strValue, string strSpawnObjectId, string strSpawnParameter, bool canDespawn = true) : base(map)
+        public ObjObjectSpawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            string strValue,
+            string strSpawnObjectId,
+            string strSpawnParameter,
+            bool canDespawn = true
+        )
+            : base(map)
         {
             _strKey = strKey;
             _strValue = string.IsNullOrEmpty(strValue) ? "0" : strValue;
@@ -70,7 +81,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!string.IsNullOrEmpty(_strKey))
             {
                 _spawnObject.IsActive = false;
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
             }
             // spawn object deactivated
             Map.Objects.SpawnObject(_spawnObject);
@@ -94,7 +108,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     // Now that we have the Tarin spawn we can use it to find the duplicate spawn.
                     var objects = new List<GameObject>();
-                    Map.Objects.GetComponentList(objects, (int)_spawnObject.EntityPosition.X - 8, (int)_spawnObject.EntityPosition.Y - 8, 16, 16, BodyComponent.Mask);
+                    Map.Objects.GetComponentList(
+                        objects,
+                        (int)_spawnObject.EntityPosition.X - 8,
+                        (int)_spawnObject.EntityPosition.Y - 8,
+                        16,
+                        16,
+                        BodyComponent.Mask
+                    );
 
                     // Loop through the objects to find the duplicate.
                     foreach (var obj in objects)

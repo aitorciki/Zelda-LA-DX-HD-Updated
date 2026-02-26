@@ -20,7 +20,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private int _direction;
 
-        public ObjMouse(Map.Map map, int posX, int posY) : base(map)
+        public ObjMouse(Map.Map map, int posX, int posY)
+            : base(map)
         {
             SprEditorImage = Resources.SprNpCs;
             EditorIconSource = new Rectangle(63, 280, 15, 14);
@@ -31,18 +32,23 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -5, -8, 10, 8, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Player |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Player
+                    | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 DragAir = 0.85f,
                 Drag = 0.85f,
-                Gravity = -0.15f
+                Gravity = -0.15f,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/mouse");
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-9, -_animator.FrameHeight));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-9, -_animator.FrameHeight)
+            );
 
             var stateIdle = new AiState(StateIdle);
             stateIdle.Trigger.Add(_hitCooldown = new AiTriggerSwitch(250));
@@ -61,7 +67,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             //AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -82,9 +91,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             // change the direction
             var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-            _body.VelocityTarget = new Vector2(
-                                       (float)Math.Sin(rotation),
-                                       (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation))
+                * Game1.RandomNumber.Next(25, 40)
+                / 50f;
             _direction = _body.VelocityTarget.X < 0 ? 0 : 1;
 
             _animator.Play("walk_" + _direction);
@@ -103,7 +113,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.Velocity.Z = 1f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -157,10 +173,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _aiComponent.ChangeState("walking");
 
-            var offsetAngle = MathHelper.ToRadians(Game1.RandomNumber.Next(45, 85) * (_direction * 2 - 1));
-            var newDirection = new Vector2(
-                                   direction.X * (float)Math.Cos(offsetAngle) - direction.Y * (float)Math.Sin(offsetAngle),
-                                   direction.X * (float)Math.Sin(offsetAngle) + direction.Y * (float)Math.Cos(offsetAngle)) * 0.5f;
+            var offsetAngle = MathHelper.ToRadians(
+                Game1.RandomNumber.Next(45, 85) * (_direction * 2 - 1)
+            );
+            var newDirection =
+                new Vector2(
+                    direction.X * (float)Math.Cos(offsetAngle)
+                        - direction.Y * (float)Math.Sin(offsetAngle),
+                    direction.X * (float)Math.Sin(offsetAngle)
+                        + direction.Y * (float)Math.Cos(offsetAngle)
+                ) * 0.5f;
             _body.VelocityTarget = newDirection;
 
             _direction = _body.VelocityTarget.X < 0 ? 0 : 1;

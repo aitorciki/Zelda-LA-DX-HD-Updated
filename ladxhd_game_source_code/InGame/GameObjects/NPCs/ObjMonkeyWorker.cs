@@ -29,7 +29,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private ObjSpriteShadow _spriteShadow;
 
-        public ObjMonkeyWorker(Map.Map map, Vector2 startPosition, Vector2 workPosition, Vector2 endPosition) : base(map)
+        public ObjMonkeyWorker(
+            Map.Map map,
+            Vector2 startPosition,
+            Vector2 workPosition,
+            Vector2 endPosition
+        )
+            : base(map)
         {
             _monkeyPosition = new CPosition(startPosition.X + 8, startPosition.Y + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -44,18 +50,27 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 CollisionTypes = Values.CollisionTypes.None,
                 Drag = 0.85f,
                 Gravity = -0.15f,
-                MoveCollision = OnCollision
+                MoveCollision = OnCollision,
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/monkey");
             _sprite = new CSprite(_monkeyPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _waitTimer = new AiTriggerSwitch(150);
 
             var stateInit = new AiState();
-            stateInit.Trigger.Add(new AiTriggerCountdown(
-                Game1.RandomNumber.Next(0, 1000), null, () => _aiComponent.ChangeState("come")));
+            stateInit.Trigger.Add(
+                new AiTriggerCountdown(
+                    Game1.RandomNumber.Next(0, 1000),
+                    null,
+                    () => _aiComponent.ChangeState("come")
+                )
+            );
             var stateCome = new AiState(UpdateCome);
             stateCome.Trigger.Add(_waitTimer);
             var stateWork = new AiState(UpdateWork);
@@ -77,7 +92,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
             AddComponent(UpdateComponent.Index, new UpdateComponent(UpdateSpriteShadow));
         }
@@ -97,16 +115,29 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.Velocity = Vector3.Zero;
             }
         }
+
         private void UpdateSpriteShadow()
         {
             if (_spriteShadow == null)
-                _spriteShadow = new ObjSpriteShadow(Map, _monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, Values.LayerPlayer, "sprshadowm");
+                _spriteShadow = new ObjSpriteShadow(
+                    Map,
+                    _monkeyPosition.Position.X - 8,
+                    _monkeyPosition.Position.Y - 14,
+                    Values.LayerPlayer,
+                    "sprshadowm"
+                );
 
             _spriteShadow.UpdateVisibility(!GameSettings.EnableShadows);
 
             if (!GameSettings.EnableShadows && _spriteShadow != null)
             {
-                _spriteShadow.EntityPosition.Set(new CPosition(_monkeyPosition.Position.X-8, _monkeyPosition.Position.Y-14, 0));
+                _spriteShadow.EntityPosition.Set(
+                    new CPosition(
+                        _monkeyPosition.Position.X - 8,
+                        _monkeyPosition.Position.Y - 14,
+                        0
+                    )
+                );
             }
         }
 

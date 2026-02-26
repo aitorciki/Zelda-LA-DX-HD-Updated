@@ -37,11 +37,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _direction;
         private bool _followMode;
 
-        public ObjBowWow() : base("bowwow") { }
+        public ObjBowWow()
+            : base("bowwow") { }
 
         private ObjBowWowWater _waterGraphic;
 
-        public ObjBowWow(Map.Map map, int posX, int posY, string mode) : base(map)
+        public ObjBowWow(Map.Map map, int posX, int posY, string mode)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -89,12 +91,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 MoveCollision = OnCollision,
                 Gravity = -0.175f,
                 CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
-                FieldRectangle = map.GetField(posX, posY)
+                FieldRectangle = map.GetField(posX, posY),
             };
 
             _animator = AnimatorSaveLoad.LoadAnimator("NPCs/BowWow");
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             var stateIAttack = new AiState(UpdateIAttack);
             stateIAttack.Trigger.Add(new AiTriggerCountdown(400, null, ToAttack));
@@ -121,11 +127,26 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 5 });
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 5 }
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
 
             Map.Objects.SpawnObject(_chain = new ObjChain(map, _origin));
             _currentDirectionOffset = AnimationHelper.DirectionOffset[_direction];
@@ -136,7 +157,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -173,7 +200,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void SetFollowMode(bool follow)
         {
             _followMode = follow;
-            _body.CollisionTypes = follow ? Values.CollisionTypes.None : (Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall);
+            _body.CollisionTypes = follow
+                ? Values.CollisionTypes.None
+                : (Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall);
             _hitComponent.IsActive = !follow;
             _pushComponent.IsActive = !follow;
 
@@ -242,15 +271,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 var distanceMultiplier = MathHelper.Clamp(
                     MathF.Min(
                         (maxDistanceX - MathF.Abs(directionToStart.X)) / maxDistanceX,
-                        (maxDistanceY - MathF.Abs(directionToStart.Y)) / maxDistanceY), 0, 1);
+                        (maxDistanceY - MathF.Abs(directionToStart.Y)) / maxDistanceY
+                    ),
+                    0,
+                    1
+                );
 
-                rotation = radiusToCenter + (MathF.PI - Game1.RandomNumber.Next(0, 628) / 100f) * distanceMultiplier;
+                rotation =
+                    radiusToCenter
+                    + (MathF.PI - Game1.RandomNumber.Next(0, 628) / 100f) * distanceMultiplier;
             }
             else
             {
                 rotation = Game1.RandomNumber.Next(0, 628) / 100f;
             }
-
 
             // change the direction
             SetWalkDirection(new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)));
@@ -291,18 +325,30 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _enemyTarget = null;
 
             // Get a list of enemies for Bow Wow to attack.
-            Map.Objects.GetGameObjectsWithTag(_enemyList, Values.GameObjectTag.Enemy,
+            Map.Objects.GetGameObjectsWithTag(
+                _enemyList,
+                Values.GameObjectTag.Enemy,
                 (int)MapManager.ObjLink.CenterPosition.Position.X - 50,
-                (int)MapManager.ObjLink.CenterPosition.Position.Y - 50, 100, 100);
+                (int)MapManager.ObjLink.CenterPosition.Position.Y - 50,
+                100,
+                100
+            );
 
             // The types of enemies that Bow Wow shouldn't eat.
-            Type[] _dontEat = new Type[]{ typeof(EnemyGhini), typeof(EnemySeaUrchin), typeof(EnemyZombie) };
+            Type[] _dontEat = new Type[]
+            {
+                typeof(EnemyGhini),
+                typeof(EnemySeaUrchin),
+                typeof(EnemyZombie),
+            };
             _enemyList.RemoveAll(obj => ObjectManager.IsGameObjectType(obj, _dontEat));
 
             // Make sure the enemy is currently within the field rectangle.
             if (Camera.ClassicMode)
-                _enemyList.RemoveAll(obj => !_body.FieldRectangle.Contains(obj.EntityPosition.Position));
-            
+                _enemyList.RemoveAll(obj =>
+                    !_body.FieldRectangle.Contains(obj.EntityPosition.Position)
+                );
+
             // Loop through the enemies in the list.
             foreach (var obj in _enemyList)
             {
@@ -349,8 +395,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     fish.MakeVulerable();
                 }
                 // Set the attack direction.
-                var damageState = (HittableComponent)_enemyTarget.Components[HittableComponent.Index];
-                var direction = damageState.HittableBox.Box.Center - new Vector2(EntityPosition.X, EntityPosition.Y - 8);
+                var damageState = (HittableComponent)
+                    _enemyTarget.Components[HittableComponent.Index];
+                var direction =
+                    damageState.HittableBox.Box.Center
+                    - new Vector2(EntityPosition.X, EntityPosition.Y - 8);
                 if (direction != Vector2.Zero)
                     direction.Normalize();
                 _body.VelocityTarget = direction * 3;
@@ -400,7 +449,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateAttack()
         {
             var damageState = (HittableComponent)_enemyTarget.Components[HittableComponent.Index];
-            var direction = damageState.HittableBox.Box.Center - new Vector2(EntityPosition.X, EntityPosition.Y - 8);
+            var direction =
+                damageState.HittableBox.Box.Center
+                - new Vector2(EntityPosition.X, EntityPosition.Y - 8);
 
             // attack the enemy if we are close enough
             if (direction.Length() < 5)
@@ -439,8 +490,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _origin = MapManager.ObjLink.Position - new Vector2(0, 4);
 
             // limit the position
-            var distance = (EntityPosition.Position +
-                new Vector2(_body.VelocityTarget.X + _body.Velocity.X, _body.VelocityTarget.Y + _body.Velocity.Y) * Game1.TimeMultiplier - new Vector2(0, 4)) - _origin;
+            var distance =
+                (
+                    EntityPosition.Position
+                    + new Vector2(
+                        _body.VelocityTarget.X + _body.Velocity.X,
+                        _body.VelocityTarget.Y + _body.Velocity.Y
+                    ) * Game1.TimeMultiplier
+                    - new Vector2(0, 4)
+                ) - _origin;
             var dist = distance.Length();
             if (dist > 46)
             {
@@ -460,7 +518,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 {
                     // are we moving outside of the range?
                     if (dist < (distance + _body.VelocityTarget).Length())
-                        _body.VelocityTarget = AnimationHelper.MoveToTarget(_body.VelocityTarget, Vector2.Zero, Game1.TimeMultiplier);
+                        _body.VelocityTarget = AnimationHelper.MoveToTarget(
+                            _body.VelocityTarget,
+                            Vector2.Zero,
+                            Game1.TimeMultiplier
+                        );
 
                     _outsideCounter -= Game1.DeltaTime;
                     if (_outsideCounter <= 0)
@@ -487,13 +549,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             // update the chain
             var directionOffset = AnimationHelper.DirectionOffset[_direction] * new Vector2(6, 3);
-            _currentDirectionOffset = Vector2.Lerp(_currentDirectionOffset, directionOffset, Game1.TimeMultiplier * 0.25f);
+            _currentDirectionOffset = Vector2.Lerp(
+                _currentDirectionOffset,
+                directionOffset,
+                Game1.TimeMultiplier * 0.25f
+            );
 
-            var startPosition = new Vector3(_origin.X, _origin.Y, _followMode ? MapManager.ObjLink.EntityPosition.Z : 0);
+            var startPosition = new Vector3(
+                _origin.X,
+                _origin.Y,
+                _followMode ? MapManager.ObjLink.EntityPosition.Z : 0
+            );
             var goalPosition = new Vector3(
                 EntityPosition.Position.X - _currentDirectionOffset.X,
                 EntityPosition.Position.Y - 4 - _currentDirectionOffset.Y,
-                EntityPosition.Z);
+                EntityPosition.Z
+            );
 
             startPosition.Z = MathHelper.Clamp(startPosition.Z, 0, 12);
 
@@ -518,7 +589,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y * 0.5f;
             }
 
-            if ((moveCollision & (Values.BodyCollision.Vertical | Values.BodyCollision.Horizontal)) != 0)
+            if (
+                (moveCollision & (Values.BodyCollision.Vertical | Values.BodyCollision.Horizontal))
+                != 0
+            )
             {
                 _direction = AnimationHelper.GetDirection(_body.VelocityTarget);
                 _animator.Play("walk_" + _direction);

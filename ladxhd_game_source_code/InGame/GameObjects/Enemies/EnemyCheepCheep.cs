@@ -33,14 +33,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly bool _canJump;
         private bool _stomped;
 
-        public EnemyCheepCheep() : base("cheep cheep") { }
+        public EnemyCheepCheep()
+            : base("cheep cheep") { }
 
-        public EnemyCheepCheep(Map.Map map, int posX, int posY, int dir, bool canJump) : base(map)
+        public EnemyCheepCheep(Map.Map map, int posX, int posY, int dir, bool canJump)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -53,17 +55,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/cheep cheep");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -8, -12, 16, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 DragAir = 0.8f,
-                Gravity2DWater = 0f
+                Gravity2DWater = 0f,
             };
 
             var stateMoving = new AiState();
@@ -89,7 +94,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 HitMultiplierX = 3.0f,
                 HitMultiplierY = 2.0f,
                 FlameOffset = new Point(0, 2),
-                OnBurn = OnBurn
+                OnBurn = OnBurn,
             };
 
             ToMoving();
@@ -98,13 +103,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageBox = new CBox(EntityPosition, -5, -8, 0, 10, 8, 4);
             _headJumpBox = new CBox(EntityPosition, -6, -16, 0, 12, 6, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
         }
 
         private void Reset()
@@ -124,7 +138,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _hitComponent.IsActive = false;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -139,7 +159,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // look into the direction of the player
             if (_dir % 2 != 0 && MapManager.ObjLink.NextMapPositionStart != null)
-                _animator.Play("idle_" + (EntityPosition.X > MapManager.ObjLink.NextMapPositionStart.Value.X ? 0 : 2));
+                _animator.Play(
+                    "idle_"
+                        + (
+                            EntityPosition.X > MapManager.ObjLink.NextMapPositionStart.Value.X
+                                ? 0
+                                : 2
+                        )
+                );
         }
 
         private void ToMoving()
@@ -177,15 +204,28 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // splash animation
             var position = new Point((int)_jumpStart.X, (int)_jumpStart.Y);
-            var splashAnimator = new ObjAnimator(_body.Owner.Map, position.X, position.Y - 14, 0, 3, 1, "Particles/fishingSplash", "idle", true);
+            var splashAnimator = new ObjAnimator(
+                _body.Owner.Map,
+                position.X,
+                position.Y - 14,
+                0,
+                3,
+                1,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             Map.Objects.SpawnObject(splashAnimator);
         }
 
         private void Update()
         {
             // player jumped on the fish?
-            if (!_stomped && _headJumpBox.Box.Bottom >= MapManager.ObjLink._body.BodyBox.Box.Bottom && 
-                _headJumpBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
+            if (
+                !_stomped
+                && _headJumpBox.Box.Bottom >= MapManager.ObjLink._body.BodyBox.Box.Bottom
+                && _headJumpBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box)
+            )
             {
                 Game1.GameManager.PlaySoundEffect("D370-14-0E");
 
@@ -203,7 +243,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateJump(double time)
         {
-            var newPosition = _jumpStart - new Vector2(0, 64) * MathF.Sin((float)(time / JumpTime) * MathF.PI);
+            var newPosition =
+                _jumpStart - new Vector2(0, 64) * MathF.Sin((float)(time / JumpTime) * MathF.PI);
             EntityPosition.Set(newPosition);
         }
 
@@ -227,8 +268,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void OnCollision(Values.BodyCollision direction)
         {
             // kill the fish when it reaches the ground
-            if (_aiComponent.CurrentStateId == "dead" &&
-                (direction & Values.BodyCollision.Vertical) != 0)
+            if (
+                _aiComponent.CurrentStateId == "dead"
+                && (direction & Values.BodyCollision.Vertical) != 0
+            )
             {
                 _damageState.OnHit(MapManager.ObjLink, new Vector2(0, 1), HitType.Sword1, 1, false);
                 return;

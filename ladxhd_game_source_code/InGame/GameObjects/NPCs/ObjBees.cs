@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
@@ -32,7 +32,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _angryMode;
         private bool _playSound;
 
-        public ObjBees(Map.Map map, Vector2 position, GameObject targetObject, bool playSound) : base(map)
+        public ObjBees(Map.Map map, Vector2 position, GameObject targetObject, bool playSound)
+            : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-3, -5, 7, 7);
@@ -46,7 +47,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -3, -5, 7, 7, 8)
             {
                 CollisionTypes = Values.CollisionTypes.None,
-                VelocityTarget = new Vector2(-0.75f, 0.65f)
+                VelocityTarget = new Vector2(-0.75f, 0.65f),
             };
 
             _sprite = new CSprite(EntityPosition);
@@ -91,15 +92,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_angryMode && _playSound)
             {
                 _soundCounter -= Game1.DeltaTime;
-                if(_soundCounter < 0)
+                if (_soundCounter < 0)
                 {
                     _soundCounter += 25;
-                    Game1.GameManager.PlaySoundEffect("D360-34-22", true, MathF.Sin((float)(Game1.TotalGameTime / 65)) * 0.125f + 0.875f, -MathF.Sin((float)(Game1.TotalGameTime / 65)) * 0.25f - 0.125f);
+                    Game1.GameManager.PlaySoundEffect(
+                        "D360-34-22",
+                        true,
+                        MathF.Sin((float)(Game1.TotalGameTime / 65)) * 0.125f + 0.875f,
+                        -MathF.Sin((float)(Game1.TotalGameTime / 65)) * 0.25f - 0.125f
+                    );
                 }
             }
 
             // move towards the target
-            var targetDirection = (_targetObject.EntityPosition.Position + _targetOffset) - EntityPosition.Position;
+            var targetDirection =
+                (_targetObject.EntityPosition.Position + _targetOffset) - EntityPosition.Position;
             var targetDistance = targetDirection.Length();
             if (targetDistance > _targetDist)
             {
@@ -112,7 +119,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
                 _directionOffset = new Vector2(-targetDirection.Y, targetDirection.X);
 
-                _body.VelocityTarget = AnimationHelper.MoveToTarget(_body.VelocityTarget, targetDirection * _moveSpeed, _acceleration * Game1.TimeMultiplier);
+                _body.VelocityTarget = AnimationHelper.MoveToTarget(
+                    _body.VelocityTarget,
+                    targetDirection * _moveSpeed,
+                    _acceleration * Game1.TimeMultiplier
+                );
                 _body.VelocityTarget += _directionOffset * _offsetSpeed * Game1.TimeMultiplier;
             }
             else if (targetDirection != Vector2.Zero)
@@ -123,7 +134,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     if (!_followMode)
                         _targetOffset = new Vector2(
                             Game1.RandomNumber.Next(0, _offsetDist * 2 + 1) - _offsetDist,
-                            Game1.RandomNumber.Next(0, _offsetDist * 2 + 1) - _offsetDist);
+                            Game1.RandomNumber.Next(0, _offsetDist * 2 + 1) - _offsetDist
+                        );
                 }
             }
         }

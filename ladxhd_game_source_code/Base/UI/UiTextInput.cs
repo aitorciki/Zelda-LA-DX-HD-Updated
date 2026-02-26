@@ -41,8 +41,16 @@ namespace ProjectZ.Base.UI
 
         private double _lastMouseClick;
 
-        public UiTextInput(Rectangle rectangle, SpriteFont font, float maxLength,
-            string elementId, string screen, UiFunction update, UiFunction onTextUpdate) : base(elementId, screen)
+        public UiTextInput(
+            Rectangle rectangle,
+            SpriteFont font,
+            float maxLength,
+            string elementId,
+            string screen,
+            UiFunction update,
+            UiFunction onTextUpdate
+        )
+            : base(elementId, screen)
         {
             Rectangle = rectangle;
             UpdateFunction = update;
@@ -60,9 +68,14 @@ namespace ProjectZ.Base.UI
 
             _cursorCounter += Game1.DeltaTime;
 
-            if (InputHandler.KeyDown(Keys.Left) || InputHandler.KeyDown(Keys.Right) ||
-                InputHandler.KeyDown(Keys.Up) || InputHandler.KeyDown(Keys.Down) ||
-                InputHandler.KeyDown(Keys.Back) || InputHandler.KeyDown(Keys.Delete))
+            if (
+                InputHandler.KeyDown(Keys.Left)
+                || InputHandler.KeyDown(Keys.Right)
+                || InputHandler.KeyDown(Keys.Up)
+                || InputHandler.KeyDown(Keys.Down)
+                || InputHandler.KeyDown(Keys.Back)
+                || InputHandler.KeyDown(Keys.Delete)
+            )
             {
                 _buttonDownCounter -= Game1.DeltaTime;
             }
@@ -71,7 +84,8 @@ namespace ProjectZ.Base.UI
                 _buttonDownCounter = _buttonResetInitTime;
             }
 
-            if (!Selected) return;
+            if (!Selected)
+                return;
 
             var mousePosition = InputHandler.MousePosition().ToVector2();
             var newCursorIndex = SetCursor(mousePosition);
@@ -95,8 +109,10 @@ namespace ProjectZ.Base.UI
                     _cursorIndex = _selectionEnd;
                 }
             }
-            else if (InputHandler.MouseLeftDown() &&
-                     (_mouseSelecting || (_selectionStart == -1 && newCursorIndex != _cursorIndex)))
+            else if (
+                InputHandler.MouseLeftDown()
+                && (_mouseSelecting || (_selectionStart == -1 && newCursorIndex != _cursorIndex))
+            )
             {
                 _mouseSelecting = true;
                 _selectionStart = Math.Min(_cursorIndex, newCursorIndex);
@@ -116,15 +132,23 @@ namespace ProjectZ.Base.UI
                 if (_selectionStart != -1)
                     DeleteSelection();
 
-                _strValue = _strValue.Substring(0, _cursorIndex) + inputString +
-                            _strValue.Substring(_cursorIndex, _strValue.Length - _cursorIndex);
+                _strValue =
+                    _strValue.Substring(0, _cursorIndex)
+                    + inputString
+                    + _strValue.Substring(_cursorIndex, _strValue.Length - _cursorIndex);
 
                 _cursorIndex++;
             }
 
             //delete last position
-            if ((InputHandler.KeyPressed(Keys.Back) || InputHandler.KeyDown(Keys.Back) &&
-                 _buttonDownCounter <= 0) && _strValue.Length > 0 && _cursorIndex > 0)
+            if (
+                (
+                    InputHandler.KeyPressed(Keys.Back)
+                    || InputHandler.KeyDown(Keys.Back) && _buttonDownCounter <= 0
+                )
+                && _strValue.Length > 0
+                && _cursorIndex > 0
+            )
             {
                 // delete selection
                 if (_selectionStart != -1)
@@ -141,8 +165,13 @@ namespace ProjectZ.Base.UI
                 _cursorCounter = 0;
             }
 
-            if ((InputHandler.KeyPressed(Keys.Delete) || InputHandler.KeyDown(Keys.Delete) &&
-                 _buttonDownCounter <= 0) && _strValue.Length > 0)
+            if (
+                (
+                    InputHandler.KeyPressed(Keys.Delete)
+                    || InputHandler.KeyDown(Keys.Delete) && _buttonDownCounter <= 0
+                )
+                && _strValue.Length > 0
+            )
             {
                 // delete selection
                 if (_selectionStart != -1)
@@ -167,7 +196,10 @@ namespace ProjectZ.Base.UI
             }
 
             // move the cursor to the end of the word
-            if (InputHandler.KeyPressed(Keys.Left) || InputHandler.KeyDown(Keys.Left) && _buttonDownCounter <= 0)
+            if (
+                InputHandler.KeyPressed(Keys.Left)
+                || InputHandler.KeyDown(Keys.Left) && _buttonDownCounter <= 0
+            )
             {
                 if (InputHandler.KeyDown(Keys.LeftControl))
                     _cursorIndex = CursorPositionSkip(-1);
@@ -180,7 +212,10 @@ namespace ProjectZ.Base.UI
                 ResetCursorTimer();
             }
 
-            if (InputHandler.KeyPressed(Keys.Right) || InputHandler.KeyDown(Keys.Right) && _buttonDownCounter <= 0)
+            if (
+                InputHandler.KeyPressed(Keys.Right)
+                || InputHandler.KeyDown(Keys.Right) && _buttonDownCounter <= 0
+            )
             {
                 if (InputHandler.KeyDown(Keys.LeftControl))
                     _cursorIndex = CursorPositionSkip(1);
@@ -287,10 +322,12 @@ namespace ProjectZ.Base.UI
             if (character == ' ')
                 return 0;
 
-            if (('a' <= character && character <= 'z') ||
-                ('A' <= character && character <= 'Z') ||
-                ('0' <= character && character <= '9') ||
-                character == '_')
+            if (
+                ('a' <= character && character <= 'z')
+                || ('A' <= character && character <= 'Z')
+                || ('0' <= character && character <= '9')
+                || character == '_'
+            )
             {
                 return 1;
             }
@@ -302,7 +339,8 @@ namespace ProjectZ.Base.UI
         {
             var converted = ConvertToType();
 
-            if (converted == null) return;
+            if (converted == null)
+                return;
 
             var intValue = (int)converted + diff;
             _strValue = intValue.ToString();
@@ -312,7 +350,8 @@ namespace ProjectZ.Base.UI
         {
             var converted = ConvertToType();
 
-            if (converted == null) return;
+            if (converted == null)
+                return;
 
             var boolValue = !(bool)converted;
             _strValue = boolValue.ToString();
@@ -367,14 +406,23 @@ namespace ProjectZ.Base.UI
                 while (drawIndex < _selectionEnd)
                 {
                     var drawIndexEnd = MathHelper.Min(
-                        drawIndex + _maxCharacterCount - (drawIndex % _maxCharacterCount), _selectionEnd);
+                        drawIndex + _maxCharacterCount - (drawIndex % _maxCharacterCount),
+                        _selectionEnd
+                    );
                     var drawPosition = new Vector2(
                         (drawIndex % _maxCharacterCount) * _fontSize.X,
-                        (drawIndex / _maxCharacterCount) * _fontSize.Y);
-                    spriteBatch.Draw(Resources.SprWhite,
+                        (drawIndex / _maxCharacterCount) * _fontSize.Y
+                    );
+                    spriteBatch.Draw(
+                        Resources.SprWhite,
                         new Rectangle(
-                            (int)(textPosition.X + drawPosition.X), (int)(textPosition.Y + drawPosition.Y),
-                            (drawIndexEnd - drawIndex) * (int)_fontSize.X, (int)_fontSize.Y), Color.Blue);
+                            (int)(textPosition.X + drawPosition.X),
+                            (int)(textPosition.Y + drawPosition.Y),
+                            (drawIndexEnd - drawIndex) * (int)_fontSize.X,
+                            (int)_fontSize.Y
+                        ),
+                        Color.Blue
+                    );
                     drawIndex = drawIndexEnd;
                 }
             }
@@ -386,8 +434,12 @@ namespace ProjectZ.Base.UI
             {
                 var offset = _cursorIndex != 0 && _cursorIndex % _maxCharacterCount == 0 ? 1 : 0;
                 var cursorPosition = new Vector2(
-                    textPosition.X + (_cursorIndex % _maxCharacterCount + offset * _maxCharacterCount) * _fontSize.X - 3,
-                    textPosition.Y + (_cursorIndex / _maxCharacterCount - offset) * _fontSize.Y);
+                    textPosition.X
+                        + (_cursorIndex % _maxCharacterCount + offset * _maxCharacterCount)
+                            * _fontSize.X
+                        - 3,
+                    textPosition.Y + (_cursorIndex / _maxCharacterCount - offset) * _fontSize.Y
+                );
 
                 spriteBatch.DrawString(Font, "|", cursorPosition, FontColor);
             }
@@ -396,7 +448,10 @@ namespace ProjectZ.Base.UI
         private Vector2 GetTextPosition()
         {
             var label = Label.Length > 0 ? Label : "0";
-            return new Vector2(Rectangle.X + 5, (int)(Rectangle.Y + Rectangle.Height / 2 - Font.MeasureString(label).Y / 2));
+            return new Vector2(
+                Rectangle.X + 5,
+                (int)(Rectangle.Y + Rectangle.Height / 2 - Font.MeasureString(label).Y / 2)
+            );
         }
     }
 }

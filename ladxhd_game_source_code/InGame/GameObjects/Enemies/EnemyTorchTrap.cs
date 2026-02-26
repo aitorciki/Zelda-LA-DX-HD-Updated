@@ -15,9 +15,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const int FireballTime = 3000;
         private bool _isActive;
 
-        public EnemyTorchTrap() : base("torch trap") { }
+        public EnemyTorchTrap()
+            : base("torch trap") { }
 
-        public EnemyTorchTrap(Map.Map map, int posX, int posY, string key) : base(map)
+        public EnemyTorchTrap(Map.Map map, int posX, int posY, string key)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 8, 0);
             EntitySize = new Rectangle(-8, -8, 16, 16);
@@ -28,7 +30,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _key = key;
 
             if (!string.IsNullOrEmpty(_key))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChanged)
+                );
             else
                 _isActive = true;
 
@@ -48,13 +53,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _fireballCounter += Game1.DeltaTime;
             if (_fireballCounter < FireballTime)
                 return;
-            
+
             _fireballCounter -= FireballTime;
 
             // spawn a fireball?
             var distance = EntityPosition.Position - MapManager.ObjLink.Position;
             if (distance.Length() < 106)
-                Map.Objects.SpawnObject(new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 1.25f));
+                Map.Objects.SpawnObject(
+                    new EnemyFireball(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 1.25f)
+                );
         }
     }
 }

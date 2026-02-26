@@ -19,9 +19,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _talkCount;
         private bool _isTransitioning;
 
-        public ObjFisherman() : base("fisherman") { }
+        public ObjFisherman()
+            : base("fisherman") { }
 
-        public ObjFisherman(Map.Map map, int posX, int posY) : base(map)
+        public ObjFisherman(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Animator = AnimatorSaveLoad.LoadAnimator("NPCs/" + _personId);
             Animator.Play("stand");
@@ -37,13 +39,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Body = new BodyComponent(EntityPosition, -8, -11, 15, 11, 8);
 
             AddComponent(BodyComponent.Index, Body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    Body,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(Body.BodyBox, Interact));
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(Body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
         }
 
         private void Update()
@@ -66,7 +80,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void KeyChanged()
         {
             // spawn object
-            if (_isTransitioning || Game1.GameManager.SaveManager.GetString("enterPond") != "yes") return;
+            if (_isTransitioning || Game1.GameManager.SaveManager.GetString("enterPond") != "yes")
+                return;
 
             _isTransitioning = true;
 
@@ -75,8 +90,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             MapManager.ObjLink.TransitionOutWalking = false;
 
             // append a map change
-            ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                "pond.map", "entry", true, false, Values.MapTransitionColor, false);
+            (
+                (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+            ).AppendMapChange("pond.map", "entry", true, false, Values.MapTransitionColor, false);
         }
     }
 }

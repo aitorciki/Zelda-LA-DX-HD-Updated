@@ -20,11 +20,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Vector2 _offset = new Vector2(-8, -14);
 
-        public ObjSpriteShadow() : this("sprshadows") { }
+        public ObjSpriteShadow()
+            : this("sprshadows") { }
 
-        public ObjSpriteShadow(string spriteName) : base(spriteName) { }
+        public ObjSpriteShadow(string spriteName)
+            : base(spriteName) { }
 
-        public ObjSpriteShadow(Map.Map map, float posX, float posY, int layer, string spriteName) : base(map)
+        public ObjSpriteShadow(Map.Map map, float posX, float posY, int layer, string spriteName)
+            : base(map)
         {
             _currentMap = map;
             map.Objects.SpawnObject(this);
@@ -34,34 +37,54 @@ namespace ProjectZ.InGame.GameObjects.Things
             _sprite = new CSprite(spriteName, _position);
             EntityPosition = _position;
 
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(_sprite, _layer));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawCSpriteComponent(_sprite, _layer)
+            );
             UpdateVisibility(!GameSettings.EnableShadows);
         }
 
-        public ObjSpriteShadow(Map.Map map, GameObject host, float offsetX, float offsetY, int layer, string spriteName) : this(map, host, layer, spriteName)
+        public ObjSpriteShadow(
+            Map.Map map,
+            GameObject host,
+            float offsetX,
+            float offsetY,
+            int layer,
+            string spriteName
+        )
+            : this(map, host, layer, spriteName)
         {
             _currentMap = map;
             _offset = new Vector2(offsetX, offsetY);
             _drawComponent.IsActive = !GameSettings.EnableShadows;
         }
 
-        public ObjSpriteShadow(Map.Map map, GameObject host, int layer, string spriteName) : base(map)
+        public ObjSpriteShadow(Map.Map map, GameObject host, int layer, string spriteName)
+            : base(map)
         {
             _currentMap = map;
 
             // A failsafe to prevent crashes. This shouldn't happen but it could.
-            if (_host == null && map == null) return;
+            if (_host == null && map == null)
+                return;
 
             map.Objects.SpawnObject(this);
 
             _host = host;
             _layer = layer;
-            _position = new CPosition(_host.EntityPosition.Position.X + _offset.X, _host.EntityPosition.Position.Y + _offset.Y, 0);
+            _position = new CPosition(
+                _host.EntityPosition.Position.X + _offset.X,
+                _host.EntityPosition.Position.Y + _offset.Y,
+                0
+            );
             _sprite = new CSprite(spriteName, _position);
 
             EntityPosition = _position;
 
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawCSpriteComponent(_sprite, _layer));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawCSpriteComponent(_sprite, _layer)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 

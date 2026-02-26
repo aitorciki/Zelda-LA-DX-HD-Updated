@@ -14,19 +14,34 @@ namespace ProjectZ.InGame.GameObjects.Things
         private double _despawnCounter;
         private bool _despawning;
 
-        public ObjFinalBackgroundStairs() : base("editor_final_platform") { }
+        public ObjFinalBackgroundStairs()
+            : base("editor_final_platform") { }
 
-        public ObjFinalBackgroundStairs(Map.Map map, int posX, int posY, string despawnKey) : base(map)
+        public ObjFinalBackgroundStairs(Map.Map map, int posX, int posY, string despawnKey)
+            : base(map)
         {
             _despawnKey = despawnKey;
 
-            var sprite = new CSprite("final_background_stairs", new CPosition(posX, posY + 1, 0), new Vector2(0, -1)) { SpriteShader = Resources.ThanosSpriteShader0 };
+            var sprite = new CSprite(
+                "final_background_stairs",
+                new CPosition(posX, posY + 1, 0),
+                new Vector2(0, -1)
+            )
+            {
+                SpriteShader = Resources.ThanosSpriteShader0,
+            };
             Resources.ThanosSpriteShader0.FloatParameter["Percentage"] = 0;
 
             if (!string.IsNullOrEmpty(_despawnKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBackground));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(sprite, Values.LayerBackground)
+            );
         }
 
         private void OnKeyChange()

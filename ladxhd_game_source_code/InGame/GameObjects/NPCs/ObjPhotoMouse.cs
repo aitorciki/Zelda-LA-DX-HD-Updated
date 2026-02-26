@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             public float MoveSpeed;
             public Vector2 Offset;
         }
+
         private Queue<MoveStep> _nextMoveStep = new Queue<MoveStep>();
 
         public readonly BodyComponent Body;
@@ -50,9 +51,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _movingToPlayer;
         private bool _isActive = true;
 
-        public ObjPhotoMouse() : base("photo_mouse") { }
+        public ObjPhotoMouse()
+            : base("photo_mouse") { }
 
-        public ObjPhotoMouse(Map.Map map, int posX, int posY, string spawnCondition, string dialogId) : base(map)
+        public ObjPhotoMouse(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spawnCondition,
+            string dialogId
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 15, 0);
             EntitySize = new Rectangle(-8, -15, 16, 16);
@@ -78,15 +87,38 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Body.DragAir = 0.95f;
             }
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, Body);
             // only the player should collide with the npc
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, _interactComponent = new InteractComponent(new CBox(EntityPosition, -7, -6 - 1, 2, 2, 8), Interact));
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BodyCollisionComponent(
+                    Body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                InteractComponent.Index,
+                _interactComponent = new InteractComponent(
+                    new CBox(EntityPosition, -7, -6 - 1, 2, 2, 8),
+                    Interact
+                )
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, _sprite, Values.LayerPlayer) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(Body, _sprite));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(Body, _sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(Body, _sprite)
+            );
 
             if (!string.IsNullOrEmpty(spawnCondition))
                 SetActive(false);
@@ -124,8 +156,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _movingToPlayer = true;
 
                     // move to the player
-                    _nextMoveStep.Enqueue(new MoveStep() { MoveSpeed = 1, Offset = new Vector2(80 - EntityPosition.X, 0) });
-                    _nextMoveStep.Enqueue(new MoveStep() { MoveSpeed = 1, Offset = new Vector2(0, 54 - EntityPosition.Y) });
+                    _nextMoveStep.Enqueue(
+                        new MoveStep()
+                        {
+                            MoveSpeed = 1,
+                            Offset = new Vector2(80 - EntityPosition.X, 0),
+                        }
+                    );
+                    _nextMoveStep.Enqueue(
+                        new MoveStep()
+                        {
+                            MoveSpeed = 1,
+                            Offset = new Vector2(0, 54 - EntityPosition.Y),
+                        }
+                    );
 
                     StartMoving();
 
@@ -156,8 +200,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _swimCounter += SwimTime;
                 // change direction
-                if ((_swimDirection > 0 && _spawnPosition.X + 8 < EntityPosition.X) ||
-                    (_swimDirection < 0 && EntityPosition.X < _spawnPosition.X - 8))
+                if (
+                    (_swimDirection > 0 && _spawnPosition.X + 8 < EntityPosition.X)
+                    || (_swimDirection < 0 && EntityPosition.X < _spawnPosition.X - 8)
+                )
                 {
                     _swimDirection = -_swimDirection;
                     _animator.Play("swim_" + _swimDirection);
@@ -309,7 +355,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     var offsetY = int.Parse(split[1]);
                     var moveSpeed = float.Parse(split[2], CultureInfo.InvariantCulture);
 
-                    _nextMoveStep.Enqueue(new MoveStep() { MoveSpeed = moveSpeed, Offset = new Vector2(offsetX, offsetY) });
+                    _nextMoveStep.Enqueue(
+                        new MoveStep()
+                        {
+                            MoveSpeed = moveSpeed,
+                            Offset = new Vector2(offsetX, offsetY),
+                        }
+                    );
 
                     StartMoving();
                 }

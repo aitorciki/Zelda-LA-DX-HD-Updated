@@ -28,9 +28,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _removeCollider;
         private bool _stickCollected;
 
-        public ObjBridge() : base("bridge") { }
+        public ObjBridge()
+            : base("bridge") { }
 
-        public ObjBridge(Map.Map map, int posX, int posY) : base(map)
+        public ObjBridge(Map.Map map, int posX, int posY)
+            : base(map)
         {
             _sourceRectangle = Resources.SourceRectangle("bridge");
 
@@ -40,13 +42,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             var value = Game1.GameManager.SaveManager.GetString("monkeyBusiness");
             var finished = value == "3";
 
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
 
             value = Game1.GameManager.SaveManager.GetString("ow_trade4", "0");
             _stickCollected = (value == "1");
 
             if (!_stickCollected)
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
 
             // Spawn the stick if it has not been collected.
             if (finished)
@@ -61,9 +69,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             for (var i = 0; i < _workers.Length; i++)
             {
                 var randomDir = (Game1.RandomNumber.Next(0, 50) / 50.0f) * MathF.PI * 2;
-                var startPosition = new Vector2(EntityPosition.X + 8, EntityPosition.Y - 24) +
-                                    new Vector2(MathF.Sin(randomDir), MathF.Cos(randomDir)) * 150;
-                var workPosition = new Vector2(EntityPosition.X + 8, EntityPosition.Y - 36 * (i / 6.0f));
+                var startPosition =
+                    new Vector2(EntityPosition.X + 8, EntityPosition.Y - 24)
+                    + new Vector2(MathF.Sin(randomDir), MathF.Cos(randomDir)) * 150;
+                var workPosition = new Vector2(
+                    EntityPosition.X + 8,
+                    EntityPosition.Y - 36 * (i / 6.0f)
+                );
                 _workers[i] = new ObjMonkeyWorker(map, startPosition, workPosition, startPosition);
             }
         }
@@ -95,8 +107,24 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void SpawnStick()
         {
             // Spawn the stick and spawn a collider so the player can't jump over it.
-            var objStick = new ObjItem(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 32, "", "ow_trade4", "trade4", null);
-           _collider = new ObjCollider(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 48, false, Color.Red, Values.CollisionTypes.Normal, new Rectangle(0, 0, 16, 16));
+            var objStick = new ObjItem(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y - 32,
+                "",
+                "ow_trade4",
+                "trade4",
+                null
+            );
+            _collider = new ObjCollider(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y - 48,
+                false,
+                Color.Red,
+                Values.CollisionTypes.Normal,
+                new Rectangle(0, 0, 16, 16)
+            );
 
             // If the stick has not been collected, spawn them into the map.
             if (!objStick.IsDead)
@@ -137,11 +165,26 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // draw the segments of the bridge
             if (_counter > Segment1Time)
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(EntityPosition.X, EntityPosition.Y - 48), _sourceRectangle, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(EntityPosition.X, EntityPosition.Y - 48),
+                    _sourceRectangle,
+                    Color.White
+                );
             if (_counter > Segment2Time)
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(EntityPosition.X, EntityPosition.Y - 32), _sourceRectangle, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(EntityPosition.X, EntityPosition.Y - 32),
+                    _sourceRectangle,
+                    Color.White
+                );
             if (_counter > Segment3Time)
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(EntityPosition.X, EntityPosition.Y - 16), _sourceRectangle, Color.White);
+                spriteBatch.Draw(
+                    Resources.SprObjects,
+                    new Vector2(EntityPosition.X, EntityPosition.Y - 16),
+                    _sourceRectangle,
+                    Color.White
+                );
         }
     }
 }

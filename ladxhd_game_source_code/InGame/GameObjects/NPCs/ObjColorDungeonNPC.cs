@@ -27,9 +27,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private Vector2 _centerPosition;
         private Vector2 _sidePosition;
 
-        public ObjColorDungeonNPC() : base("npc_color_dungeon") { }
+        public ObjColorDungeonNPC()
+            : base("npc_color_dungeon") { }
 
-        public ObjColorDungeonNPC(Map.Map map, int posX, int posY, string personId, bool isRed) : base(map)
+        public ObjColorDungeonNPC(Map.Map map, int posX, int posY, string personId, bool isRed)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -40,7 +42,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _centerPosition = new Vector2(EntityPosition.X + (_isRed ? -8 : 8), EntityPosition.Y);
             _sidePosition = new Vector2(EntityPosition.X + (_isRed ? 11 : -11), EntityPosition.Y);
 
-            _animator = AnimatorSaveLoad.LoadAnimator("NPCs/npc_color_dungeon_" + (isRed ? "red" : "blue"));
+            _animator = AnimatorSaveLoad.LoadAnimator(
+                "NPCs/npc_color_dungeon_" + (isRed ? "red" : "blue")
+            );
             _animator.Play("idle");
 
             // already moved?
@@ -55,13 +59,22 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             var body = new BodyComponent(EntityPosition, -8, -16, 16, 16, 8);
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(body, Values.CollisionTypes.Normal)
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(body.BodyBox, Interact));
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 

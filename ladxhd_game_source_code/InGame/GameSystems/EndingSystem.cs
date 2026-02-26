@@ -17,7 +17,7 @@ namespace ProjectZ.InGame.GameSystems
 
         public override void Update()
         {
-            if(!_isActive)
+            if (!_isActive)
                 return;
 
             _counter -= Game1.DeltaTime;
@@ -29,22 +29,24 @@ namespace ProjectZ.InGame.GameSystems
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-
-        }
+        public override void Draw(SpriteBatch spriteBatch) { }
 
         public void StartEnding()
         {
             _isActive = true;
             _counter = 2000;
 
-            MapManager.ObjLink.MapTransitionStart = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y);
+            MapManager.ObjLink.MapTransitionStart = new Vector2(
+                MapManager.ObjLink.EntityPosition.X,
+                MapManager.ObjLink.EntityPosition.Y
+            );
             MapManager.ObjLink.MapTransitionEnd = MapManager.ObjLink.MapTransitionStart;
             //MapManager.ObjLink.DirectionExit = Direction;
 
             // append a map change
-            ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange("ending.map", "entry");
+            (
+                (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]
+            ).AppendMapChange("ending.map", "entry");
         }
     }
 }

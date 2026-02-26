@@ -28,12 +28,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _direction;
         private int _lives = EnemyLives.Wizzrobe;
 
-        public EnemyWizzrobe() : base("wizzrobe") { }
+        public EnemyWizzrobe()
+            : base("wizzrobe") { }
 
-        public EnemyWizzrobe(Map.Map map, int posX, int posY) : base(map)
+        public EnemyWizzrobe(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -50,24 +52,39 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Field,
             };
             var stateHidden = new AiState(UpdateHidden) { Init = InitHidden };
             // will be hidden for at lease x time
             stateHidden.Trigger.Add(_hiddenTimer = new AiTriggerTimer(1000));
             var stateSpawn = new AiState { Init = InitSpawn };
-            stateSpawn.Trigger.Add(new AiTriggerCountdown(BlinkTime, BlinkTick, () => _aiComponent.ChangeState("head")));
+            stateSpawn.Trigger.Add(
+                new AiTriggerCountdown(BlinkTime, BlinkTick, () => _aiComponent.ChangeState("head"))
+            );
             var stateHead = new AiState { Init = InitHead };
-            stateHead.Trigger.Add(new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("stand")));
+            stateHead.Trigger.Add(
+                new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("stand"))
+            );
             var stateStand = new AiState { Init = InitStand };
             stateStand.Trigger.Add(new AiTriggerCountdown(300, null, Shoot));
-            stateStand.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("despawnHead")));
+            stateStand.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("despawnHead"))
+            );
             var stateDespawnHead = new AiState { Init = InitHead };
-            stateDespawnHead.Trigger.Add(new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("despawn")));
+            stateDespawnHead.Trigger.Add(
+                new AiTriggerCountdown(400, null, () => _aiComponent.ChangeState("despawn"))
+            );
             var stateDespawn = new AiState();
-            stateDespawn.Trigger.Add(new AiTriggerCountdown(BlinkTime, BlinkTick, () => _aiComponent.ChangeState("hidden")));
+            stateDespawn.Trigger.Add(
+                new AiTriggerCountdown(
+                    BlinkTime,
+                    BlinkTick,
+                    () => _aiComponent.ChangeState("hidden")
+                )
+            );
 
             _aiComponent = new AiComponent();
 
@@ -78,7 +95,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.States.Add("despawnHead", stateDespawnHead);
             _aiStunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false);
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            );
             new AiFallState(_aiComponent, _body, null, null, 100);
 
             _aiComponent.ChangeState("hidden");
@@ -89,11 +114,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush) { IsActive = false });
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush) { IsActive = false }
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
         }
 
@@ -138,7 +175,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateHidden()
         {
             // start spawning
-            if (_hiddenTimer.State && _fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
+            if (
+                _hiddenTimer.State
+                && _fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+            )
                 _aiComponent.ChangeState("spawn");
         }
 
@@ -157,19 +197,33 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Shoot()
         {
-            var projectile = new EnemyWizzrobeProjectile(Map, new Vector2(EntityPosition.X, EntityPosition.Y - 7), _direction, 2.0f);
+            var projectile = new EnemyWizzrobeProjectile(
+                Map,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 7),
+                _direction,
+                2.0f
+            );
             Map.Objects.SpawnObject(projectile);
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can not hit the enemy while he is spawning or hidden
-            if (_damageState.CurrentLives <= 0 || _damageState.IsInDamageState() ||
-                (_aiComponent.CurrentStateId != "stand" && !_aiStunnedState.IsStunned()))
+            if (
+                _damageState.CurrentLives <= 0
+                || _damageState.IsInDamageState()
+                || (_aiComponent.CurrentStateId != "stand" && !_aiStunnedState.IsStunned())
+            )
                 return Values.HitCollision.None;
 
             if (hitType == HitType.Hookshot || hitType == HitType.Boomerang)
@@ -202,7 +256,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
         {
             if (pushType == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }

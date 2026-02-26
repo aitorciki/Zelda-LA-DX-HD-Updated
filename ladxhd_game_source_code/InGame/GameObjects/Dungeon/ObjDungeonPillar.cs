@@ -16,7 +16,14 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly AiComponent _aiComponent;
 
         private readonly CSprite[] _sprites = new CSprite[5];
-        private readonly string[] _spriteIds = { "pillar_bottom", "pillar_middle", "pillar_middle", "pillar_middle", "pillar_top" };
+        private readonly string[] _spriteIds =
+        {
+            "pillar_bottom",
+            "pillar_middle",
+            "pillar_middle",
+            "pillar_middle",
+            "pillar_top",
+        };
 
         private string _saveKey;
 
@@ -27,9 +34,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private Vector2 _basePosition;
 
-        public ObjDungeonPillar() : base("pillar_bottom") { }
+        public ObjDungeonPillar()
+            : base("pillar_bottom") { }
 
-        public ObjDungeonPillar(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public ObjDungeonPillar(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             _saveKey = saveKey;
             if (!string.IsNullOrEmpty(_saveKey))
@@ -43,7 +52,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             }
 
             for (var i = 0; i < 5; i++)
-                _sprites[i] = new CSprite(_spriteIds[i], new CPosition(posX, posY - i * 16, 0), Vector2.Zero);
+                _sprites[i] = new CSprite(
+                    _spriteIds[i],
+                    new CPosition(posX, posY - i * 16, 0),
+                    Vector2.Zero
+                );
 
             _basePosition = new Vector2(posX, posY);
 
@@ -52,7 +65,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             var stateIdle = new AiState();
             var stateShaking = new AiState { Init = InitShake };
-            stateShaking.Trigger.Add(new AiTriggerCountdown(1300, null, () => _aiComponent.ChangeState("falling")));
+            stateShaking.Trigger.Add(
+                new AiTriggerCountdown(1300, null, () => _aiComponent.ChangeState("falling"))
+            );
             var stateFalling = new AiState(UpdateFalling);
 
             _aiComponent = new AiComponent();
@@ -66,8 +81,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(HittableComponent.Index, new HittableComponent(hitBox, OnHit));
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    collisionBox,
+                    Values.CollisionTypes.Normal
+                )
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
         }
 
         private void InitShake()
@@ -106,7 +130,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
                 var stonePosX = (int)_basePosition.X + Game1.RandomNumber.Next(0, 48) - 24;
                 var stonePosY = (int)_basePosition.Y + Game1.RandomNumber.Next(0, 48) - 24;
-                Map.Objects.SpawnObject(new ObjSmallStone(Map, stonePosX, stonePosY, 64, new Vector3(0, 0, 0), true));
+                Map.Objects.SpawnObject(
+                    new ObjSmallStone(Map, stonePosX, stonePosY, 64, new Vector3(0, 0, 0), true)
+                );
             }
 
             // spawn particles
@@ -116,11 +142,27 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
                 var positionX = (int)_basePosition.X + Game1.RandomNumber.Next(0, 28) - 14;
                 var positionY = (int)_basePosition.Y + Game1.RandomNumber.Next(0, 8) - 2;
-                Map.Objects.SpawnObject(new ObjAnimator(Map, positionX, positionY, Values.LayerTop, "Particles/spawn", "run", true));
+                Map.Objects.SpawnObject(
+                    new ObjAnimator(
+                        Map,
+                        positionX,
+                        positionY,
+                        Values.LayerTop,
+                        "Particles/spawn",
+                        "run",
+                        true
+                    )
+                );
             }
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (originObject.GetType() == typeof(ObjBall) && _aiComponent.CurrentStateId == "idle")
             {
@@ -135,7 +177,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             for (var i = 0; i < _pillarIndex; i++)
             {
-                _sprites[5 - _pillarIndex + i].Position.Set(new Vector2(_basePosition.X, _basePosition.Y - i * 16));
+                _sprites[5 - _pillarIndex + i]
+                    .Position.Set(new Vector2(_basePosition.X, _basePosition.Y - i * 16));
                 _sprites[5 - _pillarIndex + i].Draw(spriteBatch);
             }
         }

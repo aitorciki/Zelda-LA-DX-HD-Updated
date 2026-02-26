@@ -53,14 +53,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private bool _attackable = false;
         private bool _isDead = false;
 
-        public MBossTurtleRock() : base("turtle rock") { }
+        public MBossTurtleRock()
+            : base("turtle rock") { }
 
-        public MBossTurtleRock(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public MBossTurtleRock(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             // do not spawn if the tutle was already killed
             _saveKey = saveKey;
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -71,14 +75,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _centerPosition = new Vector2(_startPosition.X, _startPosition.Y + 32);
 
             EntityPosition = new CPosition(_startPosition.X, _startPosition.Y, 0);
-            ResetPosition  = new CPosition(_startPosition.X, _startPosition.Y, 0);
+            ResetPosition = new CPosition(_startPosition.X, _startPosition.Y, 0);
             EntitySize = new Rectangle(-16, -16, 32, 32);
             CanReset = true;
             OnReset = Reset;
 
             _body = new BodyComponent(EntityPosition, -8, 0, 16, 16, 8)
             {
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             _spriteNeck = Resources.GetSprite("turtle neck");
@@ -96,16 +100,50 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _headPartOffset[4] = new Vector2(0, headHeight);
             _headPartOffset[5] = new Vector2(_stoneHead.SourceRectangle.Width / 2, headHeight);
 
-            _headParts[0] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[0].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[0].Y, headWidth, headHeight);
-            _headParts[1] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[1].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[1].Y, 8, headHeight);
-            _headParts[2] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[2].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[2].Y, 8, headHeight);
-            _headParts[3] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[3].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[3].Y, headWidth, headHeight);
-            _headParts[4] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[4].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[4].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
-            _headParts[5] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[5].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[5].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
+            _headParts[0] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[0].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[0].Y,
+                headWidth,
+                headHeight
+            );
+            _headParts[1] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[1].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[1].Y,
+                8,
+                headHeight
+            );
+            _headParts[2] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[2].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[2].Y,
+                8,
+                headHeight
+            );
+            _headParts[3] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[3].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[3].Y,
+                headWidth,
+                headHeight
+            );
+            _headParts[4] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[4].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[4].Y,
+                _stoneHead.SourceRectangle.Width / 2,
+                headHeight
+            );
+            _headParts[5] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[5].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[5].Y,
+                _stoneHead.SourceRectangle.Width / 2,
+                headHeight
+            );
 
             // set the part position
             for (var i = 0; i < _partPosition.Length; i++)
-                _partPosition[i] = new Vector3(EntityPosition.X + _headPartOffset[i].X, EntityPosition.Y + _headPartOffset[i].Y, 0);
+                _partPosition[i] = new Vector3(
+                    EntityPosition.X + _headPartOffset[i].X,
+                    EntityPosition.Y + _headPartOffset[i].Y,
+                    0
+                );
 
             _animator = AnimatorSaveLoad.LoadAnimator("MidBoss/turtle rock");
             _animator.Play("stone");
@@ -124,14 +162,22 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var stateOpenEyes = new AiState(UpdateEyeOpening) { Init = InitOpenEyes };
             var stateCome = new AiState(UpdateCome) { Init = InitCome };
             var stateInitWait = new AiState();
-            stateInitWait.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("move")));
+            stateInitWait.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("move"))
+            );
             var stateMove = new AiState(UpdateMove) { Init = InitMove };
             var stateWait = new AiState();
-            stateWait.Trigger.Add(new AiTriggerCountdown(150, null, () => _aiComponent.ChangeState("move")));
+            stateWait.Trigger.Add(
+                new AiTriggerCountdown(150, null, () => _aiComponent.ChangeState("move"))
+            );
             var statePreAttack = new AiState();
-            statePreAttack.Trigger.Add(new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("attack")));
+            statePreAttack.Trigger.Add(
+                new AiTriggerCountdown(1000, null, () => _aiComponent.ChangeState("attack"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
-            stateAttack.Trigger.Add(new AiTriggerCountdown(600, null, () => _aiComponent.ChangeState("return")));
+            stateAttack.Trigger.Add(
+                new AiTriggerCountdown(600, null, () => _aiComponent.ChangeState("return"))
+            );
             var stateReturn = new AiState(UpdateReturn);
             var stateDead = new AiState();
 
@@ -148,11 +194,20 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("return", stateReturn);
             _aiComponent.States.Add("dead", stateDead);
 
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false, AiDamageState.BlinkTime * 6)
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false,
+                AiDamageState.BlinkTime * 6
+            )
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
-                ExplosionOffsetY = 16
+                ExplosionOffsetY = 16,
             };
             _aiDamageState.AddBossDamageState(OnDeath);
 
@@ -164,12 +219,39 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed) { InteractRect = new Rectangle(-65,-80, 130,160) });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, -8, 0, 16, 14, 8), Values.CollisionTypes.Enemy));
+            AddComponent(
+                OcarinaListenerComponent.Index,
+                new OcarinaListenerComponent(OnSongPlayed)
+                {
+                    InteractRect = new Rectangle(-65, -80, 130, 160),
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+                {
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    new CBox(EntityPosition, -8, 0, 16, 14, 8),
+                    Values.CollisionTypes.Enemy
+                )
+            );
         }
 
         private void Reset()
@@ -201,12 +283,42 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _headPartOffset[4] = new Vector2(0, headHeight);
             _headPartOffset[5] = new Vector2(_stoneHead.SourceRectangle.Width / 2, headHeight);
 
-            _headParts[0] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[0].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[0].Y, headWidth, headHeight);
-            _headParts[1] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[1].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[1].Y, 8, headHeight);
-            _headParts[2] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[2].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[2].Y, 8, headHeight);
-            _headParts[3] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[3].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[3].Y, headWidth, headHeight);
-            _headParts[4] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[4].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[4].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
-            _headParts[5] = new Rectangle(_stoneHead.SourceRectangle.X + (int)_headPartOffset[5].X, _stoneHead.SourceRectangle.Y + (int)_headPartOffset[5].Y, _stoneHead.SourceRectangle.Width / 2, headHeight);
+            _headParts[0] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[0].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[0].Y,
+                headWidth,
+                headHeight
+            );
+            _headParts[1] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[1].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[1].Y,
+                8,
+                headHeight
+            );
+            _headParts[2] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[2].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[2].Y,
+                8,
+                headHeight
+            );
+            _headParts[3] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[3].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[3].Y,
+                headWidth,
+                headHeight
+            );
+            _headParts[4] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[4].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[4].Y,
+                _stoneHead.SourceRectangle.Width / 2,
+                headHeight
+            );
+            _headParts[5] = new Rectangle(
+                _stoneHead.SourceRectangle.X + (int)_headPartOffset[5].X,
+                _stoneHead.SourceRectangle.Y + (int)_headPartOffset[5].Y,
+                _stoneHead.SourceRectangle.Width / 2,
+                headHeight
+            );
 
             // Invert component states.
             _collisionComponent.IsActive = true;
@@ -214,7 +326,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // Reset the part positions.
             for (var i = 0; i < _partPosition.Length; i++)
-                _partPosition[i] = new Vector3(ResetPosition.X + _headPartOffset[i].X, ResetPosition.Y + _headPartOffset[i].Y, 0);
+                _partPosition[i] = new Vector3(
+                    ResetPosition.X + _headPartOffset[i].X,
+                    ResetPosition.Y + _headPartOffset[i].Y,
+                    0
+                );
 
             _animator.Play("stone");
             _aiComponent.ChangeState("stone");
@@ -224,7 +340,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         public override void Init()
         {
-            Map.Objects.GetComponentList(_spriteList, (int)EntityPosition.X - 8 - 16 * 3, (int)EntityPosition.Y - 16, 16 * 7, 16 * 5, DrawComponent.Mask);
+            Map.Objects.GetComponentList(
+                _spriteList,
+                (int)EntityPosition.X - 8 - 16 * 3,
+                (int)EntityPosition.Y - 16,
+                16 * 7,
+                16 * 5,
+                DrawComponent.Mask
+            );
             UpdateSpriteLayers();
         }
 
@@ -236,7 +359,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 var percentage = 1 - (startOffset.Y - i * 16) / (startOffset.Y + 8);
                 var offset = 1 - MathF.Sin(percentage * MathF.PI / 2);
-                var position = new Vector2(_startPosition.X - 8 + startOffset.X * offset, EntityPosition.Y - i * 16 - 32);
+                var position = new Vector2(
+                    _startPosition.X - 8 + startOffset.X * offset,
+                    EntityPosition.Y - i * 16 - 32
+                );
                 var damageBox = new ProjectZ.Base.Box(position.X, position.Y, 0, 16, 16, 8);
                 var playerDamageBox = MapManager.ObjLink.DamageCollider.Box;
                 var direction = playerDamageBox.Center - damageBox.Center;
@@ -245,7 +371,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 direction *= 1.5f;
 
                 if (damageBox.Intersects(playerDamageBox) && !_isDead)
-                    MapManager.ObjLink.HitPlayer(direction, HitType.Sword, 2, false, ObjLink.CooldownTime / 4);
+                    MapManager.ObjLink.HitPlayer(
+                        direction,
+                        HitType.Sword,
+                        2,
+                        false,
+                        ObjLink.CooldownTime / 4
+                    );
             }
         }
 
@@ -388,7 +520,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void UpdateSpriteLayers()
         {
-            var rectangle = new Rectangle((int)EntityPosition.X - 8, (int)EntityPosition.Y - 16, 16, 32);
+            var rectangle = new Rectangle(
+                (int)EntityPosition.X - 8,
+                (int)EntityPosition.Y - 16,
+                16,
+                32
+            );
 
             foreach (var sprite in _spriteList)
             {
@@ -410,7 +547,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void TickWobble(double counter)
         {
-            _animationComponent.SpriteOffset.X = MathF.Sin((float)(counter / WobbleTime) * 2 * MathF.PI);
+            _animationComponent.SpriteOffset.X = MathF.Sin(
+                (float)(counter / WobbleTime) * 2 * MathF.PI
+            );
             _animationComponent.UpdateSprite();
         }
 
@@ -449,7 +588,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 var percentage = 1 - (startOffset.Y - i * 16) / (startOffset.Y + 8);
                 var offset = 1 - MathF.Sin(percentage * MathF.PI / 2);
-                var position = new Vector2(_startPosition.X - 8 + startOffset.X * offset, EntityPosition.Y - i * 16 - 32);
+                var position = new Vector2(
+                    _startPosition.X - 8 + startOffset.X * offset,
+                    EntityPosition.Y - i * 16 - 32
+                );
                 DrawHelper.DrawNormalized(spriteBatch, _spriteNeck, position, Color.White);
             }
 
@@ -463,8 +605,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                     if (_partPosition[i].Z < 0)
                         continue;
 
-                    var position = new Vector2(_partPosition[i].X - 14, _partPosition[i].Y - _partPosition[i].Z - 16);
-                    DrawHelper.DrawNormalized(spriteBatch, _stoneHead.Texture, position, _headParts[i], Color.White);
+                    var position = new Vector2(
+                        _partPosition[i].X - 14,
+                        _partPosition[i].Y - _partPosition[i].Z - 16
+                    );
+                    DrawHelper.DrawNormalized(
+                        spriteBatch,
+                        _stoneHead.Texture,
+                        position,
+                        _headParts[i],
+                        Color.White
+                    );
                 }
 
             // change the draw effect
@@ -480,7 +631,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

@@ -60,7 +60,19 @@ namespace ProjectZ.InGame.Interface
             ColorSlider = Values.MenuButtonColorSlider;
         }
 
-        public InterfaceSlider(SpriteFont font, string key, int width, int baseHeight, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
+        public InterfaceSlider(
+            SpriteFont font,
+            string key,
+            int width,
+            int baseHeight,
+            Point margin,
+            int start,
+            int end,
+            int stepSize,
+            int current,
+            BFunction numberChanged
+        )
+            : this()
         {
             Size = new Point(width, baseHeight + _sliderSize.Y * 4);
             Margin = margin;
@@ -72,11 +84,19 @@ namespace ProjectZ.InGame.Interface
 
             NumberChanged = numberChanged;
 
-            _sliderBackgroundRectangle = new Rectangle(_sliderSize.X * 2, 2, width - _sliderSize.X * 4, _sliderHeight);
+            _sliderBackgroundRectangle = new Rectangle(
+                _sliderSize.X * 2,
+                2,
+                width - _sliderSize.X * 4,
+                _sliderHeight
+            );
 
             _sliderRectangle = new Rectangle(
-                _sliderSize.X, _sliderBackgroundRectangle.Y - _sliderSize.Y,
-                _sliderHeight + _sliderSize.X * 2, _sliderHeight + _sliderSize.Y * 2);
+                _sliderSize.X,
+                _sliderBackgroundRectangle.Y - _sliderSize.Y,
+                _sliderHeight + _sliderSize.X * 2,
+                _sliderHeight + _sliderSize.Y * 2
+            );
 
             _steps = End - Start + 1;
             _stepWidth = (_sliderBackgroundRectangle.Width - 4) / ((float)_steps - 1);
@@ -108,6 +128,7 @@ namespace ProjectZ.InGame.Interface
             _animationStepStart = _stepWidth * CurrentStep;
             _animationStepPosition = _stepWidth * CurrentStep;
         }
+
         public override InputEventReturn PressedButton(CButtons pressedButton)
         {
             _lastStep = CurrentStep;
@@ -117,9 +138,14 @@ namespace ProjectZ.InGame.Interface
                 _scrollCounter += _scrollTime;
 
             // Detect a button press and repeat the last action when held.
-            if (ControlHandler.ButtonDown(CButtons.Left) || ControlHandler.ButtonDown(CButtons.Right) ||
-                ControlHandler.ButtonDown(CButtons.LB) || ControlHandler.ButtonDown(CButtons.RB) ||
-                ControlHandler.ButtonDown(CButtons.LT) || ControlHandler.ButtonDown(CButtons.RT))
+            if (
+                ControlHandler.ButtonDown(CButtons.Left)
+                || ControlHandler.ButtonDown(CButtons.Right)
+                || ControlHandler.ButtonDown(CButtons.LB)
+                || ControlHandler.ButtonDown(CButtons.RB)
+                || ControlHandler.ButtonDown(CButtons.LT)
+                || ControlHandler.ButtonDown(CButtons.RT)
+            )
             {
                 _scrollCounter -= Game1.DeltaTime;
             }
@@ -127,24 +153,30 @@ namespace ProjectZ.InGame.Interface
                 _scrollCounter = _scrollStartTime;
 
             // Get the button that was pressed.
-            bool Pressed(CButtons b) => ControlHandler.ButtonPressed(b) || (ControlHandler.ButtonDown(b) && _scrollCounter < 0);
+            bool Pressed(CButtons b) =>
+                ControlHandler.ButtonPressed(b)
+                || (ControlHandler.ButtonDown(b) && _scrollCounter < 0);
 
             // The pressed button determines the direction and step multiplier.
             (int direction, int multiplier) =
-                Pressed(CButtons.Left)  ? (-1, 1) :
-                Pressed(CButtons.Right) ? ( 1, 1) :
-                Pressed(CButtons.LB)    ? (-1, 5) :
-                Pressed(CButtons.RB)    ? ( 1, 5) :
-                Pressed(CButtons.LT)    ? (-1, 10) :
-                Pressed(CButtons.RT)    ? ( 1, 10) :
-                (0, 0);
+                Pressed(CButtons.Left) ? (-1, 1)
+                : Pressed(CButtons.Right) ? (1, 1)
+                : Pressed(CButtons.LB) ? (-1, 5)
+                : Pressed(CButtons.RB) ? (1, 5)
+                : Pressed(CButtons.LT) ? (-1, 10)
+                : Pressed(CButtons.RT) ? (1, 10)
+                : (0, 0);
 
             // If no button has been pressed then return.
             if (direction == 0)
                 return InputEventReturn.Nothing;
 
             // Move the slider position based on the direction and step calculated.
-            CurrentStep = MathHelper.Clamp(CurrentStep + direction * StepSize * multiplier, 0, _steps - 1);
+            CurrentStep = MathHelper.Clamp(
+                CurrentStep + direction * StepSize * multiplier,
+                0,
+                _steps - 1
+            );
 
             // Start the slider animation.
             _animationCounter = _animationTime;
@@ -185,8 +217,11 @@ namespace ProjectZ.InGame.Interface
             if (_animationCounter < 0)
                 _animationCounter = 0;
 
-            _animationStepPosition = MathHelper.Lerp(_animationStepStart, _stepWidth * CurrentStep,
-                (float)Math.Sin((1 - _animationCounter / _animationTime) * Math.PI / 2));
+            _animationStepPosition = MathHelper.Lerp(
+                _animationStepStart,
+                _stepWidth * CurrentStep,
+                (float)Math.Sin((1 - _animationCounter / _animationTime) * Math.PI / 2)
+            );
         }
 
         public void ToggleSliderColors(bool disableSetting)
@@ -203,42 +238,85 @@ namespace ProjectZ.InGame.Interface
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 drawPosition,
+            float scale,
+            float transparency
+        )
         {
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 
             Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Game1.GetMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                null,
+                null,
+                null,
+                null,
+                Resources.RoundedCornerEffect,
+                Game1.GetMatrix
+            );
 
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(2.0f);
-            Resources.RoundedCornerEffect.Parameters["width"].SetValue(_sliderBackgroundRectangle.Width);
-            Resources.RoundedCornerEffect.Parameters["height"].SetValue(_sliderBackgroundRectangle.Height);
+            Resources
+                .RoundedCornerEffect.Parameters["width"]
+                .SetValue(_sliderBackgroundRectangle.Width);
+            Resources
+                .RoundedCornerEffect.Parameters["height"]
+                .SetValue(_sliderBackgroundRectangle.Height);
 
             // draw the toggle background line
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                (int)(drawPosition.X + _sliderBackgroundRectangle.X * scale),
-                (int)(drawPosition.Y + _sliderBackgroundRectangle.Y * scale + _drawOffset.Y * scale),
-                (int)(_sliderBackgroundRectangle.Width * scale),
-                (int)(_sliderBackgroundRectangle.Height * scale)), _colorSliderBackground * transparency);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(
+                    (int)(drawPosition.X + _sliderBackgroundRectangle.X * scale),
+                    (int)(
+                        drawPosition.Y
+                        + _sliderBackgroundRectangle.Y * scale
+                        + _drawOffset.Y * scale
+                    ),
+                    (int)(_sliderBackgroundRectangle.Width * scale),
+                    (int)(_sliderBackgroundRectangle.Height * scale)
+                ),
+                _colorSliderBackground * transparency
+            );
 
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(2.0f);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_sliderRectangle.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_sliderRectangle.Height);
 
-            // draw the slider 
+            // draw the slider
             var sliderPosition = (_sliderRectangle.X + _animationStepPosition);
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                (int)(drawPosition.X + sliderPosition * scale),
-                (int)(drawPosition.Y + _sliderRectangle.Y * scale + _drawOffset.Y * scale),
-                (int)(_sliderRectangle.Width * scale),
-                (int)(_sliderRectangle.Height * scale)), ColorSlider * transparency);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(
+                    (int)(drawPosition.X + sliderPosition * scale),
+                    (int)(drawPosition.Y + _sliderRectangle.Y * scale + _drawOffset.Y * scale),
+                    (int)(_sliderRectangle.Width * scale),
+                    (int)(_sliderRectangle.Height * scale)
+                ),
+                ColorSlider * transparency
+            );
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                Game1.GetMatrix
+            );
 
-            if (_textKey != null && Game1.LanguageManager.GetString(_textKey, "error") != Text || CurrentStep != _lastStep || _updateText)
+            if (
+                _textKey != null && Game1.LanguageManager.GetString(_textKey, "error") != Text
+                || CurrentStep != _lastStep
+                || _updateText
+            )
                 UpdateLanguageText();
             _updateText = false;
 
@@ -246,9 +324,20 @@ namespace ProjectZ.InGame.Interface
                 return;
 
             // draw the text
-            spriteBatch.DrawString(Font, Text + TextPostfix,
-                new Vector2((int)(drawPosition.X + _drawOffset.X * scale), (int)(drawPosition.Y + scale)),
-                TextColor * transparency, 0, Vector2.Zero, new Vector2(scale), SpriteEffects.None, 0);
+            spriteBatch.DrawString(
+                Font,
+                Text + TextPostfix,
+                new Vector2(
+                    (int)(drawPosition.X + _drawOffset.X * scale),
+                    (int)(drawPosition.Y + scale)
+                ),
+                TextColor * transparency,
+                0,
+                Vector2.Zero,
+                new Vector2(scale),
+                SpriteEffects.None,
+                0
+            );
         }
     }
 }

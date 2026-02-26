@@ -13,9 +13,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         public int CurrentState;
 
-        public ObjGraveTrigger() : base("editor grave trigger") { }
+        public ObjGraveTrigger()
+            : base("editor grave trigger") { }
 
-        public ObjGraveTrigger(Map.Map map, int posX, int posY, string triggerKey) : base(map)
+        public ObjGraveTrigger(Map.Map map, int posX, int posY, string triggerKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Utility;
 
@@ -32,7 +34,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             Game1.GameManager.SaveManager.SetString(_triggerKey, "0");
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
         }
 
         private void OnKeyChange()
@@ -49,10 +54,12 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 if (!string.IsNullOrEmpty(strKey) && strKey != "-1")
                 {
                     // Check if the palyer has a follower with them.
-                    var hasBowWow  = Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1";
-                    var hasMarin   = Game1.GameManager.SaveManager.GetString("has_marin", "0") == "1";
-                    var hasGhost   = Game1.GameManager.SaveManager.GetString("has_ghost", "0") == "1";
-                    var hasRooster = Game1.GameManager.SaveManager.GetString("has_rooster", "0") == "1";
+                    var hasBowWow =
+                        Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1";
+                    var hasMarin = Game1.GameManager.SaveManager.GetString("has_marin", "0") == "1";
+                    var hasGhost = Game1.GameManager.SaveManager.GetString("has_ghost", "0") == "1";
+                    var hasRooster =
+                        Game1.GameManager.SaveManager.GetString("has_rooster", "0") == "1";
                     var hasFollower = hasBowWow || hasMarin || hasGhost || hasRooster;
 
                     // Disable reset.

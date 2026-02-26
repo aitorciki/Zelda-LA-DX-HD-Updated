@@ -13,7 +13,13 @@ namespace ProjectZ.InGame.GameObjects.Things
     internal class ObjWeatherBird : GameObject
     {
         private readonly AiComponent _aiComponent;
-        private readonly Point[] _moveOffset = { new Point(-1, 0), new Point(0, -1), new Point(1, 0), new Point(0, 1) };
+        private readonly Point[] _moveOffset =
+        {
+            new Point(-1, 0),
+            new Point(0, -1),
+            new Point(1, 0),
+            new Point(0, 1),
+        };
 
         private readonly string _saveKey;
         private readonly int _allowedDirection = 1;
@@ -27,19 +33,24 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _pushCounter;
         private bool _wasPushed;
 
-        public ObjWeatherBird() : base("weather_bird") { }
+        public ObjWeatherBird()
+            : base("weather_bird") { }
 
-        public ObjWeatherBird(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public ObjWeatherBird(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 1, posY + 30, 0);
             EntitySize = new Rectangle(0, -30, 16, 32);
 
             _saveKey = saveKey;
-            
+
             var movingTrigger = new AiTriggerCountdown(MoveTime, MoveTick, MoveEnd);
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState(UpdateIdle));
-            _aiComponent.States.Add("moving", new AiState { Init = InitMoving, Trigger = { movingTrigger } });
+            _aiComponent.States.Add(
+                "moving",
+                new AiState { Init = InitMoving, Trigger = { movingTrigger } }
+            );
             _aiComponent.States.Add("moved", new AiState());
 
             if (_saveKey != null && Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
@@ -52,7 +63,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var body = new BodyComponent(EntityPosition, 0, -10, 14, 12, 8)
             {
-                FieldRectangle = map.GetField(posX, posY)
+                FieldRectangle = map.GetField(posX, posY),
             };
 
             var animator = AnimatorSaveLoad.LoadAnimator("Objects/weatherBird");
@@ -63,8 +74,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(InteractComponent.Index, new InteractComponent(body.BodyBox, Interact));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(body.BodyBox, Values.CollisionTypes.Normal));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(body.BodyBox, Values.CollisionTypes.Normal)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(body, sprite, Values.LayerPlayer)
+            );
             AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
         }
 
@@ -103,7 +120,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _aimPosition = new Vector2(
                 _startPosition.X + _moveOffset[pushDirection].X * 16,
-                _startPosition.Y + _moveOffset[pushDirection].Y * 16);
+                _startPosition.Y + _moveOffset[pushDirection].Y * 16
+            );
 
             _aiComponent.ChangeState("moving");
 
@@ -131,7 +149,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void MoveTick(double time)
         {
-            // freeze the player 
+            // freeze the player
             MapManager.ObjLink.FreezePlayer();
 
             // the movement is fast in the beginning and slows down at the end

@@ -12,13 +12,15 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjOverworldTeleporter : GameObject
     {
-        public static Dictionary<int, ObjOverworldTeleporter> TeleporterDictionary = new Dictionary<int, ObjOverworldTeleporter>();
+        public static Dictionary<int, ObjOverworldTeleporter> TeleporterDictionary =
+            new Dictionary<int, ObjOverworldTeleporter>();
         private readonly Rectangle _field;
         private readonly int _teleporterId;
         private bool _registered;
         public CBox collisionBox;
 
-        public ObjOverworldTeleporter(Map.Map map, int posX, int posY, int teleporterId) : base(map)
+        public ObjOverworldTeleporter(Map.Map map, int posX, int posY, int teleporterId)
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -42,8 +44,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Store the collision box in a public field so it can be referenced from other places. Currently used to detect if landing on a teleporter when jumping.
             collisionBox = new CBox(posX + 1, posY + 1, 0, 14, 14, 16);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Hole));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(collisionRectangle, OnCollision)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Hole)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
@@ -55,7 +63,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         public override void Init()
         {
             // register the teleporter if it was already unlocked
-            if (Game1.GameManager.SaveManager.GetString("unlocked_teleporter_" + _teleporterId) == "1")
+            if (
+                Game1.GameManager.SaveManager.GetString("unlocked_teleporter_" + _teleporterId)
+                == "1"
+            )
                 RegisterTeleporter();
         }
 
@@ -84,7 +95,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         public void SetPosition()
         {
-            MapManager.ObjLink.StartWorldTelportation(new Vector2(EntityPosition.X + 8, EntityPosition.Y + 38));
+            MapManager.ObjLink.StartWorldTelportation(
+                new Vector2(EntityPosition.X + 8, EntityPosition.Y + 38)
+            );
         }
 
         private void Update()

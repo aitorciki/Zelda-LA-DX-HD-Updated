@@ -22,9 +22,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private int _flyTime = 850;
         private int _direction;
 
-        public ObjLetterBird() : base("letter_bird") { }
+        public ObjLetterBird()
+            : base("letter_bird") { }
 
-        public ObjLetterBird(Map.Map map, int posX, int posY, string animationId) : base(map)
+        public ObjLetterBird(Map.Map map, int posX, int posY, string animationId)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -32,8 +34,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -6, -8, 12, 8, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
                 Bounciness = 0.25f,
                 Drag = 0.9f,
                 Gravity = -0.15f,
@@ -41,13 +42,21 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _animator = AnimatorSaveLoad.LoadAnimator(animationId);
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             var stateIdle = new AiState() { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1500)
+            );
 
             var stateWalking = new AiState(UpdateWalking) { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1500));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 750, 1500)
+            );
             stateWalking.Trigger.Add(_changeDirectionSwitch = new AiTriggerSwitch(250));
 
             var stateFly = new AiState(UpdateFlying);
@@ -62,9 +71,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(AnimationComponent.Index, animationComponent);
             //AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.5f });
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.5f }
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -81,9 +96,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         {
             // change the direction
             var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-            _body.VelocityTarget = new Vector2(
-                (float)Math.Sin(rotation),
-                (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(35, 55) / 100f;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation))
+                * Game1.RandomNumber.Next(35, 55)
+                / 100f;
             _direction = _body.VelocityTarget.X < 0 ? 0 : 1;
 
             _animator.Play("idle_" + _direction);
@@ -117,7 +133,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -158,7 +180,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             else if ((moveCollision & Values.BodyCollision.Vertical) != 0)
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y * 0.5f;
 
-            if ((moveCollision & (Values.BodyCollision.Vertical | Values.BodyCollision.Horizontal)) != 0)
+            if (
+                (moveCollision & (Values.BodyCollision.Vertical | Values.BodyCollision.Horizontal))
+                != 0
+            )
             {
                 _direction = _body.VelocityTarget.X < 0 ? 0 : 1;
                 _animator.Play("idle_" + _direction);

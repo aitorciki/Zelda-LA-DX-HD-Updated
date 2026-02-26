@@ -42,6 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private float _collectionCounter = FadeOutTime;
 
         private float _targetHeight = 16;
+
         // the butterfly will stay around this distance from the start point
         private float _positionZ;
         private int _startDistance;
@@ -51,16 +52,18 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool sword_collect = false;
         private int hearts_healed = 6;
 
-        bool  light_source = true;
-        int   light_red = 220;
-        int   light_grn = 220;
-        int   light_blu = 255;
+        bool light_source = true;
+        int light_red = 220;
+        int light_grn = 220;
+        int light_blu = 255;
         float light_bright = 0.60f;
-        int   light_size = 32;
+        int light_size = 32;
 
-        public ObjDungeonFairy() : base("fairy") { }
+        public ObjDungeonFairy()
+            : base("fairy") { }
 
-        public ObjDungeonFairy(Map.Map map, int posX, int posY, int posZ, string carriedItem = null) : base(map)
+        public ObjDungeonFairy(Map.Map map, int posX, int posY, int posZ, string carriedItem = null)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjDungeonFairy.lahdmod");
@@ -73,10 +76,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _positionZ = posZ;
 
-            var body = new BodyComponent(EntityPosition, -4, -8, 8, 8, 8)
-            {
-                IgnoresZ = true
-            };
+            var body = new BodyComponent(EntityPosition, -4, -8, 8, 8, 8) { IgnoresZ = true };
 
             if (!string.IsNullOrEmpty(carriedItem))
             {
@@ -107,12 +107,27 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _sprite = new CSprite("fairy", EntityPosition, new Vector2(-4, -13));
 
-            _collectionBox = new CBox(EntityPosition, -4, -10, _itemMode ? -16 : 0, 8, 10, 8, !_itemMode);
+            _collectionBox = new CBox(
+                EntityPosition,
+                -4,
+                -10,
+                _itemMode ? -16 : 0,
+                8,
+                10,
+                8,
+                !_itemMode
+            );
 
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_collectionBox, Values.CollisionTypes.Item));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(_collectionBox, Values.CollisionTypes.Item)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, _sprite));
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
@@ -151,7 +166,9 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _lastSpeed = _speedGoal;
                 _speedGoal = Game1.RandomNumber.Next(MinSpeed, MaxSpeed) / 100f;
 
-                var randomDirection = ((Game1.RandomNumber.Next(0, 20) - 10) / 6f) * ((float)Math.PI / (60 * (_flyCounter / 1000f)));
+                var randomDirection =
+                    ((Game1.RandomNumber.Next(0, 20) - 10) / 6f)
+                    * ((float)Math.PI / (60 * (_flyCounter / 1000f)));
 
                 // direction back to the base
                 var startDifference = EntityPosition.Position - MapManager.ObjLink.Position;
@@ -165,7 +182,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
                 // calculate the new rotation direction of the fairy
                 // the farther away it is from the start position the more likely it is to rotate to face the start position
-                _directionChange = MathHelper.Lerp(randomDirection, newRotation, MathHelper.Clamp(startDifference.Length() / _startDistance, 0, 1));
+                _directionChange = MathHelper.Lerp(
+                    randomDirection,
+                    newRotation,
+                    MathHelper.Clamp(startDifference.Length() / _startDistance, 0, 1)
+                );
             }
 
             // update the speed
@@ -174,16 +195,28 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             // update direction
             _currentRotation += _directionChange * Game1.TimeMultiplier;
             _currentRotation = _currentRotation % (float)(Math.PI * 2);
-            _direction = new Vector2((float)Math.Cos(_currentRotation), (float)Math.Sin(_currentRotation)) * _currentSpeed;
+            _direction =
+                new Vector2((float)Math.Cos(_currentRotation), (float)Math.Sin(_currentRotation))
+                * _currentSpeed;
             EntityPosition.Move(_direction);
 
             EntityPosition.Z = _positionZ + (float)Math.Sin(Game1.TotalGameTime / 200) * 1.5f;
-            _sprite.SpriteEffect = _direction.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            _sprite.SpriteEffect =
+                _direction.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             // Collision boxes of Link and fairy collide or if the lahdmod file allows sword collection.
-            if (_collectionCooldown <= 0 && (MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle()) || (MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box) && (sword_collect || GameSettings.SwGrabFairy))))
+            if (
+                _collectionCooldown <= 0
+                && (
+                    MapManager.ObjLink.PlayerRectangle.Intersects(_collectionBox.Box.Rectangle())
+                    || (
+                        MapManager.ObjLink.SwordDamageBox.Intersects(_collectionBox.Box)
+                        && (sword_collect || GameSettings.SwGrabFairy)
+                    )
+                )
+            )
                 CollectFairy();
-            
+
             // Despawn the fairy.
             if (_lifeSpan <= 0)
                 UpdateCollected();
@@ -200,10 +233,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             else
             {
                 // Collect the item the fairy was carrying.
-                var cItem = new GameItemCollected(_carriedItem.Name)
-                {
-                    Count = _carriedItem.Count
-                };
+                var cItem = new GameItemCollected(_carriedItem.Name) { Count = _carriedItem.Count };
                 MapManager.ObjLink.PickUpItem(cItem, true);
             }
             Game1.GameManager.PlaySoundEffect("D370-01-01");
@@ -221,7 +251,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             }
             else
             {
-                _sprite.Color = Color.White * MathHelper.Clamp(_collectionCounter / FadeOutTime, 0, 1);
+                _sprite.Color =
+                    Color.White * MathHelper.Clamp(_collectionCounter / FadeOutTime, 0, 1);
                 EntityPosition.Move(_direction);
                 if (_itemMode)
                     EntityPosition.Z += Game1.TimeMultiplier * 0.25f;
@@ -240,8 +271,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             // draw the item if the fairy is carrying one
             if (_carriedItem != null && !_collected)
             {
-                ItemDrawHelper.DrawItem(spriteBatch, _carriedItem, new Vector2(
-                    EntityPosition.X - _carriedItemSourceRectangle.Width / 2, EntityPosition.Y - EntityPosition.Z - 1), Color.White, 1, true);
+                ItemDrawHelper.DrawItem(
+                    spriteBatch,
+                    _carriedItem,
+                    new Vector2(
+                        EntityPosition.X - _carriedItemSourceRectangle.Width / 2,
+                        EntityPosition.Y - EntityPosition.Z - 1
+                    ),
+                    Color.White,
+                    1,
+                    true
+                );
             }
         }
 
@@ -249,8 +289,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             if (light_source && GameSettings.ObjectLights)
             {
-                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z - 5, light_size, light_size);
-                DrawHelper.DrawLight(spriteBatch, _lightRectangle, new Color(light_red, light_grn, light_blu) * light_bright);
+                Rectangle _lightRectangle = new Rectangle(
+                    (int)EntityPosition.X - light_size / 2,
+                    (int)EntityPosition.Y - light_size / 2 - (int)EntityPosition.Z - 5,
+                    light_size,
+                    light_size
+                );
+                DrawHelper.DrawLight(
+                    spriteBatch,
+                    _lightRectangle,
+                    new Color(light_red, light_grn, light_blu) * light_bright
+                );
             }
         }
     }

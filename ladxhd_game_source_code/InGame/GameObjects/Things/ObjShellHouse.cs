@@ -33,9 +33,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _spawnPresent;
         private bool _spawnSword;
 
-        public ObjShellHouse() : base("shell_bar") { }
+        public ObjShellHouse()
+            : base("shell_bar") { }
 
-        public ObjShellHouse(Map.Map map, int posX, int posY) : base(map)
+        public ObjShellHouse(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(0, -16, 16, 16);
@@ -89,7 +91,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _targetHeight = 0;
             }
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
         }
 
         private void Update()
@@ -122,7 +127,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _soundCounter -= Game1.DeltaTime;
                 if (_soundCounter < 0)
                 {
-                    _soundCounter += Game1.RandomNumber.Next(50, 200);;
+                    _soundCounter += Game1.RandomNumber.Next(50, 200);
+                    ;
                     Game1.GameManager.PlaySoundEffect("D370-06-06");
                 }
 
@@ -140,35 +146,66 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                     _particle = true;
 
-                    if (_shellCount >= 20 && (!GameSettings.Unmissables || _SaveFileVersion < 1 || _PresentCount >= 2))
+                    if (
+                        _shellCount >= 20
+                        && (!GameSettings.Unmissables || _SaveFileVersion < 1 || _PresentCount >= 2)
+                    )
                         _barAnimator.Play("idle");
 
-                    bool PlaySound = _shellCount == 5 || 
-                                     _shellCount == 10 || 
-                                     _shellCount >= 20;
+                    bool PlaySound = _shellCount == 5 || _shellCount == 10 || _shellCount >= 20;
 
                     if (GameSettings.Unmissables && _SaveFileVersion >= 1)
-                         PlaySound = _shellCount >= 5 && _PresentCount == 0 || 
-                                     _shellCount >= 10 && _PresentCount < 2 || 
-                                     _shellCount >= 20;
+                        PlaySound =
+                            _shellCount >= 5 && _PresentCount == 0
+                            || _shellCount >= 10 && _PresentCount < 2
+                            || _shellCount >= 20;
 
                     if (PlaySound)
                         Game1.GameManager.PlaySoundEffect("D360-02-02");
                     else
                         Game1.GameManager.PlaySoundEffect("D360-29-1D");
 
-                    var objParticle0 = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerPlayer, "Particles/shell_mansion_particle", "idle", true);
+                    var objParticle0 = new ObjAnimator(
+                        Map,
+                        0,
+                        0,
+                        0,
+                        0,
+                        Values.LayerPlayer,
+                        "Particles/shell_mansion_particle",
+                        "idle",
+                        true
+                    );
                     objParticle0.Animator.CurrentAnimation.LoopCount = 1;
-                    objParticle0.EntityPosition.Set(new Vector2((int)EntityPosition.X - 8, (int)EntityPosition.Y - (int)_barHeight + 7));
+                    objParticle0.EntityPosition.Set(
+                        new Vector2(
+                            (int)EntityPosition.X - 8,
+                            (int)EntityPosition.Y - (int)_barHeight + 7
+                        )
+                    );
                     Map.Objects.SpawnObject(objParticle0);
 
-                    var objParticle1 = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerPlayer, "Particles/shell_mansion_particle", "idle", true);
+                    var objParticle1 = new ObjAnimator(
+                        Map,
+                        0,
+                        0,
+                        0,
+                        0,
+                        Values.LayerPlayer,
+                        "Particles/shell_mansion_particle",
+                        "idle",
+                        true
+                    );
                     objParticle1.Animator.CurrentAnimation.LoopCount = 1;
-                    objParticle1.EntityPosition.Set(new Vector2((int)EntityPosition.X + 16 + 8, (int)EntityPosition.Y - (int)_barHeight + 7));
+                    objParticle1.EntityPosition.Set(
+                        new Vector2(
+                            (int)EntityPosition.X + 16 + 8,
+                            (int)EntityPosition.Y - (int)_barHeight + 7
+                        )
+                    );
                     Map.Objects.SpawnObject(objParticle1);
                 }
             }
-
             // The meter has finished counting up.
             else if (_particle)
             {
@@ -181,12 +218,12 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     _particle = false;
 
-                    bool SpawnShell = _shellCount == 5 || 
-                                      _shellCount == 10;
+                    bool SpawnShell = _shellCount == 5 || _shellCount == 10;
 
                     if (GameSettings.Unmissables && _SaveFileVersion >= 1)
-                         SpawnShell = _shellCount >= 5 && _PresentCount == 0 || 
-                                      _shellCount >= 10 && _PresentCount < 2;
+                        SpawnShell =
+                            _shellCount >= 5 && _PresentCount == 0
+                            || _shellCount >= 10 && _PresentCount < 2;
 
                     // If a shell is spawned then show an explosion effect.
                     if (SpawnShell)
@@ -195,8 +232,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                         Game1.GameManager.PlaySoundEffect("D378-12-0C");
 
-                        var objExplosion = new ObjAnimator(Map, 0, 0, 0, 0, Values.LayerBottom, "Particles/explosionBomb", "run", true);
-                        objExplosion.EntityPosition.Set(new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 64));
+                        var objExplosion = new ObjAnimator(
+                            Map,
+                            0,
+                            0,
+                            0,
+                            0,
+                            Values.LayerBottom,
+                            "Particles/explosionBomb",
+                            "run",
+                            true
+                        );
+                        objExplosion.EntityPosition.Set(
+                            new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 64)
+                        );
                         Map.Objects.SpawnObject(objExplosion);
                     }
                     // If more than 20 shells were collected spawn the sword.
@@ -230,7 +279,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     _spawnPresent = false;
                     var objItem = new ObjItem(Map, 0, 0, null, null, "shellPresent", null);
-                    objItem.EntityPosition.Set(new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 56));
+                    objItem.EntityPosition.Set(
+                        new Vector2((int)EntityPosition.X - 48, (int)EntityPosition.Y - 56)
+                    );
                     Map.Objects.SpawnObject(objItem);
                 }
             }
@@ -245,11 +296,25 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_barAnimator.IsPlaying)
             {
                 for (int i = 1; i < 8; i++)
-                    _barAnimator.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y - 16 * i), Color.White);
+                    _barAnimator.Draw(
+                        spriteBatch,
+                        new Vector2(EntityPosition.X, EntityPosition.Y - 16 * i),
+                        Color.White
+                    );
             }
             else
             {
-                spriteBatch.Draw(_barSprite.Texture, new Rectangle((int)EntityPosition.X, (int)EntityPosition.Y - (int)_barHeight, 16, (int)_barHeight), _barSprite.ScaledRectangle, Color.White);
+                spriteBatch.Draw(
+                    _barSprite.Texture,
+                    new Rectangle(
+                        (int)EntityPosition.X,
+                        (int)EntityPosition.Y - (int)_barHeight,
+                        16,
+                        (int)_barHeight
+                    ),
+                    _barSprite.ScaledRectangle,
+                    Color.White
+                );
             }
         }
     }

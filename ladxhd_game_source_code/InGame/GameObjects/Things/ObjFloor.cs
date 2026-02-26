@@ -8,18 +8,25 @@ namespace ProjectZ.InGame.GameObjects.Things
 {
     internal class ObjFloor : GameObject
     {
-        public ObjFloor() : base("editor floor")
+        public ObjFloor()
+            : base("editor floor")
         {
             EditorColor = Color.YellowGreen * 0.65f;
         }
 
-        public ObjFloor(Map.Map map, int posX, int posY, int depth) : base(map)
+        public ObjFloor(Map.Map map, int posX, int posY, int depth)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
-            AddComponent(CollisionComponent.Index, 
-                new BoxCollisionComponent(new CBox(posX, posY, -10 + depth, 16, 16, 10), Values.CollisionTypes.Normal));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    new CBox(posX, posY, -10 + depth, 16, 16, 10),
+                    Values.CollisionTypes.Normal
+                )
+            );
         }
     }
 }

@@ -38,14 +38,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _fadeTime = 250;
         private int _lives = EnemyLives.BooBuddy;
 
-        public EnemyBooBuddy() : base("boo buddy") { }
+        public EnemyBooBuddy()
+            : base("boo buddy") { }
 
-        public EnemyBooBuddy(Map.Map map, int posX, int posY, string lightKey) : base(map)
+        public EnemyBooBuddy(Map.Map map, int posX, int posY, string lightKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 24, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 24, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 24, 0);
             EntitySize = new Rectangle(-8, -21, 16, 21);
             CanReset = true;
             OnReset = Reset;
@@ -68,7 +70,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // randomize the speed and the target position so that the ghosts don't align with each other
             _positionRadiant += (float)Math.PI;
-            _targetPositionOffset = new Vector2((float)Math.Sin(_positionRadiant) * 6, (float)Math.Cos(_positionRadiant) * 6 + 4);
+            _targetPositionOffset = new Vector2(
+                (float)Math.Sin(_positionRadiant) * 6,
+                (float)Math.Cos(_positionRadiant) * 6 + 4
+            );
             _speed = 0.55f + Game1.RandomNumber.Next(0, 101) / 1000f;
 
             _aiComponent = new AiComponent();
@@ -77,26 +82,48 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var stateCooldown = new AiState(UpdateCooldown) { Init = InitCooldown };
             var stateFleeing = new AiState(UpdateFleeing) { Init = InitFleeing };
             var stateFading = new AiState();
-            stateFading.Trigger.Add(new AiTriggerCountdown(_fadeTime, UpdateFading, FinishedFading));
+            stateFading.Trigger.Add(
+                new AiTriggerCountdown(_fadeTime, UpdateFading, FinishedFading)
+            );
 
             _aiComponent.States.Add("attacking", stateAttacking);
             _aiComponent.States.Add("cooldown", stateCooldown);
             _aiComponent.States.Add("fleeing", stateFleeing);
             _aiComponent.States.Add("fading", stateFading);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, true, false);
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                sprite,
+                _lives,
+                true,
+                false
+            );
 
             var damageCollider = new CBox(EntityPosition, -7, -20, 0, 14, 14, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animatorComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowDrawComponent = new DrawShadowCSpriteComponent(sprite));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowDrawComponent = new DrawShadowCSpriteComponent(sprite)
+            );
 
             if (!string.IsNullOrEmpty(_ligthKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
 
             _aiComponent.ChangeState("attacking");
 
@@ -120,7 +147,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("attacking");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -155,7 +188,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_rangeBox.Contains(MapManager.ObjLink.BodyRectangle))
             {
                 // move towards the player
-                var playerDirection = MapManager.ObjLink.Position + _targetPositionOffset - EntityPosition.Position;
+                var playerDirection =
+                    MapManager.ObjLink.Position + _targetPositionOffset - EntityPosition.Position;
                 if (playerDirection != Vector2.Zero)
                     playerDirection.Normalize();
 
@@ -176,16 +210,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                     // depending on how far away the enemy is to the center of the room the direction can diverge more or less
                     var offsetLength = (int)centerOffset.Length();
-                    var randomOffset = Game1.RandomNumber.Next(0, Math.Max(1, 50 - offsetLength)) / 50f * 2f * Math.PI;
+                    var randomOffset =
+                        Game1.RandomNumber.Next(0, Math.Max(1, 50 - offsetLength))
+                        / 50f
+                        * 2f
+                        * Math.PI;
 
                     var radius = Math.Atan2(centerOffset.Y, centerOffset.X) + randomOffset;
 
-                    _targetVelocity = new Vector2((float)Math.Cos(radius), (float)Math.Sin(radius)) * _speed * 0.5f;
+                    _targetVelocity =
+                        new Vector2((float)Math.Cos(radius), (float)Math.Sin(radius))
+                        * _speed
+                        * 0.5f;
                 }
             }
 
             var percentage = (float)Math.Pow(0.9, Game1.TimeMultiplier);
-            _body.VelocityTarget = percentage * _body.VelocityTarget + (1 - percentage) * _targetVelocity;
+            _body.VelocityTarget =
+                percentage * _body.VelocityTarget + (1 - percentage) * _targetVelocity;
             _animatorComponent.MirroredH = _targetVelocity.X < 0;
         }
 
@@ -246,7 +288,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 playerDirection.Normalize();
 
             var percentage = (float)Math.Pow(0.9, Game1.TimeMultiplier);
-            _body.VelocityTarget = percentage * _body.VelocityTarget + (1 - percentage) * playerDirection * 0.25f;
+            _body.VelocityTarget =
+                percentage * _body.VelocityTarget + (1 - percentage) * playerDirection * 0.25f;
             _animatorComponent.MirroredH = playerDirection.X < 0;
 
             // remove enemy if he is too far away

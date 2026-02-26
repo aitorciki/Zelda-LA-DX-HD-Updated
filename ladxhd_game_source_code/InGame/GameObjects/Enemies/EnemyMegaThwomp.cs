@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -14,9 +14,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly Animator _animator;
         private readonly BodyComponent _body;
 
-        public EnemyMegaThwomp() : base("mega thwomp") { }
+        public EnemyMegaThwomp()
+            : base("mega thwomp") { }
 
-        public EnemyMegaThwomp(Map.Map map, int posX, int posY) : base(map)
+        public EnemyMegaThwomp(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -34,7 +36,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 MoveCollision = OnCollision,
                 Gravity2D = 0.15f,
-                IsActive = false
+                IsActive = false,
             };
 
             var stateIdle = new AiState();
@@ -55,7 +57,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(_body, Values.CollisionTypes.Normal)
+            );
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerBottom));
         }
 
@@ -71,7 +76,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _body.IsActive = true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (type == HitType.PegasusBootsPush && _aiComponent.CurrentStateId == "idle")
                 ToPreFalling();

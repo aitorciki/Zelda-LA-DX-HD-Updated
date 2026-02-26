@@ -35,9 +35,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private bool _damageState;
 
-        public bool IsReady { get => _isReady; }
+        public bool IsReady
+        {
+            get => _isReady;
+        }
 
-        public BossFinalBossFireball(BossFinalBoss boss, Vector2 position) : base(boss.Map)
+        public BossFinalBossFireball(BossFinalBoss boss, Vector2 position)
+            : base(boss.Map)
         {
             _finalBoss = boss;
 
@@ -54,15 +58,19 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body = new BodyComponent(EntityPosition, -3, -3, 6, 6, 8)
             {
                 IgnoresZ = true,
-                IgnoreHoles = true
+                IgnoreHoles = true,
             };
 
             _aiComponent = new AiComponent();
 
             var state0 = new AiState() { Init = () => _animator.Play("idle_0") };
-            state0.Trigger.Add(new AiTriggerCountdown(1100, null, () => _aiComponent.ChangeState("idle1")));
+            state0.Trigger.Add(
+                new AiTriggerCountdown(1100, null, () => _aiComponent.ChangeState("idle1"))
+            );
             var state1 = new AiState() { Init = () => _animator.Play("idle_1") };
-            state1.Trigger.Add(new AiTriggerCountdown(1100, null, () => _aiComponent.ChangeState("idle2")));
+            state1.Trigger.Add(
+                new AiTriggerCountdown(1100, null, () => _aiComponent.ChangeState("idle2"))
+            );
             var state2 = new AiState() { Init = () => _animator.Play("idle_2") };
             state2.Trigger.Add(new AiTriggerCountdown(1100, null, () => _isReady = true));
             var stateMoving = new AiState();
@@ -78,7 +86,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var hittableBox = new CBox(EntityPosition, -4, -4, 0, 8, 8, 8);
             _damageBox = new CBox(EntityPosition, -4, -4, 0, 8, 8, 8);
 
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
@@ -110,7 +121,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 SpawnTrail();
             }
 
-            var playerDirection = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - 4) - EntityPosition.Position;
+            var playerDirection =
+                new Vector2(
+                    MapManager.ObjLink.EntityPosition.X,
+                    MapManager.ObjLink.EntityPosition.Y - 4
+                ) - EntityPosition.Position;
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();
@@ -124,18 +139,26 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 _moveTime += Game1.DeltaTime;
 
-                if (_isRepelled && _finalBoss.HitBoss(this, _body.VelocityTarget * 0.75f, _damageBox))
+                if (
+                    _isRepelled
+                    && _finalBoss.HitBoss(this, _body.VelocityTarget * 0.75f, _damageBox)
+                )
                     _moveTime = 1300;
 
                 // fade away
                 if (_moveTime > 1300)
                 {
-                    _sprite.Color = Color.White * MathHelper.Clamp(1 - ((float)_moveTime - 1300) / 100, 0, 1);
+                    _sprite.Color =
+                        Color.White * MathHelper.Clamp(1 - ((float)_moveTime - 1300) / 100, 0, 1);
 
                     if (_objTrail0 != null)
-                        _objTrail0.Sprite.Color = Color.White * MathHelper.Clamp(1 - ((float)_moveTime - 1350) / 100, 0, 1);
+                        _objTrail0.Sprite.Color =
+                            Color.White
+                            * MathHelper.Clamp(1 - ((float)_moveTime - 1350) / 100, 0, 1);
                     if (_objTrail1 != null)
-                        _objTrail1.Sprite.Color = Color.White * MathHelper.Clamp(1 - ((float)_moveTime - 1400) / 100, 0, 1);
+                        _objTrail1.Sprite.Color =
+                            Color.White
+                            * MathHelper.Clamp(1 - ((float)_moveTime - 1400) / 100, 0, 1);
                 }
 
                 if (_moveTime > 1500)
@@ -146,7 +169,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             // blink
-            var shader = Game1.TotalGameTime % (BlinkTime * 2) < BlinkTime ? Resources.DamageSpriteShader0 : null;
+            var shader =
+                Game1.TotalGameTime % (BlinkTime * 2) < BlinkTime
+                    ? Resources.DamageSpriteShader0
+                    : null;
             _sprite.SpriteShader = shader;
             if (_objTrail0 != null)
                 _objTrail0.Sprite.SpriteShader = shader;
@@ -156,8 +182,24 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void SpawnTrail()
         {
-            _objTrail0 = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerPlayer, "Nightmares/nightmare fireball", "idle_1", false);
-            _objTrail1 = new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerBottom, "Nightmares/nightmare fireball", "idle_0", false);
+            _objTrail0 = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                Values.LayerPlayer,
+                "Nightmares/nightmare fireball",
+                "idle_1",
+                false
+            );
+            _objTrail1 = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                Values.LayerBottom,
+                "Nightmares/nightmare fireball",
+                "idle_0",
+                false
+            );
 
             Map.Objects.SpawnObject(_objTrail0);
             Map.Objects.SpawnObject(_objTrail1);
@@ -189,8 +231,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _isRepelled = true;
             _moveTime = 0;
 
-            var playerDirection = EntityPosition.Position -
-                new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - 4);
+            var playerDirection =
+                EntityPosition.Position
+                - new Vector2(
+                    MapManager.ObjLink.EntityPosition.X,
+                    MapManager.ObjLink.EntityPosition.Y - 4
+                );
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 
@@ -202,7 +248,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             OnDeath();
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

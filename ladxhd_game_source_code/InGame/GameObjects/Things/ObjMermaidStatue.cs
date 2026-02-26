@@ -21,9 +21,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _strKey;
         private readonly int _moveTime = 650;
 
-        public ObjMermaidStatue() : base("mermaid_statue") { }
+        public ObjMermaidStatue()
+            : base("mermaid_statue") { }
 
-        public ObjMermaidStatue(Map.Map map, int posX, int posY, string strKey) : base(map)
+        public ObjMermaidStatue(Map.Map map, int posX, int posY, string strKey)
+            : base(map)
         {
             int offset = -4;
 
@@ -39,7 +41,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var stateIdle = new AiState();
             var statePreMoving = new AiState(UpdateFreezePlayer);
-            statePreMoving.Trigger.Add(new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("moving")));
+            statePreMoving.Trigger.Add(
+                new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("moving"))
+            );
             var stateMoving = new AiState(UpdateFreezePlayer) { Init = InitMoving };
             stateMoving.Trigger.Add(new AiTriggerCountdown(_moveTime, MoveTick, MoveEnd));
             var stateMoved = new AiState();
@@ -56,11 +60,23 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(InteractComponent.Index, new InteractComponent(_box, OnInteract));
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_box, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent("mermaid_statue", EntityPosition, Values.LayerPlayer));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    _box,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot
+                )
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent("mermaid_statue", EntityPosition, Values.LayerPlayer)
+            );
 
             // already moved?
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
             {
                 MoveTick(0);
                 _aiComponent.ChangeState("moved");

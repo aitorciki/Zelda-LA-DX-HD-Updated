@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -24,14 +24,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly CBox _headBox;
 
         private int _lives = EnemyLives.PiranhaPlant;
-        public EnemyPiranhaPlant() : base("piranha plant") { }
 
-        public EnemyPiranhaPlant(Map.Map map, int posX, int posY) : base(map)
+        public EnemyPiranhaPlant()
+            : base("piranha plant") { }
+
+        public EnemyPiranhaPlant(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = false;
             OnReset = Reset;
@@ -39,7 +42,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/piranha plant");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -11, 12, 11, 8);
 
@@ -58,15 +65,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
             {
                 MoveBody = false,
-                OnBurn = OnBurn
+                OnBurn = OnBurn,
             };
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_headBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_headBox, _aiDamageState.OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_headBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_headBox, _aiDamageState.OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerBottom)
+            );
 
             Deactivate();
         }
@@ -105,7 +121,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateIdle()
         {
             // update the head position
-            _headPosition.Set(new Vector2(_headPosition.X, _sprite.Position.Y + _sprite.DrawOffset.Y));
+            _headPosition.Set(
+                new Vector2(_headPosition.X, _sprite.Position.Y + _sprite.DrawOffset.Y)
+            );
             _aiDamageState.ExplosionOffsetY = (int)(_headPosition.Y - EntityPosition.Y) + 16;
             _aiDamageState.FlameOffset.Y = _aiDamageState.ExplosionOffsetY;
 

@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -14,24 +14,31 @@ namespace ProjectZ.InGame.GameObjects.Things
         private string _key;
         private bool _isTriggered;
 
-        public ObjCompassSound() : base("editor compass sound") { }
+        public ObjCompassSound()
+            : base("editor compass sound") { }
 
-        public ObjCompassSound(Map.Map map, int posX, int posY, string key) : base(map)
+        public ObjCompassSound(Map.Map map, int posX, int posY, string key)
+            : base(map)
         {
             _roomRectangle = map.GetField(posX, posY);
             var center = _roomRectangle.Center;
             _position = new Vector2(center.X, center.Y);
             _key = key;
 
-            if (string.IsNullOrEmpty(key) ||
-                Game1.GameManager.SaveManager.GetString(_key, "0") == "1")
+            if (
+                string.IsNullOrEmpty(key)
+                || Game1.GameManager.SaveManager.GetString(_key, "0") == "1"
+            )
             {
                 IsDead = true;
                 return;
             }
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
         }
 
         private void Update()
@@ -53,8 +60,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             else
             {
                 var distance = _position - MapManager.ObjLink.Position;
-                if (MathF.Abs(distance.X) > Values.FieldWidth * 0.8f ||
-                    MathF.Abs(distance.Y) > 128 * 0.8f)
+                if (
+                    MathF.Abs(distance.X) > Values.FieldWidth * 0.8f
+                    || MathF.Abs(distance.Y) > 128 * 0.8f
+                )
                     _isTriggered = false;
             }
         }

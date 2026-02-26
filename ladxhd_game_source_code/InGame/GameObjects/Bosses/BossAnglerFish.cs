@@ -50,10 +50,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private Vector2 _preAttackVelocity;
 
         private List<ObjAnglerFishBarrier> _fishBarrier = new List<ObjAnglerFishBarrier>();
-        
-        public BossAnglerFish() : base("angler fish") { }
 
-        public BossAnglerFish(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public BossAnglerFish()
+            : base("angler fish") { }
+
+        public BossAnglerFish(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -64,7 +66,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _saveKey = saveKey;
 
-            if (!string.IsNullOrWhiteSpace(saveKey) && Game1.GameManager.SaveManager.GetString(saveKey) == "1")
+            if (
+                !string.IsNullOrWhiteSpace(saveKey)
+                && Game1.GameManager.SaveManager.GetString(saveKey) == "1"
+            )
             {
                 // respawn the heart if the player died after he killed the boss without collecting the heart
                 SpawnHeart();
@@ -78,7 +83,11 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _sprite = new CSprite(EntityPosition);
 
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-28, -24 + 16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-28, -24 + 16)
+            );
 
             _body = new BodyComponent(EntityPosition, -20, -23 + 16, 50, 48, 8)
             {
@@ -88,7 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 IgnoresZ = true,
                 IsGrounded = false,
                 MoveCollision = OnCollision,
-                FieldRectangle = Map.GetField(posX, posY)
+                FieldRectangle = Map.GetField(posX, posY),
             };
 
             var hittableRectangle = new CBox(EntityPosition, -22, 0, 26, 26, 8);
@@ -112,10 +121,21 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _aiComponent = new AiComponent();
 
-            _aiComponent.Trigger.Add(_damageCountdown = new AiTriggerCountdown(CooldownTime, DamageTick, FinishDamage));
-            _aiComponent.Trigger.Add(_stoneCountdown = new AiTriggerCountdown(StoneSpawnTime, null, SpawnStone));
-            _aiComponent.Trigger.Add(_fishCountdown = new AiTriggerRandomTime(SpawnFish, 2000, 5000) { IsRunning = false });
-            _aiComponent.Trigger.Add(_blobCountdown = new AiTriggerRandomTime(SpawnBlob, 1000, 1500));
+            _aiComponent.Trigger.Add(
+                _damageCountdown = new AiTriggerCountdown(CooldownTime, DamageTick, FinishDamage)
+            );
+            _aiComponent.Trigger.Add(
+                _stoneCountdown = new AiTriggerCountdown(StoneSpawnTime, null, SpawnStone)
+            );
+            _aiComponent.Trigger.Add(
+                _fishCountdown = new AiTriggerRandomTime(SpawnFish, 2000, 5000)
+                {
+                    IsRunning = false,
+                }
+            );
+            _aiComponent.Trigger.Add(
+                _blobCountdown = new AiTriggerRandomTime(SpawnBlob, 1000, 1500)
+            );
 
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
@@ -128,13 +148,28 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             _aiComponent.ChangeState("waiting");
 
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableRectangle, OnHit) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 6)
+                {
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableRectangle, OnHit) { IsActive = false }
+            );
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
@@ -144,7 +179,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _waitingCounter += Game1.DeltaTime;
 
             // move up/down while waiting
-            EntityPosition.Set(new Vector2(EntityPosition.X, _startPosition.Y + MathF.Sin(_waitingCounter / 500f) * 7.5f));
+            EntityPosition.Set(
+                new Vector2(
+                    EntityPosition.X,
+                    _startPosition.Y + MathF.Sin(_waitingCounter / 500f) * 7.5f
+                )
+            );
 
             if (MapManager.ObjLink.PosY > 160)
                 StartMoving();
@@ -173,17 +213,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             int posX = 16;
             int posY = 128;
 
-            for (int i = 0; i < 10; i++) 
+            for (int i = 0; i < 10; i++)
             {
                 _fishBarrier.Add(new ObjAnglerFishBarrier(Map, posX, posY));
                 posX += 16;
             }
-            foreach (var barrier in _fishBarrier) 
+            foreach (var barrier in _fishBarrier)
             {
                 // Don't spawn effects with classic camera as they won't even be visible.
                 if (!Camera.ClassicMode)
                 {
-                    var explosionAnimation = new ObjAnimator(Map, barrier.PosX, barrier.PosY, Values.LayerTop, "Particles/spawn", "run", true);
+                    var explosionAnimation = new ObjAnimator(
+                        Map,
+                        barrier.PosX,
+                        barrier.PosY,
+                        Values.LayerTop,
+                        "Particles/spawn",
+                        "run",
+                        true
+                    );
                     Map.Objects.SpawnObject(explosionAnimation);
                     Map.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
                 }
@@ -193,12 +241,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void DestroyBarrier()
         {
-            foreach (var barrier in _fishBarrier) 
+            foreach (var barrier in _fishBarrier)
             {
                 // Don't spawn explosions with classic camera as they won't even be visible.
                 if (!Camera.ClassicMode)
                 {
-                    var explosionAnimation = new ObjDeathExplodeEffect(Map, barrier.PosX, barrier.PosY, 0, 0);
+                    var explosionAnimation = new ObjDeathExplodeEffect(
+                        Map,
+                        barrier.PosX,
+                        barrier.PosY,
+                        0,
+                        0
+                    );
                     Map.Objects.SpawnObject(explosionAnimation);
                     Map.Objects.RegisterAlwaysAnimateObject(explosionAnimation);
                 }
@@ -274,8 +328,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_stoneCount > 0 && _isAlive)
                 _stoneCountdown.OnInit();
 
-            var randomX = Math.Clamp(MapManager.ObjLink.EntityPosition.X,
-                _body.FieldRectangle.Left + 25 + 8, _body.FieldRectangle.Right - 25 - 8) + (Game1.RandomNumber.Next(0, 50) - 25);
+            var randomX =
+                Math.Clamp(
+                    MapManager.ObjLink.EntityPosition.X,
+                    _body.FieldRectangle.Left + 25 + 8,
+                    _body.FieldRectangle.Right - 25 - 8
+                ) + (Game1.RandomNumber.Next(0, 50) - 25);
 
             var objStone = new BossAnglerFishStone(Map, (int)randomX, 16);
             Map.Objects.SpawnObject(objStone);
@@ -288,7 +346,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             var randomDir = (Game1.RandomNumber.Next(0, 2) * 2 - 1);
             var randomX = 80 + randomDir * 88;
-            var randomY = Math.Clamp(MapManager.ObjLink.EntityPosition.Y, 124 + 35, 256 - 35) + (Game1.RandomNumber.Next(0, 70) - 35);
+            var randomY =
+                Math.Clamp(MapManager.ObjLink.EntityPosition.Y, 124 + 35, 256 - 35)
+                + (Game1.RandomNumber.Next(0, 70) - 35);
 
             var objFish = new EnemyAnglerFry(Map, randomX, (int)randomY, -randomDir);
             Map.Objects.SpawnObject(objFish);
@@ -347,10 +407,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             Game1.GameManager.PlaySoundEffect("D378-19-13");
 
             var posX = (int)EntityPosition.X + Game1.RandomNumber.Next(0, 28) - 34;
-            var posY = (int)EntityPosition.Y - (int)EntityPosition.Z + Game1.RandomNumber.Next(0, 28) - 10;
+            var posY =
+                (int)EntityPosition.Y - (int)EntityPosition.Z + Game1.RandomNumber.Next(0, 28) - 10;
 
             // spawn explosion effect
-            Map.Objects.SpawnObject(new ObjAnimator(Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(Map, posX, posY, Values.LayerTop, "Particles/spawn", "run", true)
+            );
         }
 
         private void RemoveObject()
@@ -376,8 +439,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void SpawnHeart()
         {
             // spawn big heart
-            Map.Objects.SpawnObject(new ObjItem(Map,
-                (int)EntityPosition.X - 20, (int)EntityPosition.Y + 8, "", "d4_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)EntityPosition.X - 20,
+                    (int)EntityPosition.Y + 8,
+                    "",
+                    "d4_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
         }
 
         private void FinishDamage()
@@ -389,10 +461,25 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void DrawLight(SpriteBatch spriteBatch)
         {
             if (GameSettings.ObjectLights)
-                spriteBatch.Draw(Resources.SprLight, new Rectangle((int)EntityPosition.X - 22 - 32, (int)EntityPosition.Y - 18 - 16, 64, 64), _lightColor);
+                spriteBatch.Draw(
+                    Resources.SprLight,
+                    new Rectangle(
+                        (int)EntityPosition.X - 22 - 32,
+                        (int)EntityPosition.Y - 18 - 16,
+                        64,
+                        64
+                    ),
+                    _lightColor
+                );
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

@@ -57,7 +57,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         public bool IsVisible { get; private set; }
 
-        public BossGenie(Map.Map map, string saveKey, Vector3 position, BossGenieBottle objBottle) : base(map)
+        public BossGenie(Map.Map map, string saveKey, Vector3 position, BossGenieBottle objBottle)
+            : base(map)
         {
             _saveKey = saveKey;
 
@@ -84,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body = new BodyComponent(EntityPosition, -5, -10, 10, 10, 8)
             {
                 IgnoresZ = true,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             var hittableBox = new CBox(EntityPosition, -15, -38, 0, 30, 26, 8, true);
@@ -110,7 +111,15 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.States.Add("attack", stateAttack);
             _aiComponent.States.Add("follow", stateFollow);
             _aiComponent.States.Add("rotate", stateRotate);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, true, false);
+            _damageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                true,
+                false
+            );
             _damageState.AddBossDamageState(OnDeath);
             _damageState.ExplosionOffsetY = -8;
             _damageState.BossHitSound = true;
@@ -118,12 +127,31 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _aiComponent.ChangeState("idle");
 
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+                {
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition) { ShadowWidth = 18, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new ShadowBodyDrawComponent(EntityPosition)
+                {
+                    ShadowWidth = 18,
+                    ShadowHeight = 6,
+                }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -246,7 +274,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 _smokeBottom.Stop();
             }
 
-            var movePercentage = MathF.Sin(_spawnCounter / 600f * MathF.PI / 3) / MathF.Sin(MathF.PI / 3);
+            var movePercentage =
+                MathF.Sin(_spawnCounter / 600f * MathF.PI / 3) / MathF.Sin(MathF.PI / 3);
 
             // move up
             if (_spawnCounter < 600)
@@ -263,13 +292,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private void UpdateFollow()
         {
             // fly towards the player
-            var playerDirection = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8);
+            var playerDirection =
+                MapManager.ObjLink.Position
+                - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8);
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();
                 // have momentum and not directly change the direction
                 var percentage = (float)Math.Pow(0.98, Game1.TimeMultiplier);
-                _body.VelocityTarget = percentage * _body.VelocityTarget + (1 - percentage) * playerDirection * FollowSpeed;
+                _body.VelocityTarget =
+                    percentage * _body.VelocityTarget
+                    + (1 - percentage) * playerDirection * FollowSpeed;
             }
         }
 
@@ -278,7 +311,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _shadowComponent.IsActive = false;
             _damageField.IsActive = false;
             _body.VelocityTarget = Vector2.Zero;
-            var centerOffset = new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - RotationOffsetY) - _roomCenter;
+            var centerOffset =
+                new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - RotationOffsetY)
+                - _roomCenter;
             _currentRotation = MathF.Atan2(centerOffset.Y, centerOffset.X);
             _rotationDistance = centerOffset.Length();
         }
@@ -287,13 +322,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         {
             // do not get to close the mirrored version
             if (_rotationDistance > 4)
-                _rotationDistance -= Game1.TimeMultiplier * MathHelper.Clamp(_rotationDistance / 100, 0, 0.3f);
+                _rotationDistance -=
+                    Game1.TimeMultiplier * MathHelper.Clamp(_rotationDistance / 100, 0, 0.3f);
 
             // move the same distance each frame independent of how far we are away from the rotation origin
             var rotationSpeed = MathHelper.Clamp(_rotationDistance, 0, 6);
-            _currentRotation += rotationSpeed / (_rotationDistance * MathF.PI) * Game1.TimeMultiplier;
+            _currentRotation +=
+                rotationSpeed / (_rotationDistance * MathF.PI) * Game1.TimeMultiplier;
 
-            var newPosition = new Vector2(_roomCenter.X, _roomCenter.Y + RotationOffsetY) + new Vector2(MathF.Cos(_currentRotation), MathF.Sin(_currentRotation)) * _rotationDistance;
+            var newPosition =
+                new Vector2(_roomCenter.X, _roomCenter.Y + RotationOffsetY)
+                + new Vector2(MathF.Cos(_currentRotation), MathF.Sin(_currentRotation))
+                    * _rotationDistance;
             EntityPosition.Set(newPosition);
         }
 
@@ -325,7 +365,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             for (var i = 0; i < _fireballCount; i++)
             {
                 // spawn behind the genie for the initial frame
-                _fireballs[i] = new BossGenieFireball(Map, new Vector3(EntityPosition.X, EntityPosition.Y - 1, EntityPosition.Z + 12));
+                _fireballs[i] = new BossGenieFireball(
+                    Map,
+                    new Vector3(EntityPosition.X, EntityPosition.Y - 1, EntityPosition.Z + 12)
+                );
                 Map.Objects.SpawnObject(_fireballs[i]);
             }
         }
@@ -341,11 +384,19 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 var fullTurns = 7;
                 var radiant = (state * MathF.PI * 2 * fullTurns + i * 2 * (2 * MathF.PI) / 5);
 
-                var newPosition = new Vector3(EntityPosition.X - MathF.Sin(radiant) * 12, EntityPosition.Y - 1, EntityPosition.Z + 30 - MathF.Cos(radiant) * 15);
+                var newPosition = new Vector3(
+                    EntityPosition.X - MathF.Sin(radiant) * 12,
+                    EntityPosition.Y - 1,
+                    EntityPosition.Z + 30 - MathF.Cos(radiant) * 15
+                );
                 _fireballs[i].SetPosition(newPosition);
 
                 // throw fireball at the time where the ball is behind the genie
-                if (state > 2f / fullTurns + (_fireballIndex * (3 / (float)circleCount)) * (1 / (float)fullTurns))
+                if (
+                    state
+                    > 2f / fullTurns
+                        + (_fireballIndex * (3 / (float)circleCount)) * (1 / (float)fullTurns)
+                )
                 {
                     ThrowFireball();
                 }
@@ -367,12 +418,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void ThrowFireball(BossGenieFireball fireball)
         {
-            fireball.EntityPosition.Set(new Vector3(
-                EntityPosition.X + (_fireballIndex % 2 == 0 ? -15 : 15), EntityPosition.Y, EntityPosition.Z + 30));
+            fireball.EntityPosition.Set(
+                new Vector3(
+                    EntityPosition.X + (_fireballIndex % 2 == 0 ? -15 : 15),
+                    EntityPosition.Y,
+                    EntityPosition.Z + 30
+                )
+            );
 
             // throw the fireball in the direction of the player
-            var playerDirection = MapManager.ObjLink.EntityPosition.ToVector3() -
-                                  fireball.EntityPosition.ToVector3();
+            var playerDirection =
+                MapManager.ObjLink.EntityPosition.ToVector3() - fireball.EntityPosition.ToVector3();
             if (playerDirection != Vector3.Zero)
             {
                 playerDirection.Normalize();
@@ -412,9 +468,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 {
                     color *= 0.5f;
 
-                    var drawPosition = new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y);
-                    var centerOffset = drawPosition - new Vector2(_roomCenter.X, _roomCenter.Y + RotationOffsetY);
-                    var newPosition = drawPosition - centerOffset * 2 + new Vector2(0, -EntityPosition.Z);
+                    var drawPosition = new Vector2(
+                        EntityPosition.Position.X,
+                        EntityPosition.Position.Y
+                    );
+                    var centerOffset =
+                        drawPosition - new Vector2(_roomCenter.X, _roomCenter.Y + RotationOffsetY);
+                    var newPosition =
+                        drawPosition - centerOffset * 2 + new Vector2(0, -EntityPosition.Z);
 
                     // draw the body
                     _bodyAnimator.Draw(spriteBatch, newPosition, color);
@@ -423,9 +484,17 @@ namespace ProjectZ.InGame.GameObjects.Bosses
                 }
 
                 // draw the body
-                _bodyAnimator.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z), color);
+                _bodyAnimator.Draw(
+                    spriteBatch,
+                    new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z),
+                    color
+                );
                 // draw the tail
-                _tailAnimator.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z), color);
+                _tailAnimator.Draw(
+                    spriteBatch,
+                    new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z),
+                    color
+                );
 
                 // change the draw effect
                 if (_sprite.SpriteShader != null)
@@ -466,23 +535,40 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             heartPosition = _roomCenter + centerDistance;
 
             // spawn big heart
-            Map.Objects.SpawnObject(new ObjItem(Map,
-                (int)heartPosition.X - 8, (int)heartPosition.Y - 16, "j", "d2_nHeart", "heartMeterFull", null));
+            Map.Objects.SpawnObject(
+                new ObjItem(
+                    Map,
+                    (int)heartPosition.X - 8,
+                    (int)heartPosition.Y - 16,
+                    "j",
+                    "d2_nHeart",
+                    "heartMeterFull",
+                    null
+                )
+            );
 
             // remove the boss from the map
             Map.Objects.DeleteObjects.Add(this);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can only get attacked in the follow state
-            if (_aiComponent.CurrentStateId != "follow" ||
-                _damageState.IsInDamageState() ||
-                hitType == HitType.MagicPowder)
+            if (
+                _aiComponent.CurrentStateId != "follow"
+                || _damageState.IsInDamageState()
+                || hitType == HitType.MagicPowder
+            )
                 return Values.HitCollision.None;
 
             _aiComponent.ChangeState("rotate");
@@ -490,12 +576,18 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (hitType == HitType.Bomb)
                 damage *= 2;
 
-            var damageReturn = _damageState.OnHit(MapManager.ObjLink, direction, HitType.ThrownObject, damage, pieceOfPower);
+            var damageReturn = _damageState.OnHit(
+                MapManager.ObjLink,
+                direction,
+                HitType.ThrownObject,
+                damage,
+                pieceOfPower
+            );
 
             // stop if we are dead
             if (_damageState.CurrentLives <= 0)
                 _body.VelocityTarget = Vector2.Zero;
-                _damageField.IsActive = false;
+            _damageField.IsActive = false;
 
             return damageReturn;
         }

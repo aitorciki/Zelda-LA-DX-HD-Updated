@@ -24,9 +24,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private int _lives = EnemyLives.Zombie;
 
-        public EnemyZombie() : base("zombie") { }
+        public EnemyZombie()
+            : base("zombie") { }
 
-        public EnemyZombie(Map.Map map, int posX, int posY) : base(map)
+        public EnemyZombie(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -38,30 +40,37 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/zombie");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes     = Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 MoveCollision = OnCollision,
                 HoleAbsorb = OnHoleAbsorb,
-                Drag = 0.8f
+                Drag = 0.8f,
             };
 
             // ai states
             var stateSpawn = new AiState(UpdateSpawn) { Init = InitSpawn };
             var walkingState = new AiState() { Init = InitWalking };
-            walkingState.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("despawn"), 1000, 4000));
+            walkingState.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("despawn"), 1000, 4000)
+            );
             var stateDespawn = new AiState(UpdateDespawning) { Init = InitDespawning };
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("spawn", stateSpawn);
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("despawn", stateDespawn);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
             _aiComponent.ChangeState("spawn");
 
@@ -69,13 +78,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -6, -14, 0, 12, 14, 4);
             var pushableBox = new CBox(EntityPosition, -6, -13, 0, 12, 13, 8);
 
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -148,7 +169,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return false;
 
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -157,10 +182,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (_aiComponent.CurrentStateId == "walking")
             {
-                if ((direction & Values.BodyCollision.Horizontal) != 0 &&
-                   Math.Abs(_body.VelocityTarget.X) > Math.Abs(_body.VelocityTarget.Y) * 3 ||
-                   (direction & Values.BodyCollision.Vertical) != 0 &&
-                   Math.Abs(_body.VelocityTarget.Y) > Math.Abs(_body.VelocityTarget.X) * 3)
+                if (
+                    (direction & Values.BodyCollision.Horizontal) != 0
+                        && Math.Abs(_body.VelocityTarget.X) > Math.Abs(_body.VelocityTarget.Y) * 3
+                    || (direction & Values.BodyCollision.Vertical) != 0
+                        && Math.Abs(_body.VelocityTarget.Y) > Math.Abs(_body.VelocityTarget.X) * 3
+                )
                     _aiComponent.ChangeState("despawn");
             }
         }
@@ -170,7 +197,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.SpeedMultiplier = 2f;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

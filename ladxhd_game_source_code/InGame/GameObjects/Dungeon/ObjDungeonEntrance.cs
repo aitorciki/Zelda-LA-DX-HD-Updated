@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
@@ -17,7 +17,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _opening;
         private bool _isOpen;
 
-        public ObjDungeonEntrance(Map.Map map, int posX, int posY, string spriteName, string strKey) : base(map)
+        public ObjDungeonEntrance(Map.Map map, int posX, int posY, string spriteName, string strKey)
+            : base(map)
         {
             var sprite = Resources.GetSprite(spriteName);
             if (sprite == null)
@@ -33,23 +34,42 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             EntityPosition = new CPosition(posX, posY, 0);
 
             // do not spawn the entrance if it is already open
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
             }
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-            AddComponent(CollisionComponent.Index, _collisionComponent =
-                new BoxCollisionComponent(new CBox(posX, posY, 0, 16, 16, 16), Values.CollisionTypes.Normal));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    new CBox(posX, posY, 0, 16, 16, 16),
+                    Values.CollisionTypes.Normal
+                )
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            _sprite = new CSprite(sprite.Texture, EntityPosition, sprite.ScaledRectangle, Vector2.Zero);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            _sprite = new CSprite(
+                sprite.Texture,
+                EntityPosition,
+                sprite.ScaledRectangle,
+                Vector2.Zero
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
         }
 
         private void Update()
         {
-            if (!_opening) 
+            if (!_opening)
                 return;
 
             _counter -= Game1.DeltaTime;
@@ -66,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 _sprite.SourceRectangle.Y++;
                 _sprite.SourceRectangle.Height--;
 
-                if(_sprite.SourceRectangle.Height == 8)
+                if (_sprite.SourceRectangle.Height == 8)
                     Game1.GameManager.PlaySoundEffect("D360-35-23", false, 1, 0, true);
             }
             else
@@ -87,7 +107,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private void OnKeyChange()
         {
-            if (!string.IsNullOrEmpty(_strKey) && Game1.GameManager.SaveManager.GetString(_strKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_strKey)
+                && Game1.GameManager.SaveManager.GetString(_strKey) == "1"
+            )
                 Open();
         }
     }

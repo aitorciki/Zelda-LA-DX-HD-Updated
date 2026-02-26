@@ -38,14 +38,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _circleDirection;
         private int _lives = EnemyLives.Vire;
 
-        public EnemyVire() : base("vire") { }
+        public EnemyVire()
+            : base("vire") { }
 
-        public EnemyVire(Map.Map map, int posX, int posY) : base(map)
+        public EnemyVire(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-12, -64, 24, 64);
             CanReset = true;
             OnReset = Reset;
@@ -66,7 +68,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 DragAir = 0.975f,
                 Bounciness = 0.25f,
                 CollisionTypes = Values.CollisionTypes.None,
-                AbsorbPercentage = 0.75f
+                AbsorbPercentage = 0.75f,
             };
 
             _roomRectangle = Map.GetField(posX, posY);
@@ -80,14 +82,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var stateCircling = new AiState(UpdateCircling) { Init = InitCircling };
             stateCircling.Trigger.Add(new AiTriggerCountdown(2000, null, RandomAttack));
             var statePreAttack = new AiState() { Init = InitPreAttack };
-            statePreAttack.Trigger.Add(new AiTriggerCountdown(100, null, () => _aiComponent.ChangeState("attack")));
+            statePreAttack.Trigger.Add(
+                new AiTriggerCountdown(100, null, () => _aiComponent.ChangeState("attack"))
+            );
             var stateAttack = new AiState(UpdateAttack) { Init = InitAttack };
             var statePreDash = new AiState() { Init = InitPreDash };
-            statePreDash.Trigger.Add(new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("dash")));
+            statePreDash.Trigger.Add(
+                new AiTriggerCountdown(500, null, () => _aiComponent.ChangeState("dash"))
+            );
             var stateDash = new AiState(UpdateDash) { Init = InitDash };
-            stateDash.Trigger.Add(new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("repelled")));
+            stateDash.Trigger.Add(
+                new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("repelled"))
+            );
             var stateRepelled = new AiState(UpdateRepelled);
-            stateRepelled.Trigger.Add(new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("circling")));
+            stateRepelled.Trigger.Add(
+                new AiTriggerCountdown(750, null, () => _aiComponent.ChangeState("circling"))
+            );
 
             _aiComponent.States.Add("debug", stateDebug);
             _aiComponent.States.Add("idle", stateIdle);
@@ -98,7 +108,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("preDash", statePreDash);
             _aiComponent.States.Add("dash", stateDash);
             _aiComponent.States.Add("repelled", stateRepelled);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             new AiFallState(_aiComponent, _body, null, null);
             var deepwaterstate = new AiDeepWaterState(_body);
 
@@ -109,17 +122,38 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -8, -15, 0, 16, 15, 8, true);
             var hittableBox = new CBox(EntityPosition, -10, -15, 0, 20, 15, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageBox, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(damageBox, OnPush)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10, ShadowHeight = 5 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10, ShadowHeight = 5 }
+            );
 
-            _batLeft = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(-0.75f, 0)) { IsActive = false };
-            _batRight = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(0.75f, 0)) { IsActive = false };
+            _batLeft = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(-0.75f, 0))
+            {
+                IsActive = false,
+            };
+            _batRight = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(0.75f, 0))
+            {
+                IsActive = false,
+            };
             Map.Objects.SpawnObject(_batLeft);
             Map.Objects.SpawnObject(_batRight);
 
@@ -144,9 +178,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageState.CurrentLives = EnemyLives.Vire;
 
             if (_batLeft == null || _batLeft.IsDead)
-                _batLeft = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(-0.75f, 0)) { IsActive = false };
+                _batLeft = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(-0.75f, 0))
+                {
+                    IsActive = false,
+                };
             if (_batRight == null || _batRight.IsDead)
-                _batRight = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(0.75f, 0)) { IsActive = false };
+                _batRight = new EnemyVireBat(Map, EntityPosition.ToVector3(), new Vector2(0.75f, 0))
+                {
+                    IsActive = false,
+                };
         }
 
         private void Drowned()
@@ -155,10 +195,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Game1.GameManager.PlaySoundEffect("D360-14-0E");
 
             // spawn splash effect
-            var fallAnimation = new ObjAnimator(_body.Owner.Map,
+            var fallAnimation = new ObjAnimator(
+                _body.Owner.Map,
                 (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
                 (int)(_body.Position.Y + _body.OffsetY + _body.Height / 2.0f),
-                Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                Values.LayerPlayer,
+                "Particles/fishingSplash",
+                "idle",
+                true
+            );
             Map.Objects.SpawnObject(fallAnimation);
 
             Map.Objects.DeleteObjects.Add(this);
@@ -181,7 +226,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateIdle()
         {
-            var distVec = EntityPosition.Position - new Vector2(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY + 16);
+            var distVec =
+                EntityPosition.Position
+                - new Vector2(MapManager.ObjLink.PosX, MapManager.ObjLink.PosY + 16);
 
             // start flying if the player gets near
             if (distVec.Length() < 60)
@@ -199,7 +246,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _aiComponent.ChangeState("preAttack");
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -211,7 +264,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_aiComponent.CurrentStateId == "idle")
                 _aiComponent.ChangeState("flying");
 
-            var hitReturn = _damageState.OnHit(originObject, direction, hitType, damage, pieceOfPower);
+            var hitReturn = _damageState.OnHit(
+                originObject,
+                direction,
+                hitType,
+                damage,
+                pieceOfPower
+            );
 
             if (_damageState.CurrentLives <= 0)
                 SpawnBats();
@@ -224,8 +283,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var spawnPosition = new Vector3(EntityPosition.X, EntityPosition.Y, EntityPosition.Z);
 
             // spawn the explosion effect
-            var splashAnimator = new ObjAnimator(Map, (int)spawnPosition.X - 8,
-                (int)spawnPosition.Y - (int)spawnPosition.Z - 16, 0, 0, Values.LayerTop, "Particles/spawn", "run", true);
+            var splashAnimator = new ObjAnimator(
+                Map,
+                (int)spawnPosition.X - 8,
+                (int)spawnPosition.Y - (int)spawnPosition.Z - 16,
+                0,
+                0,
+                Values.LayerTop,
+                "Particles/spawn",
+                "run",
+                true
+            );
             Map.Objects.SpawnObject(splashAnimator);
 
             // spawn the bats
@@ -240,23 +308,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateRepelled()
         {
             // get repelled by the player
-            var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) -
-                MapManager.ObjLink.Position;
+            var playerDirection =
+                new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z)
+                - MapManager.ObjLink.Position;
             if (playerDirection != Vector2.Zero && playerDirection.Length() < 64)
             {
                 playerDirection.Normalize();
 
                 // dodge to the side
-                var centerDirection = _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+                var centerDirection =
+                    _roomCenter
+                    - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
                 if (centerDirection != Vector2.Zero)
                     centerDirection.Normalize();
-                var moveDirection = new Vector2(centerDirection.Y, -centerDirection.X) * _circleDirection;
+                var moveDirection =
+                    new Vector2(centerDirection.Y, -centerDirection.X) * _circleDirection;
 
-                _body.VelocityTarget = Vector2.Lerp(_body.VelocityTarget, moveDirection * 2f + playerDirection * 1.5f, 0.025f * Game1.TimeMultiplier);
+                _body.VelocityTarget = Vector2.Lerp(
+                    _body.VelocityTarget,
+                    moveDirection * 2f + playerDirection * 1.5f,
+                    0.025f * Game1.TimeMultiplier
+                );
             }
             else
             {
-                _body.VelocityTarget = Vector2.Lerp(_body.VelocityTarget, Vector2.Zero, 0.05f * Game1.TimeMultiplier);
+                _body.VelocityTarget = Vector2.Lerp(
+                    _body.VelocityTarget,
+                    Vector2.Zero,
+                    0.05f * Game1.TimeMultiplier
+                );
             }
 
             // move up
@@ -276,7 +356,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _animator.Play("fly");
 
-            var playerDirection = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
+            var playerDirection =
+                MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
             if (playerDirection != Vector2.Zero)
             {
                 playerDirection.Normalize();
@@ -300,14 +381,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitAttack()
         {
-            var startPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8);
+            var startPosition = new Vector2(
+                EntityPosition.X,
+                EntityPosition.Y - EntityPosition.Z - 8
+            );
             var direction = MapManager.ObjLink.Position - startPosition;
             var radiant = MathF.Atan2(direction.Y, direction.X);
 
             var dist = 0.125f;
-            var vireball0 = new EnemyVireball(Map, startPosition, new Vector2(MathF.Cos(radiant - dist), MathF.Sin(radiant - dist) * 1.5f));
+            var vireball0 = new EnemyVireball(
+                Map,
+                startPosition,
+                new Vector2(MathF.Cos(radiant - dist), MathF.Sin(radiant - dist) * 1.5f)
+            );
             Map.Objects.SpawnObject(vireball0);
-            var vireball1 = new EnemyVireball(Map, startPosition, new Vector2(MathF.Cos(radiant + dist), MathF.Sin(radiant + dist) * 1.5f));
+            var vireball1 = new EnemyVireball(
+                Map,
+                startPosition,
+                new Vector2(MathF.Cos(radiant + dist), MathF.Sin(radiant + dist) * 1.5f)
+            );
             Map.Objects.SpawnObject(vireball1);
             Game1.GameManager.PlaySoundEffect("D378-13-0D");
         }
@@ -327,7 +419,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (playerDirection != Vector2.Zero)
                 playerDirection.Normalize();
 
-            _targetPosition = _roomCenter + new Vector2(playerDirection.X * CircleWidth, playerDirection.Y * CircleHeight + FlyHeight + 16);
+            _targetPosition =
+                _roomCenter
+                + new Vector2(
+                    playerDirection.X * CircleWidth,
+                    playerDirection.Y * CircleHeight + FlyHeight + 16
+                );
         }
 
         private void UpdateFlying()
@@ -375,22 +472,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateCircling()
         {
-            var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) -
-                MapManager.ObjLink.Position;
+            var playerDirection =
+                new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z)
+                - MapManager.ObjLink.Position;
             if (playerDirection.Length() < 40)
             {
                 _aiComponent.ChangeState("repelled");
             }
 
-            var centerDirection = _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+            var centerDirection =
+                _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             if (centerDirection != Vector2.Zero)
                 centerDirection.Normalize();
 
-            var moveDirection = new Vector2(centerDirection.Y, -centerDirection.X) * _circleDirection;
+            var moveDirection =
+                new Vector2(centerDirection.Y, -centerDirection.X) * _circleDirection;
             var angle = MathF.Atan2(centerDirection.Y, centerDirection.X);
 
             // distance to the ellipse
-            var e = MathF.Sqrt(1 - (float)(CircleHeight * CircleHeight) / (CircleWidth * CircleWidth));
+            var e = MathF.Sqrt(
+                1 - (float)(CircleHeight * CircleHeight) / (CircleWidth * CircleWidth)
+            );
             var distance = CircleHeight / MathF.Sqrt(1 - MathF.Pow(e * MathF.Cos(angle), 2));
             var circleVector = -centerDirection * distance;
 
@@ -405,13 +507,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 circleDirection /= 16;
 
             // move towards the circle/ around the circle
-            _body.VelocityTarget = Vector2.Lerp(_body.VelocityTarget, moveDirection * 0.5f + circleDirection, 0.1f * Game1.TimeMultiplier);
+            _body.VelocityTarget = Vector2.Lerp(
+                _body.VelocityTarget,
+                moveDirection * 0.5f + circleDirection,
+                0.1f * Game1.TimeMultiplier
+            );
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }

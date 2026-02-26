@@ -51,7 +51,7 @@ namespace ProjectZ.InGame.SaveLoad
                 FileName = Path.GetFileName(map.MapFileName),
                 InitialDirectory = Path.GetFullPath(Path.GetDirectoryName(map.MapFileName)),
                 RestoreDirectory = true,
-                Filter = "Map File (*.map)|*.map"
+                Filter = "Map File (*.map)|*.map",
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -71,10 +71,11 @@ namespace ProjectZ.InGame.SaveLoad
             var openFileDialog = new OpenFileDialog()
             {
                 Filter = "Map files (*.map)|*.map",
-                Multiselect = true
+                Multiselect = true,
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             var newMap = new Map.Map();
 
@@ -91,17 +92,15 @@ namespace ProjectZ.InGame.SaveLoad
         public static void ImportTilemap()
         {
 #if WINDOWS
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "Text files (*.txt)|*.txt"
-            };
+            var openFileDialog = new OpenFileDialog { Filter = "Text files (*.txt)|*.txt" };
 
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             var reader = new StreamReader(openFileDialog.FileName);
 
-            var tilesetName = Path.GetFileName(openFileDialog.FileName).Replace(".txt", "") + ".png";
+            var tilesetName =
+                Path.GetFileName(openFileDialog.FileName).Replace(".txt", "") + ".png";
 
             var mapWidth = Convert.ToInt32(reader.ReadLine());
             var mapDepth = 3;
@@ -109,19 +108,27 @@ namespace ProjectZ.InGame.SaveLoad
             var mapHeight = Convert.ToInt32(reader.ReadLine());
             // create a new map
             Game1.GameManager.MapManager.CurrentMap = Map.Map.CreateEmptyMap();
-            Game1.GameManager.MapManager.CurrentMap.MapFileName = openFileDialog.FileName.Replace(".txt", ".map");
+            Game1.GameManager.MapManager.CurrentMap.MapFileName = openFileDialog.FileName.Replace(
+                ".txt",
+                ".map"
+            );
             Game1.GameManager.MapManager.CurrentMap.TileMap.TilesetPath = tilesetName;
 
             Game1.GameManager.MapManager.CurrentMap.Objects.SpawnObject(MapManager.ObjLink);
             MapManager.ObjLink.Map = Game1.GameManager.MapManager.CurrentMap;
 
-            Game1.GameManager.MapManager.CurrentMap.TileMap.ArrayTileMap = new int[mapWidth, mapHeight, mapDepth];
+            Game1.GameManager.MapManager.CurrentMap.TileMap.ArrayTileMap = new int[
+                mapWidth,
+                mapHeight,
+                mapDepth
+            ];
 
             for (var y = 0; y < mapHeight; y++)
             {
                 var strLine = reader.ReadLine();
 
-                if (strLine == null) continue;
+                if (strLine == null)
+                    continue;
 
                 var strTiles = strLine.Split(',');
 
@@ -132,20 +139,28 @@ namespace ProjectZ.InGame.SaveLoad
 
             reader.Close();
 
-            Game1.GameManager.MapManager.CurrentMap.HoleMap.ArrayTileMap = new int[mapWidth, mapHeight, 1];
+            Game1.GameManager.MapManager.CurrentMap.HoleMap.ArrayTileMap = new int[
+                mapWidth,
+                mapHeight,
+                1
+            ];
             for (var y = 0; y < mapHeight; y++)
-                for (var x = 0; x < mapWidth; x++)
-                    Game1.GameManager.MapManager.CurrentMap.HoleMap.ArrayTileMap[x, y, 0] = -1;
+            for (var x = 0; x < mapWidth; x++)
+                Game1.GameManager.MapManager.CurrentMap.HoleMap.ArrayTileMap[x, y, 0] = -1;
 
             // load the tileset texture
-            Game1.GameManager.MapManager.CurrentMap.TileMap.SetTileset(Resources.GetTexture(tilesetName));
-            Game1.GameManager.MapManager.CurrentMap.HoleMap.SetTileset(Resources.GetTexture("hole.png"));
+            Game1.GameManager.MapManager.CurrentMap.TileMap.SetTileset(
+                Resources.GetTexture(tilesetName)
+            );
+            Game1.GameManager.MapManager.CurrentMap.HoleMap.SetTileset(
+                Resources.GetTexture("hole.png")
+            );
 
             // empty 2 and 3 layer
             for (var z = 1; z < mapDepth; z++)
-                for (var y = 0; y < mapHeight; y++)
-                    for (var x = 0; x < mapWidth; x++)
-                        Game1.GameManager.MapManager.CurrentMap.TileMap.ArrayTileMap[x, y, z] = -1;
+            for (var y = 0; y < mapHeight; y++)
+            for (var x = 0; x < mapWidth; x++)
+                Game1.GameManager.MapManager.CurrentMap.TileMap.ArrayTileMap[x, y, z] = -1;
 
             Game1.GameManager.MapManager.CurrentMap.DigMap = new string[mapWidth, mapHeight];
 #endif
@@ -263,8 +278,8 @@ namespace ProjectZ.InGame.SaveLoad
             holeMap.ArrayTileMap = new int[width, height, 1];
 
             for (var y = 0; y < height; y++)
-                for (var x = 0; x < width; x++)
-                    holeMap.ArrayTileMap[x, y, 0] = -1;
+            for (var x = 0; x < width; x++)
+                holeMap.ArrayTileMap[x, y, 0] = -1;
         }
 
         public static void SaveObjects(StreamWriter writer, ObjectManager objectManager)
@@ -296,7 +311,10 @@ namespace ProjectZ.InGame.SaveLoad
 
                 // create a string from the parameter of the object
                 var strObjectLine = MapData.GetObjectString(
-                    keyToIndexDictionary[gameObject.Index], gameObject.Index, gameObject.Parameter);
+                    keyToIndexDictionary[gameObject.Index],
+                    gameObject.Index,
+                    gameObject.Parameter
+                );
                 writer.WriteLine(strObjectLine);
             }
         }
@@ -328,7 +346,14 @@ namespace ProjectZ.InGame.SaveLoad
                     // map because some objects should be over the holes (pushable rocks) while some under the holes (flower patches).
 
                     bool isAltObject = strIndex.Contains("moveStone");
-                    MapData.AddObject(map, new GameObjectItem(strIndex, MapData.StringToParameter(strIndex, objectSplit)), isAltObject);
+                    MapData.AddObject(
+                        map,
+                        new GameObjectItem(
+                            strIndex,
+                            MapData.StringToParameter(strIndex, objectSplit)
+                        ),
+                        isAltObject
+                    );
                 }
             }
         }
@@ -345,18 +370,18 @@ namespace ProjectZ.InGame.SaveLoad
 
             // write the tilemap
             for (var z = 0; z < tileMap.ArrayTileMap.GetLength(2); z++)
-                for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
+            for (var y = 0; y < tileMap.ArrayTileMap.GetLength(1); y++)
+            {
+                var strLine = "";
+                for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
                 {
-                    var strLine = "";
-                    for (var x = 0; x < tileMap.ArrayTileMap.GetLength(0); x++)
-                    {
-                        if (tileMap.ArrayTileMap[x, y, z] >= 0)
-                            strLine += tileMap.ArrayTileMap[x, y, z];
+                    if (tileMap.ArrayTileMap[x, y, z] >= 0)
+                        strLine += tileMap.ArrayTileMap[x, y, z];
 
-                        strLine += ",";
-                    }
-                    writer.WriteLine(strLine);
+                    strLine += ",";
                 }
+                writer.WriteLine(strLine);
+            }
         }
 
         public static void LoadTileMap(StreamReader reader, TileMap tileMap)
@@ -381,14 +406,14 @@ namespace ProjectZ.InGame.SaveLoad
 
             // load the tile map
             for (var z = 0; z < depth; z++)
-                for (var y = 0; y < height; y++)
-                {
-                    var strLine = reader.ReadLine();
-                    var strTiles = strLine?.Split(',');
+            for (var y = 0; y < height; y++)
+            {
+                var strLine = reader.ReadLine();
+                var strTiles = strLine?.Split(',');
 
-                    for (var x = 0; x < width; x++)
-                        tileMap.ArrayTileMap[x, y, z] = strTiles[x] == "" ? -1 : int.Parse(strTiles[x]);
-                }
+                for (var x = 0; x < width; x++)
+                    tileMap.ArrayTileMap[x, y, z] = strTiles[x] == "" ? -1 : int.Parse(strTiles[x]);
+            }
         }
 
         public static void SaveMiniMapDiscovery(string fileName, int[,] map)
@@ -478,7 +503,13 @@ namespace ProjectZ.InGame.SaveLoad
                     int.TryParse(split[2], out var posY);
                     int.TryParse(split[3], out var tileIndex);
 
-                    miniMap.Overrides[i] = new GameManager.MiniMapOverrides { SaveKey = saveKey, PosX = posX, PosY = posY, TileIndex = tileIndex };
+                    miniMap.Overrides[i] = new GameManager.MiniMapOverrides
+                    {
+                        SaveKey = saveKey,
+                        PosX = posX,
+                        PosY = posY,
+                        TileIndex = tileIndex,
+                    };
                 }
             }
 

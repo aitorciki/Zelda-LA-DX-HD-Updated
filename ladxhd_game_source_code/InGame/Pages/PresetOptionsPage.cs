@@ -23,34 +23,114 @@ namespace ProjectZ.InGame.Pages
             EnableTooltips = true;
 
             // Audio Settings Layout
-            _presetSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
+            _presetSettingsLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 12),
+                Selectable = true,
+            };
 
             var buttonWidth = 320;
             var buttonHeight = 16;
             var buttonSize = new Point(150, 16);
 
-            _presetSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_preset_header",
-                new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
-            _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize - 12)), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
+            _presetSettingsLayout.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_preset_header",
+                    new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+            );
+            _contentLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, (int)(height * Values.MenuContentSize - 12)),
+                Selectable = true,
+                ContentAlignment = InterfaceElement.Gravities.Top,
+            };
 
             // Button: Set Default Option Values
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_preset_setdefault", element => { RestoreDefaults(); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    buttonSize,
+                    new Point(1, 2),
+                    "settings_preset_setdefault",
+                    element =>
+                    {
+                        RestoreDefaults();
+                    }
+                )
+            );
 
             // Button: Set Modern Values
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_preset_setmodern", element => { SetModernValues(); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    buttonSize,
+                    new Point(1, 2),
+                    "settings_preset_setmodern",
+                    element =>
+                    {
+                        SetModernValues();
+                    }
+                )
+            );
 
             // Button: Set Classic Values
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_preset_setclassic", element => { SetClassicValues(); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    buttonSize,
+                    new Point(1, 2),
+                    "settings_preset_setclassic",
+                    element =>
+                    {
+                        SetClassicValues();
+                    }
+                )
+            );
 
             // Button: Set Hybrid Values
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_preset_sethybrid", element => { SetHybridValues(); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    buttonSize,
+                    new Point(1, 2),
+                    "settings_preset_sethybrid",
+                    element =>
+                    {
+                        SetHybridValues();
+                    }
+                )
+            );
 
             // Button: Set Purist Values
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_preset_purist", element => { SetPuristValues(); }));
+            _contentLayout.AddElement(
+                new InterfaceButton(
+                    buttonSize,
+                    new Point(1, 2),
+                    "settings_preset_purist",
+                    element =>
+                    {
+                        SetPuristValues();
+                    }
+                )
+            );
 
             // Bottom Bar / Back Button:
-            _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout()
+            {
+                Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                Selectable = true,
+                HorizontalMode = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(100, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             _presetSettingsLayout.AddElement(_contentLayout);
             _presetSettingsLayout.AddElement(_bottomBar);
             PageLayout = _presetSettingsLayout;
@@ -87,7 +167,12 @@ namespace ProjectZ.InGame.Pages
             PageLayout.Select(InterfaceElement.Directions.Top, false);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -264,7 +349,12 @@ namespace ProjectZ.InGame.Pages
 
         public static void UpdateSettingsGUI()
         {
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(GameSettingsPage), out var gamePage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(GameSettingsPage),
+                    out var gamePage
+                )
+            )
             {
                 var GameSettingsPage = (GameSettingsPage)gamePage;
                 GameSettingsPage.SetMenuBricks(GameSettings.MenuBorder);
@@ -274,7 +364,12 @@ namespace ProjectZ.InGame.Pages
                 GameSettingsPage.SetItemSlotRight(GameSettings.ItemsOnRight);
                 GameSettingsPage.SetEpilepsySafe(GameSettings.EpilepsySafe);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ReduxOptionsPage), out var reduxPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(ReduxOptionsPage),
+                    out var reduxPage
+                )
+            )
             {
                 var ReduxSettingsPage = (ReduxOptionsPage)reduxPage;
                 ReduxSettingsPage.SetVariableWidthFont(GameSettings.VarWidthFont);
@@ -286,7 +381,12 @@ namespace ProjectZ.InGame.Pages
                 ReduxSettingsPage.SetNoAnimalDamage(GameSettings.NoAnimalDamage);
                 ReduxSettingsPage.SetMapTeleportValue(GameSettings.MapTeleport);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(CameraSettingsPage), out var camPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(CameraSettingsPage),
+                    out var camPage
+                )
+            )
             {
                 var CameraSettingsPage = (CameraSettingsPage)camPage;
                 CameraSettingsPage.SetCameraMode(GameSettings.ClassicCamera);
@@ -299,7 +399,12 @@ namespace ProjectZ.InGame.Pages
                 CameraSettingsPage.SetCameraScreenShake(GameSettings.ScreenShake);
                 CameraSettingsPage.SetCameraExScreenShake(GameSettings.ExScreenShake);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(GraphicSettingsPage), out var videoPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(GraphicSettingsPage),
+                    out var videoPage
+                )
+            )
             {
                 var GraphicsSettingsPage = (GraphicSettingsPage)videoPage;
                 GraphicsSettingsPage.SetGameScaleValue(GameSettings.GameScale);
@@ -309,7 +414,12 @@ namespace ProjectZ.InGame.Pages
                 GraphicsSettingsPage.SetDynamicShadows(GameSettings.EnableShadows);
                 GraphicsSettingsPage.SetVerticalSync(GameSettings.VerticalSync);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audioPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(AudioSettingsPage),
+                    out var audioPage
+                )
+            )
             {
                 var AudioSettingsPage = (AudioSettingsPage)audioPage;
                 AudioSettingsPage.SetMusicVolume(GameSettings.MusicVolume);
@@ -319,7 +429,12 @@ namespace ProjectZ.InGame.Pages
                 AudioSettingsPage.SetHealthAlarm(GameSettings.HeartBeep);
                 AudioSettingsPage.SetPowerupMusic(GameSettings.MutePowerups);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ControlSettingsPage), out var controlPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(ControlSettingsPage),
+                    out var controlPage
+                )
+            )
             {
                 var ControlSettingsPage = (ControlSettingsPage)controlPage;
                 ControlSettingsPage.SetDeadZoneValue((int)(GameSettings.DeadZone * 100));
@@ -329,7 +444,12 @@ namespace ProjectZ.InGame.Pages
                 ControlSettingsPage.SetClassicMove(GameSettings.OldMovement);
                 ControlSettingsPage.SetDigitalAnalog(GameSettings.DigitalAnalog);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ModifiersPage), out var modPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(ModifiersPage),
+                    out var modPage
+                )
+            )
             {
                 var ModifiersPage = (ModifiersPage)modPage;
                 ModifiersPage.SetEnemyHitPoints(GameSettings.EnemyBonusHP);
@@ -340,7 +460,12 @@ namespace ProjectZ.InGame.Pages
                 ModifiersPage.SetNoDamageLaunch(GameSettings.NoDamageLaunch);
                 ModifiersPage.SetMirrorReflects(GameSettings.MirrorReflects);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(SwordInteractPage), out var swordPage))
+            if (
+                Game1.UiPageManager.InsideElement.TryGetValue(
+                    typeof(SwordInteractPage),
+                    out var swordPage
+                )
+            )
             {
                 var SwordInteractPage = (SwordInteractPage)swordPage;
                 SwordInteractPage.SetSwordCollectNormal(GameSettings.SwGrabNormal);
@@ -360,20 +485,40 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_presetSettingsLayout.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
             string tooltip = "Select an option to view its tooltip.";
 
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_preset_setdefault", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_preset_setmodern", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_preset_setclassic", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_preset_sethybrid", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_preset_purist", "error"); break; }
+                case 0:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_preset_setdefault", "error");
+                    break;
+                }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_preset_setmodern", "error");
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_preset_setclassic", "error");
+                    break;
+                }
+                case 3:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_preset_sethybrid", "error");
+                    break;
+                }
+                case 4:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_preset_purist", "error");
+                    break;
+                }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

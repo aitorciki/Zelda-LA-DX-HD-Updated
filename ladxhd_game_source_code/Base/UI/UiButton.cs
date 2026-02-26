@@ -20,7 +20,15 @@ namespace ProjectZ.Base.UI
         private Texture2D _buttonIcon;
         private Rectangle _iconRectangle;
 
-        public UiButton(Rectangle rectangle, SpriteFont font, string text, string elementId, string screen, UiFunction update, UiFunction click)
+        public UiButton(
+            Rectangle rectangle,
+            SpriteFont font,
+            string text,
+            string elementId,
+            string screen,
+            UiFunction update,
+            UiFunction click
+        )
             : base(elementId, screen)
         {
             Rectangle = rectangle;
@@ -35,7 +43,8 @@ namespace ProjectZ.Base.UI
         {
             base.Update();
 
-            if (!Selected || ClickFunction == null || !InputHandler.MouseLeftPressed()) return;
+            if (!Selected || ClickFunction == null || !InputHandler.MouseLeftPressed())
+                return;
 
             ClickFunction(this);
             InputHandler.ResetInputState();
@@ -47,25 +56,43 @@ namespace ProjectZ.Base.UI
             var heightScale = (float)Rectangle.Height / ButtonIcon.Height;
 
             var imageScale = MathHelper.Min(widthScale, heightScale);
-            _iconRectangle = new Rectangle(Rectangle.X, Rectangle.Y,
-                (int)(ButtonIcon.Width * imageScale), (int)(ButtonIcon.Height * imageScale));
+            _iconRectangle = new Rectangle(
+                Rectangle.X,
+                Rectangle.Y,
+                (int)(ButtonIcon.Width * imageScale),
+                (int)(ButtonIcon.Height * imageScale)
+            );
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             // draw the button background
-            spriteBatch.Draw(Resources.SprWhite, Rectangle, (Selected || Marked) ? FontColor : BackgroundColor);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                Rectangle,
+                (Selected || Marked) ? FontColor : BackgroundColor
+            );
 
             var labelSize = Font.MeasureString(Label);
             var textLeft = ButtonIcon != null ? _iconRectangle.Right : Rectangle.X;
             var textPosition = new Vector2(
                 (int)(textLeft + (Rectangle.Width - _iconRectangle.Width) / 2 - labelSize.X / 2),
-                (int)(Rectangle.Y + Rectangle.Height / 2 - labelSize.Y / 2));
+                (int)(Rectangle.Y + Rectangle.Height / 2 - labelSize.Y / 2)
+            );
 
-            spriteBatch.DrawString(Font, Label, textPosition, (Selected || Marked) ? BackgroundColor : FontColor);
+            spriteBatch.DrawString(
+                Font,
+                Label,
+                textPosition,
+                (Selected || Marked) ? BackgroundColor : FontColor
+            );
 
             if (ButtonIcon != null)
-                spriteBatch.Draw(ButtonIcon, _iconRectangle, (Selected || Marked) ? BackgroundColor : FontColor);
+                spriteBatch.Draw(
+                    ButtonIcon,
+                    _iconRectangle,
+                    (Selected || Marked) ? BackgroundColor : FontColor
+                );
         }
     }
 }

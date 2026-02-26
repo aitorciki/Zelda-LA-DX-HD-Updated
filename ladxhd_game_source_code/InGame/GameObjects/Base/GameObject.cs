@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Diagnostics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
-using System.Diagnostics;
 
 namespace ProjectZ.InGame.GameObjects.Base
 {
@@ -28,8 +28,9 @@ namespace ProjectZ.InGame.GameObjects.Base
         // entity component system stuff
         public CPosition EntityPosition;
         public CPosition ResetPosition;
-        public Component[] Components = new Component[32];   // TODO_End: replace with actual component count
-                                                             // should have probably used an enum...
+        public Component[] Components = new Component[32]; // TODO_End: replace with actual component count
+
+        // should have probably used an enum...
         public Rectangle EntitySize = new Rectangle(-16, -16, 48, 48);
         public Point EntityPoolPosition;
 
@@ -55,7 +56,8 @@ namespace ProjectZ.InGame.GameObjects.Base
             EditorIconScale = sprite.Scale;
         }
 
-        public GameObject(Map.Map map, string spriteId) : this(spriteId)
+        public GameObject(Map.Map map, string spriteId)
+            : this(spriteId)
         {
             Map = map;
         }
@@ -70,13 +72,25 @@ namespace ProjectZ.InGame.GameObjects.Base
         public virtual void DrawEditor(SpriteBatch spriteBatch, Vector2 position)
         {
             if (SprEditorImage != null)
-                spriteBatch.Draw(SprEditorImage, position, EditorIconSource, EditorColor,
-                    0, Vector2.Zero, new Vector2(EditorIconScale), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    SprEditorImage,
+                    position,
+                    EditorIconSource,
+                    EditorColor,
+                    0,
+                    Vector2.Zero,
+                    new Vector2(EditorIconScale),
+                    SpriteEffects.None,
+                    0
+                );
         }
 
         public virtual void Reset()
         {
-            if (CanReset) { OnReset?.Invoke(); }
+            if (CanReset)
+            {
+                OnReset?.Invoke();
+            }
         }
 
         public void ResetToSpawn()
@@ -104,7 +118,9 @@ namespace ProjectZ.InGame.GameObjects.Base
                 Debug.Assert(EntityPosition.X + EntitySize.X <= rectangle.X);
                 Debug.Assert(EntityPosition.Y + EntitySize.Y <= rectangle.Y);
                 Debug.Assert(rectangle.Right <= EntityPosition.X + EntitySize.X + EntitySize.Width);
-                Debug.Assert(rectangle.Bottom <= EntityPosition.Y + EntitySize.Y + EntitySize.Height);
+                Debug.Assert(
+                    rectangle.Bottom <= EntityPosition.Y + EntitySize.Y + EntitySize.Height
+                );
             }
             if (newComponent is ObjectCollisionComponent)
             {
@@ -113,7 +129,9 @@ namespace ProjectZ.InGame.GameObjects.Base
                 Debug.Assert(EntityPosition.X + EntitySize.X <= rectangle.X);
                 Debug.Assert(EntityPosition.Y + EntitySize.Y <= rectangle.Y);
                 Debug.Assert(rectangle.Right <= EntityPosition.X + EntitySize.X + EntitySize.Width);
-                Debug.Assert(rectangle.Bottom <= EntityPosition.Y + EntitySize.Y + EntitySize.Height);
+                Debug.Assert(
+                    rectangle.Bottom <= EntityPosition.Y + EntitySize.Y + EntitySize.Height
+                );
             }
             if (newComponent is BodyCollisionComponent)
             {

@@ -88,8 +88,17 @@ namespace ProjectZ.InGame.Overlay.Sequences
             else
                 drawPosition.Y -= Sprite.Origin.Y * Sprite.Scale;
 
-            spriteBatch.Draw(Sprite.Texture, drawPosition, Sprite.ScaledRectangle,
-                Color, 0, Vector2.Zero, new Vector2(Sprite.Scale), SpriteEffect, 0);
+            spriteBatch.Draw(
+                Sprite.Texture,
+                drawPosition,
+                Sprite.ScaledRectangle,
+                Color,
+                0,
+                Vector2.Zero,
+                new Vector2(Sprite.Scale),
+                SpriteEffect,
+                0
+            );
         }
     }
 
@@ -125,7 +134,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
         protected RenderTarget2D _renderTarget;
 
         protected List<SeqDrawable> Sprites = new List<SeqDrawable>();
-        protected Dictionary<string, SeqDrawable> SpriteDict = new Dictionary<string, SeqDrawable>();
+        protected Dictionary<string, SeqDrawable> SpriteDict =
+            new Dictionary<string, SeqDrawable>();
 
         protected Vector2 _cameraPosition;
 
@@ -230,7 +240,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
             {
                 if (Sprites[i] is SeqAnimation animator)
                     animator.Animator.Update();
-
             }
 
             foreach (var spriteEntry in SpriteDict)
@@ -249,8 +258,13 @@ namespace ProjectZ.InGame.Overlay.Sequences
                         continue;
                     }
 
-                    var percentage = sprite.PositionTransitionCounter / sprite.PositionTransitionTime;
-                    sprite.Position = Vector2.Lerp(sprite.PositionStart, sprite.PositionEnd, percentage);
+                    var percentage =
+                        sprite.PositionTransitionCounter / sprite.PositionTransitionTime;
+                    sprite.Position = Vector2.Lerp(
+                        sprite.PositionStart,
+                        sprite.PositionEnd,
+                        percentage
+                    );
                 }
 
                 // update color transition
@@ -272,11 +286,18 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
         private void UpdateRenderTarget()
         {
-            if (_renderTarget != null &&
-                _sequenceWidth * _scale == _renderTarget.Width && _sequenceHeight * _scale == _renderTarget.Height)
+            if (
+                _renderTarget != null
+                && _sequenceWidth * _scale == _renderTarget.Width
+                && _sequenceHeight * _scale == _renderTarget.Height
+            )
                 return;
 
-            _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _sequenceWidth * _scale, _sequenceHeight * _scale);
+            _renderTarget = new RenderTarget2D(
+                Game1.Graphics.GraphicsDevice,
+                _sequenceWidth * _scale,
+                _sequenceHeight * _scale
+            );
         }
 
         public virtual void DrawRT(SpriteBatch spriteBatch)
@@ -291,14 +312,25 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
             // round the camera position to align with pixels
             var matrix =
-                Matrix.CreateTranslation(new Vector3(
-                    MathF.Round((-_cameraPosition.X) * _scale) / _scale,
-                    MathF.Round((-_cameraPosition.Y) * _scale) / _scale, 0)) *
-                Matrix.CreateScale(_scale);
+                Matrix.CreateTranslation(
+                    new Vector3(
+                        MathF.Round((-_cameraPosition.X) * _scale) / _scale,
+                        MathF.Round((-_cameraPosition.Y) * _scale) / _scale,
+                        0
+                    )
+                ) * Matrix.CreateScale(_scale);
 
             spriteBatch.GraphicsDevice.SetRenderTarget(_renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, matrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                matrix
+            );
 
             for (var i = 0; i < Sprites.Count; i++)
             {
@@ -308,7 +340,15 @@ namespace ProjectZ.InGame.Overlay.Sequences
                     spriteBatch.End();
 
                     ObjectManager.SetSpriteShader(Sprites[i].Shader);
-                    spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, Sprites[i].Shader.Effect, matrix);
+                    spriteBatch.Begin(
+                        SpriteSortMode.Deferred,
+                        null,
+                        SamplerState.PointWrap,
+                        null,
+                        null,
+                        Sprites[i].Shader.Effect,
+                        matrix
+                    );
                 }
 
                 Sprites[i].Draw(spriteBatch);
@@ -318,7 +358,15 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 if (Sprites[i].Shader != null)
                 {
                     spriteBatch.End();
-                    spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, matrix);
+                    spriteBatch.Begin(
+                        SpriteSortMode.Deferred,
+                        null,
+                        SamplerState.PointWrap,
+                        null,
+                        null,
+                        null,
+                        matrix
+                    );
                 }
             }
 
@@ -331,12 +379,22 @@ namespace ProjectZ.InGame.Overlay.Sequences
         public virtual void Draw(SpriteBatch spriteBatch, float transparency)
         {
             var position = new Vector2(
-                Game1.WindowWidth / 2 - _renderTarget.Width / 2 + MapManager.Camera.ShakeOffsetX * _scale,
-                Game1.WindowHeight / 2 - _renderTarget.Height / 2 + MapManager.Camera.ShakeOffsetY * _scale);
+                Game1.WindowWidth / 2
+                    - _renderTarget.Width / 2
+                    + MapManager.Camera.ShakeOffsetX * _scale,
+                Game1.WindowHeight / 2
+                    - _renderTarget.Height / 2
+                    + MapManager.Camera.ShakeOffsetY * _scale
+            );
 
             // push the sequence rt up if the textbox would overlap
             if (_textBoxOffset)
-                position.Y = Math.Min(position.Y, Game1.GameManager.InGameOverlay.TextboxOverlay.DialogBoxTextBox.Y - _renderTarget.Height - 12 * _scale);
+                position.Y = Math.Min(
+                    position.Y,
+                    Game1.GameManager.InGameOverlay.TextboxOverlay.DialogBoxTextBox.Y
+                        - _renderTarget.Height
+                        - 12 * _scale
+                );
 
             spriteBatch.Draw(_renderTarget, position, Color.White * transparency);
         }

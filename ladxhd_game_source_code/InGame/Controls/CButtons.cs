@@ -21,6 +21,6 @@ namespace ProjectZ.InGame.Controls
         Select = 4096,
         Start = 8192,
         RS = 16384,
-        LS = 32768
+        LS = 32768,
     }
 }

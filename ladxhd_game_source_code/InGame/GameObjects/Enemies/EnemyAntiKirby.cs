@@ -1,14 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Effects;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -31,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _endMove;
         private bool _bounceSound;
 
-        public EnemyAntiKirby() : base("anti kirby") { }
+        public EnemyAntiKirby()
+            : base("anti kirby") { }
 
-        public EnemyAntiKirby(Map.Map map, int posX, int posY) : base(map)
+        public EnemyAntiKirby(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntityPosition.AddPositionListener(typeof(EnemyLikeLike), UpdatePosition);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
@@ -52,10 +54,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -7, -12, 14, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Drag = 0.85f,
                 Bounciness = 0.3f,
@@ -92,18 +95,37 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -7, -13, 0, 14, 13, 8, true);
             var damageBox = new CBox(EntityPosition, -6, -12, 12, 12, 2);
 
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 }
+            );
 
             // suck animator
-            _suckParticles = new ObjAnimator(map,
-                (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerPlayer, "Enemies/anti kirby suck", "", false);
+            _suckParticles = new ObjAnimator(
+                map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                Values.LayerPlayer,
+                "Enemies/anti kirby suck",
+                "",
+                false
+            );
             _suckParticles.EntityPosition.SetParent(EntityPosition, Vector2.Zero);
             map.Objects.SpawnObject(_suckParticles);
 
@@ -135,7 +157,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("suck_" + _direction);
 
             // suck animation particles
-            _suckParticles.AnimationComponent.SpriteOffset = new Vector2(_direction == 0 ? -15 : 15, 2);
+            _suckParticles.AnimationComponent.SpriteOffset = new Vector2(
+                _direction == 0 ? -15 : 15,
+                2
+            );
             _suckParticles.Animator.Play("suck_" + _direction);
         }
 
@@ -154,7 +179,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // suck in the player
-            var playerDirection = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z + 4) - MapManager.ObjLink.Position;
+            var playerDirection =
+                new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z + 4)
+                - MapManager.ObjLink.Position;
             var playerDir = EntityPosition.X > MapManager.ObjLink.EntityPosition.X ? 0 : 1;
 
             // trap the player if he is close enough
@@ -220,7 +247,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             MapManager.ObjLink.SetPosition(EntityPosition.Position);
             MapManager.ObjLink.FreeTrappedPlayer();
             MapManager.ObjLink.CurrentState = ObjLink.State.Jumping;
-            MapManager.ObjLink._body.Velocity = new Vector3(_direction == 0 ? -1.5f : 1.5f, 0, 1.25f);
+            MapManager.ObjLink._body.Velocity = new Vector3(
+                _direction == 0 ? -1.5f : 1.5f,
+                0,
+                1.25f
+            );
 
             _aiComponent.ChangeState("spit");
             Game1.GameManager.PlaySoundEffect("D360-08-08");
@@ -277,7 +308,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                     var playerDirection = EntityPosition.Position - MapManager.ObjLink.Position;
                     var playerDir = EntityPosition.X > MapManager.ObjLink.EntityPosition.X ? 0 : 1;
 
-                    if (Math.Abs(playerDirection.Y) < 32 && Math.Abs(playerDirection.X) < 48 && playerDir == _direction)
+                    if (
+                        Math.Abs(playerDirection.Y) < 32
+                        && Math.Abs(playerDirection.X) < 48
+                        && playerDir == _direction
+                    )
                         _aiComponent.ChangeState("suck");
                     else
                         _aiComponent.ChangeState("idle");
@@ -301,7 +336,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 MapManager.ObjLink.SetPosition(newPosition.Position);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -310,18 +351,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_aiComponent.CurrentStateId == "move")
                 _aiComponent.ChangeState("idle");
 
-            if ((hitType & HitType.Sword) != 0 ||
-                hitType == HitType.Bow ||
-                hitType == HitType.Hookshot ||
-                hitType == HitType.MagicPowder)
+            if (
+                (hitType & HitType.Sword) != 0
+                || hitType == HitType.Bow
+                || hitType == HitType.Hookshot
+                || hitType == HitType.MagicPowder
+            )
                 damage = 0;
 
             // 4 hits
             if (hitType == HitType.Boomerang)
                 damage = 2;
 
-            if (hitType == HitType.Bomb ||
-                hitType == HitType.MagicRod)
+            if (hitType == HitType.Bomb || hitType == HitType.MagicRod)
                 damage = 4;
 
             if (damage != 0 && _hasPlayerTrapped)

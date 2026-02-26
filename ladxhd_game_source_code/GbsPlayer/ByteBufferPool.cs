@@ -69,7 +69,8 @@ namespace GBSPlayer
         // Find the smallest buffer that is larger than or equally large as size or -1 if none exist
         private int FirstLargerThan(int size)
         {
-            if (_freeBuffers.Count == 0) return -1;
+            if (_freeBuffers.Count == 0)
+                return -1;
 
             var l = 0;
             var r = _freeBuffers.Count - 1;
@@ -85,7 +86,8 @@ namespace GBSPlayer
                 else if (buffer.Length > size)
                 {
                     r = m;
-                    if (l == r) return l;
+                    if (l == r)
+                        return l;
                 }
                 else
                 {

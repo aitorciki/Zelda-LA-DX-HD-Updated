@@ -23,8 +23,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _respawnStart;
         private float _respawnTimer;
 
-        public ObjBushRespawner(Map.Map map, int posX, int posY, string spawnItem, string spriteId,
-            bool hasCollider, bool drawShadow, bool setGrassField, int drawLayer, string pickupKey) : base(map)
+        public ObjBushRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spawnItem,
+            string spriteId,
+            bool hasCollider,
+            bool drawShadow,
+            bool setGrassField,
+            int drawLayer,
+            string pickupKey
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -86,8 +97,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // Delete the respawn object and respawn the bush or grass object.
             Map.Objects.DeleteObjects.Add(this);
-            Map.Objects.SpawnObject(new ObjBush(Map, (int)EntityPosition.X, (int)EntityPosition.Y,
-                _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
+            Map.Objects.SpawnObject(
+                new ObjBush(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    _spawnItem,
+                    _spriteId,
+                    _hasCollider,
+                    _drawShadow,
+                    _setGrassField,
+                    _drawLayer,
+                    _pickupKey
+                )
+            );
         }
     }
 }

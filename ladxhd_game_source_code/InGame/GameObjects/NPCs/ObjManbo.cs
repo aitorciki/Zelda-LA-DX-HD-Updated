@@ -30,17 +30,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         // 3 eye
         private AnimationKeyframe[] _songKeyframes = new AnimationKeyframe[]
         {
-            new AnimationKeyframe( 0.00f, 0),
-            new AnimationKeyframe( 2.65f, 1),
-            new AnimationKeyframe( 3.35f, 2),
-            new AnimationKeyframe( 4.05f, 1),
-            new AnimationKeyframe( 4.55f, 0),
-            new AnimationKeyframe( 8.00f, 3),
+            new AnimationKeyframe(0.00f, 0),
+            new AnimationKeyframe(2.65f, 1),
+            new AnimationKeyframe(3.35f, 2),
+            new AnimationKeyframe(4.05f, 1),
+            new AnimationKeyframe(4.55f, 0),
+            new AnimationKeyframe(8.00f, 3),
             new AnimationKeyframe(13.35f, 3),
             new AnimationKeyframe(18.75f, 3),
             new AnimationKeyframe(22.75f, 3),
             new AnimationKeyframe(24.55f, 2),
-            new AnimationKeyframe(25.25f, 1)
+            new AnimationKeyframe(25.25f, 1),
         };
 
         private readonly BodyComponent _body;
@@ -66,9 +66,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _isPlaying;
         private bool _startedPlaying;
 
-        public ObjManbo() : base("manbo") { }
+        public ObjManbo()
+            : base("manbo") { }
 
-        public ObjManbo(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public ObjManbo(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 32, 48);
@@ -84,19 +86,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _animatorEye.Play("eye");
             _animatorMouth.Play("mouth_idle");
 
-            _body = new BodyComponent(EntityPosition, 0, 12, 32, 24, 8)
-            {
-                IgnoresZ = true
-            };
+            _body = new BodyComponent(EntityPosition, 0, 12, 32, 24, 8) { IgnoresZ = true };
 
             var interactBox = new CBox(posX, posY, 0, 32, 48, 8);
             AddComponent(InteractComponent.Index, new InteractComponent(interactBox, OnInteract));
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(_body, Values.CollisionTypes.Normal)
+            );
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
 
             _leftFish = new ObjDancingFish(map, new Vector2(posX - 25, posY + 70));
             _rightFish = new ObjDancingFish(map, new Vector2(posX + 23, posY + 70));
@@ -105,7 +113,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             if (Game1.GameManager.SaveManager.GetString("manbo") != "1")
             {
-                _objPushDialog = new ObjOnPushDialog(map, posX - 24, posY - 32, 32, 90 + 32, "manbo");
+                _objPushDialog = new ObjOnPushDialog(
+                    map,
+                    posX - 24,
+                    posY - 32,
+                    32,
+                    90 + 32,
+                    "manbo"
+                );
                 map.Objects.SpawnObject(_objPushDialog);
             }
         }
@@ -155,7 +170,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 PlayFishAnimation("splash");
             }
-            
+
             // fish eye roll animation
             if (_animationIndex == 3)
             {
@@ -189,7 +204,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 {
                     if (_animationIndex == 2)
                         PlayFishAnimation("idle");
-                    
+
                     // set the animations
                     PlayAnimation(_songKeyframes[_songIndex].Animation);
 
@@ -249,16 +264,39 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void Draw(SpriteBatch spriteBatch)
         {
             _animator.Draw(spriteBatch, EntityPosition.Position, Color.White);
-            _animatorMouth.Draw(spriteBatch, new Vector2(EntityPosition.X, EntityPosition.Y + 17), Color.White);
-            _animatorEye.Draw(spriteBatch, new Vector2(EntityPosition.X + 1, EntityPosition.Y + 12), Color.White);
+            _animatorMouth.Draw(
+                spriteBatch,
+                new Vector2(EntityPosition.X, EntityPosition.Y + 17),
+                Color.White
+            );
+            _animatorEye.Draw(
+                spriteBatch,
+                new Vector2(EntityPosition.X + 1, EntityPosition.Y + 12),
+                Color.White
+            );
 
             if (_animationIndex == 2)
             {
-                DrawHelper.DrawNormalized(spriteBatch, _spriteTextbox, new Vector2(_startPosition.X - 24, _startPosition.Y - 8), Color.White);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    _spriteTextbox,
+                    new Vector2(_startPosition.X - 24, _startPosition.Y - 8),
+                    Color.White
+                );
                 if (_songIndex > 6)
                 {
-                    DrawHelper.DrawNormalized(spriteBatch, _spriteTextbox, new Vector2(_startPosition.X - 56, _startPosition.Y + 42), Color.White);
-                    DrawHelper.DrawNormalized(spriteBatch, _spriteTextbox, new Vector2(_startPosition.X - 8, _startPosition.Y + 42), Color.White);
+                    DrawHelper.DrawNormalized(
+                        spriteBatch,
+                        _spriteTextbox,
+                        new Vector2(_startPosition.X - 56, _startPosition.Y + 42),
+                        Color.White
+                    );
+                    DrawHelper.DrawNormalized(
+                        spriteBatch,
+                        _spriteTextbox,
+                        new Vector2(_startPosition.X - 8, _startPosition.Y + 42),
+                        Color.White
+                    );
                 }
             }
         }

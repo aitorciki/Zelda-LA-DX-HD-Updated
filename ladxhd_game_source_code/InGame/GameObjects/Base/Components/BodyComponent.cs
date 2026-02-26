@@ -54,6 +54,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public float Bounciness2D = 0;
         public float SpeedMultiply = 1;
         public float AbsorbPercentage = 0.85f;
+
         // not sure why this was changed from beeing zero
         public float AbsorbStop = 0.15f;
         public float MaxSlideDistance = 6.0f;
@@ -90,10 +91,10 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public int DeepWaterOffset = -3;
 
         public int Level = 0;
-        
-        public bool SimpleMovement = false;             // Used to make the X/Y movement happen in one step.
-        public bool IgnoreCollision = false;            // Outright ignore all collision.
-        public bool IgnoreInsideCollision = true;       // If alread inside a collider, ignore collision.
+
+        public bool SimpleMovement = false; // Used to make the X/Y movement happen in one step.
+        public bool IgnoreCollision = false; // Outright ignore all collision.
+        public bool IgnoreInsideCollision = true; // If alread inside a collider, ignore collision.
 
         public bool IsActive = true;
         public bool IsGrounded = true;
@@ -105,15 +106,22 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public bool IsSlider;
         public bool IsAbsorbed;
         public bool WasHolePulled;
-        public bool DisableVelocityTargetMultiplier;    // This is used for the vacuum.
+        public bool DisableVelocityTargetMultiplier; // This is used for the vacuum.
         public bool RestAdditionalMovement = true;
         public bool SplashEffect = true;
         public bool UpdateFieldState = true;
 
-        public new static int Index = 2;
+        public static new int Index = 2;
         public static int Mask = 0x01 << Index;
 
-        public BodyComponent(CPosition position, int offsetX, int offsetY, int width, int height, int depth)
+        public BodyComponent(
+            CPosition position,
+            int offsetX,
+            int offsetY,
+            int width,
+            int height,
+            int depth
+        )
         {
             Position = position;
             BodyBox = new CBox(position, offsetX, offsetY, width, height, depth);

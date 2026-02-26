@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private Color _color;
 
         private double _hiddenStartTime;
-        
+
         private float _spawnState;
         private float _heartTimer;
         private float _healCounter;
@@ -47,9 +47,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool _musicPlaying;
 
-        public ObjFairy() : base("npc_fairy") { }
+        public ObjFairy()
+            : base("npc_fairy") { }
 
-        public ObjFairy(Map.Map map, int posX, int posY, string strDialogPath) : base(map)
+        public ObjFairy(Map.Map map, int posX, int posY, string strDialogPath)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 8);
             EntitySize = new Rectangle(-11, -35, 22, 35 + 32);
@@ -62,7 +64,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _body = new BodyComponent(EntityPosition, -5, -16, 10, 16, 8)
             {
                 FieldRectangle = map.GetField(posX, posY),
-                IgnoresZ = true
+                IgnoresZ = true,
             };
 
             _heartSource = Resources.GetSprite("heart");
@@ -86,14 +88,30 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             IsVisible = true;
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(animator, _sprite, new Vector2(-11, -25));
+            var animationComponent = new AnimationComponent(
+                animator,
+                _sprite,
+                new Vector2(-11, -25)
+            );
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX + 8 - 3, posY + 16, 6, 30), OnCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(
+                    new Rectangle(posX + 8 - 3, posY + 16, 6, 30),
+                    OnCollision
+                )
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerTop, EntityPosition));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerTop, EntityPosition)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new ShadowBodyDrawComponent(EntityPosition)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -102,7 +120,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdatePosition()
         {
             // move up down
-            EntityPosition.Z = 12.0f + MathF.Sin((float)Game1.TotalGameTime / 1100.0f * MathF.PI) * 4.0f;
+            EntityPosition.Z =
+                12.0f + MathF.Sin((float)Game1.TotalGameTime / 1100.0f * MathF.PI) * 4.0f;
         }
 
         private void InitHidden()
@@ -113,13 +132,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateHidden()
         {
             // fade out
-            _spawnState = AnimationHelper.MoveToTarget(_spawnState, 0, 0.05f * Game1.TimeMultiplier);
+            _spawnState = AnimationHelper.MoveToTarget(
+                _spawnState,
+                0,
+                0.05f * Game1.TimeMultiplier
+            );
             _color = Color.White * _spawnState;
             _shadowComponent.Transparency = _spawnState;
 
             // delay the spawning a little bit
-            if (_hiddenStartTime + 10000 < Game1.TotalGameTime && 
-                Game1.GameManager.CurrentHealth < Game1.GameManager.MaxHearts * 4)
+            if (
+                _hiddenStartTime + 10000 < Game1.TotalGameTime
+                && Game1.GameManager.CurrentHealth < Game1.GameManager.MaxHearts * 4
+            )
             {
                 _aiComponent.ChangeState("idle");
                 IsVisible = true;
@@ -129,7 +154,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void UpdateIdle()
         {
             // fade in
-            _spawnState = AnimationHelper.MoveToTarget(_spawnState, 1, 0.05f * Game1.TimeMultiplier);
+            _spawnState = AnimationHelper.MoveToTarget(
+                _spawnState,
+                1,
+                0.05f * Game1.TimeMultiplier
+            );
             _color = Color.White * _spawnState;
             _shadowComponent.Transparency = _spawnState;
 
@@ -151,12 +180,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Play the music when Link enters the current field the fairy is in.
             bool _stateIdle = _aiComponent.CurrentStateId == "idle";
 
-            if (_stateIdle && !_musicPlaying && _body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
+            if (
+                _stateIdle
+                && !_musicPlaying
+                && _body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+            )
             {
                 Game1.GameManager.SetMusic(11, 2);
                 _musicPlaying = true;
             }
-            else if (_musicPlaying && !_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
+            else if (
+                _musicPlaying
+                && !_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+            )
             {
                 Game1.GameManager.SetMusic(-1, 2);
                 _musicPlaying = false;
@@ -170,8 +206,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // different speeds depending on the health of the player
             var healingSteps = (DespawnStart - HealingStart) / HealingStepTime;
             var neededSteps = Game1.GameManager.MaxHearts * 4 - Game1.GameManager.CurrentHealth;
-            _healStepAmount = Math.Clamp((int)Math.Ceiling(neededSteps / (float)healingSteps), 1, 8);
-            
+            _healStepAmount = Math.Clamp(
+                (int)Math.Ceiling(neededSteps / (float)healingSteps),
+                1,
+                8
+            );
+
             Game1.GameManager.StartDialogPath("fairy");
             Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
@@ -231,8 +271,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             // fade out with a blinking effect
-            var despawnState = MathHelper.Clamp(_despawnCounter / 500.0f, 0, 1) *
-                                (0.75f + (float)Math.Cos(_despawnCounter / 15) * 0.25f);
+            var despawnState =
+                MathHelper.Clamp(_despawnCounter / 500.0f, 0, 1)
+                * (0.75f + (float)Math.Cos(_despawnCounter / 15) * 0.25f);
 
             _color = Color.White * despawnState;
             _shadowComponent.Transparency = despawnState;
@@ -260,8 +301,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _sprite.Draw(spriteBatch);
 
             // draw the hearts
-            if (_aiComponent.CurrentStateId == "healing" ||
-                _aiComponent.CurrentStateId == "despawning")
+            if (
+                _aiComponent.CurrentStateId == "healing"
+                || _aiComponent.CurrentStateId == "despawning"
+            )
                 DrawHearts(spriteBatch);
         }
 
@@ -272,7 +315,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 if (_heartTimer < (i * _heartSpeed))
                     return;
 
-                var position = new Vector2(EntityPosition.Position.X - 3.5f, EntityPosition.Position.Y + 20);
+                var position = new Vector2(
+                    EntityPosition.Position.X - 3.5f,
+                    EntityPosition.Position.Y + 20
+                );
                 var angle = i / 5.0 * Math.PI - (_heartTimer / _heartSpeed * Math.PI / 5.0);
 
                 position += new Vector2((float)Math.Sin(angle), -(float)Math.Cos(angle)) * 36;

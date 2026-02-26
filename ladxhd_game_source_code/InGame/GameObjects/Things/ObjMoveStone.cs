@@ -52,7 +52,20 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private int _type;
 
-        public ObjMoveStone(Map.Map map, int posX, int posY, int moveDirections, string strKey, string spriteId, Rectangle collisionRectangle, int layer, int type, bool freezePlayer, string resetKey) : base(map, spriteId)
+        public ObjMoveStone(
+            Map.Map map,
+            int posX,
+            int posY,
+            int moveDirections,
+            string strKey,
+            string spriteId,
+            Rectangle collisionRectangle,
+            int layer,
+            int type,
+            bool freezePlayer,
+            string resetKey
+        )
+            : base(map, spriteId)
         {
             EntityPosition = new CPosition(posX, posY + 16, 0);
             EntitySize = new Rectangle(0, -16, 16, 16);
@@ -73,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             _body = new BodyComponent(EntityPosition, 3, -13, 10, 10, 8)
             {
                 IgnoreHoles = true,
-                IgnoreHeight = true
+                IgnoreHeight = true,
             };
             var movingTrigger = new AiTriggerCountdown(_moveTime, MoveTick, MoveEnd);
             var movedState = new AiState { Init = InitMoved };
@@ -85,18 +98,45 @@ namespace ProjectZ.InGame.GameObjects.Things
             new AiFallState(_aiComponent, _body, OnHoleAbsorb, null, 200);
             _aiComponent.ChangeState("idle");
 
-            _box = new CBox(EntityPosition, collisionRectangle.X, collisionRectangle.Y, collisionRectangle.Width, collisionRectangle.Height, 16);
+            _box = new CBox(
+                EntityPosition,
+                collisionRectangle.X,
+                collisionRectangle.Y,
+                collisionRectangle.Width,
+                collisionRectangle.Height,
+                16
+            );
 
             var sprite = Resources.GetSprite(spriteId);
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_box, OnPush) { InertiaTime = 500 });
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_box, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, new Vector2(0, -sprite.SourceRectangle.Height), layer));
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_box, OnPush) { InertiaTime = 500 }
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    _box,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot
+                )
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent(
+                    spriteId,
+                    EntityPosition,
+                    new Vector2(0, -sprite.SourceRectangle.Height),
+                    layer
+                )
+            );
 
             if (!string.IsNullOrEmpty(_strResetKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
 
             // set the key
             if (_type == 1 && _strKey != null)
@@ -108,7 +148,21 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void OnHoleAbsorb()
         {
             if (!NoRespawn)
-                Map.Objects.SpawnObject(new ObjMoveStoneRespawner(Map, _baseX, _baseY, _allowedDirections, _strKey, _spriteId, _collisionRect, _layer, _type, _freezePlayer, _strResetKey));
+                Map.Objects.SpawnObject(
+                    new ObjMoveStoneRespawner(
+                        Map,
+                        _baseX,
+                        _baseY,
+                        _allowedDirections,
+                        _strKey,
+                        _spriteId,
+                        _collisionRect,
+                        _layer,
+                        _type,
+                        _freezePlayer,
+                        _strResetKey
+                    )
+                );
         }
 
         private void OnKeyChange()
@@ -154,23 +208,35 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // Find nearby objects to add to a list to find stones.
             _groupOfMoveStone.Clear();
-            Map.Objects.GetComponentList(_groupOfMoveStone, (int)boxCenterLink.X - 32, (int)boxCenterLink.Y - 32, 64, 64, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _groupOfMoveStone,
+                (int)boxCenterLink.X - 32,
+                (int)boxCenterLink.Y - 32,
+                64,
+                64,
+                BodyComponent.Mask
+            );
 
             // Loop through the object group.
             foreach (var obj in _groupOfMoveStone)
             {
                 // If the object is not a stone then skip it.
-                if (obj is not ObjMoveStone otherStone) continue;
-                if (otherStone == this) continue;
+                if (obj is not ObjMoveStone otherStone)
+                    continue;
+                if (otherStone == this)
+                    continue;
 
                 // Get the center of this stone's box.
-                Vector2 boxCentOther = new(otherStone._box.Box.Center.X, otherStone._box.Box.Center.Y);
+                Vector2 boxCentOther = new(
+                    otherStone._box.Box.Center.X,
+                    otherStone._box.Box.Center.Y
+                );
                 Vector2 distBoxOther = Vector2.Normalize(boxCentOther - boxCenterLink);
-                
+
                 // Get the distance score of this stone compared to Link.
                 float dotRockOther = Vector2.Dot(distBoxOther, pushDirection);
                 float distSquOther = Vector2.DistanceSquared(boxCenterLink, boxCentOther);
-                float stoneScoreB  = distSquOther - dotRockOther * biasStrength;
+                float stoneScoreB = distSquOther - dotRockOther * biasStrength;
 
                 // If it's score is not higher than the previous stone then don't push it.
                 if (stoneScoreB < stoneScoreA)
@@ -190,9 +256,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_type == 1 && _strKey == "ow_grave_4")
             {
                 // Check if the palyer has a follower with them.
-                var hasBowWow  = Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1";
-                var hasMarin   = Game1.GameManager.SaveManager.GetString("has_marin", "0") == "1";
-                var hasGhost   = Game1.GameManager.SaveManager.GetString("has_ghost", "0") == "1";
+                var hasBowWow = Game1.GameManager.SaveManager.GetString("has_bowWow", "0") == "1";
+                var hasMarin = Game1.GameManager.SaveManager.GetString("has_marin", "0") == "1";
+                var hasGhost = Game1.GameManager.SaveManager.GetString("has_ghost", "0") == "1";
                 var hasRooster = Game1.GameManager.SaveManager.GetString("has_rooster", "0") == "1";
 
                 // The player has a follower with them.
@@ -203,7 +269,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                     Rectangle field = MapManager.ObjLink.CurrentField;
 
                     // Search the current field that Link is in.
-                    Map.Objects.GetGameObjectsWithTag(graveTriggerList, Values.GameObjectTag.Utility, field.X, field.Y, field.Width, field.Height);
+                    Map.Objects.GetGameObjectsWithTag(
+                        graveTriggerList,
+                        Values.GameObjectTag.Utility,
+                        field.X,
+                        field.Y,
+                        field.Width,
+                        field.Height
+                    );
 
                     // The first object in the list will be what we're looking for.
                     ObjGraveTrigger graveTrigger = graveTriggerList[0] as ObjGraveTrigger;
@@ -227,21 +300,30 @@ namespace ProjectZ.InGame.GameObjects.Things
             _moveDirection = AnimationHelper.GetDirection(direction);
 
             // Assemble the list of conditions to check if the stone should move.
-            bool linkNotPushing = !Link.WasPushing;                                            // Link was pushing the stone last frame update.
-            bool dirNotMatching = _moveDirection != Link.Direction;                            // Direction of Link matches direction of push.
-            bool stateIsNotIdle = _aiComponent.CurrentStateId != "idle";                       // Current state of stone must be "Idle".
-            bool pushTypeImpact = type == PushableComponent.PushType.Impact;                   // Push type must not be "Impact" type.
-            bool singlePushOnly = _activePushStone != null && _activePushStone != this;        // Only allow a single stone to move at once.
-            bool pushStoneGrave = _type == 1 && Game1.GameManager.StoneGrabberLevel <= 0;      // Gravestones require the power bracelet.
-            bool noColorDungeon = BlockColorDungeonEntry();                                    // The gravestone which accesses the color dungeon.
+            bool linkNotPushing = !Link.WasPushing; // Link was pushing the stone last frame update.
+            bool dirNotMatching = _moveDirection != Link.Direction; // Direction of Link matches direction of push.
+            bool stateIsNotIdle = _aiComponent.CurrentStateId != "idle"; // Current state of stone must be "Idle".
+            bool pushTypeImpact = type == PushableComponent.PushType.Impact; // Push type must not be "Impact" type.
+            bool singlePushOnly = _activePushStone != null && _activePushStone != this; // Only allow a single stone to move at once.
+            bool pushStoneGrave = _type == 1 && Game1.GameManager.StoneGrabberLevel <= 0; // Gravestones require the power bracelet.
+            bool noColorDungeon = BlockColorDungeonEntry(); // The gravestone which accesses the color dungeon.
 
             // These conditions are combined into a single condition for readability.
-            bool directionExist = _allowedDirections != -1;                                    // Stone has valid pushable directions set.
-            bool directionFails = (_allowedDirections & (0x01 << _moveDirection)) == 0;        // Pushed direction must match a pushable direction.
+            bool directionExist = _allowedDirections != -1; // Stone has valid pushable directions set.
+            bool directionFails = (_allowedDirections & (0x01 << _moveDirection)) == 0; // Pushed direction must match a pushable direction.
             bool blockDirection = directionExist && directionFails;
 
             // If any of the conditions pass, then fail pushing the stone.
-            if (linkNotPushing || dirNotMatching || stateIsNotIdle || pushTypeImpact || singlePushOnly || pushStoneGrave || noColorDungeon || blockDirection)
+            if (
+                linkNotPushing
+                || dirNotMatching
+                || stateIsNotIdle
+                || pushTypeImpact
+                || singlePushOnly
+                || pushStoneGrave
+                || noColorDungeon
+                || blockDirection
+            )
                 return false;
 
             // Must be the closest stone to Link. Separated out as it's the most expensive check.
@@ -251,10 +333,26 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Only move if there is nothing blocking the way.
             var pushVector = AnimationHelper.DirectionOffset[_moveDirection];
             var collidingRectangle = Box.Empty;
-            var collisionBox = new Box(EntityPosition.X + pushVector.X * 16, EntityPosition.Y + pushVector.Y * 16 - 16, 0, 16, 16, 16);
+            var collisionBox = new Box(
+                EntityPosition.X + pushVector.X * 16,
+                EntityPosition.Y + pushVector.Y * 16 - 16,
+                0,
+                16,
+                16,
+                16
+            );
 
             // Collision blocks movement, but the push is valid. Return true so the push is consumed and not retried elsewhere.
-            if (Map.Objects.Collision(collisionBox, Box.Empty, Values.CollisionTypes.Normal | Values.CollisionTypes.Passageway, 0, 0, ref collidingRectangle))
+            if (
+                Map.Objects.Collision(
+                    collisionBox,
+                    Box.Empty,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Passageway,
+                    0,
+                    0,
+                    ref collidingRectangle
+                )
+            )
                 return true;
 
             // Set the stone's starting and finishing position before being pushed.
@@ -323,15 +421,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
             // Get any dungeon barriers nearby.
             _groupOfBarrier.Clear();
-            Map.Objects.GetComponentList(_groupOfBarrier,
-                (int)_body.BodyBox.Box.X, 
-                (int)_body.BodyBox.Box.Y, 
-                4, 4, CollisionComponent.Mask);
+            Map.Objects.GetComponentList(
+                _groupOfBarrier,
+                (int)_body.BodyBox.Box.X,
+                (int)_body.BodyBox.Box.Y,
+                4,
+                4,
+                CollisionComponent.Mask
+            );
 
             // Loop through the barriers found.
             foreach (var obj in _groupOfBarrier)
             {
-                if (obj is not ObjDungeonBarrier barrier) continue;
+                if (obj is not ObjDungeonBarrier barrier)
+                    continue;
 
                 Vector2 barPosition = barrier.EntityPosition.Position;
                 Vector2 newPosition = new Vector2(354.5f, 229f);
@@ -358,12 +461,31 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Game1.GameManager.PlaySoundEffect("D360-14-0E");
 
                 // spawn splash effect
-                var fallAnimation = new ObjAnimator(Map,
+                var fallAnimation = new ObjAnimator(
+                    Map,
                     (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
                     (int)(_body.Position.Y + _body.OffsetY + _body.Height - 2),
-                    Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                    Values.LayerPlayer,
+                    "Particles/fishingSplash",
+                    "idle",
+                    true
+                );
                 Map.Objects.SpawnObject(fallAnimation);
-                Map.Objects.SpawnObject(new ObjMoveStoneRespawner(Map, _baseX, _baseY, _allowedDirections, _strKey, _spriteId, _collisionRect, _layer, _type, _freezePlayer, _strResetKey));
+                Map.Objects.SpawnObject(
+                    new ObjMoveStoneRespawner(
+                        Map,
+                        _baseX,
+                        _baseY,
+                        _allowedDirections,
+                        _strKey,
+                        _spriteId,
+                        _collisionRect,
+                        _layer,
+                        _type,
+                        _freezePlayer,
+                        _strResetKey
+                    )
+                );
                 Map.Objects.DeleteObjects.Add(this);
             }
         }
@@ -375,7 +497,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition.Set(Vector2.Lerp(_startPosition, _goalPosition, amount));
 
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects, (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 16, 17, 17, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)EntityPosition.Position.X,
+                (int)EntityPosition.Position.Y - 16,
+                17,
+                17,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {

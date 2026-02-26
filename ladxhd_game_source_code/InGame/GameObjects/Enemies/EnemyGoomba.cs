@@ -28,14 +28,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _directionCounter;
         private const float WalkSpeed = 0.5f;
 
-        public EnemyGoomba() : base("goomba") { }
+        public EnemyGoomba()
+            : base("goomba") { }
 
-        public EnemyGoomba(Map.Map map, int posX, int posY) : base(map)
+        public EnemyGoomba(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -44,16 +46,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, Map.Is2dMap ? -14 : -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, Map.Is2dMap ? -14 : -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -6, -11, 12, 11, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.NPCWall,
-                AvoidTypes =     Values.CollisionTypes.Hole,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.NPCWall,
+                AvoidTypes = Values.CollisionTypes.Hole,
                 FieldRectangle = map.GetField(posX, posY),
                 Drag = 0.85f,
                 DragAir = 0.85f,
@@ -66,7 +73,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var stateWalking = new AiState(UpdateWalking) { Init = InitWalking };
             var stateDead = new AiState();
-            stateDead.Trigger.Add(new AiTriggerCountdown(1000 - FadeTime, null, () => _aiComponent.ChangeState("fade")));
+            stateDead.Trigger.Add(
+                new AiTriggerCountdown(
+                    1000 - FadeTime,
+                    null,
+                    () => _aiComponent.ChangeState("fade")
+                )
+            );
             var stateFade = new AiState() { Init = InitFade };
             stateFade.Trigger.Add(new AiTriggerCountdown(FadeTime, DespawnTick, RemoveEntity));
 
@@ -75,20 +88,45 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("dead", stateDead);
             _aiComponent.States.Add("fade", stateFade);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
 
             _aiComponent.ChangeState("walking");
 
             CBox damageCollider;
             if (Map.Is2dMap)
-                damageCollider = new CBox(EntityPosition, -_body.Width / 2 - 1, -8, 0, _body.Width + 2, 8, 4);
+                damageCollider = new CBox(
+                    EntityPosition,
+                    -_body.Width / 2 - 1,
+                    -8,
+                    0,
+                    _body.Width + 2,
+                    8,
+                    4
+                );
             else
-                damageCollider = new CBox(EntityPosition, -_body.Width / 2 - 1, -_body.Height, 0, _body.Width + 2, _body.Height, 4);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+                damageCollider = new CBox(
+                    EntityPosition,
+                    -_body.Width / 2 - 1,
+                    -_body.Height,
+                    0,
+                    _body.Width + 2,
+                    _body.Height,
+                    4
+                );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
 
             if (Map.Is2dMap)
                 _damageState.HitMultiplierY = 1.0f;
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
@@ -96,10 +134,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (Map.Is2dMap)
             {
                 var collisionBox = new CBox(EntityPosition, -6, -8, 0, 12, 8, 4);
-                AddComponent(CollisionComponent.Index, _bodyCollision = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
+                AddComponent(
+                    CollisionComponent.Index,
+                    _bodyCollision = new BoxCollisionComponent(
+                        collisionBox,
+                        Values.CollisionTypes.Enemy
+                    )
+                );
             }
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
         }
 
         private void Reset()
@@ -143,9 +193,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateWalking()
         {
             // player jumped on top?
-            if ((!Map.Is2dMap && MapManager.ObjLink._body.Velocity.Z < 0 ||
-                 Map.Is2dMap && MapManager.ObjLink._body.Velocity.Y > 0 && MapManager.ObjLink.CenterPosition.Y < EntityPosition.Y) &&
-                 _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
+            if (
+                (
+                    !Map.Is2dMap && MapManager.ObjLink._body.Velocity.Z < 0
+                    || Map.Is2dMap
+                        && MapManager.ObjLink._body.Velocity.Y > 0
+                        && MapManager.ObjLink.CenterPosition.Y < EntityPosition.Y
+                ) && _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box)
+            )
             {
                 JumpDeath();
             }
@@ -161,14 +216,33 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void InitFade()
         {
-            var animation = new ObjAnimator(Map,
-                (int)EntityPosition.X, (int)EntityPosition.Y - 4, 0, 0, Values.LayerTop, "Particles/despawnParticle", "orange", true);
+            var animation = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y - 4,
+                0,
+                0,
+                Values.LayerTop,
+                "Particles/despawnParticle",
+                "orange",
+                true
+            );
             Map.Objects.SpawnObject(animation);
 
             // Spawn a heart if they are not disabled.
             if (!GameSettings.NoHeartDrops)
-                Map.Objects.SpawnObject(new ObjItem(Map,
-                    (int)EntityPosition.X - 8, (int)EntityPosition.Y - 12, "j", null, "heart", null, true));
+                Map.Objects.SpawnObject(
+                    new ObjItem(
+                        Map,
+                        (int)EntityPosition.X - 8,
+                        (int)EntityPosition.Y - 12,
+                        "j",
+                        null,
+                        "heart",
+                        null,
+                        true
+                    )
+                );
         }
 
         private void DespawnTick(double time)
@@ -185,7 +259,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -223,11 +301,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _body.VelocityTarget.X = -_body.VelocityTarget.X;
 
             // stop walking into the wall
-            if (!Map.Is2dMap && (direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
+            if (
+                !Map.Is2dMap
+                && (direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical))
+                    != 0
+            )
                 _aiComponent.ChangeState("walking");
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

@@ -17,7 +17,7 @@ namespace ProjectZ.Base
 
             var argsExp = new Expression[paramsInfo.Length];
 
-            //pick each arg from the params array 
+            //pick each arg from the params array
             //and create a typed expression of them
             for (var i = 0; i < paramsInfo.Length; i++)
             {

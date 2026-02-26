@@ -22,7 +22,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _isPickedUp;
         private bool _hitEnemies;
 
-        public MBossSmasherBall(Map.Map map, Vector2 position) : base(map)
+        public MBossSmasherBall(Map.Map map, Vector2 position)
+            : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
@@ -34,7 +35,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 MoveCollision = Collision,
                 DragAir = 1.0f,
                 Gravity = -0.125f,
-                FieldRectangle = map.GetField((int)position.X, (int)position.Y, 12)
+                FieldRectangle = map.GetField((int)position.X, (int)position.Y, 12),
             };
 
             _fieldRectangle = _body.FieldRectangle;
@@ -46,13 +47,33 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _damageBox = new CBox(EntityPosition, -2, -2, 0, 2, 2, 2, true);
 
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CarriableComponent.Index, _carriableComponent = new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)), CarryInit, CarryUpdate, CarryThrow));
+            AddComponent(
+                CarriableComponent.Index,
+                _carriableComponent = new CarriableComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)),
+                    CarryInit,
+                    CarryUpdate,
+                    CarryThrow
+                )
+            );
             AddComponent(PushableComponent.Index, new PushableComponent(bodyBox, OnPush));
             AddComponent(HittableComponent.Index, new HittableComponent(bodyBox, OnHit));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.ThrownObject, 4) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageBox, HitType.ThrownObject, 4)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(cSprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, cSprite) { ShadowWidth = 12, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(cSprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, cSprite) { ShadowWidth = 12, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -61,9 +82,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // spawn explosion
             var animation = new ObjDeathExplodeEffect(Map, 0, 0, 0, 0);
-            animation.EntityPosition.Set(new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8));
+            animation.EntityPosition.Set(
+                new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z - 8)
+            );
             Map.Objects.SpawnObject(animation);
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0)
+            );
             Map.Objects.DeleteObjects.Add(this);
         }
 
@@ -71,7 +96,14 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             if (_hitEnemies)
             {
-                var collision = Map.Objects.Hit(this, EntityPosition.Position, _damageBox.Box, HitType.ThrownObject, 2, false);
+                var collision = Map.Objects.Hit(
+                    this,
+                    EntityPosition.Position,
+                    _damageBox.Box,
+                    HitType.ThrownObject,
+                    2,
+                    false
+                );
                 if (collision != Values.HitCollision.None)
                 {
                     _body.Velocity.X = -_body.Velocity.X * 0.45f;
@@ -79,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 }
             }
         }
-        
+
         public bool IsAvailable()
         {
             // Returns if the ball can be picket up by the boss. This is the case if it is laying on the ground and the player is not holding it.
@@ -117,7 +149,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _carriableComponent.IsActive = true;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

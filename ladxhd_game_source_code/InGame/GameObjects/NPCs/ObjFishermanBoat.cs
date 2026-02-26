@@ -29,7 +29,16 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private string _spawnCondition;
         private bool _directionMode = true;
 
-        public ObjFishermanBoat(Map.Map map, int posX, int posY, string spawnCondition, string animationId, string dialogId, Rectangle bodyRectangle) : base(map)
+        public ObjFishermanBoat(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spawnCondition,
+            string animationId,
+            string dialogId,
+            Rectangle bodyRectangle
+        )
+            : base(map)
         {
             SprEditorImage = Resources.SprNpCs;
             EditorIconSource = new Rectangle(276, 2, 15, 16);
@@ -40,7 +49,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
             }
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            EntitySize = new Rectangle(bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height);
+            EntitySize = new Rectangle(
+                bodyRectangle.X - bodyRectangle.Width / 2,
+                bodyRectangle.Y - bodyRectangle.Height,
+                bodyRectangle.Width,
+                bodyRectangle.Height
+            );
 
             _spawnPosition = EntityPosition.Position;
             _spawnCondition = spawnCondition;
@@ -55,18 +69,45 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
 
-            _body = new BodyComponent(EntityPosition, bodyRectangle.X - bodyRectangle.Width / 2, bodyRectangle.Y - bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height, bodyRectangle.Height) { Gravity = -0.15f };
+            _body = new BodyComponent(
+                EntityPosition,
+                bodyRectangle.X - bodyRectangle.Width / 2,
+                bodyRectangle.Y - bodyRectangle.Height,
+                bodyRectangle.Width,
+                bodyRectangle.Height,
+                bodyRectangle.Height
+            )
+            {
+                Gravity = -0.15f,
+            };
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(InteractComponent.Index, _interactionComponent = new InteractComponent(_body.BodyBox, Interact));
+            AddComponent(
+                InteractComponent.Index,
+                _interactionComponent = new InteractComponent(_body.BodyBox, Interact)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerBottom) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new BodyDrawComponent(_body, _sprite, Values.LayerBottom)
+                {
+                    WaterOutline = false,
+                }
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, _sprite)
+            );
 
-            if (Game1.GameManager.SaveManager.GetString("photoMouseActive") == "1" &&
-                Game1.GameManager.SaveManager.GetString("photo_sequence_bridge") == null)
+            if (
+                Game1.GameManager.SaveManager.GetString("photoMouseActive") == "1"
+                && Game1.GameManager.SaveManager.GetString("photo_sequence_bridge") == null
+            )
             {
                 _photoMouse = new ObjPhotoMouse(map, posX - 17, posY + 40, null, "mouseSeqBoat");
                 map.Objects.SpawnObject(_photoMouse);
@@ -87,7 +128,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 var playerDistance = new Vector2(
                     MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
-                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
+                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4)
+                );
 
                 var dir = 3;
 
@@ -116,7 +158,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 var targetPosition = new Vector2(EntityPosition.X - 25, EntityPosition.Y - 1);
                 var pullDirection = targetPosition - _photoMouse.EntityPosition.Position;
-                var pullSpeed = (_photoMouse.Body.CurrentFieldState & MapStates.FieldStates.DeepWater) != 0 ? 0.25f : 0.5f;
+                var pullSpeed =
+                    (_photoMouse.Body.CurrentFieldState & MapStates.FieldStates.DeepWater) != 0
+                        ? 0.25f
+                        : 0.5f;
 
                 if (pullDirection.Length() > pullSpeed * Game1.TimeMultiplier)
                 {

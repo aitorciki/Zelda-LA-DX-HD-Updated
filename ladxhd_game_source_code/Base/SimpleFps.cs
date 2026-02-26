@@ -26,10 +26,11 @@ namespace ProjectZ.Base
 
             if (_elapsed > MsgFrequency)
             {
-                Msg = $"fps:          {_frames / _elapsed,7:N3}" +
-                      $"\nupdates:      {_updates,3:N0}" +
-                      $"\nframes:       {_frames,3:N0}" +
-                      $"\nelapsed time: {_elapsed,7:N3}";
+                Msg =
+                    $"fps:          {_frames / _elapsed, 7:N3}"
+                    + $"\nupdates:      {_updates, 3:N0}"
+                    + $"\nframes:       {_frames, 3:N0}"
+                    + $"\nelapsed time: {_elapsed, 7:N3}";
 
                 _frames = 0;
                 _updates = 0;

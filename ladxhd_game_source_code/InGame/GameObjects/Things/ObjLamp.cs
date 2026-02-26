@@ -32,7 +32,18 @@ namespace ProjectZ.InGame.GameObjects.Things
         float light_bright = 1.00f;
         int light_size = 160;
 
-        public ObjLamp(Map.Map map, int posX, int posY, string animationName, int rotation, bool hasCollision, bool powderLamp, string lampKey, bool emitslight) : base(map)
+        public ObjLamp(
+            Map.Map map,
+            int posX,
+            int posY,
+            string animationName,
+            int rotation,
+            bool hasCollision,
+            bool powderLamp,
+            string lampKey,
+            bool emitslight
+        )
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjLamp.lahdmod");
@@ -44,7 +55,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             Tags = Values.GameObjectTag.Lamp;
 
-            EntitySize = new Rectangle(8 - light_size / 2, -8 - light_size / 2, light_size, light_size);
+            EntitySize = new Rectangle(
+                8 - light_size / 2,
+                -8 - light_size / 2,
+                light_size,
+                light_size
+            );
 
             _animator = AnimatorSaveLoad.LoadAnimator(animationName);
             if (_animator == null)
@@ -65,7 +81,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var sprite = new CSprite(EntityPosition)
             {
                 Rotation = (float)Math.PI / 2 * rotation,
-                Center = new Vector2(8, 8)
+                Center = new Vector2(8, 8),
             };
 
             // connect animation to sprite
@@ -74,7 +90,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (hasCollision)
             {
                 var collisionBox = new CBox(posX, posY, 0, 16, 16, 16);
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
+                AddComponent(
+                    CollisionComponent.Index,
+                    new BoxCollisionComponent(
+                        collisionBox,
+                        Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore
+                    )
+                );
             }
             _emitsLight = emitslight;
             _powderLamp = powderLamp;
@@ -96,7 +118,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (!string.IsNullOrEmpty(lampKey))
                 {
                     _lampKey = lampKey;
-                    AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                    AddComponent(
+                        KeyChangeListenerComponent.Index,
+                        new KeyChangeListenerComponent(OnKeyChange)
+                    );
                 }
             }
             // If it requires powder, start with it unlit.
@@ -104,7 +129,13 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _lampState = 0;
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, hasCollision ? Values.LayerPlayer : Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(
+                    sprite,
+                    hasCollision ? Values.LayerPlayer : Values.LayerBottom
+                )
+            );
 
             if (emitslight)
                 AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
@@ -173,24 +204,47 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _animator.Play("idle");
             }
 
-            _lampState = AnimationHelper.MoveToTarget(_lampState, _lampKeyState ? light_bright : 0, 0.1f * Game1.TimeMultiplier);
+            _lampState = AnimationHelper.MoveToTarget(
+                _lampState,
+                _lampKeyState ? light_bright : 0,
+                0.1f * Game1.TimeMultiplier
+            );
         }
 
         private void UpdateKeyLamp()
         {
-            _lampState = AnimationHelper.MoveToTarget(_lampState, _lampKeyState ? light_bright : 0, 0.075f * Game1.TimeMultiplier);
+            _lampState = AnimationHelper.MoveToTarget(
+                _lampState,
+                _lampKeyState ? light_bright : 0,
+                0.075f * Game1.TimeMultiplier
+            );
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
             if (light_source && GameSettings.ObjectLights)
             {
-                Rectangle _lightRectangle = new Rectangle((int)EntityPosition.X + 8 - light_size / 2, (int)EntityPosition.Y + 8 - light_size / 2, light_size, light_size);
-                spriteBatch.Draw(Resources.SprLight, _lightRectangle, new Color(light_red, light_grn, light_blu) * _lampState);
+                Rectangle _lightRectangle = new Rectangle(
+                    (int)EntityPosition.X + 8 - light_size / 2,
+                    (int)EntityPosition.Y + 8 - light_size / 2,
+                    light_size,
+                    light_size
+                );
+                spriteBatch.Draw(
+                    Resources.SprLight,
+                    _lightRectangle,
+                    new Color(light_red, light_grn, light_blu) * _lampState
+                );
             }
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
             {

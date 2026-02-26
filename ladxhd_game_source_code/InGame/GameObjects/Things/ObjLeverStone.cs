@@ -18,9 +18,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly int _direction;
 
-        public ObjLeverStone() : base("movestone_0") { }
+        public ObjLeverStone()
+            : base("movestone_0") { }
 
-        public ObjLeverStone(Map.Map map, int posX, int posY, int direction) : base(map)
+        public ObjLeverStone(Map.Map map, int posX, int posY, int direction)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -28,16 +30,31 @@ namespace ProjectZ.InGame.GameObjects.Things
             _direction = direction;
 
             _startPosition = new Vector2(posX, posY);
-            _endPosition = new Vector2(posX, posY) + AnimationHelper.DirectionOffset[direction] * 16;
+            _endPosition =
+                new Vector2(posX, posY) + AnimationHelper.DirectionOffset[direction] * 16;
 
             _box = new CBox(EntityPosition, 0, 0, 0, 16, 16, 8);
 
             // does not deal damage in the real game
             var damageBox = new CBox(EntityPosition, 1, 1, 0, 14, 14, 8);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Object, 2));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(_box, Values.CollisionTypes.Normal));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageBox, HitType.Object, 2)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(_box, Values.CollisionTypes.Normal)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent("movestone_0", EntityPosition, Vector2.Zero, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent(
+                    "movestone_0",
+                    EntityPosition,
+                    Vector2.Zero,
+                    Values.LayerBottom
+                )
+            );
         }
 
         private void Update()
@@ -55,8 +72,14 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // check for colliding bodies and push them forward
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)EntityPosition.Position.X - 1, (int)EntityPosition.Position.Y - 1, 18, 18, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)EntityPosition.Position.X - 1,
+                (int)EntityPosition.Position.Y - 1,
+                18,
+                18,
+                BodyComponent.Mask
+            );
 
             foreach (var collidingObject in _collidingObjects)
             {

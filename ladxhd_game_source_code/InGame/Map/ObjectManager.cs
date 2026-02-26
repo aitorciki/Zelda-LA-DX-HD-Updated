@@ -21,7 +21,7 @@ namespace ProjectZ.InGame.Map
         // The map the object manager is currently managing.
         public Map Owner;
 
-        // The main lists of game objects. 
+        // The main lists of game objects.
         public List<GameObjectItem> ObjectList = new List<GameObjectItem>();
         public List<GameObjectItem> ObjectListB = new List<GameObjectItem>();
         private List<GameObject> SpawnObjects = new List<GameObject>();
@@ -97,10 +97,11 @@ namespace ProjectZ.InGame.Map
             _systemAnimator = new SystemAnimation(this);
 
             // The type of game objects that are not frozen during events.
-            _FreezePersistTypes = new Type[]{ typeof(ObjGhost), typeof(ObjOwl), typeof(ObjChest) };
+            _FreezePersistTypes = new Type[] { typeof(ObjGhost), typeof(ObjOwl), typeof(ObjChest) };
 
             // The type of game objects that can be blocked by shield.
-            _ShieldDeflectTypes = new Type[]{ typeof(EnemyOctorokShot), typeof(EnemySpear) };;
+            _ShieldDeflectTypes = new Type[] { typeof(EnemyOctorokShot), typeof(EnemySpear) };
+            ;
         }
 
         public static bool IsGameObjectType(GameObject gameObject, Type[] objectTypes)
@@ -114,7 +115,7 @@ namespace ProjectZ.InGame.Map
         public List<GameObjectItem> GetMergedObjectLists()
         {
             // When game objects are needed, this combines both ObjectList and ObjectListB into a single list.
-            var objectList = new List<GameObjectItem>{ };
+            var objectList = new List<GameObjectItem> { };
             foreach (var obj in ObjectList)
                 objectList.Add(obj);
             foreach (var obj in ObjectListB)
@@ -195,7 +196,8 @@ namespace ProjectZ.InGame.Map
             if (Link.FreezeWorldAroundPlayer)
             {
                 Link.FreezeWorldAroundPlayer = false;
-                var updateComponent = (UpdateComponent)MapManager.ObjLink.Components[UpdateComponent.Index];
+                var updateComponent = (UpdateComponent)
+                    MapManager.ObjLink.Components[UpdateComponent.Index];
                 updateComponent?.UpdateFunction();
                 return;
             }
@@ -224,7 +226,12 @@ namespace ProjectZ.InGame.Map
             {
                 // The "UpdateField" is the real size of the field. The "Actual" field has an additional tile in each direction.
                 UpdateField = Owner.GetField(Link.CenterPosition.Position);
-                ActualField = new Rectangle(UpdateField.X - 16, UpdateField.Y - 16, UpdateField.Width + 32, UpdateField.Height + 32);
+                ActualField = new Rectangle(
+                    UpdateField.X - 16,
+                    UpdateField.Y - 16,
+                    UpdateField.Width + 32,
+                    UpdateField.Height + 32
+                );
 
                 // If a field change has happened, then reset the enemies on the previous field.
                 if (Link.FieldChange)
@@ -237,7 +244,7 @@ namespace ProjectZ.InGame.Map
                     _ = Owner.ResetCurrentFieldHoleMap();
                 }
             }
-            // Add the always animate objects from the main list to the temporary list here. The objects are copied to this 
+            // Add the always animate objects from the main list to the temporary list here. The objects are copied to this
             // list so it can serve as a "static" non-changing list that wont cause crashes due to it being updated mid-loop.
             if (AlwaysAnimateObjectsMain != null && AlwaysAnimateObjectsMain.Count != 0)
             {
@@ -250,13 +257,17 @@ namespace ProjectZ.InGame.Map
                     catch (ArgumentException ex)
                     {
                         Game1.GameManager.PlaySoundEffect("D370-35-23");
-                        System.Diagnostics.Debug.WriteLine($"AddRange failed: {ex.Message} (Count={AlwaysAnimateObjectsMain.Count})");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"AddRange failed: {ex.Message} (Count={AlwaysAnimateObjectsMain.Count})"
+                        );
                         AlwaysAnimateObjectsTemp.AddRange(AlwaysAnimateObjectsMain.ToArray());
                     }
                     catch (Exception ex)
                     {
                         Game1.GameManager.PlaySoundEffect("D378-55-37");
-                        System.Diagnostics.Debug.WriteLine($"Unexpected exception in AddRange: {ex}");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"Unexpected exception in AddRange: {ex}"
+                        );
                     }
                 }
             }
@@ -316,8 +327,14 @@ namespace ProjectZ.InGame.Map
 
             // Get all objects on the previous field with a DrawComponent. Add 4 additional pixels to the
             // bottom of the field to get objects that potentially fall outside the range of the field.
-            _gameObjectPool.GetComponentList(_updateGameObjects, Link.PreviousField.X, Link.PreviousField.Y, 
-                Link.PreviousField.Width, Link.PreviousField.Height + 4, DrawComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _updateGameObjects,
+                Link.PreviousField.X,
+                Link.PreviousField.Y,
+                Link.PreviousField.Width,
+                Link.PreviousField.Height + 4,
+                DrawComponent.Mask
+            );
 
             foreach (var gameObject in _updateGameObjects)
             {
@@ -330,7 +347,10 @@ namespace ProjectZ.InGame.Map
             }
         }
 
-        public static void FilterObjectsInField(List<GameObject> gameObjectList, RectangleF actualField)
+        public static void FilterObjectsInField(
+            List<GameObject> gameObjectList,
+            RectangleF actualField
+        )
         {
             int writeIndex = 0;
 
@@ -344,7 +364,7 @@ namespace ProjectZ.InGame.Map
                 // Remove when entity position exists and object is outside current field.
                 if (entityPos != null && !actualField.Contains(entityPos.Position))
                     continue;
-  
+
                 gameObjectList[writeIndex++] = obj;
             }
             if (writeIndex < gameObjectList.Count)
@@ -360,7 +380,14 @@ namespace ProjectZ.InGame.Map
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                _gameObjectPool.GetComponentList(_updateGameObjects, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, UpdateComponent.Mask);
+                _gameObjectPool.GetComponentList(
+                    _updateGameObjects,
+                    UpdateField.X,
+                    UpdateField.Y,
+                    UpdateField.Width,
+                    UpdateField.Height,
+                    UpdateComponent.Mask
+                );
                 FilterObjectsInField(_updateGameObjects, ActualField);
                 _updateGameObjectsSet.UnionWith(_updateGameObjects);
             }
@@ -368,18 +395,25 @@ namespace ProjectZ.InGame.Map
             else
             {
                 var updateFieldSize = new Vector2(Game1.RenderWidth, Game1.RenderHeight);
-                _gameObjectPool.GetComponentList(_updateGameObjects,
-                   (int)((MapManager.Camera.X - updateFieldSize.X / 2) / MapManager.Camera.Scale),
-                   (int)((MapManager.Camera.Y - updateFieldSize.Y / 2) / MapManager.Camera.Scale),
-                   (int)(updateFieldSize.X / MapManager.Camera.Scale),
-                   (int)(updateFieldSize.Y / MapManager.Camera.Scale), UpdateComponent.Mask);
+                _gameObjectPool.GetComponentList(
+                    _updateGameObjects,
+                    (int)((MapManager.Camera.X - updateFieldSize.X / 2) / MapManager.Camera.Scale),
+                    (int)((MapManager.Camera.Y - updateFieldSize.Y / 2) / MapManager.Camera.Scale),
+                    (int)(updateFieldSize.X / MapManager.Camera.Scale),
+                    (int)(updateFieldSize.Y / MapManager.Camera.Scale),
+                    UpdateComponent.Mask
+                );
                 _updateGameObjectsSet.UnionWith(_updateGameObjects);
             }
             // Always update certain objects that are flagged as "always animate".
             for (int i = 0; i < AlwaysAnimateObjectsTemp.Count; i++)
             {
                 var gameObject = AlwaysAnimateObjectsTemp[i];
-                if (gameObject != null && !gameObject.IsDead && _updateGameObjectsSet.Add(gameObject))
+                if (
+                    gameObject != null
+                    && !gameObject.IsDead
+                    && _updateGameObjectsSet.Add(gameObject)
+                )
                     _updateGameObjects.Add(gameObject);
             }
             // Update all game object update components in the list.
@@ -389,7 +423,10 @@ namespace ProjectZ.InGame.Map
                 if (!gameObject.IsActive)
                     continue;
 
-                if (gameObject.Components[UpdateComponent.Index] is UpdateComponent updateComponent && updateComponent.IsActive)
+                if (
+                    gameObject.Components[UpdateComponent.Index] is UpdateComponent updateComponent
+                    && updateComponent.IsActive
+                )
                     updateComponent.UpdateFunction?.Invoke();
             }
         }
@@ -423,22 +460,39 @@ namespace ProjectZ.InGame.Map
             // Classic Camera: Only update objects within the current field.
             if (Camera.ClassicMode)
             {
-                _gameObjectPool.GetComponentList(_collidingObjects, UpdateField.X, UpdateField.Y, UpdateField.Width, UpdateField.Height, ObjectCollisionComponent.Mask);
+                _gameObjectPool.GetComponentList(
+                    _collidingObjects,
+                    UpdateField.X,
+                    UpdateField.Y,
+                    UpdateField.Width,
+                    UpdateField.Height,
+                    ObjectCollisionComponent.Mask
+                );
                 FilterObjectsInField(_collidingObjects, ActualField);
                 _collidingObjectsSet.UnionWith(_collidingObjects);
             }
             // Normal Camera: Update objects that are within the player's body rectangle.
             else
             {
-                _gameObjectPool.GetComponentList(_collidingObjects, (int)Link.BodyRectangle.X, (int)Link.BodyRectangle.Y,
-                    (int)Link.BodyRectangle.Width, (int)Link.BodyRectangle.Height, ObjectCollisionComponent.Mask);
+                _gameObjectPool.GetComponentList(
+                    _collidingObjects,
+                    (int)Link.BodyRectangle.X,
+                    (int)Link.BodyRectangle.Y,
+                    (int)Link.BodyRectangle.Width,
+                    (int)Link.BodyRectangle.Height,
+                    ObjectCollisionComponent.Mask
+                );
                 _collidingObjectsSet.UnionWith(_collidingObjects);
             }
             // Always include certain objects that are flagged as "always animate".
             for (int i = 0; i < AlwaysAnimateObjectsTemp.Count; i++)
             {
                 var gameObject = AlwaysAnimateObjectsTemp[i];
-                if (gameObject != null && !gameObject.IsDead && _collidingObjectsSet.Add(gameObject))
+                if (
+                    gameObject != null
+                    && !gameObject.IsDead
+                    && _collidingObjectsSet.Add(gameObject)
+                )
                     _collidingObjects.Add(gameObject);
             }
             // Update all game object collision components in the list.
@@ -446,14 +500,23 @@ namespace ProjectZ.InGame.Map
             {
                 var gameObject = _collidingObjects[i];
 
-                if (!gameObject.IsActive) { continue; }
+                if (!gameObject.IsActive)
+                {
+                    continue;
+                }
 
-                if (gameObject.Components[ObjectCollisionComponent.Index] is ObjectCollisionComponent component)
+                if (
+                    gameObject.Components[ObjectCollisionComponent.Index]
+                    is ObjectCollisionComponent component
+                )
                 {
                     bool collides = component.TriggerOnCollision
                         ? component.CollisionRectangle.Rectangle.Intersects(Link.BodyRectangle)
                         : component.CollisionRectangle.Rectangle.Contains(Link.BodyRectangle);
-                    if (collides) { component.OnCollision(Link); }
+                    if (collides)
+                    {
+                        component.OnCollision(Link);
+                    }
                 }
             }
         }
@@ -468,14 +531,25 @@ namespace ProjectZ.InGame.Map
             _damageFieldObjectsSet.Clear();
 
             // Classic Camera: Only update objects that collide with Link.
-            _gameObjectPool.GetComponentList(_damageFieldObjects, (int)LinkHitBox.X, (int)LinkHitBox.Y, (int)LinkHitBox.Width,(int)LinkHitBox.Height, DamageFieldComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _damageFieldObjects,
+                (int)LinkHitBox.X,
+                (int)LinkHitBox.Y,
+                (int)LinkHitBox.Width,
+                (int)LinkHitBox.Height,
+                DamageFieldComponent.Mask
+            );
             _damageFieldObjectsSet.UnionWith(_damageFieldObjects);
 
             // Always include certain objects that are flagged as "always animate".
             for (int i = 0; i < AlwaysAnimateObjectsTemp.Count; i++)
             {
                 var gameObject = AlwaysAnimateObjectsTemp[i];
-                if (gameObject != null && !gameObject.IsDead && _damageFieldObjectsSet.Add(gameObject))
+                if (
+                    gameObject != null
+                    && !gameObject.IsDead
+                    && _damageFieldObjectsSet.Add(gameObject)
+                )
                     _damageFieldObjects.Add(gameObject);
             }
             // Update all game object damage field components in the list.
@@ -483,9 +557,15 @@ namespace ProjectZ.InGame.Map
             {
                 var gameObject = _damageFieldObjects[i];
 
-                if (!gameObject.IsActive) { continue; }
+                if (!gameObject.IsActive)
+                {
+                    continue;
+                }
 
-                if (gameObject.Components[DamageFieldComponent.Index] is DamageFieldComponent damageField)
+                if (
+                    gameObject.Components[DamageFieldComponent.Index]
+                    is DamageFieldComponent damageField
+                )
                     if (damageField.IsActive && damageField.CollisionBox.Box.Intersects(LinkHitBox))
                         damageField.OnDamage?.Invoke();
             }
@@ -514,9 +594,17 @@ namespace ProjectZ.InGame.Map
             SetSpriteShader(spriteShader);
 
             CurrentEffect = spriteShader?.Effect;
-            spriteBatch.Begin(SpriteSortMode.Deferred, null,
-                MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap,
-                null, null, CurrentEffect, MapManager.Camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                MapManager.Camera.Scale >= 1
+                    ? SamplerState.PointWrap
+                    : SamplerState.AnisotropicWrap,
+                null,
+                null,
+                CurrentEffect,
+                MapManager.Camera.TransformMatrix
+            );
         }
 
         public static void SetSpriteShader(SpriteShader spriteShader)
@@ -534,8 +622,15 @@ namespace ProjectZ.InGame.Map
         public static void SpriteBatchBeginAnisotropic(SpriteBatch spriteBatch, Effect effect)
         {
             CurrentEffect = effect;
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp,
-                null, null, effect, MapManager.Camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.AnisotropicClamp,
+                null,
+                null,
+                effect,
+                MapManager.Camera.TransformMatrix
+            );
         }
 
         public void DrawBottom(SpriteBatch spriteBatch)
@@ -545,20 +640,28 @@ namespace ProjectZ.InGame.Map
 
             SpriteBatchBegin(spriteBatch, null);
 
-            _drawPool.DrawPool(spriteBatch,
+            _drawPool.DrawPool(
+                spriteBatch,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), 0, 1);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                0,
+                1
+            );
             spriteBatch.End();
 
             SpriteBatchBegin(spriteBatch, null);
 
-            _drawPoolB.DrawPool(spriteBatch,
+            _drawPoolB.DrawPool(
+                spriteBatch,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), 0, 1);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                0,
+                1
+            );
             spriteBatch.End();
         }
 
@@ -573,27 +676,49 @@ namespace ProjectZ.InGame.Map
             // holds the pushable stone. This way we can draw game objects >> draw hole map >> draw stones to get the correct order.
 
             SpriteBatchBegin(spriteBatch, null);
-            _drawPool.DrawPool(spriteBatch,
+            _drawPool.DrawPool(
+                spriteBatch,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), 1, 2);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                1,
+                2
+            );
             spriteBatch.End();
 
             Owner.HoleMap.Draw(spriteBatch);
 
             SpriteBatchBegin(spriteBatch, null);
-            _drawPoolB.DrawPool(spriteBatch,
+            _drawPoolB.DrawPool(
+                spriteBatch,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), 1, 2);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                1,
+                2
+            );
             spriteBatch.End();
 
-            if (GameSettings.EnableShadows && Owner.UseShadows && !Game1.GameManager.UseShockEffect && ShadowTexture != null)
+            if (
+                GameSettings.EnableShadows
+                && Owner.UseShadows
+                && !Game1.GameManager.UseShockEffect
+                && ShadowTexture != null
+            )
             {
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp);//, null, null, null, Game1.GameManager.GetMatrix);
-                spriteBatch.Draw(ShadowTexture, new Rectangle(0, 0, Game1.GameManager.CurrentRenderWidth, Game1.GameManager.CurrentRenderHeight), Color.Black * 0.55f);
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicClamp); //, null, null, null, Game1.GameManager.GetMatrix);
+                spriteBatch.Draw(
+                    ShadowTexture,
+                    new Rectangle(
+                        0,
+                        0,
+                        Game1.GameManager.CurrentRenderWidth,
+                        Game1.GameManager.CurrentRenderHeight
+                    ),
+                    Color.Black * 0.55f
+                );
                 spriteBatch.End();
             }
         }
@@ -603,42 +728,80 @@ namespace ProjectZ.InGame.Map
             if (!_finishedLoading)
                 return;
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null,
-                MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap,
-                null, null, null, MapManager.Camera.TransformMatrix);
-            _drawPool.DrawPool(spriteBatch,
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                MapManager.Camera.Scale >= 1
+                    ? SamplerState.PointWrap
+                    : SamplerState.AnisotropicWrap,
+                null,
+                null,
+                null,
+                MapManager.Camera.TransformMatrix
+            );
+            _drawPool.DrawPool(
+                spriteBatch,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), 2, 4);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                2,
+                4
+            );
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, null,
-                MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap,
-                null, null, null, MapManager.Camera.TransformMatrix);
-            _drawPoolB.DrawPool(spriteBatch,
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                MapManager.Camera.Scale >= 1
+                    ? SamplerState.PointWrap
+                    : SamplerState.AnisotropicWrap,
+                null,
+                null,
+                null,
+                MapManager.Camera.TransformMatrix
+            );
+            _drawPoolB.DrawPool(
+                spriteBatch,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), 2, 4);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                2,
+                4
+            );
             spriteBatch.End();
 
             // draw the body colliders
             if (Game1.DebugMode)
             {
-                spriteBatch.Begin(SpriteSortMode.Deferred, null,
-                    MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap,
-                    null, null, null, MapManager.Camera.TransformMatrix);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    MapManager.Camera.Scale >= 1
+                        ? SamplerState.PointWrap
+                        : SamplerState.AnisotropicWrap,
+                    null,
+                    null,
+                    null,
+                    MapManager.Camera.TransformMatrix
+                );
 
                 // draw entity size rectangle
                 if (Game1.DebugBoxMode == 0)
                 {
                     db_gameObjectList.Clear();
-                    _gameObjectPool.GetObjectList(db_gameObjectList,
-                        (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                        (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    _gameObjectPool.GetObjectList(
+                        db_gameObjectList,
+                        (int)(
+                            (MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale
+                        ),
+                        (int)(
+                            (MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale
+                        ),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                        (int)(Game1.RenderHeight / MapManager.Camera.Scale));
+                        (int)(Game1.RenderHeight / MapManager.Camera.Scale)
+                    );
 
                     foreach (var gameObject in db_gameObjectList)
                     {
@@ -647,7 +810,9 @@ namespace ProjectZ.InGame.Map
                             var rectangle = new RectangleF(
                                 gameObject.EntityPosition.X + gameObject.EntitySize.X,
                                 gameObject.EntityPosition.Y + gameObject.EntitySize.Y,
-                                gameObject.EntitySize.Width, gameObject.EntitySize.Height);
+                                gameObject.EntitySize.Width,
+                                gameObject.EntitySize.Height
+                            );
 
                             DrawRectangle(spriteBatch, rectangle, Color.LightBlue);
                         }
@@ -658,11 +823,18 @@ namespace ProjectZ.InGame.Map
                 if (Game1.DebugBoxMode == 0 || Game1.DebugBoxMode == 1)
                 {
                     db_bodyList.Clear();
-                    _gameObjectPool.GetComponentList(db_bodyList,
-                        (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                        (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    _gameObjectPool.GetComponentList(
+                        db_bodyList,
+                        (int)(
+                            (MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale
+                        ),
+                        (int)(
+                            (MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale
+                        ),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                        (int)(Game1.RenderHeight / MapManager.Camera.Scale), BodyComponent.Mask);
+                        (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                        BodyComponent.Mask
+                    );
                     foreach (var drawTile in db_bodyList)
                     {
                         var body = drawTile.Components[BodyComponent.Index] as BodyComponent;
@@ -674,15 +846,27 @@ namespace ProjectZ.InGame.Map
                 if (Game1.DebugBoxMode == 0 || Game1.DebugBoxMode == 2)
                 {
                     db_damageList.Clear();
-                    _gameObjectPool.GetComponentList(db_damageList,
-                        (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                        (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    _gameObjectPool.GetComponentList(
+                        db_damageList,
+                        (int)(
+                            (MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale
+                        ),
+                        (int)(
+                            (MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale
+                        ),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                        (int)(Game1.RenderHeight / MapManager.Camera.Scale), DamageFieldComponent.Mask);
+                        (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                        DamageFieldComponent.Mask
+                    );
                     foreach (var drawTile in db_damageList)
                     {
-                        var damageComponent = drawTile.Components[DamageFieldComponent.Index] as DamageFieldComponent;
-                        DrawRectangle(spriteBatch, damageComponent.CollisionBox.Box.Rectangle(), Color.Green);
+                        var damageComponent =
+                            drawTile.Components[DamageFieldComponent.Index] as DamageFieldComponent;
+                        DrawRectangle(
+                            spriteBatch,
+                            damageComponent.CollisionBox.Box.Rectangle(),
+                            Color.Green
+                        );
                     }
                 }
 
@@ -690,15 +874,27 @@ namespace ProjectZ.InGame.Map
                 if (Game1.DebugBoxMode == 0 || Game1.DebugBoxMode == 3)
                 {
                     db_damageList.Clear();
-                    _gameObjectPool.GetComponentList(db_damageList,
-                        (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                        (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    _gameObjectPool.GetComponentList(
+                        db_damageList,
+                        (int)(
+                            (MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale
+                        ),
+                        (int)(
+                            (MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale
+                        ),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                        (int)(Game1.RenderHeight / MapManager.Camera.Scale), HittableComponent.Mask);
+                        (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                        HittableComponent.Mask
+                    );
                     foreach (var drawTile in db_damageList)
                     {
-                        var hittableComponent = drawTile.Components[HittableComponent.Index] as HittableComponent;
-                        DrawRectangle(spriteBatch, hittableComponent.HittableBox.Box.Rectangle(), Color.Yellow);
+                        var hittableComponent =
+                            drawTile.Components[HittableComponent.Index] as HittableComponent;
+                        DrawRectangle(
+                            spriteBatch,
+                            hittableComponent.HittableBox.Box.Rectangle(),
+                            Color.Yellow
+                        );
                     }
                 }
 
@@ -706,15 +902,27 @@ namespace ProjectZ.InGame.Map
                 if (Game1.DebugBoxMode == 0 || Game1.DebugBoxMode == 4)
                 {
                     db_damageList.Clear();
-                    _gameObjectPool.GetComponentList(db_damageList,
-                        (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                        (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    _gameObjectPool.GetComponentList(
+                        db_damageList,
+                        (int)(
+                            (MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale
+                        ),
+                        (int)(
+                            (MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale
+                        ),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                        (int)(Game1.RenderHeight / MapManager.Camera.Scale), PushableComponent.Mask);
+                        (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                        PushableComponent.Mask
+                    );
                     foreach (var drawTile in db_damageList)
                     {
-                        var pushableComponent = drawTile.Components[PushableComponent.Index] as PushableComponent;
-                        DrawRectangle(spriteBatch, pushableComponent.PushableBox.Box.Rectangle(), Color.Orange);
+                        var pushableComponent =
+                            drawTile.Components[PushableComponent.Index] as PushableComponent;
+                        DrawRectangle(
+                            spriteBatch,
+                            pushableComponent.PushableBox.Box.Rectangle(),
+                            Color.Orange
+                        );
                     }
                 }
 
@@ -722,45 +930,96 @@ namespace ProjectZ.InGame.Map
                 if (Game1.DebugBoxMode == 0 || Game1.DebugBoxMode == 5)
                 {
                     db_damageList.Clear();
-                    _gameObjectPool.GetComponentList(db_damageList,
-                        (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                        (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+                    _gameObjectPool.GetComponentList(
+                        db_damageList,
+                        (int)(
+                            (MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale
+                        ),
+                        (int)(
+                            (MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale
+                        ),
                         (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                        (int)(Game1.RenderHeight / MapManager.Camera.Scale), InteractComponent.Mask);
+                        (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                        InteractComponent.Mask
+                    );
                     foreach (var drawTile in db_damageList)
                     {
-                        var pushableComponent = drawTile.Components[InteractComponent.Index] as InteractComponent;
-                        DrawRectangle(spriteBatch, pushableComponent.BoxInteractable.Box.Rectangle(), Color.Aqua);
+                        var pushableComponent =
+                            drawTile.Components[InteractComponent.Index] as InteractComponent;
+                        DrawRectangle(
+                            spriteBatch,
+                            pushableComponent.BoxInteractable.Box.Rectangle(),
+                            Color.Aqua
+                        );
                     }
                 }
                 spriteBatch.End();
             }
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, MapManager.Camera.TransformMatrix);
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                MapManager.Camera.TransformMatrix
+            );
         }
 
         public void DrawRectangle(SpriteBatch spriteBatch, RectangleF rectangle, Color color)
         {
-            spriteBatch.Draw(Resources.SprWhite,
+            spriteBatch.Draw(
+                Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y),
-                new Rectangle(0, 0, (int)rectangle.Width, (int)rectangle.Height), color * 0.25f);
+                new Rectangle(0, 0, (int)rectangle.Width, (int)rectangle.Height),
+                color * 0.25f
+            );
 
             var thickness = 1 / (float)Game1.UiScale;
-            spriteBatch.Draw(Resources.SprWhite,
+            spriteBatch.Draw(
+                Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y),
                 new Rectangle(0, 0, 1, (int)(rectangle.Height * Game1.UiScale)),
-                color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprWhite,
+                color * 0.75f,
+                0,
+                Vector2.Zero,
+                thickness,
+                SpriteEffects.None,
+                0
+            );
+            spriteBatch.Draw(
+                Resources.SprWhite,
                 new Vector2(rectangle.X + rectangle.Width - thickness, rectangle.Y),
                 new Rectangle(0, 0, 1, (int)(rectangle.Height * Game1.UiScale)),
-                color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprWhite,
+                color * 0.75f,
+                0,
+                Vector2.Zero,
+                thickness,
+                SpriteEffects.None,
+                0
+            );
+            spriteBatch.Draw(
+                Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y),
                 new Rectangle(0, 0, (int)(rectangle.Width * Game1.UiScale), 1),
-                color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprWhite,
+                color * 0.75f,
+                0,
+                Vector2.Zero,
+                thickness,
+                SpriteEffects.None,
+                0
+            );
+            spriteBatch.Draw(
+                Resources.SprWhite,
                 new Vector2(rectangle.X, rectangle.Y + rectangle.Height - thickness),
                 new Rectangle(0, 0, (int)(rectangle.Width * Game1.UiScale), 1),
-                color * 0.75f, 0, Vector2.Zero, thickness, SpriteEffects.None, 0);
+                color * 0.75f,
+                0,
+                Vector2.Zero,
+                thickness,
+                SpriteEffects.None,
+                0
+            );
         }
 
         public void DrawShadow(SpriteBatch spriteBatch)
@@ -769,15 +1028,20 @@ namespace ProjectZ.InGame.Map
 
             // draw the shadows
             _drawShadowObjects.Clear();
-            _gameObjectPool.GetComponentList(_drawShadowObjects,
+            _gameObjectPool.GetComponentList(
+                _drawShadowObjects,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), DrawShadowComponent.Mask);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                DrawShadowComponent.Mask
+            );
 
             foreach (var gameObject in _drawShadowObjects)
                 if (gameObject.IsActive)
-                    (gameObject.Components[DrawShadowComponent.Index] as DrawShadowComponent)?.Draw(spriteBatch);
+                    (gameObject.Components[DrawShadowComponent.Index] as DrawShadowComponent)?.Draw(
+                        spriteBatch
+                    );
 
             DrawHelper.EndShadowDrawing();
         }
@@ -785,31 +1049,43 @@ namespace ProjectZ.InGame.Map
         public void DrawLight(SpriteBatch spriteBatch)
         {
             _lightObjectList.Clear();
-            _gameObjectPool.GetComponentList(_lightObjectList,
+            _gameObjectPool.GetComponentList(
+                _lightObjectList,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), LightDrawComponent.Mask);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                LightDrawComponent.Mask
+            );
 
-            _lightObjectList.Sort((obj0, obj1) =>
-            {
-                var light0 = (LightDrawComponent)obj0.Components[LightDrawComponent.Index];
-                var light1 = (LightDrawComponent)obj1.Components[LightDrawComponent.Index];
-
-                if (light0 != null && light1 != null)
+            _lightObjectList.Sort(
+                (obj0, obj1) =>
                 {
-                    if (light0.Layer == light1.Layer &&
-                        light0.Owner.EntityPosition != null && light1.Owner.EntityPosition != null)
-                        return (int)light0.Owner.EntityPosition.Y - (int)light1.Owner.EntityPosition.Y;
+                    var light0 = (LightDrawComponent)obj0.Components[LightDrawComponent.Index];
+                    var light1 = (LightDrawComponent)obj1.Components[LightDrawComponent.Index];
 
-                    return light0.Layer - light1.Layer;
+                    if (light0 != null && light1 != null)
+                    {
+                        if (
+                            light0.Layer == light1.Layer
+                            && light0.Owner.EntityPosition != null
+                            && light1.Owner.EntityPosition != null
+                        )
+                            return (int)light0.Owner.EntityPosition.Y
+                                - (int)light1.Owner.EntityPosition.Y;
+
+                        return light0.Layer - light1.Layer;
+                    }
+                    return 0;
                 }
-                return 0;
-            });
+            );
             for (var i = 0; i < _lightObjectList.Count; i++)
             {
                 if (_lightObjectList[i].IsActive)
-                    (_lightObjectList[i].Components[LightDrawComponent.Index] as LightDrawComponent)?.Draw(spriteBatch);
+                    (
+                        _lightObjectList[i].Components[LightDrawComponent.Index]
+                        as LightDrawComponent
+                    )?.Draw(spriteBatch);
             }
         }
 
@@ -817,15 +1093,20 @@ namespace ProjectZ.InGame.Map
         {
             // draw the shadows
             _drawShadowObjects.Clear();
-            _gameObjectPool.GetComponentList(_drawShadowObjects,
+            _gameObjectPool.GetComponentList(
+                _drawShadowObjects,
                 (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
                 (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
                 (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), BlurDrawComponent.Mask);
+                (int)(Game1.RenderHeight / MapManager.Camera.Scale),
+                BlurDrawComponent.Mask
+            );
 
             foreach (var gameObject in _drawShadowObjects)
                 if (gameObject.IsActive)
-                    (gameObject.Components[BlurDrawComponent.Index] as BlurDrawComponent)?.Draw(spriteBatch);
+                    (gameObject.Components[BlurDrawComponent.Index] as BlurDrawComponent)?.Draw(
+                        spriteBatch
+                    );
         }
 
         public void Clear()
@@ -862,9 +1143,15 @@ namespace ProjectZ.InGame.Map
             _gameObjectPool.AddEntity(gameObject);
 
             // add key listeners
-            if ((gameObject.ComponentsMask & KeyChangeListenerComponent.Mask) == KeyChangeListenerComponent.Mask)
+            if (
+                (gameObject.ComponentsMask & KeyChangeListenerComponent.Mask)
+                == KeyChangeListenerComponent.Mask
+            )
             {
-                var listener = (gameObject.Components[KeyChangeListenerComponent.Index] as KeyChangeListenerComponent).KeyChangeFunction;
+                var listener = (
+                    gameObject.Components[KeyChangeListenerComponent.Index]
+                    as KeyChangeListenerComponent
+                ).KeyChangeFunction;
                 _keyChangeListeners.Add(listener);
             }
         }
@@ -885,9 +1172,15 @@ namespace ProjectZ.InGame.Map
             _gameObjectPool.RemoveEntity(gameObject);
 
             // Remove key listeners.
-            if ((gameObject.ComponentsMask & KeyChangeListenerComponent.Mask) == KeyChangeListenerComponent.Mask)
+            if (
+                (gameObject.ComponentsMask & KeyChangeListenerComponent.Mask)
+                == KeyChangeListenerComponent.Mask
+            )
             {
-                var listener = (gameObject.Components[KeyChangeListenerComponent.Index] as KeyChangeListenerComponent).KeyChangeFunction;
+                var listener = (
+                    gameObject.Components[KeyChangeListenerComponent.Index]
+                    as KeyChangeListenerComponent
+                ).KeyChangeFunction;
                 _keyChangeListeners.Remove(listener);
             }
         }
@@ -958,17 +1251,32 @@ namespace ProjectZ.InGame.Map
             var outputList = new List<GameObject>();
             foreach (var gameObject in _objectTagAllList)
             {
-                if (gameObject.EntityPosition != null &&
-                    left <= gameObject.EntityPosition.X + gameObject.EntitySize.X &&
-                    gameObject.EntityPosition.X + gameObject.EntitySize.X + gameObject.EntitySize.Width <= left + width &&
-                    top <= gameObject.EntityPosition.Y + gameObject.EntitySize.Y &&
-                    gameObject.EntityPosition.Y + gameObject.EntitySize.Y + gameObject.EntitySize.Height <= top + height)
+                if (
+                    gameObject.EntityPosition != null
+                    && left <= gameObject.EntityPosition.X + gameObject.EntitySize.X
+                    && gameObject.EntityPosition.X
+                        + gameObject.EntitySize.X
+                        + gameObject.EntitySize.Width
+                        <= left + width
+                    && top <= gameObject.EntityPosition.Y + gameObject.EntitySize.Y
+                    && gameObject.EntityPosition.Y
+                        + gameObject.EntitySize.Y
+                        + gameObject.EntitySize.Height
+                        <= top + height
+                )
                     outputList.Add(gameObject);
             }
             return outputList;
         }
 
-        public void GetObjectsOfType(List<GameObject> outputList, Type type, int left, int top, int width, int height)
+        public void GetObjectsOfType(
+            List<GameObject> outputList,
+            Type type,
+            int left,
+            int top,
+            int width,
+            int height
+        )
         {
             // get possible candidates
             _objectTagAllList.Clear();
@@ -976,11 +1284,19 @@ namespace ProjectZ.InGame.Map
 
             foreach (var gameObject in _objectTagAllList)
             {
-                if (gameObject.GetType() == type &&
-                    left <= gameObject.EntityPosition.X + gameObject.EntitySize.X + gameObject.EntitySize.Width &&
-                    gameObject.EntityPosition.X + gameObject.EntitySize.X <= left + width &&
-                    top <= gameObject.EntityPosition.Y + gameObject.EntitySize.Y + gameObject.EntitySize.Height &&
-                    gameObject.EntityPosition.Y + gameObject.EntitySize.Y <= top + height)
+                if (
+                    gameObject.GetType() == type
+                    && left
+                        <= gameObject.EntityPosition.X
+                            + gameObject.EntitySize.X
+                            + gameObject.EntitySize.Width
+                    && gameObject.EntityPosition.X + gameObject.EntitySize.X <= left + width
+                    && top
+                        <= gameObject.EntityPosition.Y
+                            + gameObject.EntitySize.Y
+                            + gameObject.EntitySize.Height
+                    && gameObject.EntityPosition.Y + gameObject.EntitySize.Y <= top + height
+                )
                     outputList.Add(gameObject);
             }
         }
@@ -990,7 +1306,14 @@ namespace ProjectZ.InGame.Map
             return _gameObjectPool.GetObjectOfType(left, top, width, height, type);
         }
 
-        public void GetGameObjectsWithTag(List<GameObject> outputList, Values.GameObjectTag tag, int left, int top, int width, int height)
+        public void GetGameObjectsWithTag(
+            List<GameObject> outputList,
+            Values.GameObjectTag tag,
+            int left,
+            int top,
+            int width,
+            int height
+        )
         {
             // get possible candidates
             _objectTagAllList.Clear();
@@ -1000,23 +1323,56 @@ namespace ProjectZ.InGame.Map
 
             foreach (var gameObject in _objectTagAllList)
             {
-                if ((gameObject.Tags & tag) != 0 &&
-                   left <= gameObject.EntityPosition.X && gameObject.EntityPosition.X <= left + width &&
-                   top <= gameObject.EntityPosition.Y && gameObject.EntityPosition.Y <= top + height)
+                if (
+                    (gameObject.Tags & tag) != 0
+                    && left <= gameObject.EntityPosition.X
+                    && gameObject.EntityPosition.X <= left + width
+                    && top <= gameObject.EntityPosition.Y
+                    && gameObject.EntityPosition.Y <= top + height
+                )
                     outputList.Add(gameObject);
             }
         }
 
-        public void GetComponentList(List<GameObject> gameObjectList, int recLeft, int recTop, int recWidth, int recHeight, int componentMask)
+        public void GetComponentList(
+            List<GameObject> gameObjectList,
+            int recLeft,
+            int recTop,
+            int recWidth,
+            int recHeight,
+            int componentMask
+        )
         {
-            _gameObjectPool.GetComponentList(gameObjectList, recLeft, recTop, recWidth, recHeight, componentMask);
+            _gameObjectPool.GetComponentList(
+                gameObjectList,
+                recLeft,
+                recTop,
+                recWidth,
+                recHeight,
+                componentMask
+            );
         }
 
-        public bool Collision(Box box, Box oldBox, Values.CollisionTypes collisionTypes, Values.CollisionTypes ignoreTypes, int dir, int level, ref Box collidingBox)
+        public bool Collision(
+            Box box,
+            Box oldBox,
+            Values.CollisionTypes collisionTypes,
+            Values.CollisionTypes ignoreTypes,
+            int dir,
+            int level,
+            ref Box collidingBox
+        )
         {
             // Get objects that are found within the collision box.
             _collisionObjects.Clear();
-            _gameObjectPool.GetComponentList(_collisionObjects, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, CollisionComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _collisionObjects,
+                (int)box.X,
+                (int)box.Y,
+                (int)box.Width,
+                (int)box.Height,
+                CollisionComponent.Mask
+            );
 
             // Check each object to see if it is colliding.
             for (int i = 0; i < _collisionObjects.Count; i++)
@@ -1026,19 +1382,40 @@ namespace ProjectZ.InGame.Map
                 if (!gameObject.IsActive)
                     continue;
 
-                var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
-                if ((collisionObject.CollisionType & collisionTypes) != 0 &&
-                    (collisionObject.CollisionType & ignoreTypes) == 0 &&
-                     collisionObject.Collision(box, dir, level, ref collidingBox) &&
-                    (oldBox == Box.Empty || !collisionObject.Collision(oldBox, dir, level, ref collidingBox)))
+                var collisionObject =
+                    gameObject.Components[CollisionComponent.Index] as CollisionComponent;
+                if (
+                    (collisionObject.CollisionType & collisionTypes) != 0
+                    && (collisionObject.CollisionType & ignoreTypes) == 0
+                    && collisionObject.Collision(box, dir, level, ref collidingBox)
+                    && (
+                        oldBox == Box.Empty
+                        || !collisionObject.Collision(oldBox, dir, level, ref collidingBox)
+                    )
+                )
                     return true;
             }
             return false;
         }
 
-        public bool Collision(Box box, Box oldBox, Values.CollisionTypes collisionTypes, int dir, int level, ref Box collidingBox)
+        public bool Collision(
+            Box box,
+            Box oldBox,
+            Values.CollisionTypes collisionTypes,
+            int dir,
+            int level,
+            ref Box collidingBox
+        )
         {
-            return Collision(box, oldBox, collisionTypes, Values.CollisionTypes.None, dir, level, ref collidingBox);
+            return Collision(
+                box,
+                oldBox,
+                collisionTypes,
+                Values.CollisionTypes.None,
+                dir,
+                level,
+                ref collidingBox
+            );
         }
 
         public float GetDepth(Box box, Values.CollisionTypes collisionType, float maxDepth)
@@ -1046,17 +1423,35 @@ namespace ProjectZ.InGame.Map
             float outDepth = 0;
 
             // depth of holes
-            var center = new Vector2((box.X + box.Width / 2) / Values.TileSize, (box.Front - 1) / Values.TileSize);
-            if (Owner.HoleMap != null && Owner.HoleMap.ArrayTileMap != null &&
-                0 <= center.X && center.X < Owner.HoleMap.ArrayTileMap.GetLength(0) &&
-                0 <= center.Y && center.Y < Owner.HoleMap.ArrayTileMap.GetLength(1))
+            var center = new Vector2(
+                (box.X + box.Width / 2) / Values.TileSize,
+                (box.Front - 1) / Values.TileSize
+            );
+            if (
+                Owner.HoleMap != null
+                && Owner.HoleMap.ArrayTileMap != null
+                && 0 <= center.X
+                && center.X < Owner.HoleMap.ArrayTileMap.GetLength(0)
+                && 0 <= center.Y
+                && center.Y < Owner.HoleMap.ArrayTileMap.GetLength(1)
+            )
             {
                 var distance = new Vector2((int)center.X + 0.5f, (int)center.Y + 0.5f) - center;
-                outDepth = Owner.HoleMap.ArrayTileMap[(int)center.X, (int)center.Y, 0] < 0 ? 0 : -2 * Math.Clamp(1 - distance.Length() * 1.5f, 0, 1);
+                outDepth =
+                    Owner.HoleMap.ArrayTileMap[(int)center.X, (int)center.Y, 0] < 0
+                        ? 0
+                        : -2 * Math.Clamp(1 - distance.Length() * 1.5f, 0, 1);
             }
 
             _depthObjectList.Clear();
-            _gameObjectPool.GetComponentList(_depthObjectList, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, CollisionComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _depthObjectList,
+                (int)box.X,
+                (int)box.Y,
+                (int)box.Width,
+                (int)box.Height,
+                CollisionComponent.Mask
+            );
 
             var clampDepth = outDepth;
 
@@ -1080,14 +1475,22 @@ namespace ProjectZ.InGame.Map
             return MathF.Max(outDepth, clampDepth);
         }
 
-        private float GetObjectDepth(GameObject gameObject, Box box, Values.CollisionTypes collisionType, ref float maxDepth)
+        private float GetObjectDepth(
+            GameObject gameObject,
+            Box box,
+            Values.CollisionTypes collisionType,
+            ref float maxDepth
+        )
         {
-            var collisionObject = gameObject.Components[CollisionComponent.Index] as CollisionComponent;
+            var collisionObject =
+                gameObject.Components[CollisionComponent.Index] as CollisionComponent;
             var collidingBox = Box.Empty;
 
             // add the object to the list if it is in the mask and is colliding with the provided rectangle
-            if ((collisionObject.CollisionType & collisionType) != 0 &&
-                collisionObject.Collision(box, 0, 0, ref collidingBox))
+            if (
+                (collisionObject.CollisionType & collisionType) != 0
+                && collisionObject.Collision(box, 0, 0, ref collidingBox)
+            )
             {
                 var bottom = collidingBox.Z + collidingBox.Depth;
                 if (bottom < 0)
@@ -1095,7 +1498,12 @@ namespace ProjectZ.InGame.Map
                     // combine the depth values lower than 0 to smoothly transition to lower floors
                     var bodyRec = box.Rectangle();
                     var intersection = collidingBox.Rectangle().GetIntersection(bodyRec);
-                    maxDepth += bottom * ((intersection.Width * intersection.Height) / (bodyRec.Width * bodyRec.Height));
+                    maxDepth +=
+                        bottom
+                        * (
+                            (intersection.Width * intersection.Height)
+                            / (bodyRec.Width * bodyRec.Height)
+                        );
                     return bottom;
                 }
                 if (bottom > maxDepth)
@@ -1110,14 +1518,22 @@ namespace ProjectZ.InGame.Map
         public GameObject GetCarryableObjects(RectangleF rectangle)
         {
             _carriableObjectList.Clear();
-            _gameObjectPool.GetComponentList(_carriableObjectList, (int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height, CarriableComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _carriableObjectList,
+                (int)rectangle.X,
+                (int)rectangle.Y,
+                (int)rectangle.Width,
+                (int)rectangle.Height,
+                CarriableComponent.Mask
+            );
 
             foreach (var gameObject in _carriableObjectList)
             {
                 if (!gameObject.IsActive)
                     continue;
 
-                var component = gameObject.Components[CarriableComponent.Index] as CarriableComponent;
+                var component =
+                    gameObject.Components[CarriableComponent.Index] as CarriableComponent;
 
                 if (component.IsActive && component.Rectangle.Rectangle.Intersects(rectangle))
                     return gameObject;
@@ -1125,16 +1541,49 @@ namespace ProjectZ.InGame.Map
             return null;
         }
 
-        public Values.HitCollision Hit(GameObject originObject, Vector2 forceOrigin, Box hitBox, HitType type, int damage, bool doubleDamage, bool multidamage = true)
+        public Values.HitCollision Hit(
+            GameObject originObject,
+            Vector2 forceOrigin,
+            Box hitBox,
+            HitType type,
+            int damage,
+            bool doubleDamage,
+            bool multidamage = true
+        )
         {
-            return Hit(originObject, forceOrigin, hitBox, type, damage, doubleDamage, out var direction, multidamage);
+            return Hit(
+                originObject,
+                forceOrigin,
+                hitBox,
+                type,
+                damage,
+                doubleDamage,
+                out var direction,
+                multidamage
+            );
         }
 
-        public Values.HitCollision Hit(GameObject originObject, Vector2 forceOrigin, Box hitBox, HitType type, int damage, bool doubleDamage, out Vector2 direction, bool multidamage = true)
+        public Values.HitCollision Hit(
+            GameObject originObject,
+            Vector2 forceOrigin,
+            Box hitBox,
+            HitType type,
+            int damage,
+            bool doubleDamage,
+            out Vector2 direction,
+            bool multidamage = true
+        )
         {
             // get all the near objects of the rectangle
             _hittableObjectList.Clear();
-            _gameObjectPool.GetComponentList(_hittableObjectList, (int)hitBox.X, (int)hitBox.Y, (int)hitBox.Width, (int)hitBox.Height, HittableComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _hittableObjectList,
+                (int)hitBox.X,
+                (int)hitBox.Y,
+                (int)hitBox.Width,
+                (int)hitBox.Height,
+                HittableComponent.Mask
+            );
 
             var hitCollision = Values.HitCollision.None;
             direction = Vector2.Zero;
@@ -1144,9 +1593,13 @@ namespace ProjectZ.InGame.Map
                 if (!gameObject.IsActive)
                     continue;
 
-                var hittableComponent = gameObject.Components[HittableComponent.Index] as HittableComponent;
+                var hittableComponent =
+                    gameObject.Components[HittableComponent.Index] as HittableComponent;
 
-                if (!hittableComponent.IsActive || !hittableComponent.HittableBox.Box.Intersects(hitBox))
+                if (
+                    !hittableComponent.IsActive
+                    || !hittableComponent.HittableBox.Box.Intersects(hitBox)
+                )
                     continue;
 
                 // direction goes from the hitter towards the center of hittable box
@@ -1154,19 +1607,40 @@ namespace ProjectZ.InGame.Map
                 if (direction != Vector2.Zero)
                     direction.Normalize();
 
-                hitCollision |= hittableComponent.Hit(originObject, direction, type, damage, doubleDamage);
+                hitCollision |= hittableComponent.Hit(
+                    originObject,
+                    direction,
+                    type,
+                    damage,
+                    doubleDamage
+                );
 
-                if (!multidamage && hitCollision != Values.HitCollision.None && hitCollision != Values.HitCollision.NoneBlocking)
+                if (
+                    !multidamage
+                    && hitCollision != Values.HitCollision.None
+                    && hitCollision != Values.HitCollision.NoneBlocking
+                )
                     return hitCollision;
             }
             return hitCollision;
         }
 
-        public PushableComponent PushObject(Box box, Vector2 direction, PushableComponent.PushType type)
+        public PushableComponent PushObject(
+            Box box,
+            Vector2 direction,
+            PushableComponent.PushType type
+        )
         {
             // get all the near objects of the rectangle
             _pushableObjectList.Clear();
-            _gameObjectPool.GetComponentList(_pushableObjectList, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, PushableComponent.Mask);
+            _gameObjectPool.GetComponentList(
+                _pushableObjectList,
+                (int)box.X,
+                (int)box.Y,
+                (int)box.Width,
+                (int)box.Height,
+                PushableComponent.Mask
+            );
 
             PushableComponent outPushComponent = null;
 
@@ -1175,21 +1649,31 @@ namespace ProjectZ.InGame.Map
                 if (!gameObject.IsActive || IsGameObjectType(gameObject, _ShieldDeflectTypes))
                     continue;
 
-                var pushableComponent = gameObject.Components[PushableComponent.Index] as PushableComponent;
+                var pushableComponent =
+                    gameObject.Components[PushableComponent.Index] as PushableComponent;
 
                 // check for collision and if cooldown time is met
-                if (pushableComponent.IsActive &&
-                    pushableComponent.LastPushTime + pushableComponent.CooldownTime < Game1.TotalGameTime &&
-                    box.Intersects(pushableComponent.PushableBox.Box))
+                if (
+                    pushableComponent.IsActive
+                    && pushableComponent.LastPushTime + pushableComponent.CooldownTime
+                        < Game1.TotalGameTime
+                    && box.Intersects(pushableComponent.PushableBox.Box)
+                )
                 {
                     // object got inertia?
-                    if (pushableComponent.InertiaTime > 0 && type == PushableComponent.PushType.Continues)
+                    if (
+                        pushableComponent.InertiaTime > 0
+                        && type == PushableComponent.PushType.Continues
+                    )
                     {
                         // the object was pushed the last frame?
                         if (pushableComponent.LastWaitTime >= Game1.TotalGameTimeLast)
                         {
                             pushableComponent.InertiaCounter -= Game1.DeltaTime;
-                            if (pushableComponent.InertiaCounter <= 0 && pushableComponent.Push(direction, type))
+                            if (
+                                pushableComponent.InertiaCounter <= 0
+                                && pushableComponent.Push(direction, type)
+                            )
                             {
                                 pushableComponent.InertiaCounter = pushableComponent.InertiaTime;
                                 pushableComponent.LastPushTime = Game1.TotalGameTime;
@@ -1218,8 +1702,14 @@ namespace ProjectZ.InGame.Map
         {
             // get the interactable objects at the given position
             _interactableObjectList.Clear();
-            _gameObjectPool.GetComponentList(_interactableObjectList, (int)box.X, (int)box.Y, (int)box.Width, (int)box.Height, InteractComponent.Mask);
-
+            _gameObjectPool.GetComponentList(
+                _interactableObjectList,
+                (int)box.X,
+                (int)box.Y,
+                (int)box.Width,
+                (int)box.Height,
+                InteractComponent.Mask
+            );
 
             // go through all the interactable objects and check for collision before interacting with them
             foreach (var gameObject in _interactableObjectList)
@@ -1231,11 +1721,18 @@ namespace ProjectZ.InGame.Map
                 if (gameObject.GetType() == typeof(ObjRaccoon))
                 {
                     int index = GameSettings.SwapButtons ? 1 : 0;
-                    if (Game1.GameManager.Equipment[index] != null && Game1.GameManager.Equipment[index].Name == "powder")
+                    if (
+                        Game1.GameManager.Equipment[index] != null
+                        && Game1.GameManager.Equipment[index].Name == "powder"
+                    )
                         return false;
                 }
                 var component = gameObject.Components[InteractComponent.Index] as InteractComponent;
-                if (component.IsActive && component.BoxInteractable.Box.Intersects(box) && component.InteractFunction())
+                if (
+                    component.IsActive
+                    && component.BoxInteractable.Box.Intersects(box)
+                    && component.InteractFunction()
+                )
                     return true;
             }
             return false;

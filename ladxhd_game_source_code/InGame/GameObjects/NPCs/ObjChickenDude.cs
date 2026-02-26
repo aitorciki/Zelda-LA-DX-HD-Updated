@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -8,7 +9,6 @@ using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.NPCs
 {
@@ -35,9 +35,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private Map.Map _map;
 
-        public ObjChickenDude() : base("npc_chicken_dude") { }
+        public ObjChickenDude()
+            : base("npc_chicken_dude") { }
 
-        public ObjChickenDude(Map.Map map, int posX, int posY, string dialogId) : base(map)
+        public ObjChickenDude(Map.Map map, int posX, int posY, string dialogId)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
@@ -49,7 +51,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             _map = map;
 
-            if (!string.IsNullOrEmpty(_dialogId) && (Game1.GameManager.SaveManager.GetString(_dialogId) == "2") || Game1.GameManager.SaveManager.GetString(_dialogId) == "3")
+            if (
+                !string.IsNullOrEmpty(_dialogId)
+                    && (Game1.GameManager.SaveManager.GetString(_dialogId) == "2")
+                || Game1.GameManager.SaveManager.GetString(_dialogId) == "3"
+            )
             {
                 StartFlying(posX, posY);
             }
@@ -64,13 +70,17 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 IgnoresZ = true,
                 JumpStartHeight = 8,
                 CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.NPCWall,
-                MoveCollision = OnMoveCollision
+                MoveCollision = OnMoveCollision,
             };
 
             var stateIdle = new AiState() { Init = InitIdle };
-            stateIdle.Trigger.Add(new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("powder")));
+            stateIdle.Trigger.Add(
+                new AiTriggerCountdown(250, null, () => _aiComponent.ChangeState("powder"))
+            );
             var statePowder = new AiState() { Init = InitPowder };
-            statePowder.Trigger.Add(new AiTriggerCountdown(850, null, () => _aiComponent.ChangeState("idle")));
+            statePowder.Trigger.Add(
+                new AiTriggerCountdown(850, null, () => _aiComponent.ChangeState("idle"))
+            );
             var stateFlying = new AiState(UpdateFlying) { Init = InitIdle };
 
             _aiComponent = new AiComponent();
@@ -81,14 +91,31 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _aiComponent.ChangeState(_flyingMode ? "flying" : "idle");
 
             if (!string.IsNullOrEmpty(_dialogId) && !_flyingMode)
-                AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
+                AddComponent(
+                    InteractComponent.Index,
+                    new InteractComponent(_body.BodyBox, Interact)
+                );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Enemy | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    _body,
+                    Values.CollisionTypes.Enemy
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(OnKeyChange)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -115,7 +142,15 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _flyingMode = true;
             _animator.Play("fly_forward_1");
 
-            _objChicken = new ObjAnimator(_map, posX, posY, Values.LayerPlayer, "NPCs/cock", "stand_0", false);
+            _objChicken = new ObjAnimator(
+                _map,
+                posX,
+                posY,
+                Values.LayerPlayer,
+                "NPCs/cock",
+                "stand_0",
+                false
+            );
             _objChicken.Animator.SpeedMultiplier = 2;
             _map.Objects.SpawnObject(_objChicken);
 
@@ -144,7 +179,9 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateChickenPosition(CPosition newPosition)
         {
-            _objChicken.EntityPosition.Set(new Vector3(newPosition.X, newPosition.Y, newPosition.Z + 16));
+            _objChicken.EntityPosition.Set(
+                new Vector3(newPosition.X, newPosition.Y, newPosition.Z + 16)
+            );
         }
 
         private void UpdateFlying()
@@ -166,7 +203,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             _objChicken.Animator.Play("stand_" + (_aniDirection == -1 ? 0 : 2));
 
             // move up/down
-            EntityPosition.Z = 13 + (1.5f + MathF.Sin((float)_hoverCounter / FlyTime * MathF.PI * 2) * 1.5f);
+            EntityPosition.Z =
+                13 + (1.5f + MathF.Sin((float)_hoverCounter / FlyTime * MathF.PI * 2) * 1.5f);
 
             if (_flyCounter < 0)
             {
@@ -224,7 +262,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void OnKeyChange()
         {
             var borrowRooster = Game1.GameManager.SaveManager.GetString("borrow_rooster");
-            if (borrowRooster == "0") 
+            if (borrowRooster == "0")
             {
                 StartFlying((int)EntityPosition.X, (int)EntityPosition.Y);
                 _aiComponent.ChangeState(_flyingMode ? "flying" : "idle");
@@ -236,7 +274,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _animator.Play("idle");
                 _map.Objects.RemoveObject(_objChicken);
                 EntityPosition.Z = 0;
-                AddComponent(InteractComponent.Index, new InteractComponent(_body.BodyBox, Interact));
+                AddComponent(
+                    InteractComponent.Index,
+                    new InteractComponent(_body.BodyBox, Interact)
+                );
             }
         }
     }

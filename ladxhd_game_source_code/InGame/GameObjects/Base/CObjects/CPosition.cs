@@ -7,7 +7,8 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
     public class CPosition
     {
         public delegate void PositionChanged(CPosition newPosition);
-        public Dictionary<Type, PositionChanged> PositionChangedDict = new Dictionary<Type, PositionChanged>();
+        public Dictionary<Type, PositionChanged> PositionChangedDict =
+            new Dictionary<Type, PositionChanged>();
 
         private Vector2 _parentOffset;
 

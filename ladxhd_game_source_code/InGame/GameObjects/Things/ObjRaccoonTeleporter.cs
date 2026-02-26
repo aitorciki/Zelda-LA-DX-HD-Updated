@@ -21,7 +21,8 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _mode;
         private int _extraYOffset;
 
-        public ObjRaccoonTeleporter() : base("editor teleporter")
+        public ObjRaccoonTeleporter()
+            : base("editor teleporter")
         {
             EditorColor = Color.Green * 0.5f;
         }
@@ -29,13 +30,26 @@ namespace ProjectZ.InGame.GameObjects.Things
         // Mode 0: Raccoon Teleport
         // Mode 1: Dungeon 6 Teleport
 
-        public ObjRaccoonTeleporter(Map.Map map, int posX, int posY, int offsetX, int offsetY, int width, int height, int mode) : base(map)
+        public ObjRaccoonTeleporter(
+            Map.Map map,
+            int posX,
+            int posY,
+            int offsetX,
+            int offsetY,
+            int width,
+            int height,
+            int mode
+        )
+            : base(map)
         {
             _offsetX = offsetX;
             _offsetY = offsetY;
             _mode = mode;
 
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(new Rectangle(posX, posY, width, height), OnCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(new Rectangle(posX, posY, width, height), OnCollision)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
@@ -48,7 +62,6 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Modern Camera: Freeze the player until the teleport finishes.
             if (!Camera.ClassicMode)
                 MapManager.ObjLink.FreezePlayer();
-
             // Classic Camera: Set the snap camera timer to make the teleport instant.
             else
                 Camera.SnapCameraTimer = 10f;
@@ -65,7 +78,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 // Teleport Link to the new position.
                 var LinkPosX = MapManager.ObjLink.PosX + (_offsetX * Values.TileSize);
-                var LinkPosY = MapManager.ObjLink.PosY + (_offsetY * Values.TileSize) - _extraYOffset;
+                var LinkPosY =
+                    MapManager.ObjLink.PosY + (_offsetY * Values.TileSize) - _extraYOffset;
                 var newPosition = new Vector2(LinkPosX, LinkPosY);
                 MapManager.ObjLink.SetPosition(newPosition);
 
@@ -88,8 +102,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             // Modern Camera: Smooth out the transition effect during teleport.
             if (!Camera.ClassicMode)
             {
-                var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
-                transitionSystem.SetColorMode(_mode == 0 ? Color.White : Color.Black, MathHelper.Clamp(_teleportCount / _fadeTime, 0, 1), false);
+                var transitionSystem = (MapTransitionSystem)
+                    Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+                transitionSystem.SetColorMode(
+                    _mode == 0 ? Color.White : Color.Black,
+                    MathHelper.Clamp(_teleportCount / _fadeTime, 0, 1),
+                    false
+                );
             }
         }
 

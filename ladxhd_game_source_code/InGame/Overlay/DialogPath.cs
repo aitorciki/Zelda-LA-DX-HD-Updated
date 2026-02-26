@@ -39,7 +39,7 @@ namespace ProjectZ.InGame.Overlay
             {
                 1 => _key + "_mod",
                 2 => _key + "_alt",
-                _ => _key
+                _ => _key,
             };
             string testString = Game1.LanguageManager.GetString(_setKey, "noKey");
 
@@ -101,11 +101,11 @@ namespace ProjectZ.InGame.Overlay
         }
     }
 
-    class DialogActionClose : DialogAction 
+    class DialogActionClose : DialogAction
     {
         public DialogActionClose() { }
 
-        public override bool Execute() 
+        public override bool Execute()
         {
             Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen = false;
             return true;
@@ -145,23 +145,30 @@ namespace ProjectZ.InGame.Overlay
             _compare = compare;
             _resultKey = resultKey;
         }
-        
+
         public override bool Execute()
         {
             bool checkState = false;
 
             // Determine if it's a boolean by checking the compare values.
-            if (_compare == "true" || _compare == "false") 
+            if (_compare == "true" || _compare == "false")
             {
-                bool saveState = (bool)(typeof(GameSettings).GetField(_key, BindingFlags.Public | BindingFlags.Static).GetValue(null));
-                checkState = Convert.ToBoolean(_compare) == Game1.GameManager.SaveManager.GetBool(_key, saveState);
+                bool saveState = (bool)(
+                    typeof(GameSettings)
+                        .GetField(_key, BindingFlags.Public | BindingFlags.Static)
+                        .GetValue(null)
+                );
+                checkState =
+                    Convert.ToBoolean(_compare)
+                    == Game1.GameManager.SaveManager.GetBool(_key, saveState);
             }
             // Otherwise assume we are getting the value of a string field.
             else
             {
-                checkState = _key == "savename"
-                    ? Game1.GameManager.ThiefState
-                    : Game1.GameManager.SaveManager.GetString(_key, "") == _compare;
+                checkState =
+                    _key == "savename"
+                        ? Game1.GameManager.ThiefState
+                        : Game1.GameManager.SaveManager.GetString(_key, "") == _compare;
             }
             Game1.GameManager.SaveManager.SetString(_resultKey, checkState ? "1" : "0");
             return true;
@@ -176,9 +183,13 @@ namespace ProjectZ.InGame.Overlay
         {
             _compare = compare;
         }
+
         public override bool Execute()
         {
-            Game1.GameManager.SaveManager.SetString(_compare, Game1.GameManager.CloakType.ToString());
+            Game1.GameManager.SaveManager.SetString(
+                _compare,
+                Game1.GameManager.CloakType.ToString()
+            );
             return true;
         }
     }
@@ -202,6 +213,7 @@ namespace ProjectZ.InGame.Overlay
             _key = key;
             _value = value;
         }
+
         public override bool Execute()
         {
             return Game1.GameManager.SaveManager.GetString(_key) == _value;
@@ -220,10 +232,12 @@ namespace ProjectZ.InGame.Overlay
         {
             Time = time;
         }
+
         public override void Init()
         {
             _counter = Time;
         }
+
         public override bool Execute()
         {
             _counter -= Game1.DeltaTime;
@@ -241,6 +255,7 @@ namespace ProjectZ.InGame.Overlay
             _key = key;
             _value = value;
         }
+
         public override bool Execute()
         {
             MapManager.ObjLink.FreezePlayer();
@@ -257,10 +272,12 @@ namespace ProjectZ.InGame.Overlay
         {
             _time = time;
         }
+
         public override void Init()
         {
             _counter = _time;
         }
+
         public override bool Execute()
         {
             // freeze the player while the time is running
@@ -282,10 +299,12 @@ namespace ProjectZ.InGame.Overlay
         {
             _time = time;
         }
+
         public override void Init()
         {
             _counter = _time;
         }
+
         public override bool Execute()
         {
             var finished = _counter <= 0;
@@ -304,10 +323,12 @@ namespace ProjectZ.InGame.Overlay
         {
             _time = time;
         }
+
         public override void Init()
         {
             _counter = _time;
         }
+
         public override bool Execute()
         {
             var finished = _counter <= 0;
@@ -334,6 +355,7 @@ namespace ProjectZ.InGame.Overlay
             _key = key;
             _value = value;
         }
+
         public override bool Execute()
         {
             MapManager.ObjLink.SeqLockPlayer();
@@ -357,6 +379,7 @@ namespace ProjectZ.InGame.Overlay
             _shakeSpeedX = shakeSpeedX;
             _shakeSpeedY = shakeSpeedY;
         }
+
         public override bool Execute()
         {
             if (GameSettings.ScreenShake)
@@ -384,6 +407,7 @@ namespace ProjectZ.InGame.Overlay
             _time = time;
             _priority = priority;
         }
+
         public override bool Execute()
         {
             Game1.GameManager.StopMusic(_time, _priority);
@@ -401,6 +425,7 @@ namespace ProjectZ.InGame.Overlay
             _songNr = songNr;
             _priority = priority;
         }
+
         public override bool Execute()
         {
             if (_priority < 0)
@@ -428,6 +453,7 @@ namespace ProjectZ.InGame.Overlay
         {
             _playbackSpeed = playbackSpeed;
         }
+
         public override bool Execute()
         {
 #if WINDOWS
@@ -445,6 +471,7 @@ namespace ProjectZ.InGame.Overlay
         {
             _soundEffect = soundEffect;
         }
+
         public override bool Execute()
         {
             Game1.GameManager.PlaySoundEffect(_soundEffect);
@@ -464,6 +491,7 @@ namespace ProjectZ.InGame.Overlay
             _count = count;
             _resultKey = resultKey;
         }
+
         public override bool Execute()
         {
             // get the item and check if enough are available
@@ -488,11 +516,15 @@ namespace ProjectZ.InGame.Overlay
             _resultKey = resultKey;
             _lastExecutionTime = -_cooldownTime;
         }
+
         public override bool Execute()
         {
             // check when the last time the check was successful
             // this does not work directly after loading the save if it was running shortly after the last save loading
-            if (_lastExecutionTime <= Game1.TotalGameTime && Game1.TotalGameTime < _lastExecutionTime + _cooldownTime)
+            if (
+                _lastExecutionTime <= Game1.TotalGameTime
+                && Game1.TotalGameTime < _lastExecutionTime + _cooldownTime
+            )
             {
                 Game1.GameManager.SaveManager.SetString(_resultKey, "0");
                 return true;
@@ -515,6 +547,7 @@ namespace ProjectZ.InGame.Overlay
             _itemName = itemName;
             _amount = amount;
         }
+
         public override bool Execute()
         {
             if (Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
@@ -543,6 +576,7 @@ namespace ProjectZ.InGame.Overlay
             _animatorId = animatorId;
             _newPosition = newPosition;
         }
+
         public override bool Execute()
         {
             var gameSequence = Game1.GameManager.InGameOverlay.GetCurrentGameSequence();
@@ -748,11 +782,23 @@ namespace ProjectZ.InGame.Overlay
                 maxCount = Game1.GameManager.ItemManager[buyItem.Name].MaxCount;
             }
 
-            if (buyItem != null && buyItem.Name == "powder" && Game1.GameManager.SaveManager.GetString("upgradePowder") == "1")
+            if (
+                buyItem != null
+                && buyItem.Name == "powder"
+                && Game1.GameManager.SaveManager.GetString("upgradePowder") == "1"
+            )
                 maxCount += 20;
-            if (buyItem != null && buyItem.Name == "bomb" && Game1.GameManager.SaveManager.GetString("upgradeBomb") == "1")
+            if (
+                buyItem != null
+                && buyItem.Name == "bomb"
+                && Game1.GameManager.SaveManager.GetString("upgradeBomb") == "1"
+            )
                 maxCount += 30;
-            if (buyItem != null && buyItem.Name == "bow" && Game1.GameManager.SaveManager.GetString("upgradeBow") == "1")
+            if (
+                buyItem != null
+                && buyItem.Name == "bow"
+                && Game1.GameManager.SaveManager.GetString("upgradeBow") == "1"
+            )
                 maxCount += 30;
 
             // does the player already own the item?
@@ -880,7 +926,8 @@ namespace ProjectZ.InGame.Overlay
 
         public override bool Execute()
         {
-            var transitionSystem = (MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
+            var transitionSystem = (MapTransitionSystem)
+                Game1.GameManager.GameSystems[typeof(MapTransitionSystem)];
             transitionSystem.AppendMapChange(_mapName, _entryName, false, false, Color.White, true);
             transitionSystem.SetColorMode(Color.White, 1);
 

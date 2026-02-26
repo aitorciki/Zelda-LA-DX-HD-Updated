@@ -25,15 +25,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private double _lastHitTime;
         private int _direction;
 
-        public EnemyStalfosKnightSword(Map.Map map, EnemyStalfosKnight owner) : base(map)
+        public EnemyStalfosKnightSword(Map.Map map, EnemyStalfosKnight owner)
+            : base(map)
         {
             _owner = owner;
-            _owner.EntityPosition.AddPositionListener(typeof(EnemyStalfosKnightSword), PositionChange);
+            _owner.EntityPosition.AddPositionListener(
+                typeof(EnemyStalfosKnightSword),
+                PositionChange
+            );
 
             _fieldRect = _owner.Body.FieldRectangle.ToRectangle();
             _direction = _owner.Direction;
 
-            EntityPosition = new CPosition(owner.EntityPosition.X, owner.EntityPosition.Y - 1, owner.EntityPosition.Z);
+            EntityPosition = new CPosition(
+                owner.EntityPosition.X,
+                owner.EntityPosition.Y - 1,
+                owner.EntityPosition.Z
+            );
             EntitySize = new Rectangle(-22, -8 - 24, 44, 48);
             CanReset = false;
 
@@ -47,9 +55,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             UpdateBoxes();
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_collisionBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_damageBox, OnPush) { RepelParticle = true });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_collisionBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_damageBox, OnPush) { RepelParticle = true }
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
@@ -67,7 +84,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return;
 
             // Get the difference between the X and Y positions between Link and the Darknut.
-            _difference = new Vector2(MapManager.ObjLink.EntityPosition.X - _owner.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y - _owner.EntityPosition.Y);
+            _difference = new Vector2(
+                MapManager.ObjLink.EntityPosition.X - _owner.EntityPosition.X,
+                MapManager.ObjLink.EntityPosition.Y - _owner.EntityPosition.Y
+            );
 
             // Get the facing direction of the Darknut.
             _direction = _owner.Direction;
@@ -93,10 +113,28 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Calculate collision based on facing direction.
             switch (_direction)
             {
-                case 0: { collisionW = (int)_damageBox.Box.Width * 4 / 6; collisionX += (int)_damageBox.Box.Width - collisionW; break; }
-                case 1: { collisionH = (int)_damageBox.Box.Height * 4 / 6; collisionY += (int)_damageBox.Box.Height - collisionH; break; }
-                case 2: { collisionW = (int)_damageBox.Box.Width * 4 / 6; break; }
-                case 3: { collisionH = (int)_damageBox.Box.Height * 4 / 6; break; }
+                case 0:
+                {
+                    collisionW = (int)_damageBox.Box.Width * 4 / 6;
+                    collisionX += (int)_damageBox.Box.Width - collisionW;
+                    break;
+                }
+                case 1:
+                {
+                    collisionH = (int)_damageBox.Box.Height * 4 / 6;
+                    collisionY += (int)_damageBox.Box.Height - collisionH;
+                    break;
+                }
+                case 2:
+                {
+                    collisionW = (int)_damageBox.Box.Width * 4 / 6;
+                    break;
+                }
+                case 3:
+                {
+                    collisionH = (int)_damageBox.Box.Height * 4 / 6;
+                    break;
+                }
             }
             // Apply the collision to the collision box.
             _collisionBox.Box.X = collisionX;
@@ -111,18 +149,24 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 if (_direction == 0 && Math.Abs(_difference.Y) < 5)
                     _owner.HittableBox = new CBox(EntityPosition, 1, -14, 3, 12, 8);
-                if (_direction == 1 && Math.Abs(_difference.X+8) < 5)
+                if (_direction == 1 && Math.Abs(_difference.X + 8) < 5)
                     _owner.HittableBox = new CBox(EntityPosition, -4, -6, 8, 5, 8);
                 if (_direction == 2 && Math.Abs(_difference.Y) < 5)
                     _owner.HittableBox = new CBox(EntityPosition, -4, -14, 3, 12, 8);
-                if (_direction == 3 && Math.Abs(_difference.X-8) < 5)
+                if (_direction == 3 && Math.Abs(_difference.X - 8) < 5)
                     _owner.HittableBox = new CBox(EntityPosition, -4, -14, 8, 5, 8);
             }
             // If not aggroed or not level with opponent, hitbox is set to default values so other attacks or interactions behave as expected right away again.
-            else if ((_direction == 0 || _direction == 2) && (Math.Abs(_difference.Y) > 5) || (_direction == 1 || _direction == 3) && (Math.Abs(_difference.X) > 5))
-
-            if ((_direction == 0 || _direction == 2) && Math.Abs(_difference.Y) > 5 || (_direction == 1 && Math.Abs(_difference.X+8) > 5) || (_direction == 3) && (Math.Abs(_difference.X-8) > 5))
-                _owner.HittableBox = new CBox(EntityPosition, -4, -14, 8, 12, 8);
+            else if (
+                (_direction == 0 || _direction == 2) && (Math.Abs(_difference.Y) > 5)
+                || (_direction == 1 || _direction == 3) && (Math.Abs(_difference.X) > 5)
+            )
+                if (
+                    (_direction == 0 || _direction == 2) && Math.Abs(_difference.Y) > 5
+                    || (_direction == 1 && Math.Abs(_difference.X + 8) > 5)
+                    || (_direction == 3) && (Math.Abs(_difference.X - 8) > 5)
+                )
+                    _owner.HittableBox = new CBox(EntityPosition, -4, -14, 8, 12, 8);
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
@@ -135,14 +179,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            if (hitType == HitType.MagicRod || hitType == HitType.MagicPowder || hitType == HitType.Bow || hitType == HitType.Hookshot || hitType == HitType.Boomerang ||
-                (_lastHitTime != 0 && Game1.TotalGameTime - _lastHitTime < 250))
+            if (
+                hitType == HitType.MagicRod
+                || hitType == HitType.MagicPowder
+                || hitType == HitType.Bow
+                || hitType == HitType.Hookshot
+                || hitType == HitType.Boomerang
+                || (_lastHitTime != 0 && Game1.TotalGameTime - _lastHitTime < 250)
+            )
                 return Values.HitCollision.None;
 
             _lastHitTime = Game1.TotalGameTime;

@@ -23,17 +23,18 @@ namespace ProjectZ.InGame.Interface
             PageLayout?.Update();
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int scale, float transparency)
+        public virtual void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int scale,
+            float transparency
+        )
         {
             PageLayout?.Draw(spriteBatch, position, scale, transparency);
         }
-        public virtual void OnResize()
-        {
 
-        }
-        public virtual void OnResize(int newWidth, int newHeight)
-        {
+        public virtual void OnResize() { }
 
-        }
+        public virtual void OnResize(int newWidth, int newHeight) { }
     }
 }

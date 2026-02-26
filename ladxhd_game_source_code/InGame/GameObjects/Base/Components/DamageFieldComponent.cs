@@ -6,7 +6,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 {
     class DamageFieldComponent : Component
     {
-        public new static int Index = 10;
+        public static new int Index = 10;
         public static int Mask = 0x01 << Index;
 
         public delegate bool OnDamageTemplate();
@@ -36,7 +36,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             if (MapManager.ObjLink.HoleFalling == true)
                 return false;
 
-            var damagedPlayer = MapManager.ObjLink.HitPlayer(CollisionBox.Box, HitType, Strength, PushMultiplier, Direction);
+            var damagedPlayer = MapManager.ObjLink.HitPlayer(
+                CollisionBox.Box,
+                HitType,
+                Strength,
+                PushMultiplier,
+                Direction
+            );
             if (damagedPlayer && OnDamagedPlayer != null)
                 OnDamagedPlayer();
 

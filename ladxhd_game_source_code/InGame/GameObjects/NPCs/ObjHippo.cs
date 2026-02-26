@@ -16,9 +16,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private readonly AiComponent _aiComponent;
         private int _direction = -1;
 
-        public ObjHippo() : base("hippo") { }
+        public ObjHippo()
+            : base("hippo") { }
 
-        public ObjHippo(Map.Map map, int posX, int posY) : base(map)
+        public ObjHippo(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-12, -24, 24, 32);
@@ -41,10 +43,24 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
-            AddComponent(InteractComponent.Index, new InteractComponent(new CBox(EntityPosition, -9, -5, 18, 5, 8), Interact));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(new CBox(EntityPosition, -9, -5, 18, 5, 8), Interact)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(body, sprite));
         }
 
@@ -57,7 +73,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private void UpdateEmbarassed()
         {
-            var box_turnAround = new RectangleF(EntityPosition.X + _direction * 14 - 4, EntityPosition.Y - 14, 8, 18);
+            var box_turnAround = new RectangleF(
+                EntityPosition.X + _direction * 14 - 4,
+                EntityPosition.Y - 14,
+                8,
+                18
+            );
             if (MapManager.ObjLink.BodyRectangle.Intersects(box_turnAround))
                 _direction = -_direction;
 

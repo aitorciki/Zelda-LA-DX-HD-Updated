@@ -24,12 +24,13 @@ namespace ProjectZ.Base
         }
 
         public InputCharacter(string upper, string lower, params Keys[] code)
-            : this(upper, lower, lower, code)
-        { }
+            : this(upper, lower, lower, code) { }
 
         public string ReturnCharacter(bool shiftDown, bool altDown)
         {
-            return altDown ? _alt : shiftDown ? _upper : _lower;
+            return altDown ? _alt
+                : shiftDown ? _upper
+                : _lower;
         }
 
         public Keys[] ReturnKeys()
@@ -71,67 +72,67 @@ namespace ProjectZ.Base
             game.Window.TextInput += OnTextInput;
 
             // Create an array of the valid alphabet characters.
-/*          _alphabet = new List<InputCharacter>();
-
-             //Alphabet
-            _alphabet.Add(new InputCharacter("A", "a", "ª", Keys.A));
-            _alphabet.Add(new InputCharacter("B", "b", Keys.B));
-            _alphabet.Add(new InputCharacter("C", "c", "¢", Keys.C));
-            _alphabet.Add(new InputCharacter("D", "d", Keys.D));
-            _alphabet.Add(new InputCharacter("E", "e", "€", Keys.E));
-            _alphabet.Add(new InputCharacter("F", "f", Keys.F));
-            _alphabet.Add(new InputCharacter("G", "g", Keys.G));
-            _alphabet.Add(new InputCharacter("H", "h", Keys.H));
-            _alphabet.Add(new InputCharacter("I", "i", Keys.I));
-            _alphabet.Add(new InputCharacter("J", "j", Keys.J));
-            _alphabet.Add(new InputCharacter("K", "k", Keys.K));
-            _alphabet.Add(new InputCharacter("L", "l", "£", Keys.L));
-            _alphabet.Add(new InputCharacter("M", "m", Keys.M));
-            _alphabet.Add(new InputCharacter("N", "n", Keys.N));
-            _alphabet.Add(new InputCharacter("O", "o", Keys.O));
-            _alphabet.Add(new InputCharacter("P", "p", "¶", Keys.P));
-            _alphabet.Add(new InputCharacter("Q", "q", Keys.Q));
-            _alphabet.Add(new InputCharacter("R", "r", "®", Keys.R));
-            _alphabet.Add(new InputCharacter("S", "s", Keys.S));
-            _alphabet.Add(new InputCharacter("T", "t", Keys.T));
-            _alphabet.Add(new InputCharacter("U", "u", "µ", Keys.U));
-            _alphabet.Add(new InputCharacter("V", "v", Keys.V));
-            _alphabet.Add(new InputCharacter("W", "w", Keys.W));
-            _alphabet.Add(new InputCharacter("X", "x", Keys.X));
-            _alphabet.Add(new InputCharacter("Y", "y", Keys.Y));
-            _alphabet.Add(new InputCharacter("Z", "z", Keys.Z));
-
-            // Decimal numbers.
-            _alphabet.Add(new InputCharacter("~", "`", Keys.OemTilde));
-            _alphabet.Add(new InputCharacter("!", "1", "¹", Keys.D1, Keys.NumPad1));
-            _alphabet.Add(new InputCharacter("@", "2", "²", Keys.D2, Keys.NumPad2));
-            _alphabet.Add(new InputCharacter("#", "3", "³", Keys.D3, Keys.NumPad3));
-            _alphabet.Add(new InputCharacter("$", "4", Keys.D4, Keys.NumPad4));
-            _alphabet.Add(new InputCharacter("%", "5", Keys.D5, Keys.NumPad5));
-            _alphabet.Add(new InputCharacter("^", "6", Keys.D6, Keys.NumPad6));
-            _alphabet.Add(new InputCharacter("&", "7", Keys.D7, Keys.NumPad7));
-            _alphabet.Add(new InputCharacter("*", "8", Keys.D8, Keys.NumPad8));
-            _alphabet.Add(new InputCharacter("(", "9", Keys.D9, Keys.NumPad9));
-            _alphabet.Add(new InputCharacter(")", "0", "º", Keys.D0, Keys.NumPad0));
-
-            // Numpad Specific
-            _alphabet.Add(new InputCharacter("/", "/", Keys.Divide));
-            _alphabet.Add(new InputCharacter("*", "*", Keys.Multiply));
-            _alphabet.Add(new InputCharacter("-", "-", Keys.Subtract));
-            _alphabet.Add(new InputCharacter("+", "+", Keys.Add));
-            _alphabet.Add(new InputCharacter(".", ".", Keys.Decimal));
-
-            // Punctuation.
-            _alphabet.Add(new InputCharacter("_", "-", "°", Keys.OemMinus));
-            _alphabet.Add(new InputCharacter("+", "=", "±", Keys.OemPlus));
-            _alphabet.Add(new InputCharacter("{", "[", Keys.OemOpenBrackets));
-            _alphabet.Add(new InputCharacter("}", "]", Keys.OemCloseBrackets));
-            _alphabet.Add(new InputCharacter("|", "\\", "¦", Keys.OemPipe));
-            _alphabet.Add(new InputCharacter(":", ";", Keys.OemSemicolon));
-            _alphabet.Add(new InputCharacter("\"", "'", "¸", Keys.OemQuotes));
-            _alphabet.Add(new InputCharacter("<", ",", "«", Keys.OemComma));
-            _alphabet.Add(new InputCharacter(">", ".", "»", Keys.OemPeriod));
-            _alphabet.Add(new InputCharacter("?", "/", "¿", Keys.OemQuestion));  */
+            /*          _alphabet = new List<InputCharacter>();
+            
+                         //Alphabet
+                        _alphabet.Add(new InputCharacter("A", "a", "ª", Keys.A));
+                        _alphabet.Add(new InputCharacter("B", "b", Keys.B));
+                        _alphabet.Add(new InputCharacter("C", "c", "¢", Keys.C));
+                        _alphabet.Add(new InputCharacter("D", "d", Keys.D));
+                        _alphabet.Add(new InputCharacter("E", "e", "€", Keys.E));
+                        _alphabet.Add(new InputCharacter("F", "f", Keys.F));
+                        _alphabet.Add(new InputCharacter("G", "g", Keys.G));
+                        _alphabet.Add(new InputCharacter("H", "h", Keys.H));
+                        _alphabet.Add(new InputCharacter("I", "i", Keys.I));
+                        _alphabet.Add(new InputCharacter("J", "j", Keys.J));
+                        _alphabet.Add(new InputCharacter("K", "k", Keys.K));
+                        _alphabet.Add(new InputCharacter("L", "l", "£", Keys.L));
+                        _alphabet.Add(new InputCharacter("M", "m", Keys.M));
+                        _alphabet.Add(new InputCharacter("N", "n", Keys.N));
+                        _alphabet.Add(new InputCharacter("O", "o", Keys.O));
+                        _alphabet.Add(new InputCharacter("P", "p", "¶", Keys.P));
+                        _alphabet.Add(new InputCharacter("Q", "q", Keys.Q));
+                        _alphabet.Add(new InputCharacter("R", "r", "®", Keys.R));
+                        _alphabet.Add(new InputCharacter("S", "s", Keys.S));
+                        _alphabet.Add(new InputCharacter("T", "t", Keys.T));
+                        _alphabet.Add(new InputCharacter("U", "u", "µ", Keys.U));
+                        _alphabet.Add(new InputCharacter("V", "v", Keys.V));
+                        _alphabet.Add(new InputCharacter("W", "w", Keys.W));
+                        _alphabet.Add(new InputCharacter("X", "x", Keys.X));
+                        _alphabet.Add(new InputCharacter("Y", "y", Keys.Y));
+                        _alphabet.Add(new InputCharacter("Z", "z", Keys.Z));
+            
+                        // Decimal numbers.
+                        _alphabet.Add(new InputCharacter("~", "`", Keys.OemTilde));
+                        _alphabet.Add(new InputCharacter("!", "1", "¹", Keys.D1, Keys.NumPad1));
+                        _alphabet.Add(new InputCharacter("@", "2", "²", Keys.D2, Keys.NumPad2));
+                        _alphabet.Add(new InputCharacter("#", "3", "³", Keys.D3, Keys.NumPad3));
+                        _alphabet.Add(new InputCharacter("$", "4", Keys.D4, Keys.NumPad4));
+                        _alphabet.Add(new InputCharacter("%", "5", Keys.D5, Keys.NumPad5));
+                        _alphabet.Add(new InputCharacter("^", "6", Keys.D6, Keys.NumPad6));
+                        _alphabet.Add(new InputCharacter("&", "7", Keys.D7, Keys.NumPad7));
+                        _alphabet.Add(new InputCharacter("*", "8", Keys.D8, Keys.NumPad8));
+                        _alphabet.Add(new InputCharacter("(", "9", Keys.D9, Keys.NumPad9));
+                        _alphabet.Add(new InputCharacter(")", "0", "º", Keys.D0, Keys.NumPad0));
+            
+                        // Numpad Specific
+                        _alphabet.Add(new InputCharacter("/", "/", Keys.Divide));
+                        _alphabet.Add(new InputCharacter("*", "*", Keys.Multiply));
+                        _alphabet.Add(new InputCharacter("-", "-", Keys.Subtract));
+                        _alphabet.Add(new InputCharacter("+", "+", Keys.Add));
+                        _alphabet.Add(new InputCharacter(".", ".", Keys.Decimal));
+            
+                        // Punctuation.
+                        _alphabet.Add(new InputCharacter("_", "-", "°", Keys.OemMinus));
+                        _alphabet.Add(new InputCharacter("+", "=", "±", Keys.OemPlus));
+                        _alphabet.Add(new InputCharacter("{", "[", Keys.OemOpenBrackets));
+                        _alphabet.Add(new InputCharacter("}", "]", Keys.OemCloseBrackets));
+                        _alphabet.Add(new InputCharacter("|", "\\", "¦", Keys.OemPipe));
+                        _alphabet.Add(new InputCharacter(":", ";", Keys.OemSemicolon));
+                        _alphabet.Add(new InputCharacter("\"", "'", "¸", Keys.OemQuotes));
+                        _alphabet.Add(new InputCharacter("<", ",", "«", Keys.OemComma));
+                        _alphabet.Add(new InputCharacter(">", ".", "»", Keys.OemPeriod));
+                        _alphabet.Add(new InputCharacter("?", "/", "¿", Keys.OemQuestion));  */
         }
 
         #endregion
@@ -174,14 +175,12 @@ namespace ProjectZ.Base
 
         public static bool KeyPressed(Keys key)
         {
-            return _keyboardState.IsKeyDown(key) &&
-                _lastKeyboardState.IsKeyUp(key);
+            return _keyboardState.IsKeyDown(key) && _lastKeyboardState.IsKeyUp(key);
         }
 
         public static bool KeyReleased(Keys key)
         {
-            return _keyboardState.IsKeyUp(key) &&
-                _lastKeyboardState.IsKeyDown(key);
+            return _keyboardState.IsKeyUp(key) && _lastKeyboardState.IsKeyDown(key);
         }
 
         public static List<Keys> GetPressedKeys()
@@ -223,32 +222,42 @@ namespace ProjectZ.Base
 
         public static bool GamePadPressed(Buttons button)
         {
-            return _gamePadState.IsButtonDown(button) &&
-                _lastGamePadState.IsButtonUp(button);
+            return _gamePadState.IsButtonDown(button) && _lastGamePadState.IsButtonUp(button);
         }
 
         public static bool GamePadReleased(Buttons button)
         {
-            return _gamePadState.IsButtonUp(button) &&
-                _lastGamePadState.IsButtonDown(button);
+            return _gamePadState.IsButtonUp(button) && _lastGamePadState.IsButtonDown(button);
         }
-
 
         public static bool GamePadLeftStick(Vector2 dir)
         {
-            return ((dir.X < 0 && _gamePadState.ThumbSticks.Left.X < -_gamePadAccuracy) || (dir.X > 0 && _gamePadState.ThumbSticks.Left.X > _gamePadAccuracy) ||
-                (dir.Y < 0 && _gamePadState.ThumbSticks.Left.Y < -_gamePadAccuracy) || (dir.Y > 0 && _gamePadState.ThumbSticks.Left.Y > _gamePadAccuracy));
+            return (
+                (dir.X < 0 && _gamePadState.ThumbSticks.Left.X < -_gamePadAccuracy)
+                || (dir.X > 0 && _gamePadState.ThumbSticks.Left.X > _gamePadAccuracy)
+                || (dir.Y < 0 && _gamePadState.ThumbSticks.Left.Y < -_gamePadAccuracy)
+                || (dir.Y > 0 && _gamePadState.ThumbSticks.Left.Y > _gamePadAccuracy)
+            );
         }
+
         public static bool LastGamePadLeftStick(Vector2 dir)
         {
-            return ((dir.X < 0 && _lastGamePadState.ThumbSticks.Left.X < -_gamePadAccuracy) || (dir.X > 0 && _lastGamePadState.ThumbSticks.Left.X > _gamePadAccuracy) ||
-                (dir.Y < 0 && _lastGamePadState.ThumbSticks.Left.Y < -_gamePadAccuracy) || (dir.Y > 0 && _lastGamePadState.ThumbSticks.Left.Y > _gamePadAccuracy));
+            return (
+                (dir.X < 0 && _lastGamePadState.ThumbSticks.Left.X < -_gamePadAccuracy)
+                || (dir.X > 0 && _lastGamePadState.ThumbSticks.Left.X > _gamePadAccuracy)
+                || (dir.Y < 0 && _lastGamePadState.ThumbSticks.Left.Y < -_gamePadAccuracy)
+                || (dir.Y > 0 && _lastGamePadState.ThumbSticks.Left.Y > _gamePadAccuracy)
+            );
         }
 
         public static bool GamePadRightStick(Vector2 dir)
         {
-            return ((dir.X < 0 && _gamePadState.ThumbSticks.Right.X < -_gamePadAccuracy) || (dir.X > 0 && _gamePadState.ThumbSticks.Right.X > _gamePadAccuracy) ||
-                    (dir.Y < 0 && _gamePadState.ThumbSticks.Right.Y < -_gamePadAccuracy) || (dir.Y > 0 && _gamePadState.ThumbSticks.Right.Y > _gamePadAccuracy));
+            return (
+                (dir.X < 0 && _gamePadState.ThumbSticks.Right.X < -_gamePadAccuracy)
+                || (dir.X > 0 && _gamePadState.ThumbSticks.Right.X > _gamePadAccuracy)
+                || (dir.Y < 0 && _gamePadState.ThumbSticks.Right.Y < -_gamePadAccuracy)
+                || (dir.Y > 0 && _gamePadState.ThumbSticks.Right.Y > _gamePadAccuracy)
+            );
         }
 
         #region Mouse Region
@@ -258,6 +267,7 @@ namespace ProjectZ.Base
         {
             return _mouseState.ScrollWheelValue > _lastMouseState.ScrollWheelValue;
         }
+
         public static bool MouseWheelDown()
         {
             return _mouseState.ScrollWheelValue < _lastMouseState.ScrollWheelValue;
@@ -268,14 +278,17 @@ namespace ProjectZ.Base
         {
             return _mouseState.LeftButton == ButtonState.Pressed;
         }
+
         public static bool MouseLeftDown(Rectangle rectangle)
         {
             return MouseIntersect(rectangle) && MouseLeftDown();
         }
+
         public static bool MouseRightDown()
         {
             return _mouseState.RightButton == ButtonState.Pressed;
         }
+
         public static bool MouseMiddleDown()
         {
             return _mouseState.MiddleButton == ButtonState.Pressed;
@@ -284,32 +297,42 @@ namespace ProjectZ.Base
         //start
         public static bool MouseLeftStart()
         {
-            return _mouseState.LeftButton == ButtonState.Pressed && _lastMouseState.LeftButton == ButtonState.Released;
+            return _mouseState.LeftButton == ButtonState.Pressed
+                && _lastMouseState.LeftButton == ButtonState.Released;
         }
+
         public static bool MouseRightStart()
         {
-            return _mouseState.RightButton == ButtonState.Pressed && _lastMouseState.RightButton == ButtonState.Released;
+            return _mouseState.RightButton == ButtonState.Pressed
+                && _lastMouseState.RightButton == ButtonState.Released;
         }
+
         public static bool MouseMiddleStart()
         {
-            return _mouseState.MiddleButton == ButtonState.Pressed && _lastMouseState.MiddleButton == ButtonState.Released;
+            return _mouseState.MiddleButton == ButtonState.Pressed
+                && _lastMouseState.MiddleButton == ButtonState.Released;
         }
 
         //released
         public static bool MouseLeftReleased()
         {
-            return _mouseState.LeftButton == ButtonState.Released && _lastMouseState.LeftButton == ButtonState.Pressed;
+            return _mouseState.LeftButton == ButtonState.Released
+                && _lastMouseState.LeftButton == ButtonState.Pressed;
         }
+
         public static bool MouseRightReleased()
         {
-            return _mouseState.RightButton == ButtonState.Released && _lastMouseState.RightButton == ButtonState.Pressed;
+            return _mouseState.RightButton == ButtonState.Released
+                && _lastMouseState.RightButton == ButtonState.Pressed;
         }
 
         //pressed
         public static bool MouseLeftPressed()
         {
-            return _mouseState.LeftButton == ButtonState.Pressed && _lastMouseState.LeftButton == ButtonState.Released;
+            return _mouseState.LeftButton == ButtonState.Pressed
+                && _lastMouseState.LeftButton == ButtonState.Released;
         }
+
         public static bool MouseLeftPressed(Rectangle rectangle)
         {
             return rectangle.Contains(MousePosition()) && MouseLeftPressed();
@@ -317,8 +340,10 @@ namespace ProjectZ.Base
 
         public static bool MouseRightPressed()
         {
-            return _mouseState.RightButton == ButtonState.Pressed && _lastMouseState.RightButton == ButtonState.Released;
+            return _mouseState.RightButton == ButtonState.Pressed
+                && _lastMouseState.RightButton == ButtonState.Released;
         }
+
         public static bool MouseRightPressed(Rectangle rectangle)
         {
             return MouseIntersect(rectangle) && MouseRightPressed();
@@ -333,6 +358,7 @@ namespace ProjectZ.Base
         {
             return _mouseState.Position;
         }
+
         public static Point LastMousePosition()
         {
             return _lastMouseState.Position;
@@ -347,7 +373,7 @@ namespace ProjectZ.Base
         /// only returns one key at a time
         /// </summary>
         /// <returns></returns>
-        /// 
+        ///
         public static void EnableTextInput()
         {
             _textInputEnabled = true;

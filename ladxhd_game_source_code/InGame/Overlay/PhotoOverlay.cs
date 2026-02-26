@@ -62,7 +62,9 @@ namespace ProjectZ.InGame.Overlay
             _transitionValue = 0;
 
             for (var i = 0; i < 12; i++)
-                _unlockState[i] = !string.IsNullOrEmpty(Game1.GameManager.SaveManager.GetString("photo_" + (i + 1)));
+                _unlockState[i] = !string.IsNullOrEmpty(
+                    Game1.GameManager.SaveManager.GetString("photo_" + (i + 1))
+                );
 
             // set to alt image or not?
             var altPhoto = Game1.GameManager.SaveManager.GetString("photo_1_alt");
@@ -155,7 +157,6 @@ namespace ProjectZ.InGame.Overlay
 
             // converts back into index space
             _cursorIndex = CursorIndex(cursorPoint);
-
         }
 
         private Point CursorPosition(int index)
@@ -173,39 +174,92 @@ namespace ProjectZ.InGame.Overlay
             // draw the book
             var bookPosition = new Vector2(
                 Game1.WindowWidth / 2 - (_spriteBook.SourceRectangle.Width * Game1.UiScale) / 2,
-                Game1.WindowHeight / 2 - (_spriteBook.SourceRectangle.Height * Game1.UiScale) / 2);
-            spriteBatch.Draw(_spriteBook.Texture, bookPosition, _spriteBook.SourceRectangle,
-                Color.White * transparency, 0, Vector2.Zero, new Vector2(Game1.UiScale), SpriteEffects.None, 0);
+                Game1.WindowHeight / 2 - (_spriteBook.SourceRectangle.Height * Game1.UiScale) / 2
+            );
+            spriteBatch.Draw(
+                _spriteBook.Texture,
+                bookPosition,
+                _spriteBook.SourceRectangle,
+                Color.White * transparency,
+                0,
+                Vector2.Zero,
+                new Vector2(Game1.UiScale),
+                SpriteEffects.None,
+                0
+            );
 
             // draw the images
             for (var i = 0; i < 12; i++)
             {
                 var imageSprite = _unlockState[i] ? _spriteOk : _spriteNop;
-                var position = bookPosition +
-                               new Vector2(27 + (i % 2) * 32 + (i / 6) * 88, 19 + ((i % 6) / 2) * 32) * Game1.UiScale -
-                               new Vector2(imageSprite.SourceRectangle.Width / 2, 0) * Game1.UiScale;
-                spriteBatch.Draw(imageSprite.Texture, position, imageSprite.SourceRectangle,
-                    Color.White * transparency, 0, Vector2.Zero, new Vector2(Game1.UiScale), SpriteEffects.None, 0);
+                var position =
+                    bookPosition
+                    + new Vector2(27 + (i % 2) * 32 + (i / 6) * 88, 19 + ((i % 6) / 2) * 32)
+                        * Game1.UiScale
+                    - new Vector2(imageSprite.SourceRectangle.Width / 2, 0) * Game1.UiScale;
+                spriteBatch.Draw(
+                    imageSprite.Texture,
+                    position,
+                    imageSprite.SourceRectangle,
+                    Color.White * transparency,
+                    0,
+                    Vector2.Zero,
+                    new Vector2(Game1.UiScale),
+                    SpriteEffects.None,
+                    0
+                );
             }
 
             // draw the cursor
-            var cursorPosition = bookPosition +
-                           new Vector2(12 + (_cursorIndex % 2) * 32 + (_cursorIndex / 6) * 88, 8 + ((_cursorIndex % 6) / 2) * 32) * Game1.UiScale +
-                           new Vector2(21, 21) * Game1.UiScale -
-                           new Vector2(2, 2) * Game1.UiScale * _cursorState;
-            spriteBatch.Draw(_spriteCursor.Texture, cursorPosition, _spriteCursor.SourceRectangle,
-                Color.White * transparency, 0, Vector2.Zero, new Vector2(Game1.UiScale), SpriteEffects.None, 0);
+            var cursorPosition =
+                bookPosition
+                + new Vector2(
+                    12 + (_cursorIndex % 2) * 32 + (_cursorIndex / 6) * 88,
+                    8 + ((_cursorIndex % 6) / 2) * 32
+                ) * Game1.UiScale
+                + new Vector2(21, 21) * Game1.UiScale
+                - new Vector2(2, 2) * Game1.UiScale * _cursorState;
+            spriteBatch.Draw(
+                _spriteCursor.Texture,
+                cursorPosition,
+                _spriteCursor.SourceRectangle,
+                Color.White * transparency,
+                0,
+                Vector2.Zero,
+                new Vector2(Game1.UiScale),
+                SpriteEffects.None,
+                0
+            );
 
             // draw the selected image
             if (_transitionValue != 0)
             {
-                var pictureStartPosition = bookPosition + new Vector2(27 + (_cursorIndex % 2) * 32 + (_cursorIndex / 6) * 88, 27 + ((_cursorIndex % 6) / 2) * 32) * Game1.UiScale;
-                var picturePosition = Vector2.Lerp(pictureStartPosition, new Vector2(Game1.WindowWidth / 2, Game1.WindowHeight / 2), _transitionValue);
+                var pictureStartPosition =
+                    bookPosition
+                    + new Vector2(
+                        27 + (_cursorIndex % 2) * 32 + (_cursorIndex / 6) * 88,
+                        27 + ((_cursorIndex % 6) / 2) * 32
+                    ) * Game1.UiScale;
+                var picturePosition = Vector2.Lerp(
+                    pictureStartPosition,
+                    new Vector2(Game1.WindowWidth / 2, Game1.WindowHeight / 2),
+                    _transitionValue
+                );
 
-                spriteBatch.Draw(_spritePhotos[_cursorIndex].Texture, picturePosition, _spritePhotos[_cursorIndex].SourceRectangle,
-                    Color.White * transparency * _transitionValue, 0,
-                    new Vector2(_spritePhotos[_cursorIndex].SourceRectangle.Width / 2, _spritePhotos[_cursorIndex].SourceRectangle.Height / 2f),
-                    new Vector2(Game1.UiScale * (0.1f + _transitionValue * 0.9f)), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _spritePhotos[_cursorIndex].Texture,
+                    picturePosition,
+                    _spritePhotos[_cursorIndex].SourceRectangle,
+                    Color.White * transparency * _transitionValue,
+                    0,
+                    new Vector2(
+                        _spritePhotos[_cursorIndex].SourceRectangle.Width / 2,
+                        _spritePhotos[_cursorIndex].SourceRectangle.Height / 2f
+                    ),
+                    new Vector2(Game1.UiScale * (0.1f + _transitionValue * 0.9f)),
+                    SpriteEffects.None,
+                    0
+                );
             }
         }
     }

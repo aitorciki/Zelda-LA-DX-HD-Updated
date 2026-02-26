@@ -2,7 +2,7 @@
 {
     class BaseAnimationComponent : Component
     {
-        public new static int Index = 1;
+        public static new int Index = 1;
         public static int Mask = 0x01 << Index;
 
         public bool UpdateWithOpenDialog;

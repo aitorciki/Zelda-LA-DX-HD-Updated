@@ -22,7 +22,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public bool IsVisible { get; internal set; }
 
-        public MBossDesertLanmolaHead(Map.Map map, MBossDesertLanmola owner, Vector2 position) : base(map)
+        public MBossDesertLanmolaHead(Map.Map map, MBossDesertLanmola owner, Vector2 position)
+            : base(map)
         {
             IsVisible = true;
             EntityPosition = new CPosition(position.X, position.Y, 0);
@@ -36,18 +37,30 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var animationComponent = new AnimationComponent(_animator, Sprite, new Vector2(0, 0));
 
             var damageBox = new CBox(EntityPosition, -7, -15, 0, 14, 14, 8, true);
-            AddComponent(DamageFieldComponent.Index, _damageComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageComponent = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
 
             var hittableBox = new CBox(EntityPosition, -7, -15, 0, 14, 14, 8, true);
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new ShadowBodyDrawComponent(EntityPosition));
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new ShadowBodyDrawComponent(EntityPosition)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

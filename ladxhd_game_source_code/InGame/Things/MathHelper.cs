@@ -1,6 +1,6 @@
 ﻿using System;
-using ProjectZ.Base;
 using Microsoft.Xna.Framework;
+using ProjectZ.Base;
 
 namespace ProjectZ.InGame.Things
 {

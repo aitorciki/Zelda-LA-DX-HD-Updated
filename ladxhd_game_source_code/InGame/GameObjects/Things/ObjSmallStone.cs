@@ -19,7 +19,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly bool _blueStone;
 
-        public ObjSmallStone(Map.Map map, int posX, int posY, int posZ, Vector3 velocity, bool flipSprite = false, int despawnTime = 0) : base(map)
+        public ObjSmallStone(
+            Map.Map map,
+            int posX,
+            int posY,
+            int posZ,
+            Vector3 velocity,
+            bool flipSprite = false,
+            int despawnTime = 0
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY + 8, posZ);
             EntitySize = new Rectangle(-4, -24, 8, 24);
@@ -38,16 +47,23 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Drag = 0.5f,
                 DragAir = 1.0f,
                 MaxJumpHeight = 8,
-                IsGrounded = false,     // this is needed for the MaxJumpHeight to work
+                IsGrounded = false, // this is needed for the MaxJumpHeight to work
                 Velocity = velocity,
-                MoveCollision = OnCollision
+                MoveCollision = OnCollision,
             };
 
             _blueStone = posZ > 32;
 
-            var sourceRectangle = Resources.SourceRectangle(_blueStone ? "stone_particle_1" : "stone_particle");
+            var sourceRectangle = Resources.SourceRectangle(
+                _blueStone ? "stone_particle_1" : "stone_particle"
+            );
 
-            _sprite = new CSprite(Resources.SprObjects, EntityPosition, sourceRectangle, new Vector2(-4, -8));
+            _sprite = new CSprite(
+                Resources.SprObjects,
+                EntityPosition,
+                sourceRectangle,
+                new Vector2(-4, -8)
+            );
             _sprite.Color = Color.White;
             _sprite.SpriteEffect = flipSprite ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
@@ -56,8 +72,14 @@ namespace ProjectZ.InGame.GameObjects.Things
                 AddComponent(UpdateComponent.Index, new UpdateComponent(UpdateBounceDespawn));
             else
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, _blueStone ? Values.LayerPlayer : Values.LayerTop));
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_bodyComponent, _sprite));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, _blueStone ? Values.LayerPlayer : Values.LayerTop)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_bodyComponent, _sprite)
+            );
         }
 
         private void OnCollision(Values.BodyCollision collision)

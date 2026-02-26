@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Effects;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Effects;
 
 namespace ProjectZ.InGame.GameObjects.Dungeon
 {
@@ -18,23 +18,47 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private bool _isRotation;
 
-        public ObjDungeonOneWay() : base("dungeonOneWay") { }
+        public ObjDungeonOneWay()
+            : base("dungeonOneWay") { }
 
-        public ObjDungeonOneWay(Map.Map map, int posX, int posY) : base(map)
+        public ObjDungeonOneWay(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
 
-            _animatorTop = new ObjAnimator(map, posX, posY, Values.LayerBottom, "Objects/dOneWay", "idle2", false);
+            _animatorTop = new ObjAnimator(
+                map,
+                posX,
+                posY,
+                Values.LayerBottom,
+                "Objects/dOneWay",
+                "idle2",
+                false
+            );
             Map.Objects.SpawnObject(_animatorTop);
 
-            _animatorBottom = new ObjAnimator(map, posX, posY + 16, Values.LayerBottom, "Objects/dOneWay", "idle", false);
+            _animatorBottom = new ObjAnimator(
+                map,
+                posX,
+                posY + 16,
+                Values.LayerBottom,
+                "Objects/dOneWay",
+                "idle",
+                false
+            );
             Map.Objects.SpawnObject(_animatorBottom);
 
             var pushBox = new CBox(posX + 6, posY + 16, 0, 4, 16, 16);
-            AddComponent(PushableComponent.Index, new PushableComponent(pushBox, OnPush) { InertiaTime = 50 });
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(pushBox, OnPush) { InertiaTime = 50 }
+            );
 
             var collisionBox = new CBox(posX, posY, 0, 16, 32, 16);
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
@@ -56,8 +80,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             if (_animatorBottom.Animator.CurrentFrameIndex < 4)
             {
-                var frameTime = _animatorBottom.Animator.GetAnimationTime(0, _animatorBottom.Animator.CurrentFrameIndex) +
-                                _animatorBottom.Animator.FrameCounter;
+                var frameTime =
+                    _animatorBottom.Animator.GetAnimationTime(
+                        0,
+                        _animatorBottom.Animator.CurrentFrameIndex
+                    ) + _animatorBottom.Animator.FrameCounter;
                 var maxTime = _animatorBottom.Animator.GetAnimationTime(0, 4);
 
                 var state = (float)frameTime / maxTime;
@@ -83,10 +110,16 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _isRotation = true;
 
             // the player will be moved between these two points while transitioning to the other side
-            _startPosition = new Vector2(MapManager.ObjLink.EntityPosition.X, MapManager.ObjLink.EntityPosition.Y);
+            _startPosition = new Vector2(
+                MapManager.ObjLink.EntityPosition.X,
+                MapManager.ObjLink.EntityPosition.Y
+            );
             _endPosition = new Vector2(
                 EntityPosition.X + 8,
-                EntityPosition.Y - MapManager.ObjLink._body.OffsetY - MapManager.ObjLink._body.Height);
+                EntityPosition.Y
+                    - MapManager.ObjLink._body.OffsetY
+                    - MapManager.ObjLink._body.Height
+            );
 
             _animatorTop.Animator.Play("rotate2");
             _animatorBottom.Animator.Play("rotate");

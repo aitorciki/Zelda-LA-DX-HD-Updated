@@ -11,7 +11,8 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private readonly DamageFieldComponent _damageField;
 
-        public ObjSpikes2D(Map.Map map, int posX, int posY) : base(map)
+        public ObjSpikes2D(Map.Map map, int posX, int posY)
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -22,17 +23,25 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var box = new CBox(posX, posY + 10, 0, 16, 6, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(box, HitType.Object, 2)
-            {
-                OnDamage = DamagePlayer
-            });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(box, HitType.Object, 2)
+                {
+                    OnDamage = DamagePlayer,
+                }
+            );
         }
 
         private bool DamagePlayer()
         {
             MapManager.ObjLink.InflictSpikeDamage2D();
 
-            return MapManager.ObjLink.HitPlayer(new Vector2(0, -1), _damageField.HitType, _damageField.Strength, true);
+            return MapManager.ObjLink.HitPlayer(
+                new Vector2(0, -1),
+                _damageField.HitType,
+                _damageField.Strength,
+                true
+            );
         }
     }
 }

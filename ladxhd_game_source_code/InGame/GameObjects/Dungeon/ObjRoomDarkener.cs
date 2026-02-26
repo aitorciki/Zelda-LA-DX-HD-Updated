@@ -22,9 +22,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private float _state;
 
-        public ObjRoomDarkener() : base("editor room darkener") { }
+        public ObjRoomDarkener()
+            : base("editor room darkener") { }
 
-        public ObjRoomDarkener(Map.Map map, int posX, int posY, float dark, float bright) : base(map)
+        public ObjRoomDarkener(Map.Map map, int posX, int posY, float dark, float bright)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(-16, -16, Values.FieldWidth + 32, Values.FieldHeight + 32);
@@ -37,14 +39,23 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _sprite = Resources.GetSprite("room blur");
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = Values.LightLayer0 });
+            AddComponent(
+                LightDrawComponent.Index,
+                new LightDrawComponent(DrawLight) { Layer = Values.LightLayer0 }
+            );
         }
 
         public override void Init()
         {
             // get all the lamps in the area
-            Map.Objects.GetGameObjectsWithTag(_lamps, Values.GameObjectTag.Lamp,
-                _roomRectangle.X, _roomRectangle.Y, _roomRectangle.Width, _roomRectangle.Height);
+            Map.Objects.GetGameObjectsWithTag(
+                _lamps,
+                Values.GameObjectTag.Lamp,
+                _roomRectangle.X,
+                _roomRectangle.Y,
+                _roomRectangle.Width,
+                _roomRectangle.Height
+            );
 
             if (_lamps.Count == 0)
             {
@@ -81,15 +92,23 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             else
             {
                 // smoothly transition to the target state
-                var amount = Math.Clamp(0.025f / Math.Abs(targetState - _state) * Game1.TimeMultiplier, 0, 1);
+                var amount = Math.Clamp(
+                    0.025f / Math.Abs(targetState - _state) * Game1.TimeMultiplier,
+                    0,
+                    1
+                );
                 _state = MathHelper.Lerp(_state, targetState, amount);
             }
-
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
-            DrawHelper.DrawNormalized(spriteBatch, _sprite, EntityPosition.Position, Color.Black * _state);
+            DrawHelper.DrawNormalized(
+                spriteBatch,
+                _sprite,
+                EntityPosition.Position,
+                Color.Black * _state
+            );
         }
     }
 }

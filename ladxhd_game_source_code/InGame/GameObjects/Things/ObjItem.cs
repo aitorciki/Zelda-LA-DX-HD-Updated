@@ -55,14 +55,25 @@ namespace ProjectZ.InGame.GameObjects.Things
         public bool IsVisible { get; internal set; }
         private bool _despawn;
 
-        private string[] _shadowListSmall  = { "heart", "arrow_1" };
+        private string[] _shadowListSmall = { "heart", "arrow_1" };
         private string[] _shadowListMedium = { "ruby", "bomb_1", "pieceOfPower", "guardianAcorn" };
 
         public ObjSpriteShadow SpriteShadow;
 
-        public ObjItem() : base("item") { }
+        public ObjItem()
+            : base("item") { }
 
-        public ObjItem(Map.Map map, int posX, int posY, string strType, string saveKey, string itemName, string locationBound, bool despawn = false) : base(map)
+        public ObjItem(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strType,
+            string saveKey,
+            string itemName,
+            string locationBound,
+            bool despawn = false
+        )
+            : base(map)
         {
             // Start by getting basic properties of the item.
             _item = Game1.GameManager.ItemManager[itemName];
@@ -77,7 +88,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!ItemAndSaveKeyValid(_item, saveKey))
                 return;
 
-            var baseItem = _item.SourceRectangle.HasValue ? _item : Game1.GameManager.ItemManager[_item.Name];
+            var baseItem = _item.SourceRectangle.HasValue
+                ? _item
+                : Game1.GameManager.ItemManager[_item.Name];
 
             if (baseItem.MapSprite != null)
                 _sourceRectangle = baseItem.MapSprite.SourceRectangle;
@@ -100,10 +113,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Gravity = -0.1f,
                 Bounciness = 0.7f,
                 IgnoreHeight = true,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.LadderTop,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.LadderTop,
                 HoleAbsorb = OnHoleAbsorb,
-                MoveCollision = OnMoveCollision
+                MoveCollision = OnMoveCollision,
             };
 
             // Attempt to apply attributes if the item type is set.
@@ -118,13 +130,19 @@ namespace ProjectZ.InGame.GameObjects.Things
             var stateDelay = new AiState();
             var stateHoleFall = new AiState();
             stateHoleFall.Trigger.Add(new AiTriggerCountdown(125, null, HoleDespawn));
-            stateDelay.Trigger.Add(_delayCountdown = new AiTriggerCountdown(0, null, () =>
-            {
-                IsVisible = true;
-                _aiComponent.ChangeState("idle");
-                _body.Velocity.Z = Map.Is2dMap ? -1f : 1f;
-                EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 0));
-            }));
+            stateDelay.Trigger.Add(
+                _delayCountdown = new AiTriggerCountdown(
+                    0,
+                    null,
+                    () =>
+                    {
+                        IsVisible = true;
+                        _aiComponent.ChangeState("idle");
+                        _body.Velocity.Z = Map.Is2dMap ? -1f : 1f;
+                        EntityPosition.Set(new Vector3(EntityPosition.X, EntityPosition.Y, 0));
+                    }
+                )
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
@@ -136,17 +154,37 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             Rectangle collectRect = _item.CreateCollectRectangle(_sourceRectangle);
 
-            _collectionBox = new CBox(EntityPosition, -_sourceRectangle.Width / 2, collectRect.Y, _sourceRectangle.Width, collectRect.Height, 16);
+            _collectionBox = new CBox(
+                EntityPosition,
+                -_sourceRectangle.Width / 2,
+                collectRect.Y,
+                _sourceRectangle.Width,
+                collectRect.Height,
+                16
+            );
             _collectionRect = new CRectangle(EntityPosition, collectRect);
 
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(_collectionRect, OnCollision));
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(_collectionBox, Values.CollisionTypes.Item));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_collectionBox, OnHit));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(_collectionRect, OnCollision)
+            );
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    _collectionBox,
+                    Values.CollisionTypes.Item
+                )
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_collectionBox, OnHit)
+            );
 
             if (_item.Instrument)
-                _collisionComponent.CollisionType = Values.CollisionTypes.Item | Values.CollisionTypes.Instrument;
+                _collisionComponent.CollisionType =
+                    Values.CollisionTypes.Item | Values.CollisionTypes.Instrument;
 
             // Create the body draw component but don't add it yet.
             _bodyDrawComponent = new BodyDrawComponent(_body, Draw, Values.LayerPlayer);
@@ -155,7 +193,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             var offsetX = -_sourceRectangle.Width / 2 - 1;
             var offsetY = -_sourceRectangle.Width / 4 - 2;
             var drawOffset = new Vector2(offsetX, offsetY);
-            _shadowComponent = new DrawShadowSpriteComponent(Resources.SprShadow, EntityPosition, _shadowSourceRectangle, drawOffset, 1.0f, 0.0f);
+            _shadowComponent = new DrawShadowSpriteComponent(
+                Resources.SprShadow,
+                EntityPosition,
+                _shadowSourceRectangle,
+                drawOffset,
+                1.0f,
+                0.0f
+            );
             _shadowComponent.Width = _sourceRectangle.Width + 2;
             _shadowComponent.Height = _sourceRectangle.Width / 2 + 2;
 
@@ -306,22 +351,33 @@ namespace ProjectZ.InGame.GameObjects.Things
                 ToFading();
 
             if (!_body.IsActive)
-                EntityPosition.Z = 20 - _sourceRectangle.Height / 2 + (float)Math.Sin((Game1.TotalGameTime / 1050) * Math.PI * 2) * 1.5f;
+                EntityPosition.Z =
+                    20
+                    - _sourceRectangle.Height / 2
+                    + (float)Math.Sin((Game1.TotalGameTime / 1050) * Math.PI * 2) * 1.5f;
 
             // fall into the water
             if (!_isSwimming && !Map.Is2dMap)
             {
-                if (_body.IsGrounded && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater))
+                if (
+                    _body.IsGrounded
+                    && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater)
+                )
                 {
                     _deepWaterCounter -= Game1.DeltaTime;
 
                     if (_deepWaterCounter <= 0)
                     {
                         // spawn splash effect
-                        var fallAnimation = new ObjAnimator(Map,
+                        var fallAnimation = new ObjAnimator(
+                            Map,
                             (int)(_body.Position.X + _body.OffsetX + _body.Width / 2.0f),
                             (int)(_body.Position.Y + _body.OffsetY + _body.Height / 2.0f),
-                            Values.LayerPlayer, "Particles/fishingSplash", "idle", true);
+                            Values.LayerPlayer,
+                            "Particles/fishingSplash",
+                            "idle",
+                            true
+                        );
                         Map.Objects.SpawnObject(fallAnimation);
 
                         Map.Objects.DeleteObjects.Add(this);
@@ -357,7 +413,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // fade the item after fadestart
             if (_fadeStart <= _despawnCount)
-                _color = Color.White * (1 - ((_despawnCount - _fadeStart) / (_despawnTime - _fadeStart)));
+                _color =
+                    Color.White
+                    * (1 - ((_despawnCount - _fadeStart) / (_despawnTime - _fadeStart)));
 
             _shadowComponent.Color = _color;
 
@@ -371,29 +429,74 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (!IsVisible)
                 return;
 
-            ItemDrawHelper.DrawItem(spriteBatch, _item,
-                new Vector2(EntityPosition.X - _sourceRectangle.Width / 2.0f, EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height + _fadeOffset), _color, 1, true);
+            ItemDrawHelper.DrawItem(
+                spriteBatch,
+                _item,
+                new Vector2(
+                    EntityPosition.X - _sourceRectangle.Width / 2.0f,
+                    EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height + _fadeOffset
+                ),
+                _color,
+                1,
+                true
+            );
 
             if (!_isFlying)
                 return;
 
-            var wingFlap = (Game1.TotalGameTime % (16 / 60f * 1000)) < (8 / 60f * 1000) ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            var wingFlap =
+                (Game1.TotalGameTime % (16 / 60f * 1000)) < (8 / 60f * 1000)
+                    ? SpriteEffects.FlipVertically
+                    : SpriteEffects.None;
 
             // left wing
-            spriteBatch.Draw(Resources.SprItem, new Vector2(
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Vector2(
                     EntityPosition.X - _sourceRectangleWing.Width - 4f,
-                    EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height / 2 - 10 + _fadeOffset),
-                _sourceRectangleWing, _color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None | wingFlap, 0);
+                    EntityPosition.Y
+                        - EntityPosition.Z
+                        - _sourceRectangle.Height / 2
+                        - 10
+                        + _fadeOffset
+                ),
+                _sourceRectangleWing,
+                _color,
+                0,
+                Vector2.Zero,
+                Vector2.One,
+                SpriteEffects.None | wingFlap,
+                0
+            );
 
             // right wing
-            spriteBatch.Draw(Resources.SprItem, new Vector2(
+            spriteBatch.Draw(
+                Resources.SprItem,
+                new Vector2(
                     EntityPosition.X + 4f,
-                    EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height / 2 - 10 + _fadeOffset),
-                _sourceRectangleWing, _color, 0, Vector2.Zero, Vector2.One,
-                SpriteEffects.FlipHorizontally | wingFlap, 0);
+                    EntityPosition.Y
+                        - EntityPosition.Z
+                        - _sourceRectangle.Height / 2
+                        - 10
+                        + _fadeOffset
+                ),
+                _sourceRectangleWing,
+                _color,
+                0,
+                Vector2.Zero,
+                Vector2.One,
+                SpriteEffects.FlipHorizontally | wingFlap,
+                0
+            );
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // If it's an instrument collide with items.
             if (_item.Instrument)
@@ -421,8 +524,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void OnMoveCollision(Values.BodyCollision collision)
         {
             // sound should play but only for the trendy game? maybe add a extra item type?
-            if ((collision & Values.BodyCollision.Floor) != 0 && _body.Velocity.Z > 0.55f ||
-                ((collision & Values.BodyCollision.Bottom) != 0 && _body.Velocity.Y < 0f && Map.Is2dMap))
+            if (
+                (collision & Values.BodyCollision.Floor) != 0 && _body.Velocity.Z > 0.55f
+                || (
+                    (collision & Values.BodyCollision.Bottom) != 0
+                    && _body.Velocity.Y < 0f
+                    && Map.Is2dMap
+                )
+            )
             {
                 // metalic bounce sound
                 if (_item.Name == "smallkey" || _item.Name == "sword2")
@@ -447,7 +556,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             // play sound effect
             Game1.GameManager.PlaySoundEffect("D360-24-18");
 
-            var fallAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 5, (int)EntityPosition.Y - 8, Values.LayerBottom, "Particles/fall", "idle", true);
+            var fallAnimation = new ObjAnimator(
+                Map,
+                (int)EntityPosition.X - 5,
+                (int)EntityPosition.Y - 8,
+                Values.LayerBottom,
+                "Particles/fall",
+                "idle",
+                true
+            );
             Map.Objects.SpawnObject(fallAnimation);
 
             Map.Objects.DeleteObjects.Add(this);
@@ -457,8 +574,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // only collect the item when the player is near it in the z dimension
             // maybe the collision component should have used Boxes instead of Rectangles
-            if (Math.Abs(EntityPosition.Z - MapManager.ObjLink.EntityPosition.Z) < 8 &&
-                (!_isSwimming || MapManager.ObjLink.IsDiving()))
+            if (
+                Math.Abs(EntityPosition.Z - MapManager.ObjLink.EntityPosition.Z) < 8
+                && (!_isSwimming || MapManager.ObjLink.IsDiving())
+            )
                 Collect();
         }
 
@@ -471,8 +590,18 @@ namespace ProjectZ.InGame.GameObjects.Things
                 return;
 
             // Do not collect the item while the player is jumping.
-            if (_item.ShowAnimation != 0 && !_item.SwordCollect &&
-                ((!Map.Is2dMap && !MapManager.ObjLink.IsGrounded()) || (Map.Is2dMap && !MapManager.ObjLink.IsGrounded() && !MapManager.ObjLink.IsInWater2D())))
+            if (
+                _item.ShowAnimation != 0
+                && !_item.SwordCollect
+                && (
+                    (!Map.Is2dMap && !MapManager.ObjLink.IsGrounded())
+                    || (
+                        Map.Is2dMap
+                        && !MapManager.ObjLink.IsGrounded()
+                        && !MapManager.ObjLink.IsInWater2D()
+                    )
+                )
+            )
             {
                 return;
             }
@@ -489,7 +618,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             var cItem = new GameItemCollected(_itemName)
             {
                 Count = _item.Count,
-                LocationBounding = _locationBound
+                LocationBounding = _locationBound,
             };
             MapManager.ObjLink.PickUpItem(cItem, true);
 

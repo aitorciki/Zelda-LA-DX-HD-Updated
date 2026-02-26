@@ -5,7 +5,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 {
     class AiComponent : Component
     {
-        public new static int Index = 0;
+        public static new int Index = 0;
         public static int Mask = 0x01 << Index;
 
         public Dictionary<string, AiState> States = new Dictionary<string, AiState>();
@@ -15,7 +15,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
 
         public string CurrentStateId;
         public string LastStateId;
-        
+
         public void ChangeState(string newStateId, bool silentMode = false)
         {
             LastStateId = CurrentStateId;

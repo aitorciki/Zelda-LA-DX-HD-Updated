@@ -30,14 +30,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dir = 1;
         private int _lives = EnemyLives.Peahat;
 
-        public EnemyPeahat() : base("peahat") { }
+        public EnemyPeahat()
+            : base("peahat") { }
 
-        public EnemyPeahat(Map.Map map, int posX, int posY) : base(map)
+        public EnemyPeahat(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -32, 16, 32);
             CanReset = true;
             OnReset = Reset;
@@ -57,12 +59,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _body = new BodyComponent(EntityPosition, -6, -12, 12, 10, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 IgnoresZ = true,
                 FieldRectangle = fieldRectangle,
-                MaxJumpHeight = 4
+                MaxJumpHeight = 4,
             };
 
             _aiComponent = new AiComponent();
@@ -75,7 +76,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var stateLand = new AiState();
             stateLand.Trigger.Add(new AiTriggerCountdown(LandTime, LandTick, ToIdle));
             var stateIdle = new AiState();
-            stateIdle.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("start"), 3000, 6000));
+            stateIdle.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("start"), 3000, 6000)
+            );
             var stateStunned = new AiState();
             stateStunned.Trigger.Add(new AiTriggerCountdown(200, null, EndStunned));
 
@@ -84,20 +87,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("land", stateLand);
             _aiComponent.States.Add("idle", stateIdle);
             _aiComponent.States.Add("stunned", stateStunned);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false)
+            {
+                OnBurn = OnBurn,
+            };
 
             _aiComponent.ChangeState("start");
 
             var hittableBox = new CBox(EntityPosition, -6, -14, 0, 12, 14, 8, true);
             var damageBox = new CBox(EntityPosition, -6, -14, 0, 12, 14, 4, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(damageBox, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(damageBox, OnPush)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { DeepWaterOutline = true });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer) { DeepWaterOutline = true }
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
@@ -137,7 +155,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
@@ -213,7 +235,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             EntityPosition.Z = 0;
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

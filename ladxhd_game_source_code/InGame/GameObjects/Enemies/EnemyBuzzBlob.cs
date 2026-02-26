@@ -1,14 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
+using ProjectZ.InGame.GameObjects.Effects;
+using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Things;
-using ProjectZ.InGame.GameObjects.Effects;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -28,14 +28,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _isCukeman;
         private int _lives = EnemyLives.BuzzBlob;
 
-        public EnemyBuzzBlob() : base("buzz blob") { }
+        public EnemyBuzzBlob()
+            : base("buzz blob") { }
 
-        public EnemyBuzzBlob(Map.Map map, int posX, int posY) : base(map)
+        public EnemyBuzzBlob(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-10, -16, 20, 20);
             CanReset = true;
             OnReset = Reset;
@@ -43,32 +45,49 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/buzzblob");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-6, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-6, -16)
+            );
 
             var fieldRectangle = map.GetField(posX, posY);
 
             _body = new BodyComponent(EntityPosition, -4, -10, 8, 10, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall,
-                FieldRectangle = fieldRectangle
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
+                FieldRectangle = fieldRectangle,
             };
 
             var stateWalking = new AiState() { Init = InitWalking };
-            stateWalking.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1000));
+            stateWalking.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 500, 1000)
+            );
             var stateShocking = new AiState(UpdateShocking);
-            stateShocking.Trigger.Add(new AiTriggerCountdown(ShockTime, null, () => _aiComponent.ChangeState("postShock")));
+            stateShocking.Trigger.Add(
+                new AiTriggerCountdown(ShockTime, null, () => _aiComponent.ChangeState("postShock"))
+            );
             var statePostShock = new AiState() { Init = InitPostShock };
-            statePostShock.Trigger.Add(new AiTriggerCountdown(350, null, () => _aiComponent.ChangeState("walking")));
+            statePostShock.Trigger.Add(
+                new AiTriggerCountdown(350, null, () => _aiComponent.ChangeState("walking"))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("shocking", stateShocking);
             _aiComponent.States.Add("postShock", statePostShock);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false) { OnDeath = OnDeath, OnBurn = OnBurn };
-            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900) { ShakeOffset = 1, SilentStateChange = false, ReturnState = "walking" };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false)
+            {
+                OnDeath = OnDeath,
+                OnBurn = OnBurn,
+            };
+            _stunnedState = new AiStunnedState(_aiComponent, animationComponent, 3300, 900)
+            {
+                ShakeOffset = 1,
+                SilentStateChange = false,
+                ReturnState = "walking",
+            };
             new AiFallState(_aiComponent, _body, OnHolePull, OnHoleDeath, 400);
 
             var interactionBox = new CBox(EntityPosition, -10, -16, 20, 20, 8);
@@ -76,14 +95,29 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -5, -12, 0, 10, 12, 4);
             var pushableBox = new CBox(EntityPosition, -4, -11, 0, 8, 11, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(InteractComponent.Index, new InteractComponent(interactionBox, OnInteract));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                InteractComponent.Index,
+                new InteractComponent(interactionBox, OnInteract)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
 
             _aiComponent.ChangeState("walking");
@@ -138,7 +172,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // new random direction
             var directionIndex = Game1.RandomNumber.Next(0, 8);
             var radius = directionIndex / 4.0 * Math.PI;
-            _body.VelocityTarget = new Vector2((float)Math.Sin(radius), (float)Math.Cos(radius)) * _moveSpeed;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Sin(radius), (float)Math.Cos(radius)) * _moveSpeed;
         }
 
         private void OnHolePull()
@@ -165,12 +200,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -199,12 +244,27 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                 // spawn explosion effect
                 ObjAnimator animator;
-                Map.Objects.SpawnObject(animator = new ObjAnimator(Map, 0, 0, Values.LayerBottom, "Particles/spawn", "run", true));
-                animator.EntityPosition.Set(new Vector2(EntityPosition.X - 8, EntityPosition.Y - 16));
+                Map.Objects.SpawnObject(
+                    animator = new ObjAnimator(
+                        Map,
+                        0,
+                        0,
+                        Values.LayerBottom,
+                        "Particles/spawn",
+                        "run",
+                        true
+                    )
+                );
+                animator.EntityPosition.Set(
+                    new Vector2(EntityPosition.X - 8, EntityPosition.Y - 16)
+                );
 
                 return Values.HitCollision.Enemy;
             }
-            else if (!_stunnedState.IsStunned() && ((hitType & HitType.Sword) != 0 || hitType == HitType.PegasusBootsSword))
+            else if (
+                !_stunnedState.IsStunned()
+                && ((hitType & HitType.Sword) != 0 || hitType == HitType.PegasusBootsSword)
+            )
             {
                 if (_body.FieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
                     StartShock();
@@ -212,7 +272,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return Values.HitCollision.Enemy;
             }
 
-            if ((hitType & HitType.Sword) == 0 && hitType != HitType.PegasusBootsSword && hitType != HitType.SwordShot)
+            if (
+                (hitType & HitType.Sword) == 0
+                && hitType != HitType.PegasusBootsSword
+                && hitType != HitType.SwordShot
+            )
                 damage *= 2;
 
             return _damageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);

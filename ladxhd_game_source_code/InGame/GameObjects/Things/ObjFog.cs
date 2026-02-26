@@ -20,7 +20,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly int _timeOffset;
 
-        public ObjFog(Map.Map map, int posX, int posY, float scale, float transparency) : base(map)
+        public ObjFog(Map.Map map, int posX, int posY, float scale, float transparency)
+            : base(map)
         {
             SprEditorImage = Resources.SprItem;
             EditorIconSource = new Rectangle(64, 168, 16, 16);
@@ -37,13 +38,22 @@ namespace ProjectZ.InGame.GameObjects.Things
             _timeOffset = Game1.RandomNumber.Next(0, 5000);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerTop, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerTop, EntityPosition)
+            );
         }
 
         private void Update()
         {
-            _offset0 = new Vector2(MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 2000)) * 16, MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 6000)) * 2);
-            _offset1 = new Vector2(MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 3250)) * 16, MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 7500)) * 2);
+            _offset0 = new Vector2(
+                MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 2000)) * 16,
+                MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 6000)) * 2
+            );
+            _offset1 = new Vector2(
+                MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 3250)) * 16,
+                MathF.Sin((float)((Game1.TotalGameTime + _timeOffset) / 7500)) * 2
+            );
         }
 
         private void Draw(SpriteBatch spriteBatch)
@@ -52,9 +62,34 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (Game1.GameManager.UseShockEffect)
                 return;
 
-            var sourceRectangle = new Rectangle(0, 0, Resources.SprFog.Width, Resources.SprFog.Height);
-            spriteBatch.Draw(Resources.SprFog, _position + _offset0, sourceRectangle, Color.White * _transparency, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprFog, _position + _offset1, sourceRectangle, Color.White * _transparency, 0, Vector2.Zero, _scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
+            var sourceRectangle = new Rectangle(
+                0,
+                0,
+                Resources.SprFog.Width,
+                Resources.SprFog.Height
+            );
+            spriteBatch.Draw(
+                Resources.SprFog,
+                _position + _offset0,
+                sourceRectangle,
+                Color.White * _transparency,
+                0,
+                Vector2.Zero,
+                _scale,
+                SpriteEffects.None,
+                0
+            );
+            spriteBatch.Draw(
+                Resources.SprFog,
+                _position + _offset1,
+                sourceRectangle,
+                Color.White * _transparency,
+                0,
+                Vector2.Zero,
+                _scale,
+                SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically,
+                0
+            );
         }
     }
 }

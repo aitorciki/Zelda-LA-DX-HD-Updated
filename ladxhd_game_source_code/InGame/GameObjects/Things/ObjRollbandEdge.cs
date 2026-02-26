@@ -15,7 +15,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private Box _collisionBox;
 
-        public ObjRollBandEdge(Map.Map map, int posX, int posY) : base(map)
+        public ObjRollBandEdge(Map.Map map, int posX, int posY)
+            : base(map)
         {
             SprEditorImage = Resources.SprWhite;
             EditorIconSource = new Rectangle(0, 0, 16, 16);
@@ -35,8 +36,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             // get and move the components colliding with the rollband
             _collidingObjects.Clear();
-            Map.Objects.GetComponentList(_collidingObjects,
-                (int)_itemDetectionBox.Left, (int)_itemDetectionBox.Back, (int)_itemDetectionBox.Width, (int)_itemDetectionBox.Height, BodyComponent.Mask);
+            Map.Objects.GetComponentList(
+                _collidingObjects,
+                (int)_itemDetectionBox.Left,
+                (int)_itemDetectionBox.Back,
+                (int)_itemDetectionBox.Width,
+                (int)_itemDetectionBox.Height,
+                BodyComponent.Mask
+            );
 
             foreach (var gameObject in _collidingObjects)
             {
@@ -45,15 +52,22 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     // stop moving and fall from the edge
                     gameObjectBody.AdditionalMovementVT = Vector2.Zero;
-                    gameObjectBody.Position.Set(new Vector3(
-                        gameObjectBody.Position.X, EntityPosition.Y + gameObjectBody.Height + 8, (EntityPosition.Y + gameObjectBody.Height + 8) - gameObjectBody.Position.Y));
+                    gameObjectBody.Position.Set(
+                        new Vector3(
+                            gameObjectBody.Position.X,
+                            EntityPosition.Y + gameObjectBody.Height + 8,
+                            (EntityPosition.Y + gameObjectBody.Height + 8)
+                                - gameObjectBody.Position.Y
+                        )
+                    );
                 }
             }
         }
 
         private bool Collision(Box box, int dir, int level, ref Box collidingBox)
         {
-            if (dir != 1 || !_collisionBox.Intersects(box)) return false;
+            if (dir != 1 || !_collisionBox.Intersects(box))
+                return false;
 
             collidingBox = _collisionBox;
             return true;

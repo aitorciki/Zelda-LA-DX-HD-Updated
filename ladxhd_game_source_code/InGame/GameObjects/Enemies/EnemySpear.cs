@@ -30,9 +30,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _playSound = true;
         private bool _reflected;
 
-        private Point[] _collisionBoxSize = { new Point(12, 4), new Point(4, 12), new Point(12, 4), new Point(4, 12) };
+        private Point[] _collisionBoxSize =
+        {
+            new Point(12, 4),
+            new Point(4, 12),
+            new Point(12, 4),
+            new Point(4, 12),
+        };
 
-        public EnemySpear(Map.Map map, Vector3 position, Vector2 velocity, int direction) : base(map)
+        public EnemySpear(Map.Map map, Vector3 position, Vector2 velocity, int direction)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -48,14 +55,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play(dir.ToString());
 
             _drawComponent = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _drawComponent, Vector2.Zero);
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _drawComponent,
+                Vector2.Zero
+            );
 
-            _body = new BodyComponent(EntityPosition,
-                -_collisionBoxSize[dir].X / 2, -_collisionBoxSize[dir].Y / 2,
-                _collisionBoxSize[dir].X, _collisionBoxSize[dir].Y, 8)
+            _body = new BodyComponent(
+                EntityPosition,
+                -_collisionBoxSize[dir].X / 2,
+                -_collisionBoxSize[dir].Y / 2,
+                _collisionBoxSize[dir].X,
+                _collisionBoxSize[dir].Y,
+                8
+            )
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 VelocityTarget = velocity,
                 Bounciness = 0.35f,
@@ -65,21 +80,49 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
             _damageCollider = new CBox(EntityPosition, -5, -5, 0, 10, 10, 4, true);
             var stateDespawn = new AiState() { Init = InitDespawn };
-            stateDespawn.Trigger.Add(new AiTriggerCountdown(_despawnTime, TickDespawn, () => TickDespawn(0)));
+            stateDespawn.Trigger.Add(
+                new AiTriggerCountdown(_despawnTime, TickDespawn, () => TickDespawn(0))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", new AiState(UpdateIdle));
             _aiComponent.States.Add("despawn", stateDespawn);
             _aiComponent.ChangeState("idle");
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageCollider, HitType.Projectile, 2)
+                {
+                    OnDamage = OnDamage,
+                    Direction = direction,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });
+            AddComponent(
+                PushableComponent.Index,
+                new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, _bodyDrawComponent = new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer) { Grass = false });
-            AddComponent(DrawShadowComponent.Index, _shadowBody = new ShadowBodyDrawComponent(EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                _bodyDrawComponent = new BodyDrawComponent(
+                    _body,
+                    _drawComponent,
+                    Values.LayerPlayer
+                )
+                {
+                    Grass = false,
+                }
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowBody = new ShadowBodyDrawComponent(EntityPosition)
+            );
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
@@ -103,8 +146,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 var curField = MapManager.ObjLink.CurrentField;
                 var barrier = new Rectangle(curField.X - 16, curField.Y - 16, 192, 160);
 
-                if (!curField.Contains(EntityPosition.Position) &&  
-                    barrier.Contains(EntityPosition.Position))
+                if (
+                    !curField.Contains(EntityPosition.Position)
+                    && barrier.Contains(EntityPosition.Position)
+                )
                 {
                     OnCollision(Values.BodyCollision.None);
                     return;
@@ -119,7 +164,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_reflected)
             {
                 // Probably the closest parallel to player damage types is the Bow.
-                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bow, 2, false, false);
+                var collision = Map.Objects.Hit(
+                    MapManager.ObjLink,
+                    EntityPosition.Position,
+                    _damageCollider.Box,
+                    HitType.Bow,
+                    2,
+                    false,
+                    false
+                );
                 if ((collision & Values.HitCollision.Enemy) != 0)
                     Map.Objects.DeleteObjects.Add(this);
             }
@@ -162,12 +215,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // If player was damaged, delete the object.
             if (damaged)
                 Map.Objects.DeleteObjects.Add(this);
-
             // If player was not damaged, it was blocked.
             else
             {
                 // Mirror shield reflects the shot while normal shield just collides.
-                if (GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2 && !MapManager.ObjLink.InDamageState && !_reflected)
+                if (
+                    GameSettings.MirrorReflects
+                    && Game1.GameManager.ShieldLevel == 2
+                    && !MapManager.ObjLink.InDamageState
+                    && !_reflected
+                )
                     Reflect();
                 else
                     OnCollision(Values.BodyCollision.None);
@@ -190,14 +247,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            bool swordBlock = GameSettings.SwMissileBlock 
-                ? (hitType & HitType.Sword) == 0 && (hitType & HitType.SwordHold) != 0 
+            bool swordBlock = GameSettings.SwMissileBlock
+                ? (hitType & HitType.Sword) == 0 && (hitType & HitType.SwordHold) != 0
                 : true;
 
             if (swordBlock)
@@ -245,12 +308,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // Despawn the spear on impact.
             _aiComponent.ChangeState("despawn");
-            
+
             // Play the deflected animation.
             if ((direction & Values.BodyCollision.Floor) != 0)
-                _body.Velocity = new Vector3(_body.VelocityTarget.X * 0.75f, _body.VelocityTarget.Y * 0.75f, 1.5f);
+                _body.Velocity = new Vector3(
+                    _body.VelocityTarget.X * 0.75f,
+                    _body.VelocityTarget.Y * 0.75f,
+                    1.5f
+                );
             else
-                _body.Velocity = new Vector3(-_body.VelocityTarget.X * 0.25f, -_body.VelocityTarget.Y * 0.25f, 1.5f);
+                _body.Velocity = new Vector3(
+                    -_body.VelocityTarget.X * 0.25f,
+                    -_body.VelocityTarget.Y * 0.25f,
+                    1.5f
+                );
 
             // Stop future velocity completely.
             _body.VelocityTarget = Vector2.Zero;

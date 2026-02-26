@@ -14,7 +14,13 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
         private readonly HoleAbsorbFunction _onAbsorb;
         private readonly HoleAbsorbFunction _onDeath;
 
-        public AiFallState(AiComponent aiComponent, BodyComponent body, HoleAbsorbFunction onAbsorb = null, HoleAbsorbFunction onDeath = null, int fallTime = 600)
+        public AiFallState(
+            AiComponent aiComponent,
+            BodyComponent body,
+            HoleAbsorbFunction onAbsorb = null,
+            HoleAbsorbFunction onDeath = null,
+            int fallTime = 600
+        )
         {
             _aiComponent = aiComponent;
 
@@ -48,10 +54,21 @@ namespace ProjectZ.InGame.GameObjects.Base.Components.AI
             // play sound effect
             Game1.GameManager.PlaySoundEffect("D360-24-18");
 
-            var fallAnimation = new ObjAnimator(_aiComponent.Owner.Map, 0, 0, Values.LayerBottom, "Particles/fall", "idle", true);
-            fallAnimation.EntityPosition.Set(new Vector2(
-                _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
-                _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5));
+            var fallAnimation = new ObjAnimator(
+                _aiComponent.Owner.Map,
+                0,
+                0,
+                Values.LayerBottom,
+                "Particles/fall",
+                "idle",
+                true
+            );
+            fallAnimation.EntityPosition.Set(
+                new Vector2(
+                    _body.Position.X + _body.OffsetX + _body.Width / 2.0f - 5,
+                    _body.Position.Y + _body.OffsetY + _body.Height / 2.0f - 5
+                )
+            );
             _aiComponent.Owner.Map.Objects.SpawnObject(fallAnimation);
 
             _onDeath?.Invoke();

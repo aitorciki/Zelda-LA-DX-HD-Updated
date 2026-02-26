@@ -17,13 +17,19 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
             Sprite = sprite;
             Draw = SpriteDrawFunction;
         }
-        
+
         public void SpriteDrawFunction(SpriteBatch spriteBatch)
         {
             if (!IsActive)
                 return;
 
-            Sprite.DrawShadow(spriteBatch, Color, -1, Height ?? Owner.Map.ShadowHeight, Rotation ?? Owner.Map.ShadowRotation);
+            Sprite.DrawShadow(
+                spriteBatch,
+                Color,
+                -1,
+                Height ?? Owner.Map.ShadowHeight,
+                Rotation ?? Owner.Map.ShadowRotation
+            );
         }
     }
 }

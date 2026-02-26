@@ -11,9 +11,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _strKey;
         private readonly HitType _weaponType;
 
-        public ObjOnHitKeySetter() : base("signpost_0") { }
+        public ObjOnHitKeySetter()
+            : base("signpost_0") { }
 
-        public ObjOnHitKeySetter(Map.Map map, int posX, int posY, string strKey, int weaponType, bool reset, int width, int height) : base(map)
+        public ObjOnHitKeySetter(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            int weaponType,
+            bool reset,
+            int width,
+            int height
+        )
+            : base(map)
         {
             if (string.IsNullOrEmpty(strKey))
             {
@@ -34,9 +45,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(HittableComponent.Index, new HittableComponent(box, OnHit));
         }
 
-        private Values.HitCollision OnHit(GameObject originObject, Vector2 direction, HitType type, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject originObject,
+            Vector2 direction,
+            HitType type,
+            int damage,
+            bool pieceOfPower
+        )
         {
-            if((type & _weaponType) != 0)
+            if ((type & _weaponType) != 0)
             {
                 Game1.GameManager.SaveManager.SetString(_strKey, "1");
                 Map.Objects.DeleteObjects.Add(this);

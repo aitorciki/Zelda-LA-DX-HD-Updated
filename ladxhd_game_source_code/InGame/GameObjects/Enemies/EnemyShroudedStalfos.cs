@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -23,22 +23,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private readonly Vector2[] _shotOffset =
         {
-            new Vector2(-8, -1),new Vector2(0, -3),
-            new Vector2(8, -1),new Vector2(0, 2)
+            new Vector2(-8, -1),
+            new Vector2(0, -3),
+            new Vector2(8, -1),
+            new Vector2(0, 2),
         };
 
         private float _moveSpeed = 0.5f;
         private int _direction;
         private int _lives = EnemyLives.ShroudedStalfos;
 
-        public EnemyShroudedStalfos() : base("shrouded stalfos") { }
+        public EnemyShroudedStalfos()
+            : base("shrouded stalfos") { }
 
-        public EnemyShroudedStalfos(Map.Map map, int posX, int posY) : base(map)
+        public EnemyShroudedStalfos(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -47,34 +51,45 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk_1");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-8, -16)
+            );
 
             _fieldRectangle = map.GetField(posX, posY);
 
             _body = new BodyComponent(EntityPosition, -6, -10, 12, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Enemy,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.Enemy,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 Bounciness = 0.25f,
-                Drag = 0.85f
+                Drag = 0.85f,
             };
 
             var walkingState = new AiState { Init = InitWalking };
-            walkingState.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 550, 850));
+            walkingState.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("idle"), 550, 850)
+            );
             var idleState = new AiState { Init = InitIdle };
-            idleState.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 300, 500));
+            idleState.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("walking"), 300, 500)
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("walking", walkingState);
             _aiComponent.States.Add("idle", idleState);
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
 
             // start randomly idle or walking facing a random direction
             _direction = Game1.RandomNumber.Next(0, 4);
@@ -84,13 +99,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittabelBox = new CBox(EntityPosition, -7, -15, 14, 15, 8);
             var pushableBox = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittabelBox, _damageState.OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittabelBox, _damageState.OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -136,8 +163,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void ThrowSpear()
         {
-            if (Game1.RandomNumber.Next(0, 2) == 0 ||
-                !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position))
+            if (
+                Game1.RandomNumber.Next(0, 2) == 0
+                || !_fieldRectangle.Contains(MapManager.ObjLink.CenterPosition.Position)
+            )
                 return;
 
             // shoot if the player is in the range and in the right direction
@@ -150,17 +179,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 if (direction == _direction)
                 {
                     var box = Box.Empty;
-                    if (!Map.Objects.Collision(new Box(
-                            EntityPosition.X + _shotOffset[_direction].X - 4,
-                            EntityPosition.Y + _shotOffset[_direction].Y - 4, 0, 8, 8, 8),
-                            Box.Empty, Values.CollisionTypes.Normal, 0, _body.Level, ref box))
+                    if (
+                        !Map.Objects.Collision(
+                            new Box(
+                                EntityPosition.X + _shotOffset[_direction].X - 4,
+                                EntityPosition.Y + _shotOffset[_direction].Y - 4,
+                                0,
+                                8,
+                                8,
+                                8
+                            ),
+                            Box.Empty,
+                            Values.CollisionTypes.Normal,
+                            0,
+                            _body.Level,
+                            ref box
+                        )
+                    )
                     {
                         // shoot
-                        var shot = new EnemySpear(Map, new Vector3(
-                            EntityPosition.X + _shotOffset[_direction].X,
-                            EntityPosition.Y + _shotOffset[_direction].Y, 3),
+                        var shot = new EnemySpear(
+                            Map,
+                            new Vector3(
+                                EntityPosition.X + _shotOffset[_direction].X,
+                                EntityPosition.Y + _shotOffset[_direction].Y,
+                                3
+                            ),
                             AnimationHelper.DirectionOffset[_direction] * 2f,
-                            _direction);
+                            _direction
+                        );
                         Map.Objects.SpawnObject(shot);
                     }
                 }
@@ -170,7 +217,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }

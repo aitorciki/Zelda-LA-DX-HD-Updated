@@ -14,7 +14,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly CSprite _sprite;
         private readonly DamageFieldComponent _damageField;
 
-        public EnemyWizzrobeProjectile(Map.Map map, Vector2 position, int direction, float speed) : base(map)
+        public EnemyWizzrobeProjectile(Map.Map map, Vector2 position, int direction, float speed)
+            : base(map)
         {
             EntityPosition = new CPosition(position.X, position.Y, 0);
             EntitySize = new Rectangle(-6, -6, 12, 12);
@@ -30,16 +31,19 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoresZ = true,
                 IgnoreHoles = true,
                 CollisionTypes = Values.CollisionTypes.Normal,
-                MoveCollision = OnCollision
+                MoveCollision = OnCollision,
             };
 
             body.VelocityTarget = AnimationHelper.DirectionOffset[direction] * speed;
 
             var damageCollider = new CBox(EntityPosition, -3, -3, 0, 6, 6, 4);
-            
+
             AddComponent(BodyComponent.Index, body);
             AddComponent(PushableComponent.Index, new PushableComponent(body.BodyBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerTop));
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -56,7 +60,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // blink
             var blinkTime = 66.667f;
-            _sprite.SpriteShader = (Game1.TotalGameTime % (blinkTime * 2) < blinkTime) ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                (Game1.TotalGameTime % (blinkTime * 2) < blinkTime)
+                    ? Resources.DamageSpriteShader0
+                    : null;
         }
 
         private bool OnPush(Vector2 direction, PushableComponent.PushType pushType)
@@ -73,7 +80,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Despawn()
         {
-            var animation = new ObjSparkingEffect(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 0, 0);
+            var animation = new ObjSparkingEffect(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                0,
+                0
+            );
             Map.Objects.SpawnObject(animation);
             Map.Objects.DeleteObjects.Add(this);
         }

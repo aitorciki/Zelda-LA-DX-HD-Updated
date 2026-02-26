@@ -29,7 +29,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _playSound;
         private bool _reflected;
 
-        public EnemyOctorokShot(Map.Map map, float posX, float posY, Vector2 velocity, int direction) : base(map)
+        public EnemyOctorokShot(
+            Map.Map map,
+            float posX,
+            float posY,
+            Vector2 velocity,
+            int direction
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -39,8 +46,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // abort spawn in a wall
             var box = Box.Empty;
-            if (Map.Objects.Collision(new Box(EntityPosition.X - 4, EntityPosition.Y - 8, 0, 8, 8, 8),
-                Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref box))
+            if (
+                Map.Objects.Collision(
+                    new Box(EntityPosition.X - 4, EntityPosition.Y - 8, 0, 8, 8, 8),
+                    Box.Empty,
+                    Values.CollisionTypes.Normal,
+                    0,
+                    0,
+                    ref box
+                )
+            )
             {
                 IsDead = true;
                 return;
@@ -50,12 +65,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             animator.Play("idle");
 
             _drawComponent = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(animator, _drawComponent, new Vector2(-5, -10));
+            var animationComponent = new AnimationComponent(
+                animator,
+                _drawComponent,
+                new Vector2(-5, -10)
+            );
 
             _body = new BodyComponent(EntityPosition, -4, -8, 8, 8, 8)
             {
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
                 MoveCollision = OnCollision,
                 VelocityTarget = velocity,
                 Bounciness = 0.35f,
@@ -67,7 +85,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var stateIdle = new AiState(UpdateIdle);
             var stateDespawn = new AiState() { Init = InitDespawn };
-            stateDespawn.Trigger.Add(new AiTriggerCountdown(_despawnTime, Despawn, () => Despawn(0)));
+            stateDespawn.Trigger.Add(
+                new AiTriggerCountdown(_despawnTime, Despawn, () => Despawn(0))
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("idle", stateIdle);
@@ -76,14 +96,36 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _damageCollider = new CBox(EntityPosition, -5, -10, 0, 10, 10, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Projectile, 2) { OnDamage = OnDamage, Direction = direction });
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageCollider, HitType.Projectile, 2)
+                {
+                    OnDamage = OnDamage,
+                    Direction = direction,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, _pushableComponent = new PushableComponent(_body.BodyBox, OnPush) { RepelMultiplier = 0.2f });
+            AddComponent(
+                PushableComponent.Index,
+                _pushableComponent = new PushableComponent(_body.BodyBox, OnPush)
+                {
+                    RepelMultiplier = 0.2f,
+                }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, _shadowBody = new ShadowBodyDrawComponent(EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _drawComponent, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowBody = new ShadowBodyDrawComponent(EntityPosition)
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -117,7 +159,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_reflected)
             {
                 // Probably the closest parallel to player damage types is the Bow.
-                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bow, 2, false, false);
+                var collision = Map.Objects.Hit(
+                    MapManager.ObjLink,
+                    EntityPosition.Position,
+                    _damageCollider.Box,
+                    HitType.Bow,
+                    2,
+                    false,
+                    false
+                );
                 if ((collision & Values.HitCollision.Enemy) != 0)
                     Map.Objects.DeleteObjects.Add(this);
             }
@@ -142,14 +192,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             bool damaged = _damageField.DamagePlayer();
 
             // If the player was not damaged, check if it should be reflected.
-            if (!damaged && GameSettings.MirrorReflects && Game1.GameManager.ShieldLevel == 2 && !MapManager.ObjLink.InDamageState && !_reflected)
+            if (
+                !damaged
+                && GameSettings.MirrorReflects
+                && Game1.GameManager.ShieldLevel == 2
+                && !MapManager.ObjLink.InDamageState
+                && !_reflected
+            )
                 Reflect();
-
             // Whether the player was damaged or it was blocked, destroy the shot.
             else
             {
                 _aiComponent.ChangeState("despawn");
-                _body.Velocity = new Vector3(-_body.VelocityTarget.X * 0.25f, -_body.VelocityTarget.Y * 0.25f, 1.5f);
+                _body.Velocity = new Vector3(
+                    -_body.VelocityTarget.X * 0.25f,
+                    -_body.VelocityTarget.Y * 0.25f,
+                    1.5f
+                );
                 _body.VelocityTarget = Vector2.Zero;
             }
             // Return the damage state for the damage field component.
@@ -176,14 +235,20 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
-            bool swordBlock = GameSettings.SwMissileBlock 
-                ? (hitType & HitType.Sword) != 0 && (hitType & HitType.SwordHold) == 0 
+            bool swordBlock = GameSettings.SwMissileBlock
+                ? (hitType & HitType.Sword) != 0 && (hitType & HitType.SwordHold) == 0
                 : false;
 
             if (_aiComponent.CurrentStateId != "despawn" && swordBlock)
@@ -227,7 +292,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (_aiComponent.CurrentStateId != "despawn")
                 _aiComponent.ChangeState("despawn");
 
-            _body.Velocity = new Vector3(-_body.VelocityTarget.X * 0.25f, -_body.VelocityTarget.Y * 0.25f, 1.5f);
+            _body.Velocity = new Vector3(
+                -_body.VelocityTarget.X * 0.25f,
+                -_body.VelocityTarget.Y * 0.25f,
+                1.5f
+            );
             _body.VelocityTarget = Vector2.Zero;
         }
     }

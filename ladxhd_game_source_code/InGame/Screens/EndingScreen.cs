@@ -8,10 +8,8 @@ namespace ProjectZ.InGame.Screens
     {
         private float _counter;
 
-        public EndingScreen(string screenId) : base(screenId)
-        {
-
-        }
+        public EndingScreen(string screenId)
+            : base(screenId) { }
 
         public override void OnLoad()
         {

@@ -16,7 +16,15 @@ namespace ProjectZ.InGame.Screens
         private Texture2D _sprRain;
         private Texture2D _sprWaves;
         private Texture2D _sprCloud;
-        public static Texture2D _sprIntro_eng, _sprIntro_chn, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ind, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
+        public static Texture2D _sprIntro_eng,
+            _sprIntro_chn,
+            _sprIntro_deu,
+            _sprIntro_esp,
+            _sprIntro_fre,
+            _sprIntro_ind,
+            _sprIntro_ita,
+            _sprIntro_por,
+            _sprIntro_rus;
 
         public static Texture2D _sprIntro
         {
@@ -32,7 +40,7 @@ namespace ProjectZ.InGame.Screens
                     "ita" => _sprIntro_ita,
                     "por" => _sprIntro_por,
                     "rus" => _sprIntro_rus,
-                    _     => _sprIntro_eng
+                    _ => _sprIntro_eng,
                 };
             }
         }
@@ -46,7 +54,17 @@ namespace ProjectZ.InGame.Screens
         private Vector2[] _thunderPositions = new Vector2[2];
         private float[] _thunderCounts = { 1000, 2000 };
 
-        private enum States { OceanCamera, OceanPicture, OceanThunder, StrandFading, StrandCamera, StrandMarin, StrandPanning, StrandLogo };
+        private enum States
+        {
+            OceanCamera,
+            OceanPicture,
+            OceanThunder,
+            StrandFading,
+            StrandCamera,
+            StrandMarin,
+            StrandPanning,
+            StrandLogo,
+        };
 
         private States _currentState;
 
@@ -54,31 +72,83 @@ namespace ProjectZ.InGame.Screens
         private Vector2 _cameraCenter;
 
         private Matrix TransformMatrix =>
-                                Matrix.CreateTranslation(new Vector3(
-                                    -(float)(Math.Round(_cameraCenter.X * _scale) / _scale),
-                                    -(float)(Math.Round(_cameraCenter.Y * _scale) / _scale), 0)) *
-                                Matrix.CreateScale(_scale) *
-                                Matrix.CreateTranslation(new Vector3((int)(Game1.WindowWidth * 0.5f), (int)(Game1.WindowHeight * 0.5f), 0)) * Game1.GetMatrix;
+            Matrix.CreateTranslation(
+                new Vector3(
+                    -(float)(Math.Round(_cameraCenter.X * _scale) / _scale),
+                    -(float)(Math.Round(_cameraCenter.Y * _scale) / _scale),
+                    0
+                )
+            )
+            * Matrix.CreateScale(_scale)
+            * Matrix.CreateTranslation(
+                new Vector3((int)(Game1.WindowWidth * 0.5f), (int)(Game1.WindowHeight * 0.5f), 0)
+            )
+            * Game1.GetMatrix;
 
         private float _cameraState;
         private Vector2 _cameraStart;
         private Vector2 _cameraTarget;
 
-        private enum MarinState { WalkSlow, Walk, Run, Stand, Hold, Push, End };
+        private enum MarinState
+        {
+            WalkSlow,
+            Walk,
+            Run,
+            Stand,
+            Hold,
+            Push,
+            End,
+        };
 
         private MarinState marinState;
 
         private MarinState[] _marinStates =
         {
-            MarinState.WalkSlow, MarinState.Stand, MarinState.Run, MarinState.Stand, MarinState.Walk, MarinState.Stand, MarinState.Walk, MarinState.Stand, MarinState.Walk, MarinState.Stand,
-            MarinState.Hold, MarinState.Push, MarinState.Hold, MarinState.Push, MarinState.Hold, MarinState.Push, MarinState.Hold, MarinState.Push, MarinState.End,
+            MarinState.WalkSlow,
+            MarinState.Stand,
+            MarinState.Run,
+            MarinState.Stand,
+            MarinState.Walk,
+            MarinState.Stand,
+            MarinState.Walk,
+            MarinState.Stand,
+            MarinState.Walk,
+            MarinState.Stand,
+            MarinState.Hold,
+            MarinState.Push,
+            MarinState.Hold,
+            MarinState.Push,
+            MarinState.Hold,
+            MarinState.Push,
+            MarinState.Hold,
+            MarinState.Push,
+            MarinState.End,
         };
-        private int[] _marinTimes = {
-            1000, 1100, 900, 1300, 200, // stand times
-            2000, 500, 2100, 200, 400, 200, 250, 750 // push hold times
+        private int[] _marinTimes =
+        {
+            1000,
+            1100,
+            900,
+            1300,
+            200, // stand times
+            2000,
+            500,
+            2100,
+            200,
+            400,
+            200,
+            250,
+            750, // push hold times
         };
 
-        private Vector2[] _marinGoalPositions = { new Vector2(-150, 219), new Vector2(-94, 219), new Vector2(-72, 219), new Vector2(-64, 219), new Vector2(-18, 219) };
+        private Vector2[] _marinGoalPositions =
+        {
+            new Vector2(-150, 219),
+            new Vector2(-94, 219),
+            new Vector2(-72, 219),
+            new Vector2(-64, 219),
+            new Vector2(-18, 219),
+        };
 
         private float _marinStateCounter;
         private int _marinIndex;
@@ -172,7 +242,19 @@ namespace ProjectZ.InGame.Screens
 
         private const int Slow = 500;
         private const int Fast = 200;
-        private readonly int[] _waveTimes = { Slow, Fast, Fast, Fast, Slow, Fast, Fast, Fast, Fast, Fast };
+        private readonly int[] _waveTimes =
+        {
+            Slow,
+            Fast,
+            Fast,
+            Fast,
+            Slow,
+            Fast,
+            Fast,
+            Fast,
+            Fast,
+            Fast,
+        };
 
         private bool _loaded;
 
@@ -204,8 +286,9 @@ namespace ProjectZ.InGame.Screens
         int title_screen_sky_grn = 248;
         int title_screen_sky_blu = 248;
 
-        public IntroScreen(string screenId) : base(screenId) 
-        { 
+        public IntroScreen(string screenId)
+            : base(screenId)
+        {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "IntroScreen.lahdmod");
 
@@ -217,18 +300,38 @@ namespace ProjectZ.InGame.Screens
 
             // Set up the color of the ocean during the raft scene. Includes 2 lightning strike variations.
             Color ocean_01 = new Color(intro_ocean_red, intro_ocean_grn, intro_ocean_blu);
-            Color ocean_02 = new Color(intro_ocean_lightning1_red, intro_ocean_lightning1_grn, intro_ocean_lightning1_blu);
-            Color ocean_03 = new Color(intro_ocean_lightning2_red, intro_ocean_lightning2_grn, intro_ocean_lightning2_blu);
+            Color ocean_02 = new Color(
+                intro_ocean_lightning1_red,
+                intro_ocean_lightning1_grn,
+                intro_ocean_lightning1_blu
+            );
+            Color ocean_03 = new Color(
+                intro_ocean_lightning2_red,
+                intro_ocean_lightning2_grn,
+                intro_ocean_lightning2_blu
+            );
             _raftOceanColor = new Color[] { ocean_01, ocean_02, ocean_03 };
 
             // Set up the color of the lower part of the ocean during the raft scene.
-            _raftLowerColor = new Color(intro_ocean_bottom_red, intro_ocean_bottom_grn, intro_ocean_bottom_blu);
+            _raftLowerColor = new Color(
+                intro_ocean_bottom_red,
+                intro_ocean_bottom_grn,
+                intro_ocean_bottom_blu
+            );
 
             // Set up the color of the ocean during the scene Marin is walking towards Link.
-            _islandOcean = new Color(intro_ocean_island_red, intro_ocean_island_grn, intro_ocean_island_blu);
+            _islandOcean = new Color(
+                intro_ocean_island_red,
+                intro_ocean_island_grn,
+                intro_ocean_island_blu
+            );
 
             // Set up the color of the sky on the title screen.
-            _titleScreenSky = new Color(title_screen_sky_red, title_screen_sky_grn, title_screen_sky_blu);
+            _titleScreenSky = new Color(
+                title_screen_sky_red,
+                title_screen_sky_grn,
+                title_screen_sky_blu
+            );
         }
 
         public override void Load(ContentManager content)
@@ -245,7 +348,9 @@ namespace ProjectZ.InGame.Screens
             _spriteDX = Resources.GetSprite("intro_dx");
             _spriteBigN = Resources.GetSprite("intro_nintendo");
 
-            _mountainLeftPosition.X = -_spriteBackground.SourceRectangle.Width / 2 - _spriteMountain.SourceRectangle.Width;
+            _mountainLeftPosition.X =
+                -_spriteBackground.SourceRectangle.Width / 2
+                - _spriteMountain.SourceRectangle.Width;
             _mountainLeftPosition.Y = 0;
 
             _mountainRightPosition.X = _spriteBackground.SourceRectangle.Width / 2;
@@ -298,7 +403,7 @@ namespace ProjectZ.InGame.Screens
                 texExtension = "_chn";
 
             // Refresh the logo and DX images. This is done when resources are finished
-            // loading in and also when the language toggle is changed. 
+            // loading in and also when the language toggle is changed.
             _spriteLogo0 = Resources.GetSprite("intro_logo_0" + texExtension);
             _spriteLogo1 = Resources.GetSprite("intro_logo_1" + texExtension);
             _spriteDX = Resources.GetSprite("intro_dx" + texExtension);
@@ -345,7 +450,14 @@ namespace ProjectZ.InGame.Screens
                 // Set the autoload to false.
                 Game1.AutoLoadSave = false;
 
-                if (SaveManager.FileExists(Path.Combine(Values.PathSaveFolder, SaveGameSaveLoad.SaveFileName + LoadSlot.ToString())))
+                if (
+                    SaveManager.FileExists(
+                        Path.Combine(
+                            Values.PathSaveFolder,
+                            SaveGameSaveLoad.SaveFileName + LoadSlot.ToString()
+                        )
+                    )
+                )
                 {
                     // Change to the game screen.
                     Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);
@@ -356,33 +468,47 @@ namespace ProjectZ.InGame.Screens
             }
 
 #if WINDOWS
-            if (Game1.GbsPlayer.SoundGenerator.WasStopped && Game1.GbsPlayer.SoundGenerator.FinishedPlaying())
+            if (
+                Game1.GbsPlayer.SoundGenerator.WasStopped
+                && Game1.GbsPlayer.SoundGenerator.FinishedPlaying()
+            )
             {
                 Game1.GameManager.SetMusic(0, 0);
                 Game1.GbsPlayer.Play();
             }
 #endif
 
-            if (Game1.FinishedLoading &&
-                (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) || ControlHandler.ButtonPressed(CButtons.Start)))
+            if (
+                Game1.FinishedLoading
+                && (
+                    ControlHandler.ButtonPressed(ControlHandler.ConfirmButton)
+                    || ControlHandler.ButtonPressed(CButtons.Start)
+                )
+            )
             {
                 if (_currentState == States.StrandLogo)
                 {
                     Game1.ScreenManager.ChangeScreen(Values.ScreenNameMenu);
-                } 
+                }
                 else
                 {
                     Game1.GameManager.SetMusic(12, 0);
 
                     _strandFadeCount = 0;
                     _cameraState = 0;
-                    _cameraCenter = new Vector2(0, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
+                    _cameraCenter = new Vector2(
+                        0,
+                        _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5
+                    );
                     _cameraStart = _cameraCenter;
-                    _cameraTarget = new Vector2(_cameraCenter.X, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
+                    _cameraTarget = new Vector2(
+                        _cameraCenter.X,
+                        _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5
+                    );
                     _logoCounter = 1500;
                     _currentState = States.StrandPanning;
-                    _linkPosition = new Vector2(-1000,-1000);
-                    _marinPosition = new Vector2(-1000,-1000);
+                    _linkPosition = new Vector2(-1000, -1000);
+                    _marinPosition = new Vector2(-1000, -1000);
                 }
             }
             if (!Game1.FinishedLoading)
@@ -390,11 +516,19 @@ namespace ProjectZ.InGame.Screens
 
             if (Game1.FinishedLoading)
             {
-                _loadingTransparency = AnimationHelper.MoveToTarget(_loadingTransparency, 0, 0.125f * Game1.TimeMultiplier);
+                _loadingTransparency = AnimationHelper.MoveToTarget(
+                    _loadingTransparency,
+                    0,
+                    0.125f * Game1.TimeMultiplier
+                );
             }
             UpdateOcean();
             UpdateBeach();
-            _scale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / _screenWidth, Game1.WindowHeight / _screenHeight), 1, 10);
+            _scale = MathHelper.Clamp(
+                Math.Min(Game1.WindowWidth / _screenWidth, Game1.WindowHeight / _screenHeight),
+                1,
+                10
+            );
         }
 
         private void UpdateOcean()
@@ -441,19 +575,39 @@ namespace ProjectZ.InGame.Screens
                             _thunderPositions[i] = new Vector2(randomX, 14);
                     }
                 }
-                _oceanPosition0 = new Vector2(_cameraCenter.X * 0.1f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500) * 1));
-                _oceanPosition1 = new Vector2(_cameraCenter.X * 0.05f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.1) * 2));
-                _oceanPosition2 = new Vector2(-_cameraCenter.X * 0.05f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.2) * 3));
-                _oceanPosition3 = new Vector2(-_cameraCenter.X * 0.25f, 60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.2) * 3));
-                _oceanBoatPosition = new Vector2(-16 + _cameraCenter.X * 0.05f, 47 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500) * 2.5));
+                _oceanPosition0 = new Vector2(
+                    _cameraCenter.X * 0.1f,
+                    60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500) * 1)
+                );
+                _oceanPosition1 = new Vector2(
+                    _cameraCenter.X * 0.05f,
+                    60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.1) * 2)
+                );
+                _oceanPosition2 = new Vector2(
+                    -_cameraCenter.X * 0.05f,
+                    60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.2) * 3)
+                );
+                _oceanPosition3 = new Vector2(
+                    -_cameraCenter.X * 0.25f,
+                    60 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500 + 0.2) * 3)
+                );
+                _oceanBoatPosition = new Vector2(
+                    -16 + _cameraCenter.X * 0.05f,
+                    47 + (int)Math.Round(Math.Sin(Game1.TotalTime / 500) * 2.5)
+                );
             }
             else if (_currentState == States.OceanPicture)
             {
                 _cameraCenter = new Vector2(0, 0);
                 _linkBoatAnimator.Update();
 
-                if (_oceanFrameIndex != _linkBoatAnimator.CurrentFrameIndex &&
-                    (_linkBoatAnimator.CurrentFrameIndex == 1 || _linkBoatAnimator.CurrentFrameIndex == 10))
+                if (
+                    _oceanFrameIndex != _linkBoatAnimator.CurrentFrameIndex
+                    && (
+                        _linkBoatAnimator.CurrentFrameIndex == 1
+                        || _linkBoatAnimator.CurrentFrameIndex == 10
+                    )
+                )
                 {
                     Game1.GameManager.PlaySoundEffect("D378-12-0C", true);
                 }
@@ -529,9 +683,13 @@ namespace ProjectZ.InGame.Screens
 
         private void UpdateBeach()
         {
-            if (_currentState != States.StrandFading && _currentState != States.StrandCamera &&
-                _currentState != States.StrandMarin && _currentState != States.StrandPanning &&
-                _currentState != States.StrandLogo)
+            if (
+                _currentState != States.StrandFading
+                && _currentState != States.StrandCamera
+                && _currentState != States.StrandMarin
+                && _currentState != States.StrandPanning
+                && _currentState != States.StrandLogo
+            )
                 return;
 
             if (_currentState == States.StrandFading)
@@ -569,7 +727,10 @@ namespace ProjectZ.InGame.Screens
                 {
                     _cameraState = 0;
                     _cameraStart = _cameraCenter;
-                    _cameraTarget = new Vector2(_cameraCenter.X, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
+                    _cameraTarget = new Vector2(
+                        _cameraCenter.X,
+                        _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5
+                    );
                     _logoCounter = 0;
                     _currentState = States.StrandPanning;
                 }
@@ -582,7 +743,11 @@ namespace ProjectZ.InGame.Screens
 
                     if (_logoCounter > 750 && _logoState != 1)
                     {
-                        _logoState = AnimationHelper.MoveToTarget(_logoState, 1, 0.05f * Game1.TimeMultiplier);
+                        _logoState = AnimationHelper.MoveToTarget(
+                            _logoState,
+                            1,
+                            0.05f * Game1.TimeMultiplier
+                        );
 
                         if (_logoState == 1)
                         {
@@ -597,7 +762,9 @@ namespace ProjectZ.InGame.Screens
                 if (!_lightAnimation.IsPlaying)
                 {
                     _lightAnimation.Play("idle");
-                    _lightIndex = (_lightIndex + Game1.RandomNumber.Next(1, _lightPositions.Length)) % _lightPositions.Length;
+                    _lightIndex =
+                        (_lightIndex + Game1.RandomNumber.Next(1, _lightPositions.Length))
+                        % _lightPositions.Length;
                     _ligthPosition = _lightPositions[_lightIndex];
                 }
             }
@@ -611,9 +778,16 @@ namespace ProjectZ.InGame.Screens
                 }
             }
 
-            if (_currentState != States.StrandPanning && _currentState != States.StrandLogo && _strandFadeCount < StrandFadeTime)
+            if (
+                _currentState != States.StrandPanning
+                && _currentState != States.StrandLogo
+                && _strandFadeCount < StrandFadeTime
+            )
             {
-                UpdateCamera(new Vector2(_marinPosition.X + 18, 210), _currentState == States.StrandMarin ? 1.0f : 0.54f);
+                UpdateCamera(
+                    new Vector2(_marinPosition.X + 18, 210),
+                    _currentState == States.StrandMarin ? 1.0f : 0.54f
+                );
             }
             _marinAnimator.Update();
             _linkAnimator.Update();
@@ -667,7 +841,11 @@ namespace ProjectZ.InGame.Screens
 
             _cameraState += speed * Game1.TimeMultiplier;
             _cameraState = Math.Clamp(_cameraState, 0, 1);
-            _cameraCenter = Vector2.Lerp(_cameraStart, _cameraTarget, 0.5f + MathF.Sin(-MathF.PI * 0.5f + _cameraState * MathF.PI) * 0.5f);
+            _cameraCenter = Vector2.Lerp(
+                _cameraStart,
+                _cameraTarget,
+                0.5f + MathF.Sin(-MathF.PI * 0.5f + _cameraState * MathF.PI) * 0.5f
+            );
 
             return true;
         }
@@ -687,7 +865,8 @@ namespace ProjectZ.InGame.Screens
 
                 if (_marinPosition.X < _marinGoal.X)
                 {
-                    _marinPosition.X += Game1.TimeMultiplier * (marinState == MarinState.Walk ? 0.45f : 0.20f);
+                    _marinPosition.X +=
+                        Game1.TimeMultiplier * (marinState == MarinState.Walk ? 0.45f : 0.20f);
                 }
                 else
                 {
@@ -736,12 +915,20 @@ namespace ProjectZ.InGame.Screens
             marinState = _marinStates[_marinIndex];
             _marinIndex++;
 
-            if (marinState == MarinState.Stand || marinState == MarinState.Hold || marinState == MarinState.Push)
+            if (
+                marinState == MarinState.Stand
+                || marinState == MarinState.Hold
+                || marinState == MarinState.Push
+            )
             {
                 _marinStateCounter = _marinTimes[_marinTimeIndex];
                 _marinTimeIndex++;
             }
-            else if (marinState == MarinState.Walk || marinState == MarinState.WalkSlow || marinState == MarinState.Run)
+            else if (
+                marinState == MarinState.Walk
+                || marinState == MarinState.WalkSlow
+                || marinState == MarinState.Run
+            )
             {
                 _marinGoal = _marinGoalPositions[_marinWalkIndex];
                 _marinWalkIndex++;
@@ -750,8 +937,18 @@ namespace ProjectZ.InGame.Screens
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Game1.Graphics.GraphicsDevice.Clear(_currentState == States.OceanPicture ? Color.Black : _islandOcean);
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, TransformMatrix);
+            Game1.Graphics.GraphicsDevice.Clear(
+                _currentState == States.OceanPicture ? Color.Black : _islandOcean
+            );
+            spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointWrap,
+                null,
+                null,
+                null,
+                TransformMatrix
+            );
 
             DrawOcean(spriteBatch);
             DrawBeach(spriteBatch);
@@ -761,22 +958,46 @@ namespace ProjectZ.InGame.Screens
             // draw the loading animation
             if (_loadingTransparency > 0)
             {
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
-                _loadingAnimator.DrawBasic(spriteBatch, new Vector2(
-                    Game1.WindowWidth - 2 * _scale, Game1.WindowHeight - 2 * _scale), Color.White * _loadingTransparency, _scale);
+                spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    null,
+                    SamplerState.PointWrap,
+                    null,
+                    null,
+                    null,
+                    Game1.GetMatrix
+                );
+                _loadingAnimator.DrawBasic(
+                    spriteBatch,
+                    new Vector2(Game1.WindowWidth - 2 * _scale, Game1.WindowHeight - 2 * _scale),
+                    Color.White * _loadingTransparency,
+                    _scale
+                );
                 spriteBatch.End();
             }
         }
 
         private void DrawOcean(SpriteBatch spriteBatch)
         {
-            if (_currentState != States.OceanCamera && _currentState != States.OceanPicture && _currentState != States.OceanThunder)
+            if (
+                _currentState != States.OceanCamera
+                && _currentState != States.OceanPicture
+                && _currentState != States.OceanThunder
+            )
                 return;
 
-            var screenLeft = (int)Math.Floor(_cameraCenter.X) - (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
-            var screenRight = (int)Math.Ceiling(_cameraCenter.X) + (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
-            var screenTop = (int)Math.Floor(_cameraCenter.Y) - (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
-            var screenBottom = (int)Math.Ceiling(_cameraCenter.Y) + (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
+            var screenLeft =
+                (int)Math.Floor(_cameraCenter.X)
+                - (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
+            var screenRight =
+                (int)Math.Ceiling(_cameraCenter.X)
+                + (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
+            var screenTop =
+                (int)Math.Floor(_cameraCenter.Y)
+                - (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
+            var screenBottom =
+                (int)Math.Ceiling(_cameraCenter.Y)
+                + (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
             var width = screenRight - screenLeft + 2;
             var height = screenBottom - screenTop + 2;
             var cloudOffset = _cameraCenter.X * 0.05f;
@@ -784,55 +1005,144 @@ namespace ProjectZ.InGame.Screens
             if (_currentState == States.OceanCamera || _currentState == States.OceanThunder)
             {
                 // draw the dark cloud
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(screenLeft, screenTop, width, -screenTop), _raftSkyColor);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(screenLeft, screenTop, width, -screenTop),
+                    _raftSkyColor
+                );
 
                 // draw the clouds
-                spriteBatch.Draw(_sprOcean,
+                spriteBatch.Draw(
+                    _sprOcean,
                     new Rectangle(screenLeft, 0, width, _oceanCloudRectangle.Height),
-                    new Rectangle(_oceanCloudRectangle.X + screenLeft - (int)cloudOffset,
-                        _oceanCloudRectangle.Y + _thunderIndex * (_oceanCloudRectangle.Height + 16), width,
-                        _oceanCloudRectangle.Height),
-                    Color.White, 0, new Vector2(1 - cloudOffset % 1, 0), SpriteEffects.None, 0);
+                    new Rectangle(
+                        _oceanCloudRectangle.X + screenLeft - (int)cloudOffset,
+                        _oceanCloudRectangle.Y + _thunderIndex * (_oceanCloudRectangle.Height + 16),
+                        width,
+                        _oceanCloudRectangle.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(1 - cloudOffset % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
                 // draw the dark sky
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(screenLeft, _oceanCloudRectangle.Height, width, 64), _raftOceanColor[_thunderIndex]);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(screenLeft, _oceanCloudRectangle.Height, width, 64),
+                    _raftOceanColor[_thunderIndex]
+                );
 
                 // draw the ocean top
                 var oceanAnimationOffset = _thunderIndex * 64;
-                spriteBatch.Draw(_sprOcean,
-                    new Rectangle(screenLeft, (int)_oceanPosition0.Y, width, _ocean0Rectangle.Height),
-                    new Rectangle(_ocean0Rectangle.X + screenLeft - (int)_oceanPosition0.X,
-                        _ocean0Rectangle.Y + oceanAnimationOffset, width, _ocean0Rectangle.Height),
-                    Color.White, 0, new Vector2(1 - _oceanPosition0.X % 1, 0), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprOcean,
+                    new Rectangle(
+                        screenLeft,
+                        (int)_oceanPosition0.Y,
+                        width,
+                        _ocean0Rectangle.Height
+                    ),
+                    new Rectangle(
+                        _ocean0Rectangle.X + screenLeft - (int)_oceanPosition0.X,
+                        _ocean0Rectangle.Y + oceanAnimationOffset,
+                        width,
+                        _ocean0Rectangle.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(1 - _oceanPosition0.X % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
                 // draw the ocean middle
-                spriteBatch.Draw(_sprOcean,
-                    new Rectangle(screenLeft, (int)_oceanPosition1.Y, width, _ocean1Rectangle.Height),
-                    new Rectangle(_ocean1Rectangle.X + screenLeft - (int)_oceanPosition1.X,
-                        _ocean1Rectangle.Y + oceanAnimationOffset, width, _ocean1Rectangle.Height),
-                    Color.White, 0, new Vector2(1 - _oceanPosition1.X % 1, 0), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprOcean,
+                    new Rectangle(
+                        screenLeft,
+                        (int)_oceanPosition1.Y,
+                        width,
+                        _ocean1Rectangle.Height
+                    ),
+                    new Rectangle(
+                        _ocean1Rectangle.X + screenLeft - (int)_oceanPosition1.X,
+                        _ocean1Rectangle.Y + oceanAnimationOffset,
+                        width,
+                        _ocean1Rectangle.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(1 - _oceanPosition1.X % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
                 // draw the boat
-                DrawHelper.DrawNormalized(spriteBatch, _spriteOceanBoat, _oceanBoatPosition, Color.White);
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    _spriteOceanBoat,
+                    _oceanBoatPosition,
+                    Color.White
+                );
 
                 // draw the ocean middle
-                spriteBatch.Draw(_sprOcean,
-                    new Rectangle(screenLeft, (int)_oceanPosition2.Y, width, _ocean2Rectangle.Height),
-                    new Rectangle(_ocean2Rectangle.X + screenLeft - (int)_oceanPosition2.X,
-                        _ocean2Rectangle.Y + oceanAnimationOffset, width, _ocean2Rectangle.Height),
-                    Color.White, 0, new Vector2(1 - _oceanPosition2.X % 1, 0), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprOcean,
+                    new Rectangle(
+                        screenLeft,
+                        (int)_oceanPosition2.Y,
+                        width,
+                        _ocean2Rectangle.Height
+                    ),
+                    new Rectangle(
+                        _ocean2Rectangle.X + screenLeft - (int)_oceanPosition2.X,
+                        _ocean2Rectangle.Y + oceanAnimationOffset,
+                        width,
+                        _ocean2Rectangle.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(1 - _oceanPosition2.X % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
                 // draw the ocean
-                spriteBatch.Draw(_sprOcean,
-                    new Rectangle(screenLeft, (int)_oceanPosition3.Y + 16, width, _oceanRectangle.Height),
-                    new Rectangle(_oceanRectangle.X + screenLeft - (int)_oceanPosition3.X,
-                        _oceanRectangle.Y + _thunderIndex * (_oceanRectangle.Height + 16), width, _oceanRectangle.Height),
-                    Color.White, 0, new Vector2(1 - _oceanPosition3.X % 1, 0), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprOcean,
+                    new Rectangle(
+                        screenLeft,
+                        (int)_oceanPosition3.Y + 16,
+                        width,
+                        _oceanRectangle.Height
+                    ),
+                    new Rectangle(
+                        _oceanRectangle.X + screenLeft - (int)_oceanPosition3.X,
+                        _oceanRectangle.Y + _thunderIndex * (_oceanRectangle.Height + 16),
+                        width,
+                        _oceanRectangle.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(1 - _oceanPosition3.X % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
                 // draw the dark ocean
-                spriteBatch.Draw(Resources.SprWhite,
-                    new Rectangle(screenLeft, (int)_oceanPosition3.Y + 48, width,
-                        screenBottom - ((int)_oceanPosition3.Y + 48)), _raftLowerColor);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(
+                        screenLeft,
+                        (int)_oceanPosition3.Y + 48,
+                        width,
+                        screenBottom - ((int)_oceanPosition3.Y + 48)
+                    ),
+                    _raftLowerColor
+                );
             }
 
             if (_currentState == States.OceanPicture)
@@ -841,100 +1151,240 @@ namespace ProjectZ.InGame.Screens
             }
 
             // draw the rain
-            var rainOffset = new Vector2((float)(Game1.TotalTime / 2.5f + Math.Sin(Game1.TotalTime / 500) * 5), (float)Game1.TotalTime / 2.3f);
-            spriteBatch.Draw(_sprRain,
+            var rainOffset = new Vector2(
+                (float)(Game1.TotalTime / 2.5f + Math.Sin(Game1.TotalTime / 500) * 5),
+                (float)Game1.TotalTime / 2.3f
+            );
+            spriteBatch.Draw(
+                _sprRain,
                 new Rectangle(screenLeft, screenTop, width, height),
-                new Rectangle(screenLeft - (int)rainOffset.X, screenTop - (int)rainOffset.Y, width, height),
-                Color.White, 0, new Vector2(1 - rainOffset.X % 1, 1 - rainOffset.Y % 1), SpriteEffects.None, 0);
+                new Rectangle(
+                    screenLeft - (int)rainOffset.X,
+                    screenTop - (int)rainOffset.Y,
+                    width,
+                    height
+                ),
+                Color.White,
+                0,
+                new Vector2(1 - rainOffset.X % 1, 1 - rainOffset.Y % 1),
+                SpriteEffects.None,
+                0
+            );
 
             if (_currentState == States.OceanCamera)
             {
                 // draw the thunder
                 for (var i = 0; i < _thunder.Length; i++)
-                    _thunder[i].DrawBasic(spriteBatch, _thunderPositions[i] + new Vector2(cloudOffset, 0), Color.White);
+                    _thunder[i]
+                        .DrawBasic(
+                            spriteBatch,
+                            _thunderPositions[i] + new Vector2(cloudOffset, 0),
+                            Color.White
+                        );
             }
             else if (_currentState == States.OceanThunder)
             {
                 // draw the thunder on top of the boat
-                _thunder[0].DrawBasic(spriteBatch, _thunderPositions[0] + new Vector2(cloudOffset, 0), Color.White);
+                _thunder[0]
+                    .DrawBasic(
+                        spriteBatch,
+                        _thunderPositions[0] + new Vector2(cloudOffset, 0),
+                        Color.White
+                    );
 
                 if (_thunderTransition > 0)
                 {
                     var white = MathHelper.Clamp(_thunderTransition * 1.5f, 0, 1);
-                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(screenLeft, screenTop, width, height), Color.White * white);
+                    spriteBatch.Draw(
+                        Resources.SprWhite,
+                        new Rectangle(screenLeft, screenTop, width, height),
+                        Color.White * white
+                    );
 
                     // draw the boat
                     var boatWhite = MathHelper.Clamp(1.5f - _thunderTransition * 1.5f, 0, 1);
-                    DrawHelper.DrawNormalized(spriteBatch, _spriteOceanBoat, _oceanBoatPosition, Color.White * boatWhite);
+                    DrawHelper.DrawNormalized(
+                        spriteBatch,
+                        _spriteOceanBoat,
+                        _oceanBoatPosition,
+                        Color.White * boatWhite
+                    );
                 }
             }
         }
 
         private void DrawBeach(SpriteBatch spriteBatch)
         {
-            if (_currentState != States.StrandFading && _currentState != States.StrandCamera &&
-                _currentState != States.StrandMarin && _currentState != States.StrandPanning && 
-                _currentState != States.StrandLogo)
+            if (
+                _currentState != States.StrandFading
+                && _currentState != States.StrandCamera
+                && _currentState != States.StrandMarin
+                && _currentState != States.StrandPanning
+                && _currentState != States.StrandLogo
+            )
                 return;
 
-            var screenLeft = (int)Math.Floor(_cameraCenter.X) - (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
-            var screenRight = (int)Math.Ceiling(_cameraCenter.X) + (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
-            var screenTop = (int)Math.Floor(_cameraCenter.Y) - (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
-            var screenBottom = (int)Math.Ceiling(_cameraCenter.Y) + (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
+            var screenLeft =
+                (int)Math.Floor(_cameraCenter.X)
+                - (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
+            var screenRight =
+                (int)Math.Ceiling(_cameraCenter.X)
+                + (int)Math.Ceiling(Game1.WindowWidth / (double)_scale / 2.0);
+            var screenTop =
+                (int)Math.Floor(_cameraCenter.Y)
+                - (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
+            var screenBottom =
+                (int)Math.Ceiling(_cameraCenter.Y)
+                + (int)Math.Ceiling(Game1.WindowHeight / (double)_scale / 2.0);
             var width = screenRight - screenLeft + 2;
             var height = screenBottom - screenTop + 1;
 
             // draw the sky white
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                screenLeft, screenTop, width, -screenTop + 47), _titleScreenSky);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(screenLeft, screenTop, width, -screenTop + 47),
+                _titleScreenSky
+            );
 
-            var mountainOffset = new Vector2((float)(Math.Round(_cameraCenter.X * 0.5f * _scale) / _scale), 0);
+            var mountainOffset = new Vector2(
+                (float)(Math.Round(_cameraCenter.X * 0.5f * _scale) / _scale),
+                0
+            );
 
             // draw the clouds on the left
             var cloudLeft = -_spriteBackground.ScaledRectangle.Width / 2;
             if (screenLeft < cloudLeft + (int)mountainOffset.X)
-                spriteBatch.Draw(_sprCloud,
-                    new Rectangle(screenLeft, (int)_cloundLeftPosition.Y, (cloudLeft + (int)mountainOffset.X) - screenLeft, _sprCloud.Height),
-                    new Rectangle(screenLeft - (int)mountainOffset.X, 0, (cloudLeft + (int)mountainOffset.X) - screenLeft, _sprCloud.Height),
-                    Color.White, 0, new Vector2(-mountainOffset.X % 1, 0), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprCloud,
+                    new Rectangle(
+                        screenLeft,
+                        (int)_cloundLeftPosition.Y,
+                        (cloudLeft + (int)mountainOffset.X) - screenLeft,
+                        _sprCloud.Height
+                    ),
+                    new Rectangle(
+                        screenLeft - (int)mountainOffset.X,
+                        0,
+                        (cloudLeft + (int)mountainOffset.X) - screenLeft,
+                        _sprCloud.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(-mountainOffset.X % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
             // draw the clouds on the right
             var cloudRight = _spriteBackground.ScaledRectangle.Width / 2;
             if (cloudRight + (int)mountainOffset.X < screenRight)
-                spriteBatch.Draw(_sprCloud,
-                    new Rectangle(cloudRight + (int)mountainOffset.X, (int)_cloundLeftPosition.Y, screenRight - (cloudRight + (int)mountainOffset.X), _sprCloud.Height),
-                    new Rectangle(0, 0, screenRight - (cloudRight + (int)mountainOffset.X), _sprCloud.Height),
-                    Color.White, 0, new Vector2(-mountainOffset.X % 1, 0), SpriteEffects.None, 0);
+                spriteBatch.Draw(
+                    _sprCloud,
+                    new Rectangle(
+                        cloudRight + (int)mountainOffset.X,
+                        (int)_cloundLeftPosition.Y,
+                        screenRight - (cloudRight + (int)mountainOffset.X),
+                        _sprCloud.Height
+                    ),
+                    new Rectangle(
+                        0,
+                        0,
+                        screenRight - (cloudRight + (int)mountainOffset.X),
+                        _sprCloud.Height
+                    ),
+                    Color.White,
+                    0,
+                    new Vector2(-mountainOffset.X % 1, 0),
+                    SpriteEffects.None,
+                    0
+                );
 
             // draw the top of the mountain
-            spriteBatch.Draw(_sprIntro, new Vector2(-_spriteBackground.ScaledRectangle.Width / 2, 0) + mountainOffset, _spriteBackground.ScaledRectangle, Color.White);
+            spriteBatch.Draw(
+                _sprIntro,
+                new Vector2(-_spriteBackground.ScaledRectangle.Width / 2, 0) + mountainOffset,
+                _spriteBackground.ScaledRectangle,
+                Color.White
+            );
 
             // draw the left side of the mountain
-            spriteBatch.Draw(_sprIntro, _mountainLeftPosition + mountainOffset, _spriteMountain.SourceRectangle,
-                Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
+            spriteBatch.Draw(
+                _sprIntro,
+                _mountainLeftPosition + mountainOffset,
+                _spriteMountain.SourceRectangle,
+                Color.White,
+                0,
+                Vector2.Zero,
+                1,
+                SpriteEffects.FlipHorizontally,
+                0
+            );
 
             // draw the right side of the mountain
-            spriteBatch.Draw(_sprIntro, _mountainRightPosition + mountainOffset, _spriteMountain.SourceRectangle, Color.White);
+            spriteBatch.Draw(
+                _sprIntro,
+                _mountainRightPosition + mountainOffset,
+                _spriteMountain.SourceRectangle,
+                Color.White
+            );
 
             // draw the trees
             var treeOffset = new Vector2(_cameraCenter.X * 0.075f, 0);
-            spriteBatch.Draw(_sprWaves,
+            spriteBatch.Draw(
+                _sprWaves,
                 new Rectangle(screenLeft, (int)_treePosition.Y, width, _treesRectangle.Height),
-                new Rectangle(_treesRectangle.X + screenLeft - (int)treeOffset.X, _treesRectangle.Y, width, _treesRectangle.Height),
-                Color.White, 0, new Vector2(1 - treeOffset.X % 1, 0), SpriteEffects.None, 0);
+                new Rectangle(
+                    _treesRectangle.X + screenLeft - (int)treeOffset.X,
+                    _treesRectangle.Y,
+                    width,
+                    _treesRectangle.Height
+                ),
+                Color.White,
+                0,
+                new Vector2(1 - treeOffset.X % 1, 0),
+                SpriteEffects.None,
+                0
+            );
 
             // draw the strand
             var strandOffset = new Vector2(-_cameraCenter.X * 0.025f, 0);
-            spriteBatch.Draw(_sprWaves,
-                new Rectangle(screenLeft, (int)_treePosition.Y + _treesRectangle.Height, width, _sandRectangle.Height),
-                new Rectangle(_sandRectangle.X + screenLeft - (int)strandOffset.X, _sandRectangle.Y, width, _sandRectangle.Height),
-                Color.White, 0, new Vector2(1 - strandOffset.X % 1, 0), SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                _sprWaves,
+                new Rectangle(
+                    screenLeft,
+                    (int)_treePosition.Y + _treesRectangle.Height,
+                    width,
+                    _sandRectangle.Height
+                ),
+                new Rectangle(
+                    _sandRectangle.X + screenLeft - (int)strandOffset.X,
+                    _sandRectangle.Y,
+                    width,
+                    _sandRectangle.Height
+                ),
+                Color.White,
+                0,
+                new Vector2(1 - strandOffset.X % 1, 0),
+                SpriteEffects.None,
+                0
+            );
 
             // draw the waves
-            spriteBatch.Draw(_sprWaves,
+            spriteBatch.Draw(
+                _sprWaves,
                 new Rectangle(screenLeft, (int)_wavePosition.Y, width, _waveRectangle.Height),
-                new Rectangle(_waveRectangle.X + screenLeft - (int)strandOffset.X, _waveRectangle.Y + _currentFrame * 32, width, _waveRectangle.Height),
-                Color.White, 0, new Vector2(1 - strandOffset.X % 1, 0), SpriteEffects.None, 0);
+                new Rectangle(
+                    _waveRectangle.X + screenLeft - (int)strandOffset.X,
+                    _waveRectangle.Y + _currentFrame * 32,
+                    width,
+                    _waveRectangle.Height
+                ),
+                Color.White,
+                0,
+                new Vector2(1 - strandOffset.X % 1, 0),
+                SpriteEffects.None,
+                0
+            );
 
             // draw link and marin
             if (_logoState != 1)
@@ -944,38 +1394,56 @@ namespace ProjectZ.InGame.Screens
             }
             // draw the logo
             {
-                var logoHeight = (int)(_spriteLogo0.SourceRectangle.Height * (MathF.Sin(_logoState * MathF.PI - MathF.PI / 2) * 0.5f + 0.5f));
+                var logoHeight = (int)(
+                    _spriteLogo0.SourceRectangle.Height
+                    * (MathF.Sin(_logoState * MathF.PI - MathF.PI / 2) * 0.5f + 0.5f)
+                );
                 logoHeight += logoHeight % 2;
 
-                Rectangle logoAPosition = new Rectangle 
+                Rectangle logoAPosition = new Rectangle
                 {
-                     X = -_spriteBackground.SourceRectangle.Width / 2 + 16,
-                     Y = 3 + _spriteLogo0.SourceRectangle.Height / 2 - logoHeight / 2,
-                     Width = _spriteLogo0.SourceRectangle.Width,
-                     Height = logoHeight
+                    X = -_spriteBackground.SourceRectangle.Width / 2 + 16,
+                    Y = 3 + _spriteLogo0.SourceRectangle.Height / 2 - logoHeight / 2,
+                    Width = _spriteLogo0.SourceRectangle.Width,
+                    Height = logoHeight,
                 };
 
-                spriteBatch.Draw(_spriteLogo0.Texture, logoAPosition, _spriteLogo0.ScaledRectangle, Color.White);
+                spriteBatch.Draw(
+                    _spriteLogo0.Texture,
+                    logoAPosition,
+                    _spriteLogo0.ScaledRectangle,
+                    Color.White
+                );
 
-                Rectangle logoBPosition = new Rectangle 
+                Rectangle logoBPosition = new Rectangle
                 {
-                     X = -_spriteBackground.SourceRectangle.Width / 2 + 16,
-                     Y = 3 + _spriteLogo1.SourceRectangle.Height / 2 - logoHeight / 2,
-                     Width = _spriteLogo1.SourceRectangle.Width,
-                     Height = logoHeight
+                    X = -_spriteBackground.SourceRectangle.Width / 2 + 16,
+                    Y = 3 + _spriteLogo1.SourceRectangle.Height / 2 - logoHeight / 2,
+                    Width = _spriteLogo1.SourceRectangle.Width,
+                    Height = logoHeight,
                 };
-                spriteBatch.Draw(_spriteLogo1.Texture, logoBPosition, _spriteLogo1.ScaledRectangle, Color.White);
+                spriteBatch.Draw(
+                    _spriteLogo1.Texture,
+                    logoBPosition,
+                    _spriteLogo1.ScaledRectangle,
+                    Color.White
+                );
 
                 if (_logoState == 1)
                 {
                     Rectangle bigNPosition = new Rectangle
                     {
-                         X = -_spriteBackground.SourceRectangle.Width / 2 + 25,
-                         Y = _spriteBackground.SourceRectangle.Height / 2 + 4,
-                         Width = _spriteBigN.SourceRectangle.Width,
-                         Height = _spriteBigN.SourceRectangle.Height
+                        X = -_spriteBackground.SourceRectangle.Width / 2 + 25,
+                        Y = _spriteBackground.SourceRectangle.Height / 2 + 4,
+                        Width = _spriteBigN.SourceRectangle.Width,
+                        Height = _spriteBigN.SourceRectangle.Height,
                     };
-                    spriteBatch.Draw(_spriteBigN.Texture, bigNPosition, _spriteBigN.ScaledRectangle, Color.White);
+                    spriteBatch.Draw(
+                        _spriteBigN.Texture,
+                        bigNPosition,
+                        _spriteBigN.ScaledRectangle,
+                        Color.White
+                    );
 
                     _dxFadeInDelay += Game1.DeltaTime;
                     if (_dxFadeInDelay > 1000)
@@ -991,14 +1459,19 @@ namespace ProjectZ.InGame.Screens
                             offsetY = -12;
                         }
                         _dxFadeInAlpha += MathHelper.Clamp(Game1.DeltaTime / 1200.0f, 0, 1);
-                        Rectangle dxPosition = new Rectangle 
+                        Rectangle dxPosition = new Rectangle
                         {
-                             X = _spriteBackground.SourceRectangle.Width / 4 + offsetX,
-                             Y = _spriteBackground.SourceRectangle.Height / 4 + offsetY,
-                             Width = _spriteDX.SourceRectangle.Width,
-                             Height = _spriteDX.SourceRectangle.Height
+                            X = _spriteBackground.SourceRectangle.Width / 4 + offsetX,
+                            Y = _spriteBackground.SourceRectangle.Height / 4 + offsetY,
+                            Width = _spriteDX.SourceRectangle.Width,
+                            Height = _spriteDX.SourceRectangle.Height,
                         };
-                        spriteBatch.Draw(_spriteDX.Texture, dxPosition, _spriteDX.ScaledRectangle, Color.White * _dxFadeInAlpha); 
+                        spriteBatch.Draw(
+                            _spriteDX.Texture,
+                            dxPosition,
+                            _spriteDX.ScaledRectangle,
+                            Color.White * _dxFadeInAlpha
+                        );
                     }
                 }
             }
@@ -1012,7 +1485,11 @@ namespace ProjectZ.InGame.Screens
             if (_strandFadeCount > 0)
             {
                 var white = MathHelper.Clamp(_strandFadeCount / StrandFadeTime, 0, 1);
-                spriteBatch.Draw(Resources.SprWhite, new Rectangle(screenLeft, screenTop, width, height), Color.White * white);
+                spriteBatch.Draw(
+                    Resources.SprWhite,
+                    new Rectangle(screenLeft, screenTop, width, height),
+                    Color.White * white
+                );
             }
         }
     }

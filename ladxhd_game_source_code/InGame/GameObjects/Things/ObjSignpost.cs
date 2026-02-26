@@ -12,9 +12,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly string _signText;
         private readonly int _direction;
 
-        public ObjSignpost() : base("signpost_0") { }
+        public ObjSignpost()
+            : base("signpost_0") { }
 
-        public ObjSignpost(Map.Map map, int posX, int posY, string signText, string spriteId, Rectangle interactionRectangle, int direction) : base(map)
+        public ObjSignpost(
+            Map.Map map,
+            int posX,
+            int posY,
+            string signText,
+            string spriteId,
+            Rectangle interactionRectangle,
+            int direction
+        )
+            : base(map)
         {
             _signText = signText;
             _direction = direction;
@@ -23,17 +33,43 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntitySize = new Rectangle(-8, -16, 16, 16);
 
             var interactBox = new CBox(
-                posX + interactionRectangle.X, posY + interactionRectangle.Y, 0,
-                interactionRectangle.Width, interactionRectangle.Height, 16);
+                posX + interactionRectangle.X,
+                posY + interactionRectangle.Y,
+                0,
+                interactionRectangle.Width,
+                interactionRectangle.Height,
+                16
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(interactBox, OnInteract));
 
             if (string.IsNullOrEmpty(spriteId))
                 return;
 
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(interactBox, Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent(spriteId, EntityPosition, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowSpriteComponent(spriteId, EntityPosition));
-            AddComponent(CarriableComponent.Index, new CarriableComponent(new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)), null, null, null) { });
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(
+                    interactBox,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Hookshot
+                )
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent(spriteId, EntityPosition, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new DrawShadowSpriteComponent(spriteId, EntityPosition)
+            );
+            AddComponent(
+                CarriableComponent.Index,
+                new CarriableComponent(
+                    new CRectangle(EntityPosition, new Rectangle(-7, -14, 14, 14)),
+                    null,
+                    null,
+                    null
+                )
+                { }
+            );
         }
 
         private bool OnInteract()

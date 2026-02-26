@@ -13,7 +13,7 @@ namespace ProjectZ.InGame.SaveLoad
             var openFileDialog = new SaveFileDialog
             {
                 RestoreDirectory = true,
-                Filter = "Data (*.data)|*.data"
+                Filter = "Data (*.data)|*.data",
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -30,12 +30,13 @@ namespace ProjectZ.InGame.SaveLoad
                 RestoreDirectory = true,
             };
 
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
 
             data = LoadData(openFileDialog.FileName);
 #endif
         }
-        
+
         public static void SaveData(string path, string[,] data)
         {
             var writer = new StreamWriter(path);

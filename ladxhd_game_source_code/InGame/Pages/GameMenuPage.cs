@@ -13,24 +13,91 @@ namespace ProjectZ.InGame.Pages
         public GameMenuPage(int width, int height)
         {
             // main layout
-            var mainLayout = new InterfaceListLayout() { Size = new Point(width, height), Selectable = true };
+            var mainLayout = new InterfaceListLayout()
+            {
+                Size = new Point(width, height),
+                Selectable = true,
+            };
 
-            mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_header",
-                new Point(150, (int)(height * Values.MenuHeaderSize)), new Point(0, 0))
-            { TextColor = Color.White });
+            mainLayout.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "game_menu_header",
+                    new Point(150, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, 0)
+                )
+                {
+                    TextColor = Color.White,
+                }
+            );
 
             // Size = new Point(width, (int)(height * Values.MenuContentSize))
             var contentLayout = new InterfaceListLayout { AutoSize = true, Selectable = true };
 
-            contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_back_to_game", e => ClosePage()) { Margin = new Point(0, 2) });
-            contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_save_continue", OnClickSaveContinue) { Margin = new Point(0, 2) });
-            contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_settings", OnClickSettings) { Margin = new Point(0, 2) });
-            contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_exit_to_the_menu", OnClickBackToMenu) { Margin = new Point(0, 2) });
-            contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_exit_the_game", OnClickExitGame) { Margin = new Point(0, 2) });
+            contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(150, 25),
+                    Point.Zero,
+                    "game_menu_back_to_game",
+                    e => ClosePage()
+                )
+                {
+                    Margin = new Point(0, 2),
+                }
+            );
+            contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(150, 25),
+                    Point.Zero,
+                    "game_menu_save_continue",
+                    OnClickSaveContinue
+                )
+                {
+                    Margin = new Point(0, 2),
+                }
+            );
+            contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(150, 25),
+                    Point.Zero,
+                    "game_menu_settings",
+                    OnClickSettings
+                )
+                {
+                    Margin = new Point(0, 2),
+                }
+            );
+            contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(150, 25),
+                    Point.Zero,
+                    "game_menu_exit_to_the_menu",
+                    OnClickBackToMenu
+                )
+                {
+                    Margin = new Point(0, 2),
+                }
+            );
+            contentLayout.AddElement(
+                new InterfaceButton(
+                    new Point(150, 25),
+                    Point.Zero,
+                    "game_menu_exit_the_game",
+                    OnClickExitGame
+                )
+                {
+                    Margin = new Point(0, 2),
+                }
+            );
 
             mainLayout.AddElement(contentLayout);
 
-            mainLayout.AddElement(new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)) });
+            mainLayout.AddElement(
+                new InterfaceListLayout
+                {
+                    Size = new Point(width, (int)(height * Values.MenuFooterSize)),
+                }
+            );
 
             PageLayout = mainLayout;
             PageLayout.Select(InterfaceElement.Directions.Top, false);
@@ -53,7 +120,10 @@ namespace ProjectZ.InGame.Pages
         public override void Update(CButtons pressedButtons, GameTime gameTime)
         {
             base.Update(pressedButtons, gameTime);
-            if (ControlHandler.ButtonPressed(CButtons.Start) || ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+            if (
+                ControlHandler.ButtonPressed(CButtons.Start)
+                || ControlHandler.ButtonPressed(ControlHandler.CancelButton)
+            )
                 ClosePage();
         }
 

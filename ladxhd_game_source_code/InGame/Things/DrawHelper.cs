@@ -18,7 +18,8 @@ namespace ProjectZ.InGame.Things
 
         private static Matrix projectionMatrix;
         private static Matrix outMatrix;
-        public static VertexPositionPositionColorTexture[] ShadowVertexArray = new VertexPositionPositionColorTexture[MaxShadowIndices * 4];
+        public static VertexPositionPositionColorTexture[] ShadowVertexArray =
+            new VertexPositionPositionColorTexture[MaxShadowIndices * 4];
 
         public static void StartShadowDrawing()
         {
@@ -43,21 +44,47 @@ namespace ProjectZ.InGame.Things
         }
 
         // TODO_End: this should be done using normal spritebatch.Draw()
-        public static void DrawShadow(Texture2D sprImage, Vector2 drawPosition, Rectangle sourceRectangle,
-            float drawWidth, float drawHeight, bool mirror, float height, float rotation, Color color)
+        public static void DrawShadow(
+            Texture2D sprImage,
+            Vector2 drawPosition,
+            Rectangle sourceRectangle,
+            float drawWidth,
+            float drawHeight,
+            bool mirror,
+            float height,
+            float rotation,
+            Color color
+        )
         {
             //Game1.SpriteBatch.Draw(sprImage, drawPosition, sourceRectangle, color);
 
-            if (LastShadowTexture != null && (LastShadowTexture != sprImage ||
-                CurrentShadowIndex >= MaxShadowIndices || ShadowHeight != height || ShadowOffset != rotation))
+            if (
+                LastShadowTexture != null
+                && (
+                    LastShadowTexture != sprImage
+                    || CurrentShadowIndex >= MaxShadowIndices
+                    || ShadowHeight != height
+                    || ShadowOffset != rotation
+                )
+            )
             {
                 // draw the stored data
                 DrawIndexedDataNew();
                 CurrentShadowIndex = 0;
             }
 
-            SetVertexPtIndexed(ShadowVertexArray, CurrentShadowIndex * 4, drawPosition, sourceRectangle,
-                drawWidth, drawHeight, sprImage.Width, sprImage.Height, mirror, color);
+            SetVertexPtIndexed(
+                ShadowVertexArray,
+                CurrentShadowIndex * 4,
+                drawPosition,
+                sourceRectangle,
+                drawWidth,
+                drawHeight,
+                sprImage.Width,
+                sprImage.Height,
+                mirror,
+                color
+            );
 
             SetIndexBuffer(IndexDataShadow, CurrentShadowIndex * 6, CurrentShadowIndex * 4);
 
@@ -77,7 +104,12 @@ namespace ProjectZ.InGame.Things
             public Color Color;
 
             public VertexPositionPositionColorTexture(
-                Vector2 position, Vector2 textureCoordinate, Vector2 upperLeftPosition, Vector2 sourceSize, Color color)
+                Vector2 position,
+                Vector2 textureCoordinate,
+                Vector2 upperLeftPosition,
+                Vector2 sourceSize,
+                Color color
+            )
             {
                 Position = position;
                 TextureCoordinate = textureCoordinate;
@@ -94,10 +126,30 @@ namespace ProjectZ.InGame.Things
             {
                 var elements = new[]
                 {
-                    new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
-                    new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-                    new VertexElement(16, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 1),
-                    new VertexElement(24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2),
+                    new VertexElement(
+                        0,
+                        VertexElementFormat.Vector2,
+                        VertexElementUsage.Position,
+                        0
+                    ),
+                    new VertexElement(
+                        8,
+                        VertexElementFormat.Vector2,
+                        VertexElementUsage.TextureCoordinate,
+                        0
+                    ),
+                    new VertexElement(
+                        16,
+                        VertexElementFormat.Vector2,
+                        VertexElementUsage.TextureCoordinate,
+                        1
+                    ),
+                    new VertexElement(
+                        24,
+                        VertexElementFormat.Vector2,
+                        VertexElementUsage.TextureCoordinate,
+                        2
+                    ),
                     new VertexElement(32, VertexElementFormat.Color, VertexElementUsage.Color, 0),
                 };
                 VertexDeclaration = new VertexDeclaration(elements);
@@ -105,14 +157,22 @@ namespace ProjectZ.InGame.Things
         }
 
         public static void SetVertexPtIndexed(
-            VertexPositionPositionColorTexture[] buffer, int index,
-            Vector2 position, Rectangle sourceRectangle, float drawWidth, float drawHeight,
-            int textureWidth, int textureHeight, bool mirror, Color color)
+            VertexPositionPositionColorTexture[] buffer,
+            int index,
+            Vector2 position,
+            Rectangle sourceRectangle,
+            float drawWidth,
+            float drawHeight,
+            int textureWidth,
+            int textureHeight,
+            bool mirror,
+            Color color
+        )
         {
             var posLeft = position.X;
-            var posRight = position.X + drawWidth;// sourceRectangle.Width;
+            var posRight = position.X + drawWidth; // sourceRectangle.Width;
             var posTop = position.Y;
-            var posBottom = position.Y + drawHeight;// sourceRectangle.Height;
+            var posBottom = position.Y + drawHeight; // sourceRectangle.Height;
 
             var left = (!mirror ? sourceRectangle.X : sourceRectangle.Right) / (float)textureWidth;
             var right = (!mirror ? sourceRectangle.Right : sourceRectangle.X) / (float)textureWidth;
@@ -120,23 +180,45 @@ namespace ProjectZ.InGame.Things
             var bottom = sourceRectangle.Bottom / (float)textureHeight;
 
             buffer[index + 0] = new VertexPositionPositionColorTexture(
-                new Vector2(posLeft, posTop), new Vector2(left, top), position,
-                new Vector2(sourceRectangle.Width, sourceRectangle.Height), color);
+                new Vector2(posLeft, posTop),
+                new Vector2(left, top),
+                position,
+                new Vector2(sourceRectangle.Width, sourceRectangle.Height),
+                color
+            );
             buffer[index + 1] = new VertexPositionPositionColorTexture(
-                new Vector2(posRight, posTop), new Vector2(right, top), position,
-                new Vector2(sourceRectangle.Width, sourceRectangle.Height), color);
+                new Vector2(posRight, posTop),
+                new Vector2(right, top),
+                position,
+                new Vector2(sourceRectangle.Width, sourceRectangle.Height),
+                color
+            );
             buffer[index + 2] = new VertexPositionPositionColorTexture(
-                new Vector2(posLeft, posBottom), new Vector2(left, bottom), position,
-                new Vector2(sourceRectangle.Width, sourceRectangle.Height), color);
+                new Vector2(posLeft, posBottom),
+                new Vector2(left, bottom),
+                position,
+                new Vector2(sourceRectangle.Width, sourceRectangle.Height),
+                color
+            );
             buffer[index + 3] = new VertexPositionPositionColorTexture(
-                new Vector2(posRight, posBottom), new Vector2(right, bottom), position,
-                new Vector2(sourceRectangle.Width, sourceRectangle.Height), color);
+                new Vector2(posRight, posBottom),
+                new Vector2(right, bottom),
+                position,
+                new Vector2(sourceRectangle.Width, sourceRectangle.Height),
+                color
+            );
         }
 
         public static void DrawIndexedDataNew()
         {
-            projectionMatrix = Matrix.CreateOrthographicOffCenter(0, 
-                Game1.GameManager.CurrentRenderWidth, Game1.GameManager.CurrentRenderHeight, 0, 0, -1);
+            projectionMatrix = Matrix.CreateOrthographicOffCenter(
+                0,
+                Game1.GameManager.CurrentRenderWidth,
+                Game1.GameManager.CurrentRenderHeight,
+                0,
+                0,
+                -1
+            );
             outMatrix = MapManager.Camera.TransformMatrix * projectionMatrix;
 
             Resources.FullShadowEffect.Parameters["xViewProjection"].SetValue(outMatrix);
@@ -148,7 +230,14 @@ namespace ProjectZ.InGame.Things
                 pass.Apply();
                 Game1.Graphics.GraphicsDevice.Textures[0] = LastShadowTexture;
                 Game1.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(
-                    PrimitiveType.TriangleList, ShadowVertexArray, 0, CurrentShadowIndex * 4, IndexDataShadow, 0, CurrentShadowIndex * 2);
+                    PrimitiveType.TriangleList,
+                    ShadowVertexArray,
+                    0,
+                    CurrentShadowIndex * 4,
+                    IndexDataShadow,
+                    0,
+                    CurrentShadowIndex * 2
+                );
             }
         }
 
@@ -163,38 +252,97 @@ namespace ProjectZ.InGame.Things
             buffer[position + 5] = (short)(offset + 3);
         }
 
-        public static void DrawLight(SpriteBatch spriteBatch, Rectangle lightRectangle, Color lightColor)
+        public static void DrawLight(
+            SpriteBatch spriteBatch,
+            Rectangle lightRectangle,
+            Color lightColor
+        )
         {
             spriteBatch.Draw(Resources.SprLight, lightRectangle, lightColor);
         }
 
-        public static void DrawCenter(SpriteBatch spriteBatch, Texture2D sprTexture, Point offset,
-            Rectangle centerRectangle, Rectangle sourceRectangle, int scale)
+        public static void DrawCenter(
+            SpriteBatch spriteBatch,
+            Texture2D sprTexture,
+            Point offset,
+            Rectangle centerRectangle,
+            Rectangle sourceRectangle,
+            int scale
+        )
         {
-            spriteBatch.Draw(sprTexture, new Rectangle(
-                offset.X + (centerRectangle.X + centerRectangle.Width / 2 - sourceRectangle.Width / 2) * scale,
-                offset.Y + (centerRectangle.Y + centerRectangle.Height / 2 - sourceRectangle.Height / 2) * scale,
-                sourceRectangle.Width * scale,
-                sourceRectangle.Height * scale), sourceRectangle, Color.White);
+            spriteBatch.Draw(
+                sprTexture,
+                new Rectangle(
+                    offset.X
+                        + (
+                            centerRectangle.X
+                            + centerRectangle.Width / 2
+                            - sourceRectangle.Width / 2
+                        ) * scale,
+                    offset.Y
+                        + (
+                            centerRectangle.Y
+                            + centerRectangle.Height / 2
+                            - sourceRectangle.Height / 2
+                        ) * scale,
+                    sourceRectangle.Width * scale,
+                    sourceRectangle.Height * scale
+                ),
+                sourceRectangle,
+                Color.White
+            );
         }
 
-        public static void DrawNormalized(SpriteBatch spriteBatch, Texture2D texture,
-            Vector2 position, Rectangle sourceRectangle, Color color, float scale = 1.0f)
+        public static void DrawNormalized(
+            SpriteBatch spriteBatch,
+            Texture2D texture,
+            Vector2 position,
+            Rectangle sourceRectangle,
+            Color color,
+            float scale = 1.0f
+        )
         {
             var normalizedPosition = new Vector2(
                 (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale,
-                (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale);
+                (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale
+            );
 
-            spriteBatch.Draw(texture, normalizedPosition, sourceRectangle, color, 0, Vector2.Zero, new Vector2(scale), SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                texture,
+                normalizedPosition,
+                sourceRectangle,
+                color,
+                0,
+                Vector2.Zero,
+                new Vector2(scale),
+                SpriteEffects.None,
+                0
+            );
         }
 
-        public static void DrawNormalized(SpriteBatch spriteBatch, DictAtlasEntry sprite, Vector2 position, Color color)
+        public static void DrawNormalized(
+            SpriteBatch spriteBatch,
+            DictAtlasEntry sprite,
+            Vector2 position,
+            Color color
+        )
         {
             var normalizedPosition = new Vector2(
                 (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale,
-                (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale);
+                (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale
+            );
 
-            spriteBatch.Draw(sprite.Texture, normalizedPosition, sprite.ScaledRectangle, color, 0, sprite.Origin, new Vector2(sprite.Scale), SpriteEffects.None, 0);
+            spriteBatch.Draw(
+                sprite.Texture,
+                normalizedPosition,
+                sprite.ScaledRectangle,
+                color,
+                0,
+                sprite.Origin,
+                new Vector2(sprite.Scale),
+                SpriteEffects.None,
+                0
+            );
         }
     }
 }

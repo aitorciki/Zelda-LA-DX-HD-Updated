@@ -14,9 +14,18 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private bool _isSpawned;
 
-        public ObjPositionDialog() : base("editor position dialog") { }
+        public ObjPositionDialog()
+            : base("editor position dialog") { }
 
-        public ObjPositionDialog(Map.Map map, int posX, int posY, string strKey, string strValue, string dialogName) : base(map)
+        public ObjPositionDialog(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            string strValue,
+            string dialogName
+        )
+            : base(map)
         {
             _strKey = strKey;
             _strValue = strValue;
@@ -34,7 +43,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             // add key change listener
             if (!string.IsNullOrEmpty(_strKey))
             {
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(KeyChanged)
+                );
                 // if we spawn a door we need to use this here for objects refering to the player enter position in the init method
                 KeyChanged();
             }

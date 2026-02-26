@@ -45,14 +45,14 @@ namespace ProjectZ.InGame.Pages
         {
             { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' },
             { 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '-' },
-            { CapsLockCharacter, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ', BackCharacter }
+            { CapsLockCharacter, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ', BackCharacter },
         };
 
         private char[,] _charactersLower = new char[,]
         {
             { 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' },
             { 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-' },
-            { CapsLockCharacter, 'z', 'x', 'c', 'v', 'b', 'n', 'm', ' ', BackCharacter }
+            { CapsLockCharacter, 'z', 'x', 'c', 'v', 'b', 'n', 'm', ' ', BackCharacter },
         };
 
         public NewGamePage(int width, int height)
@@ -60,29 +60,56 @@ namespace ProjectZ.InGame.Pages
             EnableTooltips = true;
 
             // Create the main layout that holds everything.
-            _newGameLayout = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
+            _newGameLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, height),
+                Selectable = true,
+            };
 
             // Create the name entry window.
-            _newGameLayout.AddElement(new InterfaceLabel("new_game_menu_save_name") { Margin = new Point(0, 2) });
-            _labelNameInput = new InterfaceLabel(null) { Selectable = true, Size = new Point(200, 20) };
+            _newGameLayout.AddElement(
+                new InterfaceLabel("new_game_menu_save_name") { Margin = new Point(0, 2) }
+            );
+            _labelNameInput = new InterfaceLabel(null)
+            {
+                Selectable = true,
+                Size = new Point(200, 20),
+            };
             var layerButton = new InterfaceListLayout { Size = new Point(200, 20) };
             layerButton.AddElement(_labelNameInput);
-            _nameEntryButton = new InterfaceButton { Size = new Point(200, 20), InsideElement = layerButton };
+            _nameEntryButton = new InterfaceButton
+            {
+                Size = new Point(200, 20),
+                InsideElement = layerButton,
+            };
             _newGameLayout.AddElement(_nameEntryButton);
 
             // Create the keyboard layout.
             {
-                _keyboardLayout = new InterfaceListLayout { AutoSize = true, Margin = new Point(0, 5), Selectable = true };
+                _keyboardLayout = new InterfaceListLayout
+                {
+                    AutoSize = true,
+                    Margin = new Point(0, 5),
+                    Selectable = true,
+                };
 
                 var keyWidth = 20;
                 var keyHeight = 20;
 
-                _keyboardButtons = new InterfaceButton[_charactersUpper.GetLength(0), _charactersUpper.GetLength(1)];
+                _keyboardButtons = new InterfaceButton[
+                    _charactersUpper.GetLength(0),
+                    _charactersUpper.GetLength(1)
+                ];
                 _keyboardRows = new InterfaceListLayout[_charactersUpper.GetLength(0)];
 
                 for (var y = 0; y < _charactersUpper.GetLength(0); y++)
                 {
-                    _keyboardRows[y] = new InterfaceListLayout { AutoSize = true, HorizontalMode = true, Selectable = true };
+                    _keyboardRows[y] = new InterfaceListLayout
+                    {
+                        AutoSize = true,
+                        HorizontalMode = true,
+                        Selectable = true,
+                    };
 
                     for (int x = 0; x < _charactersUpper.GetLength(1); x++)
                     {
@@ -92,8 +119,18 @@ namespace ProjectZ.InGame.Pages
                         var letterX = x;
                         var letterY = y;
 
-                        _keyboardButtons[y, x] = new InterfaceButton(new Point(keyWidth, keyHeight), new Point(1, 1), "", element => KeyPressed(letterX, letterY)) { CornerRadius = 0 };
-                        ((InterfaceLabel)_keyboardButtons[y, x].InsideElement).SetText(_charactersUpper[y, x].ToString());
+                        _keyboardButtons[y, x] = new InterfaceButton(
+                            new Point(keyWidth, keyHeight),
+                            new Point(1, 1),
+                            "",
+                            element => KeyPressed(letterX, letterY)
+                        )
+                        {
+                            CornerRadius = 0,
+                        };
+                        ((InterfaceLabel)_keyboardButtons[y, x].InsideElement).SetText(
+                            _charactersUpper[y, x].ToString()
+                        );
 
                         if (_charactersUpper[y, x] == CapsLockCharacter)
                             _capsLockButton = _keyboardButtons[y, x];
@@ -107,16 +144,56 @@ namespace ProjectZ.InGame.Pages
             }
 
             // Create a slider to select the game type.
-            _gameTypeLayout = new InterfaceListLayout { Size = new Point(260, 22), HorizontalMode = true, Selectable = true };
-            _gameTypeSlider = new InterfaceSlider(Resources.GameFont, "new_game_menu_game_type", 260, 11, new Point(1, 2), 0, 3, 1, Game1.GameManager.GameType, 
-                number => { Game1.GameManager.GameType = number; }) { SetString = number => GameTypeScaleSliderAdjustment(number) };
+            _gameTypeLayout = new InterfaceListLayout
+            {
+                Size = new Point(260, 22),
+                HorizontalMode = true,
+                Selectable = true,
+            };
+            _gameTypeSlider = new InterfaceSlider(
+                Resources.GameFont,
+                "new_game_menu_game_type",
+                260,
+                11,
+                new Point(1, 2),
+                0,
+                3,
+                1,
+                Game1.GameManager.GameType,
+                number =>
+                {
+                    Game1.GameManager.GameType = number;
+                }
+            )
+            {
+                SetString = number => GameTypeScaleSliderAdjustment(number),
+            };
             _gameTypeLayout.AddElement(_gameTypeSlider);
             _newGameLayout.AddElement(_gameTypeLayout);
 
             // Create the "Back" and "Start" buttons.
-            _bottomLayout = new InterfaceListLayout { Size = new Point(260, 34), HorizontalMode = true, Selectable = true };
-            _bottomLayout.AddElement(new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_back", OnClickBackButton));
-            _bottomLayout.AddElement(_startGameButton = new InterfaceButton(new Point(110, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
+            _bottomLayout = new InterfaceListLayout
+            {
+                Size = new Point(260, 34),
+                HorizontalMode = true,
+                Selectable = true,
+            };
+            _bottomLayout.AddElement(
+                new InterfaceButton(
+                    new Point(110, 20),
+                    new Point(1, 0),
+                    "new_game_menu_back",
+                    OnClickBackButton
+                )
+            );
+            _bottomLayout.AddElement(
+                _startGameButton = new InterfaceButton(
+                    new Point(110, 20),
+                    new Point(1, 0),
+                    "new_game_menu_start_game",
+                    OnClickNewGameButton
+                )
+            );
             _bottomLayout.Select(InterfaceElement.Directions.Right, false);
             _bottomLayout.Deselect(false);
             _newGameLayout.AddElement(_bottomLayout);
@@ -166,19 +243,23 @@ namespace ProjectZ.InGame.Pages
                 0 => Game1.LanguageManager.GetString("new_game_menu_gtype_settings", "error"),
                 1 => Game1.LanguageManager.GetString("new_game_menu_gtype_modern", "error"),
                 2 => Game1.LanguageManager.GetString("new_game_menu_gtype_classic", "error"),
-                3 => Game1.LanguageManager.GetString("new_game_menu_gtype_hybrid", "error")
+                3 => Game1.LanguageManager.GetString("new_game_menu_gtype_hybrid", "error"),
             };
             return " " + gameType;
         }
 
         private void UpdateKeyboard()
         {
-            _capsLockButton.Color = _upperMode ? Values.MenuButtonColorSelected : Values.MenuButtonColor;
+            _capsLockButton.Color = _upperMode
+                ? Values.MenuButtonColorSelected
+                : Values.MenuButtonColor;
 
             for (var y = 0; y < _charactersUpper.GetLength(0); y++)
-                for (int x = 0; x < _charactersUpper.GetLength(1); x++)
-                    if (_keyboardButtons[y, x] != null)
-                        ((InterfaceLabel)_keyboardButtons[y, x].InsideElement).SetText((_upperMode ? _charactersUpper[y, x] : _charactersLower[y, x]).ToString());
+            for (int x = 0; x < _charactersUpper.GetLength(1); x++)
+                if (_keyboardButtons[y, x] != null)
+                    ((InterfaceLabel)_keyboardButtons[y, x].InsideElement).SetText(
+                        (_upperMode ? _charactersUpper[y, x] : _charactersLower[y, x]).ToString()
+                    );
         }
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)
@@ -208,7 +289,6 @@ namespace ProjectZ.InGame.Pages
                 // The "Back" button was pressed on controller only.
                 if (ControlHandler.ButtonPressed(ControlHandler.CancelButton, true))
                     Game1.UiPageManager.PopPage();
-                
                 // When pressing/holding the "Delete" key.
                 else if (InputHandler.KeyDown(Keys.Back))
                 {
@@ -263,8 +343,12 @@ namespace ProjectZ.InGame.Pages
                     _startError = false;
             }
             // Allow toggling caps lock with the LT or RT buttons.
-            else if (ControlHandler.ButtonPressed(CButtons.LT, true) || ControlHandler.ButtonPressed(CButtons.RT, true) || 
-                ControlHandler.ButtonPressed(CButtons.LB, true) || ControlHandler.ButtonPressed(CButtons.RB, true))
+            else if (
+                ControlHandler.ButtonPressed(CButtons.LT, true)
+                || ControlHandler.ButtonPressed(CButtons.RT, true)
+                || ControlHandler.ButtonPressed(CButtons.LB, true)
+                || ControlHandler.ButtonPressed(CButtons.RB, true)
+            )
             {
                 _upperMode = !_upperMode;
                 UpdateKeyboard();
@@ -281,7 +365,9 @@ namespace ProjectZ.InGame.Pages
                 }
             }
             // Update the entered name shown to the player.
-            _labelNameInput.SetText(_strNameInput + ((gameTime.TotalGameTime.Milliseconds % 500) < 250 ? "_" : " "));
+            _labelNameInput.SetText(
+                _strNameInput + ((gameTime.TotalGameTime.Milliseconds % 500) < 250 ? "_" : " ")
+            );
 
             // Allow forcefully starting a new game.
             if (ControlHandler.ButtonPressed(CButtons.Start))
@@ -344,7 +430,7 @@ namespace ProjectZ.InGame.Pages
             if (name == "totaka" || name == "totakeke" || name == "moyse")
             {
                 Game1.GameManager.SetMusic(59, 2);
-                Game1.UiPageManager.PopPage(SkipSound:true);
+                Game1.UiPageManager.PopPage(SkipSound: true);
             }
             else if (name == "zelda")
             {
@@ -357,7 +443,10 @@ namespace ProjectZ.InGame.Pages
                 Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);
                 Game1.GameManager.StartNewGame(_selectedSaveSlot, _strNameInput);
                 Game1.GameManager.SetGameTypeSettings();
-                Game1.UiPageManager.PopAllPages(PageManager.TransitionAnimation.TopToBottom, PageManager.TransitionAnimation.TopToBottom);
+                Game1.UiPageManager.PopAllPages(
+                    PageManager.TransitionAnimation.TopToBottom,
+                    PageManager.TransitionAnimation.TopToBottom
+                );
             }
         }
 
@@ -366,7 +455,12 @@ namespace ProjectZ.InGame.Pages
             Game1.UiPageManager.PopPage();
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
+        public override void Draw(
+            SpriteBatch spriteBatch,
+            Vector2 position,
+            int height,
+            float alpha
+        )
         {
             // Always draw the menu even when not showing tooltips.
             base.Draw(spriteBatch, position, height, alpha);
@@ -390,10 +484,18 @@ namespace ProjectZ.InGame.Pages
                 return Game1.LanguageManager.GetString("tooltip_newgame_noname", "error");
 
             // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            switch (index)
             {
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_entry", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_keyboard", "error"); break; }
+                case 1:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_newgame_entry", "error");
+                    break;
+                }
+                case 2:
+                {
+                    tooltip = Game1.LanguageManager.GetString("tooltip_newgame_keyboard", "error");
+                    break;
+                }
             }
 
             // Return the tooltip if index is between 1 and 3.
@@ -407,12 +509,40 @@ namespace ProjectZ.InGame.Pages
                 index = _gameTypeSlider.CurrentStep;
 
                 // Use the selected index to determine which tooltip to show.
-                switch (index) 
+                switch (index)
                 {
-                    case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype0", "error"); break; }
-                    case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype1", "error"); break; }
-                    case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype2", "error"); break; }
-                    case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_gametype3", "error"); break; }
+                    case 0:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_newgame_gametype0",
+                            "error"
+                        );
+                        break;
+                    }
+                    case 1:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_newgame_gametype1",
+                            "error"
+                        );
+                        break;
+                    }
+                    case 2:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_newgame_gametype2",
+                            "error"
+                        );
+                        break;
+                    }
+                    case 3:
+                    {
+                        tooltip = Game1.LanguageManager.GetString(
+                            "tooltip_newgame_gametype3",
+                            "error"
+                        );
+                        break;
+                    }
                 }
                 // Return one of the tooltips.
                 return tooltip;
@@ -425,10 +555,18 @@ namespace ProjectZ.InGame.Pages
                 index = _bottomLayout.SelectionIndex;
 
                 // Use the selected index to determine which tooltip to show.
-                switch (index) 
+                switch (index)
                 {
-                    case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_back", "error"); break; }
-                    case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_newgame_start", "error"); break; }
+                    case 0:
+                    {
+                        tooltip = Game1.LanguageManager.GetString("tooltip_newgame_back", "error");
+                        break;
+                    }
+                    case 1:
+                    {
+                        tooltip = Game1.LanguageManager.GetString("tooltip_newgame_start", "error");
+                        break;
+                    }
                 }
                 // Return one of the two tooltips.
                 return tooltip;

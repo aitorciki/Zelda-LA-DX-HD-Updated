@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
+using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using ProjectZ.InGame.GameObjects.Base.Components.AI;
 
 namespace ProjectZ.InGame.GameObjects.Enemies
 {
@@ -16,7 +16,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly AiComponent _aiComponent;
         private readonly CSprite _sprite;
 
-        public BossHotHeadSplash(Map.Map map, Vector2 position, Vector2 velocity) : base(map)
+        public BossHotHeadSplash(Map.Map map, Vector2 position, Vector2 velocity)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -35,7 +36,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 CollisionTypes = Values.CollisionTypes.None,
                 Velocity = new Vector3(0, 0, 2.25f),
                 VelocityTarget = new Vector2(velocity.X, velocity.Y),
-                IsGrounded = false
+                IsGrounded = false,
             };
 
             _aiComponent = new AiComponent();
@@ -52,8 +53,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 16));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DamageFieldComponent.Index,
+                new DamageFieldComponent(damageCollider, HitType.Enemy, 16)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
         }
 
         private void UpdateFlying()

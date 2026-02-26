@@ -15,12 +15,14 @@ namespace ProjectZ.InGame.GameSystems
 
         public Color TransitionColor = Color.White;
 
-        private Vector2[] _cameraTargets = new Vector2[] {
+        private Vector2[] _cameraTargets = new Vector2[]
+        {
             new Vector2(248, 1344),
             new Vector2(120, 1488),
             new Vector2(416, 1984),
             new Vector2(256, 704),
-            new Vector2(400, 1216) };
+            new Vector2(400, 1216),
+        };
 
         private float _counter;
         private const float ChangeTargetTime = 5350;
@@ -77,13 +79,15 @@ namespace ProjectZ.InGame.GameSystems
                 _targetIndex++;
                 if (_targetIndex < _cameraTargets.Length)
                 {
-                    Game1.GameManager.MapManager.CurrentMap.CameraTarget = _cameraTargets[_targetIndex];
+                    Game1.GameManager.MapManager.CurrentMap.CameraTarget = _cameraTargets[
+                        _targetIndex
+                    ];
                     MapManager.Camera.ForceUpdate(Game1.GameManager.MapManager.GetCameraTarget());
                 }
                 else
                 {
                     _finished = true;
-                    
+
                     // switch back to the ending map
                     var oldMap = Game1.GameManager.MapManager.CurrentMap;
                     Game1.GameManager.MapManager.CurrentMap = Game1.GameManager.MapManager.NextMap;
@@ -103,12 +107,31 @@ namespace ProjectZ.InGame.GameSystems
             var fadePercentage = 0f;
             // fade out
             if (_counter < FadeTime + FadeLock)
-                fadePercentage = 1 - MathF.Sin(MathHelper.Clamp((_counter - FadeLock) / FadeTime, 0, 1) * MathF.PI * 0.5f);
+                fadePercentage =
+                    1
+                    - MathF.Sin(
+                        MathHelper.Clamp((_counter - FadeLock) / FadeTime, 0, 1) * MathF.PI * 0.5f
+                    );
             // fade in
             else if (ChangeTargetTime - FadeTime - FadeLock < _counter)
-                fadePercentage = MathF.Sin((1 - MathHelper.Clamp((ChangeTargetTime - FadeLock - _counter) / FadeTime, 0, 1)) * MathF.PI * 0.5f);
+                fadePercentage = MathF.Sin(
+                    (
+                        1
+                        - MathHelper.Clamp(
+                            (ChangeTargetTime - FadeLock - _counter) / FadeTime,
+                            0,
+                            1
+                        )
+                    )
+                        * MathF.PI
+                        * 0.5f
+                );
 
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, Game1.RenderWidth, Game1.RenderHeight), TransitionColor * fadePercentage);
+            spriteBatch.Draw(
+                Resources.SprWhite,
+                new Rectangle(0, 0, Game1.RenderWidth, Game1.RenderHeight),
+                TransitionColor * fadePercentage
+            );
             spriteBatch.End();
         }
 
@@ -140,7 +163,9 @@ namespace ProjectZ.InGame.GameSystems
             Game1.GameManager.MapManager.NextMap.Objects.LoadObjects();
 
             // These damn birds are always causing me problems.
-            var ravenList = Game1.GameManager.MapManager.NextMap.Objects.GetObjectsOfType(typeof(EnemyRaven));
+            var ravenList = Game1.GameManager.MapManager.NextMap.Objects.GetObjectsOfType(
+                typeof(EnemyRaven)
+            );
 
             // Completely disable them from being able to do anything.
             foreach (EnemyRaven raven in ravenList)

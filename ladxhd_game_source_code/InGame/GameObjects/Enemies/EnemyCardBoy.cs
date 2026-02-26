@@ -32,17 +32,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private int _dir;
 
         private string ActiveKey => _isRespawn ? _keyRespawn : _key;
+
         private int GetCardValue(int i) => Game1.GameManager.SaveManager.GetInt(ActiveKey + i, -1);
+
         private void SetSolved() => Game1.GameManager.SaveManager.SetString(ActiveKey, "1");
 
-        public EnemyCardBoy() : base("card boy") { }
+        public EnemyCardBoy()
+            : base("card boy") { }
 
-        public EnemyCardBoy(Map.Map map, int posX, int posY, int index, string key) : base(map)
+        public EnemyCardBoy(Map.Map map, int posX, int posY, int index, string key)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -69,17 +73,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator = AnimatorSaveLoad.LoadAnimator("Enemies/card boy");
 
             _sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                _sprite,
+                new Vector2(-8, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -7, -10, 14, 10, 8)
             {
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Enemy |
-                                 Values.CollisionTypes.Player |
-                                 Values.CollisionTypes.Field |
-                                 Values.CollisionTypes.NPCWall,
-                AvoidTypes =     Values.CollisionTypes.Hole,
+                CollisionTypes =
+                    Values.CollisionTypes.Normal
+                    | Values.CollisionTypes.Enemy
+                    | Values.CollisionTypes.Player
+                    | Values.CollisionTypes.Field
+                    | Values.CollisionTypes.NPCWall,
+                AvoidTypes = Values.CollisionTypes.Hole,
                 FieldRectangle = map.GetField(posX, posY),
                 Drag = 0.75f,
             };
@@ -104,14 +113,23 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -8, -15, 16, 14, 8);
             var pushableBox = new CBox(EntityPosition, -7, -14, 14, 13, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damgeField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damgeField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
             AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
             AddComponent(PushableComponent.Index, new PushableComponent(pushableBox, OnPush));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
         }
 
@@ -157,8 +175,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void KeyChanged()
         {
             // reset boy
-            if (_aiComponent.CurrentStateId == "waiting" &&
-                GetCardValue(_index) == -1)
+            if (_aiComponent.CurrentStateId == "waiting" && GetCardValue(_index) == -1)
                 _aiComponent.ChangeState("idle");
 
             if (Game1.GameManager.SaveManager.GetString(ActiveKey) == "1")
@@ -174,7 +191,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             _isRemoving = true;
 
-            Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X - 16, (int)EntityPosition.Y - 24, Values.LayerTop, "Particles/explosion", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X - 16,
+                    (int)EntityPosition.Y - 24,
+                    Values.LayerTop,
+                    "Particles/explosion",
+                    "run",
+                    true
+                )
+            );
             Map.Objects.DeleteObjects.Add(this);
 
             string strObject = null;
@@ -186,7 +213,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             if (strObject != null)
             {
-                var objItem = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", null, strObject, null, true);
+                var objItem = new ObjItem(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y - 8,
+                    "j",
+                    null,
+                    strObject,
+                    null,
+                    true
+                );
                 Map.Objects.SpawnObject(objItem);
             }
         }
@@ -253,7 +289,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Game1.GameManager.SaveManager.RemoveString(ActiveKey);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -276,10 +318,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (type == PushableComponent.PushType.Impact)
             {
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
-                if (_aiComponent.CurrentStateId != "damage" &&
-                    _aiComponent.CurrentStateId != "waiting")
+                if (
+                    _aiComponent.CurrentStateId != "damage"
+                    && _aiComponent.CurrentStateId != "waiting"
+                )
                     AddDamage();
             }
 

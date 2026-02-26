@@ -21,16 +21,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _damage;
         private Box _hitBox;
 
-        int   powder_damage = 2;
+        int powder_damage = 2;
         float powder_gravity = 5.00f;
-        bool  light_source = true;
-        int   light_red = 230;
-        int   light_grn = 230;
-        int   light_blu = 255;
+        bool light_source = true;
+        int light_red = 230;
+        int light_grn = 230;
+        int light_blu = 255;
         float light_bright = 0.35f;
-        int   light_size = 20;
+        int light_size = 20;
 
-        public ObjPowder(Map.Map map, float posX, float posY, float posZ, bool playerPowder) : base(map)
+        public ObjPowder(Map.Map map, float posX, float posY, float posZ, bool playerPowder)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ObjPowder.lahdmod");
@@ -40,7 +41,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             EntityPosition = new CPosition(posX, posY, posZ);
             EntitySize = new Rectangle(-8, -16, 16, 16);
-             
+
             _points[0] = new Vector3(posX, posY, posZ + 7);
             _points[1] = new Vector3(posX - 1, posY, posZ + 6);
             _points[2] = new Vector3(posX + 1, posY, posZ + 6);
@@ -60,7 +61,10 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _damage = true;
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerPlayer, EntityPosition)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
@@ -69,17 +73,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             var key = MapManager.ObjLink.Direction;
             var offsets = key switch
             {
-                1 => ( -3, -13, +10, +16),
-                2 => ( -8, -10, +16, +10),
-                3 => ( -7, -10, +10, +16),
-                _ => ( -8, -10, +16, +10)
+                1 => (-3, -13, +10, +16),
+                2 => (-8, -10, +16, +10),
+                3 => (-7, -10, +10, +16),
+                _ => (-8, -10, +16, +10),
             };
             var (xOff, yOff, wOff, hOff) = offsets;
 
-            return new Box(
-                EntityPosition.X + xOff,
-                EntityPosition.Y + yOff, 0,
-                wOff, hOff, 8);
+            return new Box(EntityPosition.X + xOff, EntityPosition.Y + yOff, 0, wOff, hOff, 8);
         }
 
         public void Update()
@@ -92,7 +93,15 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     _damage = true;
                     _hitBox = GetPowderAttackBox();
-                    Map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y), _hitBox, HitType.MagicPowder, powder_damage, false, false);
+                    Map.Objects.Hit(
+                        this,
+                        new Vector2(EntityPosition.X, EntityPosition.Y),
+                        _hitBox,
+                        HitType.MagicPowder,
+                        powder_damage,
+                        false,
+                        false
+                    );
                 }
                 if (_points[i].Z <= 0)
                 {
@@ -117,9 +126,15 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             for (var i = 0; i < _points.Length; i++)
             {
-                spriteBatch.Draw(Resources.SprItem, new Vector2(
-                    _points[i].X - _sourceRectangle.Width / 2,
-                    _points[i].Y - _sourceRectangle.Height - _points[i].Z), _sourceRectangle, Color.White * _live[i]);
+                spriteBatch.Draw(
+                    Resources.SprItem,
+                    new Vector2(
+                        _points[i].X - _sourceRectangle.Width / 2,
+                        _points[i].Y - _sourceRectangle.Height - _points[i].Z
+                    ),
+                    _sourceRectangle,
+                    Color.White * _live[i]
+                );
             }
         }
 
@@ -133,7 +148,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (light_source && GameSettings.ObjectLights)
             {
                 for (var i = 0; i < _points.Length; i++)
-                    DrawHelper.DrawLight(spriteBatch, new Rectangle((int)_points[i].X - light_size / 2, (int)(_points[i].Y - _points[i].Z) - 2 - light_size / 2, light_size, light_size), new Color(light_red, light_grn, light_blu) * light_bright * _live[i]);
+                    DrawHelper.DrawLight(
+                        spriteBatch,
+                        new Rectangle(
+                            (int)_points[i].X - light_size / 2,
+                            (int)(_points[i].Y - _points[i].Z) - 2 - light_size / 2,
+                            light_size,
+                            light_size
+                        ),
+                        new Color(light_red, light_grn, light_blu) * light_bright * _live[i]
+                    );
             }
         }
     }

@@ -24,7 +24,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private readonly int _despawnTime = 250;
 
-        public ObjLeaf(Map.Map map, int posX, int posY, float posZ, Vector2 velocity) : base(map)
+        public ObjLeaf(Map.Map map, int posX, int posY, float posZ, Vector2 velocity)
+            : base(map)
         {
             _velocity = velocity;
 
@@ -39,7 +40,9 @@ namespace ProjectZ.InGame.GameObjects.Things
             var stateFalling = new AiState(StateFalling);
 
             var stateLieing = new AiState(StateLie);
-            stateLieing.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("fading"), 250, 750));
+            stateLieing.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("fading"), 250, 750)
+            );
 
             var stateDespawning = new AiState(StateFading);
             stateDespawning.Trigger.Add(new AiTriggerCountdown(_despawnTime, FadeTick, FadeEnd));
@@ -49,17 +52,31 @@ namespace ProjectZ.InGame.GameObjects.Things
             _aiComponent.States.Add("fading", stateDespawning);
             _aiComponent.ChangeState("falling");
 
-            _shadowSprite = new DrawShadowSpriteComponent(Resources.SprShadow,
-                EntityPosition, new Rectangle(0, 0, 65, 66), new Vector2(-1, -3), 1.0f, 0.0f);
+            _shadowSprite = new DrawShadowSpriteComponent(
+                Resources.SprShadow,
+                EntityPosition,
+                new Rectangle(0, 0, 65, 66),
+                new Vector2(-1, -3),
+                1.0f,
+                0.0f
+            );
             _shadowSprite.Width = 10;
             _shadowSprite.Height = 4;
 
             var sourceRectangle = Resources.SourceRectangle("leaf");
-            _sprite = new CSprite(Resources.SprObjects, EntityPosition, sourceRectangle, new Vector2(0, -6));
+            _sprite = new CSprite(
+                Resources.SprObjects,
+                EntityPosition,
+                sourceRectangle,
+                new Vector2(0, -6)
+            );
             _sprite.Color = Color.White * 0.8f;
 
             AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, _shadowSprite);
 
             Map.Objects.RegisterAlwaysAnimateObject(this);

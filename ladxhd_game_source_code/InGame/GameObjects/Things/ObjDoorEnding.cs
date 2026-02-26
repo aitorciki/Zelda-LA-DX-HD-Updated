@@ -10,23 +10,28 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private bool _collided;
 
-        public ObjDoorEnding() : base("editor door")
+        public ObjDoorEnding()
+            : base("editor door")
         {
             EditorColor = Color.Purple * 0.65f;
         }
 
-        public ObjDoorEnding(Map.Map map, int posX, int posY) : base(map)
+        public ObjDoorEnding(Map.Map map, int posX, int posY)
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
             var collisionRectangle = new Rectangle(posX, posY, 16, 16);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
+            AddComponent(
+                ObjectCollisionComponent.Index,
+                new ObjectCollisionComponent(collisionRectangle, OnCollision)
+            );
         }
 
         private void OnCollision(GameObject gameObject)
         {
-            if(_collided)
+            if (_collided)
                 return;
             _collided = true;
 

@@ -25,9 +25,20 @@ namespace ProjectZ.InGame.Pages
         public ControlMappingPage(int width, int height)
         {
             // Control Settings Layout
-            var controlLayout = new InterfaceListLayout { Size = new Point(width, height - 16), Selectable = true };
+            var controlLayout = new InterfaceListLayout
+            {
+                Size = new Point(width, height - 16),
+                Selectable = true,
+            };
 
-            controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_remapheader", new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
+            controlLayout.AddElement(
+                new InterfaceLabel(
+                    Resources.GameHeaderFont,
+                    "settings_controls_remapheader",
+                    new Point(width - 50, (int)(height * Values.MenuHeaderSize)),
+                    new Point(0, -10)
+                )
+            );
 
             var controllerHeight = (int)(height * Values.MenuContentSize);
 
@@ -36,13 +47,39 @@ namespace ProjectZ.InGame.Pages
             var lableHeight = 10;
             var headerHeight = 12;
 
-            var remapHeader = new InterfaceListLayout { AutoSize = true, Margin = new Point(0, 1), HorizontalMode = true, CornerRadius = 0, Color = Values.MenuButtonColor };
-            remapHeader.AddElement(new InterfaceListLayout() { Size = new Point(buttonWidth, headerHeight) });
-            remapHeader.AddElement(new InterfaceLabel("settings_controls_keyboad", new Point(lableWidth, headerHeight), new Point(0, 0)));
-            remapHeader.AddElement(new InterfaceLabel("settings_controls_gamepad", new Point(lableWidth, headerHeight), new Point(0, 0)));
+            var remapHeader = new InterfaceListLayout
+            {
+                AutoSize = true,
+                Margin = new Point(0, 1),
+                HorizontalMode = true,
+                CornerRadius = 0,
+                Color = Values.MenuButtonColor,
+            };
+            remapHeader.AddElement(
+                new InterfaceListLayout() { Size = new Point(buttonWidth, headerHeight) }
+            );
+            remapHeader.AddElement(
+                new InterfaceLabel(
+                    "settings_controls_keyboad",
+                    new Point(lableWidth, headerHeight),
+                    new Point(0, 0)
+                )
+            );
+            remapHeader.AddElement(
+                new InterfaceLabel(
+                    "settings_controls_gamepad",
+                    new Point(lableWidth, headerHeight),
+                    new Point(0, 0)
+                )
+            );
             controlLayout.AddElement(remapHeader);
 
-            var remapButtons = new InterfaceListLayout { AutoSize = true, Margin = new Point(2, 0), Selectable = true };
+            var remapButtons = new InterfaceListLayout
+            {
+                AutoSize = true,
+                Margin = new Point(2, 0),
+                Selectable = true,
+            };
             _remapButtons = new InterfaceListLayout[Enum.GetValues(typeof(CButtons)).Length - 3];
             var index = 0;
 
@@ -54,20 +91,69 @@ namespace ProjectZ.InGame.Pages
                 // Override the button text when we reach the face and top buttons.
                 string overrideText = "";
                 if (index is >= 4 and <= 13)
-                    overrideText =  ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, index - 4];
+                    overrideText = ControlHandler.ControllerLabels[
+                        ControlHandler.ControllerIndex,
+                        index - 4
+                    ];
 
                 // Most buttons are pulled from language files except for when override text is not empty.
-                _remapButtons[index] = new InterfaceListLayout { Size = new Point(buttonWidth + lableWidth * 2, lableHeight), HorizontalMode = true };
+                _remapButtons[index] = new InterfaceListLayout
+                {
+                    Size = new Point(buttonWidth + lableWidth * 2, lableHeight),
+                    HorizontalMode = true,
+                };
 
-                _remapButtons[index].AddElement(_buttonLabels[index] = new InterfaceLabel("settings_controls_" + eButton, new Point(buttonWidth, lableHeight), Point.Zero)
-                    { CornerRadius = 0, Color = Values.MenuButtonColor, OverrideText = overrideText });
+                _remapButtons[index]
+                    .AddElement(
+                        _buttonLabels[index] = new InterfaceLabel(
+                            "settings_controls_" + eButton,
+                            new Point(buttonWidth, lableHeight),
+                            Point.Zero
+                        )
+                        {
+                            CornerRadius = 0,
+                            Color = Values.MenuButtonColor,
+                            OverrideText = overrideText,
+                        }
+                    );
 
-                _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
-                _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
+                _remapButtons[index]
+                    .AddElement(
+                        new InterfaceLabel(
+                            "error",
+                            new Point(lableWidth, lableHeight),
+                            new Point(0, 0)
+                        )
+                        {
+                            Translate = false,
+                        }
+                    );
+                _remapButtons[index]
+                    .AddElement(
+                        new InterfaceLabel(
+                            "error",
+                            new Point(lableWidth, lableHeight),
+                            new Point(0, 0)
+                        )
+                        {
+                            Translate = false,
+                        }
+                    );
 
-                var remapButton = new InterfaceButton(new Point(buttonWidth + lableWidth * 2, lableHeight), new Point(0, 0), _remapButtons[index],
-                    element => { _updateButton = true; _selectedButton = eButton; })
-                    { CornerRadius = 0, Color = Color.Transparent };
+                var remapButton = new InterfaceButton(
+                    new Point(buttonWidth + lableWidth * 2, lableHeight),
+                    new Point(0, 0),
+                    _remapButtons[index],
+                    element =>
+                    {
+                        _updateButton = true;
+                        _selectedButton = eButton;
+                    }
+                )
+                {
+                    CornerRadius = 0,
+                    Color = Color.Transparent,
+                };
 
                 remapButtons.AddElement(remapButton);
                 remapButtons.AddElement(new InterfaceListLayout() { Size = new Point(1, 1) });
@@ -75,9 +161,31 @@ namespace ProjectZ.InGame.Pages
                 index++;
             }
             // Bottom Bar / Reset Button / Back Button:
-            _bottomBar = new InterfaceListLayout { Size = new Point(width - 50, (int)(height * Values.MenuFooterSize) - 20), HorizontalMode = true, Selectable = true };
-            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_controls_reset", OnClickReset));
-            _bottomBar.AddElement(new InterfaceButton(new Point(64, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
+            _bottomBar = new InterfaceListLayout
+            {
+                Size = new Point(width - 50, (int)(height * Values.MenuFooterSize) - 20),
+                HorizontalMode = true,
+                Selectable = true,
+            };
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(64, 18),
+                    new Point(2, 4),
+                    "settings_controls_reset",
+                    OnClickReset
+                )
+            );
+            _bottomBar.AddElement(
+                new InterfaceButton(
+                    new Point(64, 18),
+                    new Point(2, 4),
+                    "settings_menu_back",
+                    element =>
+                    {
+                        Game1.UiPageManager.PopPage();
+                    }
+                )
+            );
             controlLayout.AddElement(remapButtons);
             controlLayout.AddElement(_bottomBar);
             PageLayout = controlLayout;
@@ -88,12 +196,15 @@ namespace ProjectZ.InGame.Pages
 
         public static void UpdateLabels()
         {
-            for (int index = 0; index < _buttonLabels.Length ; index++)
+            for (int index = 0; index < _buttonLabels.Length; index++)
             {
                 string overrideText = "";
 
                 if (index is >= 4 and <= 13)
-                    overrideText = ControlHandler.ControllerLabels[ControlHandler.ControllerIndex, index - 4];
+                    overrideText = ControlHandler.ControllerLabels[
+                        ControlHandler.ControllerIndex,
+                        index - 4
+                    ];
 
                 if (overrideText != "")
                     _buttonLabels[index].OverrideText = overrideText;
@@ -190,7 +301,9 @@ namespace ProjectZ.InGame.Pages
         {
             foreach (var button in ControlHandler.ButtonDictionary)
                 if (button.Value.Buttons[0] == newButton && button.Key != buttonIndex)
-                    button.Value.Buttons[0] = ControlHandler.ButtonDictionary[_selectedButton].Buttons[0];
+                    button.Value.Buttons[0] = ControlHandler
+                        .ButtonDictionary[_selectedButton]
+                        .Buttons[0];
 
             ControlHandler.ButtonDictionary[_selectedButton].Buttons = new Buttons[] { newButton };
         }

@@ -47,7 +47,16 @@ namespace ProjectZ.InGame.GameObjects
         {
             // Start climbing it the player is touching a ladder at the init position.
             var box = Box.Empty;
-            if (Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, Values.CollisionTypes.Ladder, 3, 0, ref box))
+            if (
+                Map.Objects.Collision(
+                    _body.BodyBox.Box,
+                    Box.Empty,
+                    Values.CollisionTypes.Ladder,
+                    3,
+                    0,
+                    ref box
+                )
+            )
             {
                 _isWalking = true;
                 _isClimbing = true;
@@ -205,17 +214,17 @@ namespace ProjectZ.InGame.GameObjects
             }
             Animation.SpeedMultiplier = 1.0f;
 
-            if ((CurrentState != State.Jumping || !Animation.IsPlaying || _waterJump) && 
-                CurrentState != State.Attacking && 
-                CurrentState != State.AttackBlocking && 
-                CurrentState != State.AttackJumping)
+            if (
+                (CurrentState != State.Jumping || !Animation.IsPlaying || _waterJump)
+                && CurrentState != State.Attacking
+                && CurrentState != State.AttackBlocking
+                && CurrentState != State.AttackJumping
+            )
             {
                 if (CurrentState == State.Jumping)
                     Animation.Play("fall_" + Direction);
-                
                 else if (CurrentState == State.ChargeJumping)
                     Animation.Play("cjump" + shieldString + Direction);
-                
                 else if (CurrentState == State.Idle)
                 {
                     if ((_isWalking || _isClimbing) && _jumpEndTimer <= 0)
@@ -231,24 +240,34 @@ namespace ProjectZ.InGame.GameObjects
                         Animation.Play("stand" + shieldString + Direction);
                     }
                 }
-                else if ((_jumpEndTimer > 0 && 
-                    !IsAttackingState() &&
-                    CurrentState != State.Dying &&
-                    CurrentState != State.ShowToadstool &&
-                    CurrentState != State.PickingUp &&
-                    CurrentState != State.Powdering &&
-                    CurrentState != State.Digging &&
-                    CurrentState != State.Bombing &&
-                    CurrentState != State.Hookshot &&
-                    CurrentState != State.Ocarina &&
-                    CurrentState != State.MagicRod) ||
-                    (!_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)))
+                else if (
+                    (
+                        _jumpEndTimer > 0
+                        && !IsAttackingState()
+                        && CurrentState != State.Dying
+                        && CurrentState != State.ShowToadstool
+                        && CurrentState != State.PickingUp
+                        && CurrentState != State.Powdering
+                        && CurrentState != State.Digging
+                        && CurrentState != State.Bombing
+                        && CurrentState != State.Hookshot
+                        && CurrentState != State.Ocarina
+                        && CurrentState != State.MagicRod
+                    )
+                    || (
+                        !_isWalking
+                        && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)
+                    )
+                )
                 {
                     Animation.Play("stand" + shieldString + Direction);
                 }
                 else if (CurrentState == State.Carrying)
                     Animation.Play((_isWalking ? "walkc_" : "standc_") + Direction);
-                else if (_isWalking && (CurrentState == State.Charging || CurrentState == State.ChargeJumping))
+                else if (
+                    _isWalking
+                    && (CurrentState == State.Charging || CurrentState == State.ChargeJumping)
+                )
                     Animation.Play("walk" + shieldString + Direction);
                 else if (CurrentState == State.Blocking || CurrentState == State.ChargeBlocking)
                     Animation.Play((!_isWalking ? "standb" : "walkb") + shieldString + Direction);
@@ -256,7 +275,6 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("grab_" + Direction);
                 else if (CurrentState == State.Pulling)
                     Animation.Play("pull_" + Direction);
-
                 // Show swimming sprite during swimming or charge swimming.
                 else if (CurrentState == State.Swimming || CurrentState == State.ChargeSwimming)
                 {
@@ -267,8 +285,16 @@ namespace ProjectZ.InGame.GameObjects
                     Animation.Play("drown");
             }
             // Force a direction from analog stick movement.
-            if (!DisableDirHack2D && !IsChargingState() && CurrentState != State.Grabbing && CurrentState != State.Jumping &&
-                CurrentState != State.Pulling && !_isHoldingSword && CurrentState != State.Hookshot && !_hookshotPull)
+            if (
+                !DisableDirHack2D
+                && !IsChargingState()
+                && CurrentState != State.Grabbing
+                && CurrentState != State.Jumping
+                && CurrentState != State.Pulling
+                && !_isHoldingSword
+                && CurrentState != State.Hookshot
+                && !_hookshotPull
+            )
             {
                 Vector2 moveVector = ControlHandler.GetMoveVector2();
                 if (moveVector != Vector2.Zero)
@@ -338,21 +364,25 @@ namespace ProjectZ.InGame.GameObjects
         {
             _isWalking = false;
 
-            if ((CurrentState != State.Idle && 
-                CurrentState != State.Jumping &&
-                CurrentState != State.AttackJumping &&
-                CurrentState != State.ChargeJumping &&
-                CurrentState != State.Attacking && 
-                CurrentState != State.Blocking &&
-                CurrentState != State.AttackBlocking && 
-                CurrentState != State.Powdering && 
-                CurrentState != State.Bombing && 
-                CurrentState != State.MagicRod && 
-                CurrentState != State.Throwing && 
-                CurrentState != State.Carrying && 
-                CurrentState != State.Charging && 
-                CurrentState != State.ChargeBlocking && 
-                (_body.IsGrounded || _isClimbing)) || _inWater)
+            if (
+                (
+                    CurrentState != State.Idle
+                    && CurrentState != State.Jumping
+                    && CurrentState != State.AttackJumping
+                    && CurrentState != State.ChargeJumping
+                    && CurrentState != State.Attacking
+                    && CurrentState != State.Blocking
+                    && CurrentState != State.AttackBlocking
+                    && CurrentState != State.Powdering
+                    && CurrentState != State.Bombing
+                    && CurrentState != State.MagicRod
+                    && CurrentState != State.Throwing
+                    && CurrentState != State.Carrying
+                    && CurrentState != State.Charging
+                    && CurrentState != State.ChargeBlocking
+                    && (_body.IsGrounded || _isClimbing)
+                ) || _inWater
+            )
             {
                 _moveVector2D = Vector2.Zero;
                 _lastBaseMoveVelocity = _moveVector2D;
@@ -366,13 +396,24 @@ namespace ProjectZ.InGame.GameObjects
             var vectorDirection = ToDirection(walkVelocity);
 
             // start climbing?
-            if (_ladderCollision && ((walkVelocity.Y != 0 && Math.Abs(walkVelocity.X) <= Math.Abs(walkVelocity.Y)) || _tryClimbing) && _jumpStartTime + 175 < Game1.TotalGameTime)
+            if (
+                _ladderCollision
+                && (
+                    (walkVelocity.Y != 0 && Math.Abs(walkVelocity.X) <= Math.Abs(walkVelocity.Y))
+                    || _tryClimbing
+                )
+                && _jumpStartTime + 175 < Game1.TotalGameTime
+            )
             {
                 _isClimbing = true;
                 _tryClimbing = false;
             }
             // try climbing down?
-            else if (walkVelocity.Y > 0 && Math.Abs(walkVelocity.X) <= Math.Abs(walkVelocity.Y) && !_bootsRunning)
+            else if (
+                walkVelocity.Y > 0
+                && Math.Abs(walkVelocity.X) <= Math.Abs(walkVelocity.Y)
+                && !_bootsRunning
+            )
             {
                 if (_tryClimbing && !_isHoldingSword)
                     Direction = 3;
@@ -389,7 +430,10 @@ namespace ProjectZ.InGame.GameObjects
                     Direction = 1;
             }
             // boot running; stop if the player tries to move in the opposite direction
-            else if (_bootsRunning && (walkVelLength < 0 || vectorDirection != ReverseDirection(Direction)))
+            else if (
+                _bootsRunning
+                && (walkVelLength < 0 || vectorDirection != ReverseDirection(Direction))
+            )
             {
                 if (!_bootsStop)
                     _moveVector2D = AnimationHelper.DirectionOffset[Direction] * 2;
@@ -411,14 +455,16 @@ namespace ProjectZ.InGame.GameObjects
                     _bootsCounter %= _bootsParticleTime;
                     _bootsRunning = false;
                 }
-                if (newDirection != 3 &&
-                    CurrentState != State.Charging && 
-                    CurrentState != State.ChargeBlocking && 
-                    CurrentState != State.Attacking && 
-                    CurrentState != State.AttackBlocking && 
-                    CurrentState != State.Jumping && 
-                    CurrentState != State.AttackJumping &&
-                    CurrentState != State.ChargeJumping)
+                if (
+                    newDirection != 3
+                    && CurrentState != State.Charging
+                    && CurrentState != State.ChargeBlocking
+                    && CurrentState != State.Attacking
+                    && CurrentState != State.AttackBlocking
+                    && CurrentState != State.Jumping
+                    && CurrentState != State.AttackJumping
+                    && CurrentState != State.ChargeJumping
+                )
                 {
                     Direction = newDirection;
                 }
@@ -430,9 +476,10 @@ namespace ProjectZ.InGame.GameObjects
                     // If the modifier to add movement speed is used then apply it to 2D walking speed.
                     if (walkVelocity.X != 0)
                     {
-                        addSpeed = walkVelocity.X > 0
-                            ? GameSettings.MoveSpeedAdded
-                            : -GameSettings.MoveSpeedAdded;
+                        addSpeed =
+                            walkVelocity.X > 0
+                                ? GameSettings.MoveSpeedAdded
+                                : -GameSettings.MoveSpeedAdded;
                     }
                     _moveVector2D = new Vector2(walkVelocity.X + addSpeed, 0);
                     _lastMoveVelocity = _moveVector2D;
@@ -457,7 +504,11 @@ namespace ProjectZ.InGame.GameObjects
                     var direction = walkVelocity;
                     direction.Normalize();
                     var speed = Math.Max(walkVelocity.Length(), _lastMoveVelocity.Length());
-                    _lastMoveVelocity = AnimationHelper.MoveToTarget(_lastMoveVelocity, direction * speed, 0.05f * Game1.TimeMultiplier);
+                    _lastMoveVelocity = AnimationHelper.MoveToTarget(
+                        _lastMoveVelocity,
+                        direction * speed,
+                        0.05f * Game1.TimeMultiplier
+                    );
                 }
                 _moveVector2D = _lastMoveVelocity;
 
@@ -485,7 +536,14 @@ namespace ProjectZ.InGame.GameObjects
         {
             // Detect ladder collision and climbing state.
             var box = Box.Empty;
-            _ladderCollision = Map.Objects.Collision(_body.BodyBox.Box, Box.Empty, Values.CollisionTypes.Ladder, 1, 0, ref box);
+            _ladderCollision = Map.Objects.Collision(
+                _body.BodyBox.Box,
+                Box.Empty,
+                Values.CollisionTypes.Ladder,
+                1,
+                0,
+                ref box
+            );
             if (!_ladderCollision && _isClimbing)
             {
                 _isClimbing = false;
@@ -497,19 +555,21 @@ namespace ProjectZ.InGame.GameObjects
                 }
             }
             // Climbing a ladder.
-            if (_isClimbing &&
-                CurrentState != State.Attacking && 
-                CurrentState != State.Blocking && 
-                CurrentState != State.AttackBlocking &&
-                CurrentState != State.AttackJumping &&
-                CurrentState != State.Dying && 
-                CurrentState != State.PickingUp &&
-                CurrentState != State.PreCarrying && 
-                CurrentState != State.Carrying &&
-                CurrentState != State.Hookshot && 
-                CurrentState != State.MagicRod &&
-                CurrentState != State.Powdering && 
-                CurrentState != State.Throwing)
+            if (
+                _isClimbing
+                && CurrentState != State.Attacking
+                && CurrentState != State.Blocking
+                && CurrentState != State.AttackBlocking
+                && CurrentState != State.AttackJumping
+                && CurrentState != State.Dying
+                && CurrentState != State.PickingUp
+                && CurrentState != State.PreCarrying
+                && CurrentState != State.Carrying
+                && CurrentState != State.Hookshot
+                && CurrentState != State.MagicRod
+                && CurrentState != State.Powdering
+                && CurrentState != State.Throwing
+            )
             {
                 CurrentState = State.Idle;
             }
@@ -536,13 +596,36 @@ namespace ProjectZ.InGame.GameObjects
                 bodyCenter.X = (int)(bodyCenter.X / 16) * 16 + 8;
 
                 // found new reset position?
-                var bodyBox = new Box(bodyCenter.X + _body.OffsetX, bodyCenter.Y + _body.OffsetY, 0, _body.Width, _body.Height, _body.Depth);
-                var bodyBoxFloor = new Box(bodyCenter.X + _body.OffsetX, bodyCenter.Y + _body.OffsetY + 1, 0, _body.Width, _body.Height, _body.Depth);
+                var bodyBox = new Box(
+                    bodyCenter.X + _body.OffsetX,
+                    bodyCenter.Y + _body.OffsetY,
+                    0,
+                    _body.Width,
+                    _body.Height,
+                    _body.Depth
+                );
+                var bodyBoxFloor = new Box(
+                    bodyCenter.X + _body.OffsetX,
+                    bodyCenter.Y + _body.OffsetY + 1,
+                    0,
+                    _body.Width,
+                    _body.Height,
+                    _body.Depth
+                );
                 var cBox = Box.Empty;
 
                 // check it the player is not standing inside something; why???
-                if (//!Game1.GameManager.MapManager.CurrentMap.Objects.Collision(bodyBox, Box.Empty, _body.CollisionTypes, 0, 0, ref cBox) &&
-                    Map.Objects.Collision(bodyBoxFloor, Box.Empty, _body.CollisionTypes, Values.CollisionTypes.MovingPlatform, 0, 0, ref cBox))
+                if ( //!Game1.GameManager.MapManager.CurrentMap.Objects.Collision(bodyBox, Box.Empty, _body.CollisionTypes, 0, 0, ref cBox) &&
+                    Map.Objects.Collision(
+                        bodyBoxFloor,
+                        Box.Empty,
+                        _body.CollisionTypes,
+                        Values.CollisionTypes.MovingPlatform,
+                        0,
+                        0,
+                        ref cBox
+                    )
+                )
                     _drownResetPosition = bodyCenter;
             }
 
@@ -552,11 +635,27 @@ namespace ProjectZ.InGame.GameObjects
                 if (EntityPosition.Y == _lastClimbY)
                 {
                     // Create a box to detect when the player touches the ground.
-                    var groundCheckBox = new Box(EntityPosition.X + _body.OffsetX, EntityPosition.Y + _body.OffsetY + 1, 0, _body.Width, _body.Height, _body.Depth);
+                    var groundCheckBox = new Box(
+                        EntityPosition.X + _body.OffsetX,
+                        EntityPosition.Y + _body.OffsetY + 1,
+                        0,
+                        _body.Width,
+                        _body.Height,
+                        _body.Depth
+                    );
                     var refBox = Box.Empty;
-        
+
                     // Detect collision between the box and the ground.
-                    if (Map.Objects.Collision(groundCheckBox, Box.Empty, Values.CollisionTypes.Normal, 0, 0, ref refBox))
+                    if (
+                        Map.Objects.Collision(
+                            groundCheckBox,
+                            Box.Empty,
+                            Values.CollisionTypes.Normal,
+                            0,
+                            0,
+                            ref refBox
+                        )
+                    )
                     {
                         NoDropSound = true;
                         _isClimbing = false;
@@ -592,7 +691,11 @@ namespace ProjectZ.InGame.GameObjects
             _lastSwimDirection = _swimDirection;
 
             var moveVector = Vector2.Zero;
-            if (!_isLocked && CurrentState != State.Attacking && CurrentState != State.AttackSwimming)
+            if (
+                !_isLocked
+                && CurrentState != State.Attacking
+                && CurrentState != State.AttackSwimming
+            )
                 moveVector = ControlHandler.GetMoveVector2();
 
             var moveVectorLength = moveVector.Length();
@@ -636,7 +739,9 @@ namespace ProjectZ.InGame.GameObjects
                 if (Animation.CurrentFrameIndex < 2)
                 {
                     _body.Velocity = Vector3.Zero;
-                    EntityPosition.Set(new Vector2(MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y)));
+                    EntityPosition.Set(
+                        new Vector2(MathF.Round(EntityPosition.X), MathF.Round(EntityPosition.Y))
+                    );
                 }
                 if (Animation.CurrentFrameIndex == 2)
                 {
@@ -661,7 +766,8 @@ namespace ProjectZ.InGame.GameObjects
 
                     if (_drownedInLava)
                     {
-                        Game1.GameManager.CurrentHealth -= (int)MathF.Ceiling(2 * (GameSettings.DamageFactor * 0.25f));
+                        Game1.GameManager.CurrentHealth -= (int)
+                            MathF.Ceiling(2 * (GameSettings.DamageFactor * 0.25f));
                         _drownedInLava = false;
                     }
                     _body.CurrentFieldState = MapStates.FieldStates.None;
@@ -699,7 +805,9 @@ namespace ProjectZ.InGame.GameObjects
                     if (!_wasInWater)
                     {
                         _swimVelocity.X = _body.VelocityTarget.X * 0.35f;
-                        _swimVelocity.Y = _isClimbing ? _body.VelocityTarget.Y * 0.35f : _body.Velocity.Y;
+                        _swimVelocity.Y = _isClimbing
+                            ? _body.VelocityTarget.Y * 0.35f
+                            : _body.Velocity.Y;
                         _body.Velocity = Vector3.Zero;
                     }
                     if (CurrentState == State.Attacking || CurrentState == State.AttackSwimming)
@@ -714,16 +822,18 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         CurrentState = State.Hookshot;
                     }
-                    else 
+                    else
                     {
-                        if (CurrentState != State.AttackBlocking && 
-                            CurrentState != State.PickingUp && 
-                            CurrentState != State.Hookshot && 
-                            CurrentState != State.Bombing &&
-                            CurrentState != State.Powdering && 
-                            CurrentState != State.MagicRod && 
-                            CurrentState != State.Dying && 
-                            CurrentState != State.PreCarrying)
+                        if (
+                            CurrentState != State.AttackBlocking
+                            && CurrentState != State.PickingUp
+                            && CurrentState != State.Hookshot
+                            && CurrentState != State.Bombing
+                            && CurrentState != State.Powdering
+                            && CurrentState != State.MagicRod
+                            && CurrentState != State.Dying
+                            && CurrentState != State.PreCarrying
+                        )
                         {
                             CurrentState = State.Swimming;
                         }
@@ -752,9 +862,11 @@ namespace ProjectZ.InGame.GameObjects
                 }
             }
             // jump a little bit out of the water
-            else if (CurrentState == State.Swimming || 
-                CurrentState == State.AttackSwimming || 
-                CurrentState == State.ChargeSwimming)
+            else if (
+                CurrentState == State.Swimming
+                || CurrentState == State.AttackSwimming
+                || CurrentState == State.ChargeSwimming
+            )
             {
                 Direction = _swimDirection;
                 _lastMoveVelocity.X = _body.VelocityTarget.X;
@@ -792,12 +904,16 @@ namespace ProjectZ.InGame.GameObjects
                 _swimVelocity.Y = -1.185f;
             }
             // Must not be carrying or must be in one of the following states.
-            if (CurrentState == State.Carrying || 
-                (CurrentState != State.Idle && 
-                CurrentState != State.Attacking && 
-                CurrentState != State.AttackBlocking && 
-                CurrentState != State.Charging && 
-                CurrentState != State.ChargeBlocking))
+            if (
+                CurrentState == State.Carrying
+                || (
+                    CurrentState != State.Idle
+                    && CurrentState != State.Attacking
+                    && CurrentState != State.AttackBlocking
+                    && CurrentState != State.Charging
+                    && CurrentState != State.ChargeBlocking
+                )
+            )
                 return;
 
             // All three states need to pass simultaneously to return.
@@ -817,13 +933,12 @@ namespace ProjectZ.InGame.GameObjects
 
             _jumpStartTime = Game1.TotalGameTime;
 
-            // If climbing, jump velocity is reduced. When standing still, velocity  
+            // If climbing, jump velocity is reduced. When standing still, velocity
             // is a fair bit stronger. When walking, use the maximum jump velocity.
-            _body.Velocity.Y = _isClimbing 
-                ? -1.5f 
-                : _isWalking
-                    ? -2.10f 
-                    : -1.95f;
+            _body.Velocity.Y =
+                _isClimbing ? -1.5f
+                : _isWalking ? -2.10f
+                : -1.95f;
 
             // Set up the supporting values.
             _body.IsGrounded = false;
@@ -832,8 +947,12 @@ namespace ProjectZ.InGame.GameObjects
             _waterJump = false;
 
             // while attacking the player can still jump but without the animation
-            if (CurrentState != State.Attacking && CurrentState != State.AttackBlocking &&
-                CurrentState != State.Charging && CurrentState != State.ChargeBlocking)
+            if (
+                CurrentState != State.Attacking
+                && CurrentState != State.AttackBlocking
+                && CurrentState != State.Charging
+                && CurrentState != State.ChargeBlocking
+            )
             {
                 _playedJumpAnimation = false;
 
@@ -890,9 +1009,13 @@ namespace ProjectZ.InGame.GameObjects
                 _jump2DHeld = false;
 
             var initState = CurrentState;
-            if (!_body.IsGrounded && !_isClimbing && !_bootsRunning &&
-                (CurrentState == State.Idle || CurrentState == State.Blocking) &&
-                (!_tryClimbing || !_ladderCollision))
+            if (
+                !_body.IsGrounded
+                && !_isClimbing
+                && !_bootsRunning
+                && (CurrentState == State.Idle || CurrentState == State.Blocking)
+                && (!_tryClimbing || !_ladderCollision)
+            )
             {
                 if (CurrentState == State.Charging)
                     CurrentState = State.ChargeJumping;
@@ -909,9 +1032,25 @@ namespace ProjectZ.InGame.GameObjects
                 if (_wasClimbing)
                 {
                     // not ontop of a ladder
-                    if (SystemBody.MoveBody(_body, new Vector2(0, 2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true) == Values.BodyCollision.None)
+                    if (
+                        SystemBody.MoveBody(
+                            _body,
+                            new Vector2(0, 2),
+                            _body.CollisionTypes | Values.CollisionTypes.LadderTop,
+                            false,
+                            false,
+                            true
+                        ) == Values.BodyCollision.None
+                    )
                     {
-                        SystemBody.MoveBody(_body, new Vector2(0, -2), _body.CollisionTypes | Values.CollisionTypes.LadderTop, false, false, true);
+                        SystemBody.MoveBody(
+                            _body,
+                            new Vector2(0, -2),
+                            _body.CollisionTypes | Values.CollisionTypes.LadderTop,
+                            false,
+                            false,
+                            true
+                        );
 
                         if (Math.Abs(_moveVector2D.X) >= Math.Abs(_moveVector2D.Y))
                             Direction = _moveVector2D.X < 0 ? 0 : 2;

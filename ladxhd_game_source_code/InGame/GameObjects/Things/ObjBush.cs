@@ -36,8 +36,19 @@ namespace ProjectZ.InGame.GameObjects.Things
         public bool NoRespawn;
         public bool _isThrown;
 
-        public ObjBush(Map.Map map, int posX, int posY, string spawnItem, string spriteId,
-            bool hasCollider, bool drawShadow, bool setGrassField, int drawLayer, string pickupKey) : base(map, spriteId)
+        public ObjBush(
+            Map.Map map,
+            int posX,
+            int posY,
+            string spawnItem,
+            string spriteId,
+            bool hasCollider,
+            bool drawShadow,
+            bool setGrassField,
+            int drawLayer,
+            string pickupKey
+        )
+            : base(map, spriteId)
         {
             var sprite = Resources.GetSprite(spriteId);
 
@@ -88,12 +99,26 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     MoveCollision = Collision,
                     DragAir = 1.0f,
-                    Gravity = -0.125f
+                    Gravity = -0.125f,
                 };
                 var collisionBox = new CBox(EntityPosition, -8, -7, 0, 16, 14, 16, true);
                 AddComponent(BodyComponent.Index, _body);
-                AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore));
-                AddComponent(CarriableComponent.Index, new CarriableComponent( new CRectangle(EntityPosition, new Rectangle(-8, -6, 16, 14)), CarryInit, CarryUpdate, CarryThrow));
+                AddComponent(
+                    CollisionComponent.Index,
+                    _collisionComponent = new BoxCollisionComponent(
+                        collisionBox,
+                        Values.CollisionTypes.Normal | Values.CollisionTypes.ThrowWeaponIgnore
+                    )
+                );
+                AddComponent(
+                    CarriableComponent.Index,
+                    new CarriableComponent(
+                        new CRectangle(EntityPosition, new Rectangle(-8, -6, 16, 14)),
+                        CarryInit,
+                        CarryUpdate,
+                        CarryThrow
+                    )
+                );
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             }
 
@@ -108,12 +133,23 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 // not sure where this is used
                 if (_body == null)
-                    AddComponent(DrawShadowComponent.Index, new DrawShadowSpriteComponent(
-                        Resources.SprObjects, EntityPosition, sprite.ScaledRectangle,
-                        new Vector2(sprite.Origin.X + 1.0f, sprite.Origin.Y - 1.0f), 1.0f, 0.0f));
+                    AddComponent(
+                        DrawShadowComponent.Index,
+                        new DrawShadowSpriteComponent(
+                            Resources.SprObjects,
+                            EntityPosition,
+                            sprite.ScaledRectangle,
+                            new Vector2(sprite.Origin.X + 1.0f, sprite.Origin.Y - 1.0f),
+                            1.0f,
+                            0.0f
+                        )
+                    );
                 else
                 {
-                    AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
+                    AddComponent(
+                        DrawShadowComponent.Index,
+                        new BodyDrawShadowComponent(_body, _sprite)
+                    );
                     new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
                 }
             }
@@ -131,13 +167,36 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             // This is used because the normal collision detection looks strang when throwing directly towards a lower wall.
             var outBox = Box.Empty;
-            if (!Map.Is2dMap &&
-                Map.Objects.Collision(_upperBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox) &&
-                Map.Objects.Collision(_lowerBox.Box, Box.Empty, collisionType, 0, _body.Level, ref outBox))
+            if (
+                !Map.Is2dMap
+                && Map.Objects.Collision(
+                    _upperBox.Box,
+                    Box.Empty,
+                    collisionType,
+                    0,
+                    _body.Level,
+                    ref outBox
+                )
+                && Map.Objects.Collision(
+                    _lowerBox.Box,
+                    Box.Empty,
+                    collisionType,
+                    0,
+                    _body.Level,
+                    ref outBox
+                )
+            )
                 DestroyBush(Vector2.Zero);
 
             // Try to find an object to hit. The bush will try to hit itself so this is worked around in the "OnHit" method.
-            var hitCollision = Map.Objects.Hit(this, _hittableBox.Box.Center, _hittableBox.Box, HitType.ThrownObject, 2, false);
+            var hitCollision = Map.Objects.Hit(
+                this,
+                _hittableBox.Box.Center,
+                _hittableBox.Box,
+                HitType.ThrownObject,
+                2,
+                false
+            );
         }
 
         private Vector3 CarryInit()
@@ -174,13 +233,23 @@ namespace ProjectZ.InGame.GameObjects.Things
             DestroyBush(new Vector2(_body.Velocity.X, _body.Velocity.Y));
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             if (Camera.ClassicMode && !_field.Contains(MapManager.ObjLink.CenterPosition.Position))
                 return Values.HitCollision.None;
 
             // If "Classic Sword" is enabled, only the tile that the bush/grass is on should "hit".
-            if (MapManager.ObjLink.ClassicSword && (hitType & HitType.Sword) != 0 && !MapManager.ObjLink.IsPoking)
+            if (
+                MapManager.ObjLink.ClassicSword
+                && (hitType & HitType.Sword) != 0
+                && !MapManager.ObjLink.IsPoking
+            )
                 return Values.HitCollision.None;
 
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
@@ -200,7 +269,20 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     // Create a respawner for the bush.
                     if (!NoRespawn)
-                        Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
+                        Map.Objects.SpawnObject(
+                            new ObjBushRespawner(
+                                Map,
+                                (int)_respawnPosition.X - 8,
+                                (int)_respawnPosition.Y - 8,
+                                _spawnItem,
+                                _spriteId,
+                                _hasCollider,
+                                _drawShadow,
+                                _setGrassField,
+                                _drawLayer,
+                                _pickupKey
+                            )
+                        );
 
                     // We just delete the bush instead of returning damage state.
                     IsDead = true;
@@ -212,28 +294,47 @@ namespace ProjectZ.InGame.GameObjects.Things
                     // Play the sound and show the smoke effect.
                     Game1.GameManager.PlaySoundEffect("D360-09-09");
                     Game1.GameManager.PlaySoundEffect("D360-47-2F");
-                    var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, Values.LayerTop, "Particles/spawn", "run", true);
+                    var explosionAnimation = new ObjAnimator(
+                        Map,
+                        (int)EntityPosition.X - 8,
+                        (int)EntityPosition.Y - 8,
+                        Values.LayerTop,
+                        "Particles/spawn",
+                        "run",
+                        true
+                    );
                     Map.Objects.SpawnObject(explosionAnimation);
                 }
                 return Values.HitCollision.None;
             }
 
             // Damage types that don't destroy the bush. If it does not have a collider it is grass.
-            if (IsDead ||
-                (hitType & HitType.SwordHold) != 0 ||
-                hitType == HitType.Bow ||
-                hitType == HitType.Hookshot ||
-                ((!GameSettings.SwBeamShrubs || Game1.GameManager.GetItem("sword2") == null) && hitType == HitType.SwordShot) ||
-                hitType == HitType.PegasusBootsPush ||
-                hitType == HitType.MagicRod && !_hasCollider ||
-                hitType == HitType.Boomerang && !_hasCollider ||
-                hitType == HitType.ThrownObject && !_hasCollider)
+            if (
+                IsDead
+                || (hitType & HitType.SwordHold) != 0
+                || hitType == HitType.Bow
+                || hitType == HitType.Hookshot
+                || (
+                    (!GameSettings.SwBeamShrubs || Game1.GameManager.GetItem("sword2") == null)
+                    && hitType == HitType.SwordShot
+                )
+                || hitType == HitType.PegasusBootsPush
+                || hitType == HitType.MagicRod && !_hasCollider
+                || hitType == HitType.Boomerang && !_hasCollider
+                || hitType == HitType.ThrownObject && !_hasCollider
+            )
                 return Values.HitCollision.None;
 
             // A smaller hitbox is used for sword attacks on bushes.
-            if (_hasCollider && gameObject is ObjLink player && (player.IsPoking || (hitType & HitType.Sword) != 0))
+            if (
+                _hasCollider
+                && gameObject is ObjLink player
+                && (player.IsPoking || (hitType & HitType.Sword) != 0)
+            )
             {
-                var collidingRec = player.SwordDamageBox.Rectangle().GetIntersection(_hittableBox.Box.Rectangle());
+                var collidingRec = player
+                    .SwordDamageBox.Rectangle()
+                    .GetIntersection(_hittableBox.Box.Rectangle());
                 var collidingArea = collidingRec.Width * collidingRec.Height;
 
                 if (collidingArea < 16)
@@ -257,10 +358,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             // try to spawn the object
             if (!string.IsNullOrEmpty(_spawnObjectId))
             {
-                var objSpawnedObject = ObjectManager.GetGameObject(Map, _spawnObjectId, _spawnObjectParameter);
+                var objSpawnedObject = ObjectManager.GetGameObject(
+                    Map,
+                    _spawnObjectId,
+                    _spawnObjectParameter
+                );
                 spawnedObject = Map.Objects.SpawnObject(objSpawnedObject);
                 if (spawnedObject && objSpawnedObject is ObjItem spawnedItem)
-                    spawnedItem.SetVelocity(new Vector3(direction.X * 0.5f, direction.Y * 0.5f, 0.75f));
+                    spawnedItem.SetVelocity(
+                        new Vector3(direction.X * 0.5f, direction.Y * 0.5f, 0.75f)
+                    );
 
                 // If the spawned object is a hole there needs to be a way to track it was created
                 // from a bush so it can be set to inactive when resetting the current field.
@@ -283,7 +390,16 @@ namespace ProjectZ.InGame.GameObjects.Things
                 // spawn a heart or a ruby
                 if (strObject != null)
                 {
-                    var objItem = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y - 8, "j", null, strObject, null, true);
+                    var objItem = new ObjItem(
+                        Map,
+                        (int)EntityPosition.X - 8,
+                        (int)EntityPosition.Y - 8,
+                        "j",
+                        null,
+                        strObject,
+                        null,
+                        true
+                    );
                     objItem.SetVelocity(new Vector3(direction.X * 0.5f, direction.Y * 0.5f, 0.75f));
                     Map.Objects.SpawnObject(objItem);
                 }
@@ -300,7 +416,20 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D378-05-05");
 
             if (!NoRespawn)
-                Map.Objects.SpawnObject(new ObjBushRespawner(Map, (int)_respawnPosition.X - 8, (int)_respawnPosition.Y - 8, _spawnItem, _spriteId, _hasCollider, _drawShadow, _setGrassField, _drawLayer, _pickupKey));
+                Map.Objects.SpawnObject(
+                    new ObjBushRespawner(
+                        Map,
+                        (int)_respawnPosition.X - 8,
+                        (int)_respawnPosition.Y - 8,
+                        _spawnItem,
+                        _spriteId,
+                        _hasCollider,
+                        _drawShadow,
+                        _setGrassField,
+                        _drawLayer,
+                        _pickupKey
+                    )
+                );
 
             // delete this object
             Map.Objects.DeleteObjects.Add(this);
@@ -309,11 +438,23 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.RemoveFieldState(_fieldPosX, _fieldPosY, MapStates.FieldStates.Grass);
 
             // spawn the leafs
-            var offsets = new[] { new Point(-7, -1), new Point(1, -1), new Point(-7, 7), new Point(1, 7) };
+            var offsets = new[]
+            {
+                new Point(-7, -1),
+                new Point(1, -1),
+                new Point(-7, 7),
+                new Point(1, 7),
+            };
             for (var i = 0; i < offsets.Length; i++)
             {
                 var posZ = EntityPosition.Z + 5 - Game1.RandomNumber.Next(0, 40) / 10f;
-                var newLeaf = new ObjLeaf(Map, (int)EntityPosition.X + offsets[i].X, (int)EntityPosition.Y + offsets[i].Y, posZ, direction);
+                var newLeaf = new ObjLeaf(
+                    Map,
+                    (int)EntityPosition.X + offsets[i].X,
+                    (int)EntityPosition.Y + offsets[i].Y,
+                    posZ,
+                    direction
+                );
                 Map.Objects.SpawnObject(newLeaf);
             }
         }

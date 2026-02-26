@@ -20,9 +20,21 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _despawn;
         private float _despawnTimer;
 
-        public ObjHole() : base("hole_0") { }
+        public ObjHole()
+            : base("hole_0") { }
 
-        public ObjHole(Map.Map map, int posX, int posY, int width, int height, Rectangle sourceRectangle, int offsetX, int offsetY, int color) : base(map)
+        public ObjHole(
+            Map.Map map,
+            int posX,
+            int posY,
+            int width,
+            int height,
+            Rectangle sourceRectangle,
+            int offsetX,
+            int offsetY,
+            int color
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Hole;
 
@@ -45,13 +57,28 @@ namespace ProjectZ.InGame.GameObjects.Things
             float holeHeight = height;
 
             collisionBox = new CBox(holePosX, holePosY, 0, holeWidth, holeHeight, 16);
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Hole));
-            AddComponent(UpdateComponent.Index, _updateComponent = new UpdateComponent(Update) { IsActive = false }) ;
+            AddComponent(
+                CollisionComponent.Index,
+                _collisionComponent = new BoxCollisionComponent(
+                    collisionBox,
+                    Values.CollisionTypes.Hole
+                )
+            );
+            AddComponent(
+                UpdateComponent.Index,
+                _updateComponent = new UpdateComponent(Update) { IsActive = false }
+            );
 
             // visible hole?
             if (sourceRectangle != Rectangle.Empty)
             {
-                _drawComponent = new DrawSpriteComponent(Resources.SprObjects, EntityPosition, sourceRectangle, new Vector2(0, 0), Values.LayerBottom);
+                _drawComponent = new DrawSpriteComponent(
+                    Resources.SprObjects,
+                    EntityPosition,
+                    sourceRectangle,
+                    new Vector2(0, 0),
+                    Values.LayerBottom
+                );
                 AddComponent(DrawComponent.Index, _drawComponent);
             }
         }

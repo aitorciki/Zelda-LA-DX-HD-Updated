@@ -25,10 +25,20 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _movementCounter;
         private Vector2 _startPosition;
         private Vector2 _endPosition;
-        
-        public ObjPerson() : base("person") { }
 
-        public ObjPerson(Map.Map map, int posX, int posY, string personId, Rectangle bodyRectangle, Vector2 offset, string animationName) : base(map)
+        public ObjPerson()
+            : base("person") { }
+
+        public ObjPerson(
+            Map.Map map,
+            int posX,
+            int posY,
+            string personId,
+            Rectangle bodyRectangle,
+            Vector2 offset,
+            string animationName
+        )
+            : base(map)
         {
             if (string.IsNullOrEmpty(personId))
             {
@@ -37,7 +47,12 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            EntitySize = new Rectangle(-bodyRectangle.Width / 2, -bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height);
+            EntitySize = new Rectangle(
+                -bodyRectangle.Width / 2,
+                -bodyRectangle.Height,
+                bodyRectangle.Width,
+                bodyRectangle.Height
+            );
 
             _personId = personId;
             Animator = AnimatorSaveLoad.LoadAnimator("NPCs/" + _personId);
@@ -49,14 +64,25 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             }
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(Animator, sprite, new Vector2(
-                -Animator.CurrentAnimation.AnimationWidth / 2f + offset.X, 
-                -Animator.CurrentAnimation.AnimationHeight + offset.Y));
+            var animationComponent = new AnimationComponent(
+                Animator,
+                sprite,
+                new Vector2(
+                    -Animator.CurrentAnimation.AnimationWidth / 2f + offset.X,
+                    -Animator.CurrentAnimation.AnimationHeight + offset.Y
+                )
+            );
 
-            Body = new BodyComponent(EntityPosition,
-                -bodyRectangle.Width / 2, -bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height, bodyRectangle.Height)
+            Body = new BodyComponent(
+                EntityPosition,
+                -bodyRectangle.Width / 2,
+                -bodyRectangle.Height,
+                bodyRectangle.Width,
+                bodyRectangle.Height,
+                bodyRectangle.Height
+            )
             {
-                Gravity = -0.15f
+                Gravity = -0.15f,
             };
 
             if (!string.IsNullOrEmpty(animationName))
@@ -65,13 +91,27 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Animator.Play(animationName);
             }
 
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(BodyComponent.Index, Body);
-            AddComponent(CollisionComponent.Index, new BodyCollisionComponent(Body, Values.CollisionTypes.Normal | Values.CollisionTypes.PushIgnore | Values.CollisionTypes.NPC));
+            AddComponent(
+                CollisionComponent.Index,
+                new BodyCollisionComponent(
+                    Body,
+                    Values.CollisionTypes.Normal
+                        | Values.CollisionTypes.PushIgnore
+                        | Values.CollisionTypes.NPC
+                )
+            );
             AddComponent(InteractComponent.Index, new InteractComponent(Body.BodyBox, Interact));
             AddComponent(AnimationComponent.Index, animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(Body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(Body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
@@ -89,7 +129,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 }
                 else
                 {
-                    var newPosition = Vector2.Lerp(_startPosition, _endPosition, _movementCounter / 1000);
+                    var newPosition = Vector2.Lerp(
+                        _startPosition,
+                        _endPosition,
+                        _movementCounter / 1000
+                    );
                     EntityPosition.Set(newPosition);
                 }
             }
@@ -98,7 +142,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 var playerDistance = new Vector2(
                     MapManager.ObjLink.EntityPosition.X - (EntityPosition.X),
-                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4));
+                    MapManager.ObjLink.EntityPosition.Y - (EntityPosition.Y - 4)
+                );
 
                 var dir = 3;
 

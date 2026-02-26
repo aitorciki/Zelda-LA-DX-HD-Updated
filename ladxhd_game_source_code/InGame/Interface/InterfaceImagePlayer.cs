@@ -10,24 +10,60 @@ class InterfaceImagePlayer : InterfaceImage
 
     public bool ShowSword;
 
-    public InterfaceImagePlayer(Animator player, Animator sword, Texture2D texture, Rectangle source, Point size, Point margin) : base(texture, source, size, margin)
+    public InterfaceImagePlayer(
+        Animator player,
+        Animator sword,
+        Texture2D texture,
+        Rectangle source,
+        Point size,
+        Point margin
+    )
+        : base(texture, source, size, margin)
     {
         _player = player;
         _sword = sword;
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+    public override void Draw(
+        SpriteBatch spriteBatch,
+        Vector2 drawPosition,
+        float scale,
+        float transparency
+    )
     {
         var color = ImageColor * transparency;
         var basePos = drawPosition + Offset * scale;
 
-        spriteBatch.Draw( _player.SprTexture, basePos, _player.CurrentFrame.SourceRectangle, color, 0f, Vector2.Zero, scale, Effects, 0f);
+        spriteBatch.Draw(
+            _player.SprTexture,
+            basePos,
+            _player.CurrentFrame.SourceRectangle,
+            color,
+            0f,
+            Vector2.Zero,
+            scale,
+            Effects,
+            0f
+        );
 
         if (!ShowSword)
             return;
 
-        var swordOffset = basePos + new Vector2(_sword.CurrentFrame.Offset.X + 9, _sword.CurrentFrame.Offset.Y + 13) * scale;
+        var swordOffset =
+            basePos
+            + new Vector2(_sword.CurrentFrame.Offset.X + 9, _sword.CurrentFrame.Offset.Y + 13)
+                * scale;
 
-        spriteBatch.Draw(_sword.SprTexture, swordOffset, _sword.CurrentFrame.SourceRectangle, color, 0f, Vector2.Zero, scale, Effects, 0f);
+        spriteBatch.Draw(
+            _sword.SprTexture,
+            swordOffset,
+            _sword.CurrentFrame.SourceRectangle,
+            color,
+            0f,
+            Vector2.Zero,
+            scale,
+            Effects,
+            0f
+        );
     }
 }

@@ -10,9 +10,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
     {
         private readonly string _signText;
 
-        public ObjDungeonOwl() : base("dungeon_owl") { }
+        public ObjDungeonOwl()
+            : base("dungeon_owl") { }
 
-        public ObjDungeonOwl(Map.Map map, int posX, int posY, string signText) : base(map)
+        public ObjDungeonOwl(Map.Map map, int posX, int posY, string signText)
+            : base(map)
         {
             var sourceRectangle = Resources.SourceRectangle("dungeon_owl");
 
@@ -24,11 +26,29 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             var interactBox = new CBox(posX, posY, 0, 16, 16, 16);
 
             AddComponent(InteractComponent.Index, new InteractComponent(interactBox, OnInteract));
-            AddComponent(CollisionComponent.Index, new BoxCollisionComponent(interactBox, Values.CollisionTypes.Normal));
-            AddComponent(DrawComponent.Index, new DrawSpriteComponent(
-                Resources.SprObjects, EntityPosition, sourceRectangle, new Vector2(0, -16), Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new DrawShadowSpriteComponent(
-                Resources.SprObjects, EntityPosition, sourceRectangle, new Vector2(0, -16)));
+            AddComponent(
+                CollisionComponent.Index,
+                new BoxCollisionComponent(interactBox, Values.CollisionTypes.Normal)
+            );
+            AddComponent(
+                DrawComponent.Index,
+                new DrawSpriteComponent(
+                    Resources.SprObjects,
+                    EntityPosition,
+                    sourceRectangle,
+                    new Vector2(0, -16),
+                    Values.LayerPlayer
+                )
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new DrawShadowSpriteComponent(
+                    Resources.SprObjects,
+                    EntityPosition,
+                    sourceRectangle,
+                    new Vector2(0, -16)
+                )
+            );
         }
 
         private bool OnInteract()

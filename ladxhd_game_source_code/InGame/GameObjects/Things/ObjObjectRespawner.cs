@@ -24,12 +24,21 @@ namespace ProjectZ.InGame.GameObjects.Things
         private float _spawnCounter;
         private bool _isActive = true;
 
-        public ObjObjectRespawner() : base("editor object respawner")
+        public ObjObjectRespawner()
+            : base("editor object respawner")
         {
             EditorColor = Color.Red * 0.65f;
         }
 
-        public ObjObjectRespawner(Map.Map map, int posX, int posY, string strDisableKey, string strSpawnObjectId, string strSpawnParameter) : base(map)
+        public ObjObjectRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strDisableKey,
+            string strSpawnObjectId,
+            string strSpawnParameter
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -59,7 +68,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             // add key change listener
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             if (!string.IsNullOrEmpty(_strDisableKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
 
             OnKeyChange();
             SpawnObject();
@@ -88,7 +100,16 @@ namespace ProjectZ.InGame.GameObjects.Things
             // return if there is something there
             var outBox = Box.Empty;
 
-            if (Map.Objects.Collision(_spawnBox, Box.Empty, Values.CollisionTypes.Normal | Values.CollisionTypes.Player, 0, 0, ref outBox))
+            if (
+                Map.Objects.Collision(
+                    _spawnBox,
+                    Box.Empty,
+                    Values.CollisionTypes.Normal | Values.CollisionTypes.Player,
+                    0,
+                    0,
+                    ref outBox
+                )
+            )
             {
                 _spawnCounter = SpawnTime * 0.25f;
                 return;
@@ -98,7 +119,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             Game1.GameManager.PlaySoundEffect("D360-15-0F");
 
             // spawn explosion effect
-            Map.Objects.SpawnObject(new ObjAnimator(Map, (int)EntityPosition.X, (int)EntityPosition.Y, Values.LayerTop, "Particles/spawn", "run", true));
+            Map.Objects.SpawnObject(
+                new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                )
+            );
         }
 
         private void SpawnObject()

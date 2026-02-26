@@ -20,16 +20,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private Vector2 _startPosition;
 
-        bool  light_source = true;
-        int   light_red = 255;
-        int   light_grn = 200;
-        int   light_blu = 200;
+        bool light_source = true;
+        int light_red = 255;
+        int light_grn = 200;
+        int light_blu = 200;
         float light_bright = 0.75f;
-        int   light_size = 64;
+        int light_size = 64;
 
-        public EnemyPodoboo() : base("podoboo") { }
+        public EnemyPodoboo()
+            : base("podoboo") { }
 
-        public EnemyPodoboo(Map.Map map, int posX, int posY, int timeOffset) : base(map)
+        public EnemyPodoboo(Map.Map map, int posX, int posY, int timeOffset)
+            : base(map)
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "EnemyPodoboo.lahdmod");
@@ -40,7 +42,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-32, -8 - 32, 64, 64);
             CanReset = true;
             OnReset = Reset;
@@ -57,15 +59,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Gravity2D = 0.05f,
                 CollisionTypes = Values.CollisionTypes.None,
-                SplashEffect = false
+                SplashEffect = false,
             };
 
             _aiComponent = new AiComponent();
 
             var stateFlying = new AiState(UpdateFlying) { Init = InitFlying };
-            stateFlying.Trigger.Add(new AiTriggerCountdown(250, null, SpawnParticle) { ResetAfterEnd = true });
+            stateFlying.Trigger.Add(
+                new AiTriggerCountdown(250, null, SpawnParticle) { ResetAfterEnd = true }
+            );
             var stateHidden = new AiState() { Init = InitHidden };
-            var hiddenCountdown = new AiTriggerCountdown(2000, null, () => _aiComponent.ChangeState("flying"));
+            var hiddenCountdown = new AiTriggerCountdown(
+                2000,
+                null,
+                () => _aiComponent.ChangeState("flying")
+            );
             stateHidden.Trigger.Add(hiddenCountdown);
 
             _aiComponent.States.Add("flying", stateFlying);
@@ -73,11 +81,17 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             var damageCollider = new CBox(EntityPosition, -5, -8 - 5, 0, 10, 10, 4);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerBottom)
+            );
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
 
             _aiComponent.ChangeState("hidden");
@@ -102,7 +116,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateFlying()
         {
-            _sprite.SpriteShader = Game1.TotalGameTime % (8000 / 60f) >= (4000 / 60f) ? Resources.DamageSpriteShader0 : null;
+            _sprite.SpriteShader =
+                Game1.TotalGameTime % (8000 / 60f) >= (4000 / 60f)
+                    ? Resources.DamageSpriteShader0
+                    : null;
 
             if (_body.Velocity.Y > 0 && !_animationComponent.MirroredV)
             {
@@ -127,20 +144,45 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void SpawnParticle()
         {
-            var particle = new EnemyPodobooParticle(Map, new Vector2(EntityPosition.X, EntityPosition.Y), _animationComponent.MirroredV);
+            var particle = new EnemyPodobooParticle(
+                Map,
+                new Vector2(EntityPosition.X, EntityPosition.Y),
+                _animationComponent.MirroredV
+            );
             Map.Objects.SpawnObject(particle);
         }
 
         private void SpawnSplash()
         {
-            Map.Objects.SpawnObject(new EnemyPodobooSplash(Map, new Vector2(_startPosition.X, _startPosition.Y), new Vector2(-0.5f, -0.85f)));
-            Map.Objects.SpawnObject(new EnemyPodobooSplash(Map, new Vector2(_startPosition.X, _startPosition.Y), new Vector2(0.5f, -0.85f)));
+            Map.Objects.SpawnObject(
+                new EnemyPodobooSplash(
+                    Map,
+                    new Vector2(_startPosition.X, _startPosition.Y),
+                    new Vector2(-0.5f, -0.85f)
+                )
+            );
+            Map.Objects.SpawnObject(
+                new EnemyPodobooSplash(
+                    Map,
+                    new Vector2(_startPosition.X, _startPosition.Y),
+                    new Vector2(0.5f, -0.85f)
+                )
+            );
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
         {
             if (light_source && GameSettings.ObjectLights)
-                DrawHelper.DrawLight(spriteBatch, new Rectangle((int)EntityPosition.X - light_size / 2, (int)EntityPosition.Y - light_size / 2, light_size, light_size), new Color(light_red, light_grn, light_blu) * light_bright);
+                DrawHelper.DrawLight(
+                    spriteBatch,
+                    new Rectangle(
+                        (int)EntityPosition.X - light_size / 2,
+                        (int)EntityPosition.Y - light_size / 2,
+                        light_size,
+                        light_size
+                    ),
+                    new Color(light_red, light_grn, light_blu) * light_bright
+                );
         }
     }
 }

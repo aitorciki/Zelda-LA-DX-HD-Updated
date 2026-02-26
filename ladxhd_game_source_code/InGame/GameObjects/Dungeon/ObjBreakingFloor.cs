@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
@@ -25,7 +25,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         private bool _isActive;
 
-        public ObjBreakingFloor(Map.Map map, int posX, int posY, string spriteId) : base(map, spriteId)
+        public ObjBreakingFloor(Map.Map map, int posX, int posY, string spriteId)
+            : base(map, spriteId)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
@@ -34,9 +35,27 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _collisionBox = new Box(posX, posY + margin, 0, 16, 16 - margin * 2, 1);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawSpriteComponent(spriteId, EntityPosition, Vector2.Zero, Values.LayerBottom));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawSpriteComponent(
+                    spriteId,
+                    EntityPosition,
+                    Vector2.Zero,
+                    Values.LayerBottom
+                )
+            );
 
-            _objHole = new ObjHole(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 16, 14, Rectangle.Empty, 0, 1, 0);
+            _objHole = new ObjHole(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                16,
+                14,
+                Rectangle.Empty,
+                0,
+                1,
+                0
+            );
             _objHole.IsActive = false;
             Map.Objects.SpawnObject(_objHole);
             Activate();
@@ -62,9 +81,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             // is the player standing on the floor tile?
             if (MapManager.ObjLink._body.BodyBox.Box.Intersects(_collisionBox))
             {
-                if (MapManager.ObjLink.CurrentState != ObjLink.State.Idle &&
-                    MapManager.ObjLink.CurrentState != ObjLink.State.Pushing &&
-                    MapManager.ObjLink.IsStunned())
+                if (
+                    MapManager.ObjLink.CurrentState != ObjLink.State.Idle
+                    && MapManager.ObjLink.CurrentState != ObjLink.State.Pushing
+                    && MapManager.ObjLink.IsStunned()
+                )
                     return;
 
                 _breakCounter += Game1.DeltaTime;

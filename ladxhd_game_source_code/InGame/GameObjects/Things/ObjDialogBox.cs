@@ -21,12 +21,14 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
-        public ObjDialogBox() : base("editor dialog box")
+        public ObjDialogBox()
+            : base("editor dialog box")
         {
             EditorColor = Color.GreenYellow;
         }
 
-        public ObjDialogBox(Map.Map map, int posX, int posY, string dialogName) : base(map)
+        public ObjDialogBox(Map.Map map, int posX, int posY, string dialogName)
+            : base(map)
         {
             _dialogName = dialogName;
 

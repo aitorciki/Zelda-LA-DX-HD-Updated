@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -6,7 +7,6 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {
@@ -28,9 +28,11 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _moving;
         private bool _despawnStairs;
 
-        public ObjFinalFountain() : base("final_fountain") { }
+        public ObjFinalFountain()
+            : base("final_fountain") { }
 
-        public ObjFinalFountain(Map.Map map, int posX, int posY, string activationKey) : base(map)
+        public ObjFinalFountain(Map.Map map, int posX, int posY, string activationKey)
+            : base(map)
         {
             _activationKey = activationKey;
 
@@ -44,9 +46,15 @@ namespace ProjectZ.InGame.GameObjects.Things
             _position = _startPosition;
 
             if (!string.IsNullOrEmpty(_activationKey))
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
+                AddComponent(
+                    KeyChangeListenerComponent.Index,
+                    new KeyChangeListenerComponent(OnKeyChange)
+                );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBackground, new CPosition(0, 0, 0)));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawComponent(Draw, Values.LayerBackground, new CPosition(0, 0, 0))
+            );
         }
 
         private void OnKeyChange()
@@ -88,12 +96,21 @@ namespace ProjectZ.InGame.GameObjects.Things
                 else if (_counter - WobbleTime < 5000 - 250)
                 {
                     var percentage = (float)((_counter - WobbleTime - 250) / 2000) * MathF.PI * 2;
-                    _position = new Vector2(_targetPosition.X, _targetPosition.Y - MathF.Sin(percentage) * 3);
+                    _position = new Vector2(
+                        _targetPosition.X,
+                        _targetPosition.Y - MathF.Sin(percentage) * 3
+                    );
                 }
                 // leave the screen
                 else
                 {
-                    _position.Y -= Game1.TimeMultiplier * MathHelper.Clamp((float)(_counter - WobbleTime - 250 - 4000) / 150, 0.125f, 16f);
+                    _position.Y -=
+                        Game1.TimeMultiplier
+                        * MathHelper.Clamp(
+                            (float)(_counter - WobbleTime - 250 - 4000) / 150,
+                            0.125f,
+                            16f
+                        );
                 }
 
                 if (_counter - WobbleTime - 5000 - 250 > 1500)

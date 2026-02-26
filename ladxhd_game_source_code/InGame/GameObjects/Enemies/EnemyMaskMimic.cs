@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
@@ -29,14 +29,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _wasColliding;
         private int _lives = EnemyLives.MaskMimic;
 
-        public EnemyMaskMimic() : base("mask mimic") { }
+        public EnemyMaskMimic()
+            : base("mask mimic") { }
 
-        public EnemyMaskMimic(Map.Map map, int posX, int posY) : base(map)
+        public EnemyMaskMimic(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -51,13 +53,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 Gravity = -0.075f,
                 DragAir = 1.0f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole | 
-                                 Values.CollisionTypes.NPCWall,
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes = Values.CollisionTypes.Hole | Values.CollisionTypes.NPCWall,
                 FieldRectangle = map.GetField(posX, posY),
                 IsSlider = true,
-                MaxSlideDistance = 4.0f
+                MaxSlideDistance = 4.0f,
             };
 
             _aiComponent = new AiComponent();
@@ -67,20 +67,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("idle", stateUpdate);
             _aiStunnedState = new AiStunnedState(_aiComponent, _animatorComponent, 3300, 900);
             new AiFallState(_aiComponent, _body, null, null, 300);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             _aiComponent.ChangeState("idle");
 
             var damageBox = new CBox(EntityPosition, -7, -15, 2, 14, 15, 4);
             var hittableBox = new CBox(EntityPosition, -7, -15, 2, 14, 15, 8);
             var pushableBox = new CBox(EntityPosition, -7, -14, 2, 14, 14, 8);
 
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animatorComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
         }
 
@@ -123,8 +138,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
                     // Stops the enemy if the player runs into an obstacle.
                     moveVelocity = new Vector2(
-                        Math.Min(Math.Abs(moveVelocity.X), Math.Abs(diff.X)) * Math.Sign(moveVelocity.X),
-                        Math.Min(Math.Abs(moveVelocity.Y), Math.Abs(diff.Y)) * Math.Sign(moveVelocity.Y));
+                        Math.Min(Math.Abs(moveVelocity.X), Math.Abs(diff.X))
+                            * Math.Sign(moveVelocity.X),
+                        Math.Min(Math.Abs(moveVelocity.Y), Math.Abs(diff.Y))
+                            * Math.Sign(moveVelocity.Y)
+                    );
 
                     _body.VelocityTarget = moveVelocity * 0.75f;
 
@@ -135,8 +153,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                         if (!MapManager.ObjLink.IsChargingState())
                         {
                             // deadzone to not have a fixed point where the direction gets changed
-                            if (Math.Abs(moveVelocity.X) * ((_direction % 2 == 0) ? 1.1f : 1f) >
-                                Math.Abs(moveVelocity.Y) * ((_direction % 2 != 0) ? 1.1f : 1f))
+                            if (
+                                Math.Abs(moveVelocity.X) * ((_direction % 2 == 0) ? 1.1f : 1f)
+                                > Math.Abs(moveVelocity.Y) * ((_direction % 2 != 0) ? 1.1f : 1f)
+                            )
                                 _direction = moveVelocity.X < 0 ? 0 : 2;
                             else
                                 _direction = moveVelocity.Y < 0 ? 1 : 3;
@@ -165,12 +185,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool OnPush(Vector2 direction, PushableComponent.PushType type)
         {
             if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                _body.Velocity = new Vector3(
+                    direction.X * 2.5f,
+                    direction.Y * 2.5f,
+                    _body.Velocity.Z
+                );
 
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -197,10 +227,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
             // can be hit if the damage source is coming from the back
             var dir = AnimationHelper.GetDirection(direction);
-            if (dir == _direction ||
-                hitType == HitType.Bomb ||
-                hitType == HitType.Bow ||
-                hitType == HitType.MagicRod)
+            if (
+                dir == _direction
+                || hitType == HitType.Bomb
+                || hitType == HitType.Bow
+                || hitType == HitType.MagicRod
+            )
             {
                 return _aiDamageState.OnHit(gameObject, direction, hitType, damage, pieceOfPower);
             }

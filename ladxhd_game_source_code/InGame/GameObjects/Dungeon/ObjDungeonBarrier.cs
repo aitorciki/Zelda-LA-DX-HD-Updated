@@ -33,7 +33,15 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _isUp;
         private ObjLink LinkHack;
 
-        public ObjDungeonBarrier(Map.Map map, int posX, int posY, string strKey, bool negate, int type) : base(map)
+        public ObjDungeonBarrier(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            bool negate,
+            int type
+        )
+            : base(map)
         {
             type = MathHelper.Clamp(type, 0, 3);
 
@@ -51,13 +59,21 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _negate = negate;
 
             var collisionComponent = new BoxCollisionComponent(
-                _bodyBox = new CBox(EntityPosition, 0, -1, 11, 8, 4), Values.CollisionTypes.Normal);
+                _bodyBox = new CBox(EntityPosition, 0, -1, 11, 8, 4),
+                Values.CollisionTypes.Normal
+            );
 
             AddComponent(CollisionComponent.Index, collisionComponent);
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            AddComponent(
+                KeyChangeListenerComponent.Index,
+                new KeyChangeListenerComponent(KeyChanged)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             AddComponent(DrawShadowComponent.Index, new DrawShadowComponent(DrawShadow));
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            AddComponent(
+                DrawComponent.Index,
+                _drawComponent = new DrawComponent(Draw, Values.LayerBottom, EntityPosition)
+            );
 
             KeyChanged();
             if (_isUp)
@@ -96,7 +112,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                     _stateCounter = StateTimer;
             }
 
-            _transitionPercentage = MathF.Sin((_stateCounter / StateTimer) * MathF.PI - MathF.PI / 2) * 0.5f + 0.5f;
+            _transitionPercentage =
+                MathF.Sin((_stateCounter / StateTimer) * MathF.PI - MathF.PI / 2) * 0.5f + 0.5f;
             _transitionState = _transitionPercentage * 4;
 
             if (EntityPosition.Z != _transitionState - 4)
@@ -109,11 +126,18 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 // Check for game objects (enemy units, Link) that are currently standing over the barrier.
                 _collidingObjects.Clear();
                 Map.Objects.GetComponentList(
-                    _collidingObjects, (int)EntityPosition.Position.X, (int)EntityPosition.Position.Y - 1, 11, 8, BodyComponent.Mask);
+                    _collidingObjects,
+                    (int)EntityPosition.Position.X,
+                    (int)EntityPosition.Position.Y - 1,
+                    11,
+                    8,
+                    BodyComponent.Mask
+                );
 
                 foreach (var collidingObject in _collidingObjects)
                 {
-                    BodyComponent collisionBody = collidingObject.Components[BodyComponent.Index] as BodyComponent;
+                    BodyComponent collisionBody =
+                        collidingObject.Components[BodyComponent.Index] as BodyComponent;
                     Box collisionBodyBox = collisionBody.BodyBox.Box;
 
                     // Lift the game object up with the barrier.
@@ -137,8 +161,11 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 }
             }
             // If Link is still over the boxes then fix his Z-Position.
-            if (LinkHack != null && LinkHack._body.IsGrounded && 
-                LinkHack._body.BodyBox.Box.Intersects(_bodyBox.Box))
+            if (
+                LinkHack != null
+                && LinkHack._body.IsGrounded
+                && LinkHack._body.BodyBox.Box.Intersects(_bodyBox.Box)
+            )
             {
                 LinkHack._body.Position.Z = 4;
             }
@@ -147,23 +174,44 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private void Draw(SpriteBatch spriteBatch)
         {
             // draw the bottom part
-            DrawHelper.DrawNormalized(spriteBatch, _dictBarrierBack, new Vector2(EntityPosition.X, EntityPosition.Y - 1), Color.White);
+            DrawHelper.DrawNormalized(
+                spriteBatch,
+                _dictBarrierBack,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 1),
+                Color.White
+            );
 
             // draw the barrier
             if (_transitionState != 0)
             {
                 var rectangle = _dictBarrier.ScaledRectangle;
-                rectangle.Height = (int)((_dictBarrier.SourceRectangle.Height - 4 + _transitionState) / _dictBarrier.Scale);
-                DrawHelper.DrawNormalized(spriteBatch, _dictBarrier.Texture,
-                    new Vector2(EntityPosition.X, EntityPosition.Y - 1 - _transitionState), rectangle, Color.White);
+                rectangle.Height = (int)(
+                    (_dictBarrier.SourceRectangle.Height - 4 + _transitionState)
+                    / _dictBarrier.Scale
+                );
+                DrawHelper.DrawNormalized(
+                    spriteBatch,
+                    _dictBarrier.Texture,
+                    new Vector2(EntityPosition.X, EntityPosition.Y - 1 - _transitionState),
+                    rectangle,
+                    Color.White
+                );
             }
         }
 
         private void DrawShadow(SpriteBatch spriteBatch)
         {
-            DrawHelper.DrawShadow(_dictBarrier.Texture, new Vector2(EntityPosition.X, EntityPosition.Y - 6),
-                _dictBarrier.ScaledRectangle, _dictBarrier.SourceRectangle.Width, _dictBarrier.SourceRectangle.Height, false,
-                Map.ShadowHeight, Map.ShadowRotation, Color.White * _transitionPercentage);
+            DrawHelper.DrawShadow(
+                _dictBarrier.Texture,
+                new Vector2(EntityPosition.X, EntityPosition.Y - 6),
+                _dictBarrier.ScaledRectangle,
+                _dictBarrier.SourceRectangle.Width,
+                _dictBarrier.SourceRectangle.Height,
+                false,
+                Map.ShadowHeight,
+                Map.ShadowRotation,
+                Color.White * _transitionPercentage
+            );
         }
     }
 }

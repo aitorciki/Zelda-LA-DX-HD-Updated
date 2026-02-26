@@ -42,7 +42,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private float _circleSpeed;
 
         // TODO: sync animations
-        public MBossGrimCreeperFly(Map.Map map, Vector2 position, Vector2 targetPosition) : base(map)
+        public MBossGrimCreeperFly(Map.Map map, Vector2 position, Vector2 targetPosition)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -64,7 +65,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 IgnoreHoles = true,
                 Bounciness = 0.25f,
                 Gravity = -0.175f,
-                CollisionTypes = Values.CollisionTypes.None
+                CollisionTypes = Values.CollisionTypes.None,
             };
 
             _aiComponent = new AiComponent();
@@ -84,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("fadeout", stateFadeout);
             _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives)
             {
-                OnBurn = OnBurn
+                OnBurn = OnBurn,
             };
 
             _aiComponent.States.Add("circling", stateCircling);
@@ -95,13 +96,31 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var damageBox = new CBox(EntityPosition, -5, -12, 0, 10, 10, 8, true);
             var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hittableComponent = new HittableComponent(hittableBox, _damageState.OnHit) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+                {
+                    IsActive = false,
+                }
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hittableComponent = new HittableComponent(hittableBox, _damageState.OnHit)
+                {
+                    IsActive = false,
+                }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite) { Transparency = 0 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false }
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                _shadowComponent = new BodyDrawShadowComponent(_body, _sprite) { Transparency = 0 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -177,9 +196,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateCircling()
         {
-            var newPosition = _centerPosition + new Vector2(
-                MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + _circlingOffset) * 1,
-                MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + 1.0f + _circlingOffset) * 2);
+            var newPosition =
+                _centerPosition
+                + new Vector2(
+                    MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + _circlingOffset) * 1,
+                    MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + 1.0f + _circlingOffset)
+                        * 2
+                );
             EntityPosition.Set(newPosition);
         }
 
@@ -201,7 +224,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _hittableComponent.IsActive = true;
 
             // fly towards the player
-            var direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
+            var direction =
+                MapManager.ObjLink.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
             if (direction != Vector2.Zero)
             {
                 direction.Normalize();
@@ -214,7 +238,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if (EntityPosition.Z > 12)
                 EntityPosition.Z -= 0.5f * Game1.TimeMultiplier;
 
-            var direction = _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
+            var direction =
+                _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
 
             // fade out?
             if (direction.Length() > 120)

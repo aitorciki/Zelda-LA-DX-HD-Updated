@@ -24,7 +24,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private readonly PushableComponent _pushComponent;
         private readonly HittableComponent _hitComponent;
 
-        private Vector2[] _walkOffset = { new Vector2(-24, 0), new Vector2(24, 0), new Vector2(0, 24) };
+        private Vector2[] _walkOffset =
+        {
+            new Vector2(-24, 0),
+            new Vector2(24, 0),
+            new Vector2(0, 24),
+        };
 
         private readonly Vector2 _spawnPosition;
         private Vector2 _targetPosition;
@@ -38,9 +43,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
         public List<MBossStoneHinoxStone> HinoxStones = new List<MBossStoneHinoxStone>();
 
-        public MBossStoneHinox() : base("stone hinox") { }
+        public MBossStoneHinox()
+            : base("stone hinox") { }
 
-        public MBossStoneHinox(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public MBossStoneHinox(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 32, 0);
             EntitySize = new Rectangle(-16, -32, 32, 32);
@@ -48,8 +55,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _saveKey = saveKey;
 
             // was already killed?
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -66,7 +75,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _body = new BodyComponent(EntityPosition, -14, -20, 28, 20, 8)
             {
                 Gravity = -0.1f,
-                FieldRectangle = Map.GetField(posX, posY, 16)
+                FieldRectangle = Map.GetField(posX, posY, 16),
             };
 
             _aiComponent = new AiComponent();
@@ -89,11 +98,19 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("attack", stateHitFloor);
             _aiComponent.States.Add("postAttack", statePostAttack);
             _aiComponent.States.Add("postHit", statePostHit);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives, false, false)
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                sprite,
+                _lives,
+                false,
+                false
+            )
             {
                 HitMultiplierX = 0,
                 HitMultiplierY = 0,
-                BossHitSound = true
+                BossHitSound = true,
             };
             _aiDamageState.DamageSpriteShader = Resources.DamageSpriteShader1;
             _aiDamageState.AddBossDamageState(OnDeathAnimationEnd);
@@ -101,14 +118,29 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.ChangeState("idle");
 
             var damageCollider = new CBox(EntityPosition, -14, -24, 0, 28, 24, 8);
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 4)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(_body.BodyBox, OnHit) { IsActive = false }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 16, ShadowHeight = 6 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 16, ShadowHeight = 6 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
@@ -191,7 +223,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 return;
 
             // Spawn a stone at a random position.
-            var position = new Vector3(_spawnPosition.X + Game1.RandomNumber.Next(0, 120) - 60, _spawnPosition.Y - 8 - Game1.RandomNumber.Next(0, 8), 16);
+            var position = new Vector3(
+                _spawnPosition.X + Game1.RandomNumber.Next(0, 120) - 60,
+                _spawnPosition.Y - 8 - Game1.RandomNumber.Next(0, 8),
+                16
+            );
             var direction = new Vector3(0, 1, 1);
             var centerX = (int)_spawnPosition.X;
             var objStone = new MBossStoneHinoxStone(Map, this, position, direction, centerX);
@@ -224,9 +260,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 var newState = Game1.RandomNumber.Next(0, 2);
 
-                var state = (newState != 0 && _jumpCount < 2) 
-                    ? (_jumpCount++, "jump") 
-                    : (_jumpCount = 0, "walk");
+                var state =
+                    (newState != 0 && _jumpCount < 2)
+                        ? (_jumpCount++, "jump")
+                        : (_jumpCount = 0, "walk");
 
                 _aiComponent.ChangeState(state.Item2);
             }
@@ -294,7 +331,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // spawns a fairy
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }
@@ -304,7 +343,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -320,7 +365,12 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 _wasHit = true;
             }
 
-            if (hitType == HitType.Bomb || hitType == HitType.Boomerang || hitType == HitType.Bow || hitType == HitType.MagicRod)
+            if (
+                hitType == HitType.Bomb
+                || hitType == HitType.Boomerang
+                || hitType == HitType.Bow
+                || hitType == HitType.MagicRod
+            )
                 damage = 4;
 
             var hitCollision = _aiDamageState.OnHit(gameObject, direction, hitType, damage, false);
@@ -336,7 +386,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
 
             if (hitCollision != Values.HitCollision.None)
-                return hitCollision | Values.HitCollision.Repelling | Values.HitCollision.Repelling0;
+                return hitCollision
+                    | Values.HitCollision.Repelling
+                    | Values.HitCollision.Repelling0;
 
             return hitCollision;
         }

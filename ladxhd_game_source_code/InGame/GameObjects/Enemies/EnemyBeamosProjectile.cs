@@ -21,7 +21,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private bool _isFirstProjectile;
         private bool _reflected;
 
-        public EnemyBeamosProjectile(Map.Map map, EnemyBeamos host, Vector2 position, Vector2 velocityTarget, bool isFirstProjectile) : base(map)
+        public EnemyBeamosProjectile(
+            Map.Map map,
+            EnemyBeamos host,
+            Vector2 position,
+            Vector2 velocityTarget,
+            bool isFirstProjectile
+        )
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
@@ -41,26 +48,49 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 SimpleMovement = true,
                 VelocityTarget = velocityTarget,
                 MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal
+                CollisionTypes = Values.CollisionTypes.Normal,
             };
             _damageCollider = new CBox(EntityPosition, -2, -2, 0, 4, 4, 4);
 
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_damageCollider, OnPush));
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(_damageCollider, HitType.Enemy, 4) { OnDamage = OnDamage });;
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_damageCollider, OnPush)
+            );
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(_damageCollider, HitType.Enemy, 4)
+                {
+                    OnDamage = OnDamage,
+                }
+            );
+            ;
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(
+                DrawComponent.Index,
+                new DrawCSpriteComponent(_sprite, Values.LayerPlayer)
+            );
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
+
         private void Update()
         {
             // If the shot was reflected, try to hit an enemy.
             if (_reflected)
             {
-                var collision = Map.Objects.Hit(MapManager.ObjLink, EntityPosition.Position, _damageCollider.Box, HitType.Bomb, 4, false, false);
+                var collision = Map.Objects.Hit(
+                    MapManager.ObjLink,
+                    EntityPosition.Position,
+                    _damageCollider.Box,
+                    HitType.Bomb,
+                    4,
+                    false,
+                    false
+                );
                 if ((collision & Values.HitCollision.Enemy) != 0)
                     DeleteProjectile(false);
             }
         }
+
         private bool OnDamage()
         {
             // Don't show the spark if it hits Link falling down a hole.
@@ -120,7 +150,8 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Use the incoming direction and the shield reflect direction to determine new direction.
             shieldDirection.Normalize();
             var incoming = _body.VelocityTarget;
-            var reflected = (incoming - 2 * Vector2.Dot(incoming, shieldDirection) * shieldDirection) * 1.75f;
+            var reflected =
+                (incoming - 2 * Vector2.Dot(incoming, shieldDirection) * shieldDirection) * 1.75f;
 
             // Reverse the movement of the spear.
             _body.VelocityTarget = reflected;
@@ -133,8 +164,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 if (showParticle)
                 {
-                    var animation = new ObjAnimator(Map, 0, 0, Values.LayerTop, "Particles/despawnParticle", "idle", true);
-                    animation.EntityPosition.Set(EntityPosition.Position + _body.VelocityTarget * Game1.TimeMultiplier);
+                    var animation = new ObjAnimator(
+                        Map,
+                        0,
+                        0,
+                        Values.LayerTop,
+                        "Particles/despawnParticle",
+                        "idle",
+                        true
+                    );
+                    animation.EntityPosition.Set(
+                        EntityPosition.Position + _body.VelocityTarget * Game1.TimeMultiplier
+                    );
                     Map.Objects.SpawnObject(animation);
                 }
             }

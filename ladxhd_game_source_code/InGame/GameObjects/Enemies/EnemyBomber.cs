@@ -31,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool fairySpawn;
 
-        public EnemyBomber() : base("bomber") { }
+        public EnemyBomber()
+            : base("bomber") { }
 
-        public EnemyBomber(Map.Map map, int posX, int posY) : base(map)
+        public EnemyBomber(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, _flyHeight);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, _flyHeight);
+            ResetPosition = new CPosition(posX + 8, posY + 16, _flyHeight);
             EntitySize = new Rectangle(-12, -32, 24, 32);
             CanReset = true;
             OnReset = Reset;
@@ -49,12 +51,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("idle");
 
             var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-12, -16));
+            var animationComponent = new AnimationComponent(
+                _animator,
+                sprite,
+                new Vector2(-12, -16)
+            );
 
             _body = new BodyComponent(EntityPosition, -8, -12, 16, 12, 8)
             {
-                CollisionTypes = Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.Field,
+                CollisionTypes = Values.CollisionTypes.NPCWall | Values.CollisionTypes.Field,
                 FieldRectangle = map.GetField(posX, posY),
                 DragAir = 0.975f,
                 Gravity = -0.175f,
@@ -63,26 +68,46 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             };
 
             var stateWaiting = new AiState() { Init = InitWaiting };
-            stateWaiting.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("moving"), 500, 1000));
+            stateWaiting.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("moving"), 500, 1000)
+            );
             var stateMoving = new AiState() { Init = InitMoving };
-            stateMoving.Trigger.Add(new AiTriggerRandomTime(() => _aiComponent.ChangeState("waiting"), 500, 1000));
+            stateMoving.Trigger.Add(
+                new AiTriggerRandomTime(() => _aiComponent.ChangeState("waiting"), 500, 1000)
+            );
 
             _aiComponent = new AiComponent();
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("moving", stateMoving);
             _aiComponent.ChangeState("waiting");
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn, OnDeath = OnDeath };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+                OnDeath = OnDeath,
+            };
 
             var hittableBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 8, true);
             var damageBox = new CBox(EntityPosition, -7, -12, 0, 14, 12, 4, true);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 4 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 12, ShadowHeight = 4 }
+            );
 
             var spriteShadow = new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
             Map.Objects.RegisterAlwaysAnimateObject(this);
@@ -120,7 +145,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var distance = playerDistance.Length();
 
             // bomb
-            if (distance < 80 && Game1.RandomNumber.Next(0, 4) != 4 && _body.FieldRectangle.Contains(positionLink))
+            if (
+                distance < 80
+                && Game1.RandomNumber.Next(0, 4) != 4
+                && _body.FieldRectangle.Contains(positionLink)
+            )
             {
                 Vector2 throwDirection;
 
@@ -135,7 +164,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 {
                     // throw into a random direction
                     var randomRadius = Game1.RandomNumber.Next(0, 620) / 100;
-                    throwDirection = new Vector2((float)Math.Sin(randomRadius), (float)Math.Cos(randomRadius)) * 0.75f;
+                    throwDirection =
+                        new Vector2((float)Math.Sin(randomRadius), (float)Math.Cos(randomRadius))
+                        * 0.75f;
                 }
 
                 // spawn a bomb
@@ -159,28 +190,43 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var radiusToStart = Math.Atan2(directionToStart.Y, directionToStart.X);
 
             var maxDistance = 80.0f;
-            var randomDir = radiusToStart + (Math.PI - Game1.RandomNumber.Next(0, 628) / 100f) *
-                Math.Clamp(((maxDistance - directionToStart.Length()) / maxDistance), 0, 1);
+            var randomDir =
+                radiusToStart
+                + (Math.PI - Game1.RandomNumber.Next(0, 628) / 100f)
+                    * Math.Clamp(((maxDistance - directionToStart.Length()) / maxDistance), 0, 1);
 
-            _body.VelocityTarget = new Vector2((float)Math.Cos(randomDir), (float)Math.Sin(randomDir)) * 0.5f;
+            _body.VelocityTarget =
+                new Vector2((float)Math.Cos(randomDir), (float)Math.Sin(randomDir)) * 0.5f;
         }
 
         private void OnDeath(bool pieceOfPower)
         {
             if (fairySpawn)
-                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0));
+                Map.Objects.SpawnObject(
+                    new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0)
+                );
 
             _damageState.BaseOnDeath(pieceOfPower);
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
             // can only be attacked with the sword while holding it
-            if ((hitType & HitType.Sword) != 0 && (hitType & HitType.SwordHold) == 0 && (hitType & HitType.SwordSpin) == 0)
+            if (
+                (hitType & HitType.Sword) != 0
+                && (hitType & HitType.SwordHold) == 0
+                && (hitType & HitType.SwordSpin) == 0
+            )
             {
                 _body.Velocity.X = direction.X * 5;
                 _body.Velocity.Y = direction.Y * 5;
@@ -190,7 +236,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             // Magic Rod has 50% chance to spawn fairy.
             if ((hitType & HitType.MagicRod) != 0 && !fairySpawn)
             {
-                if (Game1.RandomNumber.Next(0,2) == 0)
+                if (Game1.RandomNumber.Next(0, 2) == 0)
                     fairySpawn = true;
             }
             // Boomerang has 100% chance to spawn fairy.
@@ -204,12 +250,22 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 fairySpawn = true;
 
                 // We just delete the enemy instead of returning damage state.
-                Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0));
+                Map.Objects.SpawnObject(
+                    new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y - 8, 0)
+                );
                 Map.Objects.DeleteObjects.Add(this);
 
                 // Play the crunch sound and show the smoke effect.
                 Game1.GameManager.PlaySoundEffect("D360-03-03");
-                var explosionAnimation = new ObjAnimator(Map, (int)EntityPosition.X-8, (int)EntityPosition.Y-26, Values.LayerTop, "Particles/spawn", "run", true);
+                var explosionAnimation = new ObjAnimator(
+                    Map,
+                    (int)EntityPosition.X - 8,
+                    (int)EntityPosition.Y - 26,
+                    Values.LayerTop,
+                    "Particles/spawn",
+                    "run",
+                    true
+                );
                 Map.Objects.SpawnObject(explosionAnimation);
                 return Values.HitCollision.None;
             }

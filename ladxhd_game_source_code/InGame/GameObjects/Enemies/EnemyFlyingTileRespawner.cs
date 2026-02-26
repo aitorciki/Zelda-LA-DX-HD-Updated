@@ -22,14 +22,22 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _index;
         private readonly int _mode;
 
-        public EnemyFlyingTileRespawner(Map.Map map, int posX, int posY, string strKey, int index, int mode) : base(map)
+        public EnemyFlyingTileRespawner(
+            Map.Map map,
+            int posX,
+            int posY,
+            string strKey,
+            int index,
+            int mode
+        )
+            : base(map)
         {
             EntityPosition = new CPosition(posX, posY, 0);
             EntitySize = new Rectangle(0, 0, 16, 16);
 
             _strKey = strKey;
-            _index  = index;
-            _mode   = mode;
+            _index = index;
+            _mode = mode;
 
             _fieldRect = Map.GetField(posX, posY);
             _lastFieldTime = Map.GetUpdateState(EntityPosition.Position);
@@ -82,7 +90,14 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void SpawnTile()
         {
             List<GameObject> enemyTriggers = new List<GameObject>();
-            EnemyFlyingTile flyingTile = new EnemyFlyingTile(Map, (int)EntityPosition.X, (int)EntityPosition.Y, _strKey, _index, _mode);
+            EnemyFlyingTile flyingTile = new EnemyFlyingTile(
+                Map,
+                (int)EntityPosition.X,
+                (int)EntityPosition.Y,
+                _strKey,
+                _index,
+                _mode
+            );
 
             // Remove respawner
             Map.Objects.DeleteObjects.Add(this);
@@ -91,11 +106,17 @@ namespace ProjectZ.InGame.GameObjects.Things
             Map.Objects.SpawnObject(flyingTile);
 
             // If there is utility objects in the room find them.
-            Map.Objects.GetGameObjectsWithTag(enemyTriggers, Values.GameObjectTag.Utility,
-                (int)_fieldRect.X, (int)_fieldRect.Y, (int)_fieldRect.Width, (int)_fieldRect.Height);
+            Map.Objects.GetGameObjectsWithTag(
+                enemyTriggers,
+                Values.GameObjectTag.Utility,
+                (int)_fieldRect.X,
+                (int)_fieldRect.Y,
+                (int)_fieldRect.Width,
+                (int)_fieldRect.Height
+            );
 
             // Loop through the list of utility objects.
-            foreach (var trigger in enemyTriggers) 
+            foreach (var trigger in enemyTriggers)
             {
                 // If it's an enemy trigger add the Red Zol.
                 if (trigger is ObjEnemyTrigger etrig)

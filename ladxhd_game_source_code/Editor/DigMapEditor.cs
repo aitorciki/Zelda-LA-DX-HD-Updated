@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProjectZ.Base;
 using ProjectZ.Base.UI;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using System.Collections.Generic;
 
 namespace ProjectZ.Editor
 {
@@ -48,13 +48,29 @@ namespace ProjectZ.Editor
             var buttonHeight = 35;
             var distanceY = buttonHeight + 5;
 
-            Game1.UiManager.AddElement(new UiTextInput(new Rectangle(5, posY, buttonWidth, 50),
-                Resources.EditorFontMonoSpace, 50, "Mode", Values.EditorUiDigTileEditor,
-                uiElement => ((UiTextInput)uiElement).StrValue = _selection ?? "",
-                uiElement => _selection = ((UiTextInput)uiElement).StrValue));
+            Game1.UiManager.AddElement(
+                new UiTextInput(
+                    new Rectangle(5, posY, buttonWidth, 50),
+                    Resources.EditorFontMonoSpace,
+                    50,
+                    "Mode",
+                    Values.EditorUiDigTileEditor,
+                    uiElement => ((UiTextInput)uiElement).StrValue = _selection ?? "",
+                    uiElement => _selection = ((UiTextInput)uiElement).StrValue
+                )
+            );
 
-            Game1.UiManager.AddElement(new UiButton(new Rectangle(5, posY += 55, buttonWidth, buttonHeight),
-                Resources.EditorFont, "Fill Map", "button", Values.EditorUiDigTileEditor, null, FillMap));
+            Game1.UiManager.AddElement(
+                new UiButton(
+                    new Rectangle(5, posY += 55, buttonWidth, buttonHeight),
+                    Resources.EditorFont,
+                    "Fill Map",
+                    "button",
+                    Values.EditorUiDigTileEditor,
+                    null,
+                    FillMap
+                )
+            );
         }
 
         public void Update(GameTime gameTime)
@@ -91,23 +107,46 @@ namespace ProjectZ.Editor
                     var width = _tileWidth;
                     var height = _tileHeight;
 
-                    spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                        posX + (_tileWidth - width) / 2,
-                        posY + (_tileHeight - height) / 2, width, height), _colorData[x, y] * 0.75f);
+                    spriteBatch.Draw(
+                        Resources.SprWhite,
+                        new Rectangle(
+                            posX + (_tileWidth - width) / 2,
+                            posY + (_tileHeight - height) / 2,
+                            width,
+                            height
+                        ),
+                        _colorData[x, y] * 0.75f
+                    );
                 }
             }
 
             var cursorPosition = GetTiledCursor();
-            if (cursorPosition.X >= 0 && !string.IsNullOrEmpty(CurrentMap.DigMap[cursorPosition.X, cursorPosition.Y]))
+            if (
+                cursorPosition.X >= 0
+                && !string.IsNullOrEmpty(CurrentMap.DigMap[cursorPosition.X, cursorPosition.Y])
+            )
             {
-                var spriteSize = Resources.EditorFont.MeasureString(CurrentMap.DigMap[cursorPosition.X, cursorPosition.Y]);
+                var spriteSize = Resources.EditorFont.MeasureString(
+                    CurrentMap.DigMap[cursorPosition.X, cursorPosition.Y]
+                );
                 var scale = spriteSize.X > spriteSize.Y ? (_tileWidth - 2) / spriteSize.X : 1;
 
-                spriteBatch.DrawString(Resources.EditorFont, CurrentMap.DigMap[cursorPosition.X, cursorPosition.Y],
+                spriteBatch.DrawString(
+                    Resources.EditorFont,
+                    CurrentMap.DigMap[cursorPosition.X, cursorPosition.Y],
                     new Vector2(
                         _tileWidth * cursorPosition.X + _tileWidth / 2 - (spriteSize.X / 2 * scale),
-                        _tileHeight * cursorPosition.Y + _tileHeight / 2 - (spriteSize.Y / 2 * scale)),
-                    Color.White, 0, Vector2.One, new Vector2(scale), SpriteEffects.None, 0);
+                        _tileHeight * cursorPosition.Y
+                            + _tileHeight / 2
+                            - (spriteSize.Y / 2 * scale)
+                    ),
+                    Color.White,
+                    0,
+                    Vector2.One,
+                    new Vector2(scale),
+                    SpriteEffects.None,
+                    0
+                );
             }
         }
 
@@ -116,8 +155,8 @@ namespace ProjectZ.Editor
             _colorData = new Color[CurrentMap.DigMap.GetLength(0), CurrentMap.DigMap.GetLength(1)];
 
             for (var y = 0; y < CurrentMap.DigMap.GetLength(1); y++)
-                for (var x = 0; x < CurrentMap.DigMap.GetLength(0); x++)
-                    UpdateColor(x, y);
+            for (var x = 0; x < CurrentMap.DigMap.GetLength(0); x++)
+                UpdateColor(x, y);
         }
 
         private void UpdateColor(int x, int y)
@@ -137,7 +176,8 @@ namespace ProjectZ.Editor
                     newColor = new Color(
                         Game1.RandomNumber.Next(0, 256),
                         Game1.RandomNumber.Next(0, 256),
-                        Game1.RandomNumber.Next(0, 256));
+                        Game1.RandomNumber.Next(0, 256)
+                    );
                 }
 
                 _colorData[x, y] = newColor;
@@ -148,8 +188,8 @@ namespace ProjectZ.Editor
         private void FillMap(UiElement uiElement)
         {
             for (var y = 0; y < CurrentMap.DigMap.GetLength(1); y++)
-                for (var x = 0; x < CurrentMap.DigMap.GetLength(0); x++)
-                    CurrentMap.DigMap[x, y] = _selection;
+            for (var x = 0; x < CurrentMap.DigMap.GetLength(0); x++)
+                CurrentMap.DigMap[x, y] = _selection;
         }
 
         public Point GetTiledCursor()
@@ -158,7 +198,8 @@ namespace ProjectZ.Editor
 
             var position = new Point(
                 (int)((_mousePosition.X - _camera.Location.X) / (_tileWidth * _camera.Scale)),
-                (int)((_mousePosition.Y - _camera.Location.Y) / (_tileHeight * _camera.Scale)));
+                (int)((_mousePosition.Y - _camera.Location.Y) / (_tileHeight * _camera.Scale))
+            );
 
             // fix
             if (_mousePosition.X - _camera.Location.X < 0)
@@ -166,9 +207,13 @@ namespace ProjectZ.Editor
             if (_mousePosition.Y - _camera.Location.Y < 0)
                 position.Y--;
 
-            if (_mousePosition.X > _leftToolbarWidth &&
-                0 <= position.X && position.X < CurrentMap.DigMap.GetLength(0) &&
-                0 <= position.Y && position.Y < CurrentMap.DigMap.GetLength(1))
+            if (
+                _mousePosition.X > _leftToolbarWidth
+                && 0 <= position.X
+                && position.X < CurrentMap.DigMap.GetLength(0)
+                && 0 <= position.Y
+                && position.Y < CurrentMap.DigMap.GetLength(1)
+            )
             {
                 return position;
             }

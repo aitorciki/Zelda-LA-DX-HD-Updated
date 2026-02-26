@@ -41,9 +41,11 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         private bool _attackable;
         private int _lives = EnemyLives.GiantBuzzBlob;
 
-        public MBossGiantBuzzBlob() : base("giant buzz blob") { }
+        public MBossGiantBuzzBlob()
+            : base("giant buzz blob") { }
 
-        public MBossGiantBuzzBlob(Map.Map map, int posX, int posY, string saveKey) : base(map)
+        public MBossGiantBuzzBlob(Map.Map map, int posX, int posY, string saveKey)
+            : base(map)
         {
             EntityPosition = new CPosition(posX + 16, posY + 32, 0);
             EntitySize = new Rectangle(-16, -32, 32, 32);
@@ -51,8 +53,10 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _saveKey = saveKey;
 
             // was already killed?
-            if (!string.IsNullOrEmpty(_saveKey) &&
-                Game1.GameManager.SaveManager.GetString(_saveKey) == "1")
+            if (
+                !string.IsNullOrEmpty(_saveKey)
+                && Game1.GameManager.SaveManager.GetString(_saveKey) == "1"
+            )
             {
                 IsDead = true;
                 return;
@@ -68,7 +72,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 IgnoreHoles = true,
                 Gravity = -0.095f,
-                FieldRectangle = Map.GetField(posX, posY, 16)
+                FieldRectangle = Map.GetField(posX, posY, 16),
             };
 
             _aiComponent = new AiComponent();
@@ -80,7 +84,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var stateAttack = new AiState { Init = InitAttack };
             stateAttack.Trigger.Add(new AiTriggerCountdown(50, null, EndAttack));
             var statePreSlime = new AiState();
-            statePreSlime.Trigger.Add(new AiTriggerCountdown(600, null, () => _aiComponent.ChangeState("toSlime")));
+            statePreSlime.Trigger.Add(
+                new AiTriggerCountdown(600, null, () => _aiComponent.ChangeState("toSlime"))
+            );
             var stateToSlime = new AiState(UpdateToSlime) { Init = InitToSlime };
             var stateSlime = new AiState { Init = InitSlime };
             stateSlime.Trigger.Add(new AiTriggerCountdown(133, null, EndSlime));
@@ -102,12 +108,20 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.States.Add("postJump", statePostJump);
             _aiComponent.States.Add("endSlime", stateEndSlime);
             _aiComponent.States.Add("death", stateDeath);
-            _aiDamageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives, false, false)
+            _aiDamageState = new AiDamageState(
+                this,
+                _body,
+                _aiComponent,
+                _sprite,
+                _lives,
+                false,
+                false
+            )
             {
                 HitMultiplierX = 1,
                 HitMultiplierY = 1,
                 ExplosionOffsetY = 4,
-                BossHitSound = true
+                BossHitSound = true,
             };
             _aiDamageState.AddBossDamageState(OnDeathAnimationEnd);
             _aiDamageState.DamageSpriteShader = Resources.DamageSpriteShader1;
@@ -117,14 +131,29 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             var damageBox = new CBox(EntityPosition, -8, -28, 0, 16, 28, 8, false);
             var hittableBox = new CBox(EntityPosition, -8, -28, 0, 16, 28, 8, false);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4));
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false });
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 4)
+            );
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(_body.BodyBox, OnPush)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit) { IsActive = false }
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 14, ShadowHeight = 5 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, _sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 14, ShadowHeight = 5 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
@@ -166,13 +195,27 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
         {
             // spawn a fairy carrying powder for the player?
             var powder = Game1.GameManager.GetItem("powder");
-            if ((powder == null || powder.Count <= 0) && (_dungeonFairy == null || !_dungeonFairy.IsActive))
+            if (
+                (powder == null || powder.Count <= 0)
+                && (_dungeonFairy == null || !_dungeonFairy.IsActive)
+            )
             {
-                _dungeonFairy = new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 32, "powder_10");
+                _dungeonFairy = new ObjDungeonFairy(
+                    Map,
+                    (int)EntityPosition.X,
+                    (int)EntityPosition.Y,
+                    32,
+                    "powder_10"
+                );
                 Map.Objects.SpawnObject(_dungeonFairy);
             }
             // make sure to be on the straight frame when attacking
-            if (!_toSlime && _startAttack && _animator.CurrentFrameIndex % 2 == 0 && _animator.FrameCounter >= 50)
+            if (
+                !_toSlime
+                && _startAttack
+                && _animator.CurrentFrameIndex % 2 == 0
+                && _animator.FrameCounter >= 50
+            )
             {
                 _startAttack = false;
                 _aiComponent.ChangeState("attack");
@@ -207,7 +250,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             {
                 var rotation = MathF.PI / 2 * i + direction * MathF.PI / 4;
                 var offset = new Vector2(-MathF.Cos(rotation), MathF.Sin(rotation));
-                var objBuzz = new MBossGiantBuzzBlobBuzz(Map, new Vector2(spawnOrigin.X + offset.X * 20, spawnOrigin.Y + offset.Y * 20), offset, "buzz_" + direction, MathF.PI / 2 * i);
+                var objBuzz = new MBossGiantBuzzBlobBuzz(
+                    Map,
+                    new Vector2(spawnOrigin.X + offset.X * 20, spawnOrigin.Y + offset.Y * 20),
+                    offset,
+                    "buzz_" + direction,
+                    MathF.PI / 2 * i
+                );
                 Map.Objects.SpawnObject(objBuzz);
             }
         }
@@ -317,7 +366,9 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
 
             // spawns a fairy
             Game1.GameManager.PlaySoundEffect("D360-27-1B");
-            Map.Objects.SpawnObject(new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8));
+            Map.Objects.SpawnObject(
+                new ObjDungeonFairy(Map, (int)EntityPosition.X, (int)EntityPosition.Y, 8)
+            );
 
             Map.Objects.DeleteObjects.Add(this);
         }
@@ -330,7 +381,13 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             return true;
         }
 
-        public Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        public Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)

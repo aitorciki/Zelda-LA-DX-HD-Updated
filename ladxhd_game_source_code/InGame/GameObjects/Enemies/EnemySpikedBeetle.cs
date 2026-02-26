@@ -31,14 +31,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private bool _playerInsideField;
 
-        public EnemySpikedBeetle() : base("spiked beetle") { }
+        public EnemySpikedBeetle()
+            : base("spiked beetle") { }
 
-        public EnemySpikedBeetle(Map.Map map, int posX, int posY) : base(map)
+        public EnemySpikedBeetle(Map.Map map, int posX, int posY)
+            : base(map)
         {
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            ResetPosition  = new CPosition(posX + 8, posY + 16, 0);
+            ResetPosition = new CPosition(posX + 8, posY + 16, 0);
             EntitySize = new Rectangle(-8, -16, 16, 16);
             CanReset = true;
             OnReset = Reset;
@@ -57,12 +59,12 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 Drag = 0.8f,
                 Gravity = -0.1f,
                 Bounciness = 0.5f,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.Field,
-                AvoidTypes =     Values.CollisionTypes.Hole |
-                                 Values.CollisionTypes.NPCWall |
-                                 Values.CollisionTypes.DeepWater,
-                FieldRectangle = fieldRectangle
+                CollisionTypes = Values.CollisionTypes.Normal | Values.CollisionTypes.Field,
+                AvoidTypes =
+                    Values.CollisionTypes.Hole
+                    | Values.CollisionTypes.NPCWall
+                    | Values.CollisionTypes.DeepWater,
+                FieldRectangle = fieldRectangle,
             };
 
             var stateWalking = new AiState(UpdateAttack);
@@ -81,7 +83,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("waiting", stateWaiting);
             _aiComponent.States.Add("stunned", stateStunned);
             _aiComponent.States.Add("back", stateBack);
-            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives) { OnBurn = OnBurn };
+            _damageState = new AiDamageState(this, _body, _aiComponent, sprite, _lives)
+            {
+                OnBurn = OnBurn,
+            };
             new AiFallState(_aiComponent, _body, OnAbsorption, null, 250);
             new AiDeepWaterState(_body);
 
@@ -92,15 +97,30 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             var hittableBox = new CBox(EntityPosition, -8, -14, 16, 14, 8);
             var pushableBox = new CBox(EntityPosition, -7, -13, 14, 13, 8);
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2));
-            AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(hittableBox, OnHit));
+            AddComponent(
+                DamageFieldComponent.Index,
+                _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2)
+            );
+            AddComponent(
+                HittableComponent.Index,
+                _hitComponent = new HittableComponent(hittableBox, OnHit)
+            );
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BodyComponent.Index, _body);
-            AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(pushableBox, OnPush));
+            AddComponent(
+                PushableComponent.Index,
+                _pushComponent = new PushableComponent(pushableBox, OnPush)
+            );
             AddComponent(BaseAnimationComponent.Index, _animationComponent);
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10, ShadowHeight = 5 });
+            AddComponent(
+                DrawComponent.Index,
+                new BodyDrawComponent(_body, sprite, Values.LayerPlayer)
+            );
+            AddComponent(
+                DrawShadowComponent.Index,
+                new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10, ShadowHeight = 5 }
+            );
 
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
@@ -184,15 +204,25 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateAttack()
         {
             var oldPercentage = (float)Math.Pow(0.9f, Game1.TimeMultiplier);
-            _body.VelocityTarget = _body.VelocityTarget * oldPercentage +
-                                   _velocityTarget * (1 - oldPercentage);
+            _body.VelocityTarget =
+                _body.VelocityTarget * oldPercentage + _velocityTarget * (1 - oldPercentage);
 
             if (!_playerInsideField)
                 return;
 
             var collisionRectangles = new RectangleF[4];
-            collisionRectangles[0] = new RectangleF(EntityPosition.X - 128, EntityPosition.Y - 5, 128, 2);
-            collisionRectangles[1] = new RectangleF(EntityPosition.X, EntityPosition.Y - 128, 2, 128);
+            collisionRectangles[0] = new RectangleF(
+                EntityPosition.X - 128,
+                EntityPosition.Y - 5,
+                128,
+                2
+            );
+            collisionRectangles[1] = new RectangleF(
+                EntityPosition.X,
+                EntityPosition.Y - 128,
+                2,
+                128
+            );
             collisionRectangles[2] = new RectangleF(EntityPosition.X, EntityPosition.Y - 5, 128, 2);
             collisionRectangles[3] = new RectangleF(EntityPosition.X, EntityPosition.Y, 2, 128);
 
@@ -206,7 +236,13 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _playerInsideField = false;
         }
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)
+        private Values.HitCollision OnHit(
+            GameObject gameObject,
+            Vector2 direction,
+            HitType hitType,
+            int damage,
+            bool pieceOfPower
+        )
         {
             // Because of the way the hit system works, this needs to be in any hit that doesn't default to "None" hit collision.
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
@@ -265,7 +301,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 }
                 else
                 {
-                    _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
+                    _body.Velocity = new Vector3(
+                        direction.X * 2.5f,
+                        direction.Y * 2.5f,
+                        _body.Velocity.Z
+                    );
                 }
             }
 
@@ -285,9 +325,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             }
 
             // collide with a wall
-            if ((direction & Values.BodyCollision.Horizontal) != 0 && Math.Sign(_body.VelocityTarget.X) == Math.Sign(_velocityTarget.X))
+            if (
+                (direction & Values.BodyCollision.Horizontal) != 0
+                && Math.Sign(_body.VelocityTarget.X) == Math.Sign(_velocityTarget.X)
+            )
                 _velocityTarget.X = -_velocityTarget.X;
-            else if ((direction & Values.BodyCollision.Vertical) != 0 && Math.Sign(_body.VelocityTarget.Y) == Math.Sign(_velocityTarget.Y))
+            else if (
+                (direction & Values.BodyCollision.Vertical) != 0
+                && Math.Sign(_body.VelocityTarget.Y) == Math.Sign(_velocityTarget.Y)
+            )
                 _velocityTarget.Y = -_velocityTarget.Y;
         }
 
