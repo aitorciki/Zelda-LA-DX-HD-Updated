@@ -3,6 +3,7 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
 using Android.Views;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.Android
 {
@@ -17,11 +18,22 @@ namespace ProjectZ.Android
             ConfigChanges.ScreenSize |
             ConfigChanges.KeyboardHidden |
             ConfigChanges.UiMode)]
+
     public class MainActivity : Microsoft.Xna.Framework.AndroidGameActivity
     {
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            var root = Application.Context.GetExternalFilesDir(null)!.AbsolutePath;
+
+            // Point Values to a writable location on Android.
+            Values.SetUserDataRoot(root);
+
+            // Ensure folders exist.
+            System.IO.Directory.CreateDirectory(Values.PathMods);
+            System.IO.Directory.CreateDirectory(Values.PathLAHDMods);
+            System.IO.Directory.CreateDirectory(Values.PathGraphicsMods);
 
             // construct your real game here:
             var game = new Game1(

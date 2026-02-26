@@ -48,6 +48,25 @@ namespace ProjectZ.InGame.Things
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
         //
+        //  STRING HELPERS
+        //
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static string ReadAllText(string path)
+        {
+            path = ToAssetPath(path);
+            using var s = OpenRead(path);
+            using var sr = new StreamReader(s, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+            return sr.ReadToEnd();
+        }
+
+        public static string[] ReadAllLines(string path)
+        {
+            return ReadAllText(path).Replace("\r\n", "\n").Split('\n');
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+        //
         //  PATH HELPERS
         //
         //-------------------------------------------------------------------------------------------------------------------------------------------------

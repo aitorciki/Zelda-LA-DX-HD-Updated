@@ -19,49 +19,55 @@ namespace ProjectZ.InGame.Things
 
         public void Load()
         {
-            // Go through the ".lng" files and fill the "_languageStrings" dictionary array. Searches both language and mods folders.
-            var files = (Directory.Exists(Values.PathLanguageFolder)
-                            ? Directory.EnumerateFiles(Values.PathLanguageFolder, "*.lng", SearchOption.AllDirectories)
-                            : Enumerable.Empty<string>())
-                        .Concat(Directory.Exists(Values.PathMods)
-                            ? Directory.EnumerateFiles(Values.PathMods, "*.lng", SearchOption.AllDirectories)
-                            : Enumerable.Empty<string>())
-                        .OrderBy(f => f)
-                        .ToArray();
+            // Base languages from APK assets (Data/)
+            var baseFiles = GameFS.EnumerateFiles(
+                    Values.PathLanguageFolder,
+                    recursive: true,
+                    acceptFile: name => name.EndsWith(".lng", StringComparison.OrdinalIgnoreCase)
+                );
 
-            // Create the dictionary to store available languages. The default (first) entry is English.
-            var languageStrings = new Dictionary<string, Dictionary<string, string>>();
-            languageStrings.Add("eng", new Dictionary<string, string>());
+            // 2) Mod languages from filesystem
+            IEnumerable<string> modFiles = Enumerable.Empty<string>();
+            if (Directory.Exists(Values.PathMods))
+                modFiles = Directory.EnumerateFiles(Values.PathMods, "*.lng", SearchOption.AllDirectories);
 
-            // Loop through all the language files that have been found.
+            var files = baseFiles
+                .Concat(modFiles)
+                .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            var languageStrings = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["eng"] = new Dictionary<string, string>()
+            };
+
             for (var i = 0; i < files.Length; i++)
             {
-                // Get the filename and split on underscores to determine type of language file.
-                var fileName = Path.GetFileNameWithoutExtension(files[i]);
-                var split = fileName.Split('_');
-                var lngName = "";
+                var fileNameNoExt = Path.GetFileNameWithoutExtension(files[i]);
+                var split = fileNameNoExt.Split('_');
 
-                // Adds the language file for menu elements (Example: "eng.lng").
+                string lngName = "";
+
+                // "eng.lng"
                 if (split.Length == 1)
                     lngName = split[0];
 
-                // Adds the language file for NPC dialogs (Example: "dialog_eng.lng").
+                // "dialog_eng.lng"
                 if (split.Length == 2)
                     lngName = split[1];
 
-                languageStrings.TryGetValue(lngName, out Dictionary<string, string> dict);
-
-                if (dict == null)
+                if (!languageStrings.TryGetValue(lngName, out var dict) || dict == null)
                 {
                     dict = new Dictionary<string, string>();
-                    languageStrings.Add(lngName, dict);
+                    languageStrings[lngName] = dict;
                 }
 
-                if (split.Length == 1 || (split.Length == 2 && split[0] == "dialog"))
+                if (split.Length == 1 || (split.Length == 2 && split[0].Equals("dialog", StringComparison.OrdinalIgnoreCase)))
                     LoadFile(dict, files[i]);
             }
+
             LanguageCode = new List<string> { "eng" };
-            LanguageCode.AddRange(languageStrings.Keys.Where(k => k != "eng"));
+            LanguageCode.AddRange(languageStrings.Keys.Where(k => !k.Equals("eng", StringComparison.OrdinalIgnoreCase)));
 
             _languageStrings = LanguageCode.Select(k => languageStrings[k]).ToArray();
             CurrentLanguageIndex = Math.Clamp(CurrentLanguageIndex, 0, _languageStrings.Length - 1);
@@ -70,29 +76,42 @@ namespace ProjectZ.InGame.Things
 
         public void LoadFile(Dictionary<string, string> dictionary, string fileName)
         {
-            var reader = new StreamReader(fileName);
+            // If it looks like an asset path (Data/ or Content/), use GameFS.
+            // Otherwise treat it as a real OS file path (mods).
+            var ap = GameFS.ToAssetPath(fileName);
 
-            while (!reader.EndOfStream)
+            Stream stream =
+                (ap.StartsWith("Data/", StringComparison.OrdinalIgnoreCase) ||
+                 ap.StartsWith("Content/", StringComparison.OrdinalIgnoreCase))
+                    ? GameFS.OpenRead(ap)
+                    : File.OpenRead(fileName);
+
+            using (stream)
+            using (var reader = new StreamReader(stream))
             {
-                var strLine = reader.ReadLine();
-                var spacePosition = strLine.IndexOf(' ');
-
-                if (spacePosition < 0 || strLine.StartsWith("//"))
-                    continue;
-
-                var strKey = strLine.Substring(0, spacePosition);
-
-                // empty string
-                if (spacePosition + 1 >= strLine.Length)
+                while (!reader.EndOfStream)
                 {
-                    dictionary.Add(strKey, "");
-                    continue;
-                }
-                var strValue = strLine.Substring(spacePosition + 1);
+                    var strLine = reader.ReadLine();
+                    if (string.IsNullOrEmpty(strLine))
+                        continue;
 
-                dictionary[strKey] = strValue;
+                    var spacePosition = strLine.IndexOf(' ');
+                    if (spacePosition < 0 || strLine.StartsWith("//"))
+                        continue;
+
+                    var strKey = strLine.Substring(0, spacePosition);
+
+                    // empty string
+                    if (spacePosition + 1 >= strLine.Length)
+                    {
+                        dictionary[strKey] = "";
+                        continue;
+                    }
+
+                    var strValue = strLine.Substring(spacePosition + 1);
+                    dictionary[strKey] = strValue;
+                }
             }
-            reader.Close();
         }
 
         public string GetString(string strKey, string defaultString)
