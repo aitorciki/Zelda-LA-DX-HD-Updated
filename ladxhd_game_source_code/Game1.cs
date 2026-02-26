@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 ﻿using System.IO;
 using System.Threading;
 using Microsoft.Xna.Framework;
@@ -35,7 +35,7 @@ namespace ProjectZ
         public static Random RandomNumber = new Random();
         public static CameraField ClassicCamera = new CameraField();
         public static EditorManager EditorManager;
-  
+
         public static int WindowWidth;
         public static int WindowHeight;
         public static int WindowWidthEnd;
@@ -104,7 +104,7 @@ namespace ProjectZ
 
         // True when in-game after selecting save file. False at main menu and intro.
         public static bool InProgress;
-        
+
         // Stores classic cam setting for ending.
         static public bool StoredCameraSet = false;
         static public bool StoredClassicCamera = false;
@@ -179,7 +179,7 @@ namespace ProjectZ
             base.Initialize();
         }
 
-        protected override void OnExiting(object sender, EventArgs args)
+        protected override void OnExiting(object sender, ExitingEventArgs args)
         {
             // Close out the GBS Player before exiting.
             GbsPlayer.OnExit();
@@ -288,7 +288,7 @@ namespace ProjectZ
                 InputHandler.ResetInputState();
                 SettingsSaveLoad.SaveSettings();
             }
-            // Initialize render targets if thread is finished loading resources and they have not been initialized yet. 
+            // Initialize render targets if thread is finished loading resources and they have not been initialized yet.
             if (_finishedLoading && !_initRenderTargets)
             {
                 _initRenderTargets = true;
@@ -644,7 +644,7 @@ namespace ProjectZ
 
                 // If set to autoscale (Game1.MaxGameScale + 1) used the calculated value; otherwise use the value set by the user.
                 MapManager.Camera.Scale = GameSettings.GameScale == maxScale
-                    ? MathF.Ceiling(usedScale) 
+                    ? MathF.Ceiling(usedScale)
                     : GameSettings.GameScale;
 
                 // The camera scale uses a float value and can use a fractional scaling value when drawing the world.
@@ -653,7 +653,7 @@ namespace ProjectZ
                     MapManager.Camera.Scale = 1 / (2 - MapManager.Camera.Scale);
                     GameManager.SetGameScale(1);
                 }
-                // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional 
+                // If it's 1x or greater. We use "gameScale" directly here as a float as it allows fractional
                 // values while manually setting the scale only allows upscaling using integer values.
                 else
                 {
@@ -669,8 +669,8 @@ namespace ProjectZ
             if (GameSettings.UiScale > interfaceScale)
                 UiScale = interfaceScale;
             else
-                UiScale = GameSettings.UiScale == 0 
-                    ? interfaceScale 
+                UiScale = GameSettings.UiScale == 0
+                    ? interfaceScale
                     : MathHelper.Clamp(GameSettings.UiScale, 1, interfaceScale);
 
             UiManager.SizeChanged();
