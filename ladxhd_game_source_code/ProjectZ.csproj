@@ -47,6 +47,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CSharpier.MsBuild" Version="1.2.6">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="MonoGame.Extended" Version="5.3.1" />
         <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="5.3.1" />
         <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.4.1" />
@@ -99,5 +103,24 @@
         <MakeDir Directories="$(PublishDir)Mods" />
         <MakeDir Directories="$(PublishDir)Mods\Graphics" />
         <MakeDir Directories="$(PublishDir)Mods\LAHDMods" />
+    </Target>
+
+    <Target
+        Name="Husky"
+        BeforeTargets="Restore;CollectPackageReferences"
+        Condition="'$(HUSKY)' != 0"
+    >
+        <Exec
+            Command="dotnet tool restore"
+            StandardOutputImportance="Low"
+            StandardErrorImportance="High"
+            WorkingDirectory=".."
+        />
+        <Exec
+            Command="dotnet husky install"
+            StandardOutputImportance="Low"
+            StandardErrorImportance="High"
+            WorkingDirectory=".."
+        />
     </Target>
 </Project>

@@ -1,0 +1,18 @@
+{
+  "tasks": [
+    {
+      "name": "Run csharpier",
+      "command": "dotnet",
+      "args": ["csharpier", "format", "${staged}"],
+      "include": [
+        "ladxhd_game_source_code/**/*.cs",
+        "ladxhd_game_source_code/**/*.csx",
+        "ladxhd_game_source_code/**/*.csproj",
+        "ladxhd_game_source_code/**/*.props",
+        "ladxhd_game_source_code/**/*.targets",
+        "ladxhd_game_source_code/**/*.xml",
+        "ladxhd_game_source_code/**/*.config"
+      ]
+    }
+  ]
+}
