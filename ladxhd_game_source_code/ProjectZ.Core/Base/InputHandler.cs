@@ -61,6 +61,12 @@ namespace ProjectZ.Base
         private static string _textInputBuffer = "";
         private static bool _textInputEnabled;
 
+        private static int _gamePadIndex = 0;
+        public static int GamePadIndex => _gamePadIndex;
+
+        public static GamePadState GamePadState => _gamePadState;
+        public static GamePadState LastGamePadState => _lastGamePadState;
+
         #region Constructor Region
 
         public InputHandler(Game game)
@@ -144,12 +150,31 @@ namespace ProjectZ.Base
             _lastMouseState = _mouseState;
             _mouseState = Mouse.GetState();
 
+            DetectGamePad();
+
             _lastGamePadState = _gamePadState;
             _gamePadState = GamePad.GetState(0);
 
             // Prevents input when Window is in the background (do we really want this?).
             if (!Game1.WasActive)
                 ResetInputState();
+        }
+
+        public static void DetectGamePad()
+        {
+            // Try 0..3 and pick the first connected pad.
+            for (int i = 0; i < 4; i++)
+            {
+                var st = GamePad.GetState(i);
+                if (st.IsConnected)
+                {
+                    _gamePadIndex = i;
+                    return;
+                }
+            }
+            _gamePadIndex = 0;
+
+            System.Diagnostics.Debug.WriteLine($"Pad {_gamePadIndex} connected: {GamePad.GetState(_gamePadIndex).IsConnected}");
         }
 
         /// <summary>

@@ -165,9 +165,8 @@ namespace ProjectZ.InGame.Controls
 
         public static Vector2 GetCamVector2()
         {
-            var gamepadState = GamePad.GetState(PlayerIndex.One);
-            var vec = new Vector2(gamepadState.ThumbSticks.Right.X, -gamepadState.ThumbSticks.Right.Y);
-            return vec;
+            var st = InputHandler.GamePadState;
+            return new Vector2(st.ThumbSticks.Right.X, -st.ThumbSticks.Right.Y);
         }
 
         public static void Update()
@@ -220,9 +219,9 @@ namespace ProjectZ.InGame.Controls
 
         public static Vector2 GetMoveVector2()
         {
-            var gamepadState = GamePad.GetState(PlayerIndex.One);
+            var st = InputHandler.GamePadState;
 
-            Vector2 vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+            Vector2 vec = new Vector2(st.ThumbSticks.Left.X, -st.ThumbSticks.Left.Y);
 
             if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
                 vec = Vector2.Zero;
@@ -231,24 +230,21 @@ namespace ProjectZ.InGame.Controls
 
             if (vec == Vector2.Zero)
             {
-                if (ButtonDown(CButtons.Left))
-                    vec.X = -1;
-                else if (ButtonDown(CButtons.Right))
-                    vec.X = 1;
+                if (ButtonDown(CButtons.Left)) vec.X = -1;
+                else if (ButtonDown(CButtons.Right)) vec.X = 1;
 
-                if (ButtonDown(CButtons.Up))
-                    vec.Y = -1;
-                else if (ButtonDown(CButtons.Down))
-                    vec.Y = 1;
+                if (ButtonDown(CButtons.Up)) vec.Y = -1;
+                else if (ButtonDown(CButtons.Down)) vec.Y = 1;
             }
+
             return vec;
         }
 
         public static Vector2 GetAnalogDirection()
         {
-            var gamepadState = GamePad.GetState(PlayerIndex.One);
+            var st = InputHandler.GamePadState;
 
-            var vec = new Vector2(gamepadState.ThumbSticks.Left.X, -gamepadState.ThumbSticks.Left.Y);
+            var vec = new Vector2(st.ThumbSticks.Left.X, -st.ThumbSticks.Left.Y);
 
             if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
                 vec = Vector2.Zero;
