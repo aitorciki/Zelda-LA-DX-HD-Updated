@@ -68,10 +68,6 @@ namespace ProjectZ.Base
         public static GamePadState LastGamePadState => _lastGamePadState;
 
         private const float TriggerPressThreshold = 0.5f;
-        private const float TriggerReleaseThreshold = 0.25f;
-
-        private static bool _ltDownLast;
-        private static bool _rtDownLast;
 
         #region Constructor Region
 

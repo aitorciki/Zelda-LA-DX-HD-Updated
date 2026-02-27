@@ -57,7 +57,12 @@ namespace ProjectZ.InGame.Pages
                 SettingsSaveLoad.SaveSettings();
                 SaveGameSaveLoad.SaveGame(Game1.GameManager, false);
             }
+        #if ANDROID
+            // This is the most user-friendly equivalent of "quit" on Android.
+            Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+        #else
             Game1.Instance.Exit();
+        #endif
         }
     }
 }

@@ -41,7 +41,7 @@ namespace ProjectZ.InGame.SaveLoad
             if (File.Exists(portable))
                 return Path.Combine(Values.WorkingDirectory, "SaveFiles");
 
-            return Path.Combine(Values.AppDataFolder, "SaveFiles");
+            return Path.Combine(Values.AppDataFolder, "Zelda_LA", "SaveFiles");
         #endif
         }
 
@@ -54,7 +54,7 @@ namespace ProjectZ.InGame.SaveLoad
             if (File.Exists(portable))
                 return Path.Combine(Values.WorkingDirectory, "settings");
 
-            return Path.Combine(Values.AppDataFolder, "settings");
+            return Path.Combine(Values.AppDataFolder, "Zelda_LA", "settings");
         #endif
         }
 
