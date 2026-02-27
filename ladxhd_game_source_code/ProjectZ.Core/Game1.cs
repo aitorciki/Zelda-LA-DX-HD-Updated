@@ -152,10 +152,8 @@ namespace ProjectZ
         #endif
 
         #if WINDOWS
-            System.Diagnostics.Debug.WriteLine("DirectX");
             Graphics.GraphicsProfile = GraphicsProfile.FL10_1;
         #else
-            System.Diagnostics.Debug.WriteLine("OpenGL");
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
         #endif
 

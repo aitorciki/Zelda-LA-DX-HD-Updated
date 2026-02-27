@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MainForm));
             this.picturebox_Main = new System.Windows.Forms.PictureBox();
             this.groupBox_Main = new System.Windows.Forms.GroupBox();
@@ -45,6 +46,10 @@
             this.button_CreateMod = new System.Windows.Forms.Button();
             this.button_Close = new System.Windows.Forms.Button();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.button_Image = new System.Windows.Forms.Button();
+            this.label_Image = new System.Windows.Forms.Label();
+            this.textBox_Image = new System.Windows.Forms.TextBox();
+            this.mainTooltip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picturebox_Main)).BeginInit();
             this.groupBox_Main.SuspendLayout();
             this.panel_Description.SuspendLayout();
@@ -64,6 +69,9 @@
             // 
             // groupBox_Main
             // 
+            this.groupBox_Main.Controls.Add(this.button_Image);
+            this.groupBox_Main.Controls.Add(this.label_Image);
+            this.groupBox_Main.Controls.Add(this.textBox_Image);
             this.groupBox_Main.Controls.Add(this.button_OutputPath);
             this.groupBox_Main.Controls.Add(this.label_OutputPath);
             this.groupBox_Main.Controls.Add(this.textBox_OutputPath);
@@ -76,13 +84,13 @@
             this.groupBox_Main.Controls.Add(this.textBox_ModName);
             this.groupBox_Main.Location = new System.Drawing.Point(9, 247);
             this.groupBox_Main.Name = "groupBox_Main";
-            this.groupBox_Main.Size = new System.Drawing.Size(347, 282);
+            this.groupBox_Main.Size = new System.Drawing.Size(347, 326);
             this.groupBox_Main.TabIndex = 6;
             this.groupBox_Main.TabStop = false;
             // 
             // button_OutputPath
             // 
-            this.button_OutputPath.Location = new System.Drawing.Point(314, 244);
+            this.button_OutputPath.Location = new System.Drawing.Point(314, 292);
             this.button_OutputPath.Name = "button_OutputPath";
             this.button_OutputPath.Size = new System.Drawing.Size(28, 24);
             this.button_OutputPath.TabIndex = 12;
@@ -93,16 +101,17 @@
             // label_OutputPath
             // 
             this.label_OutputPath.AutoSize = true;
-            this.label_OutputPath.Location = new System.Drawing.Point(6, 227);
+            this.label_OutputPath.Location = new System.Drawing.Point(6, 275);
             this.label_OutputPath.Name = "label_OutputPath";
             this.label_OutputPath.Size = new System.Drawing.Size(67, 13);
             this.label_OutputPath.TabIndex = 11;
             this.label_OutputPath.Text = "Output Path:";
+            this.mainTooltip.SetToolTip(this.label_OutputPath, "The path to output the finalized mod\r\nwhich will appear in \"~ModOutput\".");
             // 
             // textBox_OutputPath
             // 
             this.textBox_OutputPath.AllowDrop = true;
-            this.textBox_OutputPath.Location = new System.Drawing.Point(6, 246);
+            this.textBox_OutputPath.Location = new System.Drawing.Point(6, 294);
             this.textBox_OutputPath.Name = "textBox_OutputPath";
             this.textBox_OutputPath.Size = new System.Drawing.Size(304, 20);
             this.textBox_OutputPath.TabIndex = 10;
@@ -113,7 +122,7 @@
             // 
             // button_GamePath
             // 
-            this.button_GamePath.Location = new System.Drawing.Point(314, 195);
+            this.button_GamePath.Location = new System.Drawing.Point(314, 244);
             this.button_GamePath.Name = "button_GamePath";
             this.button_GamePath.Size = new System.Drawing.Size(28, 24);
             this.button_GamePath.TabIndex = 9;
@@ -124,16 +133,17 @@
             // label_GamePath
             // 
             this.label_GamePath.AutoSize = true;
-            this.label_GamePath.Location = new System.Drawing.Point(6, 178);
+            this.label_GamePath.Location = new System.Drawing.Point(6, 227);
             this.label_GamePath.Name = "label_GamePath";
             this.label_GamePath.Size = new System.Drawing.Size(110, 13);
             this.label_GamePath.TabIndex = 6;
             this.label_GamePath.Text = "LADXHD Game Path:";
+            this.mainTooltip.SetToolTip(this.label_GamePath, "The path to the base game folder\r\nthat contains your modded files.");
             // 
             // textBox_GamePath
             // 
             this.textBox_GamePath.AllowDrop = true;
-            this.textBox_GamePath.Location = new System.Drawing.Point(6, 197);
+            this.textBox_GamePath.Location = new System.Drawing.Point(6, 246);
             this.textBox_GamePath.Name = "textBox_GamePath";
             this.textBox_GamePath.Size = new System.Drawing.Size(304, 20);
             this.textBox_GamePath.TabIndex = 5;
@@ -150,6 +160,7 @@
             this.label_Description.Size = new System.Drawing.Size(87, 13);
             this.label_Description.TabIndex = 4;
             this.label_Description.Text = "Mod Description:";
+            this.mainTooltip.SetToolTip(this.label_Description, "A brief description of the mod.");
             // 
             // panel_Description
             // 
@@ -178,6 +189,7 @@
             this.label_ModName.Size = new System.Drawing.Size(62, 13);
             this.label_ModName.TabIndex = 1;
             this.label_ModName.Text = "Mod Name:";
+            this.mainTooltip.SetToolTip(this.label_ModName, "The name of the mod & optionally the version.");
             // 
             // textBox_ModName
             // 
@@ -189,7 +201,7 @@
             // 
             // button_CreateMod
             // 
-            this.button_CreateMod.Location = new System.Drawing.Point(8, 559);
+            this.button_CreateMod.Location = new System.Drawing.Point(8, 603);
             this.button_CreateMod.Name = "button_CreateMod";
             this.button_CreateMod.Size = new System.Drawing.Size(140, 30);
             this.button_CreateMod.TabIndex = 7;
@@ -199,7 +211,7 @@
             // 
             // button_Close
             // 
-            this.button_Close.Location = new System.Drawing.Point(218, 559);
+            this.button_Close.Location = new System.Drawing.Point(218, 603);
             this.button_Close.Name = "button_Close";
             this.button_Close.Size = new System.Drawing.Size(140, 30);
             this.button_Close.TabIndex = 8;
@@ -209,16 +221,48 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(9, 536);
+            this.progressBar.Location = new System.Drawing.Point(9, 580);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(347, 16);
             this.progressBar.TabIndex = 9;
+            // 
+            // button_Image
+            // 
+            this.button_Image.Location = new System.Drawing.Point(313, 196);
+            this.button_Image.Name = "button_Image";
+            this.button_Image.Size = new System.Drawing.Size(28, 24);
+            this.button_Image.TabIndex = 15;
+            this.button_Image.Text = "...";
+            this.button_Image.UseVisualStyleBackColor = true;
+            this.button_Image.Click += new System.EventHandler(this.button_Image_Click);
+            // 
+            // label_Image
+            // 
+            this.label_Image.AutoSize = true;
+            this.label_Image.Location = new System.Drawing.Point(5, 179);
+            this.label_Image.Name = "label_Image";
+            this.label_Image.Size = new System.Drawing.Size(103, 13);
+            this.label_Image.TabIndex = 14;
+            this.label_Image.Text = "Image File (Optional)";
+            this.mainTooltip.SetToolTip(this.label_Image, "Replaces default image. Must be\r\nformatted as PNG, BMP, or JPG.");
+            // 
+            // textBox_Image
+            // 
+            this.textBox_Image.AllowDrop = true;
+            this.textBox_Image.Location = new System.Drawing.Point(5, 198);
+            this.textBox_Image.Name = "textBox_Image";
+            this.textBox_Image.Size = new System.Drawing.Size(304, 20);
+            this.textBox_Image.TabIndex = 13;
+            this.textBox_Image.TextChanged += new System.EventHandler(this.textBox_Image_TextChanged);
+            this.textBox_Image.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox_Image_DragDrop);
+            this.textBox_Image.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox_Image_DragEnter);
+            this.textBox_Image.Leave += new System.EventHandler(this.textBox_Image_Leave);
             // 
             // Form_MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(368, 595);
+            this.ClientSize = new System.Drawing.Size(368, 639);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.button_Close);
             this.Controls.Add(this.button_CreateMod);
@@ -257,6 +301,10 @@
         private System.Windows.Forms.Label label_OutputPath;
         private System.Windows.Forms.TextBox textBox_OutputPath;
         public System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Button button_Image;
+        private System.Windows.Forms.Label label_Image;
+        private System.Windows.Forms.TextBox textBox_Image;
+        private System.Windows.Forms.ToolTip mainTooltip;
     }
 }
 

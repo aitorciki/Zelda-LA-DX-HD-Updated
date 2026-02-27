@@ -83,12 +83,6 @@ namespace LADXHD_ModMaker
             return reverse;
         }
 
-        public static bool InJunkFolder(FileItem fileItem)
-        {
-            return (fileItem.DirectoryName.IndexOf("content\\bin\\", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    fileItem.DirectoryName.IndexOf("content\\obj\\", StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         PROGRESS CODE : TRACK AND UPDATE THE PROGRESS BAR BY KEEPING TRACK OF THE FILE COUNTS.
@@ -172,8 +166,12 @@ namespace LADXHD_ModMaker
                 // Get the lahdmod file as a file item.
                 FileItem lahdmodFile = new FileItem(file);
 
+                // Use the relative path to the file to get the finalized output path.
+                string relative = lahdmodFile.DirectoryName.Replace(sourcePath,"").TrimStart('\\');
+                string destination = Path.Combine(destinationPath, relative).CreatePath();
+
                 // Set the path to where the file should be copied.
-                string targetPath = Path.Combine(destinationPath, lahdmodFile.Name);
+                string targetPath = Path.Combine(destination, lahdmodFile.Name);
 
                 // Copy the lahdmod file to the destination.
                 lahdmodFile.FullName.CopyPath(targetPath, true);
@@ -239,39 +237,24 @@ namespace LADXHD_ModMaker
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static FileItem FindMatchingFileItem(string originalFileItem)
+        private static void InstallImageFile()
         {
-            // Search the backup path first. We only want to match with ORIGINAL game files.
-            if (Config.BackupPath.TestPath())
+            // If the user selected an image.
+            if (Config.ImagePath != "" && Config.ImagePath.TestPath())
             {
-                foreach (string fileX in Config.BackupPath.GetFiles("*", true))
-                {
-                    FileItem matchingFileItem = new FileItem(fileX);
-                    if (matchingFileItem.Name == originalFileItem)
-                        return matchingFileItem;
-                }
+                // Get the path to where it will be copied.
+                FileItem imageItem = new FileItem(Config.ImagePath);
+                string outImagePath = Path.Combine(Config.OutputPath, "Image" + imageItem.Extension);
+
+                // Copy it to the destination.
+                Config.ImagePath.CopyPath(outImagePath, true);
             }
-            // If it's not in the backup path, check the rest of the data folder.
-            if (Config.GamePath.TestPath())
-            {
-                foreach (string fileX in Config.DataPath.GetFiles("*", true))
-                {
-                    FileItem matchingFileItem = new FileItem(fileX);
-                    if (!matchingFileItem.IsInFolder("Backup") && matchingFileItem.Name == originalFileItem)
-                        return matchingFileItem;
-                }
-            }
-            // Return null which will skip the file.
-            return null;
         }
 
         private static void CreatePatchLoop()
         {
             // Create the necessary output paths.
             Config.TempPath.CreatePath(true);
-            Config.PatchesPath.CreatePath(true);
-
-            // Create the patches path if it doesn't exist.
             Config.PatchesPath.CreatePath(true);
 
             // Get all files found in the base folder recursively.
@@ -290,26 +273,36 @@ namespace LADXHD_ModMaker
                 UpdateProgress();
 
                 // Get the modded file as "FileItem" and default original name to modded file name.
-                FileItem moddedFileItem = new FileItem(file);
-                string originalName = moddedFileItem.Name;
+                FileItem modFileItem = new FileItem(file);
+                string originalName = modFileItem.Name;
+
+                // Use the relative path to the file to get the finalized output path.
+                string relative = modFileItem.DirectoryName.Replace(Config.GraphicsPath,"").TrimStart('\\');
+                string destination = Path.Combine(Config.PatchesPath, relative).CreatePath();
 
                 // If the file is not an "original" file from v1.0.0 then find the original it was spawned from.
-                if (reverseFileTargets.TryGetValue(moddedFileItem.Name, out string shortName))
+                if (reverseFileTargets.TryGetValue(modFileItem.Name, out string shortName))
                     originalName = shortName;
 
                 // Get the original file as a "FileItem" to create a patch against.
                 FileItem originalFileItem = FindFileToPatch(originalName);
 
-                // If the original file doesn't exist we have a problem.
+                // If the original file doesn't exist then copy the file to the output path.
                 if (originalFileItem == null)
+                {
+                    string copyFileName = Path.Combine(destination, modFileItem.Name);
+                    modFileItem.FullName.CopyPath(copyFileName,true);
                     continue;
-
+                }
                 // Set the output path to the patch file and create it.
-                string patchName = Path.Combine(Config.PatchesPath, moddedFileItem.Name + ".xdelta");
-                XDelta3.Execute(Operation.Create, originalFileItem.FullName, moddedFileItem.FullName, patchName);
+                string outputPatch = Path.Combine(destination, modFileItem.Name + ".xdelta");
+                XDelta3.Execute(Operation.Create, originalFileItem.FullName, modFileItem.FullName, outputPatch);
             }
             // Copy any LAHDMOD files found in the mods folder.
             CopyLahdmodFiles(Config.LahdmodPath, Config.OutLahdmodPath);
+
+            // Try to copy over the image file.
+            InstallImageFile();
 
             // Remove the temporary folder.
             Config.TempPath.RemovePath();
@@ -377,19 +370,23 @@ namespace LADXHD_ModMaker
                 FileItem patchFileItem = new FileItem(file);
                 FileItem fileToPatchItem = FindFileToPatch(patchFileItem.BaseName);
 
-                // If the file to patch doesn't exist we have a problem.
-                if (fileToPatchItem == null)
-                    continue;
+                // Use the relative path to the file to get the finalized output path.
+                string relative = patchFileItem.DirectoryName.Replace(Config.PatchesPath,"").TrimStart('\\');
+                string destination = Path.Combine(Config.OutputPath, relative).CreatePath();
 
+                // If the file to patch doesn't exist then copy the file to the output path.
+                if (fileToPatchItem == null)
+                {
+                    string copyFileName = Path.Combine(destination, patchFileItem.Name);
+                    patchFileItem.FullName.CopyPath(copyFileName,true);
+                    continue;
+                }
                 // Create the patched file at the output path.
-                string patchedFile = Path.Combine(Config.OutputPath, patchFileItem.BaseName);
+                string patchedFile = Path.Combine(destination, patchFileItem.BaseName);
                 XDelta3.Execute(Operation.Apply, fileToPatchItem.FullName, patchFileItem.FullName, patchedFile);
             }
             // Copy any LAHDMOD files found in the mods folder.
             CopyLahdmodFiles(Config.OutLahdmodPath, Config.LahdmodPath);
-
-            Console.WriteLine(Config.OutLahdmodPath);
-            Console.WriteLine(Config.LahdmodPath);
 
             // Remove the temporary folder.
             Config.TempPath.RemovePath();

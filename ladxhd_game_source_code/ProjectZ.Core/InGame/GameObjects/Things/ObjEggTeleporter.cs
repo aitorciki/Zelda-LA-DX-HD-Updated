@@ -405,8 +405,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 }
             }
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, MapManager.LightBlendState,
-                MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap, null, null, null, MapManager.Camera.TransformMatrix);
+            spriteBatch.Begin(SpriteSortMode.Deferred, MapManager.LightBlendState, MapManager.Camera.Scale >= 1 ? SamplerState.PointWrap : SamplerState.AnisotropicWrap, null, null, null, MapManager.Camera.TransformMatrix);
         }
     }
 }
