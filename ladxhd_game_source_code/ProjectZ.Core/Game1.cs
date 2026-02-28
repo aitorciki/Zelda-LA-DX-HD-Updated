@@ -1,6 +1,8 @@
 ﻿﻿using System;
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
+using GBSPlayer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,12 +15,22 @@ using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Screens;
 using ProjectZ.InGame.Things;
-using GBSPlayer;
 
 namespace ProjectZ
 {
     public class Game1 : Game
     {
+        // Used to load an icon into the window for OpenGL.
+        const string SDL_LIB = "SDL2.dll";
+        [DllImport(SDL_LIB, CallingConvention = CallingConvention.Cdecl)]
+        static extern IntPtr SDL_LoadBMP_RW(IntPtr src, int freesrc);
+        [DllImport(SDL_LIB, CallingConvention = CallingConvention.Cdecl)]
+        static extern IntPtr SDL_RWFromFile(string file, string mode);
+        [DllImport(SDL_LIB, CallingConvention = CallingConvention.Cdecl)]
+        static extern void SDL_SetWindowIcon(IntPtr window, IntPtr surface);
+        [DllImport(SDL_LIB, CallingConvention = CallingConvention.Cdecl)]
+        static extern void SDL_FreeSurface(IntPtr surface);
+
         public static Game1 Instance;
         public static GraphicsDeviceManager Graphics;
         public static SpriteBatch SpriteBatch;
@@ -108,9 +120,6 @@ namespace ProjectZ
 
         public static bool FinishedLoading => _finishedLoading;
 
-        // Used to know when the icon was set.
-        private bool _windowIconSet;
-
         public static Matrix GetMatrix
         {
             get
@@ -151,12 +160,7 @@ namespace ProjectZ
             EditorMode = true;
         #endif
 
-        #if WINDOWS
-            Graphics.GraphicsProfile = GraphicsProfile.FL10_1;
-        #else
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
-        #endif
-
             Graphics.PreferredBackBufferWidth = Values.MinWidth * 3;
             Graphics.PreferredBackBufferHeight = Values.MinHeight * 3;
             Graphics.ApplyChanges();
@@ -165,7 +169,10 @@ namespace ProjectZ
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += (_, __) => OnResize();
             Window.AllowAltF4 = true;
+
+        #if !ANDROID
             Window.KeyDown += OnWindowKeyDown;
+        #endif
 
             // Store any command line parameters if available.
             IsMouseVisible = EditorMode;
@@ -178,11 +185,17 @@ namespace ProjectZ
 
         protected override void Initialize()
         {
+        #if DESKTOPGL
+            var surface = SDL_LoadBMP_RW(SDL_RWFromFile("Data\\Icon\\Icon.bmp", "rb"), 1);
+            SDL_SetWindowIcon(Window.Handle, surface);
+            SDL_FreeSurface(surface);
+        #endif
             // Store an instance so it can be referenced.
             Instance = this;
             base.Initialize();
         }
 
+    #if !ANDROID
         private void OnWindowKeyDown(object? sender, InputKeyEventArgs e)
         {
             // Check if the "Alt" key is held.
@@ -207,6 +220,7 @@ namespace ProjectZ
                 SettingsSaveLoad.SaveSettings();
             }
         }
+    #endif
 
         protected override void LoadContent()
         {
@@ -250,9 +264,6 @@ namespace ProjectZ
                 GameSettings.IsFullscreen = false;
                 ToggleFullscreen();
             }
-        #if !WINDOWS
-            TrySetWindowIconBmp();
-        #endif
         }
 
         private void LoadContentThreaded(Object obj)
@@ -285,30 +296,8 @@ namespace ProjectZ
             Resources.RefreshDynamicResources();
         }
 
-        private void TrySetWindowIconBmp()
-        {
-            if (_windowIconSet)
-                return;
-
-            if (Window?.Handle == IntPtr.Zero)
-                return;
-
-            try
-            {
-                using var stream = TitleContainer.OpenStream("Data/Icon/icon.bmp");
-                if (WindowIcon.SetFromStream(Window.Handle, stream))
-                    _windowIconSet = true;
-            }
-            catch { }
-        }
-
         protected override void Update(GameTime gameTime)
         {
-        #if !WINDOWS
-            // If OpenGL renderer we need to jump through some hoops for the icon.
-            TrySetWindowIconBmp();
-        #endif
-
             // If exclusive fullscreen mode is enabled.
             if (_firstFrameDrawn && !_fullscreenWasSet)
             {
@@ -811,8 +800,8 @@ namespace ProjectZ
 
             if (_finishedLoading)
             {
-             //   Resources.BlurEffect.Parameters["width"].SetValue(width);
-             //   Resources.BlurEffect.Parameters["height"].SetValue(height);
+                Resources.BlurEffect.Parameters["width"].SetValue(width);
+                Resources.BlurEffect.Parameters["height"].SetValue(height);
                 Resources.RoundedCornerBlurEffect.Parameters["textureWidth"].SetValue(width);
                 Resources.RoundedCornerBlurEffect.Parameters["textureHeight"].SetValue(height);
             }

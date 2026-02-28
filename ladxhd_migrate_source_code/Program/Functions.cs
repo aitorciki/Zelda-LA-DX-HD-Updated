@@ -213,15 +213,27 @@ namespace LADXHD_Migrater
 
         public static void CleanBuildFiles()
         {
-            (Config.Game_Source + "\\bin").RemovePath();
-            (Config.Game_Source + "\\obj").RemovePath();
-            (Config.Game_Source + "\\Content\\bin").RemovePath();
-            (Config.Game_Source + "\\Content\\obj").RemovePath();
-            (Config.Game_Source + "\\Publish").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Android\\bin").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Android\\obj").RemovePath();
+
+            (Config.Game_Source + "\\ProjectZ.Core\\bin").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Core\\obj").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Core\\Content\\bin").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Core\\Content\\obj").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Core\\Publish").RemovePath();
+
+            (Config.Game_Source + "\\ProjectZ.Desktop\\bin").RemovePath();
+            (Config.Game_Source + "\\ProjectZ.Desktop\\obj").RemovePath();
+
             (Config.Migrate_Source + "\\bin").RemovePath();
             (Config.Migrate_Source + "\\obj").RemovePath();
+
             (Config.Patcher_Source + "\\bin").RemovePath();
             (Config.Patcher_Source + "\\obj").RemovePath();
+
+            (Config.ModMaker_Source + "\\bin").RemovePath();
+            (Config.ModMaker_Source + "\\obj").RemovePath();
+
             (Config.BaseFolder + "\\zelda_ladxhd_build").RemovePath();
         }
 

@@ -76,7 +76,9 @@ namespace ProjectZ.Base
         {
             // Rather than using a predefined alphabet which limits which characters the user is
             // allowed to type for a name, we capture the input and filter out invalid chars later.
-            game.Window.TextInput += OnTextInput;
+        #if !ANDROID
+            Game.Window.TextInput += OnTextInput;
+        #endif
 
             // Create an array of the valid alphabet characters.
 /*          _alphabet = new List<InputCharacter>();

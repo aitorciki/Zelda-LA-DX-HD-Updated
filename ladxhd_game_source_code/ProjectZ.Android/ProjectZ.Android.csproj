@@ -1,72 +1,68 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<AssemblyName>ProjectZ.Android</AssemblyName>
-		<RootNamespace>ProjectZ.Android</RootNamespace>
-		<ApplicationId>com.projectz.game</ApplicationId>
-		<ApplicationVersion>1</ApplicationVersion>
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<TargetFramework>net8.0-android</TargetFramework>
-		<RuntimeIdentifier>android-arm64</RuntimeIdentifier>
-		<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
-		<OutputType>Exe</OutputType>
-		<KniPlatform>Android</KniPlatform>
-		<AndroidPackageFormat>apk</AndroidPackageFormat>
-		<ProjectGuid>3279c9ec-d436-4173-b1cd-6189290d0c71</ProjectGuid>
-		<IsTrimmable>false</IsTrimmable>
-		<EnableDefaultItems>true</EnableDefaultItems>
-		<AndroidStoreUncompressedFileExtensions>.m4a</AndroidStoreUncompressedFileExtensions>
-		<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<DebugType>portable</DebugType>
-		<DebugSymbols>true</DebugSymbols>
-		<AndroidLogLevel>Debug</AndroidLogLevel>
-	</PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>ProjectZ.Android</AssemblyName>
+    <RootNamespace>ProjectZ.Android</RootNamespace>
+    <ApplicationId>com.projectz.game</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
+    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <IsTrimmable>false</IsTrimmable>
+    <EnableDefaultItems>true</EnableDefaultItems>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+  </PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <AndroidLogLevel>Debug</AndroidLogLevel>
+  </PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	</PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="nkast.Xna.Framework" Version="4.2.9001" />
-		<PackageReference Include="nkast.Kni.Platform.Android.GL" Version="4.2.9001" />
-		<PackageReference Include="nkast.Xna.Framework.Content" Version="4.2.9001" />
-		<PackageReference Include="nkast.Xna.Framework.Content.Pipeline.Builder" Version="4.2.9001" />
-	</ItemGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="AndroidManifest.xml" />
-		<None Include="Assets\AboutAssets.txt" />
-		<None Include="Resources\AboutResources.txt" />
-		<AndroidResource Include="Resources\drawable\icon.png" />
-		<AndroidResource Include="Resources\drawable\splash.png" />
-		<AndroidResource Include="Resources\values\strings.xml" />
-		<AndroidResource Include="Resources\values\styles.xml" />
-		<AndroidResource Include="Resources\layout\splash_layout.xml" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.Android" Version="3.8.4.1" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
+    <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.4.1" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\ProjectZ.Core\ProjectZ.Core.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="AndroidManifest.xml" />
+    <None Include="Assets\AboutAssets.txt" />
+    <None Include="Resources\AboutResources.txt" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable\splash.png" />
+    <AndroidResource Include="Resources\values\strings.xml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\layout\splash_layout.xml" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<KniContentReference Include="..\ProjectZ.Core\Content\Content.mgcb" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProjectZ.Core\ProjectZ.Core.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<AndroidAsset Include="..\ProjectZ.Core\Data\**\*"
-					  Link="Data\%(RecursiveDir)%(Filename)%(Extension)" />
-	</ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb" />
+  </ItemGroup>
 
-	<Target Name="DumpAllDataAssets" BeforeTargets="_BuildApk">
-		<Message Importance="High" Text="---- AndroidAsset items (Data/*) ----" />
-		<Message Importance="High"
-				 Text="AssetLink=%(AndroidAsset.Link)  Identity=%(AndroidAsset.Identity)"
-				 Condition="$([System.String]::Copy('%(AndroidAsset.Link)').StartsWith('Data/'))" />
-	</Target>
+  <ItemGroup>
+    <AndroidAsset Include="..\ProjectZ.Core\Data\**\*" Link="Data\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <Target Name="DumpAllDataAssets" BeforeTargets="_BuildApk">
+    <Message Importance="High" Text="---- AndroidAsset items (Data/*) ----" />
+    <Message Importance="High"
+        Text="AssetLink=%(AndroidAsset.Link)  Identity=%(AndroidAsset.Identity)"
+        Condition="$([System.String]::Copy('%(AndroidAsset.Link)').StartsWith('Data/'))" />
+  </Target>
 
 </Project>

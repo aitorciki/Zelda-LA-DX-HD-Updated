@@ -66,7 +66,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Resources.WobbleEffect.Parameters["height"].SetValue(gameHeight);
                 Resources.WobbleEffect.Parameters["scale"].SetValue(MapManager.Camera.Scale);
                 Resources.WobbleEffect.Parameters["brightness"].SetValue(Brightness);
-
                 Resources.WobbleEffect.Parameters["offset"].SetValue(WobblePercentage * 30);
                 Resources.WobbleEffect.Parameters["offsetWidth"].SetValue((0.5f - MathF.Cos(WobblePercentage * 4) / 2) * 3);
                 Resources.WobbleEffect.Parameters["offsetHeight"].SetValue(16);
