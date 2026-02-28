@@ -20,13 +20,11 @@ namespace ProjectZ.Base.UI
 
         public override void DrawBlur(SpriteBatch spriteBatch)
         {
-            var viewport = spriteBatch.GraphicsDevice.Viewport;
             Resources.RoundedCornerBlurEffect.Parameters["scale"].SetValue(Game1.UiScale);
             Resources.RoundedCornerBlurEffect.Parameters["blurColor"].SetValue(BlurColor.ToVector4());
             Resources.RoundedCornerBlurEffect.Parameters["radius"].SetValue(Radius);
             Resources.RoundedCornerBlurEffect.Parameters["width"].SetValue(Rectangle.Width / Game1.UiScale);
             Resources.RoundedCornerBlurEffect.Parameters["height"].SetValue(Rectangle.Height / Game1.UiScale);
-
             spriteBatch.Draw(Resources.SprWhite, Rectangle, BackgroundColor);
         }
     }

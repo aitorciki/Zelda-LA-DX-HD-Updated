@@ -11,10 +11,7 @@ namespace GBSPlayer
 
         public CDynamicEffectInstance(int sampleRate)
         {
-            _instance = new DynamicSoundEffectInstance(
-                sampleRate,
-                AudioChannels.Mono
-            );
+            _instance = new DynamicSoundEffectInstance(sampleRate, AudioChannels.Mono);
         }
 
         public int GetPendingBufferCount()
@@ -24,33 +21,34 @@ namespace GBSPlayer
 
         public void Play()
         {
-            _instance.Play();
+            _instance?.Play();
         }
 
         public void Pause()
         {
-            _instance.Pause();
+            _instance?.Pause();
         }
 
         public void Resume()
         {
-            if (_instance.State == SoundState.Paused)
-                _instance.Resume();
+            if (_instance?.State == SoundState.Paused)
+                _instance?.Resume();
         }
 
         public void Stop()
         {
-            _instance.Stop();
+            _instance?.Stop();
         }
 
         public void SetVolume(float volume)
         {
-            _instance.Volume = volume;
+            var instance = _instance ?? null;
+            instance.Volume = volume;
         }
 
         public void SubmitBuffer(byte[] buffer, int offset, int count)
         {
-            _instance.SubmitBuffer(buffer, offset, count);
+            _instance?.SubmitBuffer(buffer, offset, count);
         }
     }
 }

@@ -437,7 +437,12 @@ namespace ProjectZ
 
             ScreenManager.Draw(SpriteBatch);
 
+        // NOTE: This blurring effect is completely broken on Android. I have tried a MILLION different things to try to get it working but 
+        // not a single one of them worked! I am not an expert, and I suspect this is a bug in MonoGame itself as this issue did NOT happen
+        // with KNI. What happens is the top half is drawn on the bottom, which wraps around so the bottom half is drawn on the top.
+        #if !ANDROID
             BlurImage();
+        #endif
             {
                 Graphics.GraphicsDevice.SetRenderTarget(null);
                 GraphicsDevice.Clear(Color.Black);
