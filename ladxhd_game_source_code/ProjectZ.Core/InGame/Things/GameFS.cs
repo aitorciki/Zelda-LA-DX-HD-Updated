@@ -51,6 +51,7 @@ namespace ProjectZ.InGame.Things
         //  STRING HELPERS
         //
         //-------------------------------------------------------------------------------------------------------------------------------------------------
+        private static string BaseDir => AppContext.BaseDirectory;
 
         public static string ReadAllText(string path)
         {
@@ -74,7 +75,7 @@ namespace ProjectZ.InGame.Things
         /// <summary>Normalize separators and remove leading/trailing slashes.</summary>
         public static string NormalizePath(string path)
         {
-        #if ANDROID
+        #if ANDROID || LINUX
             return (path ?? "").Replace("\\", "/").Trim('/');
         #endif
             return path;
@@ -118,11 +119,11 @@ namespace ProjectZ.InGame.Things
         {
             path = ToAssetPath(path);
 
-        #if ANDROID
+        #if ANDROID || LINUX
             try { using var _ = TitleContainer.OpenStream(path); return true; }
             catch { return false; }
         #else
-            return File.Exists(path);
+            return File.Exists(ToDiskPath(path));
         #endif
         }
 
@@ -130,16 +131,16 @@ namespace ProjectZ.InGame.Things
         {
             path = ToAssetPath(path);
 
-        #if ANDROID
+        #if ANDROID || LINUX
             return TitleContainer.OpenStream(path);
         #else
-            return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return File.Open(ToDiskPath(path), FileMode.Open, FileAccess.Read, FileShare.Read);
         #endif
         }
 
         public static Stream OpenReadAny(string path)
         {
-        #if ANDROID
+        #if ANDROID || LINUX
             // Normalize and try to map to an asset path if possible
             var ap = ToAssetPath(path);
 
@@ -159,6 +160,15 @@ namespace ProjectZ.InGame.Things
         //  DIRECTORY LISTING (returns names only, like AssetManager.List)
         //
         //-------------------------------------------------------------------------------------------------------------------------------------------------
+        private static string ToDiskPath(string path)
+        {
+            path = ToAssetPath(path);
+            path = path.Replace('\\', '/').TrimStart('/');
+
+            // Convert to OS separators and root at the executable directory.
+            var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            return Path.GetFullPath(Path.Combine(new[] { BaseDir }.Concat(parts).ToArray()));
+        }
 
         public static string[] List(string dir)
         {
@@ -175,14 +185,15 @@ namespace ProjectZ.InGame.Things
                 return Array.Empty<string>();
             }
         #else
-            if (!Directory.Exists(dir))
+            var diskDir = ToDiskPath(dir);
+
+            if (!Directory.Exists(diskDir))
                 return Array.Empty<string>();
 
-            var entries = Directory.GetFileSystemEntries(dir);
-            for (int i = 0; i < entries.Length; i++)
-                entries[i] = Path.GetFileName(entries[i]);
-
-            return entries;
+            return Directory.EnumerateFileSystemEntries(diskDir)
+                .Select(Path.GetFileName)
+                .Where(n => !string.IsNullOrEmpty(n))
+                .ToArray();
         #endif
         }
 
@@ -191,10 +202,9 @@ namespace ProjectZ.InGame.Things
             dir = ToAssetPath(dir);
 
         #if ANDROID
-            // Asset dirs are “virtual”. Listing is the best probe.
             return List(dir).Length > 0;
         #else
-            return Directory.Exists(dir);
+            return Directory.Exists(ToDiskPath(dir));
         #endif
         }
 
@@ -217,7 +227,7 @@ namespace ProjectZ.InGame.Things
         {
             dir = ToAssetPath(dir);
 
-        #if ANDROID
+        #if ANDROID || LINUX
             foreach (var entry in List(dir))
             {
                 var full = $"{dir}/{entry}";

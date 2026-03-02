@@ -20,8 +20,13 @@ namespace ProjectZ
 {
     public class Game1 : Game
     {
+        #if LINUX
+            private const string SDL_LIB = "libSDL2-2.0.so.0";
+        #else
+            private const string SDL_LIB = "SDL2.dll";
+        #endif
+
         // Used to load an icon into the window for OpenGL.
-        const string SDL_LIB = "SDL2.dll";
         [DllImport(SDL_LIB, CallingConvention = CallingConvention.Cdecl)]
         static extern IntPtr SDL_LoadBMP_RW(IntPtr src, int freesrc);
         [DllImport(SDL_LIB, CallingConvention = CallingConvention.Cdecl)]

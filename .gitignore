@@ -2,6 +2,7 @@
 *.csproj.user
 assets_original/
 ladxhd_game_source_code/.vs/
+ladxhd_game_source_code/%LocalAppData%/
 ladxhd_game_source_code/ProjectZ.Android/bin/
 ladxhd_game_source_code/ProjectZ.Android/obj/
 ladxhd_game_source_code/ProjectZ.Android/Content/
@@ -14,6 +15,10 @@ ladxhd_game_source_code/ProjectZ.Desktop/bin/
 ladxhd_game_source_code/ProjectZ.Desktop/obj/
 ladxhd_game_source_code/ProjectZ.Desktop/Content/
 ladxhd_game_source_code/ProjectZ.Desktop/Data/
+ladxhd_game_source_code/ProjectZ.Linux/bin/
+ladxhd_game_source_code/ProjectZ.Linux/obj/
+ladxhd_game_source_code/ProjectZ.Linux/Content/
+ladxhd_game_source_code/ProjectZ.Linux/Data/
 ladxhd_migrate_source_code/.vs/
 ladxhd_migrate_source_code/bin/
 ladxhd_migrate_source_code/obj/
