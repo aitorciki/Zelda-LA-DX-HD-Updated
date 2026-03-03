@@ -2,6 +2,7 @@
 *.csproj.user
 assets_original/
 ladxhd_game_source_code/.vs/
+ladxhd_game_source_code/~Publish/
 ladxhd_game_source_code/%LocalAppData%/
 ladxhd_game_source_code/ProjectZ.Android/bin/
 ladxhd_game_source_code/ProjectZ.Android/obj/
