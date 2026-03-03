@@ -57,8 +57,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var height = _sequenceHeight;
 
             _mapOverlay.Draw(spriteBatch, new Rectangle(
-                Game1.WindowWidth / 2 - (int)(width * Game1.UiScale) / 2,
-                Game1.WindowHeight / 2 - (int)(height * Game1.UiScale) / 2,
+                Game1.WindowWidth / 2 - width * Game1.UiScale / 2,
+                Game1.WindowHeight / 2 - height * Game1.UiScale / 2,
                 width, height),
                 Color.White * transparency, Game1.GetMatrix);
 
@@ -80,8 +80,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var nodeSelected = _mapOverlay.SelectionPosition;
 
             // If we're in map mode and one of the dungeons are selected.
-
-            if (((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3) || (GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport)) && Game1.GameManager.InGameOverlay.TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
+            if ((GameSettings.MapTeleport == 1 || GameSettings.MapTeleport == 3 || GameSettings.MapTeleport == 2 && MapManager.ObjLink.ManboTeleport) && Game1.GameManager.InGameOverlay.TeleportMap.ContainsKey(nodeSelected) && MapManager.ObjLink.Map.IsOverworld)
             {
                 // Get the selected dungeon and check if the instrument has been collected.
                 int dungeonLevel = Game1.GameManager.InGameOverlay.TeleportMap[nodeSelected].Level - 1;

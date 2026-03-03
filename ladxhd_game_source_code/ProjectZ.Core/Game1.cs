@@ -85,6 +85,10 @@ namespace ProjectZ
         private static RenderTarget2D _renderTarget2;
         private static bool _initRenderTargets;
 
+        private const double _startDelayTime = 1.5;
+        private double _startDelayElapsed;
+        private bool _startDelayFinished;
+
         public static int UiScale;
         public static bool ScaleChanged;
         public static int MaxGameScale;
@@ -297,6 +301,19 @@ namespace ProjectZ
 
         protected override void Update(GameTime gameTime)
         {
+            // Startup black screen delay.
+            if (!_startDelayFinished)
+            {
+                _startDelayElapsed += gameTime.ElapsedGameTime.TotalSeconds;
+
+                if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
+                    OnResize();
+
+                if (_startDelayElapsed < _startDelayTime)
+                    return;
+
+                _startDelayFinished = true;
+            }
             // If exclusive fullscreen mode is enabled.
             if (_firstFrameDrawn && !_fullscreenWasSet)
             {
@@ -341,6 +358,9 @@ namespace ProjectZ
             }
             // Update input from any input devices (controller/keyboard).
             ControlHandler.Update();
+
+            // Pump GBS audio on the game thread
+            GbsPlayer?.Pump();
 
             // Update all render targets.
             UpdateRenderTargets();
@@ -411,6 +431,11 @@ namespace ProjectZ
 
         protected override void Draw(GameTime gameTime)
         {
+            if (!_startDelayFinished)
+            {
+                GraphicsDevice.Clear(Color.Black);
+                return;
+            }
             _firstFrameDrawn = true;
 
             _fpsCounter.CountDraw();
@@ -461,7 +486,8 @@ namespace ProjectZ
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
 
                 // blurred ui parts
-                UiManager.DrawBlur(SpriteBatch);
+                if (_finishedLoading)
+                    UiManager.DrawBlur(SpriteBatch);
 
                 // blured stuff
                 GameManager?.InGameOverlay?.InGameHud?.DrawBlur(SpriteBatch);
@@ -477,7 +503,8 @@ namespace ProjectZ
                 SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, GetMatrix);
 
                 // draw the ui part
-                UiManager.Draw(SpriteBatch);
+                if (_finishedLoading)
+                    UiManager.Draw(SpriteBatch);
 
                 // draw the game ui
                 UiPageManager.Draw(SpriteBatch);
@@ -806,8 +833,8 @@ namespace ProjectZ
             width = Math.Max(1, width);
             height = Math.Max(1, height);
 
-     //       if (_finishedLoading)
-     //       {
+            if (_finishedLoading)
+            {
                 if (Resources.BlurEffect != null)
                 {
                     Resources.BlurEffect.Parameters["width"]?.SetValue(width);
@@ -818,7 +845,7 @@ namespace ProjectZ
                     Resources.RoundedCornerBlurEffect.Parameters["textureWidth"]?.SetValue(width);
                     Resources.RoundedCornerBlurEffect.Parameters["textureHeight"]?.SetValue(height);
                 }
-      //      }
+            }
             var blurScale = MathHelper.Clamp(MapManager.Camera.Scale / 2, 1, 10);
             var blurRtWidth = Math.Max(1, (int)(width / blurScale));
             var blurRtHeight = Math.Max(1, (int)(height / blurScale));

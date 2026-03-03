@@ -50,16 +50,11 @@ namespace ProjectZ.InGame.Things
         public static string PathLightsFolder => Path.Combine(PathContentFolder, "Lights");
         public static string PathAnimationFolder => Path.Combine(PathContentFolder, "Animations");
         public static string PathMinimapFolder => Path.Combine(PathContentFolder, "Dungeon");
-
-        // Base writable folder (set on startup for Android)
         public static string UserDataRoot { get; private set; } = ".";
         public static void SetUserDataRoot(string root) { UserDataRoot = root; }
-
-        // Mods
         public static string PathMods => Path.Combine(UserDataRoot, "Mods");
         public static string PathLAHDMods => Path.Combine(PathMods, "LAHDMods");
         public static string PathGraphicsMods => Path.Combine(PathMods, "Graphics");
-
         public static string PathSaveFolder => SaveManager.GetSaveFilePath();
 
         public const string EditorUiObjectEditor = "objectEditor";

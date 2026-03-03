@@ -14,6 +14,7 @@ namespace GBSPlayer
         public Sound SoundGenerator;
 
         public byte CurrentTrack;
+        private volatile int _pendingTrack = -1;
 
         public bool GbsLoaded;
 
@@ -68,21 +69,34 @@ namespace GBSPlayer
             StartTrack((byte)newTrack);
         }
 
+        public void RequestTrack(byte trackNr)
+        {
+            _pendingTrack = trackNr;
+        }
+
         public void StartTrack(byte trackNr)
         {
             // directly init the new song if update is not called at this time
             lock (_updateLock)
             {
+                if (GbsLoaded && Cpu.IsRunning && trackNr == CurrentTrack)
+                    return;
+
                 CurrentTrack = trackNr;
 
-                // clear buffer; stop playback
                 SoundGenerator.Stop();
-
-                // init play
                 GbsInit(trackNr);
-
                 SoundGenerator.SetStopTime(0);
             }
+        }
+
+        private void StartTrack_NoLock(byte trackNr)
+        {
+            CurrentTrack = trackNr;
+
+            SoundGenerator.Stop();
+            GbsInit(trackNr);
+            SoundGenerator.SetStopTime(0);
         }
 
         private void GbsInit(byte trackNumber)
@@ -103,6 +117,11 @@ namespace GBSPlayer
             Memory[--Cpu.reg_SP] = (byte)(Cpu.IdleAddress & 0xFF);
 
             Console.WriteLine("finished gbs init");
+        }
+
+        public void Pump()
+        {
+            SoundGenerator?.Pump();
         }
 
         public void Play()
@@ -153,7 +172,9 @@ namespace GBSPlayer
 
         public void Update(float deltaTime)
         {
-            Cpu.Update();
+            if (!Cpu.IsRunning) return;
+            lock (_updateLock)
+                Cpu.Update();
         }
 
         public void StartThread()
@@ -178,8 +199,18 @@ namespace GBSPlayer
             while (!_exitThread)
             {
                 lock (_updateLock)
-                    Cpu.Update();
+                {
+                    var req = _pendingTrack;
+                    if (req >= 0)
+                    {
+                        _pendingTrack = -1;
 
+                        var song = (byte)req;
+                        if (CurrentTrack != song)
+                            StartTrack_NoLock(song);
+                    }
+                    Cpu.Update();
+                }
                 Thread.Sleep(5);
             }
         }

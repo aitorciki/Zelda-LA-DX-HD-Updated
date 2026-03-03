@@ -42,7 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb" />
+    <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb">
+      <OutputDir>$(MSBuildProjectDirectory)\$(OutputPath)Content\</OutputDir>
+      <IntermediateDir>$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)\mgcb\</IntermediateDir>
+    </MonoGameContentReference>
   </ItemGroup>
 
   <ItemGroup>

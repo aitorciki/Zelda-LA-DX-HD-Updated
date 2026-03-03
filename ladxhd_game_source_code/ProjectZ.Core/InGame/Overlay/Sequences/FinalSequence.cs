@@ -485,7 +485,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 InitScreen3();
                 return;
             }
-            _s2Link.Position.Y = _s2LinkPosY + MathF.Round(MathF.Sin((float)_screen2Counter / 2000 * MathF.PI * 2));
+            _s2Link.Position.Y = _s2LinkPosY + MathF.Round(MathF.Sin(_screen2Counter / 2000 * MathF.PI * 2));
             _s2Log0.Position.Y = _s2Log0PosY + MathF.Round(0.5f + MathF.Sin((float)(_screen2Counter - 450) / 2000 * MathF.PI * 2) * 0.5f);
             _s2Log1.Position.Y = _s2Log1PosY + MathF.Round(0.5f + MathF.Sin((float)(_screen2Counter + 350) / 2000 * MathF.PI * 2) * 0.5f);
         }
@@ -512,8 +512,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
                 InitScreen4();
             }
 
-            _s3Shadow.Position.Y = _s3LinkPosY + MathF.Round(MathF.Sin((float)_screen3Counter / 3300 * MathF.PI * 2) * 6);
-            _s3Link.Position.Y = _s3LinkPosY + MathF.Round(MathF.Sin((float)_screen3Counter / 3300 * MathF.PI * 2) * 6);
+            _s3Shadow.Position.Y = _s3LinkPosY + MathF.Round(MathF.Sin(_screen3Counter / 3300 * MathF.PI * 2) * 6);
+            _s3Link.Position.Y = _s3LinkPosY + MathF.Round(MathF.Sin(_screen3Counter / 3300 * MathF.PI * 2) * 6);
 
             _s3Log.Position.Y = _s3LogPosY + MathF.Round(0.5f + MathF.Sin((float)(_screen3Counter + 250) / 3300 * MathF.PI * 2) * 1.5f);
             _s3Barrel0.Position.Y = _s3Barrel0PosY + MathF.Round(MathF.Sin((float)(_screen3Counter + 750 + 0) / 3300 * MathF.PI * 2) * 2);
@@ -580,7 +580,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
             if (_s4Wale.Position.Y < 20 - 10)
                 _s4Sun2.Color = Color.White;
 
-            _s4Link.Position.Y = _s4LinkPosY + MathF.Round(MathF.Sin((float)_screen4Counter / 3300 * MathF.PI * 2) * 4f);
+            _s4Link.Position.Y = _s4LinkPosY + MathF.Round(MathF.Sin(_screen4Counter / 3300 * MathF.PI * 2) * 4f);
 
             var colorBrightness = new Color((int)_s4Brightness, (int)_s4Brightness, (int)_s4Brightness);
             _s4Link.Color = colorBrightness;
@@ -694,7 +694,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
                     if (_screen6Counter > 14200 && _marSeagull != null)
                     {
                         _marSeagull.Position.X += 0.5f * Game1.TimeMultiplier;
-                        _marSeagull.Position.Y -= (1f / 2.75f) * Game1.TimeMultiplier;
+                        _marSeagull.Position.Y -= 1f / 2.75f * Game1.TimeMultiplier;
                     }
                     _s6Marin.Color = Color.White * _s6MarinTransparency;
 
@@ -848,7 +848,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
             if (_screenFadeCounter > 0)
             {
-                var percentage = MathF.Sin((_screenFadeCounter / (ScreenFadeTime * 2)) * MathF.PI);
+                var percentage = MathF.Sin(_screenFadeCounter / (ScreenFadeTime * 2) * MathF.PI);
                 spriteBatch.Draw(Resources.SprWhite, new Rectangle(0, 0, Game1.WindowWidth, Game1.WindowHeight), Color.White * percentage);
             }
         }

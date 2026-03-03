@@ -391,7 +391,6 @@ namespace ProjectZ.InGame.Overlay
                 ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("shell"), offsetBottom, _shellRectangle, 1, Color.White);
                 ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("goldLeaf"), offsetBottom, _leafRectangle, 1, Color.White);
             }
-
             DrawEquipment(spriteBatch, offsetBottom + _equipmentPosition);
 
             // Draw slot labels and items.

@@ -138,7 +138,7 @@ namespace GBSPlayer
                 return;
 
             // create a 5 buffer puffer
-            while (!_gbSound.WasStopped && _gbSound._soundOutput.GetPendingBufferCount() < 10)
+            while (!_gbSound.WasStopped && _gbSound.PendingCount < 10)
             {
                 while (cycleCount < CycleTime)
                     CPUCycle();

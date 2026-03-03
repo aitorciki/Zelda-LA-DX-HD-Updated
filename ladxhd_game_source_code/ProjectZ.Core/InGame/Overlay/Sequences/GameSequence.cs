@@ -197,7 +197,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
 
                 // calculate the time needed to finishe the transition
                 var length = drawable.PositionStart - drawable.PositionEnd;
-                drawable.PositionTransitionTime = ((length.Length() / speed) / 60) * 1000;
+                drawable.PositionTransitionTime = length.Length() / speed / 60 * 1000;
 
                 Game1.GameManager.SaveManager.SetString(drawableId + "Moving", "1");
             }
@@ -292,8 +292,8 @@ namespace ProjectZ.InGame.Overlay.Sequences
             // round the camera position to align with pixels
             var matrix =
                 Matrix.CreateTranslation(new Vector3(
-                    MathF.Round((-_cameraPosition.X) * _scale) / _scale,
-                    MathF.Round((-_cameraPosition.Y) * _scale) / _scale, 0)) *
+                    MathF.Round(-_cameraPosition.X * _scale) / _scale,
+                    MathF.Round(-_cameraPosition.Y * _scale) / _scale, 0)) *
                 Matrix.CreateScale(_scale);
 
             spriteBatch.GraphicsDevice.SetRenderTarget(_renderTarget);

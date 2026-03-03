@@ -265,7 +265,7 @@ namespace ProjectZ.InGame.Things
                     if (skipDirectory != null && skipDirectory(name))
                         continue;
 
-                    continue; // directories themselves aren't returned
+                    continue;
                 }
 
                 if (acceptFile(name))

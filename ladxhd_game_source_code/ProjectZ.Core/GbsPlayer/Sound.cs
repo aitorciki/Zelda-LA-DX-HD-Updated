@@ -5,9 +5,12 @@ namespace GBSPlayer
 {
     public class Sound
     {
-        public CDynamicEffectInstance _soundOutput;
+        private readonly CDynamicEffectInstance _soundOutput;
 
         public bool WasStopped;
+        public int PendingCount => _soundOutput.GetPendingBufferCount();
+        public SoundState OutputState => _soundOutput.State;
+
         private int _endBufferCount;
         private int _bufferCount;
 
@@ -23,6 +26,7 @@ namespace GBSPlayer
         // frame sequencer
         private int _frameSequencerTimer;
         private byte _frameSequencerCounter;
+        private double _frameSeqAcc;
 
         // Square 1
         private byte _modeOneNumberOfSweepShifts;
@@ -137,6 +141,7 @@ namespace GBSPlayer
 
         public void Init()
         {
+            _frameSeqAcc = 0.0;
             _frameSequencerTimer = 0;
             _frameSequencerCounter = 0;
 
@@ -174,6 +179,11 @@ namespace GBSPlayer
             _endBufferCount = (int)(length * OutputRate);
         }
 
+        public void Pump()
+        {
+            _soundOutput?.Pump();
+        }
+
         public void Play()
         {
             _soundOutput.Play();
@@ -193,6 +203,7 @@ namespace GBSPlayer
         {
             _bufferCount = 0;
             _bufferIndex = 0;
+            _soundOutput.ClearQueuedPcm();
             _soundOutput.Stop();
         }
 
@@ -203,7 +214,15 @@ namespace GBSPlayer
 
         public void AddCurrentBuffer()
         {
-            _soundOutput.SubmitBuffer(_soundBuffer, 0, _bufferIndex);
+            if (_bufferIndex <= 0)
+            {
+                _bufferIndex = 0;
+                return;
+            }
+            var copy = new byte[_bufferIndex];
+            Buffer.BlockCopy(_soundBuffer, 0, copy, 0, _bufferIndex);
+
+            _soundOutput.SubmitBuffer(copy, 0, copy.Length);
             _bufferIndex = 0;
         }
 
@@ -512,12 +531,14 @@ namespace GBSPlayer
         public void UpdateBuffer()
         {
             DebugCounter++;
-            _frameSequencerTimer++;
 
-            // 44100/512 = 86
-            if (_frameSequencerTimer >= 86)
+            // Advance frame sequencer with fractional timing (exact 512 Hz)
+            _frameSeqAcc += 512.0 / OutputRate;
+
+            // Tick as many times as needed (normally 0 or 1, occasionally more if you ever change rates)
+            while (_frameSeqAcc >= 1.0)
             {
-                _frameSequencerTimer = 0;
+                _frameSeqAcc -= 1.0;
 
                 // 256Hz Length Ctr Clock
                 if (_frameSequencerCounter % 2 == 0)
@@ -527,15 +548,12 @@ namespace GBSPlayer
                     _waveLengthCounter++;
                     _noiseLengthCounter++;
 
-                    // deactivate channel 1
                     if (_square1LengthCounter >= _square1LengthLoad && _modeOneCounterEnable)
                         _soundOnOff &= 0xFE;
 
-                    // deactivate channel 2
                     if (_square2LengthCounter >= _modeTwoSoundLength && _modeTwoCounterEnable)
                         _soundOnOff &= 0xFD;
 
-                    // deactivate channel 3
                     if (_waveLengthCounter >= _modeThreeSoundLength && _waveLengthEnable)
                     {
                         _waveTrigger = false;
@@ -543,70 +561,61 @@ namespace GBSPlayer
                     }
 
                     if (_noiseLengthCounter >= _noiseLengthLoad && _noiseLengthEnable)
-                    {
                         _soundOnOff &= 0xF7;
-                    }
                 }
 
                 // 64Hz Volume Envelope Clock
-                if ((_frameSequencerCounter + 1) % 8 == 0)
+                if (_frameSequencerCounter == 7)
                 {
-                    // step channel 1 up/down
-                    _square1EnvelopeCounter--;
-                    if (_square1EnvelopePeriod != 0 && _square1EnvelopeCounter <= 0 &&
-                       (!_square1EnvelopeAddMode && _square1Volume > 0 || _square1EnvelopeAddMode && _square1Volume < 15))
-                    {
-                        _square1EnvelopeCounter = _square1EnvelopePeriod;
-                        _square1Volume += _square1EnvelopeAddMode ? 1 : -1;
-                    }
+                    if (_square1EnvelopePeriod != 0)
+                    {                   
+                        _square1EnvelopeCounter--;
 
-                    // step channel 2 up/down
-                    _square2EnvelopeCounter--;
-                    if (_square2EnvelopePeriod != 0 && _square2EnvelopeCounter <= 0 &&
-                       (!_square2EnvelopeAddMode && _square2Volume > 0 || _square2EnvelopeAddMode && _square2Volume < 15))
-                    {
-                        _square2EnvelopeCounter = _square2EnvelopePeriod;
-                        _square2Volume += _square2EnvelopeAddMode ? 1 : -1;
+                        if (_square1EnvelopeCounter <= 0 && ((!_square1EnvelopeAddMode && _square1Volume > 0) || (_square1EnvelopeAddMode && _square1Volume < 15)))
+                        {
+                            _square1EnvelopeCounter = _square1EnvelopePeriod;
+                            _square1Volume += _square1EnvelopeAddMode ? 1 : -1;
+                        }
                     }
+                    if (_square2EnvelopeCounter != 0)
+                    {                   
+                        _square2EnvelopeCounter--;
 
-                    // step channel 4
-                    _noiseEnvelopeCounter--;
-                    if (_noiseEnvelopePeriod != 0 && _noiseEnvelopeCounter <= 0 &&
-                        (!_noiseEnvelopeAddMode && _noiseVolume > 0 || _noiseEnvelopeAddMode && _noiseVolume < 15))
-                    {
-                        _noiseEnvelopeCounter = _noiseEnvelopePeriod;
-                        _noiseVolume += (byte)(_noiseEnvelopeAddMode ? 1 : -1);
+                        if (_square2EnvelopeCounter <= 0 && ((!_square2EnvelopeAddMode && _square2Volume > 0) || (_square2EnvelopeAddMode && _square2Volume < 15)))
+                        {
+                            _square2EnvelopeCounter = _square2EnvelopePeriod;
+                            _square2Volume += _square2EnvelopeAddMode ? 1 : -1;
+                        }
+                    }
+                    if (_noiseEnvelopeCounter != 0)
+                    {                   
+                        _noiseEnvelopeCounter--;
+
+                        if (_noiseEnvelopeCounter <= 0 && ((!_noiseEnvelopeAddMode && _noiseVolume > 0) || (_noiseEnvelopeAddMode && _noiseVolume < 15)))
+                        {
+                            _noiseEnvelopeCounter = _noiseEnvelopePeriod;
+                            _noiseVolume += (byte)(_noiseEnvelopeAddMode ? 1 : -1);
+                        }
                     }
                 }
 
                 // 128Hz Sweep Clock
-                if ((_frameSequencerCounter + 2) % 4 == 0)
+                if (_frameSequencerCounter == 2 || _frameSequencerCounter == 6)
                 {
                     _modeOneSweepCounter++;
 
-                    // sweep
                     if (_modeOneSweepTime != 0 && _modeOneNumberOfSweepShifts != 0 && _modeOneSweepCounter >= _modeOneSweepTime)
                     {
                         _modeOneSweepCounter = 0;
                         var newFreq = (short)(_square1Frequency + (_modeOneSweepSubtraction ? -1 : 1) * (_square1Frequency >> _modeOneNumberOfSweepShifts));
 
-                        // newFreq > 11bits
                         if ((newFreq & 0x7FF) != newFreq)
-                        {
-                            // deactivate channel
                             _soundOnOff &= 0xFE;
-                        }
-                        else if (newFreq <= 0)
-                        {
-
-                        }
-                        else
-                        {
+                        else if (newFreq > 0)
                             _square1Frequency = newFreq;
-                        }
 
                         _soundRegister[0xFF13 - 0xFF10] = (byte)(_square1Frequency & 0xFF);
-                        _soundRegister[0xFF14 - 0xFF10] = (byte)(_soundRegister[0xFF14 - 0xFF10] & 0xF8 + (_square1Frequency >> 8));
+                        _soundRegister[0xFF14 - 0xFF10] = (byte)((_soundRegister[0xFF14 - 0xFF10] & 0xF8) + (_square1Frequency >> 8));
 
                         UpdateSquare1FrequencyTime();
                     }
@@ -616,6 +625,7 @@ namespace GBSPlayer
                 if (_frameSequencerCounter >= 8)
                     _frameSequencerCounter = 0;
             }
+            
 
             // Square 1
             short channel0 = 0;

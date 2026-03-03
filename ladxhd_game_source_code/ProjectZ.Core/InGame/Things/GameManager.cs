@@ -972,8 +972,7 @@ namespace ProjectZ.InGame.Things
                 if (_musicArray[i] >= 0)
                 {
                     var songNumber = (byte)_musicArray[i];
-                    if (Game1.GbsPlayer.CurrentTrack != songNumber)
-                        Game1.GbsPlayer.StartTrack(songNumber);
+                    Game1.GbsPlayer.RequestTrack(songNumber);
 
                     if (startPlaying)
                         Game1.GbsPlayer.Play();
@@ -1004,7 +1003,7 @@ namespace ProjectZ.InGame.Things
                 _musicArray[1] = trackID;
             }
             // When leaving the village, restore piece of power music and write new track to it's proper slot.
-            else if ((trackID != 3 || trackID != 10) && _musicArray[0] == 72 && priority == 0)
+            else if ((trackID != 3 && trackID != 10) && _musicArray[0] == 72 && priority == 0)
             {
                 _musicArray[0] = trackID;
                 _musicArray[1] = 72;

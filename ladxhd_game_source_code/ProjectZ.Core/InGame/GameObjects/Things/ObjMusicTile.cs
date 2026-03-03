@@ -14,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects.Things
         private string _lastTrack;
 
         private bool _currentEnabled;
+        private int _lastTrackId = -1;
 
         // @TODO: fade in/out
         public ObjMusicTile() : base("editor music") { }
@@ -31,6 +32,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
+            if (_musicData == null)
+                return;
+
             // Offset the Y position by 4 pixels to match Link's body box center.
             var position = new Point(
                 (int)(MapManager.ObjLink.PosX - Map.MapOffsetX * Values.TileSize) / 16,
@@ -39,13 +43,12 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (0 <= position.X && position.X < _musicData.GetLength(0) &&
                 0 <= position.Y && position.Y < _musicData.GetLength(1))
             {
-                var track = _musicData[position.X, position.Y];
-
-                if (int.TryParse(track, out var trackID))
+                var trackStr = _musicData[position.X, position.Y];
+                if (int.TryParse(trackStr, out var trackID))
                 {
-                    if (_lastTrack != track)
+                    if (_lastTrackId != trackID)
                     {
-                        _lastTrack = track;
+                        _lastTrackId = trackID;
                         Game1.GameManager.SetMusic(trackID, 0, false);
                     }
                 }
