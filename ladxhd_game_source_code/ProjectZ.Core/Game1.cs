@@ -192,12 +192,26 @@ namespace ProjectZ
 
         protected override void Initialize()
         {
+            // Direct-X now requires this workaround to set the icon.
+        #if DIRECTX
+            var path = Path.Combine("Data", "Icon", "Icon.ico");
+            var icon = new System.Drawing.Icon(path);
+            var form = System.Windows.Forms.Form.FromHandle(Window.Handle) as System.Windows.Forms.Form;
+            if (form != null)
+            {
+                form.Icon = icon;
+                form.ShowIcon = true;
+            }
+        #endif
+
+            // OpenGL requires a workaround using SDL to set the icon.
         #if DESKTOPGL
             var path = Path.Combine("Data", "Icon", "Icon.bmp");
             var surface = SDL_LoadBMP_RW(SDL_RWFromFile(path, "rb"), 1);
             SDL_SetWindowIcon(Window.Handle, surface);
             SDL_FreeSurface(surface);
         #endif
+
             // Store an instance so it can be referenced.
             Instance = this;
             base.Initialize();

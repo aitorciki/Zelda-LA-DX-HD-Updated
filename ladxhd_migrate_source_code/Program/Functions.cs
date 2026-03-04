@@ -107,15 +107,22 @@ namespace LADXHD_Migrater
             File.WriteAllBytes(editorFontA, (byte[])resources["Courier-Prime.ttf"]);
             File.WriteAllBytes(editorFontB, (byte[])resources["NotoSans-Regular.ttf"]);
 
-            // Set up the path to the bitmap Icon.
+            // Set up the path to the Icon.
             string iconPath = Path.Combine(Config.Update_Data, "Icon").CreatePath();
-            string iconFile = Path.Combine(iconPath, "Icon.bmp");
+            string iconFile = Path.Combine(iconPath, "Icon.ico");
+
+            // Write the files to the "Content\Fonts" folder.
+            File.WriteAllBytes(iconFile, (byte[])resources["Icon.ico"]);
+
+            // Set up the path to the bitmap Icon.
+            string iconBmpPath = Path.Combine(Config.Update_Data, "Icon").CreatePath();
+            string iconBmpFile = Path.Combine(iconBmpPath, "Icon.bmp");
 
             // Write the bitmap icon to the "Data\Icon" folder.
             using (var ms = new MemoryStream())
             {
                 ((Bitmap)resources["Icon.bmp"]).Save(ms, ImageFormat.Bmp);
-                File.WriteAllBytes(iconFile, ms.ToArray());
+                File.WriteAllBytes(iconBmpFile, ms.ToArray());
             }
         }
 
