@@ -348,7 +348,7 @@ namespace ProjectZ.InGame.Pages
                 Game1.GameManager.SetMusic(59, 2);
                 Game1.UiPageManager.PopPage(SkipSound:true);
             }
-            else if (name == "zelda")
+            else if (name == "zelda" || name == "塞尔达")
             {
                 Game1.GameManager.SetMusic(95, 2);
                 Game1.UiPageManager.PopPage(SkipSound: true);
