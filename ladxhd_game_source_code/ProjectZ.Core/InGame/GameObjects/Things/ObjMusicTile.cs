@@ -43,6 +43,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (0 <= position.X && position.X < _musicData.GetLength(0) &&
                 0 <= position.Y && position.Y < _musicData.GetLength(1))
             {
+                // Hack to play the intro music.
+                if (_lastTrackId != 28 && Game1.GameManager.SaveManager.GetString("introMusic", "0") == "1")
+                {
+                    Game1.GameManager.SetMusic(28, 0, false);
+                    return;
+                }
+                // Play the music from the tile.
                 var trackStr = _musicData[position.X, position.Y];
                 if (int.TryParse(trackStr, out var trackID))
                 {

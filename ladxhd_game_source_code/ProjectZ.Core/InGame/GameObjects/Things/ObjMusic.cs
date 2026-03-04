@@ -28,8 +28,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private int GetProperMusicTrack(int songNr)
         {
-            int dungeonClear = 23;
+            // Hack to play the intro music.
+            if (Game1.GameManager.SaveManager.GetString("introMusic", "0") == "1")
+                return 28;
 
+            // Hack to play the proper dungeon music.
+            int dungeonClear = 23;
             if (SongToDungeon.TryGetValue(songNr, out int dungeonIndex))
             {
                 string heartKey = $"d{dungeonIndex}_nHeart";
@@ -41,6 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                     return dungeonClear;
                 }
             }
+            // Return the actual song assigned to "ObjMusic".
             return songNr;
         }
     }
