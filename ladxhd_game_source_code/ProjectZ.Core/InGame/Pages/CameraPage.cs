@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
@@ -72,12 +73,12 @@ namespace ProjectZ.InGame.Pages
             // Toggle: Modern: Overworld Only
             _toggleModernOverworld = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_modernoverworld", GameSettings.ModernOverworld, 
-                newState => { GameSettings.ModernOverworld = newState; Game1.ScaleChanged = true; });
+                newState => { GameSettings.ModernOverworld = newState; Game1.ScaleChanged = true; Camera.SnapCameraTimer = 10f; });
 
             // Toggle: Classic: Dungeons Only
             _toggleClassicDungeon = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_classicdungeon", GameSettings.ClassicDungeon, 
-                newState => { GameSettings.ClassicDungeon = newState; Game1.ScaleChanged = true; });
+                newState => { GameSettings.ClassicDungeon = newState; Game1.ScaleChanged = true; Camera.SnapCameraTimer = 10f; });
             
             // Depending on which of the above two options is added depends on camera state.
             if (GameSettings.ClassicCamera)
@@ -88,7 +89,7 @@ namespace ProjectZ.InGame.Pages
             // Slider: Classic Camera Border
             _sliderCameraBorder = new InterfaceSlider("settings_camera_camborder",
                 buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
-                number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; }) 
+                number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; Camera.SnapCameraTimer = 10f; }) 
                 { SetString = number => ClassicBorderAdjustment(number) };
             _contentLayout.AddElement(_sliderCameraBorder);
 
@@ -102,7 +103,7 @@ namespace ProjectZ.InGame.Pages
             // Toggle: Classic Scale Lock
             _toggleClassicScaling = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_camera_classicscaling", GameSettings.ClassicScaling, 
-                newState => { GameSettings.ClassicScaling = newState; Game1.ScaleChanged = true; });
+                newState => { GameSettings.ClassicScaling = newState; Game1.ScaleChanged = true; Camera.SnapCameraTimer = 10f; });
             _contentLayout.AddElement(_toggleClassicScaling);
 
             // Toggle: Camera Lock

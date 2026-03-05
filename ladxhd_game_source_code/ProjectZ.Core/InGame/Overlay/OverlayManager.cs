@@ -261,6 +261,7 @@ namespace ProjectZ.InGame.Overlay
             DisableOverlayToggle = false;
             DisableInventoryToggle = false;
         }
+
         private void ChangeGameScale(GameScaleDirection scaleDirection)
         {
             // Get the maximum scale and add 1 for auto-scale.
@@ -312,6 +313,7 @@ namespace ProjectZ.InGame.Overlay
                 _scaleButtonDown = true;
                 _scaleButtonTimer = -425f;
                 _scaleButtonPeriod = 75;
+                Camera.SnapCameraTimer = 10f;
             }
             else if ((GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RT)) || 
                 (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RB)))
@@ -320,6 +322,7 @@ namespace ProjectZ.InGame.Overlay
                 _scaleButtonDown = true;
                 _scaleButtonTimer = -425f;
                 _scaleButtonPeriod = 75;
+                Camera.SnapCameraTimer = 10f;
             }
             // Increase/Decrease game scale repeatedly while button is held every 75ms.
             if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && 
@@ -329,6 +332,7 @@ namespace ProjectZ.InGame.Overlay
                 ChangeGameScale(GameScaleDirection.Decrease);
                 _scaleButtonTimer = 0;
                 _scaleButtonCount++;
+                Camera.SnapCameraTimer = 10f;
             }
             if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && 
                 ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT)) || 
@@ -337,6 +341,7 @@ namespace ProjectZ.InGame.Overlay
                 ChangeGameScale(GameScaleDirection.Increase);
                 _scaleButtonTimer = 0;
                 _scaleButtonCount++;
+                Camera.SnapCameraTimer = 10f;
             }
             // The longer the button is held down, the faster the "zoom" will get. The left value in the switch represents
             // how many scaling iterations have passed, the right value represents how many milliseconds between iterations.
