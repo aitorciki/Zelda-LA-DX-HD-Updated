@@ -86,11 +86,6 @@ namespace ProjectZ.InGame.GameSystems
 
                 LoadMapFromFile(_nextMapName, _nextMapCenter, _nextMapStartInMiddle, _nextMapColor, _nextColorMode);
                 _nextMapName = null;
-
-                // If classic camera is enabled then find the closest camera. Do not try to find a camera
-                // field object during ocarina teleport or it will pan to the nearest one that is found.
-                if (Camera.ClassicMode && MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport)
-                    Game1.ClassicCamera.FindClosestCoords();
             }
 
             if (_transitionEnded)
@@ -501,6 +496,14 @@ namespace ProjectZ.InGame.GameSystems
             // Finish loading map
             mm.FinishLoadingMap(mm.CurrentMap);
 
+            // If classic camera is enabled then find the closest camera. Do not try to find a camera
+            // field object during ocarina teleport or it will pan to the nearest one that is found.
+            if (Camera.ClassicMode && MapManager.ObjLink.CurrentState != ObjLink.State.OcarinaTeleport)
+            {
+                Game1.ClassicCamera.ClearList();
+                Game1.ClassicCamera.FindClosestCoords();
+            }
+            // Update the transition into the new map.
             MapManager.ObjLink.UpdateMapTransitionIn(0);
 
             // Set the new music

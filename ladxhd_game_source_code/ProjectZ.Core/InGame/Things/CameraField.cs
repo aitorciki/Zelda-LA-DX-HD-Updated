@@ -43,28 +43,37 @@ namespace ProjectZ.InGame.Things
                     closestCam = fieldCenter;
                 }
             }
+            // If the closest camera is null, there is no camera coords to obtain.
+            if (closestCam == null)
+            {
+                CameraFieldCoords = Vector2.Zero;
+                return;
+            }
             // Return the coordinates of the closest camera.
             CameraFieldCoords = new Vector2(closestCam.EntityPosition.X, closestCam.EntityPosition.Y);
         }
 
         public void FindClosestCoords()
         {
-            // Grab objects with a certain range.
-            GameObjectList.Clear();
-            GameObjectList = MapManager.ObjLink.Map.Objects.GetObjects((int)MapManager.ObjLink.CenterPosition.X - 160, (int)MapManager.ObjLink.CenterPosition.Y -100, 320, 200);
+            // Always reset. If we fail to find anything, coords become Zero (not stale).
+            CameraFieldList.Clear();
+            CameraFieldCoords = Vector2.Zero;
+
+            var map = MapManager.ObjLink?.Map;
+            var objects = map?.Objects;
+            if (objects == null)
+                return;
+
+            var player = MapManager.ObjLink.CenterPosition.Position;
+            var objList = objects.GetObjects((int)player.X - 160, (int)player.Y - 100, 320, 200);
 
             // Loop through the game objects.
-            foreach (var gameObject in GameObjectList)
-            {
-                // Find camera field objects.
+            foreach (var gameObject in objList)
                 if (gameObject is ObjCameraField camField)
-                {
-                    // Add the camera object to the list.
-                    AddToList(camField);
-                }
-                // Set the closest camera to 
-                SetClosestCoords();
-            }
+                    CameraFieldList.Add(camField);
+
+            // Set the closest camera to Link.
+            SetClosestCoords();
         }
 
         public void ClearList()
