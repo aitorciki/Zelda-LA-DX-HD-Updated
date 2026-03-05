@@ -41,8 +41,6 @@ namespace ProjectZ.Base
 
     public class InputHandler : GameComponent
     {
-        private static List<InputCharacter> _alphabet;
-
         public static KeyboardState KeyboardState => _keyboardState;
         public static KeyboardState LastKeyboardState => _lastKeyboardState;
         public static MouseState MouseState => _mouseState;
@@ -67,9 +65,13 @@ namespace ProjectZ.Base
         public static GamePadState GamePadState => _gamePadState;
         public static GamePadState LastGamePadState => _lastGamePadState;
 
-        private const float TriggerPressThreshold = 0.5f;
+    #if ANDROID
+        private static readonly bool _useAnalogTriggerFallback = true;
+    #else
+        private static readonly bool _useAnalogTriggerFallback = true;
+    #endif
 
-        #region Constructor Region
+        private const float TriggerPressThreshold = 0.5f;
 
         public InputHandler(Game game)
             : base(game)
@@ -79,72 +81,7 @@ namespace ProjectZ.Base
         #if !ANDROID
             Game.Window.TextInput += OnTextInput;
         #endif
-
-            // Create an array of the valid alphabet characters.
-/*          _alphabet = new List<InputCharacter>();
-
-             //Alphabet
-            _alphabet.Add(new InputCharacter("A", "a", "ª", Keys.A));
-            _alphabet.Add(new InputCharacter("B", "b", Keys.B));
-            _alphabet.Add(new InputCharacter("C", "c", "¢", Keys.C));
-            _alphabet.Add(new InputCharacter("D", "d", Keys.D));
-            _alphabet.Add(new InputCharacter("E", "e", "€", Keys.E));
-            _alphabet.Add(new InputCharacter("F", "f", Keys.F));
-            _alphabet.Add(new InputCharacter("G", "g", Keys.G));
-            _alphabet.Add(new InputCharacter("H", "h", Keys.H));
-            _alphabet.Add(new InputCharacter("I", "i", Keys.I));
-            _alphabet.Add(new InputCharacter("J", "j", Keys.J));
-            _alphabet.Add(new InputCharacter("K", "k", Keys.K));
-            _alphabet.Add(new InputCharacter("L", "l", "£", Keys.L));
-            _alphabet.Add(new InputCharacter("M", "m", Keys.M));
-            _alphabet.Add(new InputCharacter("N", "n", Keys.N));
-            _alphabet.Add(new InputCharacter("O", "o", Keys.O));
-            _alphabet.Add(new InputCharacter("P", "p", "¶", Keys.P));
-            _alphabet.Add(new InputCharacter("Q", "q", Keys.Q));
-            _alphabet.Add(new InputCharacter("R", "r", "®", Keys.R));
-            _alphabet.Add(new InputCharacter("S", "s", Keys.S));
-            _alphabet.Add(new InputCharacter("T", "t", Keys.T));
-            _alphabet.Add(new InputCharacter("U", "u", "µ", Keys.U));
-            _alphabet.Add(new InputCharacter("V", "v", Keys.V));
-            _alphabet.Add(new InputCharacter("W", "w", Keys.W));
-            _alphabet.Add(new InputCharacter("X", "x", Keys.X));
-            _alphabet.Add(new InputCharacter("Y", "y", Keys.Y));
-            _alphabet.Add(new InputCharacter("Z", "z", Keys.Z));
-
-            // Decimal numbers.
-            _alphabet.Add(new InputCharacter("~", "`", Keys.OemTilde));
-            _alphabet.Add(new InputCharacter("!", "1", "¹", Keys.D1, Keys.NumPad1));
-            _alphabet.Add(new InputCharacter("@", "2", "²", Keys.D2, Keys.NumPad2));
-            _alphabet.Add(new InputCharacter("#", "3", "³", Keys.D3, Keys.NumPad3));
-            _alphabet.Add(new InputCharacter("$", "4", Keys.D4, Keys.NumPad4));
-            _alphabet.Add(new InputCharacter("%", "5", Keys.D5, Keys.NumPad5));
-            _alphabet.Add(new InputCharacter("^", "6", Keys.D6, Keys.NumPad6));
-            _alphabet.Add(new InputCharacter("&", "7", Keys.D7, Keys.NumPad7));
-            _alphabet.Add(new InputCharacter("*", "8", Keys.D8, Keys.NumPad8));
-            _alphabet.Add(new InputCharacter("(", "9", Keys.D9, Keys.NumPad9));
-            _alphabet.Add(new InputCharacter(")", "0", "º", Keys.D0, Keys.NumPad0));
-
-            // Numpad Specific
-            _alphabet.Add(new InputCharacter("/", "/", Keys.Divide));
-            _alphabet.Add(new InputCharacter("*", "*", Keys.Multiply));
-            _alphabet.Add(new InputCharacter("-", "-", Keys.Subtract));
-            _alphabet.Add(new InputCharacter("+", "+", Keys.Add));
-            _alphabet.Add(new InputCharacter(".", ".", Keys.Decimal));
-
-            // Punctuation.
-            _alphabet.Add(new InputCharacter("_", "-", "°", Keys.OemMinus));
-            _alphabet.Add(new InputCharacter("+", "=", "±", Keys.OemPlus));
-            _alphabet.Add(new InputCharacter("{", "[", Keys.OemOpenBrackets));
-            _alphabet.Add(new InputCharacter("}", "]", Keys.OemCloseBrackets));
-            _alphabet.Add(new InputCharacter("|", "\\", "¦", Keys.OemPipe));
-            _alphabet.Add(new InputCharacter(":", ";", Keys.OemSemicolon));
-            _alphabet.Add(new InputCharacter("\"", "'", "¸", Keys.OemQuotes));
-            _alphabet.Add(new InputCharacter("<", ",", "«", Keys.OemComma));
-            _alphabet.Add(new InputCharacter(">", ".", "»", Keys.OemPeriod));
-            _alphabet.Add(new InputCharacter("?", "/", "¿", Keys.OemQuestion));  */
         }
-
-        #endregion
 
         public override void Update(GameTime gameTime)
         {
@@ -221,7 +158,6 @@ namespace ProjectZ.Base
                 if (KeyPressed(downKeys[i]))
                     pressedKeys.Add(downKeys[i]);
             }
-
             return pressedKeys;
         }
 
@@ -234,7 +170,6 @@ namespace ProjectZ.Base
                 if (GamePadPressed(button))
                     pressedKeys.Add(button);
             }
-
             return pressedKeys;
         }
 
@@ -261,37 +196,41 @@ namespace ProjectZ.Base
 
         public static bool GamePadDown(Buttons button)
         {
-            if (button == Buttons.LeftTrigger)  return _gamePadState.IsButtonDown(button) || TriggerDown(left: true);
-            if (button == Buttons.RightTrigger) return _gamePadState.IsButtonDown(button) || TriggerDown(left: false);
+            if (_useAnalogTriggerFallback)
+            {
+                if (button == Buttons.LeftTrigger)  return TriggerDown(left: true);
+                if (button == Buttons.RightTrigger) return TriggerDown(left: false);
+            }
             return _gamePadState.IsButtonDown(button);
         }
 
         public static bool LastGamePadDown(Buttons button)
         {
-            if (button == Buttons.LeftTrigger)  return _lastGamePadState.IsButtonDown(button) || TriggerDownLast(left: true);
-            if (button == Buttons.RightTrigger) return _lastGamePadState.IsButtonDown(button) || TriggerDownLast(left: false);
+            if (_useAnalogTriggerFallback)
+            {
+                if (button == Buttons.LeftTrigger)  return TriggerDownLast(left: true);
+                if (button == Buttons.RightTrigger) return TriggerDownLast(left: false);
+            }
             return _lastGamePadState.IsButtonDown(button);
         }
 
         public static bool GamePadPressed(Buttons button)
         {
-            if (button == Buttons.LeftTrigger)
-                return (TriggerDown(true) && !TriggerDownLast(true)) || (_gamePadState.IsButtonDown(button) && _lastGamePadState.IsButtonUp(button));
-
-            if (button == Buttons.RightTrigger)
-                return (TriggerDown(false) && !TriggerDownLast(false)) || (_gamePadState.IsButtonDown(button) && _lastGamePadState.IsButtonUp(button));
-
+            if (_useAnalogTriggerFallback)
+            {
+                if (button == Buttons.LeftTrigger)  return TriggerDown(true)  && !TriggerDownLast(true);
+                if (button == Buttons.RightTrigger) return TriggerDown(false) && !TriggerDownLast(false);
+            }
             return _gamePadState.IsButtonDown(button) && _lastGamePadState.IsButtonUp(button);
         }
 
         public static bool GamePadReleased(Buttons button)
         {
-            if (button == Buttons.LeftTrigger)
-                return (!TriggerDown(true) && TriggerDownLast(true)) || (_gamePadState.IsButtonUp(button) && _lastGamePadState.IsButtonDown(button));
-
-            if (button == Buttons.RightTrigger)
-                return (!TriggerDown(false) && TriggerDownLast(false)) || (_gamePadState.IsButtonUp(button) && _lastGamePadState.IsButtonDown(button));
-
+            if (_useAnalogTriggerFallback)
+            {
+                if (button == Buttons.LeftTrigger)  return !TriggerDown(true)  && TriggerDownLast(true);
+                if (button == Buttons.RightTrigger) return !TriggerDown(false) && TriggerDownLast(false);
+            }
             return _gamePadState.IsButtonUp(button) && _lastGamePadState.IsButtonDown(button);
         }
 
