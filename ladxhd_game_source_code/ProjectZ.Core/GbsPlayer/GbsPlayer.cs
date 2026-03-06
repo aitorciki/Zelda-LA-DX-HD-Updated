@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using Microsoft.Xna.Framework;
+﻿using System.Threading;
 using ProjectZ.InGame.Things;
 
 namespace GBSPlayer
@@ -51,12 +48,16 @@ namespace GBSPlayer
         {
             path = GameFS.ToAssetPath(path);
 
-            Cartridge.ROM = GameFS.ReadAllBytes(path);
+            var rom = GameFS.ReadAllBytes(path);
 
-            Cartridge.Init();
-            Cpu.Init();
-
-            GbsLoaded = true;
+            lock (_updateLock)
+            {
+                Cartridge.ROM = rom;
+                Cartridge.Init();
+                Cpu.Init();
+                GbsLoaded = true;
+                CurrentTrack = 255;
+            }
         }
 
         public void ChangeTrack(int offset)
@@ -77,10 +78,12 @@ namespace GBSPlayer
 
         public void StartTrack(byte trackNr)
         {
-            // directly init the new song if update is not called at this time
             lock (_updateLock)
             {
-                if (GbsLoaded && Cpu.IsRunning && trackNr == CurrentTrack)
+                if (!GbsLoaded)
+                    return;
+
+                if (Cpu.IsRunning && trackNr == CurrentTrack)
                     return;
 
                 CurrentTrack = trackNr;
@@ -88,6 +91,7 @@ namespace GBSPlayer
                 SoundGenerator.Stop();
                 GbsInit(trackNr);
                 SoundGenerator.SetStopTime(0);
+                Cpu.IsRunning = true;
             }
         }
 
@@ -98,13 +102,14 @@ namespace GBSPlayer
             SoundGenerator.Stop();
             GbsInit(trackNr);
             SoundGenerator.SetStopTime(0);
+            Cpu.IsRunning = true;
         }
 
         private void GbsInit(byte trackNumber)
         {
             Cartridge.Init();
-            Cpu.SkipBootROM();
             Cpu.Init();
+            Cpu.SkipBootROM();
             Cpu.SetPlaybackSpeed(_playbackSpeed);
 
             Cpu.reg_A = trackNumber;
@@ -115,34 +120,44 @@ namespace GBSPlayer
             Memory[--Cpu.reg_SP] = (byte)(Cpu.IdleAddress & 0xFF);
         }
 
+
         public void Pump()
         {
-            SoundGenerator?.Pump();
+            SoundGenerator.Pump();
         }
 
         public void Play()
         {
-            Cpu.IsRunning = true;
+            lock (_updateLock)
+                Cpu.IsRunning = true;
         }
 
         public void Pause()
         {
-            SoundGenerator.Pause();
-            Cpu.IsRunning = false;
+            lock (_updateLock)
+            {
+                SoundGenerator.Pause();
+                Cpu.IsRunning = false;
+            }
         }
 
         public void Resume()
         {
-            SoundGenerator.Resume();
-            Cpu.IsRunning = true;
+            lock (_updateLock)
+            {
+                SoundGenerator.Resume();
+                Cpu.IsRunning = true;
+            }
         }
 
         public void Stop()
         {
-            // stop music playback
-            SoundGenerator.Stop();
-            Cpu.IsRunning = false;
-            CurrentTrack = 255;
+            lock (_updateLock)
+            {
+                SoundGenerator.Stop();
+                Cpu.IsRunning = false;
+                CurrentTrack = 255;
+            }
         }
 
         public void SetPlaybackSpeed(float multiplier)
@@ -178,13 +193,6 @@ namespace GBSPlayer
             SoundGenerator.SetVolume(_volume * _volumeMultiplier);
         }
 
-        public void Update(float deltaTime)
-        {
-            if (!Cpu.IsRunning) return;
-            lock (_updateLock)
-                Cpu.Update();
-        }
-
         public void StartThread()
         {
             // Don’t start twice
@@ -217,7 +225,8 @@ namespace GBSPlayer
                         if (CurrentTrack != song)
                             StartTrack_NoLock(song);
                     }
-                    Cpu.Update();
+                    if (Cpu.IsRunning)
+                        Cpu.Update();
                 }
                 Thread.Sleep(5);
             }

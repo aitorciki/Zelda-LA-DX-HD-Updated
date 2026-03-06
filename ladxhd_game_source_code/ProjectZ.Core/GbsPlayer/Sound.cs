@@ -9,6 +9,8 @@ namespace GBSPlayer
 
         public bool WasStopped;
         public int PendingCount => _soundOutput.GetPendingBufferCount();
+        public int BufferedCount => _soundOutput.GetBufferedChunkCount();
+
         public SoundState OutputState => _soundOutput.State;
 
         private int _endBufferCount;
@@ -161,6 +163,8 @@ namespace GBSPlayer
             _highPassFilterCapacitor = 0;
 
             _bufferIndex = 0;
+            _bufferCount = 0;
+            _endBufferCount = 0;
             WasStopped = false;
         }
 
@@ -171,7 +175,7 @@ namespace GBSPlayer
 
         public bool FinishedPlaying()
         {
-            return _soundOutput.GetPendingBufferCount() == 0;
+            return BufferedCount == 0;
         }
 
         public void SetStopTime(float length)
@@ -181,7 +185,7 @@ namespace GBSPlayer
 
         public void Pump()
         {
-            _soundOutput?.Pump();
+            _soundOutput.Pump();
         }
 
         public void Play()
@@ -201,6 +205,7 @@ namespace GBSPlayer
 
         public void Stop()
         {
+            WasStopped = false;
             _bufferCount = 0;
             _bufferIndex = 0;
             _soundOutput.ClearQueuedPcm();

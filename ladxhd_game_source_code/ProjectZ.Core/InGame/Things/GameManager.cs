@@ -13,6 +13,9 @@ using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 
+// using ProjectZ.Base;
+// using Microsoft.Xna.Framework.Input;
+
 namespace ProjectZ.InGame.Things
 {
     public class GameManager
@@ -242,6 +245,9 @@ namespace ProjectZ.InGame.Things
 
         public void UpdateGame()
         {
+//            if (InputHandler.KeyPressed(Keys.F8))
+//                InitPieceOfPower();
+
             // Update the overlay. Includes the HUD and inventory.
             InGameOverlay.Update();
 
@@ -972,7 +978,8 @@ namespace ProjectZ.InGame.Things
                 if (_musicArray[i] >= 0)
                 {
                     var songNumber = (byte)_musicArray[i];
-                    Game1.GbsPlayer.RequestTrack(songNumber);
+                    if (Game1.GbsPlayer.CurrentTrack != songNumber)
+                        Game1.GbsPlayer.StartTrack(songNumber);
 
                     if (startPlaying)
                         Game1.GbsPlayer.Play();

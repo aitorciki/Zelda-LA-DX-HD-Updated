@@ -373,9 +373,6 @@ namespace ProjectZ
             // Update input from any input devices (controller/keyboard).
             ControlHandler.Update();
 
-            // Pump GBS audio on the game thread
-            GbsPlayer?.Pump();
-
             // Update all render targets.
             UpdateRenderTargets();
 
@@ -421,11 +418,14 @@ namespace ProjectZ
                         TotalGameTime += gameTime.ElapsedGameTime.TotalMilliseconds * DebugTimeScale;
                 }
             }
-            // update the screen manager
+            // Update the screen manager.
             UpdateGame = true;
 
             if (!DebugStepper || InputHandler.KeyPressed(Keys.M))
                 ScreenManager.Update(gameTime);
+
+            // Pump GBS audio on the game thread
+            GbsPlayer.Pump();
 
             if (_finishedLoading)
             {

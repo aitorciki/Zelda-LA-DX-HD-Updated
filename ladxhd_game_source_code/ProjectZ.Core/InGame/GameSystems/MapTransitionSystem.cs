@@ -491,8 +491,6 @@ namespace ProjectZ.InGame.GameSystems
             if (currentTrack != nextTrack)
                 Game1.GbsPlayer.Pause();
 
-            gm.ResetMusic();
-
             // Finish loading map
             mm.FinishLoadingMap(mm.CurrentMap);
 

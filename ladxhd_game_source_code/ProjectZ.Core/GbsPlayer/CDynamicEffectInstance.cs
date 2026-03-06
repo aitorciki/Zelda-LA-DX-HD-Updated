@@ -11,8 +11,9 @@ namespace GBSPlayer
 
         private readonly ConcurrentQueue<PcmChunk> _pcmQueue = new();
 
-        private volatile int _cachedPending;
         private volatile SoundState _cachedState;
+        private volatile int _cachedPending;
+        private volatile int _queuedChunkCount;
 
         // command flags (cross-thread)
         private volatile int _cmdPlay;
@@ -75,6 +76,7 @@ namespace GBSPlayer
                 return;
 
             _pcmQueue.Enqueue(new PcmChunk(buffer, offset, count));
+            Interlocked.Increment(ref _queuedChunkCount);
         }
 
         public void Dispose()
@@ -83,10 +85,6 @@ namespace GBSPlayer
             Volatile.Write(ref _cmdDispose, 1);
         }
 
-        /// <summary>
-        /// Call exactly once per frame from the MonoGame game thread (Game.Update).
-        /// This is where we safely touch DynamicSoundEffectInstance.
-        /// </summary>
         public void Pump(int maxBuffersPerFrame = 6, int maxPending = 12)
         {
             if (Volatile.Read(ref _isDisposed) == 1)
@@ -108,6 +106,9 @@ namespace GBSPlayer
             if (Interlocked.Exchange(ref _cmdStop, 0) == 1)
             {
                 _instance.Stop();
+                DrainPcmQueue();
+                _cachedPending = 0;
+                _cachedState = SoundState.Stopped;
             }
 
             // Pause
@@ -129,8 +130,7 @@ namespace GBSPlayer
                 _instance.Volume = _volume;
             }
 
-            // Capture "want play" request, but DO NOT Play yet.
-            bool wantPlay = Interlocked.Exchange(ref _cmdPlay, 0) == 1;
+            Interlocked.Exchange(ref _cmdPlay, 0);
 
             // Submit PCM buffers first
             int submitted = 0;
@@ -138,26 +138,13 @@ namespace GBSPlayer
                    _instance.PendingBufferCount < maxPending &&
                    _pcmQueue.TryDequeue(out var chunk))
             {
+                Interlocked.Decrement(ref _queuedChunkCount);
                 _instance.SubmitBuffer(chunk.Buffer, chunk.Offset, chunk.Count);
                 submitted++;
             }
 
-            // Auto-start logic:
-            // - If caller requested Play, remember it until we have data
-            // - If we have pending buffers and we are not playing, start.
-            // This covers "Play called too early" AND "underrun then recovered".
-            if (wantPlay)
-            {
-                // If there is no data yet, we just don't start this frame.
-                // Next Pump will start once buffers exist (because CPU thread will enqueue).
-            }
-
             if (_instance.State != SoundState.Playing && _instance.PendingBufferCount > 0)
-            {
-                // If you ONLY want to start when wantPlay was requested, gate this with a flag.
-                // In practice, auto-start is usually desired for streaming audio.
                 _instance.Play();
-            }
 
             _cachedPending = _instance.PendingBufferCount;
             _cachedState   = _instance.State;
@@ -165,13 +152,22 @@ namespace GBSPlayer
 
         private void DrainPcmQueue()
         {
-            while (_pcmQueue.TryDequeue(out _)) { }
+            while (_pcmQueue.TryDequeue(out _))
+            {
+                if (Interlocked.Decrement(ref _queuedChunkCount) < 0)
+                    Volatile.Write(ref _queuedChunkCount, 0);
+            }
+            Volatile.Write(ref _queuedChunkCount, 0);
+        }
+
+        public int GetBufferedChunkCount()
+        {
+            return Volatile.Read(ref _queuedChunkCount) + _cachedPending;
         }
 
         public void ClearQueuedPcm()
         {
             DrainPcmQueue();
-            _cachedPending = 0;
         }
 
         private readonly struct PcmChunk

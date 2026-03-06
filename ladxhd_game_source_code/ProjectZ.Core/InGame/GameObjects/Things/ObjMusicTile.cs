@@ -11,12 +11,10 @@ namespace ProjectZ.InGame.GameObjects.Things
     class ObjMusicTile : GameObject
     {
         private string[,] _musicData;
-        private string _lastTrack;
 
         private bool _currentEnabled;
         private int _lastTrackId = -1;
 
-        // @TODO: fade in/out
         public ObjMusicTile() : base("editor music") { }
 
         public ObjMusicTile(Map.Map map, int posX, int posY) : base(map)

@@ -125,11 +125,13 @@ namespace GBSPlayer
 
             soundCount = 0;
             updateCycleCounter = 0;
+            maxPlayCycles = maxPlayCycles60;
 
             CPUHalt = false;
 
             _finishedInit = false;
             _calledPlay = false;
+            IsRunning = false;
         }
         
         public void Update()
@@ -137,16 +139,18 @@ namespace GBSPlayer
             if (!IsRunning)
                 return;
 
-            // create a 5 buffer puffer
-            while (!_gbSound.WasStopped && _gbSound.PendingCount < 10)
+            const int maxChunksPerUpdate = 3;
+            int chunks = 0;
+
+            while (!_gbSound.WasStopped && _gbSound.BufferedCount < 10 && chunks < maxChunksPerUpdate)
             {
                 while (cycleCount < CycleTime)
                     CPUCycle();
 
                 cycleCount -= CycleTime;
+                chunks++;
             }
-            
-            // start playing music
+
             if (_calledPlay && !_gbSound.IsPlaying())
                 _gbSound.Play();
         }
@@ -202,11 +206,11 @@ namespace GBSPlayer
                     // skip cycles until the next relevant event
                     var instructionDiff = CycleTime - cycleCount;
                     var updateDiff = maxPlayCycles - updateCycleCounter;
-
                     var minDiff = Math.Min(instructionDiff, updateDiff);
+                    int wholeSamples = (int)(minDiff / maxSoundCycles);
 
-                    cycleCount += (int)(maxSoundCycles * (int)(minDiff / maxSoundCycles));
-                    soundCount -= maxSoundCycles * (int)(minDiff / maxSoundCycles);
+                    cycleCount += (int)(maxSoundCycles * wholeSamples);
+                    soundCount -= maxSoundCycles * wholeSamples;
 
                     while (minDiff >= maxSoundCycles && !_gbSound.WasStopped)
                     {
