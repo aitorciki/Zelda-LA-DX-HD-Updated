@@ -504,9 +504,11 @@ namespace ProjectZ.InGame.GameSystems
             // Update the transition into the new map.
             MapManager.ObjLink.UpdateMapTransitionIn(0);
 
-            // Set the new music
-            bool hasMusic = false;
+            // If anything set music in slot 2 unload it now.
+            Game1.GameManager.SetMusic(-1, 2);
 
+            // Set the music to play.
+            bool hasMusic = false;
             for (var i = 0; i < mm.CurrentMap.MapMusic.Length; i++)
             {
                 if (mm.CurrentMap.MapMusic[i] >= 0)
@@ -520,9 +522,8 @@ namespace ProjectZ.InGame.GameSystems
             else
                 Game1.GbsPlayer.Stop();
 
-            // Center the camera
+            // Center the camera after the map is done loading.
             var goalPosition = mm.GetCameraTarget();
-
             if (_centerCamera)
                 MapManager.Camera.ForceUpdate(goalPosition);
             else

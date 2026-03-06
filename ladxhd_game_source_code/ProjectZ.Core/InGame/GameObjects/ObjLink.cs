@@ -72,6 +72,14 @@ namespace ProjectZ.InGame.GameObjects
             CurrentState == State.Jumping ||
             CurrentState == State.AttackJumping ||
             CurrentState == State.ChargeJumping;
+        public bool IsShowingInstrument() =>
+            CurrentState == State.ShowInstrumentPart0 ||
+            CurrentState == State.ShowInstrumentPart1 ||
+            CurrentState == State.ShowInstrumentPart2 ||
+            CurrentState == State.ShowInstrumentPart3;
+        public bool IsShowingCloak() =>
+            CurrentState == State.CloakShow0 ||
+            CurrentState == State.CloakShow1;
 
         // Link Animator
         public readonly Animator Animation;
@@ -821,8 +829,7 @@ namespace ProjectZ.InGame.GameObjects
                     TransitionOutWalking = false;
 
                     // append a map change
-                    ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                        "overworld.map", "cloakOut", false, true, Color.White, true);
+                    ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange("overworld.map", "cloakOut", false, true, Color.White, true);
                 }
             }
             else if (CurrentState == State.ShowToadstool)
@@ -3113,11 +3120,6 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  INSTRUMENTS CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        private bool IsShowingInstrument() =>
-            CurrentState == State.ShowInstrumentPart0 ||
-            CurrentState == State.ShowInstrumentPart1 ||
-            CurrentState == State.ShowInstrumentPart2 ||
-            CurrentState == State.ShowInstrumentPart3;
 
         private void UpdateInstrumentSequence()
         {
@@ -3580,7 +3582,7 @@ namespace ProjectZ.InGame.GameObjects
             if (IsAttackingState() || CurrentState == State.SwordShow0 || _bootsRunning && CarrySword)
                 UpdateAttacking();
 
-            if (!IsShowingInstrument())
+            if (!IsShowingInstrument() && !IsShowingCloak())
                 UpdatePickup();
 
             if (!Animation.IsPlaying && (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
