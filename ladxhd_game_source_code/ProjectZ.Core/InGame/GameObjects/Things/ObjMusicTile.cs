@@ -30,7 +30,8 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            if (_musicData == null)
+            // If there is no music data or Link is showing the sword do not play music.
+            if (_musicData == null || MapManager.ObjLink.IsShowingSword())
                 return;
 
             // Offset the Y position by 4 pixels to match Link's body box center.

@@ -39,7 +39,7 @@ namespace ProjectZ.InGame.GameObjects
             Teleporting, MagicRod, Hookshot, Bombing, Powdering, Digging, BootKnockback,
             TeleporterUpWait, TeleporterUp, TeleportFallWait, TeleportFall,
             Dying, InitStunned, Stunned, Knockout,
-            SwordShow0, SwordShow1, SwordShowLv2,
+            SwordShow0, SwordShow1, SwordShow2, SwordShowLv2,
             ShowInstrumentPart0, ShowInstrumentPart1, ShowInstrumentPart2, ShowInstrumentPart3,
             ShowToadstool,
             CloakShow0, CloakShow1,
@@ -80,6 +80,11 @@ namespace ProjectZ.InGame.GameObjects
         public bool IsShowingCloak() =>
             CurrentState == State.CloakShow0 ||
             CurrentState == State.CloakShow1;
+        public bool IsShowingSword() =>
+            CurrentState == State.SwordShow0 ||
+            CurrentState == State.SwordShow1 ||
+            CurrentState == State.SwordShow2 ||
+            CurrentState == State.SwordShowLv2;
 
         // Link Animator
         public readonly Animator Animation;
@@ -1086,7 +1091,7 @@ namespace ProjectZ.InGame.GameObjects
             // draw the sword/magic rod
             if (IsAttackingState() ||
                 IsChargingState() ||
-                CurrentState == State.SwordShow0 ||
+                CurrentState == State.SwordShow1 ||
                 CurrentState == State.MagicRod ||
                 (_bootsRunning && CarrySword))
             {
@@ -1115,7 +1120,7 @@ namespace ProjectZ.InGame.GameObjects
             }
 
             // draw the sword after the first pickup
-            if (CurrentState == State.SwordShow1)
+            if (CurrentState == State.SwordShow2)
             {
                 var itemSword = Game1.GameManager.ItemManager["sword1"];
                 var position = new Vector2(
@@ -3579,10 +3584,10 @@ namespace ProjectZ.InGame.GameObjects
             if (IsChargingState())
                 UpdateCharging();
 
-            if (IsAttackingState() || CurrentState == State.SwordShow0 || _bootsRunning && CarrySword)
+            if (IsAttackingState() || CurrentState == State.SwordShow1 || _bootsRunning && CarrySword)
                 UpdateAttacking();
 
-            if (!IsShowingInstrument() && !IsShowingCloak())
+            if (!IsShowingInstrument() && !IsShowingCloak() && CurrentState != State.SwordShowLv2)
                 UpdatePickup();
 
             if (!Animation.IsPlaying && (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
@@ -3896,7 +3901,7 @@ namespace ProjectZ.InGame.GameObjects
             // If the item is null then do nothing here.
             if (ShowItem == null)
                 return;
-            
+
             // Disable the inventory while showing the item.
             Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
@@ -3933,7 +3938,10 @@ namespace ProjectZ.InGame.GameObjects
                 }
                 // Additional time after the dialog.
                 if (ShowItem.Name == "sword1")
+                {
                     _itemShowCounter = 5650;
+                    CurrentState = State.SwordShow0;
+                }
                 else if (ShowItem.Name.StartsWith("instrument"))
                     _itemShowCounter = 1000;
                 else
@@ -3941,7 +3949,7 @@ namespace ProjectZ.InGame.GameObjects
             }
             else
             {
-                // I don't think this string actually does anything.
+                // Used in "script.zScript" when learning ocarina songs or obtaining the pineapple.
                 Game1.GameManager.SaveManager.SetString("player_shows_item", "0");
 
                 // Add the item to the player's inventory.
@@ -3959,7 +3967,7 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.GameManager.PlaySoundEffect("D378-03-03");
                     Animation.Play("swing_3");
                     AnimatorWeapons.Play("swing_3");
-                    CurrentState = State.SwordShow0;
+                    CurrentState = State.SwordShow1;
                     _swordChargeCounter = 1;
                     ShowItem = null;
                 }
@@ -3996,13 +4004,13 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UpdateSwordSequence()
         {
-            if (CurrentState == State.SwordShow0)
+            if (CurrentState == State.SwordShow1)
             {
                 if (!Animation.IsPlaying)
                 {
                     Animation.Play("show2");
                     _showSwordLv2Counter = 500;
-                    CurrentState = State.SwordShow1;
+                    CurrentState = State.SwordShow2;
                     Game1.GameManager.PlaySoundEffect("D360-07-07");
                     var animation = new ObjSparkingEffect(Map, 0, 0, 0, 0);
                     animation.EntityPosition.Set(new Vector2(BodyRectangle.X, EntityPosition.Y - EntityPosition.Z - 30));
@@ -4011,7 +4019,7 @@ namespace ProjectZ.InGame.GameObjects
                 else
                     return;
             }
-            else if (CurrentState == State.SwordShow1)
+            else if (CurrentState == State.SwordShow2)
             {
                 _showSwordLv2Counter -= Game1.DeltaTime;
                 if (_showSwordLv2Counter < 0)
