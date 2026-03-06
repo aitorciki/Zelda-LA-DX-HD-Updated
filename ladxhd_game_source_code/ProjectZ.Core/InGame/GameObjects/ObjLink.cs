@@ -3113,16 +3113,17 @@ namespace ProjectZ.InGame.GameObjects
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //  INSTRUMENTS CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        private bool IsShowingInstrument() =>
+            CurrentState == State.ShowInstrumentPart0 ||
+            CurrentState == State.ShowInstrumentPart1 ||
+            CurrentState == State.ShowInstrumentPart2 ||
+            CurrentState == State.ShowInstrumentPart3;
 
         private void UpdateInstrumentSequence()
         {
             // We need to prevent overlays from being opened because they
             // do not stop the music and it would run out of sync.
-            if ((ShowItem != null && ShowItem.Name.StartsWith("instrument")) ||
-                CurrentState == State.ShowInstrumentPart0 ||
-                CurrentState == State.ShowInstrumentPart1 ||
-                CurrentState == State.ShowInstrumentPart2 ||
-                CurrentState == State.ShowInstrumentPart3)
+            if ((ShowItem != null && ShowItem.Name.StartsWith("instrument")) || IsShowingInstrument())
                 Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
 
             if (CurrentState == State.ShowInstrumentPart0)
@@ -3185,8 +3186,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 EndPickup();
 
-                ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange(
-                    "overworld.map", $"d{_instrumentIndex+1}Finished", false, true, Color.White, true);
+                ((MapTransitionSystem)Game1.GameManager.GameSystems[typeof(MapTransitionSystem)]).AppendMapChange("overworld.map", $"d{_instrumentIndex+1}Finished", false, true, Color.White, true);
 
                 // Set the key-value pair to open the instrument door.
                 var openDoor = $"d{_instrumentIndex+1}_cleared";
@@ -3580,7 +3580,8 @@ namespace ProjectZ.InGame.GameObjects
             if (IsAttackingState() || CurrentState == State.SwordShow0 || _bootsRunning && CarrySword)
                 UpdateAttacking();
 
-            UpdatePickup();
+            if (!IsShowingInstrument())
+                UpdatePickup();
 
             if (!Animation.IsPlaying && (CurrentState == State.Powdering || CurrentState == State.Bombing || CurrentState == State.MagicRod || CurrentState == State.Throwing))
                 ReturnToIdle();
@@ -3966,6 +3967,7 @@ namespace ProjectZ.InGame.GameObjects
                     Game1.GameManager.StopPieceOfPower();
                     Game1.GameManager.StopGuardianAcorn();
 
+                    _itemShowCounter = 0;
                     _instrumentCounter = 0;
                     CurrentState = State.ShowInstrumentPart0;
                 }
