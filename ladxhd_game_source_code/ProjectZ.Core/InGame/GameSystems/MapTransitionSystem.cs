@@ -507,9 +507,20 @@ namespace ProjectZ.InGame.GameSystems
             MapManager.ObjLink.UpdateMapTransitionIn(0);
 
             // Set the new music
+            bool hasMusic = false;
+
             for (var i = 0; i < mm.CurrentMap.MapMusic.Length; i++)
+            {
                 if (mm.CurrentMap.MapMusic[i] >= 0)
+                {
                     gm.SetMusic(mm.CurrentMap.MapMusic[i], i, false);
+                    hasMusic = true;
+                }
+            }
+            if (hasMusic)
+                gm.PlayMusic(true);
+            else
+                Game1.GbsPlayer.Stop();
 
             // Center the camera
             var goalPosition = mm.GetCameraTarget();

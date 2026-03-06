@@ -408,14 +408,10 @@ namespace ProjectZ.InGame.Overlay
                 Game1.GameManager.StopMusic();
                 return true;
             }
-            if (MapManager.ObjLink.IsTransitioning)
-                Game1.GameManager.MapManager.NextMap.MapMusic[_priority] = _songNr;
-            else
-            {
-                Game1.GameManager.SetMusic(_songNr, _priority);
-                if (_songNr >= 0)
-                    Game1.GbsPlayer.Play();
-            }
+            Game1.GameManager.SetMusic(_songNr, _priority);
+            if (_songNr >= 0)
+                Game1.GbsPlayer.Play();
+
             return true;
         }
     }
