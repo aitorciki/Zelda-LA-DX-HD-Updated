@@ -31,7 +31,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                     ("Nintendo", false)    => "candy_grabber_controls_top_rev",
                     ("Nintendo", true)     => "candy_grabber_controls_top",
                     ("Playstation", false) => "candy_grabber_controls_psx_rev",
-                    ("Playstation", true)  => "candy_grabber_controls_psx"
+                    ("Playstation", true)  => "candy_grabber_controls_psx",
+                    _                      => "candy_grabber_controls_top"
                 };
             }
         }

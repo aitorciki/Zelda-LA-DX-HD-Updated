@@ -168,7 +168,8 @@ namespace ProjectZ.InGame.Pages
                 0 => Game1.LanguageManager.GetString("new_game_menu_gtype_settings", "error"),
                 1 => Game1.LanguageManager.GetString("new_game_menu_gtype_modern", "error"),
                 2 => Game1.LanguageManager.GetString("new_game_menu_gtype_classic", "error"),
-                3 => Game1.LanguageManager.GetString("new_game_menu_gtype_hybrid", "error")
+                3 => Game1.LanguageManager.GetString("new_game_menu_gtype_hybrid", "error"),
+                _ => Game1.LanguageManager.GetString("new_game_menu_gtype_settings", "error")
             };
             return " " + gameType;
         }

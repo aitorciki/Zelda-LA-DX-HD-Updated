@@ -115,7 +115,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _aiComponent.ChangeState("idle");
             _aiComponent.ChangeState("idle");

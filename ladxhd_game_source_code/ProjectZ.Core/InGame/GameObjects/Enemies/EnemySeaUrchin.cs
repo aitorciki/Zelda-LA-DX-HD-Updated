@@ -78,7 +78,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite) { Height = 1.0f, Rotation = 0.1f });
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _hitComponent.IsActive = true;

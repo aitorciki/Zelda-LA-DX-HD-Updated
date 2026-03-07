@@ -74,7 +74,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _damageField.IsActive = true;

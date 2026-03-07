@@ -107,7 +107,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _damageField.IsActive = false;
             _hitComponent.IsActive = true;

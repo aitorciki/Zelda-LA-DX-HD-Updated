@@ -116,7 +116,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sword = new EnemyMoblinSwordSword(Map, this);
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _sword.Animator.Continue();
             _sword._damageField.IsActive = true;

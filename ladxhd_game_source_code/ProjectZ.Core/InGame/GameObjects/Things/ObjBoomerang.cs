@@ -62,7 +62,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
         }
 
-        public void Reset()
+        public override void Reset()
         {
             _isReady = true;
         }

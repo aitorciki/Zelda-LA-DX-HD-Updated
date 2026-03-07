@@ -84,7 +84,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             hiddenCountdown.CurrentTime = timeOffset;
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _aiComponent.ChangeState("hidden");
             _aiComponent.ChangeState("hidden");

@@ -91,7 +91,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _body.IgnoreHoles = true;
             _body.VelocityTarget = Vector2.Zero;

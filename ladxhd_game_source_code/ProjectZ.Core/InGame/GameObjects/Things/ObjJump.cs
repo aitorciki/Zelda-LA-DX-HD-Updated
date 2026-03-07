@@ -63,7 +63,8 @@ namespace ProjectZ.InGame.GameObjects.Things
                 0 => vecDirection.X < -0.85f,
                 1 => vecDirection.Y < -0.85f,
                 2 => vecDirection.X > 0.85f,
-                3 => vecDirection.Y > 0.85f
+                3 => vecDirection.Y > 0.85f,
+                _ => false
             };
             // If the player is not holding the analog stick full tilt then don't jump.
             if (!doJump)

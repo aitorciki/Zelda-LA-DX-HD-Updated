@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _body.IgnoresZ = false;
             _animator.Play("idle");

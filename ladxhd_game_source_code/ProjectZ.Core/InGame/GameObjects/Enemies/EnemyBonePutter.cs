@@ -97,7 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _aiComponent.ChangeState(_hasWings ? "flying" : "jumping");
             _aiComponent.ChangeState(_hasWings ? "flying" : "jumping");

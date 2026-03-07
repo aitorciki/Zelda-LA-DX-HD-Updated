@@ -14,7 +14,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         private int _lastFieldTime;
         private bool _respawnStart;
         private float _respawnTimer;
-        private readonly bool _respawnedFromSpawner;
 
         Rectangle _fieldRect;
         private readonly string _strKey;
@@ -39,13 +38,6 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Update()
         {
-            // If this respawner already spawned the tile this frame, delete it
-            if (_respawnedFromSpawner)
-            {
-                DeleteThis();
-                return;
-            }
-
             if (Camera.ClassicMode)
             {
                 // Classic Camera: respawn on field change
@@ -71,11 +63,6 @@ namespace ProjectZ.InGame.GameObjects.Things
                 if (_lastFieldTime < updateState)
                     SpawnTile();
             }
-        }
-
-        private void DeleteThis()
-        {
-            Map.Objects.DeleteObjects.Add(this);
         }
 
         private void SpawnTile()

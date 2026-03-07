@@ -23,7 +23,7 @@ namespace ProjectZ.Android
 
     public class MainActivity : Microsoft.Xna.Framework.AndroidGameActivity
     {
-        protected override void OnCreate(Bundle? savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             var window = Window;
             if (window != null)

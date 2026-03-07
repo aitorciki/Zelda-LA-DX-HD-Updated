@@ -77,7 +77,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _reset = true;
             _aiComponent.ChangeState("idle");

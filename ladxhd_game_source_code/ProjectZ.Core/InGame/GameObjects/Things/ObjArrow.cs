@@ -118,7 +118,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawShadowComponent.Index, _shadowBody = new ShadowBodyDrawComponent(EntityPosition));
         }
 
-        public void Reset()
+        public override void Reset()
         {
             Map.Objects.DeleteObjects.Add(this);
         }

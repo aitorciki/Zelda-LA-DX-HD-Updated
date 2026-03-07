@@ -56,7 +56,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
-        private void Reset()
+        public override void Reset()
         {
             Map.Objects.DeleteObjects.Add(this);
         }

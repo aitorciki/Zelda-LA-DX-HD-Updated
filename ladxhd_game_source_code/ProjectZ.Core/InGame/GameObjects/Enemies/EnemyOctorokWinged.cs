@@ -118,7 +118,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _shotCooldown -= Game1.DeltaTime;
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _damageField.IsActive = true;

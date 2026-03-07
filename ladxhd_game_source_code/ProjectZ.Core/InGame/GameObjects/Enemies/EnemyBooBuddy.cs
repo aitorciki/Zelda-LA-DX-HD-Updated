@@ -104,7 +104,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _aiComponent.ChangeState("attacking");
             _aiComponent.ChangeState("attacking");

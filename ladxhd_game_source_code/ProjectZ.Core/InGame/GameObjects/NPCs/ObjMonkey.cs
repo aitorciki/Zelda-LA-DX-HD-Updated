@@ -146,7 +146,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _body.Velocity = Vector3.Zero;
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _fightMode = false;
             _animator.Play("idle_" + _direction);

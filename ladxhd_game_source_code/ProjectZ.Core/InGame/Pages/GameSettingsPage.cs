@@ -175,7 +175,8 @@ namespace ProjectZ.InGame.Pages
             {
                 0 => Game1.LanguageManager.GetString("settings_game_menubricksA", "error"),
                 1 => Game1.LanguageManager.GetString("settings_game_menubricksB", "error"),
-                2 => Game1.LanguageManager.GetString("settings_game_menubricksC", "error")
+                2 => Game1.LanguageManager.GetString("settings_game_menubricksC", "error"),
+                _ => Game1.LanguageManager.GetString("settings_game_menubricksA", "error")
             };
         }
 

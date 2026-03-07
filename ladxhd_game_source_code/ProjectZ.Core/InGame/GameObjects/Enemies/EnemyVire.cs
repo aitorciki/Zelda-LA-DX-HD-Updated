@@ -128,7 +128,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.RegisterAlwaysAnimateObject(spriteShadow);
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _damageField.IsActive = true;

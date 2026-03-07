@@ -83,7 +83,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             if (_objBomb != null)
                 Map.Objects.DeleteObjects.Add(_objBomb);

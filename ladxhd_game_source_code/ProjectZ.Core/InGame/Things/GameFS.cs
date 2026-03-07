@@ -224,7 +224,7 @@ namespace ProjectZ.InGame.Things
             string dir,
             bool recursive,
             Func<string, bool> acceptFile,
-            Func<string, bool>? skipDirectory = null)
+            Func<string, bool> skipDirectory = null)
         {
             dir = ToAssetPath(dir);
 

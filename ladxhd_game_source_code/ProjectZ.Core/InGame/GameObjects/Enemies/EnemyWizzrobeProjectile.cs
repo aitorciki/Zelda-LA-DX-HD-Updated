@@ -45,7 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _sprite.IsVisible = false;
             _damageField.IsActive = false;

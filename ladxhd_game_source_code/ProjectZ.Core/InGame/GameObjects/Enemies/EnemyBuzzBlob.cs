@@ -89,7 +89,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("walking");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _isCukeman = false;
             _animator.Play("walk");

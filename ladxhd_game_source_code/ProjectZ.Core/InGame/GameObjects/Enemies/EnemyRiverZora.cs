@@ -78,7 +78,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _playSplash = false;
             ToWait();

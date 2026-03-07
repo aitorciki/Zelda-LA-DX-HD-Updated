@@ -82,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite) { ShadowWidth = 10, ShadowHeight = 5 });
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _state = 0;
             _sprite.SetSprite(_spriteBody);

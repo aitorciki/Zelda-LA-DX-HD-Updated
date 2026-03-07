@@ -214,7 +214,8 @@ namespace ProjectZ.InGame.Pages
             {
                 0 => Game1.LanguageManager.GetString("tooltip_camera_camborderA", "error"),
                 1 => Game1.LanguageManager.GetString("tooltip_camera_camborderB", "error"),
-                2 => Game1.LanguageManager.GetString("tooltip_camera_camborderC", "error")
+                2 => Game1.LanguageManager.GetString("tooltip_camera_camborderC", "error"),
+                _ => Game1.LanguageManager.GetString("tooltip_camera_camborderA", "error")
             };
         }
 

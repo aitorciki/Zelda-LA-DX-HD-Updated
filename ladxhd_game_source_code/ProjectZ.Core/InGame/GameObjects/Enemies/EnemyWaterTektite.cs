@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             ToMoving();
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _damageField.IsActive = true;

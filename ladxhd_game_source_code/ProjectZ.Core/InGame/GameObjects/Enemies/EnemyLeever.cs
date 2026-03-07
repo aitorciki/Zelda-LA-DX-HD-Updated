@@ -99,7 +99,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             Deactivate();
         }
 
-        private void Reset()
+        public override void Reset()
         {
             Deactivate();
             _bodyDrawComponent.IsActive = false;
