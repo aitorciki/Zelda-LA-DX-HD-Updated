@@ -72,17 +72,17 @@ namespace ProjectZ.InGame.Overlay
 
             if (custom_heart_show)
             {
-                _heartBackground = new UiRectangle(Rectangle.Empty, "heart", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
+                _heartBackground = new UiRectangle(Rectangle.Empty, "heart", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                 Game1.UiManager.AddElement(_heartBackground);
             }
             if (custom_rupee_show)
             {
-                _rupeeBackground = new UiRectangle(Rectangle.Empty, "rupee", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
+                _rupeeBackground = new UiRectangle(Rectangle.Empty, "rupee", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                 Game1.UiManager.AddElement(_rupeeBackground);
             }
             if (custom_keys_show)
             {
-                _keyBackground = new UiRectangle(Rectangle.Empty, "keys", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
+                _keyBackground = new UiRectangle(Rectangle.Empty, "keys", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                 Game1.UiManager.AddElement(_keyBackground);
             }
             if (custom_sicon_show)
@@ -199,11 +199,23 @@ namespace ProjectZ.InGame.Overlay
 
         public void DrawBlur(SpriteBatch spriteBatch)
         {
+            // Save icon uses opaque draw path when opaque HUD is active
+            if (GameSettings.OpaqueHudBg)
+                return;
+
             // draw the save icon
             if (custom_sicon_show)
             {
                 Resources.RoundedCornerBlurEffect.Parameters["blurColor"].SetValue((Values.OverlayBackgroundBlurColor * _saveIconTransparency).ToVector4());
                 DrawHelper.DrawNormalized(spriteBatch, _saveIcon.Texture, _saveIconPosition, _saveIcon.ScaledRectangle, Values.OverlayBackgroundColor * _saveIconTransparency, _siconScale);
+            }
+        }
+
+        public void DrawSaveIcon(SpriteBatch spriteBatch)
+        {
+            if (custom_sicon_show)
+            {
+                DrawHelper.DrawNormalized(spriteBatch, _saveIcon.Texture, _saveIconPosition, _saveIcon.ScaledRectangle, UiRectangle.OpaqueHudColor * _saveIconTransparency, _siconScale);
             }
         }
 

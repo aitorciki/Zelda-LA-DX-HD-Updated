@@ -42,6 +42,7 @@
         public static bool    ObjectLights    =  true;
         public static bool    EnableShadows   =  true;
         public static bool    VerticalSync    =  true;
+        public static bool    OpaqueHudBg     =  false;
 
         // Audio Settings
         private static int    _musicVolume    =  100;
@@ -119,6 +120,7 @@
             ClassicDungeon  =  false;
             ClassicBorders  =  0;
             ClassicAlpha    =  1.00f;
+            ClassicScaling  =  true;
             CameraLock      =  true;
             SmoothCamera    =  true;
             ScreenShake     =  true;
@@ -133,6 +135,7 @@
             ObjectLights    =  true;
             EnableShadows   =  true;
             VerticalSync    =  true;
+            OpaqueHudBg     =  false;
 
             // Audio Settings
             ClassicMusic    =  false;
@@ -156,6 +159,7 @@
             MoveSpeedAdded  =  0;
             NoHeartDrops    =  false;
             NoDamageLaunch  =  false;
+            MirrorReflects  =  false;
 
             // Sword Collection
             SwGrabNormal    =  true;

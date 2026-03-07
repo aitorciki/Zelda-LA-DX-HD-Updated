@@ -54,6 +54,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.ObjectLights = saveManager.GetBool("ObjectLights", GameSettings.ObjectLights);
             GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
+            GameSettings.OpaqueHudBg = saveManager.GetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Audio Settings
             GameSettings.MusicVolume = saveManager.GetInt("MusicVolume", GameSettings.MusicVolume);
@@ -142,6 +143,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("ObjectLights", GameSettings.ObjectLights);
             saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
+            saveManager.SetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Audio Settings
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);

@@ -77,7 +77,7 @@ namespace ProjectZ.InGame.Overlay
                 _uiBackgroundBoxes = new UiRectangle[_itemSlots.Length];
                 for (var i = 0; i < _uiBackgroundBoxes.Length; i++)
                 {
-                    _uiBackgroundBoxes[i] = new UiRectangle(_itemSlots[i], "itemBox" + i, Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius };
+                    _uiBackgroundBoxes[i] = new UiRectangle(_itemSlots[i], "itemBox" + i, Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                     Game1.UiManager.AddElement(_uiBackgroundBoxes[i]);
                 }
             }
