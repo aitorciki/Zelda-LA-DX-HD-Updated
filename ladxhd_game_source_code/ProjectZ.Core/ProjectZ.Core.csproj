@@ -51,6 +51,5 @@
 
   <ItemGroup>
     <PackageReference Include="MonoGame.Extended" Version="5.4.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 </Project>

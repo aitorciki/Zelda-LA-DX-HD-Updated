@@ -58,7 +58,6 @@
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="5.4.0" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
     <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.4.1" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 
 
