@@ -489,14 +489,17 @@ namespace ProjectZ.InGame.GameSystems
                     nextTrack = mm.CurrentMap.MapMusic[i];
 
             // Clear the music from all slots.
-            Game1.GameManager.SetMusic(-1, 0);
+            if (!mm.CurrentMap.DungeonMode)
+                Game1.GameManager.SetMusic(-1, 0);
             Game1.GameManager.SetMusic(-1, 1);
             Game1.GameManager.SetMusic(-1, 2);
 
             // Stop whatever music was playing.
-            Game1.GbsPlayer.Stop();
-            Game1.GbsPlayer.Pump();
-
+            if (!mm.CurrentMap.DungeonMode)
+            {
+                Game1.GbsPlayer.Stop();
+                Game1.GbsPlayer.Pump();
+            }
             // Finish loading map
             mm.FinishLoadingMap(mm.CurrentMap);
 
