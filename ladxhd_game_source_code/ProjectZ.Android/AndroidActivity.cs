@@ -1,3 +1,4 @@
+using System;
 using Android.App;
 using Android.Content.PM;
 using Android.Content.Res;
@@ -24,12 +25,16 @@ namespace ProjectZ.Android
     {
         protected override void OnCreate(Bundle? savedInstanceState)
         {
-            Window.AddFlags(WindowManagerFlags.Fullscreen);
-            Window.AddFlags(WindowManagerFlags.LayoutNoLimits);
-            Window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
+            var window = Window;
+            if (window != null)
+            {
+                window.AddFlags(WindowManagerFlags.Fullscreen);
+                window.AddFlags(WindowManagerFlags.LayoutNoLimits);
+                window.ClearFlags(WindowManagerFlags.ForceNotFullscreen);
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
-                Window.Attributes.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
+                if (OperatingSystem.IsAndroidVersionAtLeast(28) && window.Attributes is { } attributes)
+                    attributes.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
+            }
 
             base.OnCreate(savedInstanceState);
 
@@ -44,6 +49,46 @@ namespace ProjectZ.Android
             System.IO.Directory.CreateDirectory(Values.PathGraphicsMods);
             System.IO.Directory.CreateDirectory(Values.PathSaveFolder);
 
+            // Get real display size for proper fullscreen rendering.
+            var surfaceWidth = 0;
+            var surfaceHeight = 0;
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
+            {
+                var metrics = WindowManager?.CurrentWindowMetrics;
+                var bounds = metrics?.Bounds;
+                if (bounds != null)
+                {
+                    surfaceWidth = bounds.Width();
+                    surfaceHeight = bounds.Height();
+                }
+            }
+            else
+            {
+                var display = WindowManager?.DefaultDisplay;
+                if (display != null)
+                {
+                    var size = new global::Android.Graphics.Point();
+#pragma warning disable CS0618
+                    display.GetRealSize(size);
+#pragma warning restore CS0618
+                    surfaceWidth = size.X;
+                    surfaceHeight = size.Y;
+                }
+            }
+
+            if (surfaceWidth > 0 && surfaceHeight > 0)
+            {
+                // Ensure landscape orientation (wider dimension first).
+                if (surfaceWidth < surfaceHeight)
+                {
+                    var swap = surfaceWidth;
+                    surfaceWidth = surfaceHeight;
+                    surfaceHeight = swap;
+                }
+                Game1.SetAndroidSurfaceSizeHint(surfaceWidth, surfaceHeight);
+            }
+
             // construct your real game here:
             var game = new Game1(
                 editorMode: false,
@@ -53,7 +98,11 @@ namespace ProjectZ.Android
             game.Services.AddService(typeof(AssetManager), Assets);
 
             var view = (View)game.Services.GetService(typeof(View))!;
-            SetContentView(view);
+            var matchParent = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MatchParent,
+                ViewGroup.LayoutParams.MatchParent);
+            view.LayoutParameters = matchParent;
+            SetContentView(view, matchParent);
 
             ApplyFullscreenFlags();
 
@@ -65,10 +114,14 @@ namespace ProjectZ.Android
 
         private void ApplyFullscreenFlags()
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+            var window = Window;
+            if (window == null)
+                return;
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
             {
-                Window.SetDecorFitsSystemWindows(false);
-                var controller = Window.InsetsController;
+                window.SetDecorFitsSystemWindows(false);
+                var controller = window.InsetsController;
                 if (controller != null)
                 {
                     controller.Hide(global::Android.Views.WindowInsets.Type.StatusBars() |
@@ -79,7 +132,12 @@ namespace ProjectZ.Android
             }
             else
             {
-                Window.DecorView.SystemUiVisibility =
+                var decorView = window.DecorView;
+                if (decorView == null)
+                    return;
+
+#pragma warning disable CS0618
+                decorView.SystemUiVisibility =
                     (StatusBarVisibility)(
                         SystemUiFlags.LayoutStable |
                         SystemUiFlags.LayoutHideNavigation |
@@ -87,6 +145,7 @@ namespace ProjectZ.Android
                         SystemUiFlags.HideNavigation |
                         SystemUiFlags.Fullscreen |
                         SystemUiFlags.ImmersiveSticky);
+#pragma warning restore CS0618
             }
         }
 
@@ -97,8 +156,11 @@ namespace ProjectZ.Android
                 ApplyFullscreenFlags();
         }
 
-        public override bool DispatchKeyEvent(KeyEvent e)
+        public override bool DispatchKeyEvent(KeyEvent? e)
         {
+            if (e == null)
+                return base.DispatchKeyEvent(e);
+
             // Only treat "down" as a press (avoid repeats).
             if (e.Action == KeyEventActions.Down && e.RepeatCount == 0)
             {
