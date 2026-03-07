@@ -467,7 +467,8 @@ namespace ProjectZ
 
             ScreenManager.Draw(SpriteBatch);
 
-            BlurImage();
+            if (!GameSettings.OpaqueHudBg)
+                BlurImage();
             {
                 Graphics.GraphicsDevice.SetRenderTarget(null);
                 GraphicsDevice.Clear(Color.Black);
@@ -479,6 +480,7 @@ namespace ProjectZ
                 SpriteBatch.End();
             }
 
+            if (!GameSettings.OpaqueHudBg)
             {
                 if (_renderTarget2 != null)
                 {
@@ -509,6 +511,12 @@ namespace ProjectZ
                 // background for the debug text
                 DebugTextBackground();
 
+                SpriteBatch.End();
+            }
+            else
+            {
+                SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, GetMatrix);
+                GameManager?.InGameOverlay?.InGameHud?.DrawSaveIcon(SpriteBatch);
                 SpriteBatch.End();
             }
 

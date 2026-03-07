@@ -42,6 +42,7 @@
         public static bool    ObjectLights    =  true;
         public static bool    EnableShadows   =  true;
         public static bool    VerticalSync    =  true;
+        public static bool    OpaqueHudBg     =  false;
 
         // Audio Settings
         private static int    _musicVolume    =  100;
@@ -134,6 +135,7 @@
             ObjectLights    =  true;
             EnableShadows   =  true;
             VerticalSync    =  true;
+            OpaqueHudBg     =  false;
 
             // Audio Settings
             ClassicMusic    =  false;

@@ -22,6 +22,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleObjectLighting;
         private readonly InterfaceListLayout _toggleDynamicShadows;
         private readonly InterfaceListLayout _toggleVerticalSync;
+        private readonly InterfaceListLayout _toggleOpaqueHudBg;
 
         List<string> _tooltips = new List<string>();
         private bool _showTooltip;
@@ -32,6 +33,7 @@ namespace ProjectZ.InGame.Pages
         public void SetObjectLighting(bool state) => ((InterfaceToggle)_toggleObjectLighting.Elements[1]).ToggleState = state;
         public void SetDynamicShadows(bool state) => ((InterfaceToggle)_toggleDynamicShadows.Elements[1]).ToggleState = state;
         public void SetVerticalSync(bool state) { ((InterfaceToggle)_toggleVerticalSync.Elements[1]).ToggleState = state; Game1.FpsSettingChanged = true; }
+        public void SetOpaqueHudBg(bool state) => ((InterfaceToggle)_toggleOpaqueHudBg.Elements[1]).ToggleState = state;
 
         public GraphicSettingsPage(int width, int height)
         {
@@ -107,6 +109,13 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
             _contentLayout.AddElement(_toggleVerticalSync);
             _tooltips.Add("tooltip_graphics_fps_lock");
+
+            // Toggle: Disable UI Blur
+            _toggleOpaqueHudBg = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_graphics_opaquehud", GameSettings.OpaqueHudBg,
+                newState => { GameSettings.OpaqueHudBg = newState; });
+            _contentLayout.AddElement(_toggleOpaqueHudBg);
+            _tooltips.Add("tooltip_graphics_opaquehud");
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
