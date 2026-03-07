@@ -124,7 +124,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowl");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             // Restore idle state and heal the boss.
             _aiComponent.ChangeState("idle");

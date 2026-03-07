@@ -92,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
-        public void Reset()
+        public override void Reset()
         {
             Map.Objects.DeleteObjects.Add(this);
         }

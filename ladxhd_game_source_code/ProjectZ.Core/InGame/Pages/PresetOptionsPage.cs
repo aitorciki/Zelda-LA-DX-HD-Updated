@@ -14,8 +14,6 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
 
-        private readonly InterfaceListLayout _toggleDefaultSettings;
-
         private bool _showTooltip;
 
         public PresetOptionsPage(int width, int height)
@@ -26,7 +24,6 @@ namespace ProjectZ.InGame.Pages
             _presetSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
-            var buttonHeight = 16;
             var buttonSize = new Point(150, 16);
 
             _presetSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_preset_header",

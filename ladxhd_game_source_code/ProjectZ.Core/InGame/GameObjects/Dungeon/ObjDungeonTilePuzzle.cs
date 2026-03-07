@@ -29,7 +29,8 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 "1" => new int[] { 3, 2, 0, 1, 4 },
                 "2" => new int[] { 0, 4, 2, 3, 1 },
                 "3" => new int[] { 2, 3, 4, 0, 1 },
-                "4" => new int[] { 4, 1, 0, 3, 2 }
+                "4" => new int[] { 4, 1, 0, 3, 2 },
+                _   => new int[] { 3, 2, 0, 1, 4 }
             };
             // The positions of the tiles. Puzzle tile should be placed on center tile.
             Point[] tilePos = new Point[5];

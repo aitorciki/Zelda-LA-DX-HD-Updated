@@ -112,7 +112,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadows");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             // It needs to be active or Gels attached to unsplit Zols will trigger this. This
             // also only applies to Gels that were spawned from splitting a Red Zol.

@@ -52,7 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _sprite.IsVisible = false;
             _damageField.IsActive = false;

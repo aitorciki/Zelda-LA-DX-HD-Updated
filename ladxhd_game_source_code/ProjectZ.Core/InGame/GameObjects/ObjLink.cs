@@ -2259,6 +2259,7 @@ namespace ProjectZ.InGame.GameObjects
                 1 => 1,  // - Bottom field, facing Up.
                 2 => 2,  // - Left field, facing Right.
                 3 => 0,  // - Right field, facing Left.
+                _ => 0
             };
         }
 
@@ -3615,7 +3616,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private void UseItem(GameItemCollected item)
         {
-            Action? useItem = item.Name switch
+            Action useItem = item.Name switch
             {
                 "sword1"        => UseSword,
                 "sword2"        => UseSword,
@@ -3639,7 +3640,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private void HoldItem(GameItemCollected item)
         {
-            Action? holdItem = item.Name switch
+            Action holdItem = item.Name switch
             {
                 "sword1"        => HoldSword,
                 "sword2"        => HoldSword,
@@ -3656,7 +3657,7 @@ namespace ProjectZ.InGame.GameObjects
 
         private void ReleaseItem(GameItemCollected item)
         {
-            Action? releaseItem = item.Name switch
+            Action releaseItem = item.Name switch
             {
                 "shield"        => ReleaseShield,
                 "mirrorShield"  => ReleaseShield,
@@ -4183,6 +4184,7 @@ namespace ProjectZ.InGame.GameObjects
                                 1 => new Point(2,-11),
                                 2 => new Point(10,0),
                                 3 => new Point(0,5),
+                                _ => new Point(0,0),
                             };
                             _hitParticleTime = Game1.TotalGameTime;
                             SpawnRepelParticle(collisionRectangle, offset.X, offset.Y);

@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new BodyDrawComponent(body, _sprite, Values.LayerPlayer));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _aiComponent.ChangeState("hidden");
             _aiComponent.ChangeState("hidden");

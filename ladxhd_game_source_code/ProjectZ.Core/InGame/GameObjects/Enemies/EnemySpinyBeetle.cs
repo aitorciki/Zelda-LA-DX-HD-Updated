@@ -138,7 +138,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("init");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             // Delete carried object only if still on beetle's back.
             if (!_objectPickedUp && !_objectDestroyed)

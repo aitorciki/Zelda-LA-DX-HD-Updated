@@ -47,7 +47,7 @@ namespace ProjectZ
         public static GbsPlayer GbsPlayer = new GbsPlayer();
         public static Random RandomNumber = new Random();
         public static CameraField ClassicCamera = new CameraField();
-        public static IEditorManager? EditorManager;
+        public static IEditorManager EditorManager;
 
         public static int WindowWidth;
         public static int WindowHeight;
@@ -218,7 +218,7 @@ namespace ProjectZ
         }
 
     #if !ANDROID
-        private void OnWindowKeyDown(object? sender, InputKeyEventArgs e)
+        private void OnWindowKeyDown(object sender, InputKeyEventArgs e)
         {
             // Check if the "Alt" key is held.
             var keyState = Keyboard.GetState();
@@ -874,7 +874,7 @@ namespace ProjectZ
                 newRt1 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
                 newRt2 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 newMain?.Dispose();
                 newRt1?.Dispose();
@@ -905,7 +905,7 @@ namespace ProjectZ
             _renderTarget2 = null;
         }
 
-        private void OnGameExiting(object? sender, EventArgs e)
+        private void OnGameExiting(object sender, EventArgs e)
         {
             // Stop the game loop so it doesn't do anything new.
             UpdateGame = false;

@@ -97,7 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _aiComponent.ChangeState("idle");

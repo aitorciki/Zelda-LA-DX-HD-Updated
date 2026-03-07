@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, _hookshotPosition));
         }
 
-        public void Reset()
+        public override void Reset()
         {
             IsMoving = false;
         }

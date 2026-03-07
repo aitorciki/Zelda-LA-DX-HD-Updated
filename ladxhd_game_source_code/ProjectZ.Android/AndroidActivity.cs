@@ -22,7 +22,7 @@ namespace ProjectZ.Android
 
     public class MainActivity : Microsoft.Xna.Framework.AndroidGameActivity
     {
-        protected override void OnCreate(Bundle? savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             Window.AddFlags(WindowManagerFlags.Fullscreen);
             Window.AddFlags(WindowManagerFlags.LayoutNoLimits);

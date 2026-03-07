@@ -92,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _isFollowing = false;
             _wasFollowing = false;

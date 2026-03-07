@@ -111,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _cTimer = _cReset;
             _movePosition = 0;

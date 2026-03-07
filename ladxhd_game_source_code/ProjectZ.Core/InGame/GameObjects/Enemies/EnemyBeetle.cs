@@ -92,7 +92,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(_sprite) { Height = 1.0f, Rotation = 0.1f });
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _sprite.IsVisible = false;
             _damageField.IsActive = false;

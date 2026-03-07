@@ -69,8 +69,6 @@ namespace ProjectZ.InGame.Overlay
         private const int SelectionTime = 125;
         private bool _selectionButtonPressed;
 
-        private bool? _lastSixButtonsState = null;
-
         public InventoryOverlay(int width, int height)
         {
             _width = width * Game1.UiScale;

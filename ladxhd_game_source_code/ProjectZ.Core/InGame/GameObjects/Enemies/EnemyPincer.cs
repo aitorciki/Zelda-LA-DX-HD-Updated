@@ -102,7 +102,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _attackCounter = 0;

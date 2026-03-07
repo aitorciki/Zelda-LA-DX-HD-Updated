@@ -95,7 +95,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerPlayer, EntityPosition));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _aiComp.ChangeState("walking");
             _aiComp.ChangeState("walking");

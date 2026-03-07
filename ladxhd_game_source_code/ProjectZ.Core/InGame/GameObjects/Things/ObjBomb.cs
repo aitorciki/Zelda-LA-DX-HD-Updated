@@ -141,7 +141,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
         }
 
-        public void Reset()
+        public override void Reset()
         {
             if (!_carried)
                 RemoveBomb();

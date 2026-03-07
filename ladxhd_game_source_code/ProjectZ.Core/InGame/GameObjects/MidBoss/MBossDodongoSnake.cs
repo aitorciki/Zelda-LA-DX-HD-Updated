@@ -139,7 +139,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             _aiComponent.ChangeState("moving");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _bodyOffset.X = 0;
             _bodyOffset.Y = 0;
@@ -248,7 +248,8 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
                 0 => _eatBox = new CBox(EntityPosition, -4, -12, 3, 10, 8),
                 1 => _eatBox = new CBox(EntityPosition, -3, -12, 6, 3, 8),
                 2 => _eatBox = new CBox(EntityPosition,  1, -12, 3, 10, 8),
-                3 => _eatBox = new CBox(EntityPosition, -3, -7, 6, 3, 8)
+                3 => _eatBox = new CBox(EntityPosition, -3, -7, 6, 3, 8),
+                _ => _eatBox = new CBox(EntityPosition, -4, -12, 3, 10, 8)
             };
         }
 

@@ -121,7 +121,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             new ObjSpriteShadow(map, this, Values.LayerPlayer, "sprshadowm");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _pushable = false;

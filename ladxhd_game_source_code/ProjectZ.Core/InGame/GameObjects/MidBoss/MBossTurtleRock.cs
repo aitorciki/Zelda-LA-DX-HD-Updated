@@ -172,7 +172,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(new CBox(EntityPosition, -8, 0, 16, 14, 8), Values.CollisionTypes.Enemy));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             // If the boss is dying, don't let it respawn even on field transition.
             if (_isDead)

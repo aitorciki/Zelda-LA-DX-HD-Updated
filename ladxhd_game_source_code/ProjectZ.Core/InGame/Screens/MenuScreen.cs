@@ -36,7 +36,8 @@ namespace ProjectZ.InGame.Screens
             {
                 0 => "Menu/menuBackground",
                 1 => "Menu/menuBackgroundB",
-                2 => "Menu/menuBackgroundC"
+                2 => "Menu/menuBackgroundC",
+                _ => "Menu/menuBackground"
             };
             _sprBackground = content.Load<Texture2D>(texture);
 

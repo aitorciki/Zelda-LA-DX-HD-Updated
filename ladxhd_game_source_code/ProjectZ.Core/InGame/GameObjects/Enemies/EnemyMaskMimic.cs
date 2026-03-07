@@ -22,8 +22,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
 
-        private readonly Rectangle _fieldRectangle;
-
         private Vector2 _lastPosition;
         private int _direction;
         private bool _wasColliding;
@@ -84,7 +82,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _animator.Continue();
             _damageField.IsActive = true;

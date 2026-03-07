@@ -16,7 +16,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private readonly Animator _animator;
         private readonly DrawComponent _drawComponent;
 
-        public CSprite _sprite;
         public CPosition _position;
         public ObjBowWow _host;
 

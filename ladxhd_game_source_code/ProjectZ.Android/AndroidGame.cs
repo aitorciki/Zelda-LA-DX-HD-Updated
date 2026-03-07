@@ -9,7 +9,7 @@ namespace ProjectZ.Android
     public class AndroidGame : Game
     {
         private readonly GraphicsDeviceManager _graphics;
-        private SpriteBatch? _spriteBatch;
+        private SpriteBatch _spriteBatch;
 
         public AndroidGame()
         {

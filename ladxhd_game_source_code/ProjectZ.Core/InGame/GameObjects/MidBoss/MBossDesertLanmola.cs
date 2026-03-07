@@ -111,7 +111,7 @@ namespace ProjectZ.InGame.GameObjects.MidBoss
             }
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _lives = EnemyLives.DesertLanmola;
         }

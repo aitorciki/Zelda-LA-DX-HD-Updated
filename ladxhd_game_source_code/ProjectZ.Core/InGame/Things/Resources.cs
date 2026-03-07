@@ -282,11 +282,11 @@ namespace ProjectZ.InGame.Things
             RoundedCornerBlurEffect = content.Load<Effect>("Shader/RoundedCornerEffectBlur");
         }
 
-        private static void TryLoadTextures(ref Texture2D? target, string inputPath)
+        private static void TryLoadTextures(ref Texture2D target, string inputPath)
         {
             inputPath = GameFS.NormalizePath(inputPath);
             if (GameFS.Exists(inputPath))
-                LoadTexture(out target!, inputPath);
+                LoadTexture(out target, inputPath);
         }
 
         public static void LoadTextures(GraphicsDevice graphics, ContentManager content)
@@ -322,7 +322,7 @@ namespace ProjectZ.InGame.Things
 
             LoadTexture(out _, Path.Combine(Values.PathContentFolder, "Editor", "editorIcons4x.png"));
 
-            Texture2D? _nullTex = null;
+            Texture2D _nullTex = null;
             LoadTexture(out _, Path.Combine(Values.PathContentFolder, "ui.png"));
             TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_chn.png"));
             TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_deu.png"));
@@ -671,7 +671,8 @@ namespace ProjectZ.InGame.Things
             {
                 0 => content.Load<Texture2D>("Menu/menuBackground"),
                 1 => content.Load<Texture2D>("Menu/menuBackgroundB"),
-                2 => content.Load<Texture2D>("Menu/menuBackgroundC")
+                2 => content.Load<Texture2D>("Menu/menuBackgroundC"),
+                _ => content.Load<Texture2D>("Menu/menuBackground")
             };
             var menuScreen = (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
             menuScreen?.SetBackground(texture);

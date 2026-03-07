@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             AddComponent(DrawShadowComponent.Index, new DrawShadowCSpriteComponent(sprite));
         }
 
-        private void Reset()
+        public override void Reset()
         {
             _damageField.IsActive = false;
             _bodyCollision.IsActive = true;

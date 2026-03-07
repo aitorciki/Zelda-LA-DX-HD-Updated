@@ -153,8 +153,6 @@ namespace ProjectZ.InGame.Map
                 blurRT2.Width <= 0 || blurRT2.Height <= 0)
                 return;
 
-            // Keep a safe flag so we can restore state if something fails
-            bool rtWasSet = false;
             try
             {
                 var matrixPosition = Vector2.Zero;
@@ -162,7 +160,6 @@ namespace ProjectZ.InGame.Map
                 if (!Game1.GameManager.UseShockEffect)
                 {
                     Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT0);
-                    rtWasSet = true;
                     Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
                     var cameraPosition = new Vector2(Camera.RoundX / Camera.Scale, Camera.RoundY / Camera.Scale);
@@ -212,7 +209,6 @@ namespace ProjectZ.InGame.Map
                 // v blur pass
                 Game1.Graphics.GraphicsDevice.SetRenderTarget(blurRT1);
                 Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-                rtWasSet = true;
 
                 var blurX = (-(matrixPosition.X % 2) / 2.0f) + (blurRT1.Width % 2 * 0.5f);
                 var blurY = (-(matrixPosition.Y % 2) / 2.0f) + (blurRT1.Height % 2 * 0.5f);

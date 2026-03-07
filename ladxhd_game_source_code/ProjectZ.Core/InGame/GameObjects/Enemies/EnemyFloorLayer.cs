@@ -86,7 +86,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.ChangeState("idle");
         }
 
-        private void Reset()
+        public override void Reset()
         {
             Reactivate();
         }

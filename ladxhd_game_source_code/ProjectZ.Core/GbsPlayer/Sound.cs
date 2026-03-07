@@ -26,7 +26,6 @@ namespace GBSPlayer
         private byte[] _soundRegister = new byte[0x30];
 
         // frame sequencer
-        private int _frameSequencerTimer;
         private byte _frameSequencerCounter;
         private double _frameSeqAcc;
 
@@ -144,7 +143,6 @@ namespace GBSPlayer
         public void Init()
         {
             _frameSeqAcc = 0.0;
-            _frameSequencerTimer = 0;
             _frameSequencerCounter = 0;
 
             _square1LengthCounter = 0;

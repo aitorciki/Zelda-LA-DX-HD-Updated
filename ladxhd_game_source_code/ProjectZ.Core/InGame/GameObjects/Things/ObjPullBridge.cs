@@ -32,7 +32,6 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly int _min = 6;
         private readonly int _max = 72;
 
-        private CBox _hittableBox;
         private bool _startedPulling;
         private bool _finishedPulling;
         private bool _up;
@@ -70,7 +69,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             }
         }
 
-        private void Reset()
+        public override void Reset()
         {
             // Reset all the various states of the pull bridge.
             _state = 0;
