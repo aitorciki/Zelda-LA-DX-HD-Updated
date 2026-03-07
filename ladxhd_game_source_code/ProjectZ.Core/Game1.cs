@@ -1,5 +1,5 @@
 ﻿﻿using System;
-﻿using System.IO;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using GBSPlayer;
@@ -101,6 +101,11 @@ namespace ProjectZ
         public static bool AutoLoadSave;
         public static int AutoLoadSlot;
 
+#if ANDROID
+        private static int _androidSurfaceWidthHint;
+        private static int _androidSurfaceHeightHint;
+#endif
+
         private static volatile bool _finishedLoading;
         private static volatile bool _isExiting;
 
@@ -131,10 +136,40 @@ namespace ProjectZ
 
         public static bool FinishedLoading => _finishedLoading;
 
+#if ANDROID
+        public static void SetAndroidSurfaceSizeHint(int width, int height)
+        {
+            if (width > 0 && height > 0)
+            {
+                _androidSurfaceWidthHint = width;
+                _androidSurfaceHeightHint = height;
+            }
+        }
+#endif
+
         public static Matrix GetMatrix
         {
             get
             {
+#if ANDROID
+                if (WindowWidth > 0 && WindowHeight > 0)
+                {
+                    var gd = Instance?.GraphicsDevice;
+                    if (gd != null)
+                    {
+                        var pp = gd.PresentationParameters;
+                        if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
+                            return Matrix.CreateScale((float)pp.BackBufferWidth / WindowWidth, (float)pp.BackBufferHeight / WindowHeight, 1f);
+                    }
+
+                    if (Instance?.Window != null)
+                    {
+                        var cb = Instance.Window.ClientBounds;
+                        if (cb.Width > 0 && cb.Height > 0)
+                            return Matrix.CreateScale((float)cb.Width / WindowWidth, (float)cb.Height / WindowHeight, 1f);
+                    }
+                }
+#endif
                 return Matrix.CreateScale((float)Graphics.PreferredBackBufferWidth / WindowWidth, (float)Graphics.PreferredBackBufferHeight / WindowHeight, 1f);
             }
         }
@@ -170,6 +205,24 @@ namespace ProjectZ
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
             Graphics.PreferredBackBufferWidth = Values.MinWidth * 3;
             Graphics.PreferredBackBufferHeight = Values.MinHeight * 3;
+
+#if ANDROID
+            if (_androidSurfaceWidthHint > 0 && _androidSurfaceHeightHint > 0)
+            {
+                Graphics.PreferredBackBufferWidth = _androidSurfaceWidthHint;
+                Graphics.PreferredBackBufferHeight = _androidSurfaceHeightHint;
+            }
+            else
+            {
+                var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+                if (displayMode.Width > 0 && displayMode.Height > 0)
+                {
+                    Graphics.PreferredBackBufferWidth = displayMode.Width;
+                    Graphics.PreferredBackBufferHeight = displayMode.Height;
+                }
+            }
+#endif
+
             Graphics.ApplyChanges();
 
             // Allow the user to resize the window.
@@ -472,10 +525,34 @@ namespace ProjectZ
                 Graphics.GraphicsDevice.SetRenderTarget(null);
                 GraphicsDevice.Clear(Color.Black);
 
+#if ANDROID
+                var pp = GraphicsDevice.PresentationParameters;
+                var targetWidth = pp.BackBufferWidth;
+                var targetHeight = pp.BackBufferHeight;
+
+                if (targetWidth <= 0 || targetHeight <= 0)
+                {
+                    var cb = Window.ClientBounds;
+                    targetWidth = cb.Width;
+                    targetHeight = cb.Height;
+                }
+
+                if (targetWidth <= 0 || targetHeight <= 0)
+                {
+                    var viewport = GraphicsDevice.Viewport;
+                    targetWidth = viewport.Width;
+                    targetHeight = viewport.Height;
+                }
+#else
                 var viewport = GraphicsDevice.Viewport;
+#endif
 
                 SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+#if ANDROID
+                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
+#else
                 SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+#endif
                 SpriteBatch.End();
             }
 
@@ -691,17 +768,41 @@ namespace ProjectZ
 
         #if ANDROID
             // On Android, this can fire before GraphicsDevice exists (or during reset).
+            var cbWidth = Window?.ClientBounds.Width ?? 0;
+            var cbHeight = Window?.ClientBounds.Height ?? 0;
+
             if (GraphicsDevice != null)
             {
+                if (cbWidth > 0 && cbHeight > 0 &&
+                    (Graphics.PreferredBackBufferWidth != cbWidth || Graphics.PreferredBackBufferHeight != cbHeight))
+                {
+                    try
+                    {
+                        Graphics.PreferredBackBufferWidth = cbWidth;
+                        Graphics.PreferredBackBufferHeight = cbHeight;
+                        Graphics.ApplyChanges();
+                    }
+                    catch
+                    {
+                        // Keep running; we'll use the best available dimensions below.
+                    }
+                }
+
                 var pp = GraphicsDevice.PresentationParameters;
                 w = pp.BackBufferWidth;
                 h = pp.BackBufferHeight;
+
+                if (cbWidth > 0 && cbHeight > 0)
+                {
+                    w = cbWidth;
+                    h = cbHeight;
+                }
             }
             else
             {
                 // Fallback: at least keep sizes sane until GD exists
-                w = Window?.ClientBounds.Width ?? 0;
-                h = Window?.ClientBounds.Height ?? 0;
+                w = cbWidth;
+                h = cbHeight;
             }
         #else
             w = Window.ClientBounds.Width;

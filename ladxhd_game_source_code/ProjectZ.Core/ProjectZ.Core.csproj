@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <AssemblyName>ProjectZ.Core</AssemblyName>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <CheckEolWorkloads>false</CheckEolWorkloads>
   </PropertyGroup>
 
   <!-- Exclude debug symbols when publishing -->

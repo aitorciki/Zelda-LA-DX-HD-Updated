@@ -14,6 +14,8 @@
     <IsTrimmable>false</IsTrimmable>
     <EnableDefaultItems>true</EnableDefaultItems>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <CheckEolWorkloads>false</CheckEolWorkloads>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">

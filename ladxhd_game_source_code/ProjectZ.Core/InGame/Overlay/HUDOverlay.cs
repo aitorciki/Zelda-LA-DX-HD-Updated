@@ -112,12 +112,19 @@ namespace ProjectZ.InGame.Overlay
             _gameUiWindow.Width = (int)(Values.MinWidth * scale);
             _gameUiWindow.Height = (int)(Values.MinHeight * scale);
 
+#if ANDROID
+            _gameUiWindow.X = 0;
+            _gameUiWindow.Y = 0;
+            _gameUiWindow.Width = Game1.WindowWidth;
+            _gameUiWindow.Height = Game1.WindowHeight;
+#else
             var ar = MathHelper.Clamp(Game1.WindowWidth / (float)Game1.WindowHeight, 1, 2);
 
             _gameUiWindow.Width = MathHelper.Clamp((int)(Game1.WindowHeight * ar), 0, Game1.WindowWidth);
             _gameUiWindow.Height = MathHelper.Clamp((int)(Game1.WindowWidth / ar), 0, Game1.WindowHeight);
             _gameUiWindow.X = Game1.WindowWidth / 2 - _gameUiWindow.Width / 2;
             _gameUiWindow.Y = Game1.WindowHeight / 2 - _gameUiWindow.Height / 2;
+#endif
 
             // top left
             if (custom_rupee_show)
