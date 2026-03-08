@@ -50,43 +50,6 @@ namespace ProjectZ.InGame.GameObjects
         }
         public State CurrentState;
 
-        // State tracking functions: check multiple state types at once by category.
-        public bool IsAttackingState() =>
-            CurrentState == State.Attacking ||
-            CurrentState == State.AttackBlocking ||
-            CurrentState == State.AttackJumping ||
-            CurrentState == State.AttackSwimming;
-        public bool IsChargingState() =>
-            CurrentState == State.Charging ||
-            CurrentState == State.ChargeBlocking ||
-            CurrentState == State.ChargeJumping ||
-            CurrentState == State.ChargeSwimming;
-        public bool IsBlockingState() =>
-            CurrentState == State.Blocking ||
-            CurrentState == State.AttackBlocking ||
-            CurrentState == State.ChargeBlocking;
-        public bool IsSwimmingState() =>
-            CurrentState == State.Swimming ||
-            CurrentState == State.AttackSwimming ||
-            CurrentState == State.ChargeSwimming;
-        public bool IsJumpingState() =>
-            CurrentState == State.Jumping ||
-            CurrentState == State.AttackJumping ||
-            CurrentState == State.ChargeJumping;
-        public bool IsShowingInstrument() =>
-            CurrentState == State.ShowInstrumentPart0 ||
-            CurrentState == State.ShowInstrumentPart1 ||
-            CurrentState == State.ShowInstrumentPart2 ||
-            CurrentState == State.ShowInstrumentPart3;
-        public bool IsShowingCloak() =>
-            CurrentState == State.CloakShow0 ||
-            CurrentState == State.CloakShow1;
-        public bool IsShowingSword() =>
-            CurrentState == State.SwordShow0 ||
-            CurrentState == State.SwordShow1 ||
-            CurrentState == State.SwordShow2 ||
-            CurrentState == State.SwordShowLv2;
-
         // Link Animator
         public readonly Animator Animation;
         private int _animationOffsetX = -7;
@@ -134,7 +97,13 @@ namespace ProjectZ.InGame.GameObjects
 
         // Link Direction
         public int Direction;
-        private readonly Vector2[] _walkDirection = { new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1) };
+        private readonly Vector2[] _walkDirection = 
+        { 
+            new Vector2(-1, 0), 
+            new Vector2(0, -1), 
+            new Vector2(1, 0), 
+            new Vector2(0, 1) 
+        };
         public Vector2 ForwardVector { get => _walkDirection[Direction]; }
 
         // Link Body
@@ -276,10 +245,8 @@ namespace ProjectZ.InGame.GameObjects
         private double _itemShowCounter;
         private bool _showItem;
         private bool _savedPreItemPickup;
-        public bool SavePreItemPickup
-        {
-            get { return _savedPreItemPickup; }
-        }
+        public bool SavePreItemPickup => _savedPreItemPickup; 
+
         // Items: Disable
         public bool DisableItems;
         public float DisableItemCounter;
@@ -415,10 +382,22 @@ namespace ProjectZ.InGame.GameObjects
         private bool _pickingUpInstrument;
         private const int dist0 = 30;
         private const int dist1 = 15;
-        private readonly Vector2[] _showInstrumentOffset = {
-            new Vector2(-dist1, -dist0), new Vector2(dist1, -dist0), new Vector2(dist0, dist1), new Vector2(dist0, -dist1),
-            new Vector2(dist1, dist0),new Vector2(-dist1, dist0),new Vector2(-dist0, -dist1),new Vector2(-dist0, dist1) };
-        private Rectangle[] _noteSourceRectangles = { new Rectangle(145, 97, 10, 12), new Rectangle(156, 97, 6, 12) };
+        private readonly Vector2[] _showInstrumentOffset = 
+        {
+            new Vector2(-dist1, -dist0), 
+            new Vector2(dist1, -dist0), 
+            new Vector2(dist0, dist1), 
+            new Vector2(dist0, -dist1),
+            new Vector2(dist1, dist0),
+            new Vector2(-dist1, dist0),
+            new Vector2(-dist0, -dist1),
+            new Vector2(-dist0, dist1) 
+        };
+        private Rectangle[] _noteSourceRectangles = 
+        {
+            new Rectangle(145, 97, 10, 12),
+            new Rectangle(156, 97, 6, 12) 
+        };
         private readonly int[] _instrumentMusicIndex = { 31, 39, 40, 41, 42, 43, 44, 45 };
 
         // Raft
@@ -4768,7 +4747,7 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState != State.Swimming || !Map.Is2dMap))
                 return;
 
-            // remove one powder from the inventory
+            // Remove one powder from the inventory.
             if (!Game1.GameManager.RemoveItem("powder", 1))
                 return;
 
@@ -5276,9 +5255,12 @@ namespace ProjectZ.InGame.GameObjects
             var pullVector = AnimationHelper.DirectionOffset[Direction];
 
             // Reached the end of the hook or collided with an object before.
-            if (distance.Length() < (distance + pullVector).Length() ||
-                (_body.LastVelocityCollision != Values.BodyCollision.None && (_body.SlideOffset == Vector2.Zero || _body.BodyBox.Box.Contains(Hookshot.HookshotPosition.Position))) ||
-                CurrentState == State.Dying)
+            var check01 = distance.Length() < (distance + pullVector).Length();
+            var check02 = _body.LastVelocityCollision != Values.BodyCollision.None && (_body.SlideOffset == Vector2.Zero || _body.BodyBox.Box.Contains(Hookshot.HookshotPosition.Position));
+            var check03 = IsDying();
+
+            // If any of the checks pass, stop the hookshot pull.
+            if (check01 || check02 || check03)
             {
                 _hookshotPull = false;
                 _body.IgnoresZ = false;

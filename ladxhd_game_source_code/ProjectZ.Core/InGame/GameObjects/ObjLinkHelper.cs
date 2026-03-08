@@ -13,21 +13,59 @@ namespace ProjectZ.InGame.GameObjects
     public partial class ObjLink
     {
         //-------------------------------------------------------------------------------------------------------
+        // State tracking functions: check multiple state types at once by category.
+        public bool IsAttackingState() =>
+            CurrentState == State.Attacking ||
+            CurrentState == State.AttackBlocking ||
+            CurrentState == State.AttackJumping ||
+            CurrentState == State.AttackSwimming;
+        public bool IsChargingState() =>
+            CurrentState == State.Charging ||
+            CurrentState == State.ChargeBlocking ||
+            CurrentState == State.ChargeJumping ||
+            CurrentState == State.ChargeSwimming;
+        public bool IsBlockingState() =>
+            CurrentState == State.Blocking ||
+            CurrentState == State.AttackBlocking ||
+            CurrentState == State.ChargeBlocking;
+        public bool IsSwimmingState() =>
+            CurrentState == State.Swimming ||
+            CurrentState == State.AttackSwimming ||
+            CurrentState == State.ChargeSwimming;
+        public bool IsJumpingState() =>
+            CurrentState == State.Jumping ||
+            CurrentState == State.AttackJumping ||
+            CurrentState == State.ChargeJumping;
+        public bool IsShowingInstrument() =>
+            CurrentState == State.ShowInstrumentPart0 ||
+            CurrentState == State.ShowInstrumentPart1 ||
+            CurrentState == State.ShowInstrumentPart2 ||
+            CurrentState == State.ShowInstrumentPart3;
+        public bool IsShowingCloak() =>
+            CurrentState == State.CloakShow0 ||
+            CurrentState == State.CloakShow1;
+        public bool IsShowingSword() =>
+            CurrentState == State.SwordShow0 ||
+            CurrentState == State.SwordShow1 ||
+            CurrentState == State.SwordShow2 ||
+            CurrentState == State.SwordShowLv2;
+
+        //-------------------------------------------------------------------------------------------------------
         // One-line "getter" functions.
-        public bool IsInWater2D() => (_inWater);
-        public bool IsDiving() => (CurrentState == State.Swimming && _diveCounter > 0);
-        public bool IsGrounded() => (_body.IsGrounded && !_railJump && !_isFlying);
-        public bool IsRailJumping() => (_railJump);
-        public bool IsHoleAbsorb() => (_isFallingIntoHole);
-        public bool IsDashing() => (_bootsRunning);
-        public bool IsStunned() => (CurrentState == State.Stunned);
-        public bool IsTrapped() => (_isTrapped);
-        public bool IsFlying() => (_isFlying && CurrentState == State.Carrying);
-        public bool IsDying() => (CurrentState == State.Dying);
-        public bool IsClimbing() => (_isClimbing);
-        public bool IsUsingHookshot() => (CurrentState == State.Hookshot);
-        public Vector2 GetSwimVelocity() => (_swimVelocity);
-        public ObjMarin GetMarin() => (_objMaria);
+        public bool IsInWater2D()   => _inWater;
+        public bool IsDiving()      => CurrentState == State.Swimming && _diveCounter > 0;
+        public bool IsGrounded()    => _body.IsGrounded && !_railJump && !_isFlying;
+        public bool IsRailJumping() => _railJump;
+        public bool IsHoleAbsorb()  => _isFallingIntoHole;
+        public bool IsDashing()     => _bootsRunning;
+        public bool IsStunned()     => CurrentState == State.Stunned;
+        public bool IsTrapped()     => _isTrapped;
+        public bool IsFlying()      => _isFlying && CurrentState == State.Carrying;
+        public bool IsDying()       => CurrentState == State.Dying;
+        public bool IsClimbing()    => _isClimbing;
+        public bool IsUsingHookshot()    => CurrentState == State.Hookshot;
+        public Vector2 GetSwimVelocity() => _swimVelocity;
+        public ObjMarin GetMarin()       => _objMaria;
 
         //-------------------------------------------------------------------------------------------------------
         // One-line "setter" functions.
@@ -244,7 +282,7 @@ namespace ProjectZ.InGame.GameObjects
         // Stun the player for an amount of time (MBossHinox, MBossBlaino).
         public void Stun(int stunTime, bool particle = false)
         {
-            if (CurrentState == State.Dying)
+            if (IsDying())
                 return;
 
             CurrentState = State.InitStunned;
