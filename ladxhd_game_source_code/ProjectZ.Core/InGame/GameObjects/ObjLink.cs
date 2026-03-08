@@ -188,7 +188,7 @@ namespace ProjectZ.InGame.GameObjects
         private Vector2 _railJumpTargetPosition;
 
         // Followers
-        public GameObjectFollower _objFollower;
+        public GameObjectFollower ObjFollower;
         private ObjCock _objRooster;
         private ObjMarin _objMaria;
         private ObjBowWow _objBowWow;
@@ -1689,19 +1689,19 @@ namespace ProjectZ.InGame.GameObjects
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
                 Map.Objects.RemoveObject(_objRooster);
-                _objFollower = _objRooster = null;
+                ObjFollower = _objRooster = null;
             }
             else if (borrowRooster == "1")
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_rooster");
                 var itemRooster = new GameItemCollected("rooster") { Count = 1 };
                 PickUpItem(itemRooster, false, false, true);
-                _objFollower = _objRooster = new ObjCock(Map,
+                ObjFollower = _objRooster = new ObjCock(Map,
                     (int)(EntityPosition.X + AnimationHelper.DirectionOffset[Direction].X),
                     (int)(EntityPosition.Y + AnimationHelper.DirectionOffset[Direction].X),
                     "borrow_rooster");
                 Map.Objects.SpawnObject(_objRooster);
-                Map.Objects.RegisterAlwaysAnimateObject(_objFollower);
+                Map.Objects.RegisterAlwaysAnimateObject(ObjFollower);
                 _objRooster.BorrowRooster();
             }
 
@@ -1710,7 +1710,7 @@ namespace ProjectZ.InGame.GameObjects
             if (borrowMarin == "0")
             {
                 Game1.GameManager.SaveManager.RemoveString("borrow_marin");
-                _objFollower = _objMaria = null;
+                ObjFollower = _objMaria = null;
             }
             else if (borrowMarin == "1")
             {
@@ -5761,13 +5761,13 @@ namespace ProjectZ.InGame.GameObjects
             var itemMarin = Game1.GameManager.GetItem("marin");
             if (itemMarin != null && itemMarin.Count > 0)
             {
-                // For some reason, the "_objFollower" is always null after a map transition. Most of the time, we can just safely respawn Marin
+                // For some reason, the "ObjFollower" is always null after a map transition. Most of the time, we can just safely respawn Marin
                 // so this isn't a problem. This code is also what works around the beach issue where she doesn't spawn. But, it doesn't work if
                 // leaving a dungeon and she's currently waiting for Link to come out. So in that case, don't run this code, use the backup path.
-                if (_objFollower == null && !_objMaria._dungeonLeaveSequence)
+                if (ObjFollower == null && !_objMaria._dungeonLeaveSequence)
                     SpawnMarin();
                 else
-                    _objFollower = _objMaria;
+                    ObjFollower = _objMaria;
 
                 hasFollower = true;
             }
@@ -5776,7 +5776,7 @@ namespace ProjectZ.InGame.GameObjects
             var itemRooster = Game1.GameManager.GetItem("rooster");
             if (itemRooster != null && itemRooster.Count > 0)
             {
-                _objFollower = _objRooster;
+                ObjFollower = _objRooster;
                 hasFollower = true;
             }
 
@@ -5784,29 +5784,29 @@ namespace ProjectZ.InGame.GameObjects
             var itemGhost = Game1.GameManager.GetItem("ghost");
             if (itemGhost != null && itemGhost.Count > 0)
             {
-                _objFollower = _objGhost;
+                ObjFollower = _objGhost;
                 hasFollower = true;
             }
             // Check if there is a follower and it is already spawned.
             if (hasFollower)
             {
-                if (_objFollower.Map != Map)
+                if (ObjFollower.Map != Map)
                 {
                     if (mapInit && NextMapPositionStart.HasValue)
-                        _objFollower.EntityPosition.Set(NextMapPositionStart.Value);
+                        ObjFollower.EntityPosition.Set(NextMapPositionStart.Value);
                     else
-                        _objFollower.EntityPosition.Set(EntityPosition.Position);
+                        ObjFollower.EntityPosition.Set(EntityPosition.Position);
 
-                    _objFollower.Map = Map;
-                    Map.Objects.SpawnObject(_objFollower);
+                    ObjFollower.Map = Map;
+                    Map.Objects.SpawnObject(ObjFollower);
                 }
-                Map.Objects.RegisterAlwaysAnimateObject(_objFollower);
+                Map.Objects.RegisterAlwaysAnimateObject(ObjFollower);
             }
             // Remove the current follower from the map.
-            else if (_objFollower != null)
+            else if (ObjFollower != null)
             {
-                Map.Objects.DeleteObjects.Add(_objFollower);
-                _objFollower = null;
+                Map.Objects.DeleteObjects.Add(ObjFollower);
+                ObjFollower = null;
             }
         }
 
@@ -5827,7 +5827,7 @@ namespace ProjectZ.InGame.GameObjects
             Vector2 offset = GetMarinSpawnOffset(Direction, 13f);
             Vector2 marinSpawnPos = new Vector2(_body.Position.X, _body.Position.Y) + offset;
             _objMaria = new ObjMarin(Map, (int)EntityPosition.X, (int)EntityPosition.Y);
-            _objFollower = _objMaria;
+            ObjFollower = _objMaria;
             Map.Objects.SpawnObject(_objMaria);
             Map.Objects.RegisterAlwaysAnimateObject(_objMaria);
             _objMaria.SetPosition(marinSpawnPos);
@@ -6028,7 +6028,7 @@ namespace ProjectZ.InGame.GameObjects
 
             ShowItem = null;
             _collectedShowItem = null;
-            _objFollower = null;
+            ObjFollower = null;
 
             _hitRepelTime = 0;
             _hitParticleTime = 0;
@@ -6128,8 +6128,8 @@ namespace ProjectZ.InGame.GameObjects
 
             UpdateFollower(true);
 
-            if (_objFollower != null)
-                _objFollower.EntityPosition.Set(NextMapPositionStart.Value);
+            if (ObjFollower != null)
+                ObjFollower.EntityPosition.Set(NextMapPositionStart.Value);
 
             if (_spriteShadow != null)
                 _spriteShadow.EntityPosition.Set(NextMapPositionStart.Value);
@@ -6312,13 +6312,13 @@ namespace ProjectZ.InGame.GameObjects
 
             HoleFalling = false;
 
-            if (_objFollower != null)
+            if (ObjFollower != null)
             {
                 var itemGhost = Game1.GameManager.GetItem("ghost");
                 if (itemGhost != null && itemGhost.Count >= 0)
-                    _objFollower.EntityPosition.Set(fallPositionV2);
+                    ObjFollower.EntityPosition.Set(fallPositionV2);
                 else
-                    _objFollower.EntityPosition.Set(fallPositionV3);
+                    ObjFollower.EntityPosition.Set(fallPositionV3);
             }
             if (_objBowWow != null)
                 _objBowWow.EntityPosition.Set(fallPositionV3);
@@ -6459,12 +6459,12 @@ namespace ProjectZ.InGame.GameObjects
         {
             // Disable followers on maps that contain the "NoFollowers" map object.
             if (Map.NoFollowers || Map.Is2dMap)
-                _objFollower.IsActive = false;
+                ObjFollower.IsActive = false;
 
             // Marin has her own method of respawning. Not doing it this way breaks her dungeon transition.
             else
-                if (_objFollower != _objMaria)
-                    _objFollower.IsActive = true;
+                if (ObjFollower != _objMaria)
+                    ObjFollower.IsActive = true;
         }
 
         public void UpdateMapTransitionIn(float state)
@@ -6518,10 +6518,10 @@ namespace ProjectZ.InGame.GameObjects
                 SetPosition(newPosition);
 
                 // Transition the follower out of the map. I'm not sure why this check existed, but the commented off code used to be part of the check.
-                if (_objFollower != null) // && NextMapPositionStart.Value != NextMapPositionEnd.Value)
+                if (ObjFollower != null) // && NextMapPositionStart.Value != NextMapPositionEnd.Value)
                 {
                     var followerPosition = Vector2.Lerp(NextMapPositionStart.Value, NextMapPositionEnd.Value, state * 0.5f);
-                    _objFollower.SetPosition(followerPosition);
+                    ObjFollower.SetPosition(followerPosition);
                     SetFollowerMapState();
                 }
             }

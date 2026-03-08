@@ -472,5 +472,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             RemoveComponent(CollisionComponent.Index);
             ((DrawComponent)Components[DrawComponent.Index]).Layer = Values.LayerPlayer;
         }
+
+        public override void SetFacingDirection(int direction)
+        {
+            _direction = direction;
+            _animator.Play("stand_" + direction);
+        }
     }
 }

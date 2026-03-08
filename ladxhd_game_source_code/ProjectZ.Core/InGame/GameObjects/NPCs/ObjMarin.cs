@@ -1119,7 +1119,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             DrawHelper.DrawNormalized(spriteBatch, _spriteNote, position, Color.White * transparency);
         }
 
-        public void SetFacingDirection(int direction)
+        public override void SetFacingDirection(int direction)
         {
             _lastDirection = direction;
             _walkDirection = direction;

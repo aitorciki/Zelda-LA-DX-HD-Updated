@@ -311,6 +311,13 @@ namespace ProjectZ.InGame.Overlay
                 body.VelocityTarget = Vector2.Zero;
                 MapManager.ObjLink.Direction = 3;
 
+                // If Link has a follower, spawn it nearby.
+                if (MapManager.ObjLink.ObjFollower != null)
+                {
+                    var followerPos = new Vector2(teleportPoint.X, teleportPoint.Y - 16);
+                    MapManager.ObjLink.ObjFollower.EntityPosition.Set(followerPos);
+                    MapManager.ObjLink.ObjFollower.SetFacingDirection(3);
+                }
                 // Play an animation and a sound effect.
                 var explosionAnimation = new ObjAnimator(MapManager.ObjLink.Map, (int)teleportPoint.X, (int)teleportPoint.Y - 8, Values.LayerTop, "Particles/pieceOfPowerExplosion", "run", true);
                 MapManager.ObjLink.Map.Objects.SpawnObject(explosionAnimation);

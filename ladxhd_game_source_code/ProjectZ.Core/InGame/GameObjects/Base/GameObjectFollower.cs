@@ -9,5 +9,7 @@ namespace ProjectZ.InGame.GameObjects.Base
         public GameObjectFollower(Map.Map map) : base(map) { }
 
         public virtual void SetPosition(Vector2 position) { }
+
+        public virtual void SetFacingDirection(int direction) { }
     }
 }

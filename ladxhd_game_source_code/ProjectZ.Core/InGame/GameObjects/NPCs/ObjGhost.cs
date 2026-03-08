@@ -272,5 +272,10 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.SaveManager.RemoveString("ghost_return");
             }
         }
+
+        public override void SetFacingDirection(int direction)
+        {
+            _animator.Play("stand_" + direction);
+        }
     }
 }
