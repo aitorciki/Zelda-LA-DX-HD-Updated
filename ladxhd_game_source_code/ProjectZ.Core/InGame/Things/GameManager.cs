@@ -424,6 +424,30 @@ namespace ProjectZ.InGame.Things
             InGameOverlay.TextboxOverlay.StartDialog(Game1.LanguageManager.GetString(dialogKey, "error"));
         }
 
+        private bool DialogPathMatches(DialogPath path)
+        {
+            var value = SaveManager.GetString(path.VariableKey);
+
+            if (value == null)
+                return path.Condition == "0";
+
+            if (value == path.Condition)
+                return true;
+
+            if (path.Condition.Contains('-'))
+            {
+                var split = path.Condition.Split('-');
+                if (split.Length == 2 &&
+                    int.TryParse(split[0], out var min) &&
+                    int.TryParse(split[1], out var max) &&
+                    int.TryParse(value, out var intValue))
+                {
+                    return intValue >= min && intValue <= max;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// @HACK: used by the map overlay to completly run a dialog path; this does only work for single dialogs
         /// the problem is that the current game dialog should be unaffected by the dialogs run by the map overlay
@@ -433,13 +457,13 @@ namespace ProjectZ.InGame.Things
         {
             // look if a dialog path exists for the key
             DialogPath dialogPath = null;
+
             if (dialogKey != null && _dialogPaths.ContainsKey(dialogKey))
             {
                 var paths = _dialogPaths[dialogKey];
                 for (var i = 0; i < paths.Count; i++)
                 {
-                    if (SaveManager.GetString(paths[i].VariableKey) == null && paths[i].Condition == "0" ||
-                        SaveManager.GetString(paths[i].VariableKey) == paths[i].Condition)
+                    if (DialogPathMatches(paths[i]))
                     {
                         dialogPath = paths[i];
                         break;
@@ -455,8 +479,7 @@ namespace ProjectZ.InGame.Things
                 if (dialogKey != null)
                     stateString = SaveManager.GetString(dialogKey);
 
-                InGameOverlay.TextboxOverlay.StartDialog(
-                    Game1.LanguageManager.GetString(dialogKey + (stateString != null ? "_" + stateString : ""), "error"));
+                InGameOverlay.TextboxOverlay.StartDialog(Game1.LanguageManager.GetString(dialogKey + (stateString != null ? "_" + stateString : ""), "error"));
             }
 
             while (dialogPath != null)
@@ -564,8 +587,7 @@ namespace ProjectZ.InGame.Things
                 var paths = _dialogPaths[dialogKey];
                 for (var i = 0; i < paths.Count; i++)
                 {
-                    if (SaveManager.GetString(paths[i].VariableKey) == null && paths[i].Condition == "0" ||
-                        SaveManager.GetString(paths[i].VariableKey) == paths[i].Condition)
+                    if (DialogPathMatches(paths[i]))
                     {
                         _dialogPathQueue.Dequeue();
                         return paths[i];

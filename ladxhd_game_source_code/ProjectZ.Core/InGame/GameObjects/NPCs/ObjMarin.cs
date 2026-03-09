@@ -201,8 +201,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (_dungeonLeaveSequence)
                 base.IsActive = IsVisible = true;
 
+            string active = "0";
+
             if (IsActive)
+            {
                 Activate();
+                active = "1";
+            }
+            Game1.GameManager.SaveManager.SetString("marin_active", active);
         }
 
         public override void SetPosition(Vector2 position)

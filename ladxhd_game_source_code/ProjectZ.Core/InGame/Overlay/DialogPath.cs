@@ -133,6 +133,36 @@ namespace ProjectZ.InGame.Overlay
         }
     }
 
+    class DialogActionGetRandom : DialogAction
+    {
+        private readonly string _min;
+        private readonly string _max;
+        private readonly string _key;
+
+        public DialogActionGetRandom(string min, string max, string key)
+        {
+            _min = min;
+            _max = max;
+            _key = key;
+        }
+
+        public override bool Execute()
+        {
+            // Try to parse each value as an integer.
+            if (!int.TryParse(_min, out var min))
+                return false;
+            if (!int.TryParse(_max, out var max))
+                return false;
+
+            // Get a random number between min and max.
+            int random = Game1.RandomNumber.Next(min, max + 1);
+
+            // Set the random value to the integer.
+            Game1.GameManager.SaveManager.SetString(_key, random.ToString());
+            return true;
+        }
+    }
+
     class DialogActionGetVariable : DialogAction
     {
         private readonly string _key;
@@ -151,9 +181,9 @@ namespace ProjectZ.InGame.Overlay
             bool checkState = false;
 
             // Determine if it's a boolean by checking the compare values.
-            if (_compare == "true" || _compare == "false") 
+            if (_compare == "true" || _compare == "false")
             {
-                bool saveState = (bool)(typeof(GameSettings).GetField(_key, BindingFlags.Public | BindingFlags.Static).GetValue(null));
+                bool saveState = (bool)typeof(GameSettings).GetField(_key, BindingFlags.Public | BindingFlags.Static).GetValue(null);
                 checkState = Convert.ToBoolean(_compare) == Game1.GameManager.SaveManager.GetBool(_key, saveState);
             }
             // Otherwise assume we are getting the value of a string field.

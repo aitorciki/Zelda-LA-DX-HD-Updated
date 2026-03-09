@@ -66,7 +66,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         private bool Interact()
         {
-            Game1.GameManager.StartDialogPath("npc_hippo");
+            Game1.GameManager.StartDialogPath("npc_hippo_line");
             return true;
         }
     }
