@@ -37,6 +37,7 @@
         public static int     GameScale       =  Game1.MaxGameScale + 1;
         public static int     UiScale         =  11;
         public static int     ScreenMode      =  0;
+        public static bool    FogEffects      =  true;
         public static bool    GlobalLights    =  true;
         public static bool    ObjectLights    =  true;
         public static bool    EnableShadows   =  true;
@@ -129,6 +130,7 @@
             GameScale       =  Game1.MaxGameScale + 1;
             UiScale         =  11;
             ScreenMode      =  0;
+            FogEffects      =  true;
             GlobalLights    =  true;
             ObjectLights    =  true;
             EnableShadows   =  true;

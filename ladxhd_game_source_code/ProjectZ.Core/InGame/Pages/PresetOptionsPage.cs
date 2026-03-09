@@ -119,6 +119,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = true;
+            GameSettings.FogEffects = true;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = false;
             GameSettings.OldMovement = false;
@@ -156,6 +157,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = false;
+            GameSettings.FogEffects = false;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = true;
             GameSettings.OldMovement = false;
@@ -194,6 +196,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = true;
+            GameSettings.FogEffects = true;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = false;
             GameSettings.HeartBeep = true;
@@ -235,6 +238,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = false;
             GameSettings.GlobalLights = false;
             GameSettings.ObjectLights = false;
+            GameSettings.FogEffects = false;
             GameSettings.EnableShadows = false;
             GameSettings.ClassicMusic = true;
             GameSettings.HeartBeep = true;
@@ -305,6 +309,7 @@ namespace ProjectZ.InGame.Pages
                 GraphicsSettingsPage.SetGlobalLighting(GameSettings.GlobalLights);
                 GraphicsSettingsPage.SetObjectLighting(GameSettings.ObjectLights);
                 GraphicsSettingsPage.SetDynamicShadows(GameSettings.EnableShadows);
+                GraphicsSettingsPage.SetFogEffects(GameSettings.FogEffects);
                 GraphicsSettingsPage.SetVerticalSync(GameSettings.VerticalSync);
                 GraphicsSettingsPage.SetOpaqueHudBg(GameSettings.OpaqueHudBg);
             }

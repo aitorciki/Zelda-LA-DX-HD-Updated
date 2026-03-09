@@ -48,6 +48,9 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Draw(SpriteBatch spriteBatch)
         {
+            if (!GameSettings.FogEffects)
+                return;
+
             // the fog would break the shock effect
             if (Game1.GameManager.UseShockEffect)
                 return;

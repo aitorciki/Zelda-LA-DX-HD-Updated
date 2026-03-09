@@ -17,6 +17,7 @@ namespace ProjectZ.InGame.Pages
     #if !ANDROID
         private readonly InterfaceSlider     _sliderFullscreen;
     #endif
+        private readonly InterfaceListLayout _toggleFogEffects;
         private readonly InterfaceListLayout _toggleGlobalLighting;
         private readonly InterfaceListLayout _toggleObjectLighting;
         private readonly InterfaceListLayout _toggleDynamicShadows;
@@ -34,6 +35,7 @@ namespace ProjectZ.InGame.Pages
         public void SetGlobalLighting(bool state) => ((InterfaceToggle)_toggleGlobalLighting.Elements[1]).ToggleState = state;
         public void SetObjectLighting(bool state) => ((InterfaceToggle)_toggleObjectLighting.Elements[1]).ToggleState = state;
         public void SetDynamicShadows(bool state) => ((InterfaceToggle)_toggleDynamicShadows.Elements[1]).ToggleState = state;
+        public void SetFogEffects(bool state) => ((InterfaceToggle)_toggleFogEffects.Elements[1]).ToggleState = state;
         public void SetVerticalSync(bool state) { ((InterfaceToggle)_toggleVerticalSync.Elements[1]).ToggleState = state; Game1.FpsSettingChanged = true; }
         public void SetOpaqueHudBg(bool state) => ((InterfaceToggle)_toggleOpaqueHudBg.Elements[1]).ToggleState = state;
 
@@ -46,7 +48,7 @@ namespace ProjectZ.InGame.Pages
 
             var buttonWidth = 320;
             var sliderHeight = 10;
-            var buttonHeight = 14;
+            var buttonHeight = 11;
 
             _graphicSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_graphics_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
@@ -80,19 +82,12 @@ namespace ProjectZ.InGame.Pages
 
         #endif
 
-            // Toggle: Disable Global Lighting
-            _toggleGlobalLighting = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-               "settings_graphics_globallights", GameSettings.GlobalLights,
-               newState => GameSettings.GlobalLights = newState);
-            _contentLayout.AddElement(_toggleGlobalLighting);
-            _tooltips.Add("tooltip_graphics_nogloballights");
-
-            // Toggle: Disable Object Lighting
-            _toggleObjectLighting = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-               "settings_graphics_objectlights", GameSettings.ObjectLights,
-               newState => GameSettings.ObjectLights = newState);
-            _contentLayout.AddElement(_toggleObjectLighting);
-            _tooltips.Add("tooltip_graphics_noobjectlights");
+            // Toggle: Vertical Sync
+            _toggleVerticalSync = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_graphics_fps_lock", GameSettings.VerticalSync,
+                newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
+            _contentLayout.AddElement(_toggleVerticalSync);
+            _tooltips.Add("tooltip_graphics_fps_lock");
 
             // Toggle: Dynamic Shadows
             _toggleDynamicShadows = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
@@ -101,12 +96,26 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(_toggleDynamicShadows);
             _tooltips.Add("tooltip_graphics_shadow");
 
-            // Toggle: Vertical Sync
-            _toggleVerticalSync = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_graphics_fps_lock", GameSettings.VerticalSync,
-                newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
-            _contentLayout.AddElement(_toggleVerticalSync);
-            _tooltips.Add("tooltip_graphics_fps_lock");
+            // Toggle: Fog Effects
+            _toggleFogEffects = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+               "settings_graphics_fogeffects", GameSettings.FogEffects,
+               newState => GameSettings.FogEffects = newState);
+            _contentLayout.AddElement(_toggleFogEffects);
+            _tooltips.Add("tooltip_graphics_fogeffects");
+
+            // Toggle: Global Lighting
+            _toggleGlobalLighting = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+               "settings_graphics_globallights", GameSettings.GlobalLights,
+               newState => GameSettings.GlobalLights = newState);
+            _contentLayout.AddElement(_toggleGlobalLighting);
+            _tooltips.Add("tooltip_graphics_nogloballights");
+
+            // Toggle: Object Lighting
+            _toggleObjectLighting = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
+               "settings_graphics_objectlights", GameSettings.ObjectLights,
+               newState => GameSettings.ObjectLights = newState);
+            _contentLayout.AddElement(_toggleObjectLighting);
+            _tooltips.Add("tooltip_graphics_noobjectlights");
 
             // Toggle: Disable UI Blur
             _toggleOpaqueHudBg = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
