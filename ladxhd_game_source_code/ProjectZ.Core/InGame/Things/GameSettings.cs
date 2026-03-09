@@ -25,7 +25,7 @@
         public static bool    ClassicCamera   =  false;
         public static bool    ModernOverworld =  false;
         public static bool    ClassicDungeon  =  false;
-        public static int     ClassicBorders  =  0;
+        public static int     ClassicBorder   =  1;
         public static float   ClassicAlpha    =  1.00f;
         public static bool    ClassicScaling  =  true;
         public static bool    CameraLock      =  true;
@@ -118,7 +118,7 @@
             ClassicCamera   =  false;
             ModernOverworld =  false;
             ClassicDungeon  =  false;
-            ClassicBorders  =  0;
+            ClassicBorder   =  1;
             ClassicAlpha    =  1.00f;
             ClassicScaling  =  true;
             CameraLock      =  true;

@@ -1606,7 +1606,7 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicMusic = false;
                 GameSettings.ClassicCamera = false;
                 GameSettings.ClassicDungeon = false;
-                GameSettings.ClassicBorders = 0;
+                GameSettings.ClassicBorder = 0;
             }
             // Game Type is set to "Classic".
             else if (GameType == 2)
@@ -1614,7 +1614,7 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicMusic = true;
                 GameSettings.ClassicCamera = true;
                 GameSettings.ClassicDungeon = false;
-                GameSettings.ClassicBorders = 1;
+                GameSettings.ClassicBorder = 1;
             }
             // Game type is set to "Hybrid".
             else if (GameType == 3)
@@ -1622,7 +1622,7 @@ namespace ProjectZ.InGame.Things
                 GameSettings.ClassicMusic = true;
                 GameSettings.ClassicCamera = true;
                 GameSettings.ClassicDungeon = true;
-                GameSettings.ClassicBorders = 1;
+                GameSettings.ClassicBorder = 1;
             }
             // Apply the settings to the settings menus.
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audPage))
@@ -1635,7 +1635,7 @@ namespace ProjectZ.InGame.Things
                 var cameraPage = (CameraSettingsPage)camPage;
                 cameraPage.SetCameraMode(GameSettings.ClassicCamera);
                 cameraPage.SetClassicDungeon(GameSettings.ClassicDungeon);
-                cameraPage.SetClassicCamBorder(GameSettings.ClassicBorders);
+                cameraPage.SetClassicCamBorder(GameSettings.ClassicBorder);
                 cameraPage.SetCameraLock(GameSettings.CameraLock);
                 cameraPage.SetCameraSmoothCam(GameSettings.SmoothCamera);
             }

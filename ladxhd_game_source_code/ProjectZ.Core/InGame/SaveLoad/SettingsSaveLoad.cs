@@ -37,7 +37,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.ClassicCamera = saveManager.GetBool("ClassicCamera", GameSettings.ClassicCamera);
             GameSettings.ModernOverworld = saveManager.GetBool("ModernOverworld", GameSettings.ModernOverworld);
             GameSettings.ClassicDungeon = saveManager.GetBool("ClassicDungeon", GameSettings.ClassicDungeon);
-            GameSettings.ClassicBorders = saveManager.GetInt("ClassicBorders", GameSettings.ClassicBorders);
+            GameSettings.ClassicBorder = saveManager.GetInt("ClassicBorder", GameSettings.ClassicBorder);
             GameSettings.ClassicAlpha = saveManager.GetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
             GameSettings.ClassicScaling = saveManager.GetBool("ClassicScaling", GameSettings.ClassicScaling);
             GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
@@ -126,7 +126,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("ClassicCamera", GameSettings.ClassicCamera);
             saveManager.SetBool("ModernOverworld", GameSettings.ModernOverworld);
             saveManager.SetBool("ClassicDungeon", GameSettings.ClassicDungeon);
-            saveManager.SetInt("ClassicBorders", GameSettings.ClassicBorders);
+            saveManager.SetInt("ClassicBorder", GameSettings.ClassicBorder);
             saveManager.SetFloat("ClassicAlpha", GameSettings.ClassicAlpha);
             saveManager.SetBool("ClassicScaling", GameSettings.ClassicScaling);
             saveManager.SetBool("CameraLock", GameSettings.CameraLock);

@@ -113,7 +113,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicCamera = false;
             GameSettings.ModernOverworld = false;
             GameSettings.ClassicDungeon = false;
-            GameSettings.ClassicBorders = 0;
+            GameSettings.ClassicBorder = 0;
             GameSettings.CameraLock = false;
             GameSettings.ScreenShake = true;
             GameSettings.ExScreenShake = true;
@@ -151,7 +151,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.MapTeleport = 0;
             GameSettings.ClassicCamera = true;
             GameSettings.ClassicDungeon = false;
-            GameSettings.ClassicBorders = 1;
+            GameSettings.ClassicBorder = 1;
             GameSettings.CameraLock = true;
             GameSettings.ScreenShake = true;
             GameSettings.ExScreenShake = true;
@@ -190,7 +190,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicCamera = true;
             GameSettings.ModernOverworld = true;
             GameSettings.ClassicDungeon = true;
-            GameSettings.ClassicBorders = 1;
+            GameSettings.ClassicBorder = 1;
             GameSettings.CameraLock = false;
             GameSettings.ScreenShake = true;
             GameSettings.ExScreenShake = true;
@@ -232,7 +232,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.MapTeleport = 0;
             GameSettings.ClassicCamera = true;
             GameSettings.ClassicDungeon = false;
-            GameSettings.ClassicBorders = 1;
+            GameSettings.ClassicBorder = 1;
             GameSettings.CameraLock = true;
             GameSettings.ScreenShake = true;
             GameSettings.ExScreenShake = false;
@@ -293,7 +293,7 @@ namespace ProjectZ.InGame.Pages
                 CameraSettingsPage.SetCameraMode(GameSettings.ClassicCamera);
                 CameraSettingsPage.SetModernOverworld(GameSettings.ModernOverworld);
                 CameraSettingsPage.SetClassicDungeon(GameSettings.ClassicDungeon);
-                CameraSettingsPage.SetClassicCamBorder(GameSettings.ClassicBorders);
+                CameraSettingsPage.SetClassicCamBorder(GameSettings.ClassicBorder);
                 CameraSettingsPage.SetClassicBorderAlpha((int)(GameSettings.ClassicAlpha * 100));
                 CameraSettingsPage.SetClassicScaleLock(GameSettings.ClassicScaling);
                 CameraSettingsPage.SetCameraLock(GameSettings.CameraLock);

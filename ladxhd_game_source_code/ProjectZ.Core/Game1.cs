@@ -891,7 +891,7 @@ namespace ProjectZ
                 int gameScale = Math.Max(1, Math.Min(WindowWidth / 160, WindowHeight / 128));
 
                 // Super Game Boy border is enabled. Calculate from the base resolution of the border instead.
-                if (GameSettings.ClassicBorders == 2)
+                if (GameSettings.ClassicBorder == 2)
                     gameScale = Math.Max(1, Math.Min(WindowWidth / 256, WindowHeight / 224));
 
                 // Send the game scale to the proper places it needs to go.

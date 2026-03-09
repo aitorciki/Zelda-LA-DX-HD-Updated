@@ -234,7 +234,7 @@ namespace ProjectZ.InGame.Map
             if (ClassicMode)
             {
                 // Draw the black border even if using SGB border.
-                if (GameSettings.ClassicBorders > 0)
+                if (GameSettings.ClassicBorder > 0)
                 {
                     int thickness = 4;
                     float scale = ScaleValue;
@@ -286,7 +286,7 @@ namespace ProjectZ.InGame.Map
                     spriteBatch.Draw(tex, new Rectangle((int)(rectScreenX + fieldW), (int)rectScreenY - 1, (int)(screenW - (rectScreenX + fieldW)), (int)fieldH + 2), blackoutColor);
 
                     // If set to the Super Game Boy border.
-                    if (GameSettings.ClassicBorders == 2)
+                    if (GameSettings.ClassicBorder == 2)
                     {
                         // Border's original pixel size.
                         const int borderW = 256;

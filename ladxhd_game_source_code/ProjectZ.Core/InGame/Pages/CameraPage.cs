@@ -88,8 +88,8 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Classic Camera Border
             _sliderCameraBorder = new InterfaceSlider("settings_camera_camborder",
-                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorders, 
-                number => { GameSettings.ClassicBorders = number; Game1.ScaleChanged = true; Camera.SnapCameraTimer = 10f; }) 
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.ClassicBorder, 
+                number => { GameSettings.ClassicBorder = number; Game1.ScaleChanged = true; Camera.SnapCameraTimer = 10f; }) 
                 { SetString = number => ClassicBorderAdjustment(number) };
             _contentLayout.AddElement(_sliderCameraBorder);
 
