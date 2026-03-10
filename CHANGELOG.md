@@ -1,5 +1,35 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.4**
+### The "Next Generation" Update
+  * Enormous refactoring of the code base. This is only mentioned as it can lead to new bugs to squash.
+  * Fix tons of regressions due to both the refactoring and other fixes which broke lots of stuff.
+  * The Windows version now comes in DX11 or OpenGL. The patcher can select which version to install.
+  * Android and Linux ports are supported if manually built from source. Builds coming later in some form.
+  * MonoGame has been updated to v3.8.4.1 (from 3.8.1.303). This brings with it increased executable size.
+  * Added a 1.5 second delay between the window appearing and the game starting for a smoother start.
+  * Large portions of the audio code/GBS Player have been reworked to fix audio dropouts on Android.
+  * Screen modes: Window, Borderless Fullscreen, and Exclusive Fullscreen has been turned into a slider.
+  * Add graphics option to disable the UI blur effect and to disable the fog effect in Mysterious Woods.
+  * New camera option "Classic Scale Lock" that allows rescaling the "Classic Camera" when disabled.
+  * Chinese fonts are now properly implemented via bitmap fonts (PNG/FNT combo) using MonoGame Extended.
+  * Rework the map transition system to be more deterministic to hopefully fix crashing on slow systems.
+  * Implement dialog randomness: lines hitting chickens and breaking pots with Marin and the Hippo's lines.
+  * Both the LADXHD Patcher and Migration Tool have been updated to support the new OpenGL Windows build.
+  * If Link has a follower when using the map teleport feature, teleport the follower along with him.
+  * Analog stick range must be pushed more than 85% towards a ledge to jump off it (does not affect D-Pad).
+  * Marin now waits outside of all dungeons and her position changes depending on which dungeon is entered.
+  * When running out of magic powder on the overworld, spawn a new toadstool without needing a map reload.
+  * Adjust the "eat box" of the miniboss Dodongo Snake to be larger and size itself based on direction.
+  * Add secret song for "Zelda" ("塞尔达") in Chinese language which is entered on the Name Entry screen.
+  * Hopefully fix a rare bug where picking up items could stick to Link's head and not be collected.
+  * Fix a rare bug with camera field objects in Classic Camera sometimes not snapping the camera in time.
+  * Fix the Tarin bee-chase honeycomb to line up with the sound effect the moment it falls from the tree.
+  * Fix using the analog stick to limit the distance of a cast while fishing by holding it to the right.
+  * Fix miniboss Rolling Bones to not start sliding around when slashed while Piece of Power is active.
+  * Fix dungeon 5 door near the Gohma miniboss that did not open due to an ObjLeaveButton that was moved.
+  * Fix dungeon 7 ball from being able to be thrown through staircases and onto an unreachable platform.
+
 ## **v1.6.3**
 ### The "Very Quick Maintenance" Update
   * Fix some maps not automatically scaling correctly when the camera option "Modern Overworld" is enabled.
