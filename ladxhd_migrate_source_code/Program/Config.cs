@@ -19,7 +19,7 @@ namespace LADXHD_Migrater
         public static string Publish_Path;
         public static string Build_Path;
 
-        public enum Platform { Windows }
+        public enum Platform { Windows, Android }
         public static Platform SelectedPlatform;
 
         public enum GraphicsAPI { DirectX, OpenGL }

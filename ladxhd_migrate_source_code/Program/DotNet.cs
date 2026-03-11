@@ -15,15 +15,23 @@ namespace LADXHD_Migrater
             string arguments = "";
 
             // Build the game for the correct platform and graphics API.
-            if (Config.SelectedGraphics == GraphicsAPI.DirectX)
+            if (Config.SelectedPlatform == Platform.Windows)
             {
-                Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-DX");
-                arguments = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 -p:PublishProfile=FolderProfile_DX";
+                if (Config.SelectedGraphics == GraphicsAPI.DirectX)
+                {
+                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-DX");
+                    arguments = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 -p:PublishProfile=FolderProfile_DX";
+                }
+                else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
+                {
+                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-GL");
+                    arguments = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 -p:PublishProfile=FolderProfile_GL";
+                }
             }
-            else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
+            else if (Config.SelectedPlatform == Platform.Android)
             {
-                Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-GL");
-                arguments = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 -p:PublishProfile=FolderProfile_GL";
+                Config.Build_Path = Path.Combine(Config.Publish_Path, "Android");
+                arguments = "publish ProjectZ.Android\\ProjectZ.Android.csproj -c Release -f net8.0-android -p:PublishProfile=FolderProfile_Android";
             }
 
             try
@@ -62,8 +70,17 @@ namespace LADXHD_Migrater
             }
 
             // Return whether or not it actually succeeded.
-            var gameEXEPath = Path.Combine(Config.Build_Path, "Link's Awakening DX HD.exe");
-            return gameEXEPath.TestPath();
+            if (Config.SelectedPlatform == Platform.Windows)
+            {
+                string exePath = Path.Combine(Config.Build_Path, "Link's Awakening DX HD.exe");
+                return exePath.TestPath();
+            }
+            if (Config.SelectedPlatform == Platform.Android)
+            {
+                string apkPath = Path.Combine(Config.Build_Path, "com.zelda.ladxhd-Signed.apk");
+                return apkPath.TestPath();
+            }
+            return false;
         }
     }
 }

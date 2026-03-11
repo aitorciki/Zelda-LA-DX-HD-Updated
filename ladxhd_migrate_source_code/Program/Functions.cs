@@ -250,28 +250,26 @@ namespace LADXHD_Migrater
 
         public static void CleanBuildFiles()
         {
-            (Config.Game_Source + "\\ProjectZ.Android\\bin").RemovePath();
-            (Config.Game_Source + "\\ProjectZ.Android\\obj").RemovePath();
-
-            (Config.Game_Source + "\\ProjectZ.Core\\bin").RemovePath();
-            (Config.Game_Source + "\\ProjectZ.Core\\obj").RemovePath();
-            (Config.Game_Source + "\\ProjectZ.Core\\Content\\bin").RemovePath();
-            (Config.Game_Source + "\\ProjectZ.Core\\Content\\obj").RemovePath();
-            (Config.Game_Source + "\\ProjectZ.Core\\Publish").RemovePath();
-
-            (Config.Game_Source + "\\ProjectZ.Desktop\\bin").RemovePath();
-            (Config.Game_Source + "\\ProjectZ.Desktop\\obj").RemovePath();
-
-            (Config.Migrate_Source + "\\bin").RemovePath();
-            (Config.Migrate_Source + "\\obj").RemovePath();
-
-            (Config.Patcher_Source + "\\bin").RemovePath();
-            (Config.Patcher_Source + "\\obj").RemovePath();
-
-            (Config.ModMaker_Source + "\\bin").RemovePath();
-            (Config.ModMaker_Source + "\\obj").RemovePath();
-
-            (Config.BaseFolder + "\\zelda_ladxhd_build").RemovePath();
+            Path.Combine(Config.Game_Source, "~Publish").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Android", "bin").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Android", "obj").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Core", "bin").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Core", "obj").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Core", "Content", "bin").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Core", "Content", "obj").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Desktop", "bin").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Desktop", "obj").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Linux", "bin").RemovePath();
+            Path.Combine(Config.Game_Source, "ProjectZ.Linux", "obj").RemovePath();
+            Path.Combine(Config.Migrate_Source, "bin").RemovePath();
+            Path.Combine(Config.Migrate_Source, "obj").RemovePath();
+            Path.Combine(Config.Patcher_Source, "bin").RemovePath();
+            Path.Combine(Config.Patcher_Source, "obj").RemovePath();
+            Path.Combine(Config.ModMaker_Source, "bin").RemovePath();
+            Path.Combine(Config.ModMaker_Source, "obj").RemovePath();
+            Path.Combine(Config.BaseFolder, "zelda_ladxhd_build_android").RemovePath();
+            Path.Combine(Config.BaseFolder, "zelda_ladxhd_build_windows_dx").RemovePath();
+            Path.Combine(Config.BaseFolder, "zelda_ladxhd_build_windows_gl").RemovePath();
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -289,11 +287,17 @@ namespace LADXHD_Migrater
                 string MoveDestination = "";
 
                 // If it succeeded, move the folder to the main folder.
-                if (Config.SelectedGraphics == GraphicsAPI.DirectX)
-                    MoveDestination = Config.BaseFolder + "\\zelda_ladxhd_build_directx";
-                else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
-                    MoveDestination = Config.BaseFolder + "\\zelda_ladxhd_build_opengl";
-
+                if (Config.SelectedPlatform == Platform.Windows)
+                {
+                    if (Config.SelectedGraphics == GraphicsAPI.DirectX)
+                        MoveDestination = Config.BaseFolder + "\\zelda_ladxhd_build_windows_dx";
+                    else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
+                        MoveDestination = Config.BaseFolder + "\\zelda_ladxhd_build_windows_gl";
+                }
+                else if (Config.SelectedPlatform == Platform.Android)
+                {
+                    MoveDestination = Config.BaseFolder + "\\zelda_ladxhd_build_android";
+                }
                 // Move the publish folder to the root directory.
                 Config.Build_Path.MovePath(MoveDestination, true);
             }

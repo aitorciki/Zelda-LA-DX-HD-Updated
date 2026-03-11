@@ -35,7 +35,21 @@ namespace LADXHD_Migrater
             ComboBox comboBox = (ComboBox)sender;
 
             if (comboBox.SelectedIndex == 0)
+            {
                 Config.SelectedPlatform = Platform.Windows;
+
+                combBox_API.Items.Clear();
+                combBox_API.Items.Add("DirectX");
+                combBox_API.Items.Add("OpenGL");
+            }
+            if (comboBox.SelectedIndex == 1)
+            {
+                Config.SelectedPlatform = Platform.Android;
+
+                combBox_API.Items.Clear();
+                combBox_API.Items.Add("OpenGL");
+            }
+            combBox_API.SelectedIndex = 0;
         }
 
         private void combBox_API_SelectedIndexChanged(object sender, EventArgs e)
