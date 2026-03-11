@@ -8,9 +8,9 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <TargetFramework>net8.0-android</TargetFramework>
     <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
-    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
     <OutputType>Exe</OutputType>
-    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidPackageFormats>apk</AndroidPackageFormats>
     <IsTrimmable>false</IsTrimmable>
     <EnableDefaultItems>true</EnableDefaultItems>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>

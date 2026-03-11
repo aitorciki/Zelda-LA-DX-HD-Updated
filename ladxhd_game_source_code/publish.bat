@@ -9,5 +9,9 @@ echo Building Windows OpenGL...
 dotnet publish ProjectZ.Desktop\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 -p:PublishProfile=FolderProfile_GL
 if %errorlevel% neq 0 ( echo GL build failed! & pause & exit /b 1 )
 
+echo Building Android APK...
+dotnet publish ProjectZ.Android\ProjectZ.Android.csproj -c Release -f net8.0-android -p:PublishProfile=FolderProfile_Android
+if %errorlevel% neq 0 ( echo Android build failed! & pause & exit /b 1 )
+
 echo Done! Builds are in the Publish folder.
 pause
