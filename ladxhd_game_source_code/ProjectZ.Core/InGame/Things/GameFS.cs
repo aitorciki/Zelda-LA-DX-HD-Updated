@@ -43,37 +43,8 @@ namespace ProjectZ.InGame.Things
         {
             if (Game1.LanguageManager.CurrentLanguageCode == "chn")
                 return Resources.ChinaFont.MeasureString(text);
+
             return Resources.GameFont.MeasureString(text);
-        }
-
-        //-------------------------------------------------------------------------------------------------------------------------------------------------
-        //
-        //  STRING HELPERS
-        //
-        //-------------------------------------------------------------------------------------------------------------------------------------------------
-        private static string BaseDir => AppContext.BaseDirectory;
-
-        public static string ReadAllText(string path)
-        {
-            path = ToAssetPath(path);
-            using var s = OpenRead(path);
-            using var sr = new StreamReader(s, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-            return sr.ReadToEnd();
-        }
-
-        public static string[] ReadAllLines(string path)
-        {
-            return ReadAllText(path).Replace("\r\n", "\n").Split('\n');
-        }
-
-        private static string ToDiskPath(string path)
-        {
-            path = ToAssetPath(path);
-            path = path.Replace('\\', '/').TrimStart('/');
-
-            // Convert to OS separators and root at the executable directory.
-            var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            return Path.GetFullPath(Path.Combine(new[] { BaseDir }.Concat(parts).ToArray()));
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -82,18 +53,65 @@ namespace ProjectZ.InGame.Things
         //
         //-------------------------------------------------------------------------------------------------------------------------------------------------
 
-        /// <summary>Normalize separators and remove leading/trailing slashes.</summary>
+        private static string BaseDir => AppContext.BaseDirectory;
+
+        /// <summary>
+        /// Normalize separators. On non-Windows platforms, convert '\' to '/'.
+        /// Does not trim rooted paths into relative paths.
+        /// </summary>
         public static string NormalizePath(string path)
         {
-        #if ANDROID || LINUX
-            return (path ?? "").Replace("\\", "/").Trim('/');
-        #endif
-            return path;
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+#if WINDOWS
+            return path.Replace('/', '\\');
+#else
+            return path.Replace('\\', '/');
+#endif
         }
 
         /// <summary>
-        /// Converts absolute desktop paths into asset-relative paths like "Data/..." or "Content/...".
-        /// Safe on all platforms.
+        /// True when the path points at packaged game assets, not user files.
+        /// Valid examples: "Data/...", "Content/..."
+        /// </summary>
+        private static bool IsPackagedAssetPath(string path)
+        {
+            path = NormalizePath(path).TrimStart('/', '\\');
+
+#if WINDOWS
+            return path.StartsWith("Data\\", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Data", StringComparison.OrdinalIgnoreCase) ||
+                   path.StartsWith("Content\\", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Content", StringComparison.OrdinalIgnoreCase);
+#else
+            return path.StartsWith("Data/", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Data", StringComparison.OrdinalIgnoreCase) ||
+                   path.StartsWith("Content/", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Content", StringComparison.OrdinalIgnoreCase);
+#endif
+        }
+
+        /// <summary>
+        /// True when the path is an actual rooted filesystem path.
+        /// Android mod folders and save folders should end up here.
+        /// </summary>
+        private static bool IsRealFileSystemPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            path = NormalizePath(path);
+
+            if (IsPackagedAssetPath(path))
+                return false;
+
+            return Path.IsPathRooted(path);
+        }
+
+        /// <summary>
+        /// Converts an absolute desktop path containing /Data/ or /Content/ into an asset-relative path.
+        /// Leaves rooted user-data paths alone.
         /// </summary>
         public static string ToAssetPath(string path)
         {
@@ -102,21 +120,79 @@ namespace ProjectZ.InGame.Things
             if (string.IsNullOrEmpty(path))
                 return path;
 
-            // Already relative
-            if (path.StartsWith("Data/", StringComparison.OrdinalIgnoreCase) ||
-                path.StartsWith("Content/", StringComparison.OrdinalIgnoreCase))
+            if (IsRealFileSystemPath(path))
+            {
+#if WINDOWS
+                int dataIdx = path.IndexOf("\\Data\\", StringComparison.OrdinalIgnoreCase);
+                if (dataIdx >= 0)
+                    return path.Substring(dataIdx + 1);
+
+                int contentIdx = path.IndexOf("\\Content\\", StringComparison.OrdinalIgnoreCase);
+                if (contentIdx >= 0)
+                    return path.Substring(contentIdx + 1);
+
+                return path;
+#else
+                int dataIdx = path.IndexOf("/Data/", StringComparison.OrdinalIgnoreCase);
+                if (dataIdx >= 0)
+                    return path.Substring(dataIdx + 1);
+
+                int contentIdx = path.IndexOf("/Content/", StringComparison.OrdinalIgnoreCase);
+                if (contentIdx >= 0)
+                    return path.Substring(contentIdx + 1);
+
+                return path;
+#endif
+            }
+
+            path = path.TrimStart('/', '\\');
+
+            if (IsPackagedAssetPath(path))
                 return path;
 
-            // Trim absolute paths down to asset roots
-            int dataIdx = path.IndexOf("/Data/", StringComparison.OrdinalIgnoreCase);
-            if (dataIdx >= 0)
-                return path.Substring(dataIdx + 1);
+            return path;
+        }
 
-            int contentIdx = path.IndexOf("/Content/", StringComparison.OrdinalIgnoreCase);
-            if (contentIdx >= 0)
-                return path.Substring(contentIdx + 1);
+        /// <summary>
+        /// Converts a packaged asset path like "Data/..." or "Content/..." into an on-disk path rooted at BaseDirectory.
+        /// Only use this for packaged asset paths on desktop.
+        /// </summary>
+        private static string ToDiskPath(string path)
+        {
+            path = ToAssetPath(path);
 
-            return path.TrimStart('/');
+            if (IsRealFileSystemPath(path))
+                return path;
+
+            path = path.TrimStart('/', '\\');
+
+#if WINDOWS
+            var parts = path.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+#else
+            var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+#endif
+            return Path.GetFullPath(Path.Combine(new[] { BaseDir }.Concat(parts).ToArray()));
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+        //
+        //  STRING HELPERS
+        //
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static string ReadAllText(string path)
+        {
+            using var s = OpenRead(path);
+            using var sr = new StreamReader(s, System.Text.Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+            return sr.ReadToEnd();
+        }
+
+        public static string[] ReadAllLines(string path)
+        {
+            return ReadAllText(path)
+                .Replace("\r\n", "\n")
+                .Replace('\r', '\n')
+                .Split('\n');
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -127,55 +203,90 @@ namespace ProjectZ.InGame.Things
 
         public static bool Exists(string path)
         {
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            path = NormalizePath(path);
+
+            if (IsRealFileSystemPath(path))
+                return File.Exists(path);
+
             path = ToAssetPath(path);
 
-        #if ANDROID || LINUX
-            try { using var _ = TitleContainer.OpenStream(path); return true; }
-            catch { return false; }
-        #else
+#if ANDROID
+            try
+            {
+                using var _ = TitleContainer.OpenStream(path);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+#else
             return File.Exists(ToDiskPath(path));
-        #endif
+#endif
         }
 
         public static Stream OpenRead(string path)
         {
+            if (string.IsNullOrWhiteSpace(path))
+                throw new ArgumentException("Path cannot be null or empty.", nameof(path));
+
+            path = NormalizePath(path);
+
+            if (IsRealFileSystemPath(path))
+                return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+
             path = ToAssetPath(path);
 
-        #if ANDROID || LINUX
+#if ANDROID
             return TitleContainer.OpenStream(path);
-        #else
+#else
             return File.Open(ToDiskPath(path), FileMode.Open, FileAccess.Read, FileShare.Read);
-        #endif
+#endif
         }
 
+        /// <summary>
+        /// Opens either a packaged asset path or a real filesystem path.
+        /// </summary>
         public static Stream OpenReadAny(string path)
         {
-        #if ANDROID || LINUX
-            // Normalize and try to map to an asset path if possible
-            var ap = ToAssetPath(path);
-
-            // If it looks like a packaged asset, load from TitleContainer (APK assets on Android)
-            if (ap.StartsWith("Data/", StringComparison.OrdinalIgnoreCase) ||
-                ap.StartsWith("Content/", StringComparison.OrdinalIgnoreCase))
-            {
-                return OpenRead(ap); // your existing OpenRead already uses TitleContainer on Android / File on desktop
-            }
-        #endif
-            // Otherwise treat as a real filesystem path (mods/user data)
-            return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return OpenRead(path);
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
         //
-        //  DIRECTORY LISTING (returns names only, like AssetManager.List)
+        //  DIRECTORY LISTING
         //
         //-------------------------------------------------------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// Returns names only, not full paths.
+        /// For packaged assets on Android, uses AssetManager.
+        /// For real filesystem folders, uses Directory enumeration.
+        /// </summary>
         public static string[] List(string dir)
         {
+            if (string.IsNullOrWhiteSpace(dir))
+                return Array.Empty<string>();
+
+            dir = NormalizePath(dir);
+
+            if (IsRealFileSystemPath(dir))
+            {
+                if (!Directory.Exists(dir))
+                    return Array.Empty<string>();
+
+                return Directory.EnumerateFileSystemEntries(dir)
+                    .Select(Path.GetFileName)
+                    .Where(n => !string.IsNullOrEmpty(n))
+                    .ToArray();
+            }
+
             dir = ToAssetPath(dir);
 
-        #if ANDROID
+#if ANDROID
             try
             {
                 AssetManager am = Android.App.Application.Context.Assets;
@@ -185,7 +296,7 @@ namespace ProjectZ.InGame.Things
             {
                 return Array.Empty<string>();
             }
-        #else
+#else
             var diskDir = ToDiskPath(dir);
 
             if (!Directory.Exists(diskDir))
@@ -195,18 +306,28 @@ namespace ProjectZ.InGame.Things
                 .Select(Path.GetFileName)
                 .Where(n => !string.IsNullOrEmpty(n))
                 .ToArray();
-        #endif
+#endif
         }
 
         public static bool IsDirectory(string dir)
         {
+            if (string.IsNullOrWhiteSpace(dir))
+                return false;
+
+            dir = NormalizePath(dir);
+
+            if (IsRealFileSystemPath(dir))
+                return Directory.Exists(dir);
+
             dir = ToAssetPath(dir);
 
-        #if ANDROID
+#if ANDROID
+            // AssetManager can't directly distinguish files from directories reliably.
+            // A directory generally returns child entries; files return empty.
             return List(dir).Length > 0;
-        #else
+#else
             return Directory.Exists(ToDiskPath(dir));
-        #endif
+#endif
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -216,9 +337,10 @@ namespace ProjectZ.InGame.Things
         //-------------------------------------------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Enumerates files under a directory. Returned paths are normalized and include the directory prefix.
-        /// - acceptFile: receives the entry filename (no path)
-        /// - skipDirectory: receives the directory name (no path) and returns true to skip it
+        /// Enumerates files under a directory.
+        /// Returned paths include the directory prefix.
+        /// - acceptFile: receives filename only
+        /// - skipDirectory: receives directory name only
         /// </summary>
         public static IEnumerable<string> EnumerateFiles(
             string dir,
@@ -226,12 +348,100 @@ namespace ProjectZ.InGame.Things
             Func<string, bool> acceptFile,
             Func<string, bool> skipDirectory = null)
         {
+            if (string.IsNullOrWhiteSpace(dir))
+                yield break;
+
+            dir = NormalizePath(dir);
+
+            if (IsRealFileSystemPath(dir))
+            {
+                if (!Directory.Exists(dir))
+                    yield break;
+
+                if (!recursive)
+                {
+                    foreach (var file in Directory.EnumerateFiles(dir, "*", SearchOption.TopDirectoryOnly))
+                    {
+                        var name = Path.GetFileName(file);
+
+                        if (acceptFile == null || acceptFile(name))
+                            yield return NormalizePath(file);
+                    }
+
+                    yield break;
+                }
+
+                foreach (var file in EnumerateRealFilesRecursive(dir, acceptFile, skipDirectory))
+                    yield return file;
+
+                yield break;
+            }
+
             dir = ToAssetPath(dir);
 
-        #if ANDROID || LINUX
+#if ANDROID
+            foreach (var file in EnumerateAssetFiles(dir, recursive, acceptFile, skipDirectory))
+                yield return file;
+#else
+            var diskDir = ToDiskPath(dir);
+
+            if (!Directory.Exists(diskDir))
+                yield break;
+
+            if (!recursive)
+            {
+                foreach (var file in Directory.EnumerateFiles(diskDir, "*", SearchOption.TopDirectoryOnly))
+                {
+                    var name = Path.GetFileName(file);
+
+                    if (acceptFile == null || acceptFile(name))
+                        yield return NormalizePath(file);
+                }
+
+                yield break;
+            }
+
+            foreach (var file in EnumerateRealFilesRecursive(diskDir, acceptFile, skipDirectory))
+                yield return file;
+#endif
+        }
+
+        private static IEnumerable<string> EnumerateRealFilesRecursive(
+            string dir,
+            Func<string, bool> acceptFile,
+            Func<string, bool> skipDirectory)
+        {
+            foreach (var entry in Directory.EnumerateFileSystemEntries(dir, "*", SearchOption.TopDirectoryOnly))
+            {
+                var name = Path.GetFileName(entry);
+
+                if (Directory.Exists(entry))
+                {
+                    if (skipDirectory != null && skipDirectory(name))
+                        continue;
+
+                    foreach (var sub in EnumerateRealFilesRecursive(entry, acceptFile, skipDirectory))
+                        yield return sub;
+
+                    continue;
+                }
+
+                if (acceptFile == null || acceptFile(name))
+                    yield return NormalizePath(entry);
+            }
+        }
+
+#if ANDROID
+        private static IEnumerable<string> EnumerateAssetFiles(
+            string dir,
+            bool recursive,
+            Func<string, bool> acceptFile,
+            Func<string, bool> skipDirectory)
+        {
             foreach (var entry in List(dir))
             {
-                var full = $"{dir}/{entry}";
+                var full = string.IsNullOrEmpty(dir) ? entry : $"{dir}/{entry}";
+                full = NormalizePath(full);
 
                 if (IsDirectory(full))
                 {
@@ -241,38 +451,17 @@ namespace ProjectZ.InGame.Things
                     if (skipDirectory != null && skipDirectory(entry))
                         continue;
 
-                    foreach (var sub in EnumerateFiles(full, true, acceptFile, skipDirectory))
+                    foreach (var sub in EnumerateAssetFiles(full, true, acceptFile, skipDirectory))
                         yield return sub;
 
                     continue;
                 }
 
-                if (acceptFile(entry))
+                if (acceptFile == null || acceptFile(entry))
                     yield return full;
             }
-        #else
-            if (!Directory.Exists(dir))
-                yield break;
-
-            var option = recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-
-            foreach (var full in Directory.EnumerateFileSystemEntries(dir, "*", option))
-            {
-                var name = Path.GetFileName(full);
-
-                if (Directory.Exists(full))
-                {
-                    if (skipDirectory != null && skipDirectory(name))
-                        continue;
-
-                    continue;
-                }
-
-                if (acceptFile(name))
-                    yield return NormalizePath(full);
-            }
-        #endif
         }
+#endif
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
         //
@@ -292,11 +481,10 @@ namespace ProjectZ.InGame.Things
         }
 
         /// <summary>
-        /// Opens a file (desktop or APK asset) and reads all bytes.
+        /// Opens a file or asset and reads all bytes.
         /// </summary>
         public static byte[] ReadAllBytes(string path)
         {
-            path = ToAssetPath(path);
             using var stream = OpenRead(path);
             return ReadAllBytes(stream);
         }

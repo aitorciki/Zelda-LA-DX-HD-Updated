@@ -256,19 +256,14 @@ namespace ProjectZ.InGame.Things
             SprWhite.SetData(new[] { Color.White });
 
             // Try to load custom Intro graphics first.
-            if (Directory.Exists(Values.PathGraphicsMods))
+            if (GameFS.IsDirectory(Values.PathGraphicsMods))
             {
                 var introDirs = Directory.EnumerateDirectories(Values.PathGraphicsMods, "Intro", SearchOption.AllDirectories);
 
                 foreach (var introDir in introDirs)
-                {
-                    var possibleIntro = GameFS.NormalizePath(introDir);
-
                     LoadTexturesFromFolder(introDir, false);
-                }
             }
             var introPath = GameFS.NormalizePath(Path.Combine(Values.PathContentFolder, "Intro"));
-
             LoadTexturesFromFolder(introPath, false);
 
             AddSoundEffect(content, "D378-15-0F");
@@ -294,7 +289,7 @@ namespace ProjectZ.InGame.Things
             LoadTilesetSizes();
 
             // Try to load graphics from here before other places.
-            if (Directory.Exists(Values.PathGraphicsMods))
+            if (GameFS.IsDirectory(Values.PathGraphicsMods))
                 LoadTexturesFromFolder(Values.PathGraphicsMods, true);
 
             LoadTexture(out SprGameSequences, Path.Combine(Values.PathContentFolder, "Sequences", "game sequences.png"));
@@ -555,26 +550,22 @@ namespace ProjectZ.InGame.Things
 
         public static string FindAtlasFile(string textureName)
         {
-            // Try to find an atlas with the language code.
-            string basePath = textureName.Replace(".png","");
+            textureName = GameFS.NormalizePath(textureName);
+
+            string basePath = textureName.Replace(".png", "", StringComparison.OrdinalIgnoreCase);
             string fullAtlas = basePath + ".atlas";
 
-            // Fix the path if on Android.
-        #if ANDROID
             if (GameFS.Exists(fullAtlas))
                 return fullAtlas;
-        #else
-            if (File.Exists(fullAtlas))
-                return fullAtlas;
-        #endif
 
-            // Fallback to base atlas file by stripping language + redux.
-            var parts = textureName
-                .Replace(".png", "")
+            var parts = Path.GetFileNameWithoutExtension(textureName)
                 .Split('_')
                 .Where(name => name != "redux" && !_languageList.Contains(name));
 
-            return string.Join("_", parts) + ".atlas";
+            var fallbackName = string.Join("_", parts) + ".atlas";
+            var fallbackPath = Path.Combine(Path.GetDirectoryName(textureName) ?? "", fallbackName);
+
+            return GameFS.NormalizePath(fallbackPath);
         }
 
         public static void LoadContentTextureWithAtlas(ContentManager content, string filePath)
@@ -586,7 +577,7 @@ namespace ProjectZ.InGame.Things
 
         public static void LoadTexture(out Texture2D texture, string assetPath)
         {
-            assetPath = GameFS.ToAssetPath(assetPath);
+            assetPath = GameFS.NormalizePath(assetPath);
 
             using Stream stream = GameFS.OpenReadAny(assetPath);
             texture = Texture2D.FromStream(Game1.Graphics.GraphicsDevice, stream);
@@ -651,10 +642,10 @@ namespace ProjectZ.InGame.Things
         {
             var fileName = Path.Combine(Values.PathTilesetFolder, "tileset size.txt");
 
-            if (!File.Exists(fileName))
+            if (!GameFS.Exists(fileName))
                 return;
 
-            foreach (var line in File.ReadLines(fileName))
+            foreach (var line in GameFS.ReadAllLines(fileName))
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
                     continue;
