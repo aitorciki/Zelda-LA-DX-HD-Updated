@@ -59,6 +59,11 @@ namespace ProjectZ.InGame.Things
         public static SpriteShader ShockShader0;
         public static SpriteShader ShockShader1;
 
+    #if ANDROID
+        // The textures that holds the sprites for the onscreen buttons for Android screens
+        public static Texture2D SprButtons;
+    #endif
+
         public static SpriteFont EditorFont, EditorFontMonoSpace, EditorFontSmallMonoSpace;
         public static SpriteFont GameHeaderFont;
         public static SpriteFont FontCredits, FontCreditsHeader;
@@ -181,11 +186,6 @@ namespace ProjectZ.InGame.Things
                 };
             }
         }
-
-    #if ANDROID
-        public static Texture2D SprButtons;
-    #endif
-
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasChn = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeu = new();
