@@ -185,12 +185,6 @@ namespace ProjectZ.InGame.Controls
             }
         }
 
-        public static Vector2 GetCamVector2()
-        {
-            var st = InputHandler.GamePadState;
-            return new Vector2(st.ThumbSticks.Right.X, -st.ThumbSticks.Right.Y);
-        }
-
         public static void Update()
         {
             if (_scrollCounter < 0)
@@ -241,13 +235,9 @@ namespace ProjectZ.InGame.Controls
 
         public static Vector2 GetMoveVector2()
         {
-            var st = InputHandler.GamePadState;
+            Vector2 vec = GetAnalogDirection();
 
-            Vector2 vec = new Vector2(st.ThumbSticks.Left.X, -st.ThumbSticks.Left.Y);
-
-            if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
-                vec = Vector2.Zero;
-            else if (GameSettings.DigitalAnalog)
+            if (vec != Vector2.Zero && GameSettings.DigitalAnalog)
                 vec = Digitalize(vec);
 
             if (vec == Vector2.Zero)
@@ -262,16 +252,41 @@ namespace ProjectZ.InGame.Controls
             return vec;
         }
 
-        public static Vector2 GetAnalogDirection()
+        public static Vector2 GetCameraVector2()
         {
             var st = InputHandler.GamePadState;
+            Vector2 vec = new Vector2(st.ThumbSticks.Right.X, -st.ThumbSticks.Right.Y);
+            if (Math.Abs(vec.X) > GameSettings.DeadZone || Math.Abs(vec.Y) > GameSettings.DeadZone)
+                return vec;
 
-            var vec = new Vector2(st.ThumbSticks.Left.X, -st.ThumbSticks.Left.Y);
+        #if ANDROID
+            Vector2 touchVec = VirtualController.GetRightStickOutput();
+            if (touchVec != Vector2.Zero)
+                return touchVec;
+        #endif
 
-            if (Math.Abs(vec.X) <= GameSettings.DeadZone && Math.Abs(vec.Y) <= GameSettings.DeadZone)
-                vec = Vector2.Zero;
+            return Vector2.Zero;
+        }
 
-            return vec;
+        public static Vector2 GetAnalogDirection()
+        {
+            // First check physical controller
+            var st = InputHandler.GamePadState;
+
+            Vector2 vec = new Vector2(st.ThumbSticks.Left.X, -st.ThumbSticks.Left.Y);
+
+            if (Math.Abs(vec.X) > GameSettings.DeadZone || Math.Abs(vec.Y) > GameSettings.DeadZone)
+                return vec;
+
+        #if ANDROID
+            // If controller stick isn't being used, use the virtual stick
+            Vector2 touchVec = VirtualController.GetLeftStickOutput();
+
+            if (touchVec != Vector2.Zero)
+                return touchVec;
+        #endif
+
+            return Vector2.Zero;
         }
 
         public static bool LastButtonDown(CButtons button)
@@ -311,16 +326,22 @@ namespace ProjectZ.InGame.Controls
                 if (InputHandler.GamePadDown(ButtonDictionary[button].Buttons[i]))
                     return true;
 
+        #if ANDROID
+            if (VirtualController.ButtonDown(button))
+                return true;
+        #endif
             return false;
         }
 
         public static bool ButtonPressed(CButtons button, bool controllerOnly = false)
         {
+
         #if ANDROID
             // Android controllers often send Select as a KeyEvent (ButtonSelect) instead of a GamePad button.
             if (button == CButtons.Select && InputHandler.PlatformSelectPressed())
                 return true;
         #endif
+
             var direction = GetAnalogDirection();
 
             if (_initDirection && direction != Vector2.Zero)
@@ -346,6 +367,10 @@ namespace ProjectZ.InGame.Controls
             if ((DebugButtons & button) != 0)
                 return true;
 
+        #if ANDROID
+            if (VirtualController.ButtonPressed(button))
+                return true;
+        #endif
             return false;
         }
 
@@ -370,6 +395,10 @@ namespace ProjectZ.InGame.Controls
                 if (InputHandler.GamePadReleased(ButtonDictionary[button].Buttons[i]))
                     return true;
 
+        #if ANDROID
+            if (VirtualController.ButtonReleased(button))
+                return true;
+        #endif
             return false;
         }
 
@@ -411,6 +440,17 @@ namespace ProjectZ.InGame.Controls
         public static CButtons GetPressedButtons()
         {
             CButtons pressedButtons = 0;
+
+        #if ANDROID
+            foreach (CButtons button in Enum.GetValues(typeof(CButtons)))
+            {
+                if (button == CButtons.None)
+                    continue;
+
+                if (VirtualController.ButtonPressed(button))
+                    pressedButtons |= button;
+            }
+        #endif
 
             foreach (var bEntry in ButtonDictionary)
             {

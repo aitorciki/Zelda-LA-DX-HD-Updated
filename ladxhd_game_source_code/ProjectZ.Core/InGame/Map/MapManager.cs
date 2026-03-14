@@ -104,7 +104,7 @@ namespace ProjectZ.InGame.Map
                 CameraOffset = Vector2.Zero;
                 return;
             }
-            var direction = ControlHandler.GetCamVector2();
+            var direction = ControlHandler.GetCameraVector2();
             float cameraSpeed = 0.60f;
             CameraOffset += direction * cameraSpeed * Game1.DeltaTime;
         }

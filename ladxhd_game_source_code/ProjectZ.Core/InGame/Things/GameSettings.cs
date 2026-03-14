@@ -60,6 +60,7 @@
         public static bool    SwapButtons     =  false;
         public static bool    OldMovement     =  false;
         public static bool    DigitalAnalog   =  false;
+        public static int     TouchControls   =  1;
 
         // Modifiers Settings
         public static int     EnemyBonusHP    =  0;
@@ -151,6 +152,7 @@
             SwapButtons     =  false;
             OldMovement     =  false;
             DigitalAnalog   =  false;
+            TouchControls   =  1;
 
             // Modifiers Settings
             EnemyBonusHP    =  0;

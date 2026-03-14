@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+#if ANDROID
+using Microsoft.Xna.Framework.Input.Touch;
+#endif
+
 namespace ProjectZ.Base
 {
     #region InputCharacter
@@ -54,6 +58,7 @@ namespace ProjectZ.Base
 
         private static GamePadState _gamePadState;
         private static GamePadState _lastGamePadState;
+
         private static float _gamePadAccuracy = 0.2f;
 
         private static string _textInputBuffer = "";
@@ -66,6 +71,12 @@ namespace ProjectZ.Base
         public static GamePadState LastGamePadState => _lastGamePadState;
 
     #if ANDROID
+        private static TouchCollection _touchState;
+        private static TouchCollection _lastTouchState;
+
+        public static TouchCollection TouchState => _touchState;
+        public static TouchCollection LastTouchState => _lastTouchState;
+
         private static readonly bool _useAnalogTriggerFallback = true;
     #else
         private static readonly bool _useAnalogTriggerFallback = true;
@@ -81,6 +92,10 @@ namespace ProjectZ.Base
         #if !ANDROID
             Game.Window.TextInput += OnTextInput;
         #endif
+
+        #if ANDROID
+            TouchPanel.EnabledGestures = GestureType.None;
+        #endif
         }
 
         public override void Update(GameTime gameTime)
@@ -90,6 +105,11 @@ namespace ProjectZ.Base
 
             _lastMouseState = _mouseState;
             _mouseState = Mouse.GetState();
+
+        #if ANDROID
+            _lastTouchState = _touchState;
+            _touchState = TouchPanel.GetState();
+        #endif
 
             DetectGamePad();
 
@@ -124,6 +144,10 @@ namespace ProjectZ.Base
             _lastKeyboardState = _keyboardState;
             _lastMouseState = _mouseState;
             _lastGamePadState = _gamePadState;
+
+        #if ANDROID
+            _lastTouchState = _touchState;
+        #endif
         }
 
         public static bool LastKeyDown(Keys key)

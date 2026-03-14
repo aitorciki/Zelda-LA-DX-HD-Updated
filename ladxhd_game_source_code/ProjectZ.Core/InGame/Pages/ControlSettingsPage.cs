@@ -23,6 +23,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleDigitalAnalog;
 
         private float _controlCooldown = 0f;
+        List<string> _tooltips = new List<string>();
         private bool _showTooltip;
 
         public void SetDeadZoneValue(int value) => ((InterfaceSlider)_sliderDeadZone).CurrentStep = value;
@@ -49,56 +50,81 @@ namespace ProjectZ.InGame.Pages
             _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
 
             var buttonWidth = 320;
+
+        #if ANDROID
+            var buttonHeight = 12;
+            var sliderHeight = 10;
+        #else
             var buttonHeight = 14;
+            var sliderHeight = 11;
+        #endif
 
             _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
+            // Slider: Android On-Screen Controls
+        #if ANDROID
+            _sliderDeadZone = new InterfaceSlider("settings_controls_onscreenpad", 
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.TouchControls,
+                number => { GameSettings.TouchControls = number; })
+                { SetString = number => SetOnScreenControlsVisibility(number) };
+            _contentLayout.AddElement(_sliderDeadZone);
+            _tooltips.Add("tooltip_controls_onscreenpad");
+        #endif
+
             // Slider: Deadzone
             _sliderDeadZone = new InterfaceSlider("settings_controls_deadzone", 
-                buttonWidth, 11, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 100, 1, (int)(GameSettings.DeadZone * 100),
                 number => { GameSettings.DeadZone = (float)(number * 0.01); })
                 { SetString = number => ": " + number + "%" };
             _contentLayout.AddElement(_sliderDeadZone);
+            _tooltips.Add("tooltip_controls_deadzone");
 
             // Button: Controller Type
             _contentLayout.AddElement(_controllerType = new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(0, 2), "", PressButtonSetController));
             UpdateControllerOverrideText();
+            _tooltips.Add("tooltip_controls_gamepad");
 
             // Button: Remap Settings
             _contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, buttonHeight), new Point(1, 2), 
                 "settings_controls_remap", element => { Game1.UiPageManager.ChangePage(typeof(ControlMappingPage)); }));
+            _tooltips.Add("tooltip_controls_remap");
 
             // Toggle: Triggers Scale Game
             _toggleTriggersScale = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_triggersscale", GameSettings.TriggersScale, 
                 newState => { GameSettings.TriggersScale = newState; });
             _contentLayout.AddElement(_toggleTriggersScale);
+            _tooltips.Add("tooltip_controls_triggersscale");
 
             // Toggle: Toggle Six Buttons
             _toggleSixButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_sixbuttons", GameSettings.SixButtons, 
                 newState => { UpdateSixButtonToggle(newState); });
             _contentLayout.AddElement(_toggleSixButtons);
+            _tooltips.Add("tooltip_controls_triggersscale");
 
             // Toggle: Swap Confirm & Cancel
             _toggleSwapButtons = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_swapbuttons", GameSettings.SwapButtons, 
                 newState => { _controlCooldown = 500f; GameSettings.SwapButtons = newState; ControlHandler.SetConfirmCancelButtons(); });
             _contentLayout.AddElement(_toggleSwapButtons);
+            _tooltips.Add("tooltip_controls_swapconfirm");
 
             // Toggle: Classic Movement
             _toggleClassicMove = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_classicmove", GameSettings.OldMovement, 
                 newState => { GameSettings.OldMovement = newState; });
             _contentLayout.AddElement(_toggleClassicMove);
+            _tooltips.Add("tooltip_controls_classicmove");
 
             // Toggle: Digital Analog
             _toggleDigitalAnalog = InterfaceToggle.GetToggleButton(new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_controls_digitalanalog", GameSettings.DigitalAnalog, 
                 newState => { GameSettings.DigitalAnalog = newState; });
             _contentLayout.AddElement(_toggleDigitalAnalog);
+            _tooltips.Add("tooltip_controls_digitalanalog");
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -171,6 +197,21 @@ namespace ProjectZ.InGame.Pages
             // If currently in-game then update equipment. Fixes sword/shield remaining or not being equipped if equipped to L/R buttons.
             if (Game1.InProgress)
                 Game1.GameManager.UpdateEquipment();
+
+        #if ANDROID
+            // Move the LB and RB buttons near the face buttons on the virtual controller.
+            VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight);
+        #endif
+        }
+
+        private string SetOnScreenControlsVisibility(int number)
+        {
+            return ": " + number switch
+            {
+                0 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_01", "error"),
+                1 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_02", "error"),
+                2 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_03", "error"),
+            };
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
@@ -190,23 +231,17 @@ namespace ProjectZ.InGame.Pages
         {
             // Detect back button press by checking the index of the main InterfaceListLayout.
             if (_controlSettingsList.SelectionIndex == 2)
-                return  Game1.LanguageManager.GetString("tooltip_default", "error");
+                return Game1.LanguageManager.GetString("tooltip_default", "error");
 
             // Detect the chosen button by checking the content InterfaceListLayout.
             int index = _contentLayout.SelectionIndex;
             string tooltip = "Select an option to view its tooltip.";
 
-            // Use the selected index to determine which tooltip to show.
-            switch (index) 
+            // Get the tooltip that matches the index.
+            for (int i = 0; i < _tooltips.Count; i++)
             {
-                case 0:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_deadzone", "error"); break; }
-                case 1:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_gamepad", "error"); break; }
-                case 2:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_remap", "error"); break; }
-                case 3:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_triggersscale", "error"); break; }
-                case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_sixbuttons", "error"); break; }
-                case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_swapconfirm", "error"); break; }
-                case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_classicmove", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_controls_digitalanalog", "error"); break; }
+                if (i == index)
+                    tooltip = Game1.LanguageManager.GetString(_tooltips[i], "error");
             }
             // Display the tooltip in the tooltip window.
             return tooltip;

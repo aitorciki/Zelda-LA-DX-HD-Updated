@@ -336,6 +336,11 @@ namespace ProjectZ
             ControlHandler.Initialize();
             Components.Add(new InputHandler(this));
 
+        #if ANDROID
+            // Load the on-screen controller if on Android.
+            VirtualController.Initialize(Graphics.PreferredBackBufferWidth, Graphics.PreferredBackBufferHeight);
+        #endif
+
             // Load the users saved settings.
             SettingsSaveLoad.LoadSettings();
 
@@ -444,7 +449,13 @@ namespace ProjectZ
                 UpdateFpsSettings();
                 FpsSettingChanged = false;
             }
-            // Update input from any input devices (controller/keyboard).
+
+        #if ANDROID
+            // Update the on-screen controller if on Android.
+            VirtualController.Update();
+        #endif
+
+            // Update input from any input devices.
             ControlHandler.Update();
 
             // Update all render targets.
@@ -631,6 +642,10 @@ namespace ProjectZ
 
                 // draw the screen tops
                 ScreenManager.DrawTop(SpriteBatch);
+
+            #if ANDROID
+                VirtualController.Draw(SpriteBatch);
+            #endif
 
                 // draw the debug text
                 DrawDebugText();
@@ -954,6 +969,11 @@ namespace ProjectZ
             UiManager?.OnResize();
             ScreenManager?.OnResize(WindowWidth, WindowHeight);
             UiPageManager?.OnResize(WindowWidth, WindowHeight);
+
+        #if ANDROID
+            // Update virtual button sizes.
+            VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight);
+        #endif
 
             // This needs to go false or it will run every loop.
             ScaleChanged = false;

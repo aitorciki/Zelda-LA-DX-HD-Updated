@@ -182,6 +182,10 @@ namespace ProjectZ.InGame.Things
             }
         }
 
+    #if ANDROID
+        public static Texture2D SprButtons;
+    #endif
+
         public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasChn = new();
         public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeu = new();
@@ -255,6 +259,11 @@ namespace ProjectZ.InGame.Things
             SprWhite = new Texture2D(graphics, 1, 1);
             SprWhite.SetData(new[] { Color.White });
 
+        #if ANDROID
+            // Load the button textures for Android.
+            LoadTexture(out SprButtons, Path.Combine(Values.PathContentFolder, "Buttons", "buttons.png"));
+        #endif
+
             // Try to load custom Intro graphics first.
             if (GameFS.IsDirectory(Values.PathGraphicsMods))
             {
@@ -288,13 +297,15 @@ namespace ProjectZ.InGame.Things
         {
             LoadTilesetSizes();
 
-            // Try to load graphics from here before other places.
+            // Try to load graphics mods before other places.
             if (GameFS.IsDirectory(Values.PathGraphicsMods))
                 LoadTexturesFromFolder(Values.PathGraphicsMods, true);
 
+            // Load game sequence textures.
             LoadTexture(out SprGameSequences, Path.Combine(Values.PathContentFolder, "Sequences", "game sequences.png"));
             LoadTexture(out SprGameSequencesFinal, Path.Combine(Values.PathContentFolder, "Sequences", "end sequence.png"));
 
+            // Load the photo textures.
             LoadTexture(out SprPhotosEng, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos.png"));
             TryLoadTextures(ref SprPhotosChn, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_chn.png"));
             TryLoadTextures(ref SprPhotosDeu, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_deu.png"));
@@ -305,6 +316,7 @@ namespace ProjectZ.InGame.Things
             TryLoadTextures(ref SprPhotosPor, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_por.png"));
             TryLoadTextures(ref SprPhotosRus, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_rus.png"));
 
+            // Load the colored photo textures.
             LoadTexture(out SprPhotosEngRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux.png"));
             TryLoadTextures(ref SprPhotosChnRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_chn.png"));
             TryLoadTextures(ref SprPhotosDeuRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_deu.png"));
@@ -315,8 +327,10 @@ namespace ProjectZ.InGame.Things
             TryLoadTextures(ref SprPhotosPorRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_por.png"));
             TryLoadTextures(ref SprPhotosRusRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_rus.png"));
 
+            // Load the editor icons.
             LoadTexture(out _, Path.Combine(Values.PathContentFolder, "Editor", "editorIcons4x.png"));
 
+            // Load the UI textures.
             Texture2D _nullTex = null;
             LoadTexture(out _, Path.Combine(Values.PathContentFolder, "ui.png"));
             TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_chn.png"));
