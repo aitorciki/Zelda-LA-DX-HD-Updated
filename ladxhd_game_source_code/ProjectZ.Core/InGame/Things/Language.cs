@@ -20,7 +20,7 @@ namespace ProjectZ.InGame.Things
         public void Load()
         {
             var baseFiles = GameFS.EnumerateFiles(
-                Values.PathLanguageFolder,
+                Path.Combine(Values.PathDataFolder, "Languages"),
                 recursive: true,
                 acceptFile: name => name.EndsWith(".lng", StringComparison.OrdinalIgnoreCase))
                 .OrderBy(f => Path.GetFileName(f), StringComparer.OrdinalIgnoreCase)

@@ -548,7 +548,7 @@ namespace ProjectZ.InGame.Overlay
                     skirtPosition.X, skirtPosition.Y,
                     _skirtRectangle.Width, _skirtRectangle.Height),
                 new Rectangle(_skirtRectangle.X, _skirtRectangle.Y + _skirtRectangle.Height,
-                    _skirtRectangle.Width, _skirtRectangle.Height), Values.SkirtColors[Game1.GameManager.CloakType]);
+                    _skirtRectangle.Width, _skirtRectangle.Height), Values.TunicColors[Game1.GameManager.CloakType]);
         }
     }
 }

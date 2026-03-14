@@ -85,7 +85,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 musicTileData = "musicOverworldClassic.data";
 
             // Reload the data into the game.
-            _musicData = DataMapSerializer.LoadData(Path.Combine(Values.PathContentFolder, musicTileData));
+            _musicData = DataMapSerializer.LoadData(Path.Combine(Values.PathDataFolder, musicTileData));
         }
 
     }

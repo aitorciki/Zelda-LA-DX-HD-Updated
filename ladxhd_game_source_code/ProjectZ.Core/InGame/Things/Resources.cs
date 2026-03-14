@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -18,19 +17,6 @@ namespace ProjectZ.InGame.Things
 {
     public class Resources
     {
-        public class Texture
-        {
-            public string Name;
-            public Texture2D SprTexture;
-
-            public Texture(string name)
-            {
-                Name = name;
-            }
-        }
-        // A list of all currently supported language codes.
-        static string[] _languageList = { "chn", "deu", "esp", "fre", "ind", "ita", "por", "rus" };
-
         public static Effect RoundedCornerEffect;
         public static Effect BlurEffect;
         public static Effect RoundedCornerBlurEffect;
@@ -102,11 +88,9 @@ namespace ProjectZ.InGame.Things
         public static Texture2D SprIconOptions, SprIconErase, SprIconCopy, EditorIconEdit, EditorIconSelect;
         public static Texture2D sgbBorder;
 
-        public static List<Texture> TextureList = new();
-        public static List<Texture> ReloadQueue = new();
-
-        public static Dictionary<string, int> TilesetSizes = new();
-        public static Dictionary<string, SoundEffect> SoundEffects = new();
+        public static Dictionary<string, int> TilesetSizes = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, SoundEffect> SoundEffects = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, Texture2D> TextureList = new (StringComparer.OrdinalIgnoreCase);
 
         public static int GameFontHeight = 10;
         public static int EditorFontHeight;
@@ -186,25 +170,27 @@ namespace ProjectZ.InGame.Things
                 };
             }
         }
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasChn = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeu = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasEsp = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasFre = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasInd = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasIta = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasPor = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRus = new();
+        private static readonly Dictionary<string, string> _atlasPathCache = new (StringComparer.OrdinalIgnoreCase);
 
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasChnRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeuRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasEspRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasFreRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasIndRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasItaRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasPorRedux = new();
-        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRusRedux = new();
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlas = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasChn = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeu = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasEsp = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasFre = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasInd = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasIta = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasPor = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRus = new(StringComparer.OrdinalIgnoreCase);
+
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasChnRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasDeuRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasEspRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasFreRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasIndRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasItaRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasPorRedux = new(StringComparer.OrdinalIgnoreCase);
+        public static Dictionary<string, DictAtlasEntry> SpriteAtlasRusRedux = new(StringComparer.OrdinalIgnoreCase);
 
         public enum AtlasLanguage { English, Chinese, German, Spanish, French, Indonesian, Italian, Portuguese, Russian }
         public enum AtlasVariant { Default, Redux }
@@ -216,19 +202,24 @@ namespace ProjectZ.InGame.Things
                 .Split('_');
 
             AtlasLanguage lang = AtlasLanguage.English;
-            if (parts.Contains("chn")) lang = AtlasLanguage.Chinese;
-            else if (parts.Contains("deu")) lang = AtlasLanguage.German;
-            else if (parts.Contains("esp")) lang = AtlasLanguage.Spanish;
-            else if (parts.Contains("fre")) lang = AtlasLanguage.French;
-            else if (parts.Contains("ind")) lang = AtlasLanguage.Indonesian;
-            else if (parts.Contains("ita")) lang = AtlasLanguage.Italian;
-            else if (parts.Contains("por")) lang = AtlasLanguage.Portuguese;
-            else if (parts.Contains("rus")) lang = AtlasLanguage.Russian;
+            AtlasVariant variant = AtlasVariant.Default;
 
-            AtlasVariant variant = parts.Contains("redux") 
-                ? AtlasVariant.Redux 
-                : AtlasVariant.Default;
+            for (int i = 0; i < parts.Length; i++)
+            {
+                switch (parts[i])
+                {
+                    case "chn": lang = AtlasLanguage.Chinese; break;
+                    case "deu": lang = AtlasLanguage.German; break;
+                    case "esp": lang = AtlasLanguage.Spanish; break;
+                    case "fre": lang = AtlasLanguage.French; break;
+                    case "ind": lang = AtlasLanguage.Indonesian; break;
+                    case "ita": lang = AtlasLanguage.Italian; break;
+                    case "por": lang = AtlasLanguage.Portuguese; break;
+                    case "rus": lang = AtlasLanguage.Russian; break;
 
+                    case "redux": variant = AtlasVariant.Redux; break;
+                }
+            }
             return (lang, variant);
         }
 
@@ -261,11 +252,11 @@ namespace ProjectZ.InGame.Things
 
         #if ANDROID
             // Load the button textures for Android.
-            LoadTexture(out SprButtons, Path.Combine(Values.PathContentFolder, "Buttons", "buttons.png"));
+            LoadTexture(out SprButtons, Path.Combine(Values.PathDataFolder, "Buttons", "buttons.png"));
         #endif
 
             // base first
-            var introPath = GameFS.NormalizePath(Path.Combine(Values.PathContentFolder, "Intro"));
+            var introPath = GameFS.NormalizePath(Path.Combine(Values.PathDataFolder, "Intro"));
             LoadTexturesFromFolder(introPath, false);
 
             // mods second
@@ -292,62 +283,62 @@ namespace ProjectZ.InGame.Things
         private static void TryLoadTextures(ref Texture2D target, string inputPath)
         {
             inputPath = GameFS.NormalizePath(inputPath);
-            if (GameFS.Exists(inputPath))
-                LoadTexture(out target, inputPath);
+            try { LoadTexture(out target, inputPath); }
+            catch { }
         }
 
         public static void LoadTextures(GraphicsDevice graphics, ContentManager content)
         {
             LoadTilesetSizes();
 
+            // Load the editor icons.
+            LoadTexture(out _, Path.Combine(Values.PathDataFolder, "Editor", "editorIcons4x.png"));
+
             // Load game sequence textures.
-            LoadTexture(out SprGameSequences, Path.Combine(Values.PathContentFolder, "Sequences", "game sequences.png"));
-            LoadTexture(out SprGameSequencesFinal, Path.Combine(Values.PathContentFolder, "Sequences", "end sequence.png"));
+            LoadTexture(out SprGameSequences, Path.Combine(Values.PathDataFolder, "Sequences", "game sequences.png"));
+            LoadTexture(out SprGameSequencesFinal, Path.Combine(Values.PathDataFolder, "Sequences", "end sequence.png"));
 
             // Load the photo textures.
-            LoadTexture(out SprPhotosEng, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos.png"));
-            TryLoadTextures(ref SprPhotosChn, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_chn.png"));
-            TryLoadTextures(ref SprPhotosDeu, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_deu.png"));
-            TryLoadTextures(ref SprPhotosEsp, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_esp.png"));
-            TryLoadTextures(ref SprPhotosFre, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_fre.png"));
-            TryLoadTextures(ref SprPhotosInd, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_ind.png"));
-            TryLoadTextures(ref SprPhotosIta, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_ita.png"));
-            TryLoadTextures(ref SprPhotosPor, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_por.png"));
-            TryLoadTextures(ref SprPhotosRus, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_rus.png"));
+            LoadTexture(out SprPhotosEng, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos.png"));
+            TryLoadTextures(ref SprPhotosChn, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_chn.png"));
+            TryLoadTextures(ref SprPhotosDeu, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_deu.png"));
+            TryLoadTextures(ref SprPhotosEsp, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_esp.png"));
+            TryLoadTextures(ref SprPhotosFre, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_fre.png"));
+            TryLoadTextures(ref SprPhotosInd, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_ind.png"));
+            TryLoadTextures(ref SprPhotosIta, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_ita.png"));
+            TryLoadTextures(ref SprPhotosPor, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_por.png"));
+            TryLoadTextures(ref SprPhotosRus, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_rus.png"));
 
             // Load the colored photo textures.
-            LoadTexture(out SprPhotosEngRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux.png"));
-            TryLoadTextures(ref SprPhotosChnRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_chn.png"));
-            TryLoadTextures(ref SprPhotosDeuRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_deu.png"));
-            TryLoadTextures(ref SprPhotosEspRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_esp.png"));
-            TryLoadTextures(ref SprPhotosFreRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_fre.png"));
-            TryLoadTextures(ref SprPhotosIndRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_ind.png"));
-            TryLoadTextures(ref SprPhotosItaRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_ita.png"));
-            TryLoadTextures(ref SprPhotosPorRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_por.png"));
-            TryLoadTextures(ref SprPhotosRusRedux, Path.Combine(Values.PathContentFolder, "Photo Mode", "photos_redux_rus.png"));
-
-            // Load the editor icons.
-            LoadTexture(out _, Path.Combine(Values.PathContentFolder, "Editor", "editorIcons4x.png"));
+            LoadTexture(out SprPhotosEngRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux.png"));
+            TryLoadTextures(ref SprPhotosChnRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_chn.png"));
+            TryLoadTextures(ref SprPhotosDeuRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_deu.png"));
+            TryLoadTextures(ref SprPhotosEspRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_esp.png"));
+            TryLoadTextures(ref SprPhotosFreRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_fre.png"));
+            TryLoadTextures(ref SprPhotosIndRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_ind.png"));
+            TryLoadTextures(ref SprPhotosItaRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_ita.png"));
+            TryLoadTextures(ref SprPhotosPorRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_por.png"));
+            TryLoadTextures(ref SprPhotosRusRedux, Path.Combine(Values.PathDataFolder, "Photo Mode", "photos_redux_rus.png"));
 
             // Load the UI textures.
             Texture2D _nullTex = null;
-            LoadTexture(out _, Path.Combine(Values.PathContentFolder, "ui.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_chn.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_deu.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_esp.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_fre.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_ind.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_ita.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_por.png"));
-            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathContentFolder, "ui_rus.png"));
+            LoadTexture(out _, Path.Combine(Values.PathDataFolder, "ui.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_chn.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_deu.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_esp.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_fre.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_ind.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_ita.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_por.png"));
+            TryLoadTextures(ref _nullTex, Path.Combine(Values.PathDataFolder, "ui_rus.png"));
 
             // Load sequences and light graphics.
-            LoadTexturesFromFolder(Path.Combine(Values.PathContentFolder, "Sequences"));
-            LoadTexturesFromFolder(Path.Combine(Values.PathContentFolder, "Light"));
+            LoadTexturesFromFolder(Path.Combine(Values.PathDataFolder, "Light"));
+            LoadTexturesFromFolder(Path.Combine(Values.PathDataFolder, "Sequences"));
 
             // Load the tilesets and map objects.
-            LoadTexturesFromFolder(Values.PathMapObjectFolder);
-            LoadTexturesFromFolder(Values.PathTilesetFolder);
+            LoadTexturesFromFolder(Path.Combine(Values.PathDataFolder, "Map Objects"));
+            LoadTexturesFromFolder(Path.Combine(Values.PathDataFolder, "Maps", "Tilesets"));
 
             // Load graphics mods last so they override base assets
             var graphicsModsPath = GameFS.NormalizePath(Values.PathGraphicsMods);
@@ -541,65 +532,84 @@ namespace ProjectZ.InGame.Things
 
         public static void LoadTexturesFromFolder(string path, bool recurse = false)
         {
-            foreach (var full in GameFS.EnumerateFiles(path, recurse, name => name.EndsWith(".png", StringComparison.OrdinalIgnoreCase), skipDirectory: dir => string.Equals(dir, "Intro", StringComparison.OrdinalIgnoreCase)))
+            foreach (var full in GameFS.EnumerateFiles(
+                path, 
+                recurse, 
+                name => name.EndsWith(".png", StringComparison.OrdinalIgnoreCase), 
+                skipDirectory: dir => string.Equals(dir, "Intro", StringComparison.OrdinalIgnoreCase)))
             {
                 string textureName = Path.GetFileName(full);
-                var existing = TextureList.FirstOrDefault(t => t.Name.Equals(textureName, StringComparison.OrdinalIgnoreCase));
-
-                if (existing != null)
-                {
-                    LoadTexture(out existing.SprTexture, full);
-                }
-                else
-                {
-                    var newTexture = new Texture(textureName);
-                    LoadTexture(out newTexture.SprTexture, full);
-                    TextureList.Add(newTexture);
-                }
+                LoadTexture(out var texture, full);
+                TextureList[textureName] = texture;
             }
         }
 
+        private static readonly HashSet<string> _languageSet = new(StringComparer.OrdinalIgnoreCase) { "chn", "deu", "esp", "fre", "ind", "ita", "por", "rus" };
+
+        private static string StripLanguageAndVariantTags(string fileNameWithoutExtension, bool stripRedux)
+        {
+            string[] parts = fileNameWithoutExtension.Split('_');
+            var sb = new System.Text.StringBuilder(fileNameWithoutExtension.Length);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                string part = parts[i];
+
+                if (_languageSet.Contains(part))
+                    continue;
+
+                if (stripRedux && part.Equals("redux", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (sb.Length > 0)
+                    sb.Append('_');
+
+                sb.Append(part);
+            }
+
+            return sb.ToString();
+        }
+
+        private static readonly Dictionary<string, string> _textureFallbackNameCache = new(StringComparer.OrdinalIgnoreCase);
+
         public static Texture2D GetTexture(string name)
         {
-            // Try exact match first.
-            var match = TextureList.FirstOrDefault(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (TextureList.TryGetValue(name, out var texture))
+                return texture;
 
-            if (match != null)
-                return match.SprTexture;
-
-            // Remove language tags and try again.
-            string[] parts = Path.GetFileNameWithoutExtension(name).Split('_');
-
-            // Rebuild filename skipping language parts.
-            string newName = string.Join("_", parts.Where(p => !_languageList.Contains(p))) + Path.GetExtension(name);
-            match = TextureList.FirstOrDefault(t => t.Name.Equals(newName, StringComparison.OrdinalIgnoreCase));
-            return match?.SprTexture;
+            if (!_textureFallbackNameCache.TryGetValue(name, out var newName))
+            {
+                string stripped = StripLanguageAndVariantTags(Path.GetFileNameWithoutExtension(name), stripRedux: false);
+                newName = stripped + Path.GetExtension(name);
+                _textureFallbackNameCache[name] = newName;
+            }
+            return TextureList.TryGetValue(newName, out texture) ? texture : null;
         }
 
         public static string FindAtlasFile(string textureName)
         {
             textureName = GameFS.NormalizePath(textureName);
 
+            if (_atlasPathCache.TryGetValue(textureName, out var cached))
+                return cached;
+
             string basePath = textureName.Replace(".png", "", StringComparison.OrdinalIgnoreCase);
             string fullAtlas = basePath + ".atlas";
 
             if (GameFS.Exists(fullAtlas))
-                return fullAtlas;
+                return _atlasPathCache[textureName] = fullAtlas;
 
-            var parts = Path.GetFileNameWithoutExtension(textureName)
-                .Split('_')
-                .Where(name => name != "redux" && !_languageList.Contains(name));
+            string stripped = StripLanguageAndVariantTags(Path.GetFileNameWithoutExtension(textureName), stripRedux: true);
+            string fallbackName = stripped + ".atlas";
+            string fallbackPath = GameFS.NormalizePath(Path.Combine(Path.GetDirectoryName(textureName) ?? "", fallbackName));
 
-            var fallbackName = string.Join("_", parts) + ".atlas";
-            var fallbackPath = Path.Combine(Path.GetDirectoryName(textureName) ?? "", fallbackName);
-
-            return GameFS.NormalizePath(fallbackPath);
+            return _atlasPathCache[textureName] = fallbackPath;
         }
 
         public static void LoadContentTextureWithAtlas(ContentManager content, string filePath)
         {
             var texture = content.Load<Texture2D>(filePath);
-            var atlasPath = FindAtlasFile(Path.Combine(Values.PathContentFolder, filePath));
+            var atlasPath = FindAtlasFile(Path.Combine(Values.PathDataFolder, filePath));
             SpriteAtlasSerialization.LoadSourceDictionary(texture, atlasPath, SpriteAtlas);
         }
 
@@ -668,7 +678,7 @@ namespace ProjectZ.InGame.Things
 
         public static void LoadTilesetSizes()
         {
-            var fileName = Path.Combine(Values.PathTilesetFolder, "tileset size.txt");
+            var fileName = Path.Combine(Values.PathDataFolder, "Maps", "Tilesets", "tileset size.txt");
 
             if (!GameFS.Exists(fileName))
                 return;

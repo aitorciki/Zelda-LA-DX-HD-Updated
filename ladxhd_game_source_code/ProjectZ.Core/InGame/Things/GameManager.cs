@@ -217,7 +217,7 @@ namespace ProjectZ.InGame.Things
             MapManager.Load();
             ItemManager.Load();
 
-            DialogPathLoader.LoadScripts(Path.Combine(Values.PathContentFolder, "scripts.zScript"), _dialogPaths);
+            DialogPathLoader.LoadScripts(Path.Combine(Values.PathDataFolder, "scripts.zScript"), _dialogPaths);
         }
 
         public void OnLoad()
@@ -1262,7 +1262,7 @@ namespace ProjectZ.InGame.Things
                 return true;
 
             // load the mini map
-            var fileName = Path.Combine(Values.PathMinimapFolder, mapName) + ".txt";
+            var fileName = Path.Combine(Values.PathDataFolder, "Dungeon", mapName) + ".txt";
             var dungeonMap = SaveLoadMap.LoadMiniMap(fileName);
 
             if (dungeonMap == null)

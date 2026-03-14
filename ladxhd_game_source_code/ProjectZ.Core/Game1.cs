@@ -353,7 +353,7 @@ namespace ProjectZ
             ThreadPool.QueueUserWorkItem(LoadContentThreaded);
 
             // Initialize the GBS Player and load in the Link's Awakening GBS file.
-            GbsPlayer.LoadFile(Path.Combine(Values.PathContentFolder, "Music", "awakening.gbs"));
+            GbsPlayer.LoadFile(Path.Combine(Values.PathDataFolder, "Music", "awakening.gbs"));
             GbsPlayer.StartThread();
 
             // set the fps settings of the game

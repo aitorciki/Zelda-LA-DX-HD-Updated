@@ -37,26 +37,19 @@ namespace ProjectZ.InGame.Things
         public static Color OverlayBackgroundColor = new Color(255, 255, 190) * 0.55f;
         public static Color OverlayBackgroundBlurColor = new Color(255, 255, 255, 255);
 
-        public static Color[] SkirtColors = { new Color(16, 168, 64), new Color(0, 38, 255), new Color(255, 0, 0) };
+        public static Color[] TunicColors = { new Color(16, 168, 64), new Color(0, 38, 255), new Color(255, 0, 0) };
 
         public static string WorkingDirectory = AppContext.BaseDirectory;
         public static string UserDataRoot { get; private set; } = AppContext.BaseDirectory;
         public static void SetUserDataRoot(string root) { UserDataRoot = root; }
 
         public static string AppDataFolder = Environment.ExpandEnvironmentVariables("%LocalAppData%");
+        public static string PathSaveFolder => SaveManager.GetSaveFilePath();
 
-        public static string PathContentFolder = "Data";
-        public static string PathLanguageFolder => Path.Combine(PathContentFolder, "Languages");
-        public static string PathMapsFolder => Path.Combine(PathContentFolder, "Maps");
-        public static string PathTilesetFolder => Path.Combine(PathContentFolder, "Maps", "Tilesets");
-        public static string PathMapObjectFolder => Path.Combine(PathContentFolder, "Map Objects");
-        public static string PathLightsFolder => Path.Combine(PathContentFolder, "Lights");
-        public static string PathAnimationFolder => Path.Combine(PathContentFolder, "Animations");
-        public static string PathMinimapFolder => Path.Combine(PathContentFolder, "Dungeon");
+        public static string PathDataFolder = "Data";
         public static string PathMods => Path.Combine(UserDataRoot, "Mods");
         public static string PathLAHDMods => Path.Combine(PathMods, "LAHDMods");
         public static string PathGraphicsMods => Path.Combine(PathMods, "Graphics");
-        public static string PathSaveFolder => SaveManager.GetSaveFilePath();
 
         public const string EditorUiObjectEditor = "objectEditor";
         public const string EditorUiObjectSelection = "objectSelection";
@@ -97,9 +90,9 @@ namespace ProjectZ.InGame.Things
         public static int LayerPlayer = 2;      // same layer as the player
         public static int LayerTop = 3;         // on top of the player
 
-        public static int LightLayer0 = 0;  // lamp
-        public static int LightLayer1 = 1;  // teleporter light
-        public static int LightLayer2 = 2;  // dark room
+        public static int LightLayer0 = 0;      // lamp
+        public static int LightLayer1 = 1;      // teleporter light
+        public static int LightLayer2 = 2;      // dark room
         public static int LightLayer3 = 3;
 
         public static int HandItemSlots = 6;

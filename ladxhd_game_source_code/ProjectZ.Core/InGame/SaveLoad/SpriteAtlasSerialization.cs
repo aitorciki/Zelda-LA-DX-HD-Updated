@@ -10,10 +10,34 @@ namespace ProjectZ.InGame.SaveLoad
 {
     public static class SpriteAtlasSerialization
     {
+        private static readonly Dictionary<string, SpriteAtlas> _atlasCache = new(StringComparer.OrdinalIgnoreCase);
+
+        public static void ClearAtlasCache()
+        {
+            _atlasCache.Clear();
+        }
+
+        private static SpriteAtlas CloneAtlas(SpriteAtlas source)
+        {
+            var clone = new SpriteAtlas { Scale = source.Scale };
+
+            for (int i = 0; i < source.Data.Count; i++)
+            {
+                var e = source.Data[i];
+                clone.Data.Add(new AtlasEntry
+                {
+                    EntryId = e.EntryId,
+                    SourceRectangle = e.SourceRectangle,
+                    Origin = e.Origin
+                });
+            }
+            return clone;
+        }
+
         public sealed class SpriteAtlas
         {
-            public int Scale = 1;
             public List<AtlasEntry> Data { get; } = new();
+            public int Scale = 1;
         }
 
         public sealed class AtlasEntry
@@ -78,13 +102,24 @@ namespace ProjectZ.InGame.SaveLoad
             if (!GameFS.Exists(filePath))
                 return false;
 
+            if (_atlasCache.TryGetValue(filePath, out var cachedAtlas))
+            {
+                if (clearExisting)
+                    spriteAtlas.Data.Clear();
+
+                var clone = CloneAtlas(cachedAtlas);
+                spriteAtlas.Scale = clone.Scale;
+                spriteAtlas.Data.AddRange(clone.Data);
+                return true;
+            }
+
             if (clearExisting)
                 spriteAtlas.Data.Clear();
 
             using var stream = GameFS.OpenRead(filePath);
             using var reader = new StreamReader(stream);
 
-            _ = reader.ReadLine();
+            _ = reader.ReadLine(); // version
 
             var scaleLine = reader.ReadLine();
             if (!int.TryParse(scaleLine, NumberStyles.Integer, CultureInfo.InvariantCulture, out var scale) || scale <= 0)
@@ -109,7 +144,10 @@ namespace ProjectZ.InGame.SaveLoad
                 if (parts.Length < 4)
                     continue;
 
-                if (!TryInt(parts, 0, out int x) || !TryInt(parts, 1, out int y) || !TryInt(parts, 2, out int w) || !TryInt(parts, 3, out int h))
+                if (!TryInt(parts, 0, out int x) ||
+                    !TryInt(parts, 1, out int y) ||
+                    !TryInt(parts, 2, out int w) ||
+                    !TryInt(parts, 3, out int h))
                     continue;
 
                 float ox = 0, oy = 0;
@@ -125,6 +163,7 @@ namespace ProjectZ.InGame.SaveLoad
                     Origin = new Vector2(ox, oy)
                 });
             }
+            _atlasCache[filePath] = CloneAtlas(spriteAtlas);
             return true;
         }
 
