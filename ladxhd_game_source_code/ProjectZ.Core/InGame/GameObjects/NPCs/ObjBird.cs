@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
@@ -31,6 +33,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private bool _attackMode;
         private bool _swarmSpawn;
         private int _hitCounter;
+
+        private List<ObjBird> _chickenList = new List<ObjBird>();
 
         public ObjBird() : base("bird") { }
 
@@ -109,12 +113,14 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
         public override void Reset()
         {
+            _attackMode = false;
             _damageField.IsActive = false;
             _hitComponent.IsActive = true;
             _pushComponent.IsActive = true;
             _carriableComponent.IsActive = true;
             _aiComponent.ChangeState("idle");
             _hitCounter = 0;
+            DeleteBirds();
         }
 
         public void InitAttackMode()
@@ -155,7 +161,19 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             Game1.GameManager.PlaySoundEffect("D378-45-2D", false);
 
             if (_attackTransparency == 0)
+            {
+                _chickenList.Remove(this);
                 Map.Objects.DeleteObjects.Add(this);
+            }
+        }
+
+        private void DeleteBirds()
+        {
+            foreach (ObjBird chicken in _chickenList.ToList())
+            {
+                _chickenList.Remove(chicken);
+                Map.Objects.DeleteObjects.Add(chicken);
+            }
         }
 
         private void SpawnBirds()
@@ -164,17 +182,13 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 return;
 
             var playerDir = MapManager.ObjLink.Position - EntityPosition.Position;
-            if (playerDir.Length() > 120 || MapManager.ObjLink.FieldChange)
+
+            if ((Camera.ClassicMode && MapManager.ObjLink.FieldChange) || (!Camera.ClassicMode && playerDir.Length() > 140))
             {
                 _attackMode = false;
                 _hitCounter = 0;
-
-                // change back into the normal mode
-                if (_aiComponent.CurrentStateId != "idle" &&
-                    _aiComponent.CurrentStateId != "walking")
-                    _aiComponent.ChangeState("idle");
+                _aiComponent.ChangeState("idle");
             }
-
             Game1.GameManager.PlaySoundEffect("D370-19-13", false);
 
             _attackCounter -= Game1.DeltaTime;
@@ -184,8 +198,11 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 var objBird = new ObjBird(Map, (int)EntityPosition.X, (int)EntityPosition.Y, true);
                 objBird.InitAttackMode();
+
                 Map.Objects.SpawnObject(objBird);
                 Map.Objects.RegisterAlwaysAnimateObject(objBird);
+
+                _chickenList.Add(objBird);
             }
         }
 
