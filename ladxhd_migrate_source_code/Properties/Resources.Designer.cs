@@ -123,16 +123,6 @@ namespace LADXHD_Migrater.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] SDL2_dll {
-            get {
-                object obj = ResourceManager.GetObject("SDL2.dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] smallFont_chn_fnt {
             get {
                 object obj = ResourceManager.GetObject("smallFont_chn.fnt", resourceCulture);

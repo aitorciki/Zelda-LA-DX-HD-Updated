@@ -129,6 +129,7 @@ namespace LADXHD_Migrater
             string zipFilePath = Path.Combine(extractPath, "android_buttons.zip");
             File.WriteAllBytes(zipFilePath, (byte[])resources["android_buttons.zip"]);
             ZipFile.ExtractToDirectory(zipFilePath, extractPath);
+            zipFilePath.RemovePath();
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -183,6 +184,9 @@ namespace LADXHD_Migrater
             }
             // Copy the files to the destination.
             CopyNewFiles();
+
+            // After migration, some map files are not needed.
+            CleanUp.RemoveJunkMapFiles();
         }
 
         public static void MigrateFiles()
@@ -298,14 +302,7 @@ namespace LADXHD_Migrater
                     if (Config.SelectedGraphics == GraphicsAPI.DirectX)
                         MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_dx");
                     else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
-                    {
                         MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_gl");
-
-                        // Sometimes SDL2.dll is not generated the first build so just copy it there.
-                        string SDL2Path = Path.Combine(MoveDestination, "SDL2.dll");
-                        if (!SDL2Path.TestPath())
-                            File.WriteAllBytes(SDL2Path, (byte[])resources["SDL2.dll"]);
-                    }
                 }
                 else if (Config.SelectedPlatform == Platform.Android)
                     MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_android");
@@ -318,6 +315,10 @@ namespace LADXHD_Migrater
                 
                 // Move the publish folder to the root directory.
                 Config.Build_Path.MovePath(MoveDestination, true);
+
+                // Remove the old publish folder if it's empty.
+                if (Config.Publish_Path.IsPathEmpty())
+                    Config.Publish_Path.RemovePath();
             }
         }
     }

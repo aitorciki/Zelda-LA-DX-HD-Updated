@@ -14,78 +14,80 @@ namespace LADXHD_Migrater
             // If the game path is invalid just cancel.
             if (!Config.Game_Source.TestPath()) return false;
 
-            string executable = "dotnet";
-            string arguments = "";
-            bool isLinux = false;
-
-            // Build the game for the correct platform and graphics API.
-            if (Config.SelectedPlatform == Platform.Windows)
-            {
-                if (Config.SelectedGraphics == GraphicsAPI.DirectX)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-DX");
-                    arguments = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 -p:PublishProfile=FolderProfile_DX";
-                }
-                else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-GL");
-                    arguments = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 -p:PublishProfile=FolderProfile_GL";
-                }
-            }
-            else if (Config.SelectedPlatform == Platform.Android)
-            {
-                Config.Build_Path = Path.Combine(Config.Publish_Path, "Android");
-                arguments = "publish ProjectZ.Android\\ProjectZ.Android.csproj -c Release -f net8.0-android -p:PublishProfile=FolderProfile_Android";
-            }
-            else if (Config.SelectedPlatform == Platform.Linux_x86)
-            {
-                isLinux = true;
-                executable = "wsl";
-                Config.Build_Path = Path.Combine(Config.Publish_Path, "Linux-x86_64");
-                string wslPath = ToWslPath(Config.Game_Source);
-                arguments = $"bash -c \"export MGFXC_WINE_PATH={DotNet.WinePath} && " +
-                             $"cd {wslPath} && " +
-                             $"dotnet publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-x64 -p:PublishProfile=FolderProfile_Linux\"";
-            }
-            else if (Config.SelectedPlatform == Platform.Linux_Arm64)
-            {
-                isLinux = true;
-                executable = "wsl";
-                Config.Build_Path = Path.Combine(Config.Publish_Path, "Linux-Arm64");
-                string wslPath = ToWslPath(Config.Game_Source);
-                arguments = $"bash -c \"export MGFXC_WINE_PATH={DotNet.WinePath} && " +
-                             $"cd {wslPath} && " +
-                             $"dotnet publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-arm64 -p:PublishProfile=FolderProfile_Linux_Arm\"";
-            }
-
             try
             {
-                using (Process dotnet = new Process())
+                if (Config.SelectedPlatform == Platform.Windows)
                 {
-                    dotnet.StartInfo = new ProcessStartInfo
+                    if (!RunProcess("dotnet", "restore", false, "Restore Error")) return false;
+
+                    if (Config.SelectedGraphics == GraphicsAPI.DirectX)
                     {
-                        // WSL manages its own working directory via the bash -c command,
-                        // so only set WorkingDirectory for non-Linux builds.
-                        WorkingDirectory = isLinux ? "" : Config.Game_Source,
-                        FileName = executable,
-                        Arguments = arguments,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true
-                    };
+                        Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-DX");
 
-                    dotnet.Start();
+                        if (!RunProcess("dotnet",
+                            "build ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 --no-restore",
+                            false, "Build Error")) return false;
 
-                    string output = dotnet.StandardOutput.ReadToEnd();
-                    string error = dotnet.StandardError.ReadToEnd();
-
-                    dotnet.WaitForExit();
-
-                    if (!string.IsNullOrWhiteSpace(error))
-                    {
-                        Forms.OkayDialog.Display("Build Error", 250, 40, 27, 9, 15, error);
+                        if (!RunProcess("dotnet",
+                            "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 --no-restore -p:PublishProfile=FolderProfile_DX",
+                            false, "Build Error")) return false;
                     }
+                    else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
+                    {
+                        Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-GL");
+
+                        if (!RunProcess("dotnet",
+                            "build ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 --no-restore",
+                            false, "Build Error")) return false;
+
+                        if (!RunProcess("dotnet",
+                            "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 --no-restore -p:PublishProfile=FolderProfile_GL",
+                            false, "Build Error")) return false;
+                    }
+                }
+                else if (Config.SelectedPlatform == Platform.Android)
+                {
+                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Android");
+
+                    if (!RunProcess("dotnet", "restore", false, "Restore Error")) return false;
+
+                    if (!RunProcess("dotnet",
+                        "publish ProjectZ.Android\\ProjectZ.Android.csproj -c Release -f net8.0-android --no-restore -p:PublishProfile=FolderProfile_Android",
+                        false, "Build Error")) return false;
+                }
+                else if (Config.SelectedPlatform == Platform.Linux_x86)
+                {
+                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Linux-x86_64");
+                    string wslPath = ToWslPath(Config.Game_Source);
+
+                    if (!RunProcess("wsl",
+                        $"bash -c \"export MGFXC_WINE_PATH={DotNet.WinePath} && " +
+                        $"cd {wslPath} && " +
+                        $"dotnet restore ProjectZ.Linux/ProjectZ.Linux.csproj\"",
+                        true, "Restore Error")) return false;
+
+                    if (!RunProcess("wsl",
+                        $"bash -c \"export MGFXC_WINE_PATH={DotNet.WinePath} && " +
+                        $"cd {wslPath} && " +
+                        $"dotnet publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-x64 --no-restore -p:PublishProfile=FolderProfile_Linux\"",
+                        true, "Build Error")) return false;
+                }
+                else if (Config.SelectedPlatform == Platform.Linux_Arm64)
+                {
+                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Linux-Arm64");
+                    string wslPath = ToWslPath(Config.Game_Source);
+
+                    if (!RunProcess("wsl",
+                        $"bash -c \"export MGFXC_WINE_PATH={DotNet.WinePath} && " +
+                        $"cd {wslPath} && " +
+                        $"dotnet restore ProjectZ.Linux/ProjectZ.Linux.csproj\"",
+                        true, "Restore Error")) return false;
+
+                    if (!RunProcess("wsl",
+                        $"bash -c \"export MGFXC_WINE_PATH={DotNet.WinePath} && " +
+                        $"cd {wslPath} && " +
+                        $"dotnet publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-arm64 --no-restore -p:PublishProfile=FolderProfile_Linux_Arm\"",
+                        true, "Build Error")) return false;
                 }
             }
 
@@ -112,6 +114,41 @@ namespace LADXHD_Migrater
                 return linuxBinPath.TestPath();
             }
             return false;
+        }
+
+        private static bool RunProcess(string executable, string arguments, bool isLinux, string errorTitle)
+        {
+            using (Process dotnet = new Process())
+            {
+                dotnet.StartInfo = new ProcessStartInfo
+                {
+                    // WSL manages its own working directory via the bash -c command,
+                    // so only set WorkingDirectory for non-Linux builds.
+                    WorkingDirectory = isLinux ? "" : Config.Game_Source,
+                    FileName = executable,
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                dotnet.Start();
+
+                string output = dotnet.StandardOutput.ReadToEnd();
+                string error = dotnet.StandardError.ReadToEnd();
+
+                dotnet.WaitForExit();
+
+                if (dotnet.ExitCode != 0)
+                {
+                    string message = string.IsNullOrWhiteSpace(error) ? output : error;
+                    Forms.OkayDialog.Display(errorTitle, 250, 40, 27, 9, 15, message);
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         // Converts a Windows path like C:\Users\Bighead\source to /mnt/c/Users/Bighead/source

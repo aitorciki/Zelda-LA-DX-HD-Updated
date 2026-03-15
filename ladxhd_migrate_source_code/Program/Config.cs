@@ -39,6 +39,7 @@ namespace LADXHD_Migrater
             Update_Content  = Path.Combine(Game_Source, "ProjectZ.Core", "Content");
             Update_Data     = Path.Combine(Game_Source, "ProjectZ.Core", "Data");
             Publish_Path    = Path.Combine(Game_Source, "~Publish");
+            CleanUp.Init();
         }
     }
 }
