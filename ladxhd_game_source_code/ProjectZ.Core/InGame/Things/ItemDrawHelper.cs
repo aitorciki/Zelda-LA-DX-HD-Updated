@@ -494,7 +494,6 @@ namespace ProjectZ.InGame.Things
             if (keyItem == null) return;
 
             // draw the key icon
-            // TODO: actual key icon instead of using the smallkey sprite
             spriteBatch.Draw(SpriteKey.Texture, new Rectangle(
                     position.X + (RecLetters.Width + LetterMargin) * 3 * scale,
                     position.Y - 2 * scale,
