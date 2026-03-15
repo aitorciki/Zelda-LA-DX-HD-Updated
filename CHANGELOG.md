@@ -1,5 +1,16 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.5**
+### The "Cleaning up the Tooling" Update
+  * Fix migration tool and patcher to always remove files no longer used which could cause conflicts.
+  * More automation with patch and publish generation scripts to make creating new patchers much easier.
+  * Implement on-screen controller for Android. This can be disabled on the "Controls" settings menu.
+  * Slightly optimize the file loading pipeline. This should slightly increase the game's boot-up speed.
+  * Fix loading all forms of mod files on all platforms: language mods, graphics mods, and LAHDMods.
+  * Fix chicken swarm with Classic Camera active to stop the swarm on field transition and despawn chickens.
+  * Fix a crash with Level 3 dungeon on Android. This most likely was due to old files creeping back in.
+  * Fix two keys in level 5 dungeon to be "location bound" so they can not be brought into the overworld.
+
 ## **v1.6.4**
 ### The "Next Generation" Update
   * Enormous refactoring of the code base. This is only mentioned as it can lead to new bugs to squash.

@@ -3,7 +3,8 @@
 ### $${\color{red}THIS \space REPOSITORY \space DOES \space NOT \space INCLUDE \space COPYRIGHTED \space GAME \space ASSETS!}$$
 
 This fork requires the user to provide the assets from the original v1.0.0 release.<br>
-I have created tooling to make migrating everything to the latest version much easier.
+I have created tooling to make migrating everything to the latest version much easier.<br>
+The game can be patched to port to Windows (DX11), Windows (OpenGL), Android, and Linux.
 
 - This is a continuation of my [previous fork](https://github.com/BigheadSMZ/Links-Awakening-DX-HD) and here's a link to the [commits](https://github.com/BigheadSMZ/Links-Awakening-DX-HD/commits/master/).
 - See the [manual](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/MANUAL.md) to learn more about the game (WIP).
@@ -15,17 +16,16 @@ I have created tooling to make migrating everything to the latest version much e
 - As of v1.5.0, it has evolved into something I never dreamed of. Hundreds of issues fixed with tons of features.
 - As of v1.6.0, just about every small detail from the original game has been restored and/or replicated.
 
-## Patching v1.0.0 (or v1.1.4+) to v1.6.4.
+## Patching v1.0.0 (or v1.1.4+) to v1.6.5.
 
-To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page. 
+To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page.<br>
 If you wish to build the game yourself, see **Personal Build / Publishing**.
-- This game requires .NET 8.0 runtime. [Download it here](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.23-windows-x64-installer?cid=getdotnetcore).
+
 - Find the v1.0.0 release originally from itch.io.
-- If you can not find it, you can search for an "archive" of it.
 - It's a good idea to keep a <ins>backup</ins> of v1.0.0.
 - Download the patcher from the releases page.
-- Drop it into the same folder as v1.0.0/v1.1.4+.
-- Open the patcher. Select "DirectX" or "OpenGL" for "Target" renderer.
+- Drop it into the base folder of v1.0.0 (or v1.1.4+).
+- Open the patcher. Select the desired **Platform** and **Target**.
 - Press the "Patch" button. It will take a bit to finish.
 - When it is done, the patcher can be deleted.
 
@@ -48,52 +48,51 @@ LADXHD.Patcher.exe --silent
 | 1 | Game executable not found |
 | 2 | Patching failed |
 
-## Running on Linux with Proton
-
-Quick Start (Recommended) - Use the automated installer for a hassle-free setup:
-
-[zladxhd-installer](https://github.com/jslay88/zladxhd-installer)
-
-otherwise, follow the [Linux guide](./LINUX.md)
-
 ## About This Repository
 
 A few years back, an anonymous user posted a PC Port of Link's Awakening on itch.io built with MonoGame. It wasn't long before the game was taken down, fortunately the release contained the source code. This is a continuation of that PC Port but with the assets stripped away to avoid copyright issues. 
 
-This section explains the files and folders found in the base of this respository.
+This section explains the files and folders found in the base of this respository.<br>
+All software is Windows only aside from the game which has been ported to Android and Linux.
+
 - **assets_original**: This is where the **"Content"** and **"Data"** folders from v1.0.0 should go.
 - **assets_patches**: Contains xdelta3 patches that are the difference of assets from v1.0.0 to the latest updates.
 - **ladxhd_game_source_code**: Source code for The Legend of Zelda: Link's Awakening DX HD.
 - **ladxhd_migrate_source_code**: Source code for the migration tool which can apply/create assets patches.
-- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.6.4.
+- **ladxhd_modmaker_source_code**: Source code for the modmaker which can create mod installers.
+- **ladxhd_patcher_source_code**: Source code for the patcher to update the game to v1.6.5.
 - **LADXHD_Migrater.exe**: This is the migration tool used to apply or create patches to the assets.
 - **Unblock-All-Files.ps1**: This script can be used to unblock all files automatically for Visual Studio.
 
-The game is currently built with [KNI Engine](https://github.com/kniEngine/kni). I have migrated away from MonoGame due to some issues I was experiencing with it.
+The game is built with the latest version of [MonoGame](https://monogame.net/).
 
 ## Updating Source Code Assets
 
 The latest source code can be downloaded from this repository. But, you will need to provide the assets from the original v1.0.0 release. It is very important to follow the instructions carefully as many assets have been updated.
-- You will notice there is a folder in the base of this repository named **"assets_original"**.
+
+- Notice the folder named **"assets_original"** in the base of this repository .
 - This is where the **"Content"** and **"Data"** folders go from the v1.0.0 release.
-- Note that there is two versions of these folders, and you must provide the correct ones.
-- Inside the original release folder are two folders: **"Content"** and **"Data"**.
-- Copy the **"Data"** folder from the original v1.0.0 <ins>game folder</ins> to the **"assets_original"** folder.
+- Note that there is two **Content** folders and you must provide the <ints>correct<ins> one.
+- Copy the **"Data"** folder from the v1.0.0 <ins>game folder</ins> to the **"assets_original"** folder.
 - This is NOT the correct **"Content"** folder. You need the one from the source code.
-- There should also be a 7-Zip of the v1.0.0 source code included with the game: **"source.7z"**.
-- Unzip the **"source.7z"** file from the original v1.0.0 release.
-- Copy the **"Content"** folder from the original v1.0.0 <ins>source code folder</ins> to the **"assets_original"** folder.
-- After both folders are copied, open the **"LADXHD_Migrater.exe"** tool that is provided.
+- Inside the v1.0.0 game folder is a 7z file **"source.7z"**. Extract this file which is the source code.
+- Copy the **"Content"** folder from the extracted <ins>source code folder</ins> to the **"assets_original"** folder.
+
+You should now have both **Content** and **Data** copied to the **assets_original* folder.
+
+- Open the **"LADXHD_Migrater.exe"** tool that is provided in this repo.
 - Click the button **"Migrate Assets From v1.0.0"** and wait for it to finish.
 - This will create new **"Content"** and **"Data"** folders in the **"ladxhd_game_source_code"** folder.
 - And you are done. From here you can build the game or work on the code.
 - The original **"Content/Data"** folders should be kept in **"assets_original"** for future patches.
 
-Again, make sure you are grabbing the correct Content and Data folders. The "Data" folder should come from the <ins>game folder</ins>, and the "Content" folder should come from the <ins>source .7z file</ins>. While it is possible the original assets would work, there have been bugs fixed and issues addressed in some of them. The patches in **"assets_patches"** never need to be interacted with directly, as the migration tool can handle both directions: updating 1.0.0 assets, and creating new patches for asset updates.
+Again, make sure you are grabbing the correct Content and Data folders. The "Data" folder should come from the <ins>game folder</ins>, and the "Content" folder should come from the <ins>source.7z file</ins>. The patches in **"assets_patches"** never need to be interacted with directly, as the migration tool can handle both directions: updating 1.0.0 assets, and creating new patches for asset updates.
 
 ## Contributing Prerequisites
 
 If you wish to work on the code in this repository.
+
+- You will need the latest [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 - Basic knowledge of C# .NET and Visual Studio is required.
 - [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
     - Make sure to select `.NET desktop development` components in the visual studio installer.
@@ -122,15 +121,15 @@ If you wish to build the code in this repository.
 ## Personal Build / Publishing
 
 To create a personal build, follow the steps below:
-- Download and install [.NET v8.0.417 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-8.0.417-windows-x64-installer).
+- Download and install [.NET v8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 - Clone or Download this repository: green `Code` Button > `Download ZIP`
 - Unzip the repository and open up the unzipped folder.
 - Follow the steps in **Updating Source Code Assets**
 - Run the PowerShell script "Unblock-All-Files.ps1".
   - -OR- Go to the folder `ladxhd_game_source_code\.config` you will see `dotnet-tools.json`.
   - -AND- Right click, go to properties, check `Unblock`.
-- Run the `ladxhd_game_source_code\publish.bat` script to build the game.
-- Alternatively, the **"LADXHD_Migrater.exe"** tool can now build the game.
+- Run the `ladxhd_game_source_code\publish.bat` script to build all ports of the game.
+- Alternatively, the **"LADXHD_Migrater.exe"** tool can now build a single port game.
 - When done, the build will be in the `Publish` folder.
 
 ## Build Troubleshooting
