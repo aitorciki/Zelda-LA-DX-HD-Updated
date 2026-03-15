@@ -102,14 +102,14 @@ namespace LADXHD_Migrater
         {
             foreach (string file in miniMapData)
             {
-                string CurrentFile = Path.Combine(Config.Update_Data, "Dungeon", file);
-                CurrentFile.RemovePath();
+                string currentFile = Path.Combine(Config.Update_Data, "Dungeon", file);
+                currentFile.RemovePath();
             }
 
             foreach (string file in removeMaps)
             {
-                string CurrentFile = Path.Combine(Config.Update_Data, "Maps", file);
-                CurrentFile.RemovePath();
+                string currentFile = Path.Combine(Config.Update_Data, "Maps", file);
+                currentFile.RemovePath();
             }
         }
     }
