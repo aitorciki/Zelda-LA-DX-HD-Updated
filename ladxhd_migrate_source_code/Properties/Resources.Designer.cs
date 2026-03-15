@@ -63,6 +63,16 @@ namespace LADXHD_Migrater.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] android_buttons_zip {
+            get {
+                object obj = ResourceManager.GetObject("android_buttons.zip", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] Courier_Prime_ttf {
             get {
                 object obj = ResourceManager.GetObject("Courier-Prime.ttf", resourceCulture);

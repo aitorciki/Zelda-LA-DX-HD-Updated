@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using static LADXHD_Migrater.Config;
 using static LADXHD_Migrater.XDelta3;
-
 
 namespace LADXHD_Migrater
 {
@@ -124,6 +124,11 @@ namespace LADXHD_Migrater
                 ((Bitmap)resources["Icon.bmp"]).Save(ms, ImageFormat.Bmp);
                 File.WriteAllBytes(iconBmpFile, ms.ToArray());
             }
+            // Extract the Android buttons to the data path.
+            string extractPath = Path.Combine(Config.Update_Data, "Buttons").CreatePath();
+            string zipFilePath = Path.Combine(extractPath, "android_buttons.zip");
+            File.WriteAllBytes(zipFilePath, (byte[])resources["android_buttons.zip"]);
+            ZipFile.ExtractToDirectory(zipFilePath, extractPath);
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -176,7 +181,7 @@ namespace LADXHD_Migrater
                 // Handle modified files that are derivatives of original files.
                 HandleMultiFilePatches(fileItem, origPath, updatePath);
             }
-            // Finally, copy the files to the destination.
+            // Copy the files to the destination.
             CopyNewFiles();
         }
 
