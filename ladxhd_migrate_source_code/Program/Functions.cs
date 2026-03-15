@@ -298,7 +298,14 @@ namespace LADXHD_Migrater
                     if (Config.SelectedGraphics == GraphicsAPI.DirectX)
                         MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_dx");
                     else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
+                    {
                         MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_gl");
+
+                        // Sometimes SDL2.dll is not generated the first build so just copy it there.
+                        string SDL2Path = Path.Combine(MoveDestination, "SDL2.dll");
+                        if (!SDL2Path.TestPath())
+                            File.WriteAllBytes(SDL2Path, (byte[])resources["SDL2.dll"]);
+                    }
                 }
                 else if (Config.SelectedPlatform == Platform.Android)
                     MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_android");
