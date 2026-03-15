@@ -1,4 +1,4 @@
-# The Legend of Zelda: Links Awakening DX HD - PC Port
+## TLoZ: LADXHD Updated - Windows / Android / Linux
 
 ### $${\color{red}THIS \space REPOSITORY \space DOES \space NOT \space INCLUDE \space COPYRIGHTED \space GAME \space ASSETS!}$$
 
