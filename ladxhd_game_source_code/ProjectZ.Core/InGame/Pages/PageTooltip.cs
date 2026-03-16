@@ -39,8 +39,11 @@ namespace ProjectZ.InGame.Interface
 
             // Menu size reference.
             float menuWidth = (Values.MinWidth - 32) * Game1.UiScale;
+        #if ANDROID
+            float menuHeight = (Values.MinHeight - 16) * Game1.UiScale;
+        #else
             float menuHeight = (Values.MinHeight - 32) * Game1.UiScale;
-
+        #endif
             // Menu top-left position.
             float menuX = (Game1.WindowWidth - menuWidth) / 2f;
             float menuY = (Game1.WindowHeight - menuHeight) / 2f;

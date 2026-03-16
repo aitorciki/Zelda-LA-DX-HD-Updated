@@ -44,8 +44,14 @@ namespace ProjectZ.InGame.Screens
             _linkAnimation = AnimatorSaveLoad.LoadAnimator("menu_link");
             _linkAnimation.Play("idle");
 
+            // On Android we use a minimum height of 240 instead of 256. To keep the size consistent
+            // across all versions of the game only subtract 16 pixels as opposed to 32 pixels.
             _menuWidth = Values.MinWidth - 32;
+        #if ANDROID
+            _menuHeight = Values.MinHeight - 16;
+        #else
             _menuHeight = Values.MinHeight - 32;
+        #endif
         }
 
         public void SetBackground(Texture2D texture)

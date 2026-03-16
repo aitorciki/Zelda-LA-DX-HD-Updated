@@ -47,8 +47,14 @@ namespace ProjectZ.InGame.Pages
 
         public void Load(ContentManager content)
         {
+            // On Android we use a minimum height of 240 instead of 256. To keep the size consistent
+            // across all versions of the game only subtract 16 pixels as opposed to 32 pixels.
             _width = Values.MinWidth - 32;
+        #if ANDROID
+            _height = Values.MinHeight - 16;
+        #else
             _height = Values.MinHeight - 32;
+        #endif
 
             AddPage(new MainMenuPage(_width, _height));
             AddPage(new CopyPage(_width, _height));
