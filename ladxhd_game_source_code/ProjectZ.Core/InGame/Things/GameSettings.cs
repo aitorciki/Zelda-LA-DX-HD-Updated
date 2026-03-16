@@ -41,6 +41,11 @@
         public static bool    OpaqueHudBg     =  false;
 
         // Graphics Settings
+    #if ANDROID
+        public static int     SeqScaleAmplify =  1;
+    #else
+        public static int     SeqScaleAmplify =  0;
+    #endif
         public static bool    EnableShadows   =  true;
         public static bool    FogEffects      =  true;
         public static bool    GlobalLights    =  true;

@@ -12,25 +12,32 @@ namespace ProjectZ.Core.InGame.Pages
         private readonly InterfaceListLayout _graphicsSettingsLayout;
         private readonly InterfaceListLayout _contentLayout;
         private readonly InterfaceListLayout _bottomBar;
+
+        private readonly InterfaceSlider     _sliderSeqAmplifier;
         private readonly InterfaceListLayout _toggleDynamicShadows;
         private readonly InterfaceListLayout _toggleFogEffects;
         private readonly InterfaceListLayout _toggleGlobalLighting;
         private readonly InterfaceListLayout _toggleObjectLighting;
+        private readonly InterfaceListLayout _toggleScreenShake;
+        private readonly InterfaceListLayout _toggleExScreenShake;
 
         List<string> _tooltips = new List<string>();
         private bool _showTooltip;
 
+        public void SetSequenceScaleAmplifier(int value) { ((InterfaceSlider)_sliderSeqAmplifier).CurrentStep = value; }
         public void SetFogEffects(bool state) => ((InterfaceToggle)_toggleFogEffects.Elements[1]).ToggleState = state;
         public void SetGlobalLighting(bool state) => ((InterfaceToggle)_toggleGlobalLighting.Elements[1]).ToggleState = state;
         public void SetObjectLighting(bool state) => ((InterfaceToggle)_toggleObjectLighting.Elements[1]).ToggleState = state;
         public void SetDynamicShadows(bool state) => ((InterfaceToggle)_toggleDynamicShadows.Elements[1]).ToggleState = state;
+        public void SetCameraScreenShake(bool state) => ((InterfaceToggle)_toggleScreenShake.Elements[1]).ToggleState = state;
+        public void SetCameraExScreenShake(bool state) => ((InterfaceToggle)_toggleExScreenShake.Elements[1]).ToggleState = state;
 
         public GraphicsSettingsPage(int width, int height)
         {
             EnableTooltips = true;
             var buttonWidth = 320;
-            var sliderHeight = 10;
-            var buttonHeight = 15;
+            var buttonHeight = 16;
+            var sliderHeight = 12;
 
             // Graphics Settings Layout
             _graphicsSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -38,13 +45,21 @@ namespace ProjectZ.Core.InGame.Pages
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
+            // Slider: Sequence Scale Amplifier
+            _sliderSeqAmplifier = new InterfaceSlider("settings_graphics_sequencescale",
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 3, 1, GameSettings.SeqScaleAmplify, 
+                number => { GameSettings.SeqScaleAmplify = number; })
+                { SetString = number => SequenceScaleSliderAdjustmentString(number) };
+            _contentLayout.AddElement(_sliderSeqAmplifier);
+            _tooltips.Add("tooptip_graphics_sequencescale");
+
             // Toggle: Dynamic Shadows
             _toggleDynamicShadows = InterfaceToggle.GetToggleButton(
                 new Point(buttonWidth, buttonHeight), new Point(5, 2),
                 "settings_graphics_shadow", GameSettings.EnableShadows,
                 newState => GameSettings.EnableShadows = newState);
             _contentLayout.AddElement(_toggleDynamicShadows);
-            _tooltips.Add("tooltip_graphics_shadow");
+            _tooltips.Add("tooptip_graphics_shadow");
 
             // Toggle: Fog Effects
             _toggleFogEffects = InterfaceToggle.GetToggleButton(
@@ -69,6 +84,22 @@ namespace ProjectZ.Core.InGame.Pages
                 newState => GameSettings.ObjectLights = newState);
             _contentLayout.AddElement(_toggleObjectLighting);
             _tooltips.Add("tooltip_graphics_noobjectlights");
+
+            // Toggle: Screen-Shake
+            _toggleScreenShake = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_camera_screenshake", GameSettings.ScreenShake, 
+                newState => { GameSettings.ScreenShake = newState; });
+            _contentLayout.AddElement(_toggleScreenShake);
+            _tooltips.Add("tooltip_camera_screenshake");
+
+            // Toggle: Extra Screen-Shake
+            _toggleExScreenShake = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_camera_exscreenshake", GameSettings.ExScreenShake, 
+                newState => { GameSettings.ExScreenShake = newState; });
+            _contentLayout.AddElement(_toggleExScreenShake);
+            _tooltips.Add("tooltip_camera_exscreenshake");
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -120,6 +151,11 @@ namespace ProjectZ.Core.InGame.Pages
                 string tooltipText = GetOptionToolip();
                 PageTooltip.Draw(spriteBatch, tooltipText);
             }
+        }
+
+        private string SequenceScaleSliderAdjustmentString(int number)
+        {
+            return ": +" + number;
         }
 
         private string GetOptionToolip()

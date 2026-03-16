@@ -138,8 +138,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
         protected bool _useUiScale = true;
         protected bool _textBoxOffset = true;
 
-        public int SequenceScaleAmplifier = 0;
-
         public virtual void OnStart()
         {
             _sequenceCounter = 0;
@@ -284,7 +282,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
         public virtual void DrawRT(SpriteBatch spriteBatch)
         {
             if (_useUiScale)
-                _scale = Game1.UiScale + SequenceScaleAmplifier;
+                _scale = Game1.UiScale + GameSettings.SeqScaleAmplify;
 
             UpdateRenderTarget();
 

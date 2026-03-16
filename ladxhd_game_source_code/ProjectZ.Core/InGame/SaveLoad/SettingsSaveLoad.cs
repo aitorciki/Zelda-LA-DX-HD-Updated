@@ -53,6 +53,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.OpaqueHudBg = saveManager.GetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Graphics Settings
+            GameSettings.SeqScaleAmplify = saveManager.GetInt("SeqScaleAmplify", GameSettings.SeqScaleAmplify);
             GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
             GameSettings.FogEffects = saveManager.GetBool("FogEffects", GameSettings.FogEffects);
             GameSettings.GlobalLights = saveManager.GetBool("GlobalLights", GameSettings.GlobalLights);
@@ -145,6 +146,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Graphics Settings
+            saveManager.SetInt("SeqScaleAmplify", GameSettings.SeqScaleAmplify);
             saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
             saveManager.SetBool("FogEffects", GameSettings.FogEffects);
             saveManager.SetBool("GlobalLights", GameSettings.GlobalLights);

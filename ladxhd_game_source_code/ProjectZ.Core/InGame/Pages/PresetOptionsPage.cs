@@ -299,24 +299,25 @@ namespace ProjectZ.InGame.Pages
                 CameraSettingsPage.SetClassicScaleLock(GameSettings.ClassicScaling);
                 CameraSettingsPage.SetCameraLock(GameSettings.CameraLock);
                 CameraSettingsPage.SetCameraSmoothCam(GameSettings.SmoothCamera);
-                CameraSettingsPage.SetCameraScreenShake(GameSettings.ScreenShake);
-                CameraSettingsPage.SetCameraExScreenShake(GameSettings.ExScreenShake);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(VideoSettingsPage), out var videoPage))
             {
-                var GraphicsSettingsPage = (VideoSettingsPage)videoPage;
-                GraphicsSettingsPage.SetGameScaleValue(GameSettings.GameScale);
-                GraphicsSettingsPage.SetUserInterfaceScale(GameSettings.UiScale);
-                GraphicsSettingsPage.SetVerticalSync(GameSettings.VerticalSync);
-                GraphicsSettingsPage.SetOpaqueHudBg(GameSettings.OpaqueHudBg);
+                var VideoSettingsPage = (VideoSettingsPage)videoPage;
+                VideoSettingsPage.SetGameScaleValue(GameSettings.GameScale);
+                VideoSettingsPage.SetUserInterfaceScale(GameSettings.UiScale);
+                VideoSettingsPage.SetVerticalSync(GameSettings.VerticalSync);
+                VideoSettingsPage.SetOpaqueHudBg(GameSettings.OpaqueHudBg);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(GraphicsSettingsPage), out var graphicsPage))
             {
                 var GraphicsSettingsPage = (GraphicsSettingsPage)graphicsPage;
+                GraphicsSettingsPage.SetSequenceScaleAmplifier(GameSettings.SeqScaleAmplify);
                 GraphicsSettingsPage.SetDynamicShadows(GameSettings.EnableShadows);
                 GraphicsSettingsPage.SetFogEffects(GameSettings.FogEffects);
                 GraphicsSettingsPage.SetGlobalLighting(GameSettings.GlobalLights);
                 GraphicsSettingsPage.SetObjectLighting(GameSettings.ObjectLights);
+                GraphicsSettingsPage.SetCameraScreenShake(GameSettings.ScreenShake);
+                GraphicsSettingsPage.SetCameraExScreenShake(GameSettings.ExScreenShake);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audioPage))
             {

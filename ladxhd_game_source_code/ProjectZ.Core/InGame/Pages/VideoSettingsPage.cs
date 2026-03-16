@@ -35,8 +35,8 @@ namespace ProjectZ.InGame.Pages
         {
             EnableTooltips = true;
             var buttonWidth = 320;
-            var sliderHeight = 11;
-            var buttonHeight = 15;
+            var buttonHeight = 16;
+            var sliderHeight = 12;
 
             // Graphics Settings Layout
             _videoSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };

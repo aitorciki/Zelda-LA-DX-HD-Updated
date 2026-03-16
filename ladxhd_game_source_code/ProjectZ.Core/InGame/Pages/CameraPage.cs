@@ -22,9 +22,8 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleClassicScaling;
         private readonly InterfaceListLayout _toggleCameraLock;
         private readonly InterfaceListLayout _toggleCameraSmooth;
-        private readonly InterfaceListLayout _toggleScreenShake;
-        private readonly InterfaceListLayout _toggleExScreenShake;
 
+        List<string> _tooltips = new List<string>();
         private bool _showTooltip;
 
         public void SetCameraMode(bool state) => ToggleCameraModes(state);
@@ -35,8 +34,6 @@ namespace ProjectZ.InGame.Pages
         public void SetClassicScaleLock(bool state) => ((InterfaceToggle)_toggleClassicScaling.Elements[1]).ToggleState = state;
         public void SetCameraLock(bool state) => ((InterfaceToggle)_toggleCameraLock.Elements[1]).ToggleState = state; 
         public void SetCameraSmoothCam(bool state) => ((InterfaceToggle)_toggleCameraSmooth.Elements[1]).ToggleState = state;
-        public void SetCameraScreenShake(bool state) => ((InterfaceToggle)_toggleScreenShake.Elements[1]).ToggleState = state;
-        public void SetCameraExScreenShake(bool state) => ((InterfaceToggle)_toggleExScreenShake.Elements[1]).ToggleState = state;
 
         public void UpdateCameraOverrideText()
         {
@@ -56,8 +53,8 @@ namespace ProjectZ.InGame.Pages
         {
             EnableTooltips = true;
             var buttonWidth = 320;
-            var buttonHeight = 12;
-            var sliderHeight = 10;
+            var buttonHeight = 16;
+            var sliderHeight = 12;
 
             // Camera Settings Layout
             _cameraOptionsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -119,20 +116,6 @@ namespace ProjectZ.InGame.Pages
                 "settings_camera_smoothcamera", GameSettings.SmoothCamera, 
                 newState => { GameSettings.SmoothCamera = newState; });
             _contentLayout.AddElement(_toggleCameraSmooth);
-
-            // Toggle: Screen-Shake
-            _toggleScreenShake = InterfaceToggle.GetToggleButton(
-                new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_screenshake", GameSettings.ScreenShake, 
-                newState => { GameSettings.ScreenShake = newState; });
-            _contentLayout.AddElement(_toggleScreenShake);
-
-            // Toggle: Extra Screen-Shake
-            _toggleExScreenShake = InterfaceToggle.GetToggleButton(
-                new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_exscreenshake", GameSettings.ExScreenShake, 
-                newState => { GameSettings.ExScreenShake = newState; });
-            _contentLayout.AddElement(_toggleExScreenShake);
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -261,8 +244,6 @@ namespace ProjectZ.InGame.Pages
                 case 4:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_classicscaling", "error"); break; }
                 case 5:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_cameralock", "error"); break; }
                 case 6:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_smoothcamera", "error"); break; }
-                case 7:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_screenshake", "error"); break; }
-                case 8:  { tooltip = Game1.LanguageManager.GetString("tooltip_camera_exscreenshake", "error"); break; }
             }
             // Display the tooltip in the tooltip window.
             return tooltip;
