@@ -39,13 +39,11 @@ namespace ProjectZ.InGame.Pages
         public SwordInteractPage(int width, int height)
         {
             EnableTooltips = true;
-
-            // Game Settings Layout
-            _swordSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-
             var buttonWidth = 320;
             var buttonHeight = 13;
 
+            // Game Settings Layout
+            _swordSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             _swordSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_sword_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };

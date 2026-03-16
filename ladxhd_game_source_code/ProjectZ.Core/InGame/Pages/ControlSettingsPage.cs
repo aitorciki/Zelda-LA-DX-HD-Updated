@@ -45,12 +45,7 @@ namespace ProjectZ.InGame.Pages
         public ControlSettingsPage(int width, int height)
         {
             EnableTooltips = true;
-
-            // Game Settings Layout
-            _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-
             var buttonWidth = 320;
-
         #if ANDROID
             var buttonHeight = 12;
             var sliderHeight = 10;
@@ -59,6 +54,8 @@ namespace ProjectZ.InGame.Pages
             var sliderHeight = 11;
         #endif
 
+            // Game Settings Layout
+            _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };

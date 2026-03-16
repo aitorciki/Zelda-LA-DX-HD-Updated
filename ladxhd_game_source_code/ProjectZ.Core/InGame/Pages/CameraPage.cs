@@ -55,7 +55,6 @@ namespace ProjectZ.InGame.Pages
         public CameraSettingsPage(int width, int height)
         {
             EnableTooltips = true;
-
             var buttonWidth = 320;
             var buttonHeight = 12;
             var sliderHeight = 10;

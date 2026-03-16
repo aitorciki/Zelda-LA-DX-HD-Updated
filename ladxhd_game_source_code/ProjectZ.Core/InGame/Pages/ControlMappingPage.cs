@@ -26,7 +26,6 @@ namespace ProjectZ.InGame.Pages
         {
             // Control Settings Layout
             var controlLayout = new InterfaceListLayout { Size = new Point(width, height - 16), Selectable = true };
-
             controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_remapheader", new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
 
             var controllerHeight = (int)(height * Values.MenuContentSize);

@@ -37,9 +37,8 @@ namespace ProjectZ.InGame.Pages
 
         public ReduxOptionsPage(int width, int height, ContentManager content)
         {
-            EnableTooltips = true;
             _content = content;
-
+            EnableTooltips = true;
             var buttonWidth = 320;
             var buttonHeight = 15;
             var sliderHeight = 10;

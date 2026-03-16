@@ -49,12 +49,14 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.GameScale = saveManager.GetInt("GameScale", GameSettings.GameScale);
             GameSettings.UiScale = saveManager.GetInt("UIScale", GameSettings.UiScale);
             GameSettings.ScreenMode = saveManager.GetInt("ScreenMode", GameSettings.ScreenMode);
+            GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
+            GameSettings.OpaqueHudBg = saveManager.GetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
+
+            // Graphics Settings
+            GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
             GameSettings.FogEffects = saveManager.GetBool("FogEffects", GameSettings.FogEffects);
             GameSettings.GlobalLights = saveManager.GetBool("GlobalLights", GameSettings.GlobalLights);
             GameSettings.ObjectLights = saveManager.GetBool("ObjectLights", GameSettings.ObjectLights);
-            GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
-            GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
-            GameSettings.OpaqueHudBg = saveManager.GetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Audio Settings
             GameSettings.MusicVolume = saveManager.GetInt("MusicVolume", GameSettings.MusicVolume);
@@ -139,12 +141,14 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("GameScale", GameSettings.GameScale);
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetInt("ScreenMode", GameSettings.ScreenMode);
+            saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
+            saveManager.SetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
+
+            // Graphics Settings
+            saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
             saveManager.SetBool("FogEffects", GameSettings.FogEffects);
             saveManager.SetBool("GlobalLights", GameSettings.GlobalLights);
             saveManager.SetBool("ObjectLights", GameSettings.ObjectLights);
-            saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
-            saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
-            saveManager.SetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Audio Settings
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);

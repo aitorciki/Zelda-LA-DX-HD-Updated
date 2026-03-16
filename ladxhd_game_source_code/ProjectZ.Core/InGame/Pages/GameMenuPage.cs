@@ -14,7 +14,6 @@ namespace ProjectZ.InGame.Pages
         {
             // main layout
             var mainLayout = new InterfaceListLayout() { Size = new Point(width, height), Selectable = true };
-
             mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_header",
                 new Point(150, (int)(height * Values.MenuHeaderSize)), new Point(0, 0))
             { TextColor = Color.White });
@@ -29,7 +28,6 @@ namespace ProjectZ.InGame.Pages
             contentLayout.AddElement(new InterfaceButton(new Point(150, 25), Point.Zero, "game_menu_exit_the_game", OnClickExitGame) { Margin = new Point(0, 2) });
 
             mainLayout.AddElement(contentLayout);
-
             mainLayout.AddElement(new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)) });
 
             PageLayout = mainLayout;

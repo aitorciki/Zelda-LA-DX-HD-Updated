@@ -37,12 +37,14 @@
         public static int     GameScale       =  Game1.MaxGameScale + 1;
         public static int     UiScale         =  11;
         public static int     ScreenMode      =  0;
+        public static bool    VerticalSync    =  true;
+        public static bool    OpaqueHudBg     =  false;
+
+        // Graphics Settings
+        public static bool    EnableShadows   =  true;
         public static bool    FogEffects      =  true;
         public static bool    GlobalLights    =  true;
         public static bool    ObjectLights    =  true;
-        public static bool    EnableShadows   =  true;
-        public static bool    VerticalSync    =  true;
-        public static bool    OpaqueHudBg     =  false;
 
         // Audio Settings
         private static int    _musicVolume    =  100;
@@ -131,12 +133,14 @@
             GameScale       =  Game1.MaxGameScale + 1;
             UiScale         =  11;
             ScreenMode      =  0;
+            VerticalSync    =  true;
+            OpaqueHudBg     =  false;
+
+            // Graphics Settings
+            EnableShadows   =  true;
             FogEffects      =  true;
             GlobalLights    =  true;
             ObjectLights    =  true;
-            EnableShadows   =  true;
-            VerticalSync    =  true;
-            OpaqueHudBg     =  false;
 
             // Audio Settings
             ClassicMusic    =  false;

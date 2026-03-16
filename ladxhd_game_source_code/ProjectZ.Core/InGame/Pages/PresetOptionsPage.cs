@@ -313,10 +313,10 @@ namespace ProjectZ.InGame.Pages
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(GraphicsSettingsPage), out var graphicsPage))
             {
                 var GraphicsSettingsPage = (GraphicsSettingsPage)graphicsPage;
-                GraphicsSettingsPage.SetGlobalLighting(GameSettings.GlobalLights);
-                GraphicsSettingsPage.SetObjectLighting(GameSettings.ObjectLights);
                 GraphicsSettingsPage.SetDynamicShadows(GameSettings.EnableShadows);
                 GraphicsSettingsPage.SetFogEffects(GameSettings.FogEffects);
+                GraphicsSettingsPage.SetGlobalLighting(GameSettings.GlobalLights);
+                GraphicsSettingsPage.SetObjectLighting(GameSettings.ObjectLights);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audioPage))
             {

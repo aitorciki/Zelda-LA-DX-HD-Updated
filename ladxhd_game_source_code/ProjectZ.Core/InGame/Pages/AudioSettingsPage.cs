@@ -41,13 +41,11 @@ namespace ProjectZ.InGame.Pages
         public AudioSettingsPage(int width, int height)
         {
             EnableTooltips = true;
-
-            // Audio Settings Layout
-            _audioSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-
             var buttonWidth = 320;
             var buttonHeight = 16;
 
+            // Audio Settings Layout
+            _audioSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             _audioSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_audio_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize - 12)), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };

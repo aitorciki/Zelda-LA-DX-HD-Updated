@@ -34,14 +34,12 @@ namespace ProjectZ.InGame.Pages
         public VideoSettingsPage(int width, int height)
         {
             EnableTooltips = true;
-
-            // Graphics Settings Layout
-            _videoSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
-
             var buttonWidth = 320;
             var sliderHeight = 11;
             var buttonHeight = 15;
 
+            // Graphics Settings Layout
+            _videoSettingsLayout = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             _videoSettingsLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_video_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };

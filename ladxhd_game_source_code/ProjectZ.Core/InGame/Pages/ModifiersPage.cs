@@ -36,7 +36,6 @@ namespace ProjectZ.InGame.Pages
         public ModifiersPage(int width, int height)
         {
             EnableTooltips = true;
-
             var buttonWidth = 320;
             var buttonHeight = 13;
             var sliderHeight = 11;
