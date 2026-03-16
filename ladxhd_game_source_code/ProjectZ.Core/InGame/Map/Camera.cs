@@ -33,13 +33,15 @@ namespace ProjectZ.InGame.Map
                 if (_viewportWidth <= 0 || _viewportHeight <= 0 || Scale <= 0f)
                     return Matrix.Identity;
 
-                float tx = (float)Math.Round(-RoundX);
-                float ty = (float)Math.Round(-RoundY);
+                int centerX = _viewportWidth / 2;
+                int centerY = _viewportHeight / 2;
+
+                float tx = centerX - RoundX;
+                float ty = centerY - RoundY;
 
                 return
-                    Matrix.CreateScale(Scale) *
-                    Matrix.CreateTranslation(tx, ty, 0f) *
-                    Matrix.CreateTranslation(_viewportWidth * 0.5f, _viewportHeight * 0.5f, 0f);
+                    Matrix.CreateScale(Scale, Scale, 1f) *
+                    Matrix.CreateTranslation(tx, ty, 0f);
             }
         }
 
