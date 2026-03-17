@@ -75,7 +75,12 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
             GameSettings.OldMovement = saveManager.GetBool("OldMovement", GameSettings.OldMovement);
             GameSettings.DigitalAnalog = saveManager.GetBool("DigitalAnalog", GameSettings.DigitalAnalog);
+
+            // On-Screen Control Settings
             GameSettings.TouchControls = saveManager.GetInt("TouchControls", GameSettings.TouchControls);
+            GameSettings.TouchScaling = saveManager.GetInt("TouchScaling", GameSettings.TouchScaling);
+            GameSettings.TouchTopMiddle = saveManager.GetBool("TouchTopMiddle", GameSettings.TouchTopMiddle);
+            GameSettings.TouchSticks = saveManager.GetBool("TouchSticks", GameSettings.TouchSticks);
 
             // Modifiers Settings
             GameSettings.EnemyBonusHP = saveManager.GetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);
@@ -168,8 +173,13 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("SwapButtons", GameSettings.SwapButtons);
             saveManager.SetBool("OldMovement", GameSettings.OldMovement);
             saveManager.SetBool("DigitalAnalog", GameSettings.DigitalAnalog);
-            saveManager.SetInt("TouchControls", GameSettings.TouchControls);
             ControlHandler.SaveButtonMaps(saveManager);
+
+            // On-Screen Control Settings
+            saveManager.SetInt("TouchControls", GameSettings.TouchControls);
+            saveManager.SetInt("TouchScaling", GameSettings.TouchScaling);
+            saveManager.SetBool("TouchTopMiddle", GameSettings.TouchTopMiddle);
+            saveManager.SetBool("TouchSticks", GameSettings.TouchSticks);
 
             // Modifiers Settings
             saveManager.SetInt("EnemyBonusHP", GameSettings.EnemyBonusHP);

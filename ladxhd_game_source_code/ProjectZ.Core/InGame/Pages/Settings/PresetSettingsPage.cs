@@ -276,9 +276,9 @@ namespace ProjectZ.InGame.Pages
                 GameSettingsPage.SetItemSlotRight(GameSettings.ItemsOnRight);
                 GameSettingsPage.SetEpilepsySafe(GameSettings.EpilepsySafe);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ReduxOptionsPage), out var reduxPage))
+            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ReduxSettingsPage), out var reduxPage))
             {
-                var ReduxSettingsPage = (ReduxOptionsPage)reduxPage;
+                var ReduxSettingsPage = (ReduxSettingsPage)reduxPage;
                 ReduxSettingsPage.SetVariableWidthFont(GameSettings.VarWidthFont);
                 ReduxSettingsPage.SetDisableHelperText(GameSettings.NoHelperText);
                 ReduxSettingsPage.SetEnableDialogSkip(GameSettings.DialogSkip);
@@ -341,9 +341,9 @@ namespace ProjectZ.InGame.Pages
                 ControlSettingsPage.SetClassicMove(GameSettings.OldMovement);
                 ControlSettingsPage.SetDigitalAnalog(GameSettings.DigitalAnalog);
             }
-            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ModifiersPage), out var modPage))
+            if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(ModifierSettingsPage), out var modPage))
             {
-                var ModifiersPage = (ModifiersPage)modPage;
+                var ModifiersPage = (ModifierSettingsPage)modPage;
                 ModifiersPage.SetEnemyHitPoints(GameSettings.EnemyBonusHP);
                 ModifiersPage.SetDamageTaken(GameSettings.DamageFactor);
                 ModifiersPage.SetDamageCooldown(GameSettings.DmgCooldown);

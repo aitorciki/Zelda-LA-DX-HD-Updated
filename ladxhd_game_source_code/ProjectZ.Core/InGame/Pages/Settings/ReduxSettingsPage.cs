@@ -8,7 +8,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
 {
-    class ReduxOptionsPage : InterfacePage
+    class ReduxSettingsPage : InterfacePage
     {
         private readonly InterfaceListLayout _reduxOptionsList;
         private readonly InterfaceListLayout _contentLayout;
@@ -35,7 +35,7 @@ namespace ProjectZ.InGame.Pages
         public void SetColoredPhotographs(bool state) { ((InterfaceToggle)_togglePhotosColor.Elements[1]).ToggleState = state; PressButtonTogglePhotosColor(state); }
         public void SetNoAnimalDamage(bool state) => ((InterfaceToggle)_toggleAnimalDamage.Elements[1]).ToggleState = state;
 
-        public ReduxOptionsPage(int width, int height, ContentManager content)
+        public ReduxSettingsPage(int width, int height, ContentManager content)
         {
             _content = content;
             EnableTooltips = true;

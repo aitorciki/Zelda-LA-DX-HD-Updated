@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Core.InGame.Pages.Settings;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
@@ -54,20 +55,18 @@ namespace ProjectZ.InGame.Pages
             var sliderHeight = 11;
         #endif
 
-            // Game Settings Layout
+            // Control Settings Layout
             _controlSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
             _controlSettingsList.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
                 new Point(buttonWidth, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
             _contentLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuContentSize) - 12), Selectable = true, ContentAlignment = InterfaceElement.Gravities.Top };
 
-            // Slider: Android On-Screen Controls
         #if ANDROID
-            _sliderDeadZone = new InterfaceSlider("settings_controls_onscreenpad", 
-                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.TouchControls,
-                number => { GameSettings.TouchControls = number; })
-                { SetString = number => SetOnScreenControlsVisibility(number) };
-            _contentLayout.AddElement(_sliderDeadZone);
-            _tooltips.Add("tooltip_controls_onscreenpad");
+            // Button: On-Screen Controls
+            _contentLayout.AddElement(new InterfaceButton(
+                new Point(buttonWidth, buttonHeight), new Point(1, 2), 
+                "settings_controls_onscreen", element => { Game1.UiPageManager.ChangePage(typeof(ControlOnScreenPage)); }));
+            _tooltips.Add("tooltip_controls_remap");
         #endif
 
             // Slider: Deadzone
@@ -205,16 +204,6 @@ namespace ProjectZ.InGame.Pages
             // Move the LB and RB buttons near the face buttons on the virtual controller.
             VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight);
         #endif
-        }
-
-        private string SetOnScreenControlsVisibility(int number)
-        {
-            return ": " + number switch
-            {
-                0 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_01", "error"),
-                1 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_02", "error"),
-                2 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_03", "error"),
-            };
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)

@@ -17,6 +17,8 @@ namespace ProjectZ.InGame.Controls
         private static DictAtlasEntry _dPadSprite;
         private static Rectangle _dPadBounds;
 
+        private static float ControlsScale => GameSettings.TouchScaling * 0.25f;
+
         public static float ButtonMinAlpha = 0.30f;
         public static float ButtonMaxAlpha = 0.85f;
 
@@ -35,7 +37,7 @@ namespace ProjectZ.InGame.Controls
 
         private static Point GetShadowOffset()
         {
-            int offset = (int)(3 * Game1.UiScale);
+            int offset = (int)(3 * ControlsScale);
             return new Point(offset, offset);
         }
 
@@ -43,14 +45,14 @@ namespace ProjectZ.InGame.Controls
         {
             _buttons.Clear();
 
-            float scale = Game1.UiScale;
+            float scale = ControlsScale;
             int buttonSize = (int)(40 * scale);
             int margin = (int)(16 * scale);
             int spacing = (int)(8 * scale);
 
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             // LEFT SIDE: DPAD 
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             int leftX = margin;
             int leftY = screenHeight - margin;
 
@@ -77,9 +79,9 @@ namespace ProjectZ.InGame.Controls
             _buttons.Add(new VirtualButton("null", CButtons.Down | CButtons.Left, rectDownLeft));
             _buttons.Add(new VirtualButton("null", CButtons.Down | CButtons.Right, rectDownRight));
 
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             // RIGHT SIDE: X / Y / B / A
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             int rightX = screenWidth - margin;
             int rightY = screenHeight - margin;
 
@@ -93,9 +95,22 @@ namespace ProjectZ.InGame.Controls
             _buttons.Add(new VirtualButton("button_b", CButtons.B, rectB));
             _buttons.Add(new VirtualButton("button_a", CButtons.A, rectA));
 
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
+            // STICK BUTTONS
+            // ------------------------------------------------------------------------------------------------------------------------
+            if (GameSettings.TouchSticks)
+            {
+                int extraButtonLift = GameSettings.SixButtons ? buttonSize + spacing : spacing;
+                Rectangle rectExtraR = new Rectangle(rectY.X, rectY.Y - buttonSize - spacing - extraButtonLift, buttonSize, buttonSize);
+                _buttons.Add(new VirtualButton("button_rc", CButtons.RS, rectExtraR));
+
+                int dpadCenterX = _dPadBounds.X + (_dPadBounds.Width / 2) - (buttonSize / 2);
+                Rectangle rectExtraL = new Rectangle(dpadCenterX, _dPadBounds.Y - (buttonSize * 2) - spacing, buttonSize, buttonSize);
+                _buttons.Add(new VirtualButton("button_lc", CButtons.LS, rectExtraL));
+            }
+            // ------------------------------------------------------------------------------------------------------------------------
             // ANALOG STICKS
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             float stickRadius = 40f * scale;
 
             float clusterWidth = buttonSize * 3 + spacing * 2;
@@ -108,9 +123,9 @@ namespace ProjectZ.InGame.Controls
             _leftStick  = new VirtualStick("button_ls", leftStickCenter, stickRadius);
             _rightStick = new VirtualStick("button_rs", rightStickCenter, stickRadius);
 
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             // TOP SHOULDER BUTTONS / SIX BUTTON LAYOUT
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             int topY = margin;
 
             if (GameSettings.SixButtons)
@@ -130,14 +145,22 @@ namespace ProjectZ.InGame.Controls
                 _buttons.Add(new VirtualButton("button_rt", CButtons.RT, new Rectangle(screenWidth - margin - buttonSize, topY, buttonSize, buttonSize)));
                 _buttons.Add(new VirtualButton("button_rb", CButtons.RB, new Rectangle(screenWidth - margin - (buttonSize * 2) - (spacing * 2), topY, buttonSize, buttonSize)));
             }
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             // SELECT / START
-            // ------------------------------------------------------------
+            // ------------------------------------------------------------------------------------------------------------------------
             int centerX = screenWidth / 2;
             int bottomY = screenHeight - margin - buttonSize;
 
-            _buttons.Add(new VirtualButton("button_share", CButtons.Select, new Rectangle(centerX - buttonSize - spacing, bottomY, buttonSize, buttonSize)));
-            _buttons.Add(new VirtualButton("button_menu", CButtons.Start, new Rectangle(centerX + spacing, bottomY, buttonSize, buttonSize)));
+            if (GameSettings.TouchTopMiddle)
+            {
+                _buttons.Add(new VirtualButton("button_share", CButtons.Select, new Rectangle(centerX - buttonSize - spacing, topY, buttonSize, buttonSize)));
+                _buttons.Add(new VirtualButton("button_menu", CButtons.Start, new Rectangle(centerX + spacing, topY, buttonSize, buttonSize)));
+            }
+            else
+            {
+                _buttons.Add(new VirtualButton("button_share", CButtons.Select, new Rectangle(centerX - buttonSize - spacing, bottomY, buttonSize, buttonSize)));
+                _buttons.Add(new VirtualButton("button_menu", CButtons.Start, new Rectangle(centerX + spacing, bottomY, buttonSize, buttonSize)));
+            }
         }
 
         public static void UpdateButtonsAlpha()
@@ -218,7 +241,7 @@ namespace ProjectZ.InGame.Controls
             }
         
             var touches = InputHandler.TouchState;
-            int holdPadding = (int)(12 * Game1.UiScale);
+            int holdPadding = (int)(12 * ControlsScale);
 
             // First pass:
             // Keep already-owned buttons alive if their finger is still active.

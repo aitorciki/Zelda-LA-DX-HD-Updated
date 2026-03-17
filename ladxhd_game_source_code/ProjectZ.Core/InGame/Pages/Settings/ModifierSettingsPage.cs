@@ -9,7 +9,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
 {
-    class ModifiersPage : InterfacePage
+    class ModifierSettingsPage : InterfacePage
     {
         private readonly InterfaceListLayout _modifiersLayout;
         private readonly InterfaceListLayout _contentLayout;
@@ -33,7 +33,7 @@ namespace ProjectZ.InGame.Pages
         public void SetNoDamageLaunch(bool state) => ((InterfaceToggle)_toggleNoDmgLaunch.Elements[1]).ToggleState = state;
         public void SetMirrorReflects(bool state) => ((InterfaceToggle)_toggleMirrorReflects.Elements[1]).ToggleState = state;
 
-        public ModifiersPage(int width, int height)
+        public ModifierSettingsPage(int width, int height)
         {
             EnableTooltips = true;
             var buttonWidth = 320;

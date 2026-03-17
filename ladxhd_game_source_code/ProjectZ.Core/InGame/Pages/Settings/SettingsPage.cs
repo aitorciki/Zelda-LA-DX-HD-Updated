@@ -38,7 +38,7 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_game", element => { Game1.UiPageManager.ChangePage(typeof(GameSettingsPage)); }));
 
             // Button: Redux Settings
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_redux", element => { Game1.UiPageManager.ChangePage(typeof(ReduxOptionsPage)); }));
+            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_redux", element => { Game1.UiPageManager.ChangePage(typeof(ReduxSettingsPage)); }));
 
             // Button: Camera Settings
             _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_camera", element => { Game1.UiPageManager.ChangePage(typeof(CameraSettingsPage)); }));
@@ -56,7 +56,7 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_controls", element => { Game1.UiPageManager.ChangePage(typeof(ControlSettingsPage)); }));
 
             // Button: Modifier Settings
-            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_mods", element => { Game1.UiPageManager.ChangePage(typeof(ModifiersPage)); }));
+            _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_mods", element => { Game1.UiPageManager.ChangePage(typeof(ModifierSettingsPage)); }));
 
             // Button: Modifier Settings
             _contentLayout.AddElement(new InterfaceButton(buttonSize, new Point(1, 2), "settings_menu_presets", element => { Game1.UiPageManager.ChangePage(typeof(PresetOptionsPage)); }));

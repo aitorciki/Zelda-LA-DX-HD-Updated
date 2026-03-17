@@ -67,7 +67,12 @@
         public static bool    SwapButtons     =  false;
         public static bool    OldMovement     =  false;
         public static bool    DigitalAnalog   =  false;
+
+        // On-Screen Control Settings
         public static int     TouchControls   =  1;
+        public static int     TouchScaling    =  10;
+        public static bool    TouchTopMiddle  =  false;
+        public static bool    TouchSticks     =  false;
 
         // Modifiers Settings
         public static int     EnemyBonusHP    =  0;
@@ -161,7 +166,12 @@
             SwapButtons     =  false;
             OldMovement     =  false;
             DigitalAnalog   =  false;
+
+            // On-Screen Control Settings
             TouchControls   =  1;
+            TouchScaling    =  10;
+            TouchTopMiddle  =  false;
+            TouchSticks     =  false;
 
             // Modifiers Settings
             EnemyBonusHP    =  0;
