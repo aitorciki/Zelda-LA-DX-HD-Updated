@@ -1,5 +1,16 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.6**
+### The "Stabilizing the Stability" Update
+  * Add Android configuration options for on-screen controls in the "Control" settings menu.
+  * Calculate the maximum UI Scale on Android using a vertical value of 240 as opposed to 256.
+  * Split some of the in-game options in the "Video" menu into another menu named "Graphics". 
+  * New option "Scale Sequence Amplifier" which can increase the scale of sequences beyond UI Scale.
+  * Make the modifiers option "Mirror Shield Reflects Projectiles" to work on Wizzrobe shots.
+  * Fix camera viewport transform matrix causing visible "lines" in tiles due to half pixel offsets.
+  * Fix a crash when fighting Angler Fish on both Android and Linux (case sensitive folder issue).
+  * Fix a crash (Android only?) due to the patcher not applying patch to dungeon 3 when patching v1.0.0.
+
 ## **v1.6.5**
 ### The "Cleaning up the Tooling" Update
   * Fix migration tool and patcher to always remove files no longer used which could cause conflicts.
