@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectZ.Core.InGame.Pages.Settings;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;

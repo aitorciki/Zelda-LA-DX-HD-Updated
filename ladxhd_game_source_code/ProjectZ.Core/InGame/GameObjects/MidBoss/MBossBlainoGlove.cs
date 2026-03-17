@@ -4,7 +4,6 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
-using static ProjectZ.InGame.GameObjects.ObjLink;
 
 namespace ProjectZ.InGame.GameObjects.MidBoss
 {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Effects;
-using ProjectZ.InGame.GameObjects.Things;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Base.Components.AI

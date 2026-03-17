@@ -4,7 +4,6 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
-using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.GameObjects.Things
 {

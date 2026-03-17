@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;

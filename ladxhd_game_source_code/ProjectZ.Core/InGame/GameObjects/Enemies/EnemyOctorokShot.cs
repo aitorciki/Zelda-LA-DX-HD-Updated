@@ -187,13 +187,10 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 : false;
 
             if (_aiComponent.CurrentStateId != "despawn" && swordBlock)
-            {
                 _aiComponent.ChangeState("despawn");
-            }
             else
-            {
                 return Values.HitCollision.None;
-            }
+            
             _body.Velocity = new Vector3(direction.X, direction.Y, 1.5f);
             _body.VelocityTarget = Vector2.Zero;
 

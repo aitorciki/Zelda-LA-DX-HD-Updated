@@ -1,4 +1,3 @@
-using System.Threading;
 using Microsoft.Xna.Framework;
 using ProjectZ.Base;
 using ProjectZ.InGame.GameObjects.Base;
