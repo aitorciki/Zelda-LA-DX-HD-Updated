@@ -56,8 +56,8 @@ namespace GBSPlayer
         private const float UpdateStepSize = 10;
         private const int CycleTime = (int)(Clockrate / 1000.0f * UpdateStepSize);
 
-        private float soundCount;
-        private float maxSoundCycles = 95.1089f; // 4194304 / 44100
+        private double soundCount;
+        private double maxSoundCycles = 4194304.0 / 44100.0;
 
         private float updateCycleCounter;
         private float maxPlayCycles = maxPlayCycles60;
@@ -195,8 +195,9 @@ namespace GBSPlayer
                     reg_PC = _cartridge.PlayAddress;
 
                     if (reg_SP != _cartridge.StackPointer)
-                        Console.WriteLine("StackPointer error");
-
+                    {
+                        // Console.WriteLine("StackPointer error");
+                    }
                     // push the idleAddress on the stack
                     _memory[--reg_SP] = (byte)(IdleAddress >> 0x8);
                     _memory[--reg_SP] = (byte)(IdleAddress & 0xFF);
@@ -207,17 +208,9 @@ namespace GBSPlayer
                     var instructionDiff = CycleTime - cycleCount;
                     var updateDiff = maxPlayCycles - updateCycleCounter;
                     var minDiff = Math.Min(instructionDiff, updateDiff);
-                    int wholeSamples = (int)(minDiff / maxSoundCycles);
 
-                    cycleCount += (int)(maxSoundCycles * wholeSamples);
-                    soundCount -= maxSoundCycles * wholeSamples;
-
-                    while (minDiff >= maxSoundCycles && !_gbSound.WasStopped)
-                    {
-                        minDiff -= maxSoundCycles;
-                        _gbSound.UpdateBuffer();
-                    }
-
+                    // Advance CPU time only.
+                    // Audio sample generation will happen in CPUCycle() after ExecuteInstruction() returns.
                     cycleCount += (int)minDiff + 1;
                 }
 

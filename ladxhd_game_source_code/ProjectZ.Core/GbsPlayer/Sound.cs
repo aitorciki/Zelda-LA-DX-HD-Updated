@@ -34,7 +34,7 @@ namespace GBSPlayer
         private byte _modeOneSweepTime;
         private byte _modeOneSweepCounter;
 
-        private float _modeOneWavePatternDutyPercentage;
+        private byte _square1DutyPattern;
 
         private int _square1LengthLoad;
         private byte _square1LengthCounter;
@@ -58,7 +58,7 @@ namespace GBSPlayer
 
 
         // Square 2
-        private float _modeTwoWavePatternDutyPercentage;
+        private byte _square2DutyPattern;
 
         private byte _square2StartVolume;
         private bool _square2EnvelopeAddMode;
@@ -93,7 +93,6 @@ namespace GBSPlayer
         private double _modeThreeFreqCounter;
         private double _modeThreeFreqTime;
 
-        private bool _waveTrigger;
         private bool _waveLengthEnable;
 
         private byte[] _waveNibbles = new byte[32];
@@ -111,8 +110,6 @@ namespace GBSPlayer
         private byte _noiseClockShift;
         private bool _noiseWidthMode;
         private byte _noiseDivisorCode;
-
-        private bool _noiseTrigger;
         private bool _noiseLengthEnable;
 
         private short _noiseLfsr;
@@ -228,12 +225,22 @@ namespace GBSPlayer
             _bufferIndex = 0;
         }
 
+        private static byte GetDutyPattern(byte duty)
+        {
+            return duty switch
+            {
+                0 => 0b00000001, // 12.5%
+                1 => 0b10000001, // 25%
+                2 => 0b10000111, // 50%
+                3 => 0b01111110, // 75%
+                _ => 0b00000001
+            };
+        }
+
         public byte this[int index]
         {
             get
             {
-                Console.WriteLine("Get Index 0x{0:X}", index);
-
                 // Square 1
                 if (index == 0xFF10)
                     return _soundRegister[index - 0xFF10];
@@ -306,9 +313,8 @@ namespace GBSPlayer
                     // Sound Length = (64-t1) * (1/256) sec
                     _square1LengthLoad = 64 - (byte)(value & 0x3F); // was 0x07 before?
 
-                    // 12.5, 25, 50, 75
                     var waveDuty = (byte)(value >> 6);
-                    _modeOneWavePatternDutyPercentage = waveDuty == 0 ? 1 : (waveDuty * 2);
+                    _square1DutyPattern = GetDutyPattern(waveDuty);
                 }
                 else if (index == 0xFF12)
                 {
@@ -337,15 +343,21 @@ namespace GBSPlayer
                     if ((value & 0x80) == 0x80)
                     {
                         _square1Running = true;
-
                         _soundOnOff |= 0x01;
 
                         _square1LengthCounter = 0;
 
-                        // set to initial value
+                        // Reset waveform phase/timer
+                        _modeOneFreqCounter = 0;
+                        _square1WaveCounter = 0;
+                        _waveOne = ((_square1DutyPattern >> (7 - _square1WaveCounter)) & 0x01) != 0 ? 1 : 0;
+
+                        // Reset envelope
                         _square1Volume = _square1StartVolume;
-                        // set the envelope counter to the period
                         _square1EnvelopeCounter = _square1EnvelopePeriod;
+
+                        // Reset sweep timer
+                        _modeOneSweepCounter = 0;
                     }
                 }
 
@@ -360,7 +372,7 @@ namespace GBSPlayer
 
                     // 12.5, 25, 50, 75
                     var waveDuty = (byte)(value >> 6);
-                    _modeTwoWavePatternDutyPercentage = waveDuty == 0 ? 1 : (waveDuty * 2);
+                    _square2DutyPattern = GetDutyPattern(waveDuty);
                 }
                 else if (index == 0xFF17)
                 {
@@ -389,14 +401,17 @@ namespace GBSPlayer
                     if ((value & 0x80) == 0x80)
                     {
                         _square2Running = true;
-
                         _soundOnOff |= 0x02;
 
                         _square2LengthCounter = 0;
 
-                        // set to initial value
+                        // Reset waveform phase/timer
+                        _modeTwoFreqCounter = 0;
+                        _square2WaveCounter = 0;
+                        _waveTwo = ((_square2DutyPattern >> (7 - _square2WaveCounter)) & 0x01) != 0 ? 1 : 0;
+
+                        // Reset envelope
                         _square2Volume = _square2StartVolume;
-                        // set the envelope counter to the period
                         _square2EnvelopeCounter = _square2EnvelopePeriod;
                     }
                 }
@@ -415,34 +430,34 @@ namespace GBSPlayer
                 else if (index == 0xFF1C)
                 {
                     _waveVolumeCode = (byte)((value >> 5) & 0x03);
-
-                    if (_waveVolumeCode == 0x00)
+                    _waveThree = _waveVolumeCode switch
                     {
-                        _modeThreeFreqCounter = 0;
-                    }
+                        1 => _waveNibbles[_waveIndex],
+                        2 => (short)(_waveNibbles[_waveIndex] >> 1),
+                        3 => (short)(_waveNibbles[_waveIndex] >> 2),
+                        _ => (short)0
+                    };
                 }
                 else if (index == 0xFF1D)
                 {
                     _modeThreeFrequency = (short)((_modeThreeFrequency & 0x700) + value);
                     UpdateWaveFrequencyTime();
-
-                    _modeThreeFreqCounter = 0;
                 }
                 else if (index == 0xFF1E)
                 {
                     _modeThreeFrequency = (short)((_modeThreeFrequency & 0xFF) + ((value & 0x07) << 8));
                     UpdateWaveFrequencyTime();
 
-                    _waveTrigger = (value & 0x80) == 0x80;
+                    bool trigger = (value & 0x80) == 0x80; // local, no need for a field
                     _waveLengthEnable = (value & 0x40) == 0x40;
 
-                    // start sound 3 again
-                    if (_waveDACpower && _waveTrigger)
+                    if (_waveDACpower && trigger)
                     {
                         _soundOnOff |= 0x04;
-
                         _waveLengthCounter = 0;
                         _modeThreeFreqCounter = 0;
+                        _waveIndex = 31;
+                        _waveThree = 0;
                     }
                 }
 
@@ -466,19 +481,21 @@ namespace GBSPlayer
                 }
                 else if (index == 0xFF23)
                 {
-                    _noiseTrigger = (value & 0x80) == 0x80;
+                    bool noiseTrigger = (value & 0x80) == 0x80;
                     _noiseLengthEnable = (value & 0x40) == 0x40;
 
                     // turn channel on/off
-                    if (_noiseTrigger)
+                    if (noiseTrigger)
                     {
                         _soundOnOff |= 0x08;
 
                         _noiseLengthCounter = 0;
 
                         _noiseVolume = _noiseInitVolume;
-
                         _noiseEnvelopeCounter = _noiseEnvelopePeriod;
+
+                        // Reset noise timer/LFSR
+                        _noiseTimeSteps = 0;
 
                         if (_noiseWidthMode)
                             _noiseLfsr = 0x7F;
@@ -490,12 +507,9 @@ namespace GBSPlayer
                         _soundOnOff &= 0xF7;
                     }
                 }
-
                 else if (index == 0xFF24)
                 {
                     _soundOutputLevel = value;
-                    if (value != 0xFF)
-                        Console.WriteLine("Volume not supported {0:X}", value);
                 }
                 else if (index == 0xFF25)
                     _channelLeftRightControl = value;
@@ -558,7 +572,6 @@ namespace GBSPlayer
 
                     if (_waveLengthCounter >= _modeThreeSoundLength && _waveLengthEnable)
                     {
-                        _waveTrigger = false;
                         _soundOnOff &= 0xFB;
                     }
 
@@ -579,7 +592,7 @@ namespace GBSPlayer
                             _square1Volume += _square1EnvelopeAddMode ? 1 : -1;
                         }
                     }
-                    if (_square2EnvelopeCounter != 0)
+                    if (_square2EnvelopePeriod != 0)
                     {                   
                         _square2EnvelopeCounter--;
 
@@ -589,7 +602,7 @@ namespace GBSPlayer
                             _square2Volume += _square2EnvelopeAddMode ? 1 : -1;
                         }
                     }
-                    if (_noiseEnvelopeCounter != 0)
+                    if (_noiseEnvelopePeriod != 0)
                     {                   
                         _noiseEnvelopeCounter--;
 
@@ -641,7 +654,7 @@ namespace GBSPlayer
                         _modeOneFreqCounter -= _modeOneFreqTime;
 
                         // update wave
-                        _waveOne = _square1WaveCounter < _modeOneWavePatternDutyPercentage ? 1 : 0;
+                        _waveOne = ((_square1DutyPattern >> (7 - _square1WaveCounter)) & 0x01) != 0 ? 1 : 0;
                         _square1WaveCounter = (byte)((_square1WaveCounter + 1) % 8);
                     }
                 }
@@ -666,7 +679,7 @@ namespace GBSPlayer
                         _modeTwoFreqCounter -= _modeTwoFreqTime;
 
                         // update wave
-                        _waveTwo = _square2WaveCounter < _modeTwoWavePatternDutyPercentage ? 1 : 0;
+                        _waveTwo = ((_square2DutyPattern >> (7 - _square2WaveCounter)) & 0x01) != 0 ? 1 : 0;
                         _square2WaveCounter = (byte)((_square2WaveCounter + 1) % 8);
                     }
                 }
@@ -681,21 +694,25 @@ namespace GBSPlayer
             // Wave
             double channel2 = 0;
             {
-                _modeThreeFreqCounter++;
-                if (_modeThreeFreqCounter >= _modeThreeFreqTime)
+                if ((_soundOnOff & 0x04) != 0 && _waveDACpower)
                 {
-                    _modeThreeFreqCounter -= _modeThreeFreqTime;
-                    _waveIndex = (_waveIndex + 1) % 32;
+                    _modeThreeFreqCounter++;
+                    if (_modeThreeFreqCounter >= _modeThreeFreqTime)
+                    {
+                        _modeThreeFreqCounter -= _modeThreeFreqTime;
+                        _waveIndex = (_waveIndex + 1) % 32;
 
-                    // 32 x 4 bit samples
-                    _waveThree = (byte)(_waveNibbles[_waveIndex] >> (_waveVolumeCode - 1));
+                        _waveThree = _waveVolumeCode switch
+                        {
+                            0 => 0,
+                            1 => _waveNibbles[_waveIndex],           // 100% volume, no shift
+                            2 => (short)(_waveNibbles[_waveIndex] >> 1), // 50%
+                            3 => (short)(_waveNibbles[_waveIndex] >> 2), // 25%
+                            _ => 0
+                        };
+                    }
                 }
-
-                channel2 = _waveThree;
-
-                // Sound 3 ON Flag  
-                if ((_soundOnOff & 0x04) == 0x00 || _waveVolumeCode == 0x00 || !_waveDACpower)
-                    channel2 = 0;
+                channel2 = _waveVolumeCode == 0 ? 0 : _waveThree;
             }
 
             // Noise Channel
@@ -726,31 +743,72 @@ namespace GBSPlayer
 
                         _noiseLfsr >>= 1;
 
-                        _noiseLfsr |= (short)(lsb << 14);
+                        // Set bit 14 to the new XOR bit
+                        _noiseLfsr = (short)((_noiseLfsr & ~(1 << 14)) | (lsb << 14));
 
+                        // In 7-bit mode, bit 6 must also be replaced with that same XOR bit
                         if (_noiseWidthMode)
-                            _noiseLfsr |= (short)(lsb << 6);
+                            _noiseLfsr = (short)((_noiseLfsr & ~(1 << 6)) | (lsb << 6));
 
                         if (_noiseTimeSteps > freq)
                             channel3 += (double)((~_noiseLfsr & 0x01) * _noiseVolume) / (double)stepCount;
                     }
                 }
             }
+            double ch1 = channel0 / 15.0;
+            double ch2 = channel1 / 15.0;
+            double ch3 = channel2 / 15.0;
+            double ch4 = channel3 / 15.0;
 
-            //channel0 = 0;
-            //channel1 = 0;
-            //channel2 = 0;
-            //channel3 = 0;
+            // NR51: route channels to left / right
+            double left = 0.0;
+            double right = 0.0;
 
-            double mixerOutput = ((channel0 / 15.0) +
-                                  (channel1 / 15.0) +
-                                  (channel2 / 15.0) +
-                                  (channel3 / 15.0)) / 4;
+            if ((_channelLeftRightControl & 0x10) != 0) left += ch1;
+            if ((_channelLeftRightControl & 0x20) != 0) left += ch2;
+            if ((_channelLeftRightControl & 0x40) != 0) left += ch3;
+            if ((_channelLeftRightControl & 0x80) != 0) left += ch4;
+
+            if ((_channelLeftRightControl & 0x01) != 0) right += ch1;
+            if ((_channelLeftRightControl & 0x02) != 0) right += ch2;
+            if ((_channelLeftRightControl & 0x04) != 0) right += ch3;
+            if ((_channelLeftRightControl & 0x08) != 0) right += ch4;
+
+            // Average active channels per side so one side doesn't get louder
+            int leftCount = 0;
+            int rightCount = 0;
+
+            if ((_channelLeftRightControl & 0x10) != 0) leftCount++;
+            if ((_channelLeftRightControl & 0x20) != 0) leftCount++;
+            if ((_channelLeftRightControl & 0x40) != 0) leftCount++;
+            if ((_channelLeftRightControl & 0x80) != 0) leftCount++;
+
+            if ((_channelLeftRightControl & 0x01) != 0) rightCount++;
+            if ((_channelLeftRightControl & 0x02) != 0) rightCount++;
+            if ((_channelLeftRightControl & 0x04) != 0) rightCount++;
+            if ((_channelLeftRightControl & 0x08) != 0) rightCount++;
+
+            if (leftCount > 0)
+                left /= leftCount;
+            if (rightCount > 0)
+                right /= rightCount;
+
+            // NR50: per-side master volume
+            double leftVolume = (((_soundOutputLevel >> 4) & 0x07) + 1) / 8.0;
+            double rightVolume = ((_soundOutputLevel & 0x07) + 1) / 8.0;
+
+            left *= leftVolume;
+            right *= rightVolume;
+
+            // Mono output: average left and right
+            double mixerOutput = (left + right) * 0.5;
 
             if ((_soundOnOff & 0x80) != 0x80)
                 mixerOutput = 0;
 
-            var output = HighPass(mixerOutput, (_soundOnOff & 0x0F) != 0x00);
+            bool anyDacEnabled = (_soundOnOff & 0x80) != 0 && _channelLeftRightControl != 0;
+
+            var output = HighPass(mixerOutput, anyDacEnabled);
             var byteOutput = (short)(output * short.MaxValue);
 
             _soundBuffer[_bufferIndex++] = (byte)(byteOutput & 0xFF);
@@ -775,9 +833,6 @@ namespace GBSPlayer
 
             var output = input - _highPassFilterCapacitor;
 
-            // 0,999958 ^ (4194304/rate)
-            // 0,999958 ^ (4194304/44100hz) = 0,996013308910
-            // 0,999958 ^ (4194304/48000hz) = 0,996336633487
             _highPassFilterCapacitor = input - output * 0.996013308910; // for 44100hz
 
             return output;

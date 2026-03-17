@@ -43,7 +43,7 @@ namespace GBSPlayer
                 if (0xFF80 <= index && index <= 0xFFFF)
                     return Memory[index];
 
-                Console.WriteLine("Read at 0x{0:X} not supported", index);
+                // Console.WriteLine("Read at 0x{0:X} not supported", index);
                 return 0;
             }
             set
@@ -56,7 +56,7 @@ namespace GBSPlayer
                 // 8KB Video RAM (VRAM)
                 else if (index < 0xA000)
                 {
-                    Console.WriteLine("VRAM not supported 0x{0:X}", index);
+                    // Console.WriteLine("VRAM not supported 0x{0:X}", index);
                 }
                 // Unit Working RAM
                 else if (index < 0xE000)
@@ -72,17 +72,17 @@ namespace GBSPlayer
                 }
                 else if (index < 0xFF05)
                 {
-                    Console.WriteLine("Write to 0x{0:X} not supported", index);
+                    // Console.WriteLine("Write to 0x{0:X} not supported", index);
                 }
                 else if (index == 0xFF05)
                 {
                     // TIMA Timer Counter
-                    Console.WriteLine("TIMA currently not supported");
+                    // Console.WriteLine("TIMA currently not supported");
                 }
                 else if (index == 0xFF06)
                 {
                     // TMA Timer Modulo
-                    Console.WriteLine("TMA currently not supported");
+                    // Console.WriteLine("TMA currently not supported");
                 }
                 // TAC
                 else if (index == 0xFF07)
@@ -104,11 +104,11 @@ namespace GBSPlayer
                     //  0: Use normal rate
                     //  1: Use 2x(fast) rate
 
-                    Console.WriteLine("TAC currently not supported");
+                    // Console.WriteLine("TAC currently not supported");
                 }
                 else if (index < 0xFF10)
                 {
-                    Console.WriteLine("Write to 0x{0:X} not supported", index);
+                    // Console.WriteLine("Write to 0x{0:X} not supported", index);
                 }
                 // Sound stuff
                 else if (0xFF10 <= index && index <= 0xFF3F)
@@ -117,7 +117,7 @@ namespace GBSPlayer
                 }
                 else if (index < 0xFF80)
                 {
-                    Console.WriteLine("Write to 0x{0:X} not supported", index);
+                    // Console.WriteLine("Write to 0x{0:X} not supported", index);
                 }
                 // High RAM (HRAM)
                 else if (index < 0xFFFF)
@@ -132,7 +132,7 @@ namespace GBSPlayer
                 // ERROR
                 else
                 {
-                    Console.WriteLine("Error writing to high address");
+                    // Console.WriteLine("Error writing to high address");
                 }
             }
         }

@@ -80,8 +80,6 @@ namespace GBSPlayer
                     if (romIndex < ROM.Length)
                         return ROM[romIndex];
                 }
-
-                Console.WriteLine("Cartridge Index unavailable: {0:X}", index);
                 return 0;
             }
             set
@@ -89,7 +87,7 @@ namespace GBSPlayer
                 // normally enable RAM
                 if (index < 0x2000)
                 {
-                    Console.WriteLine("Write to 0x{0:X} not supported", index);
+                   // Console.WriteLine("Write to 0x{0:X} not supported", index);
                 }
                 // select ROM Bank
                 else if (index < 0x4000)
@@ -106,7 +104,9 @@ namespace GBSPlayer
                     // Player authors: you should disregard writes to $4000-$5fff and $ff70, and just implement main RAM from $a000 to $dfff.
                 }
                 else
-                    Console.WriteLine("Write to 0x{0:X} not supported", index);
+                {
+                   // Console.WriteLine("Write to 0x{0:X} not supported", index);
+                }
             }
         }
     }
