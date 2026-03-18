@@ -126,6 +126,12 @@ namespace LADXHD_Migrater
             }
             // Extract the Android buttons to the data path.
             string extractPath = Path.Combine(Config.Update_Data, "Buttons").CreatePath();
+
+            // Check to see if buttons already exist in the path.
+            if (!extractPath.IsPathEmpty())
+                extractPath.ClearPath();
+
+            // Create the zip file and extract the buttons.
             string zipFilePath = Path.Combine(extractPath, "android_buttons.zip");
             File.WriteAllBytes(zipFilePath, (byte[])resources["android_buttons.zip"]);
             ZipFile.ExtractToDirectory(zipFilePath, extractPath);
