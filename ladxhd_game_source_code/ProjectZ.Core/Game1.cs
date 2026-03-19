@@ -159,22 +159,11 @@ namespace ProjectZ
             get
             {
             #if ANDROID
-                if (WindowWidth > 0 && WindowHeight > 0)
+                if (Instance?.GraphicsDevice != null)
                 {
-                    var gd = Instance?.GraphicsDevice;
-                    if (gd != null)
-                    {
-                        var pp = gd.PresentationParameters;
-                        if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
-                            return Matrix.CreateScale((float)pp.BackBufferWidth / WindowWidth, (float)pp.BackBufferHeight / WindowHeight, 1f);
-                    }
-
-                    if (Instance?.Window != null)
-                    {
-                        var cb = Instance.Window.ClientBounds;
-                        if (cb.Width > 0 && cb.Height > 0)
-                            return Matrix.CreateScale((float)cb.Width / WindowWidth, (float)cb.Height / WindowHeight, 1f);
-                    }
+                    var pp = Instance.GraphicsDevice.PresentationParameters;
+                    if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0 && WindowWidth > 0 && WindowHeight > 0)
+                        return Matrix.CreateScale((float)pp.BackBufferWidth  / WindowWidth, (float)pp.BackBufferHeight / WindowHeight, 1f);
                 }
             #endif
                 return Matrix.CreateScale((float)Graphics.PreferredBackBufferWidth / WindowWidth, (float)Graphics.PreferredBackBufferHeight / WindowHeight, 1f);
@@ -400,8 +389,20 @@ namespace ProjectZ
             {
                 _startDelayElapsed += gameTime.ElapsedGameTime.TotalSeconds;
 
-                if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
-                    OnResize();
+                #if ANDROID
+                    if (GraphicsDevice != null)
+                    {
+                        var pp = GraphicsDevice.PresentationParameters;
+                        if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
+                        {
+                            if (WindowWidth != pp.BackBufferWidth || WindowHeight != pp.BackBufferHeight)
+                                OnResize();
+                        }
+                    }
+                #else
+                    if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
+                        OnResize();
+                #endif
 
                 if (_startDelayElapsed < _startDelayTime)
                     return;
@@ -433,11 +434,26 @@ namespace ProjectZ
             {
                 _initRenderTargets = true;
                 WindowWidth = 0;
+                WindowHeight = 0;
+                WindowWidthEnd = 0;
                 WindowHeightEnd = 0;
             }
-            // If the window size has changed then trigger a resize event.
+
+        #if ANDROID
+            // On Android use PP as the source of truth, not ClientBounds
+            if (GraphicsDevice != null)
+            {
+                var pp = GraphicsDevice.PresentationParameters;
+                if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
+                {
+                    if (WindowWidth != pp.BackBufferWidth || WindowHeight != pp.BackBufferHeight)
+                        OnResize();
+                }
+            }
+        #else
             if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
                 OnResize();
+        #endif
 
             // Update the scale if it has been changed.
             if (ScaleChanged)
@@ -572,21 +588,23 @@ namespace ProjectZ
 
                 if (targetWidth <= 0 || targetHeight <= 0)
                 {
-                    var viewport = GraphicsDevice.Viewport;
-                    targetWidth = viewport.Width;
-                    targetHeight = viewport.Height;
+                    var vp = GraphicsDevice.Viewport;
+                    targetWidth = vp.Width;
+                    targetHeight = vp.Height;
                 }
-            #else
-                var viewport = GraphicsDevice.Viewport;
-            #endif
+
+                int offsetX = (targetWidth  - MainRenderTarget.Width)  / 2;
+                int offsetY = (targetHeight - MainRenderTarget.Height) / 2;
 
                 SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
-            #if ANDROID
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
-            #else
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-            #endif
+                SpriteBatch.Draw(MainRenderTarget, new Rectangle(offsetX, offsetY, MainRenderTarget.Width, MainRenderTarget.Height), Color.White);
                 SpriteBatch.End();
+            #else
+                var viewport = GraphicsDevice.Viewport;
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+                SpriteBatch.End();
+            #endif
             }
 
             if (!GameSettings.OpaqueHudBg)
@@ -746,6 +764,16 @@ namespace ProjectZ
                 Graphics.IsFullScreen = true;
                 Graphics.ApplyChanges();
 
+            #if ANDROID
+                // Sync Preferred* to what the GPU actually committed to.
+                var pp = Graphics.GraphicsDevice.PresentationParameters;
+                if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
+                {
+                    Graphics.PreferredBackBufferWidth  = pp.BackBufferWidth;
+                    Graphics.PreferredBackBufferHeight = pp.BackBufferHeight;
+                }
+            #endif
+
                 WasExclusive = GameSettings.ScreenMode == 2;
             }
             // Exit fullscreen
@@ -814,42 +842,19 @@ namespace ProjectZ
             int w = 0, h = 0;
 
         #if ANDROID
-            // On Android, this can fire before GraphicsDevice exists (or during reset).
-            var cbWidth = Window?.ClientBounds.Width ?? 0;
-            var cbHeight = Window?.ClientBounds.Height ?? 0;
+            if (GraphicsDevice == null) return;
+    
+            var pp = GraphicsDevice.PresentationParameters;
+            var cb = Window?.ClientBounds;
 
-            if (GraphicsDevice != null)
+            w = pp.BackBufferWidth;
+            h = pp.BackBufferHeight;
+    
+            // Only fall back to ClientBounds if PP gives us nothing useful
+            if (w <= 0 || h <= 0)
             {
-                if (cbWidth > 0 && cbHeight > 0 &&
-                    (Graphics.PreferredBackBufferWidth != cbWidth || Graphics.PreferredBackBufferHeight != cbHeight))
-                {
-                    try
-                    {
-                        Graphics.PreferredBackBufferWidth = cbWidth;
-                        Graphics.PreferredBackBufferHeight = cbHeight;
-                        Graphics.ApplyChanges();
-                    }
-                    catch
-                    {
-                        // Keep running; we'll use the best available dimensions below.
-                    }
-                }
-
-                var pp = GraphicsDevice.PresentationParameters;
-                w = pp.BackBufferWidth;
-                h = pp.BackBufferHeight;
-
-                if (cbWidth > 0 && cbHeight > 0)
-                {
-                    w = cbWidth;
-                    h = cbHeight;
-                }
-            }
-            else
-            {
-                // Fallback: at least keep sizes sane until GD exists
-                w = cbWidth;
-                h = cbHeight;
+                w = cb?.Width ?? 0;
+                h = cb?.Height ?? 0;
             }
         #else
             w = Window.ClientBounds.Width;
@@ -885,10 +890,21 @@ namespace ProjectZ
         public void ForceRecalculateScaling()
         {
             // Pull the current actual client size.
+        #if ANDROID
+            int w = 0, h = 0;
+            if (GraphicsDevice != null)
+            {
+                var pp = GraphicsDevice.PresentationParameters;
+                w = pp.BackBufferWidth;
+                h = pp.BackBufferHeight;
+            }
+            if (w <= 0 || h <= 0) return;
+        #else
             int w = Window.ClientBounds.Width;
             int h = Window.ClientBounds.Height;
             if (w <= 0 || h <= 0)
                 return;
+        #endif
 
             // Update the current window dimensions.
             WindowWidth = w;
@@ -1023,7 +1039,14 @@ namespace ProjectZ
 
             try
             {
+            #if ANDROID
+                int scale = Math.Max(1, MapManager.Camera.ScaleValue);
+                int snappedWidth  = (width  / scale) * scale;
+                int snappedHeight = (height / scale) * scale;
+                newMain = new RenderTarget2D(Graphics.GraphicsDevice, snappedWidth, snappedHeight);
+            #else
                 newMain = new RenderTarget2D(Graphics.GraphicsDevice, width, height);
+            #endif
                 newRt1 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
                 newRt2 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
             }

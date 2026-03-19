@@ -17,14 +17,16 @@ namespace ProjectZ.InGame.Map
         public float ShakeOffsetY;
         public float CameraFollowMultiplier = 1;
 
+        public int ScaleValue => Math.Max(1, (int)MathF.Round(Scale));
+
+        private int SnappedViewportWidth => (_viewportWidth / Math.Max(1, ScaleValue)) * Math.Max(1, ScaleValue);
+        private int SnappedViewportHeight => (_viewportHeight / Math.Max(1, ScaleValue)) * Math.Max(1, ScaleValue);
+
         private float RoundedShakeX => MathF.Round(ShakeOffsetX);
         private float RoundedShakeY => MathF.Round(ShakeOffsetY);
 
-        // This is needed so there is no texture bleeding while rendering the game.
-        public float RoundX => (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
-        public float RoundY => (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
-
-        private static bool IsFinite(float v) => !(float.IsNaN(v) || float.IsInfinity(v));
+        public int RoundX => (int)MathF.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
+        public int RoundY => (int)MathF.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
 
         public Matrix TransformMatrix
         {
@@ -33,14 +35,25 @@ namespace ProjectZ.InGame.Map
                 if (_viewportWidth <= 0 || _viewportHeight <= 0 || Scale <= 0f)
                     return Matrix.Identity;
 
-                int centerX = _viewportWidth / 2;
-                int centerY = _viewportHeight / 2;
+                int scale = ScaleValue;
+                int snappedWidth  = (_viewportWidth  / scale) * scale;
+                int snappedHeight = (_viewportHeight / scale) * scale;
+                int offsetX = (_viewportWidth  - snappedWidth)  / 2;
+                int offsetY = (_viewportHeight - snappedHeight) / 2;
+                int centerX = offsetX + snappedWidth  / 2;
+                int centerY = offsetY + snappedHeight / 2;
 
-                float tx = centerX - RoundX;
-                float ty = centerY - RoundY;
+                #if ANDROID
+                // If height doesn't snap cleanly, nudge center by 1px to compensate for driver rounding
+                if (_viewportHeight % scale != 0)
+                    centerY += 1;
+                #endif
+
+                float tx = MathF.Round(centerX - RoundX);
+                float ty = MathF.Round(centerY - RoundY);
 
                 return
-                    Matrix.CreateScale(Scale, Scale, 1f) *
+                    Matrix.CreateScale(scale, scale, 1f) *
                     Matrix.CreateTranslation(tx, ty, 0f);
             }
         }
@@ -50,8 +63,6 @@ namespace ProjectZ.InGame.Map
 
         public int X => (int)Math.Round(Location.X + ShakeOffsetX * Scale);
         public int Y => (int)Math.Round(Location.Y + ShakeOffsetY * Scale);
-
-        public int ScaleValue => (int)Scale;
 
         private Vector2 _cameraDistance;
 
@@ -90,32 +101,34 @@ namespace ProjectZ.InGame.Map
         public Rectangle GetCameraRectangle()
         {
             var rectangle = new Rectangle(
-                (int)RoundX - _viewportWidth / 2,
-                (int)RoundY - _viewportHeight / 2,
-                _viewportWidth, _viewportHeight);
+                RoundX - SnappedViewportWidth / 2,
+                RoundY - SnappedViewportHeight / 2,
+                SnappedViewportWidth, SnappedViewportHeight);
             return rectangle;
         }
 
         public Rectangle GetGameView()
         {
+            var scale = ScaleValue;
             var rectangle = new Rectangle(
-                (int)(RoundX / Scale) - (int)(_viewportWidth / 2 / Scale),
-                (int)(RoundY / Scale) - (int)(_viewportHeight / 2 / Scale),
-                (int)(_viewportWidth / Scale), (int)(_viewportHeight / Scale));
+                (RoundX - SnappedViewportWidth / 2) / scale,
+                (RoundY - SnappedViewportHeight / 2) / scale,
+                SnappedViewportWidth / scale, SnappedViewportHeight / scale);
             return rectangle;
         }
 
         public Vector2 GetFieldCenter()
         {
             Vector2 fieldCoords = MapManager.ObjLink.CenterPosition.Position;
+            var scale = ScaleValue;
 
             if (Game1.ClassicCamera.CameraFieldCoords != Vector2.Zero && !MapManager.ObjLink.Map.IsOverworld)
                 fieldCoords = Game1.ClassicCamera.CameraFieldCoords;
 
             fieldRect = MapManager.ObjLink.Map.GetField(fieldCoords);
 
-            int rectCenterX = (fieldRect.X + fieldRect.Width / 2) * ScaleValue;
-            int rectCenterY = (fieldRect.Y + fieldRect.Height / 2) * ScaleValue;
+            int rectCenterX = (fieldRect.X + fieldRect.Width / 2) * scale;
+            int rectCenterY = (fieldRect.Y + fieldRect.Height / 2) * scale;
             return new Vector2(rectCenterX, rectCenterY);
         }
 
@@ -239,7 +252,7 @@ namespace ProjectZ.InGame.Map
                 if (GameSettings.ClassicBorder > 0)
                 {
                     int thickness = 4;
-                    float scale = ScaleValue;
+                    int scale = ScaleValue;
 
                     // Screen center
                     var viewport = spriteBatch.GraphicsDevice.Viewport;
@@ -258,25 +271,25 @@ namespace ProjectZ.InGame.Map
                     );
 
                     // Offset so that the field rect is centered on screen (like your camera)
-                    var drawOffset = screenCenter - (fieldCenter - Location);
+                    var drawOffset = screenCenter - (fieldCenter - new Vector2(RoundX, RoundY));
                     var tex = Resources.SprWhite;
 
                     // Draw border lines (using alpha)
                     Color borderColor = Color.Black * GameSettings.ClassicAlpha;
 
                     // Draw Order: Top / Bottom / Left / Right
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y), (int)fieldW, thickness), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y + fieldH - thickness), (int)fieldW, thickness), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
-                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - Location.X + fieldW - thickness), (int)(drawOffset.Y + fieldY - Location.Y - 1), thickness, (int)fieldH + 2), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - RoundX), (int)(drawOffset.Y + fieldY - RoundY), (int)fieldW, thickness), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - RoundX), (int)(drawOffset.Y + fieldY - RoundY + fieldH - thickness), (int)fieldW, thickness), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - RoundX), (int)(drawOffset.Y + fieldY - RoundY - 1), thickness, (int)fieldH + 2), borderColor);
+                    spriteBatch.Draw(tex, new Rectangle((int)(drawOffset.X + fieldX - RoundX + fieldW - thickness), (int)(drawOffset.Y + fieldY - RoundY - 1), thickness, (int)fieldH + 2), borderColor);
 
                     // Fill everything outside the border with black.
                     var screenW = viewport.Width + 1;
                     var screenH = viewport.Height + 1;
 
                     // Compute the rectangle's position on screen.
-                    var rectScreenX = drawOffset.X + fieldX - Location.X;
-                    var rectScreenY = drawOffset.Y + fieldY - Location.Y;
+                    var rectScreenX = drawOffset.X + fieldX - RoundX;
+                    var rectScreenY = drawOffset.Y + fieldY - RoundY;
 
                     // Draw border fill (using alpha)
                     Color blackoutColor = Color.Black * GameSettings.ClassicAlpha;
@@ -295,8 +308,8 @@ namespace ProjectZ.InGame.Map
                         const int borderH = 224;
 
                         // Scale by the camera scale (which should be integer scale with Classic Camera enabled).
-                        int scaledW = (int)(borderW * MapManager.Camera.Scale);
-                        int scaledH = (int)(borderH * MapManager.Camera.Scale);
+                        int scaledW = (borderW * scale);
+                        int scaledH = (borderH * scale);
 
                         // Center the SGB border on the screen.
                         Vector2 pos = new Vector2((viewport.Width  - scaledW) / 2f, (viewport.Height - scaledH) / 2f);
@@ -306,7 +319,7 @@ namespace ProjectZ.InGame.Map
                         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
 
                         // Draw the border using nearest neighbor (point filtering) for sharp pixels).
-                        spriteBatch.Draw(Resources.sgbBorder, pos, null, Color.White, 0f, Vector2.Zero, MapManager.Camera.Scale, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Resources.sgbBorder, pos, null, Color.White, 0f, Vector2.Zero, ScaleValue, SpriteEffects.None, 0f);
                     }
                 }
             }
