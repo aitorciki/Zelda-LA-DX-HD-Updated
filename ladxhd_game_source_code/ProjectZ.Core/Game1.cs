@@ -389,20 +389,20 @@ namespace ProjectZ
             {
                 _startDelayElapsed += gameTime.ElapsedGameTime.TotalSeconds;
 
-                #if ANDROID
-                    if (GraphicsDevice != null)
+            #if ANDROID
+                if (GraphicsDevice != null)
+                {
+                    var pp = GraphicsDevice.PresentationParameters;
+                    if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
                     {
-                        var pp = GraphicsDevice.PresentationParameters;
-                        if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
-                        {
-                            if (WindowWidth != pp.BackBufferWidth || WindowHeight != pp.BackBufferHeight)
-                                OnResize();
-                        }
+                        if (WindowWidth != pp.BackBufferWidth || WindowHeight != pp.BackBufferHeight)
+                            OnResize();
                     }
-                #else
-                    if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
-                        OnResize();
-                #endif
+                }
+            #else
+                if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
+                    OnResize();
+            #endif
 
                 if (_startDelayElapsed < _startDelayTime)
                     return;
@@ -451,6 +451,7 @@ namespace ProjectZ
                 }
             }
         #else
+            // If the window size has changed then trigger a resize event.
             if ((WindowWidth != Window.ClientBounds.Width) || (WindowHeight != Window.ClientBounds.Height))
                 OnResize();
         #endif
@@ -588,23 +589,21 @@ namespace ProjectZ
 
                 if (targetWidth <= 0 || targetHeight <= 0)
                 {
-                    var vp = GraphicsDevice.Viewport;
-                    targetWidth = vp.Width;
-                    targetHeight = vp.Height;
+                    var viewport = GraphicsDevice.Viewport;
+                    targetWidth = viewport.Width;
+                    targetHeight = viewport.Height;
                 }
-
-                int offsetX = (targetWidth  - MainRenderTarget.Width)  / 2;
-                int offsetY = (targetHeight - MainRenderTarget.Height) / 2;
-
-                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(offsetX, offsetY, MainRenderTarget.Width, MainRenderTarget.Height), Color.White);
-                SpriteBatch.End();
             #else
                 var viewport = GraphicsDevice.Viewport;
-                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-                SpriteBatch.End();
             #endif
+
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+            #if ANDROID
+                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
+            #else
+                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+            #endif
+                SpriteBatch.End();
             }
 
             if (!GameSettings.OpaqueHudBg)
@@ -763,16 +762,6 @@ namespace ProjectZ
 
                 Graphics.IsFullScreen = true;
                 Graphics.ApplyChanges();
-
-            #if ANDROID
-                // Sync Preferred* to what the GPU actually committed to.
-                var pp = Graphics.GraphicsDevice.PresentationParameters;
-                if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
-                {
-                    Graphics.PreferredBackBufferWidth  = pp.BackBufferWidth;
-                    Graphics.PreferredBackBufferHeight = pp.BackBufferHeight;
-                }
-            #endif
 
                 WasExclusive = GameSettings.ScreenMode == 2;
             }
@@ -1039,14 +1028,7 @@ namespace ProjectZ
 
             try
             {
-            #if ANDROID
-                int scale = Math.Max(1, MapManager.Camera.ScaleValue);
-                int snappedWidth  = (width  / scale) * scale;
-                int snappedHeight = (height / scale) * scale;
-                newMain = new RenderTarget2D(Graphics.GraphicsDevice, snappedWidth, snappedHeight);
-            #else
                 newMain = new RenderTarget2D(Graphics.GraphicsDevice, width, height);
-            #endif
                 newRt1 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
                 newRt2 = new RenderTarget2D(Graphics.GraphicsDevice, blurRtWidth, blurRtHeight);
             }

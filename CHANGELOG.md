@@ -1,5 +1,13 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.7**
+### The "Final Frontier" Update
+  * Final "oldest" known issue was fixed. Music from GBS Player now (mostly) matches original game.
+  * Add an on-screen always visible controller button for Android to toggle the controls on and off.
+  * Implement sliders for on-screen buttons for Android to adjust both button and shadow opacity.
+  * Fix viewing the painting by Schule Donavitch (the alligator in Animal Village) to be centered.
+  * Fix patcher to restore the dungeon3_1.map (backup file) if it is missing which caused crashes.
+
 ## **v1.6.6**
 ### The "Stabilizing the Stability" Update
   * Add Android configuration options for on-screen controls in the "Control" settings menu.

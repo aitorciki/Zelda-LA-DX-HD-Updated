@@ -49,6 +49,28 @@ namespace ProjectZ.InGame.Things
             public SoundEffectInstance Instance;
         }
 
+        public Matrix GetMatrix
+        {
+            get
+            {
+                if (_activeRenderTarget == null)
+                    return Matrix.Identity;
+
+                var denomX = (int)(Game1.WindowWidth * _scaleMultiplier);
+                var denomY = (int)(Game1.WindowHeight * _scaleMultiplier);
+
+                denomX = Math.Max(1, denomX);
+                denomY = Math.Max(1, denomY);
+
+                float scaleX = (float)_activeRenderTarget.Width / denomX;
+                float scaleY = (float)_activeRenderTarget.Height / denomY;
+
+                if (float.IsNaN(scaleX) || float.IsNaN(scaleY) || float.IsInfinity(scaleX) || float.IsInfinity(scaleY))
+                    return Matrix.Identity;
+
+                return Matrix.CreateScale(scaleX, scaleY, 1f);
+            }
+        }
         public int CurrentRenderWidth;
         public int CurrentRenderHeight;
         public float CurrentRenderScale;
@@ -366,12 +388,15 @@ namespace ProjectZ.InGame.Things
             // draw the output of the light and the dark shader passes
             ChangeRenderTarget();
             Game1.Graphics.GraphicsDevice.SetRenderTarget(Game1.MainRenderTarget);
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.AnisotropicWrap);
 
+            /// RT:CRASH BYPASS
             if (_inactiveRenderTarget1 != null)
-                spriteBatch.Draw(_inactiveRenderTarget1, Vector2.Zero, Color.White);
+                spriteBatch.Draw(_inactiveRenderTarget1, new Rectangle(0, 0, Game1.MainRenderTarget.Width, Game1.MainRenderTarget.Height), Color.White);
 
+            // debug stuff
             MapManager.Camera.Draw(spriteBatch);
+
             spriteBatch.End();
         }
 
@@ -700,49 +725,29 @@ namespace ProjectZ.InGame.Things
         public void SetGameScale(float scale)
         {
             _scaleMultiplier = MathF.Ceiling(scale) / scale;
-            OnResize();
+
+            UpdateRenderTargets();
         }
 
         public void OnResize()
         {
             InGameOverlay.ResolutionChanged();
 
-        #if ANDROID
-            if (Game1.MainRenderTarget != null)
-            {
-                Game1.RenderWidth = Game1.MainRenderTarget.Width;
-                Game1.RenderHeight = Game1.MainRenderTarget.Height;
-            }
-            else
-            {
-                Game1.RenderWidth = (int)(Game1.WindowWidth * _scaleMultiplier);
-                Game1.RenderHeight = (int)(Game1.WindowHeight * _scaleMultiplier);
-            }
-        #else
-            Game1.RenderWidth = (int)(Game1.WindowWidth * _scaleMultiplier);
+            Game1.RenderWidth = (int)(Game1.WindowWidth  * _scaleMultiplier);
             Game1.RenderHeight = (int)(Game1.WindowHeight * _scaleMultiplier);
-        #endif
 
             UpdateRenderTargets();
 
+            // Use the active render target size to determine bounds, and fall back to
+            // viewport size if it's currently null. Fixes scaling issues on Android.
             if (_activeRenderTarget != null)
                 MapManager.Camera.SetBounds(_activeRenderTarget.Width, _activeRenderTarget.Height);
             else
             {
-        #if ANDROID
-                if (Game1.MainRenderTarget != null)
-                    MapManager.Camera.SetBounds(Game1.MainRenderTarget.Width, Game1.MainRenderTarget.Height);
-                else if (Game1.Instance?.GraphicsDevice != null)
-                {
-                    var pp = Game1.Instance.GraphicsDevice.PresentationParameters;
-                    if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
-                        MapManager.Camera.SetBounds(pp.BackBufferWidth, pp.BackBufferHeight);
-                }
-        #else
                 var viewport = Game1.Graphics.GraphicsDevice.Viewport;
                 MapManager.Camera.SetBounds(viewport.Width, viewport.Height);
-        #endif
             }
+            MapManager.Camera.ForceUpdate(MapManager.GetCameraTarget());
         }
 
         public void OnResizeEnd()
