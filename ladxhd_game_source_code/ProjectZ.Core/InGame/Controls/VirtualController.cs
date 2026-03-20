@@ -352,8 +352,7 @@ namespace ProjectZ.InGame.Controls
                     {
                         TouchLocation touch = touches[i];
 
-                        if (touch.State != TouchLocationState.Pressed &&
-                            touch.State != TouchLocationState.Moved)
+                        if (touch.State != TouchLocationState.Pressed)
                             continue;
 
                         if (_controllerButton.Contains(touch.Position.ToPoint()))
@@ -486,8 +485,7 @@ namespace ProjectZ.InGame.Controls
             {
                 TouchLocation touch = touches[i];
 
-                if (touch.State != TouchLocationState.Pressed &&
-                    touch.State != TouchLocationState.Moved)
+                if (touch.State != TouchLocationState.Pressed)
                     continue;
 
                 bool alreadyUsed = false;
