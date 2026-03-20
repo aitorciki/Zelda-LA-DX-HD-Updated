@@ -130,12 +130,6 @@ namespace ProjectZ.InGame.Controls
             // TOP SHOULDER BUTTONS / SIX BUTTON LAYOUT
             // ------------------------------------------------------------------------------------------------------------------------
             int topY = margin;
-            if (GameSettings.TriggersScale)
-            {
-                _buttons.Add(new VirtualButton("button_rt", CButtons.RT, new Rectangle(screenWidth - margin - buttonSize, topY, buttonSize, buttonSize)));
-                _buttons.Add(new VirtualButton("button_lt", CButtons.LT, new Rectangle(margin, topY, buttonSize, buttonSize)));
-            }
-
             if (GameSettings.SixButtons)
             {
                 Rectangle rectLB6 = new Rectangle(rectX.X, rectY.Y - buttonSize - spacing, buttonSize, buttonSize);
@@ -143,6 +137,16 @@ namespace ProjectZ.InGame.Controls
 
                 _buttons.Add(new VirtualButton("button_lb", CButtons.LB, rectLB6));
                 _buttons.Add(new VirtualButton("button_rb", CButtons.RB, rectRB6));
+
+                if (GameSettings.TriggersScale)
+                {
+                    _buttons.Add(new VirtualButton("button_rt", CButtons.RT, new Rectangle(screenWidth - margin - buttonSize, topY, buttonSize, buttonSize)));
+                    _buttons.Add(new VirtualButton("button_lt", CButtons.LT, new Rectangle(margin, topY, buttonSize, buttonSize)));
+                }
+            }else if (GameSettings.TriggersScale)
+            {
+                _buttons.Add(new VirtualButton("button_rb", CButtons.RB, new Rectangle(screenWidth - margin - (buttonSize * 2) - (spacing * 2), topY, buttonSize, buttonSize)));
+                _buttons.Add(new VirtualButton("button_lb", CButtons.LB, new Rectangle(margin + buttonSize + (spacing * 2), topY, buttonSize, buttonSize)));
             }
             // ------------------------------------------------------------------------------------------------------------------------
             // SELECT / START
