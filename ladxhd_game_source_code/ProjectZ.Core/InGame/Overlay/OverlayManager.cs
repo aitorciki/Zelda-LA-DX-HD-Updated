@@ -262,6 +262,13 @@ namespace ProjectZ.InGame.Overlay
             DisableInventoryToggle = false;
         }
 
+        private void ResetGameScale()
+        {
+            int maxScale = Game1.MaxGameScale + 1;
+            GameSettings.GameScale = maxScale;
+            Game1.ScaleChanged = true;
+        }
+
         private void ChangeGameScale(GameScaleDirection scaleDirection)
         {
             // Get the maximum scale and add 1 for auto-scale.
@@ -271,30 +278,20 @@ namespace ProjectZ.InGame.Overlay
             if (Camera.ClassicMode && GameSettings.ClassicScaling)
                 return;
 
-            // If both LT and RT are pressed together, set the scaling to auto-scaling.
-            if ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB) && ControlHandler.ButtonDown(CButtons.LB)))
+            // When autoscaling is set, match the scaling value so it can move up and down smoothly.
+            if (GameSettings.GameScale == maxScale)
             {
-                GameSettings.GameScale = maxScale;
+                float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, maxScale);
+                gameScale = gameScale / 2;
+                GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
             }
-            // If either LT or RT were pressed scale up or down.
-            else if ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT)) || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB)) ||
-                (GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LT)) || (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LB)))
-            {
-                // When autoscaling is set, match the scaling value so it can move up and down smoothly.
-                if (GameSettings.GameScale == maxScale)
-                {
-                    float gameScale = MathHelper.Clamp(Math.Min(Game1.WindowWidth / 160, Game1.WindowHeight / 128), 1, maxScale);
-                    gameScale = gameScale / 2;
-                    GameSettings.GameScale = (int)MathF.Ceiling(gameScale);
-                }
-                // Set the new scale using the passed parameter.
-                int newScale = GameSettings.GameScale + (int)scaleDirection;
+            // Set the new scale using the passed parameter.
+            int newScale = GameSettings.GameScale + (int)scaleDirection;
 
-                // Do not let the scale fall outside the slider range.
-                if (newScale >= -3 && newScale < maxScale)
-                    GameSettings.GameScale = newScale;
-            }
+            // Do not let the scale fall outside the slider range.
+            if (newScale >= -3 && newScale < maxScale)
+                GameSettings.GameScale = newScale;
+            
             // Apply current scaling settings.
             Game1.ScaleChanged = true;
         }
@@ -305,9 +302,10 @@ namespace ProjectZ.InGame.Overlay
             if (_scaleButtonDown)
                 _scaleButtonTimer += Game1.DeltaTime;
 
-            // Increase/Decrease game scale. Start the timer so that there is a 500ms repeat delay.
-            if ((GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.LT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.LB)))
+            // Decrease the game scale with the bumpers or triggers.
+            if (GameSettings.SixButtons
+                ? ControlHandler.ButtonPressed(CButtons.LT)
+                : ControlHandler.ButtonPressed(CButtons.LB))
             {
                 ChangeGameScale(GameScaleDirection.Decrease);
                 _scaleButtonDown = true;
@@ -315,8 +313,11 @@ namespace ProjectZ.InGame.Overlay
                 _scaleButtonPeriod = 75;
                 Camera.SnapCameraTimer = 10f;
             }
-            else if ((GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonPressed(CButtons.RB)))
+
+            // Increase the game scale with the bumpers or triggers.
+            if (GameSettings.SixButtons
+                ? ControlHandler.ButtonPressed(CButtons.RT)
+                : ControlHandler.ButtonPressed(CButtons.RB))
             {
                 ChangeGameScale(GameScaleDirection.Increase);
                 _scaleButtonDown = true;
@@ -324,25 +325,41 @@ namespace ProjectZ.InGame.Overlay
                 _scaleButtonPeriod = 75;
                 Camera.SnapCameraTimer = 10f;
             }
-            // Increase/Decrease game scale repeatedly while button is held every 75ms.
-            if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && 
-                ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.LB))))
+
+            // Rapid fire decrease the game scale while the bumpers or triggers is held every 75ms.
+            bool heldLeft = GameSettings.SixButtons
+                ? ControlHandler.ButtonDown(CButtons.LT)
+                : ControlHandler.ButtonDown(CButtons.LB);
+
+            if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && heldLeft)
             {
                 ChangeGameScale(GameScaleDirection.Decrease);
                 _scaleButtonTimer = 0;
                 _scaleButtonCount++;
                 Camera.SnapCameraTimer = 10f;
             }
-            if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && 
-                ((GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RT)) || 
-                (!GameSettings.SixButtons && ControlHandler.ButtonDown(CButtons.RB))))
+
+            // Rapid fire increase the game scale while the bumpers or triggers is held every 75ms.
+            bool heldRight = GameSettings.SixButtons
+                ? ControlHandler.ButtonDown(CButtons.RT)
+                : ControlHandler.ButtonDown(CButtons.RB);
+
+            if (_scaleButtonDown && _scaleButtonTimer > _scaleButtonPeriod && heldRight)
             {
                 ChangeGameScale(GameScaleDirection.Increase);
                 _scaleButtonTimer = 0;
                 _scaleButtonCount++;
                 Camera.SnapCameraTimer = 10f;
             }
+
+            // When both bumpers or triggers are held, reset the game scale to the maximum scale which is Auto-Scaling.
+            if (GameSettings.SixButtons
+                ? (ControlHandler.ButtonDown(CButtons.RT) && ControlHandler.ButtonDown(CButtons.LT))
+                : (ControlHandler.ButtonDown(CButtons.RB) && ControlHandler.ButtonDown(CButtons.LB)))
+            {
+                ResetGameScale();
+            }
+
             // The longer the button is held down, the faster the "zoom" will get. The left value in the switch represents
             // how many scaling iterations have passed, the right value represents how many milliseconds between iterations.
             _scaleButtonPeriod = _scaleButtonCount switch
@@ -356,9 +373,11 @@ namespace ProjectZ.InGame.Overlay
                 >= 24 =>  5,
                 _ => _scaleButtonPeriod
             };
+
             // When either button is released, reset the repeat variables.
-            if ((GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.LT)) || (!GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.LB)) ||
-                (GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.RT)) || (!GameSettings.SixButtons && ControlHandler.ButtonReleased(CButtons.RB)))
+            if (GameSettings.SixButtons
+                ? (ControlHandler.ButtonReleased(CButtons.LT) || ControlHandler.ButtonReleased(CButtons.RT))
+                : (ControlHandler.ButtonReleased(CButtons.LB) || ControlHandler.ButtonReleased(CButtons.RB)))
             {
                 _scaleButtonDown = false;
                 _scaleButtonTimer = 0;

@@ -169,22 +169,6 @@ namespace ProjectZ.InGame.Controls
             }
         }
 
-        public static bool ControllerButtonDown()
-        {
-            return _controllerButton != null && _controllerButton.IsDown;
-        }
-
-        public static bool ControllerButtonPressed()
-        {
-            return _controllerButton != null && _controllerButton.Pressed();
-        }
-
-        public static bool ControllerButtonReleased()
-        {
-            System.Diagnostics.Debug.WriteLine("BUTTON RELEASED");
-            return _controllerButton != null && _controllerButton.Released();
-        }
-
         public static void UpdateButtonsAlpha()
         {
             foreach (var button in _buttons)
@@ -584,7 +568,6 @@ namespace ProjectZ.InGame.Controls
                 if ((_buttons[i].Button & button) != 0 && _buttons[i].IsDown)
                     return true;
             }
-
             return false;
         }
 
@@ -606,6 +589,21 @@ namespace ProjectZ.InGame.Controls
                     return true;
             }
             return false;
+        }
+
+        public static bool ControllerButtonDown()
+        {
+            return _controllerButton != null && _controllerButton.IsDown;
+        }
+
+        public static bool ControllerButtonPressed()
+        {
+            return _controllerButton != null && _controllerButton.Pressed();
+        }
+
+        public static bool ControllerButtonReleased()
+        {
+            return _controllerButton != null && _controllerButton.Released();
         }
 
         private static bool DPadIsActive()
