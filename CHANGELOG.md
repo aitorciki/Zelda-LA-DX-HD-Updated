@@ -1,5 +1,20 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.6.8**
+### The "Closing the Gap" Update
+  * Support additional Android versions: Android-x86, Android-x64, Android-ARM, and Android-ARM64.
+  * Reduce the damage boxes of all enemies in an attempt to make them much closer to original game.
+  * Add options for on-screen controls to toggle visibility of D-pad and Analog Stick (credit @xsm2).
+  * Hide certain on-screen buttons (triggers, right stick) if the option that uses it is not enabled.
+  * Potentially fix an issue with the hookshot getting stuck in conditions it does not return to Link.
+  * Fix instances in German language "deu.lng" such as verbs with capitalization (credit @mrmercy82).
+  * Fix some of the on-screen buttons (namely triggers) on Android from rapid firing when held down.
+  * Fix Android on-screen buttons "View" and "Menu" buttons to use the correct glyphs. 
+  * Fix enemy Leever to not get "stuck" looking for a new place to spawn for long periods of time.
+  * Fix enemy Sea Urchin to knock Link back the correct distance (was about half of normal knockback).
+  * Fix enemy Fireballs to exist outside their field when "Modern Camera" is active (Classic unchanged).
+  * Fix Egg dungeon crashing on Android/Linux when entering the boss room (case sensitive folder).
+
 ## **v1.6.7**
 ### The "Final Frontier" Update
   * Final "oldest" known issue was fixed. Music from GBS Player now (mostly) matches original game.

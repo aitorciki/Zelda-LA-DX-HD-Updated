@@ -4,10 +4,10 @@
     <AssemblyName>ProjectZ.Android</AssemblyName>
     <RootNamespace>ProjectZ.Android</RootNamespace>
     <ApplicationId>com.projectz.game</ApplicationId>
-    <ApplicationVersion>167</ApplicationVersion>
-    <ApplicationDisplayVersion>1.6.7</ApplicationDisplayVersion>
+    <ApplicationVersion>168</ApplicationVersion>
+    <ApplicationDisplayVersion>1.6.8</ApplicationDisplayVersion>
     <TargetFramework>net8.0-android</TargetFramework>
-    <RuntimeIdentifiers>android-x64;android-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>android-x86;android-x64;android-arm;android-arm64</RuntimeIdentifiers>
     <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
     <OutputType>Exe</OutputType>
     <AndroidPackageFormats>apk</AndroidPackageFormats>
@@ -16,6 +16,13 @@
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <CheckEolWorkloads>false</CheckEolWorkloads>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidUseAssemblyStore>false</AndroidUseAssemblyStore>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -28,9 +35,6 @@
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
 
   <ItemGroup>
