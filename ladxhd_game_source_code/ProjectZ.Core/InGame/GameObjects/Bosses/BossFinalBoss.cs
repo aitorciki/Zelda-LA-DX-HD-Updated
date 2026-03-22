@@ -159,14 +159,14 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _bodyStartPosition = EntityPosition.Position;
             _bodyTargetPosition = _bodyStartPosition - new Vector2(0, _moveDist);
 
-            _animator = AnimatorSaveLoad.LoadAnimator("nightmares/nightmare");
+            _animator = AnimatorSaveLoad.LoadAnimator("Nightmares/nightmare");
             _animator.Play("head");
 
-            _animatorBody = AnimatorSaveLoad.LoadAnimator("nightmares/nightmare");
+            _animatorBody = AnimatorSaveLoad.LoadAnimator("Nightmares/nightmare");
             _animatorBody.Play("idle");
 
-            _animatorWeapon = AnimatorSaveLoad.LoadAnimator("nightmares/nightmare ganon weapon");
-            _animatorEye = AnimatorSaveLoad.LoadAnimator("nightmares/nightmare final");
+            _animatorWeapon = AnimatorSaveLoad.LoadAnimator("Nightmares/nightmare ganon weapon");
+            _animatorEye = AnimatorSaveLoad.LoadAnimator("Nightmares/nightmare final");
 
             _spriteBody = Resources.GetSprite("nightmare_body");
 
