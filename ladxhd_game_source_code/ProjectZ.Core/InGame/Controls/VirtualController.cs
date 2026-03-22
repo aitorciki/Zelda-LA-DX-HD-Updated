@@ -65,7 +65,7 @@ namespace ProjectZ.InGame.Controls
             int leftX = margin;
             int leftY = screenHeight - margin;
 
-            if (GameSettings.TouchMovement < 2 || (GameSettings.TouchMovement == 3 && menu))
+            if (GameSettings.TouchMovement is 0 or 2 || (GameSettings.TouchMovement == 1 && menu))
             {
                 _dPadSprite = Resources.GetSprite("button_dpad");
                 _dPadBounds = new Rectangle(leftX, leftY - (buttonSize * 3) - (spacing * 2), buttonSize * 3 + spacing * 2, buttonSize * 3 + spacing * 2);
@@ -132,7 +132,7 @@ namespace ProjectZ.InGame.Controls
                 Vector2 leftStickCenter = new Vector2(leftX + clusterWidth + stickGap, screenHeight - margin - stickRadius - stickLift);
                 _leftStick = new VirtualStick("button_ls", leftStickCenter, stickRadius);
             }
-            else if (GameSettings.TouchMovement == 2 || (GameSettings.TouchMovement == 3 && !menu))
+            else if ((GameSettings.TouchMovement == 1 && !menu) || GameSettings.TouchMovement == 3)
             {
                 Vector2 leftStickCenter = new Vector2(leftX + stickGap, screenHeight - margin - stickRadius - stickLift);
                 _leftStick = new VirtualStick("button_ls", leftStickCenter, stickRadius);

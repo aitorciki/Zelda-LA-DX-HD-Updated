@@ -78,10 +78,10 @@ namespace ProjectZ.InGame.SaveLoad
 
             // On-Screen Control Settings
             GameSettings.TouchControls = saveManager.GetInt("TouchControls", GameSettings.TouchControls);
-            GameSettings.TouchScaling = saveManager.GetInt("TouchScaling", GameSettings.TouchScaling);
+            GameSettings.TouchMovement = saveManager.GetInt("TouchMovement", GameSettings.TouchMovement);
             GameSettings.TouchOpacity = saveManager.GetInt("TouchOpacity", GameSettings.TouchOpacity);
             GameSettings.ShadowOpacity = saveManager.GetInt("ShadowOpacity", GameSettings.ShadowOpacity);
-            GameSettings.TouchMovement = saveManager.GetInt("TouchMovement", GameSettings.TouchMovement);
+            GameSettings.TouchScaling = saveManager.GetInt("TouchScaling", GameSettings.TouchScaling);
             GameSettings.TouchTopMiddle = saveManager.GetBool("TouchTopMiddle", GameSettings.TouchTopMiddle);
             GameSettings.TouchSticks = saveManager.GetBool("TouchSticks", GameSettings.TouchSticks);
 
@@ -180,10 +180,10 @@ namespace ProjectZ.InGame.SaveLoad
 
             // On-Screen Control Settings
             saveManager.SetInt("TouchControls", GameSettings.TouchControls);
-            saveManager.SetInt("TouchScaling", GameSettings.TouchScaling);
+            saveManager.SetInt("TouchMovement", GameSettings.TouchMovement);
             saveManager.SetInt("TouchOpacity", GameSettings.TouchOpacity);
             saveManager.SetInt("ShadowOpacity", GameSettings.ShadowOpacity);
-            saveManager.SetInt("TouchMovement", GameSettings.TouchMovement);
+            saveManager.SetInt("TouchScaling", GameSettings.TouchScaling);
             saveManager.SetBool("TouchTopMiddle", GameSettings.TouchTopMiddle);
             saveManager.SetBool("TouchSticks", GameSettings.TouchSticks);
 

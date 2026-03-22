@@ -45,6 +45,14 @@ namespace ProjectZ.Core.InGame.Pages.Settings
             _contentLayout.AddElement(_sliderTouchControls);
             _tooltips.Add("tooltip_controls_onscreenpad");
 
+            // Slider: Touch Momement Options
+            _sliderTouchScale = new InterfaceSlider("settings_controls_touchmovement", 
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 3, 1, GameSettings.TouchMovement,
+                number => { GameSettings.TouchMovement = number; })
+                { SetString = number => TouchMovementSliderAdjustmentString(number) };
+            _contentLayout.AddElement(_sliderTouchScale);
+            _tooltips.Add("tooltip_controls_touchmovement");
+
             // Slider: Fade Opacity
             _sliderTouchOpacity = new InterfaceSlider("settings_controls_fadeopacity", 
                 buttonWidth, sliderHeight, new Point(1, 2), 0, 100, 1, GameSettings.TouchOpacity,
@@ -68,14 +76,6 @@ namespace ProjectZ.Core.InGame.Pages.Settings
                 { SetString = number => OnScreenScaleSliderAdjustmentString(number) };
             _contentLayout.AddElement(_sliderTouchScale);
             _tooltips.Add("tooltip_controls_onscreenscale");
-
-            // Slider: Touch Momement Options
-            _sliderTouchScale = new InterfaceSlider("settings_controls_touchmovement", 
-                buttonWidth, sliderHeight, new Point(1, 2), 0, 3, 1, GameSettings.TouchMovement,
-                number => { GameSettings.TouchMovement = number; })
-                { SetString = number => TouchMovementSliderAdjustmentString(number) };
-            _contentLayout.AddElement(_sliderTouchScale);
-            _tooltips.Add("tooltip_controls_touchmovement");
 
             // Toggle: Select/Start On Top
             _toggleTouchMiddleTop = InterfaceToggle.GetToggleButton(
@@ -133,12 +133,7 @@ namespace ProjectZ.Core.InGame.Pages.Settings
         }
         private string SetOnScreenControlsVisibility(int number)
         {
-            return ": " + number switch
-            {
-                0 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_01", "error"),
-                1 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_02", "error"),
-                2 => Game1.LanguageManager.GetString("settings_controls_onscreenpad_03", "error"),
-            };
+            return ": " + Game1.LanguageManager.GetString("settings_controls_onscreenpad_0" + (number + 1).ToString(), "error");
         }
 
         private string FadeOpacitySliderAdjustmentString(int number)
@@ -165,13 +160,7 @@ namespace ProjectZ.Core.InGame.Pages.Settings
             VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight, true);
 
             // Display the updated string.
-            return ": " + number switch
-            {
-                0 => Game1.LanguageManager.GetString("settings_controls_touchmovement_01", "error"),
-                1 => Game1.LanguageManager.GetString("settings_controls_touchmovement_02", "error"),
-                2 => Game1.LanguageManager.GetString("settings_controls_touchmovement_03", "error"),
-                3 => Game1.LanguageManager.GetString("settings_controls_touchmovement_04", "error"),
-            };
+            return ": " + Game1.LanguageManager.GetString("settings_controls_touchmovement_0" + (number + 1).ToString(), "error");
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, int height, float alpha)
