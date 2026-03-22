@@ -7,7 +7,7 @@
     <ApplicationVersion>167</ApplicationVersion>
     <ApplicationDisplayVersion>1.6.7</ApplicationDisplayVersion>
     <TargetFramework>net8.0-android</TargetFramework>
-    <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
+    <RuntimeIdentifiers>android-x64;android-arm64</RuntimeIdentifiers>
     <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
     <OutputType>Exe</OutputType>
     <AndroidPackageFormats>apk</AndroidPackageFormats>
@@ -22,6 +22,8 @@
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <AndroidLogLevel>Debug</AndroidLogLevel>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidEnableMarshalMethods>true</AndroidEnableMarshalMethods>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,8 +56,8 @@
 
   <ItemGroup>
     <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb">
-      <OutputDir>$(MSBuildProjectDirectory)\$(OutputPath)Content\</OutputDir>
-      <IntermediateDir>$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)\mgcb\</IntermediateDir>
+      <OutputFolder Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)/%(Filename)</OutputFolder>
+      <OutputFolder Condition="'$(RuntimeIdentifier)' == ''">%(Filename)</OutputFolder>
     </MonoGameContentReference>
   </ItemGroup>
 
