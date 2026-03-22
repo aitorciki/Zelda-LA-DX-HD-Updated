@@ -185,7 +185,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 _hookshotPosition.Y - 7 - _hookshotPosition.Z), _spriteHook.SourceRectangle, Color.White);
         }
 
-        private void Despawn()
+        public void Despawn()
         {
             IsMoving = false;
             Map.Objects.DeleteObjects.Add(this);

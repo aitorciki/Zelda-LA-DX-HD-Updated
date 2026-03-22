@@ -5211,6 +5211,8 @@ namespace ProjectZ.InGame.GameObjects
                 // after usage caused by various interruptions to it finishing.
                 if (_hookshotActive)
                 {
+                    Hookshot.Despawn();
+                    CurrentState = State.Idle;
                     _hookshotActive = false;
                     return;
                 }
