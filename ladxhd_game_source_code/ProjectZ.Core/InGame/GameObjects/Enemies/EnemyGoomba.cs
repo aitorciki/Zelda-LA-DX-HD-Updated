@@ -133,7 +133,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private void UpdateWalking()
         {
             // Link's body box and the Goomba box have collided.
-            bool intersect = _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box;
+            bool intersect = _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box);
 
             // On 2D maps, the player must be above the Goomba while falling when body boxes meet.
             bool squash2D = Map.Is2dMap &&
