@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
-using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
+using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -12,7 +13,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
     internal class ObjDungeonColorSwitch : GameObject
     {
         private readonly List<GameObject> _neighborSwitches = new List<GameObject>();
-        private readonly Color[] _colors = { new Color(25, 132, 255), new Color(255, 8, 42), new Color(254, 123, 8) };
         private readonly CSprite _sprite;
         private readonly Animator _animator;
 
@@ -30,10 +30,35 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private bool _resetKey;
         private bool _finished;
 
+        private Color[] _colors;
+
+        int red_colorswitch_red = 255;
+        int red_colorswitch_grn = 8;
+        int red_colorswitch_blu = 42;
+
+        int yel_colorswitch_red = 254;
+        int yel_colorswitch_grn = 123;
+        int yel_colorswitch_blu = 8;
+
+        int blu_colorswitch_red = 25;
+        int blu_colorswitch_grn = 132;
+        int blu_colorswitch_blu = 255;
+
         public ObjDungeonColorSwitch() : base("dungeon_color_head") { }
 
         public ObjDungeonColorSwitch(Map.Map map, int posX, int posY, string strKey, int stateCount, int stateIndex, int position, int neighbors) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathLAHDMods, "ObjDungeonColorSwitch.lahdmod");
+            ModFile.Parse(modFile, this);
+
+            _colors = new Color[]
+            {
+                new Color(blu_colorswitch_red, blu_colorswitch_grn, blu_colorswitch_blu), 
+                new Color(red_colorswitch_red, red_colorswitch_grn, red_colorswitch_blu), 
+                new Color(yel_colorswitch_red, yel_colorswitch_grn, yel_colorswitch_blu)
+            };
+
             EntityPosition = new CPosition(posX + 8, posY + 14, 0);
             EntitySize = new Rectangle(-8, -14, 16, 16);
 

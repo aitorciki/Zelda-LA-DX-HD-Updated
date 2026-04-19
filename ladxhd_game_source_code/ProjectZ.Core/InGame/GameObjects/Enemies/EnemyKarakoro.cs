@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
@@ -17,8 +18,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 {
     internal class EnemyKarakoro : GameObject
     {
-        private readonly Color[] _colors = { new Color(17, 172, 66), new Color(255, 8, 42), new Color(25, 132, 255) };
-
         private readonly List<GameObject> _holeList = new List<GameObject>();
         private readonly BoxCollisionComponent _boxCollision;
         private readonly BodyComponent _body;
@@ -50,10 +49,35 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private const int HoleTime = 350;
         private bool _inHole;
 
+        private Color[] _colors;
+
+        int red_karakoro_red = 255;
+        int red_karakoro_grn = 8;
+        int red_karakoro_blu = 42;
+
+        int grn_karakoro_red = 17;
+        int grn_karakoro_grn = 172;
+        int grn_karakoro_blu = 66;
+
+        int blu_karakoro_red = 25;
+        int blu_karakoro_grn = 132;
+        int blu_karakoro_blu = 255;
+
         public EnemyKarakoro() : base("karakoro") { }
 
         public EnemyKarakoro(Map.Map map, int posX, int posY, int colorIndex, string strKey, string strAllSetKey) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathLAHDMods, "EnemyKarakoro.lahdmod");
+            ModFile.Parse(modFile, this);
+
+            _colors = new Color[]
+            {
+                new Color(grn_karakoro_red, grn_karakoro_grn, grn_karakoro_blu), 
+                new Color(red_karakoro_red, red_karakoro_grn, red_karakoro_blu), 
+                new Color(blu_karakoro_red, blu_karakoro_grn, blu_karakoro_blu)
+            };
+
             Tags = Values.GameObjectTag.Enemy;
 
             EntityPosition = new CPosition(posX + 8, posY + 12, 0);
