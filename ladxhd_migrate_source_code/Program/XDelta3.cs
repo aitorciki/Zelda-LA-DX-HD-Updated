@@ -19,7 +19,7 @@ namespace LADXHD_Migrater
 
         private static string EscapeArg(string arg)
         {
-            return "\"" + arg.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+            return "\"" + arg.Replace("\"", "\\\"") + "\"";
         }
 
         private static string BuildArguments(IEnumerable<string> args)
