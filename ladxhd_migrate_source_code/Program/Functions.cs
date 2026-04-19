@@ -122,6 +122,10 @@ namespace LADXHD_Migrater
             string iconPngFile = Path.Combine(iconPath, "Icon.png");
             File.WriteAllBytes(iconPngFile, (byte[])resources["Icon.png"]);
 
+            // Write the svg icon to the the "Data\Icon" folder.
+            string iconSvgFile = Path.Combine(iconPath, "Icon.svg");
+            File.WriteAllBytes(iconSvgFile, (byte[])resources["Icon.svg"]);
+
             // Extract the Android buttons to the data path.
             string extractPath = Path.Combine(Config.Update_Data, "Buttons").CreatePath();
 
