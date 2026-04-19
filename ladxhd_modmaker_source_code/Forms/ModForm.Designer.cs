@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_ModForm));
             this.picturebox_Mod = new System.Windows.Forms.PictureBox();
             this.groupBox_ModDescription = new System.Windows.Forms.GroupBox();
-            this.label_Description = new System.Windows.Forms.Label();
             this.label_ModName = new System.Windows.Forms.Label();
             this.button_Install = new System.Windows.Forms.Button();
             this.button_Close = new System.Windows.Forms.Button();
@@ -40,9 +39,12 @@
             this.button_GamePath = new System.Windows.Forms.Button();
             this.label_GamePath = new System.Windows.Forms.Label();
             this.textBox_GamePath = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.richTextBox_Description = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.picturebox_Mod)).BeginInit();
             this.groupBox_ModDescription.SuspendLayout();
             this.groupBox_ModGamePath.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // picturebox_Mod
@@ -59,21 +61,13 @@
             // 
             // groupBox_ModDescription
             // 
-            this.groupBox_ModDescription.Controls.Add(this.label_Description);
+            this.groupBox_ModDescription.Controls.Add(this.panel1);
             this.groupBox_ModDescription.Controls.Add(this.label_ModName);
             this.groupBox_ModDescription.Location = new System.Drawing.Point(9, 316);
             this.groupBox_ModDescription.Name = "groupBox_ModDescription";
             this.groupBox_ModDescription.Size = new System.Drawing.Size(347, 112);
             this.groupBox_ModDescription.TabIndex = 2;
             this.groupBox_ModDescription.TabStop = false;
-            // 
-            // label_Description
-            // 
-            this.label_Description.Location = new System.Drawing.Point(5, 29);
-            this.label_Description.Name = "label_Description";
-            this.label_Description.Size = new System.Drawing.Size(340, 80);
-            this.label_Description.TabIndex = 1;
-            this.label_Description.Text = "This is where the description of the mod goes.";
             // 
             // label_ModName
             // 
@@ -154,6 +148,26 @@
             this.textBox_GamePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox_GamePath_DragEnter);
             this.textBox_GamePath.Leave += new System.EventHandler(this.textBox_GamePath_Leave);
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panel1.Controls.Add(this.richTextBox_Description);
+            this.panel1.Location = new System.Drawing.Point(9, 28);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(330, 76);
+            this.panel1.TabIndex = 1;
+            // 
+            // richTextBox_Description
+            // 
+            this.richTextBox_Description.BackColor = System.Drawing.SystemColors.Window;
+            this.richTextBox_Description.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox_Description.Location = new System.Drawing.Point(1, 1);
+            this.richTextBox_Description.Name = "richTextBox_Description";
+            this.richTextBox_Description.ReadOnly = true;
+            this.richTextBox_Description.Size = new System.Drawing.Size(328, 74);
+            this.richTextBox_Description.TabIndex = 0;
+            this.richTextBox_Description.Text = "";
+            // 
             // Form_ModForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -178,6 +192,7 @@
             this.groupBox_ModDescription.PerformLayout();
             this.groupBox_ModGamePath.ResumeLayout(false);
             this.groupBox_ModGamePath.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -194,6 +209,7 @@
         private System.Windows.Forms.Label label_GamePath;
         private System.Windows.Forms.TextBox textBox_GamePath;
         private System.Windows.Forms.Label label_ModName;
-        private System.Windows.Forms.Label label_Description;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.RichTextBox richTextBox_Description;
     }
 }
