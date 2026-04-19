@@ -60,7 +60,7 @@ For the game to appear in application launchers / docks / application switchers,
 Type=Application
 Name=Link's Awakening DX HD
 Exec="/path/to/Links Awakening DX HD/Link's Awakening DX HD"
-Icon=/path/to/Links Awakening DX HD/Data/Icon/Icon.png
+Icon=/path/to/Links Awakening DX HD/Data/Icon/Icon.svg
 Terminal=false
 StartupWMClass=Link's Awakening DX HD
 Categories=Game;

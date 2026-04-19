@@ -111,6 +111,16 @@ namespace LADXHD_Migrater.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Icon_svg {
+            get {
+                object obj = ResourceManager.GetObject("Icon.svg", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap la {
