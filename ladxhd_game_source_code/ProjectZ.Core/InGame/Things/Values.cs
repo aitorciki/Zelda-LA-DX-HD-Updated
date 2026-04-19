@@ -57,7 +57,6 @@ namespace ProjectZ.InGame.Things
       #else
         public static string ResolvedMods => PathMods;
       #endif
-
         public static string PathAnimationMods => Path.Combine(ResolvedMods, "Animations");
         public static string PathDungeonMods => Path.Combine(ResolvedMods, "Dungeon");
         public static string PathGraphicsMods => Path.Combine(ResolvedMods, "Graphics");

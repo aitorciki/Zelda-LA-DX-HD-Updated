@@ -17,7 +17,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         private readonly BodyComponent _body;
         private readonly AiComponent _aiComponent;
         private readonly Animator _animator;
-        private readonly BoxCollisionComponent _bodyCollision;
         private readonly DamageFieldComponent _damageField;
         private readonly HittableComponent _hitComponent;
         private readonly PushableComponent _pushComponent;
@@ -46,7 +45,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _sprite = new CSprite(EntityPosition);
             var animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-8, Map.Is2dMap ? -14 : -16));
 
-            _body = new BodyComponent(EntityPosition, -6, -11, 12, 11, 8)
+            _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
             {
                 MoveCollision = OnCollision,
                 CollisionTypes = Values.CollisionTypes.Normal |
@@ -59,8 +58,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 DragAir = 0.85f,
                 Gravity2D = 0.15f,
             };
-
-            // random dir -1 or 1
             var dir = Game1.RandomNumber.Next(0, 2) * 2 - 1;
             _body.VelocityTarget.X = dir * WalkSpeed;
 
@@ -74,33 +71,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _aiComponent.States.Add("walking", stateWalking);
             _aiComponent.States.Add("dead", stateDead);
             _aiComponent.States.Add("fade", stateFade);
+
             new AiFallState(_aiComponent, _body, OnHoleAbsorb);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn };
 
             _aiComponent.ChangeState("walking");
+            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, _lives) { OnBurn = OnBurn, HitMultiplierY = 1.0f };
 
-            CBox damageCollider;
-            if (Map.Is2dMap)
-                damageCollider = new CBox(EntityPosition, -3, -8, 0, 6, 6, 4);
-            else
-                damageCollider = new CBox(EntityPosition, -3, -10, 0, 6, 6, 4);
+            CBox damageCollider = Map.Is2dMap 
+                ? new CBox(EntityPosition, -3, -8, 0, 6, 6, 4) 
+                : new CBox(EntityPosition, -3, -10, 0, 6, 6, 4);
 
             AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-
-            if (Map.Is2dMap)
-                _damageState.HitMultiplierY = 1.0f;
             AddComponent(HittableComponent.Index, _hitComponent = new HittableComponent(_body.BodyBox, OnHit));
-
             AddComponent(BodyComponent.Index, _body);
             AddComponent(AiComponent.Index, _aiComponent);
             AddComponent(BaseAnimationComponent.Index, animationComponent);
-            if (Map.Is2dMap)
-            {
-                var collisionBox = new CBox(EntityPosition, -6, -8, 0, 12, 8, 4);
-                AddComponent(CollisionComponent.Index, _bodyCollision = new BoxCollisionComponent(collisionBox, Values.CollisionTypes.Enemy));
-            }
             AddComponent(PushableComponent.Index, _pushComponent = new PushableComponent(_body.BodyBox, OnPush));
             AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer));
+
+            if (Map.Is2dMap)
+                Map.Objects.RegisterAlwaysAnimateObject(this);
         }
 
         public override void Reset()
@@ -112,9 +102,6 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _animator.Play("walk");
             _aiComponent.ChangeState("walking");
             _aiComponent.ChangeState("walking");
-
-            if (_bodyCollision != null)
-                _bodyCollision.IsActive = true;
         }
 
         private void OnBurn()
@@ -123,39 +110,53 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
             _pushComponent.IsActive = false;
-
-            if (_bodyCollision != null)
-                _bodyCollision.IsActive = false;
         }
 
         private void InitWalking()
         {
             int randomDirection;
+
+            // 2D maps: randomly walk left or right. 3D maps: pick a random direction.
             if (Map.Is2dMap)
                 randomDirection = Game1.RandomNumber.Next(0, 2) * 2;
             else
                 randomDirection = Game1.RandomNumber.Next(0, 4);
 
+            // Apply the velocity and start walking in the randomized direction.
             _body.VelocityTarget = AnimationHelper.DirectionOffset[randomDirection] * WalkSpeed;
 
-            _directionCounter = Game1.RandomNumber.Next(750, 1500);
+            // Counter to change direction is only needed on 3D maps.
+            if (!Map.Is2dMap)
+                _directionCounter = Game1.RandomNumber.Next(750, 1500);
         }
 
         private void UpdateWalking()
         {
-            // player jumped on top?
-            if ((!Map.Is2dMap && MapManager.ObjLink._body.Velocity.Z < 0 ||
-                 Map.Is2dMap && MapManager.ObjLink._body.Velocity.Y > 0 && MapManager.ObjLink.CenterPosition.Y < EntityPosition.Y) &&
-                 _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box))
-            {
-                JumpDeath();
-            }
+            // Link's body box and the Goomba box have collided.
+            bool intersect = _body.BodyBox.Box.Intersects(MapManager.ObjLink._body.BodyBox.Box;
 
+            // On 2D maps, the player must be above the Goomba while falling when body boxes meet.
+            bool squash2D = Map.Is2dMap &&
+                MapManager.ObjLink._body.Velocity.Y > 0 &&
+                MapManager.ObjLink.EntityPosition.Y < EntityPosition.Y - 10;
+
+            // On 3D maps, simply check if the player is falling. 
+            bool squash3D = !Map.Is2dMap && 
+                MapManager.ObjLink._body.Velocity.Z < 0 &&
+                MapManager.ObjLink.EntityPosition.Z > EntityPosition.Z + 4;
+
+            // If the condition passes squash the Goomba.
+            if (intersect && (squash2D || squash3D))
+                JumpDeath();
+
+            // If on a 2D map exit now.
             if (Map.Is2dMap)
                 return;
 
+            // On 3D maps the Goomba randomly changes direction.
             _directionCounter -= Game1.DeltaTime;
-            // change the direction
+
+            // When the counter expires, restart the walking state which sets a direction.
             if (_directionCounter < 0)
                 _aiComponent.ChangeState("walking");
         }
@@ -187,27 +188,26 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             if (type == PushableComponent.PushType.Impact)
                 _body.Velocity = new Vector3(direction.X * 2.5f, direction.Y * 2.5f, _body.Velocity.Z);
-
             return true;
         }
 
         private void JumpDeath()
         {
-            // player jumped on the goomba
+            // Player jumped on the Goomba.
             Game1.AudioManager.PlaySoundEffect("D370-14-0E");
 
+            // Make the player bounce slightly.
             if (Map.Is2dMap)
                 MapManager.ObjLink._body.Velocity.Y = -1.0f;
             else
                 MapManager.ObjLink._body.Velocity.Z = 1.0f;
 
+            // Show it's squashed animation before removing.
             _animator.Play("dead");
             _aiComponent.ChangeState("dead");
             _body.VelocityTarget = Vector2.Zero;
             _damageField.IsActive = false;
             _hitComponent.IsActive = false;
-            if (_bodyCollision != null)
-                _bodyCollision.IsActive = false;
         }
 
         private void OnHoleAbsorb()
@@ -217,13 +217,15 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void OnCollision(Values.BodyCollision direction)
         {
+            // We don't care about collision unless it's walking.
             if (_aiComponent.CurrentStateId != "walking")
                 return;
 
+            // Reverse the direction when collision happens.
             if (Map.Is2dMap && (direction & Values.BodyCollision.Horizontal) != 0)
                 _body.VelocityTarget.X = -_body.VelocityTarget.X;
 
-            // stop walking into the wall
+            // Stop walking into the wall.
             if (!Map.Is2dMap && (direction & (Values.BodyCollision.Horizontal | Values.BodyCollision.Vertical)) != 0)
                 _aiComponent.ChangeState("walking");
         }
@@ -234,12 +236,14 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             if ((hitType & HitType.CrystalSmash) != 0 || (hitType & HitType.ClassicSword) != 0)
                 return Values.HitCollision.None;
 
+            // When the goomba has been squashed dont allow it to be hit again.
             if (_damageState.CurrentLives <= 0)
             {
                 _damageField.IsActive = false;
                 _hitComponent.IsActive = false;
                 _pushComponent.IsActive = false;
             }
+            // Stop the goomba from moving when it's burned.
             if (hitType == HitType.MagicPowder || hitType == HitType.MagicRod)
                 _body.VelocityTarget = Vector2.Zero;
 
