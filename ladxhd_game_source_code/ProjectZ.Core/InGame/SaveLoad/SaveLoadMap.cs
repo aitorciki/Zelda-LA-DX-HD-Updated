@@ -203,7 +203,7 @@ namespace ProjectZ.InGame.SaveLoad
             map.MapName = mapName;
 
             var modFile = Path.Combine(Values.PathMapMods, mapName);
-            var mapFile = File.Exists(modFile)
+            var mapFile = GameFS.Exists(modFile)
                 ? modFile
                 : GameFS.NormalizePath(Path.Combine(Values.PathDataFolder, "Maps", mapName));
 

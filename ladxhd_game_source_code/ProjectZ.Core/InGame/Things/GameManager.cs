@@ -196,10 +196,10 @@ namespace ProjectZ.InGame.Things
 
             DialogPathLoader.LoadScripts(Path.Combine(Values.PathDataFolder, "scripts.zScript"), _dialogPaths);
 
-            var modScript = Path.Combine(Values.PathMods, "scripts.zScript");
-            if (File.Exists(modScript))
+            var modScript = Path.Combine(Values.ResolvedMods, "scripts.zScript");
+            if (GameFS.Exists(modScript))
             {
-                using var reader = new StreamReader(File.OpenRead(modScript));
+                using var reader = new StreamReader(GameFS.OpenRead(modScript));
                 DialogPathLoader.LoadScripts(reader, _dialogPaths, replaceKeys: true);
             }
         }
@@ -949,17 +949,14 @@ namespace ProjectZ.InGame.Things
         {
             if (DungeonMaps.ContainsKey(mapName))
                 return true;
-
             var fileName = mapName + ".txt";
             var modFile = Path.Combine(Values.PathDungeonMods, fileName);
-            var filePath = File.Exists(modFile)
+            var filePath = GameFS.Exists(modFile)
                 ? modFile
                 : Path.Combine(Values.PathDataFolder, "Dungeon", fileName);
-
             var dungeonMap = SaveLoadMap.LoadMiniMap(filePath);
             if (dungeonMap == null)
                 return false;
-
             DungeonMaps.Add(mapName, dungeonMap);
             return true;
         }

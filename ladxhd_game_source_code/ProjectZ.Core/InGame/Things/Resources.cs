@@ -524,9 +524,9 @@ namespace ProjectZ.InGame.Things
         {
             // Check for WAV override in mods folder first.
             var wavPath = Path.Combine(Values.PathSoundEffectMods, fileName + ".wav");
-            if (File.Exists(wavPath))
+            if (GameFS.Exists(wavPath))
             {
-                using var stream = File.OpenRead(wavPath);
+                using var stream = GameFS.OpenRead(wavPath);
                 SoundEffects.TryAdd(fileName, SoundEffect.FromStream(stream));
                 return;
             }
@@ -551,13 +551,18 @@ namespace ProjectZ.InGame.Things
 
         public static void LoadTexturesFromFolder(string path, bool recurse = false)
         {
-            foreach (var full in GameFS.EnumerateFiles(path, recurse, 
-                name => name.EndsWith(".png", StringComparison.OrdinalIgnoreCase), 
+            foreach (var full in GameFS.EnumerateFiles(path, recurse,
+                name => name.EndsWith(".png", StringComparison.OrdinalIgnoreCase),
                 skipDirectory: dir => string.Equals(dir, "Intro", StringComparison.OrdinalIgnoreCase)))
             {
                 string textureName = Path.GetFileName(full);
-                LoadTexture(out var texture, full);
-                TextureList[textureName] = texture;
+
+                try
+                {
+                    LoadTexture(out var texture, full);
+                    TextureList[textureName] = texture;
+                }
+                catch (Exception ex) { }
             }
         }
 

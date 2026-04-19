@@ -12,10 +12,10 @@ namespace ProjectZ.InGame.Things
         {
             ParseAdvanced(SaveManager.GetAdvancedFile(), inputClass);
 
-            if (!File.Exists(modFile))
+            if (!GameFS.Exists(modFile))
                 return;
 
-            foreach (string line in File.ReadAllLines(modFile))
+            foreach (string line in GameFS.ReadAllLines(modFile))
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
                     continue;
@@ -40,10 +40,10 @@ namespace ProjectZ.InGame.Things
         {
             ParseAdvancedStatic(SaveManager.GetAdvancedFile(), inputClass);
 
-            if (!File.Exists(modFile))
+            if (!GameFS.Exists(modFile))
                 return;
 
-            foreach (string line in File.ReadAllLines(modFile))
+            foreach (string line in GameFS.ReadAllLines(modFile))
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
                     continue;
@@ -66,13 +66,13 @@ namespace ProjectZ.InGame.Things
 
         public static void ParseAdvanced(string advancedFile, dynamic inputClass)
         {
-            if (!File.Exists(advancedFile))
+            if (!GameFS.Exists(advancedFile))
                 return;
 
             string className = inputClass.GetType().Name;
             bool inSection = false;
 
-            foreach (string line in File.ReadAllLines(advancedFile))
+            foreach (string line in GameFS.ReadAllLines(advancedFile))
             {
                 // Check for a class section marker: //: ClassName
                 if (line.TrimStart().StartsWith("//: "))
@@ -108,13 +108,13 @@ namespace ProjectZ.InGame.Things
 
         public static void ParseAdvancedStatic(string advancedFile, Type inputClass)
         {
-            if (!File.Exists(advancedFile))
+            if (!GameFS.Exists(advancedFile))
                 return;
 
             string className = inputClass.Name;
             bool inSection = false;
 
-            foreach (string line in File.ReadAllLines(advancedFile))
+            foreach (string line in GameFS.ReadAllLines(advancedFile))
             {
                 if (line.TrimStart().StartsWith("//: "))
                 {

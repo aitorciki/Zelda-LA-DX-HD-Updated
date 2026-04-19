@@ -23,7 +23,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             Tags = Values.GameObjectTag.Utility;
 
             // If the file exists attempt to load in custom values.
-            if (File.Exists(modFile))
+            if (GameFS.Exists(modFile))
             {
                 // If the map name was in the file then load its values.
                 string[] values = ParseModFile(modFile, map.MapName);

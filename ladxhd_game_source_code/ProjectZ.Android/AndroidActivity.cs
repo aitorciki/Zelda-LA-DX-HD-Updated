@@ -47,15 +47,16 @@ namespace ProjectZ.Android
             Values.SetUserDataRoot(root);
 
             // Ensure folders exist.
-            Directory.CreateDirectory(Values.PathMods);
-            Directory.CreateDirectory(Values.PathAnimationMods);
-            Directory.CreateDirectory(Values.PathDungeonMods);
-            Directory.CreateDirectory(Values.PathGraphicsMods);
-            Directory.CreateDirectory(Values.PathMusicMods);
-            Directory.CreateDirectory(Values.PathLanguageMods);
-            Directory.CreateDirectory(Values.PathLAHDMods);
-            Directory.CreateDirectory(Values.PathMapMods);
-            Directory.CreateDirectory(Values.PathSoundEffectMods);
+            var externalMods = Values.PathMods;
+            Directory.CreateDirectory(externalMods);
+            Directory.CreateDirectory(Path.Combine(externalMods, "Animations"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "Dungeon"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "Graphics"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "Music"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "Languages"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "LAHDMods"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "Maps"));
+            Directory.CreateDirectory(Path.Combine(externalMods, "SoundEffects"));
             Directory.CreateDirectory(Values.PathSaveFolder);
 
             // Get real display size for proper fullscreen rendering.

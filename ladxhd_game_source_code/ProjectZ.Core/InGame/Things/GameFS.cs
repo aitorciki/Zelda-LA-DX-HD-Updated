@@ -47,7 +47,7 @@ namespace ProjectZ.InGame.Things
             // The "catch" return doesn't matter. An exception can be thrown from font spillover
             // from Chinese language to anything else (happens in Photo Book Overlay for example).
             try    { return Resources.GameFont.MeasureString(text); }
-            catch  { return new Vector2(0,0); }
+            catch  { return new Vector2(0, 0); }
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,6 +87,13 @@ namespace ProjectZ.InGame.Things
                    path.Equals("Data", StringComparison.OrdinalIgnoreCase) ||
                    path.StartsWith("Content\\", StringComparison.OrdinalIgnoreCase) ||
                    path.Equals("Content", StringComparison.OrdinalIgnoreCase);
+        #elif ANDROID
+            return path.StartsWith("Data/", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Data", StringComparison.OrdinalIgnoreCase) ||
+                   path.StartsWith("Content/", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Content", StringComparison.OrdinalIgnoreCase) ||
+                   path.StartsWith("Mods/", StringComparison.OrdinalIgnoreCase) ||
+                   path.Equals("Mods", StringComparison.OrdinalIgnoreCase);
         #else
             return path.StartsWith("Data/", StringComparison.OrdinalIgnoreCase) ||
                    path.Equals("Data", StringComparison.OrdinalIgnoreCase) ||
@@ -107,8 +114,9 @@ namespace ProjectZ.InGame.Things
             path = NormalizePath(path);
 
             if (IsPackagedAssetPath(path))
+            {
                 return false;
-
+            }
             return Path.IsPathRooted(path);
         }
 
@@ -148,7 +156,7 @@ namespace ProjectZ.InGame.Things
             #endif
             }
 
-            return path.TrimStart('/', '\\'); // ← was a dead if/else, both branches returned path
+            return path.TrimStart('/', '\\');
         }
 
         #if !ANDROID
@@ -322,22 +330,15 @@ namespace ProjectZ.InGame.Things
             dir = ToAssetPath(dir);
 
         #if ANDROID
-            // AssetManager.List() returns empty for both empty directories AND files,
-            // so we can't rely on it alone. Instead, try to open the path as a stream:
-            // files succeed, directories throw. Fall back to List() only if open fails,
-            // because a failed open could also mean the path simply doesn't exist.
             AssetManager am = Android.App.Application.Context.Assets;
 
             try
             {
-                // Opened as a file successfully → not a directory.
                 using var stream = am.Open(dir);
                 return false;
             }
             catch
             {
-                // Could be a directory, or could be a missing path entirely.
-                // List() returning non-null (even empty) confirms it's a known directory.
                 var entries = am.List(dir);
                 return entries != null && entries.Length > 0;
             }
@@ -367,15 +368,28 @@ namespace ProjectZ.InGame.Things
 
             if (IsRealFileSystemPath(dir))
             {
-                if (!Directory.Exists(dir))
+                bool exists;
+                try { exists = Directory.Exists(dir); }
+                catch (Exception ex) { yield break; }
+
+                if (!exists)
                     yield break;
 
                 if (!recursive)
                 {
-                    foreach (var file in Directory.EnumerateFiles(dir, "*", SearchOption.TopDirectoryOnly))
+                    List<string> files;
+                    try
+                    {
+                        files = Directory.EnumerateFiles(dir, "*", SearchOption.TopDirectoryOnly).ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        yield break;
+                    }
+
+                    foreach (var file in files)
                     {
                         var name = Path.GetFileName(file);
-
                         if (acceptFile == null || acceptFile(name))
                             yield return NormalizePath(file);
                     }
@@ -405,7 +419,6 @@ namespace ProjectZ.InGame.Things
                 foreach (var file in Directory.EnumerateFiles(diskDir, "*", SearchOption.TopDirectoryOnly))
                 {
                     var name = Path.GetFileName(file);
-
                     if (acceptFile == null || acceptFile(name))
                         yield return NormalizePath(file);
                 }
@@ -421,37 +434,92 @@ namespace ProjectZ.InGame.Things
         private static IEnumerable<string> EnumerateRealFilesRecursive(string dir, Func<string, bool> acceptFile, Func<string, bool> skipDirectory, HashSet<string> visited = null)
         {
             visited ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
             string realDir;
             try
             {
                 realDir = new DirectoryInfo(dir).ResolveLinkTarget(returnFinalTarget: true)?.FullName ?? Path.GetFullPath(dir);
             }
-            catch
+            catch (Exception ex)
             {
                 realDir = Path.GetFullPath(dir);
             }
 
             if (!visited.Add(realDir))
+            {
                 yield break;
+            }
 
-            foreach (var entry in Directory.EnumerateFileSystemEntries(dir, "*", SearchOption.TopDirectoryOnly))
+        #if ANDROID
+            List<string> allFiles;
+            try
+            {
+                allFiles = Directory.GetFiles(dir, "*", SearchOption.AllDirectories).ToList();
+            }
+            catch (Exception ex)
+            {
+                yield break;
+            }
+
+            foreach (var file in allFiles)
+            {
+                if (skipDirectory != null)
+                {
+                    var parentName = Path.GetFileName(Path.GetDirectoryName(file) ?? "");
+                    if (skipDirectory(parentName))
+                    {
+                        continue;
+                    }
+                }
+                var name = Path.GetFileName(file);
+                var accepted = acceptFile == null || acceptFile(name);
+
+                if (accepted)
+                    yield return NormalizePath(file);
+            }
+        #else
+            List<string> entries;
+            try
+            {
+                entries = Directory.EnumerateFileSystemEntries(dir, "*", SearchOption.TopDirectoryOnly).ToList();
+            }
+            catch (Exception ex)
+            {
+                yield break;
+            }
+
+            foreach (var entry in entries)
             {
                 var name = Path.GetFileName(entry);
-                var isDir = Directory.Exists(entry);
+                bool isDir;
+
+                try
+                {
+                    isDir = Directory.Exists(entry);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
 
                 if (isDir)
                 {
                     if (skipDirectory != null && skipDirectory(name))
+                    {
                         continue;
+                    }
 
                     foreach (var sub in EnumerateRealFilesRecursive(entry, acceptFile, skipDirectory, visited))
                         yield return sub;
 
                     continue;
                 }
-                if (acceptFile == null || acceptFile(name))
+                var accepted = acceptFile == null || acceptFile(name);
+
+                if (accepted)
                     yield return NormalizePath(entry);
             }
+        #endif
         }
 
     #if ANDROID
@@ -497,18 +565,30 @@ namespace ProjectZ.InGame.Things
 
             if (IsRealFileSystemPath(dir))
             {
-                if (!Directory.Exists(dir))
+                bool exists;
+                try { exists = Directory.Exists(dir); }
+                catch (Exception ex) { yield break; }
+
+                if (!exists)
                     yield break;
 
                 if (!recursive)
                 {
-                    foreach (var subDir in Directory.EnumerateDirectories(dir, "*", SearchOption.TopDirectoryOnly))
+                    List<string> subDirs;
+                    try
+                    {
+                        subDirs = Directory.EnumerateDirectories(dir, "*", SearchOption.TopDirectoryOnly).ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        yield break;
+                    }
+
+                    foreach (var subDir in subDirs)
                     {
                         var name = Path.GetFileName(subDir);
-
                         if (skipDirectory != null && skipDirectory(name))
                             continue;
-
                         if (acceptDirectory == null || acceptDirectory(name))
                             yield return NormalizePath(subDir);
                     }
@@ -538,10 +618,8 @@ namespace ProjectZ.InGame.Things
                 foreach (var subDir in Directory.EnumerateDirectories(diskDir, "*", SearchOption.TopDirectoryOnly))
                 {
                     var name = Path.GetFileName(subDir);
-
                     if (skipDirectory != null && skipDirectory(name))
                         continue;
-
                     if (acceptDirectory == null || acceptDirectory(name))
                         yield return NormalizePath(subDir);
                 }
@@ -558,8 +636,6 @@ namespace ProjectZ.InGame.Things
         {
             visited ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // Path.GetFullPath does NOT follow symlinks on Android/Linux.
-            // ResolveLinkTarget does, which is essential for the FUSE layer on Android 13.
             string realDir;
             try
             {
@@ -573,16 +649,23 @@ namespace ProjectZ.InGame.Things
             if (!visited.Add(realDir))
                 yield break;
 
-            foreach (var subDir in Directory.EnumerateDirectories(dir, "*", SearchOption.TopDirectoryOnly))
+            List<string> subDirs;
+            try
+            {
+                subDirs = Directory.EnumerateDirectories(dir, "*", SearchOption.TopDirectoryOnly).ToList();
+            }
+            catch (Exception ex)
+            {
+                yield break;
+            }
+
+            foreach (var subDir in subDirs)
             {
                 var name = Path.GetFileName(subDir);
-
                 if (skipDirectory != null && skipDirectory(name))
                     continue;
-
                 if (acceptDirectory == null || acceptDirectory(name))
                     yield return NormalizePath(subDir);
-
                 foreach (var sub in EnumerateRealDirectoriesRecursive(subDir, acceptDirectory, skipDirectory, visited))
                     yield return sub;
             }

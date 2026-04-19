@@ -128,15 +128,13 @@ namespace ProjectZ.InGame.Audio
 
         private static float GetGain(NVorbis.VorbisReader vorbis)
         {
-            // File gain.txt takes priority and is applied globally to all files in the folder.
             var gainFile = Path.Combine(Values.PathMusicMods, "volume.txt");
-            if (File.Exists(gainFile) && float.TryParse(
-                File.ReadAllText(gainFile).Trim(),
+            if (GameFS.Exists(gainFile) && float.TryParse(
+                GameFS.ReadAllText(gainFile).Trim(),
                 NumberStyles.Float,
                 CultureInfo.InvariantCulture,
                 out float globalGain))
                 return globalGain / 100.0f;
-
             // Fall back to per-file VOLUME tag.
             var tags = vorbis.Tags;
             if (tags != null)
@@ -188,9 +186,9 @@ namespace ProjectZ.InGame.Audio
 
             // Fall back to .loop file
             var loopFile = Path.ChangeExtension(audioPath, ".loop");
-            if (File.Exists(loopFile))
+            if (GameFS.Exists(loopFile))
             {
-                var lines = File.ReadAllLines(loopFile);
+                var lines = GameFS.ReadAllLines(loopFile);
                 if (lines.Length >= 1 && double.TryParse(lines[0].Trim(),
                     NumberStyles.Float,
                     CultureInfo.InvariantCulture,
@@ -211,7 +209,7 @@ namespace ProjectZ.InGame.Audio
         {
             try
             {
-                using var fs = File.OpenRead(path);
+                using var fs = GameFS.OpenRead(path);
                 using var vorbis = new NVorbis.VorbisReader(fs, closeOnDispose: false);
 
                 int sampleRate = vorbis.SampleRate;

@@ -194,7 +194,7 @@ namespace ProjectZ.InGame.Audio
         private string GetModMusicPath(int trackId)
         {
             var path = Path.Combine(Values.PathMusicMods, $"{trackId}.ogg");
-            return File.Exists(path) ? path : null;
+            return GameFS.Exists(path) ? path : null;
         }
 
         public void PlayMusic(bool startPlaying = true)

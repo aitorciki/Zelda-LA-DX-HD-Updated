@@ -47,15 +47,25 @@ namespace ProjectZ.InGame.Things
         public static string PathSaveFolder => SaveManager.GetSaveFilePath();
 
         public static string PathDataFolder = "Data";
+
+        // Android can build mods into the APK file so we need a reference to that as well.
         public static string PathMods => Path.Combine(UserDataRoot, "Mods");
-        public static string PathAnimationMods => Path.Combine(PathMods, "Animations");
-        public static string PathDungeonMods => Path.Combine(PathMods, "Dungeon");
-        public static string PathGraphicsMods => Path.Combine(PathMods, "Graphics");
-        public static string PathMusicMods => Path.Combine(PathMods, "Music");
-        public static string PathLanguageMods => Path.Combine(PathMods, "Languages");
-        public static string PathLAHDMods => Path.Combine(PathMods, "LAHDMods");
-        public static string PathMapMods => Path.Combine(PathMods, "Maps");
-        public static string PathSoundEffectMods => Path.Combine(PathMods, "SoundEffects");
+      #if ANDROID
+        public static string PathModsInternal = "Mods";
+        private static string _resolvedMods;
+        public static string ResolvedMods => _resolvedMods ??= GameFS.IsDirectory(PathModsInternal) ? PathModsInternal : PathMods;
+      #else
+        public static string ResolvedMods => PathMods;
+      #endif
+
+        public static string PathAnimationMods => Path.Combine(ResolvedMods, "Animations");
+        public static string PathDungeonMods => Path.Combine(ResolvedMods, "Dungeon");
+        public static string PathGraphicsMods => Path.Combine(ResolvedMods, "Graphics");
+        public static string PathMusicMods => Path.Combine(ResolvedMods, "Music");
+        public static string PathLanguageMods => Path.Combine(ResolvedMods, "Languages");
+        public static string PathLAHDMods => Path.Combine(ResolvedMods, "LAHDMods");
+        public static string PathMapMods => Path.Combine(ResolvedMods, "Maps");
+        public static string PathSoundEffectMods => Path.Combine(ResolvedMods, "SoundEffects");
 
         public const string EditorUiObjectEditor = "objectEditor";
         public const string EditorUiObjectSelection = "objectSelection";

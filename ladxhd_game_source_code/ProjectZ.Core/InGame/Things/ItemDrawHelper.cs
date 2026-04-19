@@ -72,7 +72,7 @@ namespace ProjectZ.InGame.Things
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ItemDrawHelper.lahdmod");
 
-            if (File.Exists(modFile))
+            if (GameFS.Exists(modFile))
             {
                 ModFile.ParseStatic(modFile, typeof(ItemDrawHelper));
 

@@ -141,8 +141,8 @@ namespace ProjectZ.InGame.GameObjects
             ParseLines(ReadAdvancedSection("EnemyLives"));
 
             string modFile = Path.Combine(Values.PathLAHDMods, "EnemyLives.lahdmod");
-            if (File.Exists(modFile))
-                ParseLines(File.ReadAllLines(modFile));
+            if (GameFS.Exists(modFile))
+                ParseLines(GameFS.ReadAllLines(modFile));
         }
 
         private static IEnumerable<string> ReadAdvancedSection(string sectionName)

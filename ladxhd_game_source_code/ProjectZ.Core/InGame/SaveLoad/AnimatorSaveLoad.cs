@@ -73,9 +73,8 @@ namespace ProjectZ.InGame.SaveLoad
         {
             // Try to load a custom animation file before the normal one.
             var customAnimator = Path.Combine(Values.PathAnimationMods, animatorId + ".ani");
-            if (File.Exists(customAnimator))
+            if (GameFS.Exists(customAnimator))
                 return LoadAnimatorFile(customAnimator, redux);
-
             // Fall back to the game's normal animation files.
             var mainAnimator = Path.Combine(Values.PathDataFolder, "Animations", animatorId + ".ani");
             return LoadAnimatorFile(mainAnimator, redux);
