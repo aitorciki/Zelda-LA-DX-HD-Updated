@@ -150,13 +150,6 @@ namespace ProjectZ.InGame.GameObjects
         public void ShortenDive() => _diveCounter = 350;
 
         //-------------------------------------------------------------------------------------------------------
-        // Used in "ObjPushButton" to force Link to put the sword away.
-        public void PlayWeaponAnimation(string animationName)
-        {
-            AnimatorWeapons.Play(animationName);
-        }
-
-        //-------------------------------------------------------------------------------------------------------
         // Used in "ObjColorJumpTile" to force Link to jump when landing on a tile.
         public void StartJump()
         {
@@ -221,7 +214,7 @@ namespace ProjectZ.InGame.GameObjects
                 if (IsChargingState() || _bootsRunning)
                 {
                     Animation.Play("stand" + shieldString + _rotateDirection);
-                    AnimatorWeapons.Play("stand_" + _rotateDirection);
+                    PlayWeaponAnimation("stand", _rotateDirection);
                 }
             }
         }

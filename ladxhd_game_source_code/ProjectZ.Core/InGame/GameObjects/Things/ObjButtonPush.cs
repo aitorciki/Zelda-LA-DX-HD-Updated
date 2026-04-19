@@ -55,7 +55,7 @@ namespace ProjectZ.InGame.GameObjects.Things
 
                 // If charging the sword, correct the sword's direction.
                 if (Link.IsChargingState())
-                    Link.PlayWeaponAnimation("stand_" + _pushDirection);
+                    Link.PlayWeaponAnimation("stand", _pushDirection);
             }
         }
     }

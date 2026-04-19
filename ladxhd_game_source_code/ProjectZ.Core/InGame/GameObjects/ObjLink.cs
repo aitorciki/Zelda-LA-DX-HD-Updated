@@ -647,7 +647,7 @@ namespace ProjectZ.InGame.GameObjects
                             : "_";
 
                         CurrentState = State.ChargeJumping;
-                        AnimatorWeapons.Play("stand_" + Direction);
+                        PlayWeaponAnimation("stand", Direction);
                         Animation.Play("cjump" + shieldString + Direction);
                         _swordPokeCounter = _swordPokeTime;
                     }
@@ -2203,7 +2203,7 @@ namespace ProjectZ.InGame.GameObjects
                         _pokeStart = true;
 
                         Animation.Play("poke_" + Direction);
-                        AnimatorWeapons.Play("poke_" + Direction);
+                        PlayWeaponAnimation("poke", Direction);
                         _swordChargeCounter = sword_charge_time;
 
                         // If in an accompanying state -> switch to a merged state.
@@ -2760,6 +2760,17 @@ namespace ProjectZ.InGame.GameObjects
         //  ANIMATION / GRAPHICS CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
+        public void PlayWeaponAnimation(string animationName, int direction = -1)
+        {
+            // Support custom sword level 2 attack animations with "l2" added. So if the
+            // animation is "attack_0" then the sword 2 equivalent would be "attackl2_0".
+            var dirSuffix  = direction >= 0 ? "_" + direction : "";
+            var basicName  = animationName + dirSuffix;
+            var nameLevel2 = animationName + "l2" + dirSuffix;
+            var showLevel2 = AnimatorWeapons.HasAnimation(nameLevel2) && Game1.GameManager.SwordLevel > 1;
+            AnimatorWeapons.Play(showLevel2 ? nameLevel2 : basicName);
+        }
+
         private void PlayWalkAndBlockAnimations(string shieldString, int animDirection, bool isBlocking)
         {
             // Default to standard walking animation.
@@ -2828,7 +2839,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 Direction = _rotateDirection;
                 Animation.Play("stand" + shieldString + Direction);
-                AnimatorWeapons.Play("stand_" + Direction);
+                PlayWeaponAnimation("stand", Direction);
             }
             _wasRotating = false;
 
@@ -3066,7 +3077,7 @@ namespace ProjectZ.InGame.GameObjects
             {
                 _npcCrossSword = false;
                 Animation.Play("stand" + Direction);
-                AnimatorWeapons.Play("stand_" + Direction);
+                PlayWeaponAnimation("stand", Direction);
                 CurrentState = State.Charging;
                 _swordChargeCounter = sword_charge_time;
                 _isHoldingSword = false;
@@ -3576,7 +3587,7 @@ namespace ProjectZ.InGame.GameObjects
                         _ => State.Charging
                     };
                     // Play animation and add to charge counter.
-                    AnimatorWeapons.Play("stand_" + Direction);
+                    PlayWeaponAnimation("stand", Direction);
                     _swordPokeCounter = _swordPokeTime;
                 }
             }
@@ -4076,7 +4087,7 @@ namespace ProjectZ.InGame.GameObjects
             Animation.Stop();
             AnimatorWeapons.Stop();
             Animation.Play("attack_" + Direction);
-            AnimatorWeapons.Play("attack_" + Direction);
+            PlayWeaponAnimation("attack", Direction);
 
             // Set up some states.
             IsPoking = false;
@@ -4138,7 +4149,7 @@ namespace ProjectZ.InGame.GameObjects
                     {
                         _pokeRepelFix = false;
                         Animation.Play("stand_" + Direction);
-                        AnimatorWeapons.Play("stand_" + Direction);
+                        PlayWeaponAnimation("stand", Direction);
                     }
                 }
                 // poke objects that walk into the sowrd
@@ -4203,7 +4214,7 @@ namespace ProjectZ.InGame.GameObjects
 
                             // Play the poking animation when making contact.
                             Animation.Play("poke_" + Direction);
-                            AnimatorWeapons.Play("poke_" + Direction);
+                            PlayWeaponAnimation("poke", Direction);
 
                             // Reset the sword charge counter.
                             _swordChargeCounter = sword_charge_time;
@@ -4220,7 +4231,7 @@ namespace ProjectZ.InGame.GameObjects
                         // Set the sword was poked and play the poke animation.
                         _swordPoked = true;
                         Animation.Play("poke_" + Direction);
-                        AnimatorWeapons.Play("poke_" + Direction);
+                        PlayWeaponAnimation("poke", Direction);
 
                         // If in an accompanying state -> switch to a merged state.
                         if (CurrentState == State.Blocking)
@@ -4268,7 +4279,7 @@ namespace ProjectZ.InGame.GameObjects
                 _   => _lastSwimDirection
             };
             if (CurrentState == State.ChargeSwimming && moveDirX % 2 == 0)
-                AnimatorWeapons.Play("stand_" + moveDirX);
+                PlayWeaponAnimation("stand", moveDirX);
         }
 
         private void StartSwordSpin()
@@ -4284,7 +4295,7 @@ namespace ProjectZ.InGame.GameObjects
                 CurrentState = State.Attacking;
 
             Animation.Play("swing_" + Direction);
-            AnimatorWeapons.Play("swing_" + Direction);
+            PlayWeaponAnimation("swing", Direction);
 
             Game1.AudioManager.PlaySoundEffect("D378-03-03");
 
@@ -4320,9 +4331,9 @@ namespace ProjectZ.InGame.GameObjects
             // If the player is dashing, hold the sword out front.
             if (_bootsRunning && CarrySword)
                 if (_isRotating)
-                    AnimatorWeapons.Play("stand_" + _rotateDirection);
+                    PlayWeaponAnimation("stand", _rotateDirection);
                 else
-                    AnimatorWeapons.Play("stand_" + Direction);
+                    PlayWeaponAnimation("stand", Direction);
 
             // If the sword is not out just exit.
             if (AnimatorWeapons.CollisionRectangle.IsEmpty)
@@ -5384,7 +5395,7 @@ namespace ProjectZ.InGame.GameObjects
 
             // play animation
             Animation.Play("rod_" + Direction);
-            AnimatorWeapons.Play("rod_" + Direction);
+            PlayWeaponAnimation("rod", Direction);
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
