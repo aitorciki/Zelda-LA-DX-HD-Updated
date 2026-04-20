@@ -90,15 +90,29 @@ namespace ProjectZ.InGame.Overlay
         public UiRectangle[] TextboxBackgroundChoice => _textboxBackgroundChoice;
 
         private float _uiScale = 4;
+        private Color _fontColor;
+        private Color _backgroundColor;
 
-        // Mod File Values 
-        float textbox_scale = 0;
+        // LAHDMod File Values 
+        private float textbox_scale = 0;
+
+        private int   textbox_font_color_red = 248;
+        private int   textbox_font_color_grn = 248;
+        private int   textbox_font_color_blu = 136;
+
+        private int   textbox_background_red = 0;
+        private int   textbox_background_grn = 0;
+        private int   textbox_background_blu = 0;
+        private float textbox_background_alpha = 0.85f;
 
         public TextboxOverlay()
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "TextboxOverlay.lahdmod");
             ModFile.Parse(modFile, this);
+
+            _fontColor = new Color(textbox_font_color_red, textbox_font_color_grn, textbox_font_color_blu);
+            _backgroundColor = new Color(textbox_background_red, textbox_background_grn, textbox_background_blu) * textbox_background_alpha;
 
             _animator = AnimatorSaveLoad.LoadAnimator("dialog_arrow");
 
@@ -170,14 +184,13 @@ namespace ProjectZ.InGame.Overlay
                     var choicePositionY = _dialogBoxHeight + 1;
                     var padding = (int)(_textboxChoice[i].SelectionPercentage * _uiScale);
 
-                    _textboxBackgroundChoice[i].BackgroundColor = Color.Lerp(Values.TextboxBackgroundColor, Values.TextboxFontColor, _textboxChoice[i].SelectionPercentage) * 0.85f * _currentOpacity * _textboxChoice[i].Percentage;
+                    _textboxBackgroundChoice[i].BackgroundColor = Color.Lerp(_backgroundColor, _fontColor, _textboxChoice[i].SelectionPercentage) * _currentOpacity * _textboxChoice[i].Percentage;
                     _textboxBackgroundChoice[i].BlurColor = Values.TextboxBlurColor * _currentOpacity * _textboxChoice[i].Percentage;
                     _textboxBackgroundChoice[i].Rectangle = new Rectangle(
                         (int)(_dialogBoxRectangle.X + _dialogBoxRectangle.Width - _choiceWidth * (_choices.Length - i) - (3 * _uiScale) * (_choices.Length - 1 - i) - padding - _uiScale),
                         (int)(_dialogBoxRectangle.Y + choicePositionY * _uiScale + (int)_textboxOffsetY - padding + (int)(Math.Sin((1 - _textboxChoice[i].Percentage) * Math.PI / 2) * 4 * _uiScale)),
                         _choiceWidth + 2 * padding, 
                         (int)((Resources.GameFontHeight + 4) * _uiScale + 2 * padding));
-
                 }
             }
             // Freeze or unfreeze game logic as needed.
@@ -187,7 +200,7 @@ namespace ProjectZ.InGame.Overlay
         private void UpdateTextBoxState()
         {
             // set textbox fade in from the bottom
-            _textboxBackground.BackgroundColor = Values.TextboxBackgroundColor * _currentOpacity;
+            _textboxBackground.BackgroundColor = _backgroundColor * _currentOpacity;
             _textboxBackground.BlurColor = Values.TextboxBlurColor * _currentOpacity;
             _textboxBackground.Rectangle.Y = _dialogBoxRectangle.Y + (int)_textboxOffsetY;
         }
@@ -217,11 +230,11 @@ namespace ProjectZ.InGame.Overlay
                 var scrollPercentage = _scrollCounter / ScrollTime;
                 scrollOffset = scrollPercentage * Resources.GameFontHeight * _uiScale;
 
-                GameFS.DrawString(spriteBatch, _scrollText, new Vector2(DialogBoxTextBox.X, DialogBoxTextBox.Y + _textboxOffsetY - Resources.GameFontHeight * _uiScale + scrollOffset + _textOffsetY * _uiScale), Values.TextboxFontColor * _currentOpacity * Math.Clamp(scrollPercentage * 2f - 1f, 0, 1), 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
+                GameFS.DrawString(spriteBatch, _scrollText, new Vector2(DialogBoxTextBox.X, DialogBoxTextBox.Y + _textboxOffsetY - Resources.GameFontHeight * _uiScale + scrollOffset + _textOffsetY * _uiScale), _fontColor * _currentOpacity * Math.Clamp(scrollPercentage * 2f - 1f, 0, 1), 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
             }
 
             // draw the dialog box
-            GameFS.DrawString(spriteBatch, _strDialog, new Vector2(DialogBoxTextBox.X, DialogBoxTextBox.Y + _textboxOffsetY + scrollOffset + _textOffsetY * _uiScale), Values.TextboxFontColor * _currentOpacity, 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
+            GameFS.DrawString(spriteBatch, _strDialog, new Vector2(DialogBoxTextBox.X, DialogBoxTextBox.Y + _textboxOffsetY + scrollOffset + _textOffsetY * _uiScale), _fontColor * _currentOpacity, 0, Vector2.Zero, _uiScale, SpriteEffects.None, 0);
 
             if (!_running && !_end)
             {
@@ -234,7 +247,7 @@ namespace ProjectZ.InGame.Overlay
                 for (var i = 0; i < _choices.Length; i++)
                 {
                     var textSize = GameFS.MeasureString(_choices[i]);
-                    var color = Color.Lerp(Values.TextboxFontColor, Values.TextboxBackgroundColor, _textboxChoice[i].SelectionPercentage);
+                    var color = Color.Lerp(_fontColor, _backgroundColor, _textboxChoice[i].SelectionPercentage);
                     var posX = _textboxBackgroundChoice[i].Rectangle.X + _textboxBackgroundChoice[i].Rectangle.Width / 2 - (textSize.X * _uiScale) / 2;
                     var posY = _textboxBackgroundChoice[i].Rectangle.Y + _textboxBackgroundChoice[i].Rectangle.Height / 2 - (textSize.Y * _uiScale) / 2 + _uiScale;
 
