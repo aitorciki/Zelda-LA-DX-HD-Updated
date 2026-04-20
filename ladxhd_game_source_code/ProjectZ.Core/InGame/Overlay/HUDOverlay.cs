@@ -168,7 +168,7 @@ namespace ProjectZ.InGame.Overlay
                 _heartPosition = new Point(_gameUiWindow.X + 16 * Game1.UiScale + custom_heart_offsetx, _gameUiWindow.Y + 16 * Game1.UiScale + custom_heart_offsety);
                 _heartBackground.Rectangle = ItemDrawHelper.GetHeartRectangle(_heartPosition, _heartScale);
                 _heartBackground.Rectangle.X -= (int)(fadePercentage * FadeOffsetBackground * _heartScale);
-                _heartBackground.BackgroundColor = RupeeBackgroundColor;
+                _heartBackground.BackgroundColor = RupeeBackgroundColor * transparency;
                 _heartBackground.BlurColor = Values.OverlayBackgroundBlurColor * transparency;
             }
             if (custom_heart_show)
@@ -176,7 +176,7 @@ namespace ProjectZ.InGame.Overlay
                 _rubeePosition = new Point(_gameUiWindow.X + _gameUiWindow.Width - ItemDrawHelper.RubeeSize.X * _rupeeScale - 16 * Game1.UiScale + custom_rupee_offsetx, _gameUiWindow.Y + 16 * Game1.UiScale + custom_rupee_offsety);
                 _rupeeBackground.Rectangle = ItemDrawHelper.GetRubeeRectangle(new Point(_rubeePosition.X, _rubeePosition.Y), _rupeeScale);
                 _rupeeBackground.Rectangle.X += (int)(fadePercentage * FadeOffsetBackground * _rupeeScale);
-                _rupeeBackground.BackgroundColor = HeartBackgroundColor;
+                _rupeeBackground.BackgroundColor = HeartBackgroundColor * transparency;
                 _rupeeBackground.BlurColor = Values.OverlayBackgroundBlurColor * transparency;
             }
             if (custom_keys_show)
@@ -191,7 +191,7 @@ namespace ProjectZ.InGame.Overlay
                 }
                 else
                 {
-                    _keyBackground.BackgroundColor = KeysBackgroundColor;
+                    _keyBackground.BackgroundColor = KeysBackgroundColor * transparency ;
                     _keyBackground.BlurColor = Values.OverlayBackgroundBlurColor * transparency;
                 }
             }

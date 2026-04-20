@@ -87,7 +87,7 @@ namespace ProjectZ.InGame.Overlay
 
             for (var i = 0; i < _itemSlots.Length; i++)
             {
-                _uiBackgroundBoxes[i].BackgroundColor = _hudOverlay.ItemsBackgroundColor;
+                _uiBackgroundBoxes[i].BackgroundColor = _hudOverlay.ItemsBackgroundColor * transparency;
                 _uiBackgroundBoxes[i].BlurColor = Values.OverlayBackgroundBlurColor * transparency;
             }
         }
