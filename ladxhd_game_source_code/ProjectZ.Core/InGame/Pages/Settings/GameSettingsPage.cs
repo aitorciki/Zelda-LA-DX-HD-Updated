@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Things;
+using ProjectZ.InGame.Screens;
 
 namespace ProjectZ.InGame.Pages
 {
@@ -23,10 +24,13 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleItemSlotSide;
         private readonly InterfaceListLayout _toggleEpilepsySafe;
 
+        // Get a link to the menu screen so the border texture can be changed.
+        MenuScreen _menuScreen => (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
+
         List<string> _tooltips = new List<string>();
         private bool _showTooltip;
 
-        public void SetMenuBricks(int value) { ((InterfaceSlider)_sliderMenuBricks).CurrentStep = value; Resources.RefreshMenuBorderTexture(_content, value); }
+        public void SetMenuBricks(int value) { ((InterfaceSlider)_sliderMenuBricks).CurrentStep = value; _menuScreen.SetMenuBorderTexture(_content, value); }
         public void SetClassicSword(bool state) => ((InterfaceToggle)_toggleClassicSword.Elements[1]).ToggleState = state;
         public void SetSavePosition(bool state) => ((InterfaceToggle)_toggleSavePosition.Elements[1]).ToggleState = state;
         public void SetAutoSave(bool state) => ((InterfaceToggle)_toggleAutosave.Elements[1]).ToggleState = state;
@@ -136,7 +140,7 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
-            // the left button is always the first one selected
+            // The left button is always the first one selected.
             _bottomBar.Deselect(false);
             _bottomBar.Select(InterfaceElement.Directions.Left, false);
             _bottomBar.Deselect(false);
@@ -180,8 +184,9 @@ namespace ProjectZ.InGame.Pages
         private string MenuBorderScaleSliderAdjustment(int number)
         {
             // Swap out the menu border with it's replacement.
-            Resources.RefreshMenuBorderTexture(_content, number);
+            _menuScreen.SetMenuBorderTexture(_content, number);
 
+            // Get the text to display on the menu.
             return ": " + number switch
             {
                 0 => Game1.LanguageManager.GetString("settings_game_menubricksA", "error"),

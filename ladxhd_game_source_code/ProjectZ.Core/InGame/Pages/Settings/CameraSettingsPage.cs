@@ -197,9 +197,9 @@ namespace ProjectZ.InGame.Pages
         public void UpdateInterfaceColors()
         {
             _toggleClassicDungeon.ToggleElementColors(GameSettings.ClassicCamera);
+            _toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);
             _sliderCameraBorder.ToggleSliderColors(GameSettings.ClassicCamera);
             _sliderBorderOpacity.ToggleSliderColors(GameSettings.ClassicCamera);
-            _toggleCameraLock.ToggleElementColors(!GameSettings.ClassicCamera);
         }
 
         private string ClassicBorderAdjustment(int number)

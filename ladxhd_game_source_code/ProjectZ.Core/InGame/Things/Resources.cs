@@ -731,19 +731,6 @@ namespace ProjectZ.InGame.Things
             }
         }
 
-        public static void RefreshMenuBorderTexture(ContentManager content, int index)
-        {
-            var texture = index switch
-            {
-                0 => content.Load<Texture2D>("Menu/menuBackground"),
-                1 => content.Load<Texture2D>("Menu/menuBackgroundB"),
-                2 => content.Load<Texture2D>("Menu/menuBackgroundC"),
-                _ => content.Load<Texture2D>("Menu/menuBackground")
-            };
-            var menuScreen = (MenuScreen)Game1.ScreenManager.GetScreen(Values.ScreenNameMenu);
-            menuScreen?.SetBackground(texture);
-        }
-
         public static void RefreshDynamicResources()
         {
             // Reload photo album photos so proper photos are displayed.

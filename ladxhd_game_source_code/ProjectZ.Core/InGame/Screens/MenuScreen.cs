@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -33,18 +34,6 @@ namespace ProjectZ.InGame.Screens
 
         public override void Load(ContentManager content)
         {
-            string texture = (GameSettings.MenuBorder) switch
-            {
-                0 => "Menu/menuBackground",
-                1 => "Menu/menuBackgroundB",
-                2 => "Menu/menuBackgroundC",
-                _ => "Menu/menuBackground"
-            };
-            _sprBackground = content.Load<Texture2D>(texture);
-
-            _linkAnimation = AnimatorSaveLoad.LoadAnimator("menu_link");
-            _linkAnimation.Play("idle");
-
             // On Android we use a minimum height of 240 instead of 256. To keep the size consistent
             // across all versions of the game only subtract 16 pixels as opposed to 32 pixels.
             _menuWidth = Values.MinWidth - 32;
@@ -53,11 +42,40 @@ namespace ProjectZ.InGame.Screens
         #else
             _menuHeight = Values.MinHeight - 32;
         #endif
+
+            // Set the menu border.
+            SetMenuBorderTexture(content, GameSettings.MenuBorder);
+
+            // Load the Link on the menu.
+            _linkAnimation = AnimatorSaveLoad.LoadAnimator("menu_link");
+            _linkAnimation.Play("idle");
         }
 
-        public void SetBackground(Texture2D texture)
+        public void SetMenuBorderTexture(ContentManager content, int index)
         {
-            _sprBackground = texture;
+            // Check for a custom menu border texture in the mods folder.
+            string backgroundPath = Path.Combine(Values.PathGraphicsMods, "menuBackground.png");
+
+            // Try to load a custom background.
+            if (index == 0 && File.Exists(backgroundPath))
+            {
+                using var stream = File.OpenRead(backgroundPath);
+                var customBorder = Texture2D.FromStream(Game1.Graphics.GraphicsDevice, stream);
+                _sprBackground = customBorder;
+                return;
+            }
+            // Fall back to the built-in textures.
+            else
+            {
+                var texture = index switch
+                {
+                    0 => content.Load<Texture2D>("Menu/menuBackground"),
+                    1 => content.Load<Texture2D>("Menu/menuBackgroundB"),
+                    2 => content.Load<Texture2D>("Menu/menuBackgroundC"),
+                    _ => content.Load<Texture2D>("Menu/menuBackground")
+                };
+                _sprBackground = texture;
+            }
         }
 
         public override void OnLoad()
