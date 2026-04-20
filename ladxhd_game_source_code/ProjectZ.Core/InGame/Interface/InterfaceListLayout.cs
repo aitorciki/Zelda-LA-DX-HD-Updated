@@ -34,7 +34,7 @@ namespace ProjectZ.InGame.Interface
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
         {
-            // look for changes
+            // Look for changes.
             foreach (var element in Elements)
             {
                 if (element.ChangeUp)
@@ -44,13 +44,13 @@ namespace ProjectZ.InGame.Interface
                 }
             }
 
-            // recalculate the position of the elements if needed
+            // Recalculate the position of the elements if needed.
             if (Recalculate)
                 CalculatePosition();
 
             base.Draw(spriteBatch, drawPosition, scale, transparency);
 
-            // draw all the visible elements inside the layout
+            // Draw all the visible elements inside the layout.
             foreach (var element in Elements)
             {
                 if (element.Visible && !element.Hidden)
@@ -418,12 +418,13 @@ namespace ProjectZ.InGame.Interface
         {
             foreach (var element in this.Elements)
             {
-                if (element is InterfaceElement buttonElement)
+                // Convert the element to a button.
+                if (element is InterfaceButton buttonElement)
                 {
                     if (disableSetting)
                     {
-                        buttonElement.Color = Values.MenuButtonColorSlider;
-                        buttonElement.SelectionColor = Values.MenuButtonColorSelected;
+                        buttonElement.Color = buttonElement.Backup_Color;
+                        buttonElement.SelectionColor = buttonElement.Backup_SelectionColor;
                     }
                     else
                     {
@@ -435,13 +436,13 @@ namespace ProjectZ.InGame.Interface
                 {
                     if (disableSetting)
                     {
-                        toggleElement._colorToggled = Values.MenuButtonColorSlider;
-                        toggleElement._colorToggledBackground = Values.MenuButtonColorSelected;
+                        toggleElement.ColorToggled = toggleElement.Backup_ColorToggled;
+                        toggleElement.ColorToggledBackground = toggleElement.Backup_ColorToggledBackground;
                     }
                     else
                     {
-                        toggleElement._colorToggled = new Color(79, 79, 79);
-                        toggleElement._colorToggledBackground = new Color(188, 188, 188);
+                        toggleElement.ColorToggled = Values.MenuButtonColorDisabled;
+                        toggleElement.ColorToggledBackground = Values.MenuButtonColorSelectedDisabled;
                     }
                 }
             }

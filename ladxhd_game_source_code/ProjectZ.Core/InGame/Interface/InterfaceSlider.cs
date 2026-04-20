@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -28,9 +29,6 @@ namespace ProjectZ.InGame.Interface
         private static int _scrollStartTime = 350;
         private static int _scrollTime = 75;
 
-        public Color ColorSlider;
-        private Color _colorSliderBackground = new Color(79, 79, 79);
-
         private Rectangle _sliderBackgroundRectangle;
         private Rectangle _sliderRectangle;
 
@@ -51,11 +49,41 @@ namespace ProjectZ.InGame.Interface
         private int _steps;
         private bool _updateText;
 
+        // Default colors that can be overwritten by LAHDMod.
+        public Color ColorSlider;
+        public Color ColorSliderBackground;
+
+        // Backup colors for when buttons are disabled/enabled.
+        public Color Backup_ColorSlider;
+        public Color Backup_ColorSliderBackground;
+
+        // Default colors that can be overwritten by LAHDMod.
+        private int custom_slider_color_red = 40;
+        private int custom_slider_color_grn = 64;
+        private int custom_slider_color_blu = 128;
+        private int custom_slider_color_bg_red = 79;
+        private int custom_slider_color_bg_grn = 79;
+        private int custom_slider_color_bg_blu = 79;
+        private int custom_slider_select_red = 90;
+        private int custom_slider_select_grn = 110;
+        private int custom_slider_select_blu = 170;
+
         public InterfaceSlider()
         {
+            // Try to load a lahdmod to get a custom set of colors.
+            string modFile = Path.Combine(Values.PathLAHDMods, "InterfaceSlider.lahdmod");
+            ModFile.Parse(modFile, this);
+
+            // Load in whatever the colors are now.
+            ColorSlider           = new Color(custom_slider_color_red, custom_slider_color_grn, custom_slider_color_blu);
+            ColorSliderBackground = new Color(custom_slider_color_bg_red, custom_slider_color_bg_grn, custom_slider_color_bg_blu);
+            SelectionColor        = new Color(custom_slider_select_red, custom_slider_select_grn, custom_slider_select_blu);
+
+            // Backup colors for when interfaces get toggled.
+            Backup_ColorSlider = ColorSlider;
+            Backup_ColorSliderBackground = SelectionColor;
+
             Selectable = true;
-            SelectionColor = Values.MenuButtonColorSelected;
-            ColorSlider = Values.MenuButtonColorSlider;
         }
 
         public InterfaceSlider(string key, int width, int baseHeight, Point margin, int start, int end, int stepSize, int current, BFunction numberChanged) : this()
@@ -178,7 +206,6 @@ namespace ProjectZ.InGame.Interface
         {
             base.Update();
 
-            // update the animation
             _animationCounter -= Game1.DeltaTime;
             if (_animationCounter < 0)
                 _animationCounter = 0;
@@ -219,7 +246,7 @@ namespace ProjectZ.InGame.Interface
                 (int)(drawPosition.X + _sliderBackgroundRectangle.X * scale),
                 (int)(drawPosition.Y + _sliderBackgroundRectangle.Y * scale + _drawOffset.Y * scale),
                 (int)(_sliderBackgroundRectangle.Width * scale),
-                (int)(_sliderBackgroundRectangle.Height * scale)), _colorSliderBackground * transparency);
+                (int)(_sliderBackgroundRectangle.Height * scale)), ColorSliderBackground * transparency);
 
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(2.0f);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_sliderRectangle.Width);

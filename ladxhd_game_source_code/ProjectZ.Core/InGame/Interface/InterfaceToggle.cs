@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
@@ -10,11 +11,6 @@ namespace ProjectZ.InGame.Interface
     {
         public delegate void BFunction(bool toggleState);
         public BFunction ClickFunction;
-
-        public Color _colorToggledBackground;
-        public Color _colorNotToggledBackground = new Color(188, 188, 188);
-        public Color _colorToggled;
-        public Color _colorNotToggled = new Color(79, 79, 79);
 
         private readonly Rectangle _toggleBackgroundRectangle;
         private readonly Rectangle _toggleRectangle;
@@ -31,14 +27,53 @@ namespace ProjectZ.InGame.Interface
             get => _toggleState;
             set => _toggleState = value;
         }
+        // Default colors that can be overwritten by LAHDMod.
+        public Color ColorToggled;
+        public Color ColorToggledBackground;
+        public Color ColorNotToggled;
+        public Color ColorNotToggledBackground;
+
+        // Backup colors for when buttons are disabled/enabled.
+        public Color Backup_ColorToggled;
+        public Color Backup_ColorToggledBackground;
+
+        // Default colors that can be overwritten by LAHDMod.
+        private int custom_toggle_color_red = 40;
+        private int custom_toggle_color_grn = 64;
+        private int custom_toggle_color_blu = 128;
+        private int custom_toggle_select_red = 90;
+        private int custom_toggle_select_grn = 110;
+        private int custom_toggle_select_blu = 170;
+        private int custom_toggle_on_red = 40;
+        private int custom_toggle_on_grn = 64;
+        private int custom_toggle_on_blu = 128;
+        private int custom_toggle_on_bg_red = 90;
+        private int custom_toggle_on_bg_grn = 110;
+        private int custom_toggle_on_bg_blu = 170;
+        private int custom_toggle_off_red = 79;
+        private int custom_toggle_off_grn = 79;
+        private int custom_toggle_off_blu = 79;
+        private int custom_toggle_off_bg_red = 188;
+        private int custom_toggle_off_bg_grn = 188;
+        private int custom_toggle_off_bg_blu = 188;
 
         public InterfaceToggle()
         {
-            Color = Values.MenuButtonColor;
-            SelectionColor = Values.MenuButtonColorSelected;
+            // Try to load a lahdmod to get a custom set of colors.
+            string modFile = Path.Combine(Values.PathLAHDMods, "InterfaceToggle.lahdmod");
+            ModFile.Parse(modFile, this);
 
-            _colorToggledBackground = Values.MenuButtonColorSelected;
-            _colorToggled = Values.MenuButtonColorSlider;
+            // Load in whatever the colors are now.
+            Color                     = new Color(custom_toggle_color_red, custom_toggle_color_grn, custom_toggle_color_blu);
+            SelectionColor            = new Color(custom_toggle_select_red, custom_toggle_select_grn, custom_toggle_select_blu);
+            ColorToggled              = new Color(custom_toggle_on_red, custom_toggle_on_grn, custom_toggle_on_blu);
+            ColorToggledBackground    = new Color(custom_toggle_on_bg_red, custom_toggle_on_bg_grn, custom_toggle_on_bg_blu);
+            ColorNotToggled           = new Color(custom_toggle_off_red, custom_toggle_off_grn, custom_toggle_off_blu);
+            ColorNotToggledBackground = new Color(custom_toggle_off_bg_red, custom_toggle_off_bg_grn, custom_toggle_off_bg_blu);
+
+            // Backup colors for when interfaces get toggled.
+            Backup_ColorToggled = ColorToggled;
+            Backup_ColorToggledBackground = ColorToggledBackground;
         }
 
         public InterfaceToggle(Point size, Point margin, bool startState, BFunction clickFunction) : this()
@@ -70,7 +105,7 @@ namespace ProjectZ.InGame.Interface
             var buttonSize = new Point(size.X - toggleSize.X - 4, size.Y);
             var toggle = new InterfaceToggle(toggleSize, new Point(2, 0), startState, clickFunction);
 
-            // Apply custom colors if provided
+            // Apply custom colors if provided.
             if (customColor.HasValue)
             {
                 toggle.Color = customColor.Value;
@@ -83,7 +118,7 @@ namespace ProjectZ.InGame.Interface
                 textKey, 
                 buttonElement => toggle.Toggle());
 
-            // Pass shared colors to button
+            // Pass shared colors to button.
             if (customColor.HasValue)
             {
                 button.Color = toggle.Color;
@@ -150,7 +185,7 @@ namespace ProjectZ.InGame.Interface
                 (int)(drawPosition.Y + _toggleBackgroundRectangle.Y * scale),
                 (int)(_toggleBackgroundRectangle.Width * scale),
                 (int)(_toggleBackgroundRectangle.Height * scale)),
-                (_toggleState ? _colorToggledBackground : _colorNotToggledBackground) * transparency);
+                (_toggleState ? ColorToggledBackground : ColorNotToggledBackground) * transparency);
 
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(4.0f);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_toggleRectangle.Width);
@@ -162,7 +197,7 @@ namespace ProjectZ.InGame.Interface
                 (int)(drawPosition.Y + _toggleRectangle.Y * scale),
                 (int)(_toggleRectangle.Width * scale),
                 (int)(_toggleRectangle.Height * scale)),
-                (_toggleState ? _colorToggled : _colorNotToggled) * transparency);
+                (_toggleState ? ColorToggled : ColorNotToggled) * transparency);
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);

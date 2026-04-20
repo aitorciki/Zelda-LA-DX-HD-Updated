@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Pages;
@@ -14,11 +15,33 @@ namespace ProjectZ.InGame.Interface
         public delegate void BFunction(InterfaceElement element);
         public BFunction ClickFunction;
 
+        // Backup colors for when buttons are disabled/enabled.
+        public Color Backup_Color;
+        public Color Backup_SelectionColor;
+
+        // Default colors that can be overwritten by LAHDMod.
+        private int custom_button_color_red = 40;
+        private int custom_button_color_grn = 64;
+        private int custom_button_color_blu = 128;
+        private int custom_button_select_red = 90;
+        private int custom_button_select_grn = 110;
+        private int custom_button_select_blu = 170;
+
         public InterfaceButton()
         {
+            // Try to load a lahdmod to get a custom set of colors.
+            string modFile = Path.Combine(Values.PathLAHDMods, "InterfaceButton.lahdmod");
+            ModFile.Parse(modFile, this);
+
+            // Load in whatever the colors are now.
+            Color          = new Color(custom_button_color_red, custom_button_color_grn, custom_button_color_blu);
+            SelectionColor = new Color(custom_button_select_red, custom_button_select_grn, custom_button_select_blu);
+
+            // Backup colors for when interfaces get toggled.
+            Backup_Color = Color;
+            Backup_SelectionColor = SelectionColor;
+
             Selectable = true;
-            Color = Values.MenuButtonColor;
-            SelectionColor = Values.MenuButtonColorSelected;
         }
 
         public InterfaceButton(Point size, Point margin, InterfaceElement insideElement, BFunction clickFunction) : this()
