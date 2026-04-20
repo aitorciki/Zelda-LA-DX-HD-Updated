@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base;
@@ -12,16 +13,26 @@ namespace ProjectZ.InGame.GameObjects.Things
     {
         private Vector2 _offset0;
         private Vector2 _offset1;
-
         private readonly Vector2 _position;
 
         private readonly float _scale;
         private readonly float _transparency;
-
         private readonly int _timeOffset;
+
+        // Default values ovewriteable with "OverlayManager.lahdmod".
+        private bool fog_effects_disable;
+        private int  fog_color_red = 255;
+        private int  fog_color_grn = 255;
+        private int  fog_color_blu = 255;
+
+        private Color _color;
 
         public ObjFog(Map.Map map, int posX, int posY, float scale, float transparency) : base(map)
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathLAHDMods, "ObjFog.lahdmod");
+            ModFile.Parse(modFile, this);
+
             SprEditorImage = Resources.SprItem;
             EditorIconSource = new Rectangle(64, 168, 16, 16);
 
@@ -29,11 +40,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             EntityPosition = new CPosition(posX, posY + height, 0);
             EntitySize = new Rectangle(0, -height, (int)(Resources.SprFog.Width * scale), height);
 
+            _color = new Color(fog_color_red, fog_color_grn, fog_color_blu);
             _position = new Vector2(posX, posY);
-
             _scale = scale;
             _transparency = transparency;
-
             _timeOffset = Game1.RandomNumber.Next(0, 5000);
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -48,16 +58,12 @@ namespace ProjectZ.InGame.GameObjects.Things
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            if (!GameSettings.FogEffects)
-                return;
-
-            // the fog would break the shock effect
-            if (Game1.GameManager.UseShockEffect)
+            if (fog_effects_disable || !GameSettings.FogEffects || Game1.GameManager.UseShockEffect)
                 return;
 
             var sourceRectangle = new Rectangle(0, 0, Resources.SprFog.Width, Resources.SprFog.Height);
-            spriteBatch.Draw(Resources.SprFog, _position + _offset0, sourceRectangle, Color.White * _transparency, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprFog, _position + _offset1, sourceRectangle, Color.White * _transparency, 0, Vector2.Zero, _scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
+            spriteBatch.Draw(Resources.SprFog, _position + _offset0, sourceRectangle, _color * _transparency, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(Resources.SprFog, _position + _offset1, sourceRectangle, _color * _transparency, 0, Vector2.Zero, _scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
         }
     }
 }
