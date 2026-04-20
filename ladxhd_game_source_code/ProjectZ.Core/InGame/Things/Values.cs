@@ -21,9 +21,6 @@ namespace ProjectZ.InGame.Things
         public static Color MenuButtonColorSelectedDisabled = new Color(150, 150, 150);
         public static Color MenuButtonColorSliderDisabled = new Color(100, 100, 100);
 
-        public static Color InventoryBackgroundColorTop = new Color(255, 255, 230) * 0.85f;
-        public static Color InventoryBackgroundColor = new Color(255, 255, 230) * 0.75f;
-
         public static Color GameMenuBackgroundColor = new Color(255, 255, 255, 255);
 
         public static Color TextboxBackgroundColor = new Color(0, 0, 0) * 0.85f;

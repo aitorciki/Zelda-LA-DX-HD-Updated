@@ -38,29 +38,57 @@ namespace ProjectZ.InGame.Overlay
         private int _keysScale;
         private int _siconScale;
 
-        // lahdmod values
-        public  bool custom_items_show     = true;
-        private int  custom_items_scale    = 0;
-        public  int  custom_items_offsetx  = 0;
-        public  int  custom_items_offsety  = 0;
+        public Color ItemsBackgroundColor;
+        public Color HeartBackgroundColor;
+        public Color RupeeBackgroundColor;
+        public Color KeysBackgroundColor;
 
-        public  bool custom_heart_show     = true;
-        private int  custom_heart_scale    = 0;
-        private int  custom_heart_offsetx  = 0;
-        private int  custom_heart_offsety  = 0;
+        // Default values ovewriteable with "OverlayManager.lahdmod".
+        private bool  custom_items_show     = true;
+        private int   custom_items_scale    = 0;
+        private int   custom_items_offsetx  = 0;
+        private int   custom_items_offsety  = 0;
+        private int   custom_items_red      = 255;
+        private int   custom_items_grn      = 255;
+        private int   custom_items_blu      = 190;
+        private float custom_items_alpha    = 0.55f;
 
-        public  bool custom_rupee_show     = true;
-        private int  custom_rupee_scale    = 0;
-        private int  custom_rupee_offsetx  = 0;
-        private int  custom_rupee_offsety  = 0;
+        private bool  custom_heart_show     = true;
+        private int   custom_heart_scale    = 0;
+        private int   custom_heart_offsetx  = 0;
+        private int   custom_heart_offsety  = 0;
+        private int   custom_heart_red      = 255;
+        private int   custom_heart_grn      = 255;
+        private int   custom_heart_blu      = 190;
+        private float custom_heart_alpha    = 0.55f;
 
-        public  bool custom_keys_show      = true;
-        private int  custom_keys_scale     = 0;
-        private int  custom_keys_offsetx   = 0;
-        private int  custom_keys_offsety   = 0;
+        private bool  custom_rupee_show     = true;
+        private int   custom_rupee_scale    = 0;
+        private int   custom_rupee_offsetx  = 0;
+        private int   custom_rupee_offsety  = 0;
+        private int   custom_rupee_red      = 255;
+        private int   custom_rupee_grn      = 255;
+        private int   custom_rupee_blu      = 190;
+        private float custom_rupee_alpha    = 0.55f;
 
-        public  bool custom_sicon_show     = true;
-        private int  custom_sicon_scale    = 0;
+        private bool  custom_keys_show      = true;
+        private int   custom_keys_scale     = 0;
+        private int   custom_keys_offsetx   = 0;
+        private int   custom_keys_offsety   = 0;
+        private int   custom_keys_red       = 255;
+        private int   custom_keys_grn       = 255;
+        private int   custom_keys_blu       = 190;
+        private float custom_keys_alpha     = 0.55f;
+
+        private bool  custom_sicon_show     = true;
+        private int   custom_sicon_scale    = 0;
+        private int   custom_sicon_offsetx  = 0;
+        private int   custom_sicon_offsety  = 0;
+
+        // Public values that can be passed to ItemSlotOverlay.
+        public bool ShowItems => custom_items_show;
+        public int  ItemsOffsetX => custom_items_offsetx;
+        public int  ItemsOffsetY => custom_items_offsety;
 
         public HudOverlay()
         {
@@ -68,21 +96,31 @@ namespace ProjectZ.InGame.Overlay
             string modFile = Path.Combine(Values.PathLAHDMods, "HUDOverlay.lahdmod");
             ModFile.Parse(modFile, this);
 
+            // Assemble the colors so they can be referenced.
+            ItemsBackgroundColor = new Color(custom_items_red, custom_items_grn, custom_items_blu) * custom_items_alpha;
+            HeartBackgroundColor = new Color(custom_heart_red, custom_heart_grn, custom_heart_blu) * custom_heart_alpha;
+            RupeeBackgroundColor = new Color(custom_rupee_red, custom_rupee_grn, custom_rupee_blu) * custom_rupee_alpha;
+            KeysBackgroundColor  = new Color(custom_keys_red,  custom_keys_grn,  custom_keys_blu)  * custom_keys_alpha;
+
+            // Create the hearts overlay if enabled.
             if (custom_heart_show)
             {
                 _heartBackground = new UiRectangle(Rectangle.Empty, "heart", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                 Game1.UiManager.AddElement(_heartBackground);
             }
+            // Create the rupees overlay if enabled.
             if (custom_rupee_show)
             {
                 _rupeeBackground = new UiRectangle(Rectangle.Empty, "rupee", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                 Game1.UiManager.AddElement(_rupeeBackground);
             }
+            // Create the keys overlay if enabled.
             if (custom_keys_show)
             {
                 _keyBackground = new UiRectangle(Rectangle.Empty, "keys", Values.ScreenNameGame, Values.OverlayBackgroundColor, Values.OverlayBackgroundBlurColor, null) { Radius = Values.UiBackgroundRadius, IsHudElement = true };
                 Game1.UiManager.AddElement(_keyBackground);
             }
+            // Get the save icon sprite if enabled.
             if (custom_sicon_show)
             {
                 _saveIcon = Resources.GetSprite("save_icon");
@@ -91,6 +129,7 @@ namespace ProjectZ.InGame.Overlay
 
         public void ResolutionChange()
         {
+            // Load a custom scale if defined otherwise use the UI scale.
             _itemsScale = custom_items_scale == 0 ? Game1.UiScale : custom_items_scale;
             _heartScale = custom_heart_scale == 0 ? Game1.UiScale : custom_heart_scale;
             _rupeeScale = custom_rupee_scale == 0 ? Game1.UiScale : custom_rupee_scale;
@@ -124,25 +163,22 @@ namespace ProjectZ.InGame.Overlay
             _gameUiWindow.Y = Game1.WindowHeight / 2 - _gameUiWindow.Height / 2;
 #endif
 
-            // top left
             if (custom_rupee_show)
             {
                 _heartPosition = new Point(_gameUiWindow.X + 16 * Game1.UiScale + custom_heart_offsetx, _gameUiWindow.Y + 16 * Game1.UiScale + custom_heart_offsety);
                 _heartBackground.Rectangle = ItemDrawHelper.GetHeartRectangle(_heartPosition, _heartScale);
                 _heartBackground.Rectangle.X -= (int)(fadePercentage * FadeOffsetBackground * _heartScale);
-                _heartBackground.BackgroundColor = Values.OverlayBackgroundColor * transparency;
+                _heartBackground.BackgroundColor = RupeeBackgroundColor;
                 _heartBackground.BlurColor = Values.OverlayBackgroundBlurColor * transparency;
             }
-            // top right, rupees
             if (custom_heart_show)
             {
                 _rubeePosition = new Point(_gameUiWindow.X + _gameUiWindow.Width - ItemDrawHelper.RubeeSize.X * _rupeeScale - 16 * Game1.UiScale + custom_rupee_offsetx, _gameUiWindow.Y + 16 * Game1.UiScale + custom_rupee_offsety);
                 _rupeeBackground.Rectangle = ItemDrawHelper.GetRubeeRectangle(new Point(_rubeePosition.X, _rubeePosition.Y), _rupeeScale);
                 _rupeeBackground.Rectangle.X += (int)(fadePercentage * FadeOffsetBackground * _rupeeScale);
-                _rupeeBackground.BackgroundColor = Values.OverlayBackgroundColor * transparency;
+                _rupeeBackground.BackgroundColor = HeartBackgroundColor;
                 _rupeeBackground.BlurColor = Values.OverlayBackgroundBlurColor * transparency;
             }
-            // top right, keys
             if (custom_keys_show)
             {
                 _keyPosition = new Point(_gameUiWindow.X + _gameUiWindow.Width - ItemDrawHelper.KeySize.X * _keysScale - 16 * Game1.UiScale + custom_keys_offsetx, _gameUiWindow.Y + 16 * 2 * _rupeeScale + custom_keys_offsety);
@@ -155,21 +191,21 @@ namespace ProjectZ.InGame.Overlay
                 }
                 else
                 {
-                    _keyBackground.BackgroundColor = Values.OverlayBackgroundColor * transparency;
+                    _keyBackground.BackgroundColor = KeysBackgroundColor;
                     _keyBackground.BlurColor = Values.OverlayBackgroundBlurColor * transparency;
                 }
             }
-            // Update overlay position
+            // Update overlay position.
             int direction = GameSettings.ItemsOnRight ? 1 : -1;
             _itemSlotOverlay.UpdatePositions(_gameUiWindow, new Point(direction * (int)(fadePercentage * FadeOffsetBackground * Game1.UiScale), 0), _itemsScale);
 
-            // Save icon position
+            // Save icon position.
             if (custom_sicon_show)
             {
                 _saveIconPosition = new Vector2(GameSettings.ItemsOnRight 
-                    ? _gameUiWindow.X + _saveIcon.SourceRectangle.Width * Game1.UiScale
-                    : _gameUiWindow.X + _gameUiWindow.Width - _saveIcon.SourceRectangle.Width * Game1.UiScale - 16 * _siconScale,
-                    _gameUiWindow.Y + _gameUiWindow.Height - _saveIcon.SourceRectangle.Height * Game1.UiScale - 16 * _siconScale);
+                    ? _gameUiWindow.X + _saveIcon.SourceRectangle.Width * Game1.UiScale + custom_sicon_offsetx
+                    : _gameUiWindow.X + _gameUiWindow.Width - _saveIcon.SourceRectangle.Width * Game1.UiScale - 16 * _siconScale + custom_sicon_offsetx,
+                    _gameUiWindow.Y + _gameUiWindow.Height - _saveIcon.SourceRectangle.Height * Game1.UiScale - 16 * _siconScale + custom_sicon_offsety);
             }
             _itemSlotOverlay.SetTransparency(transparency);
         }
@@ -178,48 +214,46 @@ namespace ProjectZ.InGame.Overlay
         {
             if (UiManager.HideOverlay) { return; }
 
-            // draw the item slots
+            // Draw the item slots sprites & rectangles.
             if (custom_items_show)
-                ItemSlotOverlay.Draw(spriteBatch, _itemSlotOverlay.ItemSlotPosition + new Point(GameSettings.ItemsOnRight ? 1 : -1 * (int)(fadePercentage * FadeOffset * _itemsScale), 0), _itemsScale, transparency);
+                ItemSlotOverlay.Draw(spriteBatch, custom_items_show, _itemSlotOverlay.ItemSlotPosition + new Point(GameSettings.ItemsOnRight ? 1 : -1 * (int)(fadePercentage * FadeOffset * _itemsScale), 0), _itemsScale, transparency);
 
-            // draw dungeon keys
+            // Draw dungeon keys sprites and rectangle.
             if (custom_keys_show)
                 ItemDrawHelper.DrawSmallKeys(spriteBatch, _keyPosition + new Point((int)(fadePercentage * FadeOffset * _keysScale), 0), _keysScale, Color.White * transparency);
 
-            // draw the rubees
+            // Draw the rupees sprites and rectangle.
             if (custom_rupee_show)
                 ItemDrawHelper.DrawRubee(spriteBatch, _rubeePosition + new Point((int)(fadePercentage * FadeOffset * _rupeeScale), 0), _rupeeScale, Color.Black * transparency);
 
-            // draw the heart position
+            // Draw the hearts sprites and rectangle.
             if (custom_heart_show)
                 ItemDrawHelper.DrawHearts(spriteBatch, _heartPosition - new Point((int)(fadePercentage * FadeOffset * _heartScale), 0), _heartScale, Color.White * transparency);
         }
 
-        public void DrawBlur(SpriteBatch spriteBatch)
-        {
-            // Save icon uses opaque draw path when opaque HUD is active
-            if (GameSettings.OpaqueHudBg)
-                return;
-
-            // draw the save icon
-            if (custom_sicon_show)
-            {
-                Resources.RoundedCornerBlurEffect.Parameters["blurColor"].SetValue((Values.OverlayBackgroundBlurColor * _saveIconTransparency).ToVector4());
-                DrawHelper.DrawNormalized(spriteBatch, _saveIcon.Texture, _saveIconPosition, _saveIcon.ScaledRectangle, Values.OverlayBackgroundColor * _saveIconTransparency, _siconScale);
-            }
-        }
-
-        public void DrawSaveIcon(SpriteBatch spriteBatch)
-        {
-            if (custom_sicon_show)
-            {
-                DrawHelper.DrawNormalized(spriteBatch, _saveIcon.Texture, _saveIconPosition, _saveIcon.ScaledRectangle, UiRectangle.OpaqueHudColor * _saveIconTransparency, _siconScale);
-            }
-        }
-
         public void ShowSaveIcon()
         {
+            // When called shows the icon for 1 second.
             _saveIconCounter = SaveIconTime;
+        }
+
+        public void DrawSaveIcon(SpriteBatch spriteBatch, bool blurEnabled)
+        {
+            // Check if the icon should be drawn.
+            if (custom_sicon_show)
+            {
+                // If the blurring effect is enabled draw the background and save icon.
+                if (blurEnabled)
+                {
+                    Resources.RoundedCornerBlurEffect.Parameters["blurColor"].SetValue((Values.OverlayBackgroundBlurColor * _saveIconTransparency).ToVector4());
+                    DrawHelper.DrawNormalized(spriteBatch, _saveIcon.Texture, _saveIconPosition, _saveIcon.ScaledRectangle, Values.OverlayBackgroundColor * _saveIconTransparency, _siconScale);
+                }
+                // If the blurring effect is disabled just draw the icon.
+                else
+                {
+                    DrawHelper.DrawNormalized(spriteBatch, _saveIcon.Texture, _saveIconPosition, _saveIcon.ScaledRectangle, UiRectangle.OpaqueHudColor * _saveIconTransparency, _siconScale);
+                }
+            }
         }
     }
 }

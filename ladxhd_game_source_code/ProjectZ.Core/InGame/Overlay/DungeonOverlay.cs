@@ -123,19 +123,27 @@ namespace ProjectZ.InGame.Overlay
             Game1.Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
             Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
 
-            // draw the background
+            // Draw the background.
             spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(_scale));
 
             Resources.RoundedCornerEffect.Parameters["scale"].SetValue(_scale);
             Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
 
+            // If the user used custom alpha, force that. Otherwise use the alpha set when the color as constructed.
+            bool userCustomAlpha = Game1.GameManager.InGameOverlay.UserCustomAlpha;
+
+            // Set the colors to be used by the inventory window.
+            Color backColor = !userCustomAlpha && GameSettings.OpaqueHudBg
+                ? new Color(Game1.GameManager.InGameOverlay.InventoryBackgroundColorBot, 1.0f)
+                : Game1.GameManager.InGameOverlay.InventoryBackgroundColorBot;
+
+            // Draw the dungeon overlay windows.
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_backgroundTop.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_backgroundTop.Height);
-            spriteBatch.Draw(Resources.SprWhite, _backgroundTop, Values.InventoryBackgroundColor);
-
+            spriteBatch.Draw(Resources.SprWhite, _backgroundTop, backColor);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_backgroundBottom.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_backgroundBottom.Height);
-            spriteBatch.Draw(Resources.SprWhite, _backgroundBottom, Values.InventoryBackgroundColor);
+            spriteBatch.Draw(Resources.SprWhite, _backgroundBottom, backColor);
 
             if (Game1.GameManager.GetItem("dmap") == null)
                 DrawBackground(spriteBatch, Point.Zero, new Rectangle(_mapRectangle.X + _mapRectangle.Width / 2, _mapRectangle.Bottom - 5, 4, 2), 1);
@@ -159,7 +167,7 @@ namespace ProjectZ.InGame.Overlay
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("nightmarekey"), offset, _nightmareKeyPosition, 1, Color.White);
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("smallkey"), offset, _smallKeyPosition, 1, Color.White);
 
-            // draw the dungeon maps
+            // Draw the dungeon map.
             var level = 0;
             var hasMap = Game1.GameManager.GetItem("dmap") != null;
             var hasCompass = Game1.GameManager.GetItem("compass") != null;

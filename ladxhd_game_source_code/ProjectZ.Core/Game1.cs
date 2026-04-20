@@ -340,15 +340,6 @@ namespace ProjectZ
 
             // Initialize extra monster hit points set by the user.
             EnemyLives.Initialize();
-
-            // Update the inventory menu transparency if disable blur is enabled.
-            // There's probably a better place to do this, but I'm tired.
-            Values.InventoryBackgroundColorTop = GameSettings.OpaqueHudBg == true 
-                ? new Color(255, 255, 230) * 0.95f
-                : new Color(255, 255, 230) * 0.85f;
-            Values.InventoryBackgroundColor = GameSettings.OpaqueHudBg == true 
-                ? new Color(255, 255, 230) * 0.95f
-                : new Color(255, 255, 230) * 0.75f;
         }
 
         private void LoadContentThreaded(Object obj)
@@ -421,12 +412,10 @@ namespace ProjectZ
             {
                 // We need to delay it until the graphics device has been fully set up.
                 if (GameSettings.ScreenMode > 0)
-                {
                     ToggleFullscreen();
-                }
+
                 _fullscreenWasSet = true;
             }
-
             // Prevent input when window is in background (do we even want this?).
             WasActive = IsActive;
 
@@ -622,6 +611,7 @@ namespace ProjectZ
                 SpriteBatch.End();
             }
 
+            // If the blurring effect is not disabled.
             if (!GameSettings.OpaqueHudBg)
             {
                 if (_renderTarget2 != null)
@@ -631,34 +621,34 @@ namespace ProjectZ
                 }
                 var vp = GraphicsDevice.Viewport;
 
-                // These are the dimensions SV_Position is normalized against in the current pass
+                // These are the dimensions SV_Position is normalized against in the current pass.
                 Resources.BlurEffect.Parameters["width"].SetValue(vp.Width);
                 Resources.BlurEffect.Parameters["height"].SetValue(vp.Height);
-
                 Resources.RoundedCornerBlurEffect.Parameters["screenWidth"].SetValue(vp.Width);
                 Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(vp.Height);
 
-                // Also prevent texture-unit-1 wrap at runtime (belt-and-suspenders)
+                // Also prevent texture-unit-1 wrap at runtime (belt-and-suspenders).
                 GraphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
 
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
 
-                // blurred ui parts
+                // Blurred ui parts.
                 if (_finishedLoading)
                     UiManager.DrawBlur(SpriteBatch);
 
-                // blured stuff
-                GameManager?.InGameOverlay?.InGameHud?.DrawBlur(SpriteBatch);
+                // Draw the save icon and rounded corner effect.
+                GameManager?.InGameOverlay?.InGameHud?.DrawSaveIcon(SpriteBatch, true);
 
-                // background for the debug text
+                // Draw background for the debug text.
                 DebugTextBackground();
 
                 SpriteBatch.End();
             }
+            // If the blurring effect is disabled still draw the save icon.
             else
             {
                 SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, GetMatrix);
-                GameManager?.InGameOverlay?.InGameHud?.DrawSaveIcon(SpriteBatch);
+                GameManager?.InGameOverlay?.InGameHud?.DrawSaveIcon(SpriteBatch, false);
                 SpriteBatch.End();
             }
 

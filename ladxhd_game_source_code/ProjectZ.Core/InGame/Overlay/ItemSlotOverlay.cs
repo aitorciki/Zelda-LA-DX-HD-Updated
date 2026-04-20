@@ -18,6 +18,8 @@ namespace ProjectZ.InGame.Overlay
 
         private bool? _lastSixButtonsState = null;
 
+        HudOverlay _hudOverlay => Game1.GameManager.InGameOverlay.InGameHud; 
+
         public ItemSlotOverlay()
         {
             UpdateButtonLayout();
@@ -25,8 +27,6 @@ namespace ProjectZ.InGame.Overlay
 
         private void UpdateButtonLayout()
         {
-            var hud = Game1.GameManager.InGameOverlay.InGameHud;
-
             // Don't need to update if the setting hasn't changed.
             if (_lastSixButtonsState == GameSettings.SixButtons)
                 return;
@@ -70,9 +70,7 @@ namespace ProjectZ.InGame.Overlay
 
         public void CreateItemBackgrounds()
         {
-            var hud = Game1.GameManager.InGameOverlay.InGameHud;
-
-            if (hud != null && hud.custom_items_show && _uiBackgroundBoxes?.Length != _itemSlots.Length)
+            if (_hudOverlay != null && _hudOverlay.ShowItems && _uiBackgroundBoxes?.Length != _itemSlots.Length)
             {
                 _uiBackgroundBoxes = new UiRectangle[_itemSlots.Length];
                 for (var i = 0; i < _uiBackgroundBoxes.Length; i++)
@@ -85,23 +83,19 @@ namespace ProjectZ.InGame.Overlay
 
         public void SetTransparency(float transparency)
         {
-            // If the user did not disable the 
-            var hud = Game1.GameManager.InGameOverlay.InGameHud;
-            if (hud.custom_items_show)
+            if (_hudOverlay == null || !_hudOverlay.ShowItems) return;
+
+            for (var i = 0; i < _itemSlots.Length; i++)
             {
-                for (var i = 0; i < _itemSlots.Length; i++)
-                {
-                    _uiBackgroundBoxes[i].BackgroundColor = Values.OverlayBackgroundColor * transparency;
-                    _uiBackgroundBoxes[i].BlurColor = Values.OverlayBackgroundBlurColor * transparency;
-                }
+                _uiBackgroundBoxes[i].BackgroundColor = _hudOverlay.ItemsBackgroundColor;
+                _uiBackgroundBoxes[i].BlurColor = Values.OverlayBackgroundBlurColor * transparency;
             }
         }
 
-        public static void Draw(SpriteBatch spriteBatch, Point position, int scale, float transparency)
+        public static void Draw(SpriteBatch spriteBatch, bool drawItems, Point position, int scale, float transparency)
         {
             // If the player disabled drawing items.
-            var hud = Game1.GameManager.InGameOverlay.InGameHud;
-            if (!hud.custom_items_show)
+            if (!drawItems)
                 return;
 
             // Draw the item slots.
@@ -117,26 +111,25 @@ namespace ProjectZ.InGame.Overlay
             UpdateButtonLayout();
 
             // Check if user disabled the items HUD.
-            var hud = Game1.GameManager.InGameOverlay.InGameHud;
-            if (hud.custom_items_show)
+            if (_hudOverlay == null || !_hudOverlay.ShowItems) 
+                return;
+
+            // Set the position of items based on whether they should be on right or left side of screen.
+            ItemSlotPosition = new Point(GameSettings.ItemsOnRight 
+                ? uiWindow.X + uiWindow.Width - (RecItemselection.Width * 2 + DistX * 2 + 16) * scale + _hudOverlay.ItemsOffsetX
+                : uiWindow.X + 16 * scale + _hudOverlay.ItemsOffsetX, uiWindow.Y + uiWindow.Height - (RecItemselection.Height * 3 + DistY * 2 + 16) * scale + _hudOverlay.ItemsOffsetY);
+
+            // Solves a race condition where "InGameHud" doesn't exist when these should be created.
+            if (_uiBackgroundBoxes == null)
+                CreateItemBackgrounds();
+
+            // Update the background rectangles.
+            for (var i = 0; i < _uiBackgroundBoxes.Length; i++)
             {
-                // Set the position of items based on whether they should be on right or left side of screen.
-                ItemSlotPosition = new Point(GameSettings.ItemsOnRight 
-                    ? uiWindow.X + uiWindow.Width - (RecItemselection.Width * 2 + DistX * 2 + 16) * scale + hud.custom_items_offsetx
-                    : uiWindow.X + 16 * scale + hud.custom_items_offsetx, uiWindow.Y + uiWindow.Height - (RecItemselection.Height * 3 + DistY * 2 + 16) * scale + hud.custom_items_offsety);
-
-                // Solves a race condition where "InGameHud" doesn't exist when these should be created.
-                if (_uiBackgroundBoxes == null)
-                    CreateItemBackgrounds();
-
-                // Update the background rectangles.
-                for (var i = 0; i < _uiBackgroundBoxes.Length; i++)
-                {
-                    _uiBackgroundBoxes[i].Rectangle = new Rectangle(
-                        ItemSlotPosition.X + _itemSlots[i].X * scale + offset.X,
-                        ItemSlotPosition.Y + _itemSlots[i].Y * scale + offset.Y,
-                        _itemSlots[i].Width * scale, _itemSlots[i].Height * scale);
-                }
+                _uiBackgroundBoxes[i].Rectangle = new Rectangle(
+                    ItemSlotPosition.X + _itemSlots[i].X * scale + offset.X,
+                    ItemSlotPosition.Y + _itemSlots[i].Y * scale + offset.Y,
+                    _itemSlots[i].Width * scale, _itemSlots[i].Height * scale);
             }
         }
     }

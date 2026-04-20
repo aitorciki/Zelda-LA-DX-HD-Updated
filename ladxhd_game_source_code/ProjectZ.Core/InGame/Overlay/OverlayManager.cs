@@ -93,11 +93,29 @@ namespace ProjectZ.InGame.Overlay
         // The scale here is passed to MapOverlay, InventoryOverlay, and DungeonOverlay.
         public float Scale => _scale;
 
-        public float inventory_scale_override = 0;
+        // Public references to the inventory colors.
+        public Color InventoryBackgroundColorTop;
+        public Color InventoryBackgroundColorBot;
+        public bool  UserCustomAlpha => inv_override_opaque_alpha;
 
+        // Default values ovewriteable with "OverlayManager.lahdmod".
+        private float inventory_scale_override = 0;
+        private int   inv_background_color_top_red = 255;
+        private int   inv_background_color_top_grn = 255;
+        private int   inv_background_color_top_blu = 230;
+        private float inv_background_color_top_alpha = 0.00f;
+        private int   inv_background_color_bot_red = 255;
+        private int   inv_background_color_bot_grn = 255;
+        private int   inv_background_color_bot_blu = 230;
+        private float inv_background_color_bot_alpha = 0.00f;
+        public bool   inv_override_opaque_alpha = false;
+
+        // Overworld Warp Points if enabling "Map Teleport" Redux Option.
         public Dictionary<Point, (int Level, Vector2 Teleport)> TeleportMap = new()
         {
-            // Tile Position    = Level, Link Teleport Position(X, Y)
+        //-------------------------------------------------------------------------------
+        //  [Tile Position]     = (Level, Teleport Position(X, Y))
+        //-------------------------------------------------------------------------------
             [new Point(5, 4)]   = (0, new Vector2(872, 606)),   // Manbo's Pond
             [new Point(3, 13)]  = (1, new Vector2(600, 1720)),  // Dungeon 1
             [new Point(4, 2)]   = (2, new Vector2(736, 340)),   // Dungeon 2
@@ -116,6 +134,14 @@ namespace ProjectZ.InGame.Overlay
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "OverlayManager.lahdmod");
             ModFile.Parse(modFile, this);
+
+            // If the user set an alpha value use that, otherwise fall back to default value.
+            float topAlpha = inv_background_color_top_alpha == 0.00 ? 0.85f : inv_background_color_top_alpha;
+            float botAlpha = inv_background_color_bot_alpha == 0.00 ? 0.75f : inv_background_color_bot_alpha;
+
+            // Set the colors to whatever they currently are.
+            InventoryBackgroundColorTop = new Color(inv_background_color_top_red, inv_background_color_top_grn, inv_background_color_top_blu) * topAlpha;
+            InventoryBackgroundColorBot = new Color(inv_background_color_bot_red, inv_background_color_bot_grn, inv_background_color_bot_blu) * botAlpha;
         }
 
         public void Load(ContentManager content)

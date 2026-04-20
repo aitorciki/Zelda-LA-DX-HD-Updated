@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
-using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
@@ -279,13 +278,24 @@ namespace ProjectZ.InGame.Overlay
             // Draw main background.
             spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(_scale));
 
+            // If the user used custom alpha, force that. Otherwise use the alpha set when the color as constructed.
+            bool UserCustomAlpha = Game1.GameManager.InGameOverlay.UserCustomAlpha;
+
+            // Set the colors to be used by the inventory window.
+            Color backColorTop = !UserCustomAlpha && GameSettings.OpaqueHudBg
+                ? new Color(Game1.GameManager.InGameOverlay.InventoryBackgroundColorTop, 1.0f)
+                : Game1.GameManager.InGameOverlay.InventoryBackgroundColorTop;
+            Color backColorBot = !UserCustomAlpha && GameSettings.OpaqueHudBg
+                ? new Color(Game1.GameManager.InGameOverlay.InventoryBackgroundColorBot, 1.0f)
+                : Game1.GameManager.InGameOverlay.InventoryBackgroundColorBot;
+
+            // Draw the inventory window.
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_background0.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_background0.Height);
-            spriteBatch.Draw(Resources.SprWhite, _background0, Values.InventoryBackgroundColorTop);
-
+            spriteBatch.Draw(Resources.SprWhite, _background0, backColorTop);
             Resources.RoundedCornerEffect.Parameters["width"].SetValue(_background1.Width);
             Resources.RoundedCornerEffect.Parameters["height"].SetValue(_background1.Height);
-            spriteBatch.Draw(Resources.SprWhite, _background1, Values.InventoryBackgroundColor);
+            spriteBatch.Draw(Resources.SprWhite, _background1, backColorBot);
 
             spriteBatch.End();
 
