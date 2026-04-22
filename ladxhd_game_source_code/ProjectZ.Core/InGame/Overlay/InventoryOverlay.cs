@@ -36,13 +36,13 @@ namespace ProjectZ.InGame.Overlay
         private Rectangle _shellRectangle;
         private Rectangle _leafRectangle;
 
-        private readonly Point _skirtPosition;
+        private readonly Point _tunicPosition;
         private readonly Point _heartPiecePosition;
 
         private Point _itemSlotsPosition;
 
-        private readonly Rectangle _skirtRectangle = new Rectangle(180, 31, 16, 15);
-        private readonly Rectangle _skirtColorRectangle = new Rectangle(198, 37, 14, 10);
+        private readonly Rectangle _tunicRectangle = new Rectangle(180, 31, 16, 15);
+        private readonly Rectangle _tunicColorRectangle = new Rectangle(198, 37, 14, 10);
         private readonly Rectangle _heartPiecesRectangle = new Rectangle(4, 72, 16, 14);
 
         private int _itemSlotWidth;
@@ -78,7 +78,7 @@ namespace ProjectZ.InGame.Overlay
             _rubeePosition = new Point(width - ItemDrawHelper.RubeeSize.X - Margin, 10);
 
             var blockPosition = 97;
-            _skirtPosition = new Point(blockPosition, 5);
+            _tunicPosition = new Point(blockPosition, 5);
             _heartPiecePosition = new Point(blockPosition += 34, 6);
             _flipperRectangle = new Rectangle(blockPosition += 18, 0, 12, _background0.Height);
             _potionRectangle = new Rectangle(blockPosition += 12, 0, 12, _background0.Height);
@@ -362,7 +362,7 @@ namespace ProjectZ.InGame.Overlay
             var heartOffset = new Point(0, Game1.GameManager.MaxHearts > 7 ? 0 : 4);
             ItemDrawHelper.DrawHearts(spriteBatch, _heartsPosition + heartOffset, 1, Color.White);
 
-            DrawSkirt(spriteBatch, _skirtPosition);
+            DrawTunic(spriteBatch, _tunicPosition);
             DrawHeartContainer(spriteBatch, _heartPiecePosition);
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("flippers"), Point.Zero, _flipperRectangle, 1, Color.White);
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("potion"), Point.Zero, _potionRectangle, 1, Color.White);
@@ -536,31 +536,28 @@ namespace ProjectZ.InGame.Overlay
             }
         }
 
-        public void DrawSkirt(SpriteBatch spriteBatch, Point drawPosition)
+        public void DrawTunic(SpriteBatch spriteBatch, Point drawPosition)
         {
-            // draw GBR
             spriteBatch.Draw(Resources.SprItem, new Rectangle(
                     drawPosition.X,
                     drawPosition.Y + 2,
-                    _skirtColorRectangle.Width, _skirtColorRectangle.Height),
+                    _tunicColorRectangle.Width, _tunicColorRectangle.Height),
                 new Rectangle(
-                    _skirtColorRectangle.X,
-                    _skirtColorRectangle.Y + Game1.GameManager.CloakType * (_skirtColorRectangle.Height + 1),
-                    _skirtColorRectangle.Width, _skirtColorRectangle.Height), Color.White);
+                    _tunicColorRectangle.X,
+                    _tunicColorRectangle.Y + Game1.GameManager.CloakType * (_tunicColorRectangle.Height + 1),
+                    _tunicColorRectangle.Width, _tunicColorRectangle.Height), Color.White);
 
-            var skirtPosition = new Point(drawPosition.X + _skirtColorRectangle.Width + 1, drawPosition.Y);
+            var skirtPosition = new Point(drawPosition.X + _tunicColorRectangle.Width + 1, drawPosition.Y);
 
-            // draw the skirt
             spriteBatch.Draw(Resources.SprItem, new Rectangle(
                 skirtPosition.X, skirtPosition.Y,
-                _skirtRectangle.Width, _skirtRectangle.Height), _skirtRectangle, Color.White);
+                _tunicRectangle.Width, _tunicRectangle.Height), _tunicRectangle, Color.White);
 
-            // draw the skirt color
             spriteBatch.Draw(Resources.SprItem, new Rectangle(
                     skirtPosition.X, skirtPosition.Y,
-                    _skirtRectangle.Width, _skirtRectangle.Height),
-                new Rectangle(_skirtRectangle.X, _skirtRectangle.Y + _skirtRectangle.Height,
-                    _skirtRectangle.Width, _skirtRectangle.Height), Values.TunicColors[Game1.GameManager.CloakType]);
+                    _tunicRectangle.Width, _tunicRectangle.Height),
+                new Rectangle(_tunicRectangle.X, _tunicRectangle.Y + _tunicRectangle.Height,
+                    _tunicRectangle.Width, _tunicRectangle.Height), Game1.GameManager.InGameOverlay.InventoryTunicColors[Game1.GameManager.CloakType]);
         }
     }
 }

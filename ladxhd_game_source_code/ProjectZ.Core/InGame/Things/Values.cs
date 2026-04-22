@@ -26,15 +26,12 @@ namespace ProjectZ.InGame.Things
         public static Color TextboxBackgroundColor = new Color(0, 0, 0) * 0.85f;
         public static Color TextboxBackgroundSideColor = new Color(248, 248, 136) * 0.65f;
         public static Color TextboxBlurColor = new Color(255, 255, 255, 255);
-        public static Color TextboxFontColor = new Color(248, 248, 136);
 
         public static Color MapTransitionColor = new Color(0, 0, 0, 255);
         public static Color MapFirstTransitionColor = new Color(0, 0, 0, 255);
 
         public static Color OverlayBackgroundColor = new Color(255, 255, 190) * 0.55f;
         public static Color OverlayBackgroundBlurColor = new Color(255, 255, 255, 255);
-
-        public static Color[] TunicColors = { new Color(16, 168, 64), new Color(0, 38, 255), new Color(255, 0, 0) };
 
         public static string WorkingDirectory = AppContext.BaseDirectory;
         public static string UserDataRoot { get; private set; } = AppContext.BaseDirectory;

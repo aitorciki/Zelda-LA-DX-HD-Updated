@@ -55,6 +55,10 @@ namespace ProjectZ.InGame.Things
         private static bool _heartAnimation;
         private static bool _heartSounds;
 
+        static int tunic_red_r = 255;
+        static int tunic_red_g = 8;
+        static int tunic_red_b = 41;
+
         static int tunic_grn_r = 16;
         static int tunic_grn_g = 173;
         static int tunic_grn_b = 66;
@@ -62,10 +66,6 @@ namespace ProjectZ.InGame.Things
         static int tunic_blu_r = 24;
         static int tunic_blu_g = 132;
         static int tunic_blu_b = 255;
-
-        static int tunic_red_r = 255;
-        static int tunic_red_g = 8;
-        static int tunic_red_b = 41;
 
         public static void Load()
         {
@@ -76,9 +76,9 @@ namespace ProjectZ.InGame.Things
             {
                 ModFile.ParseStatic(modFile, typeof(ItemDrawHelper));
 
+                Color redCloak = new Color(tunic_red_r, tunic_red_g, tunic_red_b);
                 Color grnCloak = new Color(tunic_grn_r, tunic_grn_g, tunic_grn_b);
                 Color bluCloak = new Color(tunic_blu_r, tunic_blu_g, tunic_blu_b);
-                Color redCloak = new Color(tunic_red_r, tunic_red_g, tunic_red_b);
 
                 CloakColors = new Color[] { grnCloak, bluCloak, redCloak };
             }
@@ -373,7 +373,6 @@ namespace ProjectZ.InGame.Things
         {
             var rectangle = sprite.ScaledRectangle;
 
-            // draw the item
             spriteBatch.Draw(Resources.SprItem, position,
                 new Rectangle(rectangle.X + 0, rectangle.Y, rectangle.Width, rectangle.Height), Color.White, 0, Vector2.Zero, sprite.Scale, SpriteEffects.None, 0);
 

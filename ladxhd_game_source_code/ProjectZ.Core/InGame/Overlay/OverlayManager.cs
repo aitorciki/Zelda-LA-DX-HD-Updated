@@ -96,19 +96,36 @@ namespace ProjectZ.InGame.Overlay
         // Public references to the inventory colors.
         public Color InventoryBackgroundColorTop;
         public Color InventoryBackgroundColorBot;
-        public bool  UserCustomAlpha => inv_override_opaque_alpha;
+        public Color[] InventoryTunicColors;
 
-        // Default values ovewriteable with "OverlayManager.lahdmod".
+        public bool UserCustomAlpha => inv_override_opaque_alpha;
+
+        // LAHDMod: Inventory Scale
         private float inventory_scale_override = 0;
-        private int   inv_background_color_top_red = 255;
-        private int   inv_background_color_top_grn = 255;
-        private int   inv_background_color_top_blu = 230;
+
+        // LAHDMod: Inventory Background
+        private int inv_background_color_top_red = 255;
+        private int inv_background_color_top_grn = 255;
+        private int inv_background_color_top_blu = 230;
         private float inv_background_color_top_alpha = 0.00f;
-        private int   inv_background_color_bot_red = 255;
-        private int   inv_background_color_bot_grn = 255;
-        private int   inv_background_color_bot_blu = 230;
+        private int inv_background_color_bot_red = 255;
+        private int inv_background_color_bot_grn = 255;
+        private int inv_background_color_bot_blu = 230;
         private float inv_background_color_bot_alpha = 0.00f;
-        public bool   inv_override_opaque_alpha = false;
+
+        // LAHDMod: Inventory Alpha
+        public bool inv_override_opaque_alpha = false;
+
+        // LAHDMod: Tunic Colors
+        private int inv_tunic_green_color_red = 16;
+        private int inv_tunic_green_color_grn = 168;
+        private int inv_tunic_green_color_blu = 64;
+        private int inv_tunic_blue_color_red = 0;
+        private int inv_tunic_blue_color_grn = 38;
+        private int inv_tunic_blue_color_blu = 255;
+        private int inv_tunic_red_color_red = 255;
+        private int inv_tunic_red_color_grn = 0;
+        private int inv_tunic_red_color_blu = 0;
 
         // Overworld Warp Points if enabling "Map Teleport" Redux Option.
         public Dictionary<Point, (int Level, Vector2 Teleport)> TeleportMap = new()
@@ -142,6 +159,12 @@ namespace ProjectZ.InGame.Overlay
             // Set the colors to whatever they currently are.
             InventoryBackgroundColorTop = new Color(inv_background_color_top_red, inv_background_color_top_grn, inv_background_color_top_blu) * topAlpha;
             InventoryBackgroundColorBot = new Color(inv_background_color_bot_red, inv_background_color_bot_grn, inv_background_color_bot_blu) * botAlpha;
+
+            // Create an array with the tunic colors.
+            Color redTunic = new Color(inv_tunic_red_color_red, inv_tunic_red_color_grn, inv_tunic_red_color_blu);
+            Color grnTunic = new Color(inv_tunic_green_color_red, inv_tunic_green_color_grn, inv_tunic_green_color_blu);
+            Color bluTunic = new Color(inv_tunic_blue_color_red, inv_tunic_blue_color_grn, inv_tunic_blue_color_blu);
+            InventoryTunicColors = new Color[]{ grnTunic, bluTunic, redTunic };
         }
 
         public void Load(ContentManager content)

@@ -20,6 +20,8 @@ namespace ProjectZ.InGame.Overlay
         private DictAtlasEntry _spriteCancel;
         private DictAtlasEntry _spritePrint;
 
+        public Color _textboxFontColor = new Color(248, 248, 136);
+
         private bool[] _unlockState = new bool[12];
         private int _cursorIndex;
 
@@ -326,7 +328,7 @@ namespace ProjectZ.InGame.Overlay
                 // Draw the hint text.
                 GameFS.DrawString(spriteBatch, textBoxString,
                     new Vector2(textboxRef.X + 5 * uiScale, textboxRef.Y + 5 * uiScale),
-                    Values.TextboxFontColor * transparency,
+                    _textboxFontColor * transparency,
                     0, Vector2.Zero, uiScale, SpriteEffects.None, 0);
             }
         }

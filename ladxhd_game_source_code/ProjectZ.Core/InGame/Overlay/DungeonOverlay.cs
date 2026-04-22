@@ -18,7 +18,7 @@ namespace ProjectZ.InGame.Overlay
         private static readonly Point DungeonPoint = new Point(6, 0);
 
         private Rectangle _mapRectangle = new Rectangle(DungeonPoint.X, DungeonPoint.Y, 12, 20);
-        private Rectangle _compasRectangle = new Rectangle(DungeonPoint.X + 12, DungeonPoint.Y, 12, 20);
+        private Rectangle _compassRectangle = new Rectangle(DungeonPoint.X + 12, DungeonPoint.Y, 12, 20);
         private Rectangle _stonebreakRectangle = new Rectangle(DungeonPoint.X + 24, DungeonPoint.Y, 12, 20);
         private Rectangle _nightmareKeyPosition = new Rectangle(DungeonPoint.X + 36, DungeonPoint.Y, 12, 20);
         private Rectangle _smallKeyPosition = new Rectangle(DungeonPoint.X + 48, DungeonPoint.Y, 24, 20);
@@ -148,7 +148,7 @@ namespace ProjectZ.InGame.Overlay
             if (Game1.GameManager.GetItem("dmap") == null)
                 DrawBackground(spriteBatch, Point.Zero, new Rectangle(_mapRectangle.X + _mapRectangle.Width / 2, _mapRectangle.Bottom - 5, 4, 2), 1);
             if (Game1.GameManager.GetItem("compass") == null)
-                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_compasRectangle.X + _compasRectangle.Width / 2, _compasRectangle.Bottom - 5, 4, 2), 1);
+                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_compassRectangle.X + _compassRectangle.Width / 2, _compassRectangle.Bottom - 5, 4, 2), 1);
             if (Game1.GameManager.GetItem("stonebeak") == null)
                 DrawBackground(spriteBatch, Point.Zero, new Rectangle(_stonebreakRectangle.X + _stonebreakRectangle.Width / 2, _stonebreakRectangle.Bottom - 5, 4, 2), 1);
             if (Game1.GameManager.GetItem("nightmarekey") == null)
@@ -162,7 +162,7 @@ namespace ProjectZ.InGame.Overlay
             var offset = new Point(0, 0);
 
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dmap"), offset, _mapRectangle, 1, Color.White);
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("compass"), offset, _compasRectangle, 1, Color.White);
+            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("compass"), offset, _compassRectangle, 1, Color.White);
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("stonebeak"), offset, _stonebreakRectangle, 1, Color.White);
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("nightmarekey"), offset, _nightmareKeyPosition, 1, Color.White);
             ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("smallkey"), offset, _smallKeyPosition, 1, Color.White);
@@ -186,6 +186,7 @@ namespace ProjectZ.InGame.Overlay
 
                 // draw the map
                 for (var y = 0; y < dungeonMap.Tiles.GetLength(1); y++)
+                {
                     for (var x = 0; x < dungeonMap.Tiles.GetLength(0); x++)
                     {
                         int tileIndex;
@@ -225,7 +226,7 @@ namespace ProjectZ.InGame.Overlay
                             }
                         }
                     }
-
+                }
                 // draw the position indicator
                 if (Game1.GameManager.MapManager.CurrentMap.LocationFullName == name)
                 {
