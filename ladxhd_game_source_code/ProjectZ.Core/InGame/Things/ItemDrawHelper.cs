@@ -67,6 +67,8 @@ namespace ProjectZ.InGame.Things
         static int tunic_blu_g = 132;
         static int tunic_blu_b = 255;
 
+        static bool instrument_color_cycle = true;
+
         public static void Load()
         {
             // If a mod file exists load the values from it.
@@ -81,6 +83,12 @@ namespace ProjectZ.InGame.Things
                 Color bluCloak = new Color(tunic_blu_r, tunic_blu_g, tunic_blu_b);
 
                 CloakColors = new Color[] { grnCloak, bluCloak, redCloak };
+
+                if (!instrument_color_cycle)
+                {
+                    _relictColorOne = Color.Transparent;
+                    _relictColorTwo = Color.Transparent;
+                }
             }
             SpriteLetter = Resources.GetSprite("ui letter");
             SpriteHeart = Resources.GetSprite("ui heart");
@@ -122,30 +130,31 @@ namespace ProjectZ.InGame.Things
 
         public static void Update()
         {
-            // rotate color
-            // @MOVE
-            _colorCounter += Game1.DeltaTime;
+            if (instrument_color_cycle)
+            {
+                // Cycles the instruments through colors.
+                _colorCounter += Game1.DeltaTime;
 
-            var upTime = ColorTime / 3;
-            var timeR = (_colorCounter - upTime) % ColorTime;
-            var timeG = (_colorCounter) % ColorTime;
-            var timeB = (_colorCounter - upTime * 2) % ColorTime;
+                var upTime = ColorTime / 3;
+                var timeR = (_colorCounter - upTime) % ColorTime;
+                var timeG = (_colorCounter) % ColorTime;
+                var timeB = (_colorCounter - upTime * 2) % ColorTime;
 
-            // rotate through the color wheel
-            var colorR = MathHelper.Clamp(MathF.Abs(timeR - upTime) / (upTime / 2.25f) - 1, 0, 1);
-            var colorG = MathHelper.Clamp(MathF.Abs(timeG - upTime) / (upTime / 2.25f) - 1, 0, 1);
-            var colorB = MathHelper.Clamp(MathF.Abs(timeB - upTime) / (upTime / 2.25f) - 1, 0, 1);
+                // Rotates through the color wheel.
+                var colorR = MathHelper.Clamp(MathF.Abs(timeR - upTime) / (upTime / 2.25f) - 1, 0, 1);
+                var colorG = MathHelper.Clamp(MathF.Abs(timeG - upTime) / (upTime / 2.25f) - 1, 0, 1);
+                var colorB = MathHelper.Clamp(MathF.Abs(timeB - upTime) / (upTime / 2.25f) - 1, 0, 1);
 
-            _relictColorOne = new Color(
-                MathHelper.Clamp((byte)(colorR * 120), 0, 255),
-                MathHelper.Clamp((byte)(colorG * 80), 0, 255),
-                MathHelper.Clamp((byte)(colorB * 140), 0, 255));
+                _relictColorOne = new Color(
+                    MathHelper.Clamp((byte)(colorR * 120), 0, 255),
+                    MathHelper.Clamp((byte)(colorG * 80), 0, 255),
+                    MathHelper.Clamp((byte)(colorB * 140), 0, 255));
 
-            _relictColorTwo = new Color(
-                MathHelper.Clamp((byte)(colorR * 220), 0, 255),
-                MathHelper.Clamp((byte)(colorG * 180), 0, 255),
-                MathHelper.Clamp((byte)(colorB * 240), 0, 255));
-
+                _relictColorTwo = new Color(
+                    MathHelper.Clamp((byte)(colorR * 220), 0, 255),
+                    MathHelper.Clamp((byte)(colorG * 180), 0, 255),
+                    MathHelper.Clamp((byte)(colorB * 240), 0, 255));
+            }
             UpdateRubyAnimation();
             UpdateHeartAnimation();
         }
