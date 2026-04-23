@@ -32,8 +32,6 @@ namespace ProjectZ.InGame.Things
         private static Color _relictColorOne = new Color(0, 135, 115);
         private static Color _relictColorTwo = new Color(255, 255, 255);
 
-        public static Color[] CloakColors = { new Color(16, 173, 66), new Color(24, 132, 255), new Color(255, 8, 41) };
-
         private static Rectangle _recRelicts = new Rectangle(224, 128, 16, 16);
 
         private static float _colorCounter;
@@ -54,6 +52,8 @@ namespace ProjectZ.InGame.Things
         private static int _heartCount;
         private static bool _heartAnimation;
         private static bool _heartSounds;
+
+        public static Color[] CloakColors = { new Color(16, 173, 66), new Color(24, 132, 255), new Color(255, 8, 41) };
 
         static int tunic_red_r = 255;
         static int tunic_red_g = 8;

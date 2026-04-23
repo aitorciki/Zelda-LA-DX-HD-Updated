@@ -58,6 +58,11 @@ namespace ProjectZ.InGame.Pages
             string modFile = Path.Combine(Values.PathLAHDMods, "PageManager.lahdmod");
             ModFile.Parse(modFile, this);
 
+            // PageManager only needs created once, and the custom color set in InterfaceElement only needs set once.
+            string modFileB = Path.Combine(Values.PathLAHDMods, "InterfaceElement.lahdmod");
+            ModFile.ParseStatic(modFileB, typeof(InterfaceElement));
+            InterfaceElement.MainTextColor = new Color(InterfaceElement.label_text_color_red, InterfaceElement.label_text_color_grn, InterfaceElement.label_text_color_blu);
+
             // On Android we use a minimum height of 240 instead of 256. To keep the size consistent
             // across all versions of the game only subtract 16 pixels as opposed to 32 pixels.
             _width = Values.MinWidth - 32;

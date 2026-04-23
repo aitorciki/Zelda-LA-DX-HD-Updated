@@ -73,6 +73,13 @@ namespace ProjectZ.InGame.Interface
         private bool _visible = true;
         private bool _hidden;
 
+        // A bit confusing, the LAHDMod is loaded from "PageManger.cs". We only need the color loaded once, and we needed it
+        // somewhere it can be accessed globally to be shared across all menus. I chose this class as it's a base element.
+        public static Color MainTextColor;
+        public static int label_text_color_red = 255;
+        public static int label_text_color_grn = 255;
+        public static int label_text_color_blu = 255;
+
         public virtual void Select(Directions direction, bool animate)
         {
             Selected = true;

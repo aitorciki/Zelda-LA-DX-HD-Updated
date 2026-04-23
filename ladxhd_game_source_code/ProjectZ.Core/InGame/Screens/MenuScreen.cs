@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.GameObjects.Base;
+using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
@@ -129,7 +130,7 @@ namespace ProjectZ.InGame.Screens
                 var backTextSize = GameFS.MeasureString(backHelp);
                 var backPos = new Vector2(_menuRectangle.X + 2 * _scale, _menuRectangle.Bottom - backTextSize.Y * _scale);
 
-                GameFS.DrawString(spriteBatch, backHelp, backPos, Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                GameFS.DrawString(spriteBatch, backHelp, backPos, InterfaceElement.MainTextColor, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
             }
 
             // Select Button Text
@@ -145,7 +146,7 @@ namespace ProjectZ.InGame.Screens
                 var selectTextSize = GameFS.MeasureString(inputHelp);
                 var selectPos =  new Vector2(_menuRectangle.Right - (selectTextSize.X + 2) * _scale, _menuRectangle.Bottom - selectTextSize.Y * _scale);
 
-                GameFS.DrawString(spriteBatch, inputHelp, selectPos, Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                GameFS.DrawString(spriteBatch, inputHelp, selectPos, InterfaceElement.MainTextColor, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
             }
 
             // Tooltip Button Text
@@ -162,7 +163,7 @@ namespace ProjectZ.InGame.Screens
                 var tooltipTextSize = GameFS.MeasureString(tooltipHelp);
                 var tooltipPos = new Vector2(_menuRectangle.X + (_menuRectangle.Width - tooltipTextSize.X * _scale) / 2f, _menuRectangle.Bottom - tooltipTextSize.Y * _scale);
 
-                GameFS.DrawString(spriteBatch, tooltipHelp, tooltipPos, Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                GameFS.DrawString(spriteBatch, tooltipHelp, tooltipPos, InterfaceElement.MainTextColor, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
             }
             spriteBatch.End();
         }

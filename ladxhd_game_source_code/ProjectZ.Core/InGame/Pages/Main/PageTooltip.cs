@@ -25,7 +25,7 @@ namespace ProjectZ.InGame.Interface
         static float backgroundAlpha = 0.95f;
 
         // Textbox border.
-        static Color borderColor = Color.White;
+        static Color borderColor = InterfaceElement.MainTextColor;
         static float borderAlpha = 0.95f;
         static int borderThickness = tooltip_scale == 1 ? 1 : (int)(2 * tooltip_scale);
 
@@ -96,7 +96,7 @@ namespace ProjectZ.InGame.Interface
             {
                 var lineSize = GameFS.MeasureString(line) * tooltip_scale;
                 float lineX = boxRect.X + paddingX + (boxRect.Width - paddingX * 2 - lineSize.X) / 2f; // center horizontally with padding
-                GameFS.DrawString(spriteBatch, line, new Vector2(lineX, startY), Color.White, 0f, Vector2.Zero, tooltip_scale, SpriteEffects.None, 0f);
+                GameFS.DrawString(spriteBatch, line, new Vector2(lineX, startY), InterfaceElement.MainTextColor, 0f, Vector2.Zero, tooltip_scale, SpriteEffects.None, 0f);
                 startY += lineHeight;
             }
         }

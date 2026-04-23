@@ -16,7 +16,7 @@ namespace ProjectZ.InGame.Pages
             var mainLayout = new InterfaceListLayout() { Size = new Point(width, height), Selectable = true };
             mainLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_header",
                 new Point(150, (int)(height * Values.MenuHeaderSize)), new Point(0, 0))
-            { TextColor = Color.White });
+            { TextColor = InterfaceElement.MainTextColor });
 
             // Size = new Point(width, (int)(height * Values.MenuContentSize))
             var contentLayout = new InterfaceListLayout { AutoSize = true, Selectable = true };

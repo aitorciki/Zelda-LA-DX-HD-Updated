@@ -18,7 +18,7 @@ namespace ProjectZ.InGame.Pages
             hLayout.AddElement(new InterfaceButton(new Point(74, 25), Point.Zero, "game_menu_exit_no", OnClickNo) { Margin = new Point(2, 0) });
 
             var yesNoLayoutInside = new InterfaceListLayout() { Size = new Point(150 + margin * 2, 55), Selectable = true };
-            yesNoLayoutInside.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_exit_header", new Point(150, 30), new Point(1, 2)) { TextColor = Color.White });
+            yesNoLayoutInside.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "game_menu_exit_header", new Point(150, 30), new Point(1, 2)) { TextColor = InterfaceElement.MainTextColor });
             yesNoLayoutInside.AddElement(hLayout);
 
             var yesNoLayout = new InterfaceListLayout() { Size = new Point(width, height), Selectable = true };

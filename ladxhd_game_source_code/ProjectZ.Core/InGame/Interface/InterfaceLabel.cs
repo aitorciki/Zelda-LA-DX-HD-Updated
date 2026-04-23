@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
 using ProjectZ.InGame.Things;
@@ -23,8 +24,6 @@ namespace ProjectZ.InGame.Interface
                     SetText(Text);
             }
         }
-        public Color TextColor = Color.White;
-
         public string Text { get; set; }
         public bool Translate = true;
 
@@ -39,8 +38,17 @@ namespace ProjectZ.InGame.Interface
 
         private readonly string _textKey;
 
+        public Color TextColor;
+
         public InterfaceLabel(SpriteFont font, string key, Point size, Point margin)
         {
+            // Try to load a lahdmod to get a custom set of colors.
+            string modFile = Path.Combine(Values.PathLAHDMods, "InterfaceLabel.lahdmod");
+            ModFile.Parse(modFile, this);
+
+            // Load in whatever the colors are now.
+            TextColor = MainTextColor;
+
             _font = font;
             Size = size;
             Margin = margin;

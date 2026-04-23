@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
 using ProjectZ.Base.UI;
 using ProjectZ.InGame.Controls;
+using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Overlay.Sequences;
 using ProjectZ.InGame.Pages;
@@ -508,7 +509,7 @@ namespace ProjectZ.InGame.Overlay
                     var mapString = mapStart + ": " + Game1.LanguageManager.GetString(_updateInventory ? "overlay_map" : "overlay_inventory", "error");
                     var mapDrawPos = new Vector2(8 * _scale, Game1.WindowHeight - 16 * _scale);
 
-                    GameFS.DrawString(spriteBatch, mapString, mapDrawPos, Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                    GameFS.DrawString(spriteBatch, mapString, mapDrawPos, InterfaceElement.MainTextColor * _fadeAnimationPercentage, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
 
                     // When navigating the map, get the currently selected map position.
                     var nodeSelected = _mapOverlay.SelectionPosition;
@@ -537,7 +538,7 @@ namespace ProjectZ.InGame.Overlay
                         var teleDrawPos = new Vector2(Game1.WindowWidth - (teleTextSize.X + 6) * _scale, Game1.WindowHeight - 16 * _scale);
 
                         // Draw the teleport button and label.
-                        GameFS.DrawString(spriteBatch, teleString, teleDrawPos, Color.White * _fadeAnimationPercentage, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+                        GameFS.DrawString(spriteBatch, teleString, teleDrawPos, InterfaceElement.MainTextColor * _fadeAnimationPercentage, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
                     }
                 }
             }

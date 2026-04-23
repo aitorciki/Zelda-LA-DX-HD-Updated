@@ -404,12 +404,15 @@ namespace ProjectZ.InGame.Pages
                     _playerAnimation.Play("green");
             }
             // Cycle the text to a gold color if certain criteria is met.
+            Color textInputColor = InterfaceElement.MainTextColor;
+            Color textGoldColor  = new Color(255, 215, 0);
+
+            // Lerp between them using a sine wave timer
             textGoldTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             float cycle = 3.75f;
             float speed = MathF.Tau / cycle;
             float timer = (MathF.Sin(textGoldTimer * speed) + 1f) * 0.5f;
-            int blueval = (int)MathHelper.Lerp(100, 255, timer);
-            textGoldColor = new Color(255, 255, blueval);
+            Color textOutputColor = Color.Lerp(textInputColor, textGoldColor, timer);
 
             // Cylcle the gold color if conditions are met.
             for (var i = 0; i < SaveStateManager.SaveCount; i++)
@@ -423,11 +426,11 @@ namespace ProjectZ.InGame.Pages
                 bool goldShell = SaveStateManager.SaveStates[i].CurrentShells >= 26;
                 bool goldTimer = SaveStateManager.SaveStates[i].GameCleared;
 
-                _saveNames[i].TextColor    = goldNames ? textGoldColor : Color.White;
-                _saveRupees[i].TextColor   = goldRupee ? textGoldColor : Color.White;
-                _deathLabels[i].TextColor  = goldDeath ? textGoldColor : Color.White;
-                _saveShells[i].TextColor   = goldShell ? textGoldColor : Color.White;
-                _savePlaytime[i].TextColor = goldTimer ? textGoldColor : Color.White;
+                _saveNames[i].TextColor    = goldNames ? textOutputColor : InterfaceElement.MainTextColor;
+                _saveRupees[i].TextColor   = goldRupee ? textOutputColor : InterfaceElement.MainTextColor;
+                _deathLabels[i].TextColor  = goldDeath ? textOutputColor : InterfaceElement.MainTextColor;
+                _saveShells[i].TextColor   = goldShell ? textOutputColor : InterfaceElement.MainTextColor;
+                _savePlaytime[i].TextColor = goldTimer ? textOutputColor : InterfaceElement.MainTextColor;
             }
         }
 

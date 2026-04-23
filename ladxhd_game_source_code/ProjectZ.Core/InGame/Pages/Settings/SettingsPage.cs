@@ -99,7 +99,7 @@ namespace ProjectZ.InGame.Pages
             if(Game1.ScreenManager.CurrentScreenId == Values.ScreenNameGame)
                 _versionLabel.TextColor = Color.Transparent;
             else
-                _versionLabel.TextColor = Color.White;
+                _versionLabel.TextColor = InterfaceElement.MainTextColor;
         }
 
         private void ExitPage()

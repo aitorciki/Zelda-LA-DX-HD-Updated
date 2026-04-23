@@ -15,8 +15,6 @@ namespace ProjectZ.InGame.Interface
         public delegate string StringFunction(int number);
         public StringFunction SetString;
 
-        public Color TextColor = Color.White;
-
         public string Text { get; set; }
         private string TextPostfix;
 
@@ -52,6 +50,7 @@ namespace ProjectZ.InGame.Interface
         // Default colors that can be overwritten by LAHDMod.
         public Color ColorSlider;
         public Color ColorSliderBackground;
+        public Color TextColor;
 
         // Backup colors for when buttons are disabled/enabled.
         public Color Backup_ColorSlider;
@@ -78,6 +77,7 @@ namespace ProjectZ.InGame.Interface
             ColorSlider           = new Color(custom_slider_color_red, custom_slider_color_grn, custom_slider_color_blu);
             ColorSliderBackground = new Color(custom_slider_color_bg_red, custom_slider_color_bg_grn, custom_slider_color_bg_blu);
             SelectionColor        = new Color(custom_slider_select_red, custom_slider_select_grn, custom_slider_select_blu);
+            TextColor             = MainTextColor;
 
             // Backup colors for when interfaces get toggled.
             Backup_ColorSlider = ColorSlider;
