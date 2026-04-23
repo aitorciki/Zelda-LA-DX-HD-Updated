@@ -1,5 +1,20 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.7.8
+### The "Modding Improvements Continue" Update
+  * Mods can now be packed into an APK by copying a "Mods" folder in the same path when patching.
+  * Android version can now load "Mods" that are built into the APK file using the method above.
+  * Mods can now add unique sprites/animations for the level 2 sword using a custom animation file.
+  * Rework enemy Goomba stomping mechanic to be more accurate, remove collision box, and always animate.
+  * The sword knockback effect on enemy "Hardhat Beetle" is now further back and more accurate. 
+  * Patcher now creates all the "Mods" folder if they are missing. The game also does this on load.
+  * Update Mod Maker to use a rich textbox for it's description instead of a label so text can scroll.
+  * Many more objects have lahdmods: Karakoro, color switches, UI elements, textbox, inventory, and more.
+  * A custom menu border is now supported via a "menuBackground.png" file in the mods folder.
+  * More subtle fixes to the German language dialog files (credit @mrmercy82).
+  * Icon files for game and tooling recreated from scalable vector graphics file (credit: @aitorciki).
+  * Fix "ObjLink.lahdmod" to actually make use of the "mark0" and "mark1" damage shader values.
+
 ## **v1.7.7**
 ### The "Supporting My LAHD Mod" Update
   * More modding support: allow loading custom maps, dungeon minimap files, and scripts.zscript.
