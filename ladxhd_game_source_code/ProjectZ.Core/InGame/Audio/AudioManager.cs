@@ -356,9 +356,11 @@ namespace ProjectZ.InGame.Audio
                 if (soundEffect.Value.Instance.State == SoundState.Stopped)
                     CurrentSoundEffects.Remove(soundEffect.Key);
             }
+            // This method is called every frame from GameManager which can cause the music
+            // to get loud prematurely during transitions. Prevent this by checking for one.
             if (lowerVolume)
                 SetMusicVolumeMultiplier(0.35f);
-            else
+            else if (MapManager.ObjLink == null || !MapManager.ObjLink.IsTransitioning)
                 SetMusicVolumeMultiplier(1.0f);
         }
 

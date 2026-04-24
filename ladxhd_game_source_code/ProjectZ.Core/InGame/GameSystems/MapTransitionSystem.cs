@@ -61,6 +61,8 @@ namespace ProjectZ.InGame.GameSystems
         private bool _wobbleTransitionOut;
         private bool _wobbleTransitionIn;
 
+        private volatile bool _objectsLoadedInThread;
+
         public MapTransitionSystem(MapManager gameMapManager)
         {
             _gameMapManager = gameMapManager;
@@ -432,25 +434,31 @@ namespace ProjectZ.InGame.GameSystems
         {
             try
             {
-                // Small delay to smooth audio/transition timing.
                 Thread.Sleep(75);
 
-                // Capture once to avoid races.
                 var nextMap = _gameMapManager?.NextMap;
                 if (nextMap == null)
                     throw new NullReferenceException("NextMap was null inside ThreadLoading.");
 
-                // Load/parse the map file.
                 SaveLoadMap.LoadMap(mapFileName, nextMap);
-
-                // Ensure Objects exists so FinishLoading can safely call LoadObjects().
                 nextMap.Objects ??= new ObjectManager(nextMap);
 
+        #if !ANDROID
+                // On Desktop: Load in objects while "NextMap" still points to the map being
+                // loaded. This method does not need to use the swap trick in "FinishLoading".
+                nextMap.Objects.LoadObjects();
+                _objectsLoadedInThread = true;
+        #else
+                // On Android: To prevent crashing, it is theorized that some resources need to be 
+                // created on the GL thread. So do not do "LoadObjects" until back on the main thread.
+                _objectsLoadedInThread = false;
+        #endif
                 _loadingException = null;
             }
             catch (Exception ex)
             {
                 _loadingException = ex;
+                _objectsLoadedInThread = false;
             }
             finally
             {
@@ -514,9 +522,8 @@ namespace ProjectZ.InGame.GameSystems
 
             // If the loading thread failed, surface it here (main thread).
             if (_loadingException != null)
-            {
                 System.Diagnostics.Debug.WriteLine("Map loading thread failed.");
-            }
+            
             // Shorter reference for the map manager.
             var mm = Game1.GameManager.MapManager;
 
@@ -525,20 +532,24 @@ namespace ProjectZ.InGame.GameSystems
             mm.CurrentMap = mm.NextMap;
             mm.NextMap = oldMap;
 
-            // Many init-time objects set flags on MapManager.NextMap during LoadObjects(),
-            // expecting NextMap to refer to the map being initialized.
-            // After swapping, that map is now CurrentMap, so temporarily point NextMap
-            // at CurrentMap so those objects configure the correct map.
-            var restoreNext = mm.NextMap;
-            mm.NextMap = mm.CurrentMap;
-            try
+            mm.CurrentMap.Objects ??= new ObjectManager(mm.CurrentMap);
+
+            if (!_objectsLoadedInThread)
             {
-                mm.CurrentMap.Objects ??= new ObjectManager(mm.CurrentMap);
-                mm.CurrentMap.Objects.LoadObjects();
-            }
-            finally
-            {
-                mm.NextMap = restoreNext;
+                // Many init-time objects set flags on MapManager.NextMap during LoadObjects(),
+                // expecting NextMap to refer to the map being initialized.
+                // After swapping, that map is now CurrentMap, so temporarily point NextMap
+                // at CurrentMap so those objects configure the correct map.
+                var restoreNext = mm.NextMap;
+                mm.NextMap = mm.CurrentMap;
+                try
+                {
+                    mm.CurrentMap.Objects.LoadObjects();
+                }
+                finally
+                {
+                    mm.NextMap = restoreNext;
+                }
             }
             // Getting the music to work correct with the map loading changes has been a nightmare. The
             // easiest place to handle if it restarts is here so give it a method to set it all up.
