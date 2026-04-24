@@ -6,8 +6,8 @@ namespace ProjectZ.InGame.Things
 {
     public class GameItem
     {
-        public readonly DictAtlasEntry Sprite;
-        public readonly DictAtlasEntry MapSprite;    // show a different sprite when drawn on the map compared to the one shown in the inventory
+        public readonly DictAtlasEntry Sprite;       // If set, the sprite shown in the game world and inventory unless "mapSprite" is set.
+        public readonly DictAtlasEntry MapSprite;    // If set, "sprite" is used for inventory and "mapSprite" is used for game world. 
         public readonly Rectangle? SourceRectangle;
         public readonly bool AnimateSprite;
         public readonly string Name;

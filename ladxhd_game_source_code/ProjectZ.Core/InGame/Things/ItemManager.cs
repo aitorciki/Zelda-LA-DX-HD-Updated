@@ -128,10 +128,9 @@ namespace ProjectZ.InGame.Things
                 collectOffsetY: -2
             ));
             
-            // not sure why there are two differently colored versions
-            // I am using the same version ingame and in the menu
             _items.Add("goldLeaf", new GameItem(
-                Resources.GetSprite("goldLeaf"), // icon used ingame, in the menu the less colorfull version is used
+                Resources.GetSprite("goldLeafMenu"),
+                Resources.GetSprite("goldLeaf"),
                 name: "goldLeaf",
                 pickUpDialog: GameSettings.NoHelperText ? null : "goldLeaf",
                 soundEffectName: "D368-16-10",
