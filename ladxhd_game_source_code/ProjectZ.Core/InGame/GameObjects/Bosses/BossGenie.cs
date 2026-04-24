@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -487,21 +488,49 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void OnDeath()
         {
+            // Store that the boss has been defeated.
             if (!string.IsNullOrEmpty(_saveKey))
                 Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
-            // stop music
+            // Stop the music.
             Game1.AudioManager.StopMusic(20, 0);
             Game1.AudioManager.StopMusic(20, 1);
             Game1.AudioManager.StopMusic(20, 2);
 
+            // Set the position of the heart. Clamp it to the bounds of the room.
             var heartPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
             var centerDistance = heartPosition - _roomCenter;
             centerDistance.X = MathHelper.Clamp(centerDistance.X, -56, 56);
             centerDistance.Y = MathHelper.Clamp(centerDistance.Y, -24, 54);
-
             heartPosition = _roomCenter + centerDistance;
 
+            // Nudge the heart down if it lands on a lamp.
+            var lampList = new List<GameObject>();
+            Map.Objects.GetGameObjectsWithTag(lampList, Values.GameObjectTag.Lamp,
+                (int)_roomCenter.X - 80, (int)_roomCenter.Y - 50, 160, 104);
+
+            const int nudgeStep = 4;
+            const int maxNudge = 32;
+
+            for (int nudge = 0; nudge < maxNudge; nudge += nudgeStep)
+            {
+                var heartRect = new Rectangle((int)heartPosition.X - 8, (int)heartPosition.Y - 16, 16, 16);
+                var overlaps = false;
+
+                foreach (var lamp in lampList)
+                {
+                    var lampRect = new Rectangle((int)lamp.EntityPosition.X - 8, (int)lamp.EntityPosition.Y - 8, 16, 16);
+                    if (heartRect.Intersects(lampRect))
+                    {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                if (!overlaps)
+                    break;
+
+                heartPosition.Y += nudgeStep;
+            }
             // spawn big heart
             Map.Objects.SpawnObject(new ObjItem(Map,
                 (int)heartPosition.X - 8, (int)heartPosition.Y - 16, "j", "d2_nHeart", "heartMeterFull", null));
@@ -531,9 +560,10 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
             // stop if we are dead
             if (_damageState.CurrentLives <= 0)
+            {
                 _body.VelocityTarget = Vector2.Zero;
                 _damageField.IsActive = false;
-
+            }
             return damageReturn;
         }
     }
