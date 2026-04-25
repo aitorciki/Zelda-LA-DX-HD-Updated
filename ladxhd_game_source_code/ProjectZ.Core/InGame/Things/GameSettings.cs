@@ -6,12 +6,13 @@
         public static int     MenuBorder      =  0;
         public static bool    ClassicSword    =  false;
         public static bool    StoreSavePos    =  false;
-        public static int     LastSavePos     =  0;
         public static bool    Autosave        =  true;
+        public static int     LastSavePos     =  0;
         public static bool    ItemsOnRight    =  false;
         public static bool    EpilepsySafe    =  false;
 
         // Redux Settings
+        public static int     MapTeleport     =  0;
         public static bool    VarWidthFont    =  false;
         public static bool    NoHelperText    =  false;
         public static bool    DialogSkip      =  false;
@@ -19,7 +20,6 @@
         public static bool    Unmissables     =  false;
         public static bool    PhotosColor     =  false;
         public static bool    NoAnimalDamage  =  false;
-        public static int     MapTeleport     =  0;
 
         // Camera Settings
         public static bool    ClassicCamera   =  false;
@@ -30,8 +30,6 @@
         public static bool    ClassicScaling  =  true;
         public static bool    CameraLock      =  true;
         public static bool    SmoothCamera    =  true;
-        public static bool    ScreenShake     =  true;
-        public static bool    ExScreenShake   =  false;
 
         // Video Settings
         public static int     GameScale       =  Game1.MaxGameScale + 1;
@@ -50,6 +48,9 @@
         public static bool    FogEffects      =  true;
         public static bool    GlobalLights    =  true;
         public static bool    ObjectLights    =  true;
+        public static bool    ScreenShake     =  true;
+        public static bool    ExScreenShake   =  false;
+        public static bool    ClassicSprites  =  false;
 
         // Audio Settings
         private static int    _musicVolume    =  100;
@@ -143,8 +144,6 @@
             ClassicScaling  =  true;
             CameraLock      =  true;
             SmoothCamera    =  true;
-            ScreenShake     =  true;
-            ExScreenShake   =  false;
 
             // Video Settings
             GameScale       =  Game1.MaxGameScale + 1;
@@ -158,6 +157,9 @@
             FogEffects      =  true;
             GlobalLights    =  true;
             ObjectLights    =  true;
+            ScreenShake     =  true;
+            ExScreenShake   =  false;
+            ClassicSprites  =  false;
 
             // Audio Settings
             ClassicMusic    =  false;

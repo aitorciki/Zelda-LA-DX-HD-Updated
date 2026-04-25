@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.Core.InGame.Pages
@@ -20,6 +21,7 @@ namespace ProjectZ.Core.InGame.Pages
         private readonly InterfaceListLayout _toggleObjectLighting;
         private readonly InterfaceListLayout _toggleScreenShake;
         private readonly InterfaceListLayout _toggleExScreenShake;
+        private readonly InterfaceListLayout _toggleClassicSprites;
 
         List<string> _tooltips = new List<string>();
         private bool _showTooltip;
@@ -31,12 +33,13 @@ namespace ProjectZ.Core.InGame.Pages
         public void SetDynamicShadows(bool state) => ((InterfaceToggle)_toggleDynamicShadows.Elements[1]).ToggleState = state;
         public void SetCameraScreenShake(bool state) => ((InterfaceToggle)_toggleScreenShake.Elements[1]).ToggleState = state;
         public void SetCameraExScreenShake(bool state) => ((InterfaceToggle)_toggleExScreenShake.Elements[1]).ToggleState = state;
+        public void SetClassicItemSprites(bool state) => ((InterfaceToggle)_toggleClassicSprites.Elements[1]).ToggleState = state;
 
         public GraphicsSettingsPage(int width, int height)
         {
             EnableTooltips = true;
             var buttonWidth = 320;
-            var buttonHeight = 16;
+            var buttonHeight = 14;
             var sliderHeight = 12;
 
             // Graphics Settings Layout
@@ -88,18 +91,26 @@ namespace ProjectZ.Core.InGame.Pages
             // Toggle: Screen-Shake
             _toggleScreenShake = InterfaceToggle.GetToggleButton(
                 new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_screenshake", GameSettings.ScreenShake, 
+                "settings_graphics_screenshake", GameSettings.ScreenShake, 
                 newState => { GameSettings.ScreenShake = newState; });
             _contentLayout.AddElement(_toggleScreenShake);
-            _tooltips.Add("tooltip_camera_screenshake");
+            _tooltips.Add("tooltip_graphics_screenshake");
 
             // Toggle: Extra Screen-Shake
             _toggleExScreenShake = InterfaceToggle.GetToggleButton(
                 new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_camera_exscreenshake", GameSettings.ExScreenShake, 
+                "settings_graphics_exscreenshake", GameSettings.ExScreenShake, 
                 newState => { GameSettings.ExScreenShake = newState; });
             _contentLayout.AddElement(_toggleExScreenShake);
-            _tooltips.Add("tooltip_camera_exscreenshake");
+            _tooltips.Add("tooltip_graphics_exscreenshake");
+
+            // Toggle: Classic Item Sprites
+            _toggleClassicSprites = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_graphics_classicsprites", GameSettings.ClassicSprites, 
+                newState => { PressButtonToggleClassicItemSprites(newState); });
+            _contentLayout.AddElement(_toggleClassicSprites);
+            _tooltips.Add("tooltip_graphics_classicsprites");
 
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -156,6 +167,23 @@ namespace ProjectZ.Core.InGame.Pages
         private string SequenceScaleSliderAdjustmentString(int number)
         {
             return ": +" + number;
+        }
+
+        public void PressButtonToggleClassicItemSprites(bool newState) 
+        {
+            // Toggle the setting with the new value.
+            GameSettings.ClassicSprites = newState;
+
+            // Get both Link and the boomerang object.
+            var Link = MapManager.ObjLink;
+            var Boomerang = MapManager.ObjLink.Boomerang;
+
+            // If they have been created already toggle the animator used.
+            if (Link != null && Boomerang != null)
+                Boomerang.ToggleAnimator(newState);
+
+            // Rebuild the item list to swap out sprites.
+            Game1.GameManager.ItemManager.Load();
         }
 
         private string GetOptionToolip()

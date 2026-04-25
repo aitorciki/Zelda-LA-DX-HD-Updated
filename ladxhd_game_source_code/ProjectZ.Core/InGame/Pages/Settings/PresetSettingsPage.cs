@@ -115,10 +115,11 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorder = 0;
             GameSettings.CameraLock = false;
-            GameSettings.ScreenShake = true;
-            GameSettings.ExScreenShake = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = true;
+            GameSettings.ScreenShake = true;
+            GameSettings.ExScreenShake = true;
+            GameSettings.ClassicSprites = false;
             GameSettings.FogEffects = true;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = false;
@@ -153,10 +154,11 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorder = 1;
             GameSettings.CameraLock = true;
-            GameSettings.ScreenShake = true;
-            GameSettings.ExScreenShake = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = false;
+            GameSettings.ScreenShake = true;
+            GameSettings.ExScreenShake = true;
+            GameSettings.ClassicSprites = true;
             GameSettings.FogEffects = false;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = true;
@@ -192,10 +194,11 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicDungeon = true;
             GameSettings.ClassicBorder = 1;
             GameSettings.CameraLock = false;
-            GameSettings.ScreenShake = true;
-            GameSettings.ExScreenShake = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = true;
+            GameSettings.ScreenShake = true;
+            GameSettings.ExScreenShake = true;
+            GameSettings.ClassicSprites = false;
             GameSettings.FogEffects = true;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = false;
@@ -234,10 +237,11 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorder = 1;
             GameSettings.CameraLock = true;
-            GameSettings.ScreenShake = true;
-            GameSettings.ExScreenShake = false;
             GameSettings.GlobalLights = false;
             GameSettings.ObjectLights = false;
+            GameSettings.ScreenShake = true;
+            GameSettings.ExScreenShake = false;
+            GameSettings.ClassicSprites = true;
             GameSettings.FogEffects = false;
             GameSettings.EnableShadows = false;
             GameSettings.ClassicMusic = true;
@@ -317,6 +321,7 @@ namespace ProjectZ.InGame.Pages
                 GraphicsSettingsPage.SetObjectLighting(GameSettings.ObjectLights);
                 GraphicsSettingsPage.SetCameraScreenShake(GameSettings.ScreenShake);
                 GraphicsSettingsPage.SetCameraExScreenShake(GameSettings.ExScreenShake);
+                GraphicsSettingsPage.SetClassicItemSprites(GameSettings.ClassicSprites);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(AudioSettingsPage), out var audioPage))
             {

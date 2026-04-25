@@ -416,7 +416,7 @@ namespace ProjectZ.InGame.Things
             spriteBatch.Draw(Resources.SprItem, position, _recRelicts, _relictColorOne);
         }
 
-        public static void DrawItemWithInfo(SpriteBatch spriteBatch, GameItemCollected itemCollected, Point offset, Rectangle rectangle, int scale, Color color)
+        public static void DrawItemWithInfo(SpriteBatch spriteBatch, GameItemCollected itemCollected, Point offset, Rectangle rectangle, int scale, Color color, bool forceMapSprite = false)
         {
             if (itemCollected == null)
                 return;
@@ -449,7 +449,7 @@ namespace ProjectZ.InGame.Things
                 itemPosition.Y + sourceRectangle.Height * scale - RecLetters.Height * scale);
 
             // draw the item
-            DrawItem(spriteBatch, item, new Vector2(itemPosition.X, itemPosition.Y), color, scale);
+            DrawItem(spriteBatch, item, new Vector2(itemPosition.X, itemPosition.Y), color, scale, forceMapSprite);
 
             if (item.Level > 0)
             {

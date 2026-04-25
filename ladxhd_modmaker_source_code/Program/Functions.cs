@@ -43,6 +43,7 @@ namespace LADXHD_ModMaker
         private static string[] dungeon3D  = new[] { "dungeon3.map.data" };
         private static string[] bowwowanim = new[] { "bowwow_water.ani" };
         private static string[] dungeonani = new[] { "mapDungeon.ani", "mapManboPond.ani" };
+        private static string[] boomerang  = new[] { "boomerangOrig.ani" };
 
         // THE "KEY" IS THE MASTER FILE THAT CREATES OTHER FILES FROM IT. THE "VALUE" IS THE STRING ARRAY THAT HOLDS THOSE FILES
 
@@ -66,7 +67,8 @@ namespace LADXHD_ModMaker
             { "dungeon3_1.map",       dungeon3M },
             { "dungeon3_1.map.data",  dungeon3D },
             { "BowWow.ani",          bowwowanim },
-            { "mapPlayer.ani",       dungeonani }
+            { "mapPlayer.ani",       dungeonani },
+            { "boomerang.ani",        boomerang }
         };
 
         // CREATE A REVERSE MAP OF THE DICTIONARY SO IT CAN EASILY BE SEARCHED IN EITHER DIRECTION

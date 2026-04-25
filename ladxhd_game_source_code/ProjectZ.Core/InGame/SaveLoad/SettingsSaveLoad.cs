@@ -6,7 +6,6 @@ namespace ProjectZ.InGame.SaveLoad
     class SettingsSaveLoad
     {
         private static string SettingsFilePath => SaveManager.GetSettingsFile();
-        private static string AdvancedFilePath => SaveManager.GetAdvancedFile();
 
         public static void LoadSettings()
         {
@@ -43,8 +42,6 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.ClassicScaling = saveManager.GetBool("ClassicScaling", GameSettings.ClassicScaling);
             GameSettings.CameraLock = saveManager.GetBool("CameraLock", GameSettings.CameraLock);
             GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
-            GameSettings.ScreenShake = saveManager.GetBool("ScreenShake", GameSettings.ScreenShake);
-            GameSettings.ExScreenShake = saveManager.GetBool("ExScreenShake", GameSettings.ExScreenShake);
 
             // Video Settings
             GameSettings.GameScale = saveManager.GetInt("GameScale", GameSettings.GameScale);
@@ -59,6 +56,9 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.FogEffects = saveManager.GetBool("FogEffects", GameSettings.FogEffects);
             GameSettings.GlobalLights = saveManager.GetBool("GlobalLights", GameSettings.GlobalLights);
             GameSettings.ObjectLights = saveManager.GetBool("ObjectLights", GameSettings.ObjectLights);
+            GameSettings.ScreenShake = saveManager.GetBool("ScreenShake", GameSettings.ScreenShake);
+            GameSettings.ExScreenShake = saveManager.GetBool("ExScreenShake", GameSettings.ExScreenShake);
+            GameSettings.ClassicSprites = saveManager.GetBool("ClassicSprites", GameSettings.ClassicSprites);
 
             // Audio Settings
             GameSettings.MusicVolume = saveManager.GetInt("MusicVolume", GameSettings.MusicVolume);
@@ -144,8 +144,6 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("ClassicScaling", GameSettings.ClassicScaling);
             saveManager.SetBool("CameraLock", GameSettings.CameraLock);
             saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
-            saveManager.SetBool("ScreenShake", GameSettings.ScreenShake);
-            saveManager.SetBool("ExScreenShake", GameSettings.ExScreenShake);
 
             // Video Settings
             saveManager.SetInt("GameScale", GameSettings.GameScale);
@@ -160,6 +158,9 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("FogEffects", GameSettings.FogEffects);
             saveManager.SetBool("GlobalLights", GameSettings.GlobalLights);
             saveManager.SetBool("ObjectLights", GameSettings.ObjectLights);
+            saveManager.SetBool("ScreenShake", GameSettings.ScreenShake);
+            saveManager.SetBool("ExScreenShake", GameSettings.ExScreenShake);
+            saveManager.SetBool("ClassicSprites", GameSettings.ClassicSprites);
 
             // Audio Settings
             saveManager.SetInt("MusicVolume", GameSettings.MusicVolume);

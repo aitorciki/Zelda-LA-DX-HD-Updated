@@ -20,6 +20,10 @@ namespace ProjectZ.InGame.GameObjects.Things
         private readonly BodyComponent _body;
         private readonly CBox _damageBox;
 
+        private AnimationComponent _animationComponent;
+        private Animator _animator;
+        private CSprite _sprite;
+
         private List<ObjItem> _itemsGrabbed = new List<ObjItem>();
         private ObjDungeonFairy _fairy;
 
@@ -41,8 +45,11 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             _damageBox = new CBox(EntityPosition, -5, -5, 0, 10, 10, 20, true);
 
-            var animation = AnimatorSaveLoad.LoadAnimator("Objects/boomerang");
-            animation.Play("run");
+            _animator = GameSettings.ClassicSprites 
+                ? AnimatorSaveLoad.LoadAnimator("Objects/boomerangOrig")
+                : AnimatorSaveLoad.LoadAnimator("Objects/boomerang");
+
+            _animator.Play("run");
 
             _body = new BodyComponent(EntityPosition, -1, -1, 2, 2, 8)
             {
@@ -51,20 +58,35 @@ namespace ProjectZ.InGame.GameObjects.Things
                 CollisionTypesIgnore = Values.CollisionTypes.ThrowWeaponIgnore | Values.CollisionTypes.Switch,
                 IgnoreInsideCollision = false,
             };
-            var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(animation, sprite, new Vector2(-6, -6));
-
+            _sprite = new CSprite(EntityPosition);
+            
             AddComponent(BodyComponent.Index, _body);
             AddComponent(HittableComponent.Index, new HittableComponent(_damageBox, OnHit));
-            AddComponent(BaseAnimationComponent.Index, animationComponent);
+            AddComponent(BaseAnimationComponent.Index, _animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-6, -6)));
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, _sprite));
         }
 
         public override void Reset()
         {
             _isReady = true;
+        }
+
+        public void ToggleAnimator(bool toggle)
+        {
+            // Update the boomerang animator based on the selected setting.
+            _animator = toggle 
+                ? AnimatorSaveLoad.LoadAnimator("Objects/boomerangOrig")
+                : AnimatorSaveLoad.LoadAnimator("Objects/boomerang");
+
+            // Start playing the animation and create a new animation component. Recyling the old one does not work.
+            _animator.Play("run");
+            _animationComponent = new AnimationComponent(_animator, _sprite, new Vector2(-6, -6));
+
+            // The only thing that worked here was to remove the base component and readd it.
+            RemoveComponent(BaseAnimationComponent.Index);
+            AddComponent(BaseAnimationComponent.Index, _animationComponent);
         }
 
         public void Start(Map.Map map, Vector3 position, Vector2 direction)

@@ -19,7 +19,7 @@ namespace ProjectZ.InGame.Things
             // dungeon
             // same keys but with different sounds and one does show the description
             _items.Add("smallkey", new GameItem(
-                Resources.GetSprite("smallkey"),
+                sprite: Resources.GetSprite("smallkey"),
                 name: "smallkey",
                 count: 1,
                 maxCount: 9,
@@ -31,7 +31,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("smallkeyChest", new GameItem(
-                Resources.GetSprite("smallkey"),
+                sprite: Resources.GetSprite("smallkey"),
                 name: "smallkey",
                 pickUpDialog: GameSettings.NoHelperText ? null : "smallkey",
                 count: 1,
@@ -43,7 +43,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("nightmarekey", new GameItem(
-                Resources.GetSprite("nightmarekey"),
+                sprite: Resources.GetSprite("nightmarekey"),
                 name: "nightmarekey",
                 maxCount: 1,
                 pickUpDialog: GameSettings.NoHelperText ? null : "nightmarekey",
@@ -52,7 +52,7 @@ namespace ProjectZ.InGame.Things
                 level: -1
             ));
             _items.Add("compass", new GameItem(
-                Resources.GetSprite("compass"),
+                sprite: Resources.GetSprite("compass"),
                 name: "compass",
                 count: 1,
                 maxCount: 1,
@@ -61,7 +61,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("dmap", new GameItem(
-                Resources.GetSprite("dmap"),
+                sprite: Resources.GetSprite("dmap"),
                 name: "dmap",
                 count: 1,
                 maxCount: 1,
@@ -70,7 +70,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("stonebeak", new GameItem(
-                Resources.GetSprite("stonebeak"),
+                sprite: Resources.GetSprite("stonebeak"),
                 name: "stonebeak",
                 count: 1,
                 maxCount: 1,
@@ -80,7 +80,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("potion", new GameItem(
-                Resources.GetSprite("potion"),
+                sprite: Resources.GetSprite("potion"),
                 name: "potion",
                 count: 1,
                 maxCount: 1,
@@ -96,8 +96,8 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("shell", new GameItem(
-                Resources.GetSprite("shell"),
-                Resources.GetSprite("shellMap"),
+                sprite: Resources.GetSprite("shell"),
+                mapSprite: Resources.GetSprite("shellMap"),
                 name: "shell",
                 pickUpDialog: GameSettings.NoHelperText ? null : "seashell",
                 count: 1,
@@ -107,8 +107,8 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("shellChest", new GameItem(
-                Resources.GetSprite("shell"),
-                Resources.GetSprite("shellMap"),
+                sprite: Resources.GetSprite("shell"),
+                mapSprite: Resources.GetSprite("shellMap"),
                 name: "shell",
                 pickUpDialog: GameSettings.NoHelperText ? null : "seashell",
                 count: 1,
@@ -116,7 +116,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("shellPresent", new GameItem(
-                Resources.GetSprite("shell_present"),
+                sprite: Resources.GetSprite("shell_present"),
                 name: "shell",
                 pickUpDialog: GameSettings.NoHelperText ? null : "seashell",
                 count: 1,
@@ -129,8 +129,8 @@ namespace ProjectZ.InGame.Things
             ));
             
             _items.Add("goldLeaf", new GameItem(
-                Resources.GetSprite("goldLeafMenu"),
-                Resources.GetSprite("goldLeaf"),
+                sprite: Resources.GetSprite("goldLeafMenu"),
+                mapSprite: Resources.GetSprite("goldLeaf"),
                 name: "goldLeaf",
                 pickUpDialog: GameSettings.NoHelperText ? null : "goldLeaf",
                 soundEffectName: "D368-16-10",
@@ -145,7 +145,7 @@ namespace ProjectZ.InGame.Things
 
             // instruments
             _items.Add("instrument0", new GameItem(
-                Resources.GetSprite("instrument0"),
+                sprite: Resources.GetSprite("instrument0"),
                 name: "instrument0",
                 pickUpDialog: "instrument0",
                 count: 1,
@@ -159,7 +159,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument1", new GameItem(
-                Resources.GetSprite("instrument1"),
+                sprite: Resources.GetSprite("instrument1"),
                 name: "instrument1",
                 pickUpDialog: "instrument1",
                 count: 1,
@@ -173,7 +173,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument2", new GameItem(
-                Resources.GetSprite("instrument2"),
+                sprite: Resources.GetSprite("instrument2"),
                 name: "instrument2",
                 pickUpDialog: "instrument2",
                 count: 1,
@@ -187,7 +187,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument3", new GameItem(
-                Resources.GetSprite("instrument3"),
+                sprite: Resources.GetSprite("instrument3"),
                 name: "instrument3",
                 pickUpDialog: "instrument3",
                 count: 1,
@@ -201,7 +201,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument4", new GameItem(
-                Resources.GetSprite("instrument4"),
+                sprite: Resources.GetSprite("instrument4"),
                 name: "instrument4",
                 pickUpDialog: "instrument4",
                 count: 1,
@@ -215,7 +215,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument5", new GameItem(
-                Resources.GetSprite("instrument5"),
+                sprite: Resources.GetSprite("instrument5"),
                 name: "instrument5",
                 pickUpDialog: "instrument5",
                 count: 1,
@@ -229,7 +229,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument6", new GameItem(
-                Resources.GetSprite("instrument6"),
+                sprite: Resources.GetSprite("instrument6"),
                 name: "instrument6",
                 pickUpDialog: "instrument6",
                 count: 1,
@@ -243,7 +243,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("instrument7", new GameItem(
-                Resources.GetSprite("instrument7"),
+                sprite: Resources.GetSprite("instrument7"),
                 name: "instrument7",
                 pickUpDialog: "instrument7",
                 count: 1,
@@ -259,7 +259,7 @@ namespace ProjectZ.InGame.Things
 
             // TRADE 0: Yoshi Doll
             _items.Add("trade0", new GameItem(
-                Resources.GetSprite("trade0"),
+                sprite: Resources.GetSprite("trade0"),
                 name: "trade0",
                 tradeItem: true,
                 pickUpDialog: "yoshiPickup",
@@ -274,7 +274,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 1: Ribbon
             _items.Add("trade1", new GameItem(
-                Resources.GetSprite("trade1"),
+                sprite: Resources.GetSprite("trade1"),
                 name: "trade1",
                 tradeItem: true,
                 soundEffectName: "D368-16-10",
@@ -288,7 +288,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 2: Dog Food
             _items.Add("trade2", new GameItem(
-                Resources.GetSprite("trade2"),
+                sprite: Resources.GetSprite("trade2"),
                 name: "trade2",
                 tradeItem: true,
                 soundEffectName: "D368-16-10",
@@ -302,7 +302,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 3: Bananas
             _items.Add("trade3", new GameItem(
-                Resources.GetSprite("trade3"),
+                sprite: Resources.GetSprite("trade3"),
                 name: "trade3",
                 tradeItem: true,
                 soundEffectName: "D368-16-10",
@@ -316,7 +316,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 4: Stick
             _items.Add("trade4", new GameItem(
-                Resources.GetSprite("trade4"),
+                sprite: Resources.GetSprite("trade4"),
                 name: "trade4",
                 tradeItem: true,
                 pickUpDialog: "trade4",
@@ -331,7 +331,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 5: Honeycomb
             _items.Add("trade5", new GameItem(
-                Resources.GetSprite("trade5"),
+                sprite: Resources.GetSprite("trade5"),
                 mapSprite: Resources.GetSprite("trade5Map"),
                 name: "trade5",
                 tradeItem: true,
@@ -347,7 +347,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 6: Pineapple
             _items.Add("trade6", new GameItem(
-                Resources.GetSprite("trade6"),
+                sprite: Resources.GetSprite("trade6"),
                 name: "trade6",
                 tradeItem: true,
                 pickUpDialog: "trade6Collected",
@@ -362,7 +362,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 7: Hibiscus
             _items.Add("trade7", new GameItem(
-                Resources.GetSprite("trade7"),
+                sprite: Resources.GetSprite("trade7"),
                 name: "trade7",
                 tradeItem: true,
                 pickUpDialog: "trade7",
@@ -377,7 +377,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 8: Goat's Letter
             _items.Add("trade8", new GameItem(
-                Resources.GetSprite("trade8"),
+                sprite: Resources.GetSprite("trade8"),
                 name: "trade8",
                 tradeItem: true,
                 pickUpDialog: "trade8",
@@ -393,7 +393,7 @@ namespace ProjectZ.InGame.Things
             // TRADE 9: Broom
             _items.Add("trade9", new GameItem(
                 // shown icon is browner
-                Resources.GetSprite("trade9"),
+                sprite: Resources.GetSprite("trade9"),
                 name: "trade9",
                 tradeItem: true,
                 pickUpDialog: "trade9",
@@ -408,7 +408,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 10: Fishing Hook
             _items.Add("trade10", new GameItem(
-                Resources.GetSprite("trade10"),
+                sprite: Resources.GetSprite("trade10"),
                 name: "trade10",
                 tradeItem: true,
                 pickUpDialog: "trade10",
@@ -423,7 +423,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 11: Mermaid's Necklace / Pink Bra
             _items.Add("trade11", new GameItem(
-                Resources.GetSprite("trade11"),
+                sprite: Resources.GetSprite("trade11"),
                 name: "trade11",
                 tradeItem: true,
                 pickUpDialog: "trade11",
@@ -438,7 +438,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 12: Mermaid's Scale
             _items.Add("trade12", new GameItem(
-                Resources.GetSprite("trade12"),
+                sprite: Resources.GetSprite("trade12"),
                 name: "trade12",
                 tradeItem: true,
                 pickUpDialog: "trade12",
@@ -453,7 +453,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TRADE 13: Magnifying Lens
             _items.Add("trade13", new GameItem(
-                Resources.GetSprite("trade13"),
+                sprite: Resources.GetSprite("trade13"),
                 name: "trade13",
                 tradeItem: true,
                 pickUpDialog: "trade13",
@@ -469,7 +469,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("marin", new GameItem(
-                Resources.GetSprite("marin_item"),
+                sprite: Resources.GetSprite("marin_item"),
                 name: "marin",
                 pickUpDialog: "maria_collected",
                 soundEffectName: "D368-16-10",
@@ -479,14 +479,14 @@ namespace ProjectZ.InGame.Things
                 showAnimation: 1
             ));
             _items.Add("rooster", new GameItem(
-                Resources.GetSprite("marin_item"),
+                sprite: Resources.GetSprite("marin_item"),
                 name: "rooster",
                 pickUpDialog: "rooster",
                 count: 1,
                 maxCount: 1
             ));
             _items.Add("ghost", new GameItem(
-                Resources.GetSprite("marin_item"),
+                sprite: Resources.GetSprite("marin_item"),
                 name: "ghost",
                 count: 1,
                 maxCount: 1
@@ -495,7 +495,7 @@ namespace ProjectZ.InGame.Things
             // overworld
             // TODO: look into the colors
             _items.Add("ruby", new GameItem(
-                Resources.GetSprite("rubyBlue"),
+                sprite: Resources.GetSprite("rubyBlue"),
                 name: "ruby",
                 count: 1,
                 maxCount: 999,
@@ -506,7 +506,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("rubyGreen", new GameItem(
-                Resources.GetSprite("rubyGreen"),
+                sprite: Resources.GetSprite("rubyGreen"),
                 animateSprite: true,
                 name: "ruby",
                 count: 5,
@@ -517,7 +517,7 @@ namespace ProjectZ.InGame.Things
             ));
             // TODO: shouldnt red be 30?
             _items.Add("ruby5", new GameItem(
-                Resources.GetSprite("rubyRed"),
+                sprite: Resources.GetSprite("rubyRed"),
                 name: "ruby",
                 count: 5,
                 soundEffectName: "D370-05-05",
@@ -526,7 +526,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("ruby10", new GameItem(
-                Resources.GetSprite("rubyBlue"),
+                sprite: Resources.GetSprite("rubyBlue"),
                 name: "ruby",
                 count: 10,
                 soundEffectName: "D370-05-05",
@@ -546,7 +546,7 @@ namespace ProjectZ.InGame.Things
             ));
             // trendy game ruby
             _items.Add("ruby30", new GameItem(
-                Resources.GetSprite("rubyRed"),
+                sprite: Resources.GetSprite("rubyRed"),
                 name: "ruby",
                 pickUpDialog: GameSettings.NoHelperText ? null : "ruby30",
                 count: 30,
@@ -576,7 +576,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("ruby200", new GameItem(
-                Resources.GetSprite("rubyBlue"),
+                sprite: Resources.GetSprite("rubyBlue"),
                 name: "ruby",
                 pickUpDialog: GameSettings.NoHelperText ? null : "ruby200",
                 count: 200,
@@ -588,7 +588,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("heart", new GameItem(
-                Resources.GetSprite("heart"),
+                sprite: Resources.GetSprite("heart"),
                 name: "heart",
                 count: 1,
                 maxCount: 999,
@@ -599,7 +599,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("heart_1", new GameItem(
-                Resources.GetSprite("heart"),
+                sprite: Resources.GetSprite("heart"),
                 name: "heart",
                 pickUpDialog: "heart",
                 count: 1,
@@ -610,7 +610,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetX: -1
             ));
             _items.Add("heart_3", new GameItem(
-                Resources.GetSprite("heart"),
+                sprite: Resources.GetSprite("heart"),
                 name: "heart",
                 count: 3,
                 maxCount: 999,
@@ -622,7 +622,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("heartMeter", new GameItem(
-                Resources.GetSprite("heartMeter"),
+                sprite: Resources.GetSprite("heartMeter"),
                 name: "heartMeter",
                 pickUpDialog: GameSettings.NoHelperText ? null : "heartMeter",
                 count: 1,
@@ -645,7 +645,7 @@ namespace ProjectZ.InGame.Things
                 collectOffsetY: -2
             ));
             _items.Add("heartMeterFull", new GameItem(
-                Resources.GetSprite("heartMeterFull"),
+                sprite: Resources.GetSprite("heartMeterFull"),
                 name: "heartMeterFull",
                 count: 4,
                 showAnimation: 1,
@@ -659,7 +659,7 @@ namespace ProjectZ.InGame.Things
 
             // dungeon keys
             _items.Add("dkey1", new GameItem(
-                Resources.GetSprite("dkey1"),
+                sprite: Resources.GetSprite("dkey1"),
                 name: "dkey1",
                 pickUpDialog: "dkey1",
                 count: 1,
@@ -672,7 +672,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("dkey2", new GameItem(
-                Resources.GetSprite("dkey2"),
+                sprite: Resources.GetSprite("dkey2"),
                 name: "dkey2",
                 pickUpDialog: "dkey2",
                 count: 1,
@@ -685,7 +685,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("dkey3", new GameItem(
-                Resources.GetSprite("dkey3"),
+                sprite: Resources.GetSprite("dkey3"),
                 name: "dkey3",
                 pickUpDialog: "dkey3",
                 count: 1,
@@ -698,7 +698,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("dkey4", new GameItem(
-                Resources.GetSprite("dkey4"),
+                sprite: Resources.GetSprite("dkey4"),
                 name: "dkey4",
                 pickUpDialog: "dkey4",
                 count: 1,
@@ -711,7 +711,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("dkey5", new GameItem(
-                Resources.GetSprite("dkey5"),
+                sprite: Resources.GetSprite("dkey5"),
                 name: "dkey5",
                 pickUpDialog: "dkey5",
                 count: 1,
@@ -725,7 +725,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("guardianAcorn", new GameItem(
-                Resources.GetSprite("guardianAcorn"),
+                sprite: Resources.GetSprite("guardianAcorn"),
                 name: "guardianAcorn",
                 pickUpDialog: GameSettings.NoHelperText ? null : "guardianAcorn",
                 showAnimation: 2,
@@ -735,7 +735,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("pieceOfPower", new GameItem(
-                Resources.GetSprite("pieceOfPower"),
+                sprite: Resources.GetSprite("pieceOfPower"),
                 name: "pieceOfPower",
                 pickUpDialog: GameSettings.NoHelperText ? null : "pieceOfPower",
                 showAnimation: 2,
@@ -745,14 +745,14 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 12
             ));
             _items.Add("sword1PoP", new GameItem(
-                Resources.GetSprite("sword1"),
+                sprite: Resources.GetSprite("sword1"),
                 name: "sword1PoP",
                 pickUpDialog: GameSettings.NoHelperText ? null : "pieceOfPower",
                 showAnimation: 2,
                 soundEffectName: "D360-23-17"
             ));
             _items.Add("sword2PoP", new GameItem(
-                Resources.GetSprite("sword2"),
+                sprite: Resources.GetSprite("sword2"),
                 name: "sword2PoP",
                 pickUpDialog: GameSettings.NoHelperText ? null : "pieceOfPower",
                 showAnimation: 2,
@@ -764,7 +764,7 @@ namespace ProjectZ.InGame.Things
             // else         => item has nothing
             // accessories
             _items.Add("sword1", new GameItem(
-                Resources.GetSprite("sword1"),
+                sprite: Resources.GetSprite("sword1"),
                 name: "sword1",
                 pickUpDialog: "sword1Collected",
                 count: 1,
@@ -778,7 +778,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 16
             ));
             _items.Add("sword2", new GameItem(
-                Resources.GetSprite("sword2"),
+                sprite: Resources.GetSprite("sword2"),
                 mapSprite: Resources.GetSprite("swordSpawn"),
                 name: "sword2",
                 count: 1,
@@ -788,7 +788,7 @@ namespace ProjectZ.InGame.Things
                 equipable: true
             ));
             _items.Add("shield", new GameItem(
-                Resources.GetSprite("shield"),
+                sprite: Resources.GetSprite("shield"),
                 name: "shield",
                 pickUpDialog: "shield_intro",
                 soundEffectName: "D368-16-10",
@@ -802,7 +802,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 10
             ));
             _items.Add("shield0", new GameItem(
-                Resources.GetSprite("shield"),
+                sprite: Resources.GetSprite("shield"),
                 name: "shield",
                 pickUpDialog: "shield",
                 soundEffectName: "D370-01-01",
@@ -814,7 +814,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 10
             ));
             _items.Add("shieldBack", new GameItem(
-                Resources.GetSprite("shield"),
+                sprite: Resources.GetSprite("shield"),
                 name: "shield",
                 soundEffectName: "D370-01-01",
                 count: 1,
@@ -826,7 +826,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 10
             ));
             _items.Add("mirrorShield", new GameItem(
-                Resources.GetSprite("mirror shield"),
+                sprite: Resources.GetSprite("mirror shield"),
                 name: "mirrorShield",
                 pickUpDialog: "mirrorShield",
                 soundEffectName: "D368-16-10",
@@ -838,8 +838,8 @@ namespace ProjectZ.InGame.Things
                 equipable: true
             ));
             _items.Add("toadstool", new GameItem(
-                Resources.GetSprite("toadstool"),
-                Resources.GetSprite("toadstoolMap"),
+                sprite: Resources.GetSprite("toadstool"),
+                mapSprite: Resources.GetSprite("toadstoolMap"),
                 name: "toadstool",
                 pickUpDialog: "toadstool",
                 count: 1,
@@ -854,7 +854,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 11
             ));
             _items.Add("feather", new GameItem(
-                Resources.GetSprite("feather"),
+                sprite: Resources.GetSprite("feather"),
                 name: "feather",
                 pickUpDialog: "feather",
                 count: 1,
@@ -865,7 +865,8 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("stonelifter", new GameItem(
-                Resources.GetSprite("stonelifter0"),
+                sprite: Resources.GetSprite("stonelifter0"),
+                mapSprite: GameSettings.ClassicSprites ? Resources.GetSprite("stonelifter") : Resources.GetSprite("stonelifter0"),
                 name: "stonelifter",
                 pickUpDialog: "bracelet0",
                 count: 1,
@@ -877,7 +878,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("stonelifter2", new GameItem(
-                Resources.GetSprite("stonelifter1"),
+                sprite: Resources.GetSprite("stonelifter1"),
                 // base is not supported for different sprites
                 name: "stonelifter2",
                 pickUpDialog: "bracelet1",
@@ -890,7 +891,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("pegasusBoots", new GameItem(
-                Resources.GetSprite("pegasusBoots"),
+                sprite: Resources.GetSprite("pegasusBoots"),
                 name: "pegasusBoots",
                 pickUpDialog: "pegasusBoots",
                 count: 1,
@@ -902,7 +903,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("shovel", new GameItem(
-                Resources.GetSprite("shovel"),
+                sprite: Resources.GetSprite("shovel"),
                 name: "shovel",
                 pickUpDialog: "shovel",
                 count: 1,
@@ -914,7 +915,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("flippers", new GameItem(
-                Resources.GetSprite("flippers"),
+                sprite: Resources.GetSprite("flippers"),
                 name: "flippers",
                 pickUpDialog: "flippers",
                 count: 1,
@@ -923,7 +924,8 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("magicRod", new GameItem(
-                Resources.GetSprite("magicRod"),
+                sprite: Resources.GetSprite("magicRod"),
+                mapSprite: GameSettings.ClassicSprites ? Resources.GetSprite("magicRodmap") : Resources.GetSprite("magicRod"),
                 name: "magicRod",
                 pickUpDialog: "magicRod",
                 count: 1,
@@ -935,7 +937,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("ocarina", new GameItem(
-                Resources.GetSprite("ocarina"),
+                sprite: Resources.GetSprite("ocarina"),
                 name: "ocarina",
                 pickUpDialog: "ocarina",
                 count: 1,
@@ -946,7 +948,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("ocarina_frog", new GameItem(
-                Resources.GetSprite("ocarina"),
+                sprite: Resources.GetSprite("ocarina"),
                 name: "ocarina_frog",
                 pickUpDialog: "ocarina_frog_collected",
                 count: 1,
@@ -956,7 +958,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("ocarina_maria", new GameItem(
-                Resources.GetSprite("ocarina"),
+                sprite: Resources.GetSprite("ocarina"),
                 name: "ocarina_maria",
                 pickUpDialog: "ocarina_maria_collected",
                 count: 1,
@@ -966,7 +968,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("ocarina_manbo", new GameItem(
-                Resources.GetSprite("ocarina"),
+                sprite: Resources.GetSprite("ocarina"),
                 name: "ocarina_manbo",
                 pickUpDialog: "ocarina_manbo_collected",
                 count: 1,
@@ -976,7 +978,8 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("hookshot", new GameItem(
-                Resources.GetSprite("hookshot"),
+                sprite: Resources.GetSprite("hookshot"),
+                mapSprite: GameSettings.ClassicSprites ? Resources.GetSprite("hookshotmap") : Resources.GetSprite("hookshot"),
                 name: "hookshot",
                 pickUpDialog: "hookshot",
                 count: 1,
@@ -988,7 +991,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("boomerang", new GameItem(
-                Resources.GetSprite("boomerang"),
+                sprite: Resources.GetSprite("boomerang"),
                 name: "boomerang",
                 pickUpDialog: "boomerang",
                 count: 1,
@@ -1001,7 +1004,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("powder", new GameItem(
-                Resources.GetSprite("powder"),
+                sprite: Resources.GetSprite("powder"),
                 name: "powder",
                 count: 20,
                 maxCount: 20,
@@ -1013,7 +1016,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("powderTrendy", new GameItem(
-                Resources.GetSprite("powder"),
+                sprite: Resources.GetSprite("powder"),
                 soundEffectName: "D370-01-01",
                 name: "powder",
                 pickUpDialog: "powder",
@@ -1047,7 +1050,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("bomb", new GameItem(
-                Resources.GetSprite("bomb"),
+                sprite: Resources.GetSprite("bomb"),
                 name: "bomb",
                 count: 10,
                 maxCount: 30,
@@ -1080,7 +1083,7 @@ namespace ProjectZ.InGame.Things
                 collectHeight: 14
             ));
             _items.Add("bow", new GameItem(
-                Resources.GetSprite("bow"),
+                sprite: Resources.GetSprite("bow"),
                 name: "bow",
                 count: 10,
                 maxCount: 30,
@@ -1088,13 +1091,13 @@ namespace ProjectZ.InGame.Things
                 equipable: true
             ));
             _items.Add("arrow", new GameItem(
-                Resources.GetSprite("arrow"),
+                sprite: Resources.GetSprite("arrow"),
                 name: "arrow",
                 count: 10,
                 soundEffectName: "D370-01-01"
             ));
             _items.Add("arrow_1", new GameItem(
-                Resources.GetSprite("arrow"),
+                sprite: Resources.GetSprite("arrow"),
                 name: "arrow",
                 count: 1,
                 soundEffectName: "D370-01-01",
@@ -1102,7 +1105,7 @@ namespace ProjectZ.InGame.Things
             ));
 
             _items.Add("cloakRed", new GameItem(
-                Resources.GetSprite("cloak"),
+                sprite: Resources.GetSprite("cloak"),
                 name: "cloakRed",
                 pickUpDialog: "cloak_red",
                 count: 1,
@@ -1113,7 +1116,7 @@ namespace ProjectZ.InGame.Things
                 turnDownMusic: true
             ));
             _items.Add("cloakBlue", new GameItem(
-                Resources.GetSprite("cloak"),
+                sprite: Resources.GetSprite("cloak"),
                 name: "cloakBlue",
                 pickUpDialog: "cloak_blue",
                 count: 1,

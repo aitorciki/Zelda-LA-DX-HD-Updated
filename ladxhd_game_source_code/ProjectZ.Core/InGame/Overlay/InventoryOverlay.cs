@@ -399,7 +399,7 @@ namespace ProjectZ.InGame.Overlay
 
                 DrawTradeItem(spriteBatch, offsetBottom, 1);
                 ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("shell"), offsetBottom, _shellRectangle, 1, Color.White);
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("goldLeaf"), offsetBottom, _leafRectangle, 1, Color.White);
+                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("goldLeaf"), offsetBottom, _leafRectangle, 1, Color.White, !GameSettings.ClassicSprites);
             }
             DrawEquipment(spriteBatch, offsetBottom + _equipmentPosition);
 
@@ -409,12 +409,9 @@ namespace ProjectZ.InGame.Overlay
 
             for (var i = 0; i < _itemSlots.Length; i++)
             {
-                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[i],
-                    offsetBottom + _itemSlotsPosition, _itemSlots[i], 1, Color.White);
-
+                ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.Equipment[i], offsetBottom + _itemSlotsPosition, _itemSlots[i], 1, Color.White);
                 GameFS.DrawString(spriteBatch, _itemSlotString[i], new Vector2(offsetBottom.X + _itemSlotsPosition.X + _itemSlots[i].Right - 4, offsetBottom.Y + _itemSlotsPosition.Y + _itemSlots[i].Bottom - 5), Color.Black);
             }
-
             for (var i = 0; i < 5; i++)
                 ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dkey" + (i + 1)), offsetBottom, _keyPositions[i], 1, Color.White);
 

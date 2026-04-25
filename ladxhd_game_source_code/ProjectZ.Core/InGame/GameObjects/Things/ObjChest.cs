@@ -104,8 +104,16 @@ namespace ProjectZ.InGame.GameObjects.Things
                 {
                     _dialogPath = _itemName.Remove(0, 7);
                 }
-                else if (!CreateItem())
-                    IsDead = true;
+                else
+                {
+                    if (_itemName == null)
+                        IsDead = true;
+
+                    _item = Game1.GameManager.ItemManager[_itemName];
+
+                    if (_item == null)
+                        IsDead = true;
+                }
             }
         }
 
@@ -131,34 +139,26 @@ namespace ProjectZ.InGame.GameObjects.Things
             return false;
         }
 
-        private bool CreateItem()
+        private void CreateItem()
         {
-            if (_itemName == null)
-                return false;
-
             _item = Game1.GameManager.ItemManager[_itemName];
-
-            if (_item == null)
-                return false;
 
             Rectangle itemSource;
 
-            if (_item.SourceRectangle.HasValue)
+            if (_item.MapSprite != null)
+                itemSource = _item.MapSprite.ScaledRectangle;
+            else if (_item.SourceRectangle.HasValue)
                 itemSource = _item.SourceRectangle.Value;
             else
             {
                 var baseItem = Game1.GameManager.ItemManager[_item.Name];
                 itemSource = baseItem.SourceRectangle.Value;
             }
-
-            // the offset is needed so the item would not be behind the chest
             _itemSprite = new ObjSprite(Map, 0, 0, Resources.SprItem, itemSource, new Vector2(0, -itemSource.Height + 1), Values.LayerPlayer);
             _itemSprite.EntityPosition.Set(new Vector2(EntityPosition.X + 8 - itemSource.Width / 2f, EntityPosition.Y - 0.05f));
             _itemSprite.Sprite.Color = Color.Transparent;
 
             Map.Objects.SpawnObject(_itemSprite);
-
-            return true;
         }
 
         private void InitOpen()
@@ -253,6 +253,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             // spawn item
             else
             {
+                CreateItem();
                 _aiComponent.ChangeState("opening");
                 _itemSprite.Sprite.Color = Color.White;
             }
