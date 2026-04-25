@@ -354,8 +354,9 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             if (_aiComponent.CurrentStateId == "follow")
             {
                 _aiDamageSwitch.Reset();
+                Game1.AudioManager.PlaySoundEffect("D360-03-03");
                 ToStun(direction * 0.75f);
-                return Values.HitCollision.RepellingParticle;
+                return Values.HitCollision.None;
             }
 
             if (_aiDamageSwitch.State)
