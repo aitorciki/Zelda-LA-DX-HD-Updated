@@ -175,6 +175,7 @@ $dungeon3M  = @("dungeon3.map")
 $dungeon3D  = @("dungeon3.map.data")
 $bowwowanim = @("bowwow_water.ani")
 $dungeonani = @("mapDungeon.ani", "mapManboPond.ani")
+$boomerang  = @("boomerangOrig.ani")
 
 $FileTargets = @{
     "eng.lng"             = $langFiles
@@ -196,6 +197,7 @@ $FileTargets = @{
     "dungeon3_1.map.data" = $dungeon3D
     "BowWow.ani"          = $bowwowanim
     "mapPlayer.ani"       = $dungeonani
+    "boomerang.ani"       = $boomerang
 }
 
 
