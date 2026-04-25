@@ -26,7 +26,7 @@ jobs:
 
       - name: Add GitLab remote
         run: |
-          git remote add gitlab "https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@gitlab.com/bighead.0-group/Zelda-LA-DX-HD-Updated.git"
+          git remote add gitlab "https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@gitlab.com/bighead.0/Zelda-LA-DX-HD-Updated"
           git remote -v
 
       # ----------------------------
