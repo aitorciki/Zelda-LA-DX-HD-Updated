@@ -191,7 +191,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 return;
             }
             _direction = MapManager.ObjLink.Position - new Vector2(EntityPosition.Position.X, EntityPosition.Position.Y - 4);
-            if (_direction.Length() < 32)
+            if (_direction.Length() < 36)
             {
                 _aiComponent.ChangeState("spawning");
 
@@ -215,11 +215,11 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateAttack()
         {
-            _attackCounter += (Game1.TimeMultiplier * 2) / 35.0f;
+            _attackCounter += (Game1.TimeMultiplier * 2) / 42.0f;
             if (_attackCounter > 1)
                 _attackCounter = 1;
 
-            _attackOffset = _direction * _attackCounter * 35.0f;
+            _attackOffset = _direction * _attackCounter * 42.0f;
             EntityPosition.Set(_spawnPosition + _attackOffset);
 
             if (_attackCounter >= 1)
@@ -238,7 +238,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void UpdateRetract()
         {
-            _attackCounter -= (Game1.TimeMultiplier * 1.25f) / 35.0f;
+            _attackCounter -= (Game1.TimeMultiplier * 1.25f) / 42.0f;
             if (_attackCounter < 0)
                 _attackCounter = 0;
 
@@ -258,7 +258,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
             {
                 for (var i = 0; i < 3; i++)
                 {
-                    var rawPosition = _spawnPosition + (EntityPosition.Position - _spawnPosition) * (0.15f + (i / 2f) * 0.5f) - new Vector2(4, 4);
+                    var rawPosition = _spawnPosition + (EntityPosition.Position - _spawnPosition) * (0.2f + (i / 2f) * 0.5f) - new Vector2(4, 4);
 
                     // Snap pixels to grid if enabled.
                     var position = GameSettings.PixelSnapping
