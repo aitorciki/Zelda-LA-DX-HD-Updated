@@ -33,7 +33,6 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
             _dark = dark;
             _bright = bright;
-
             _sprite = Resources.GetSprite("room blur");
 
             AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
@@ -42,9 +41,10 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
 
         public override void Init()
         {
-            // get all the lamps in the area
+            // Get all the lamps in the rect, but add a buffer of 8 pixels to avoid grabbing
+            // lamps along the edges of other rooms. This happens in dungeon 2 power bracelet room.
             Map.Objects.GetGameObjectsWithTag(_lamps, Values.GameObjectTag.Lamp,
-                _roomRectangle.X, _roomRectangle.Y, _roomRectangle.Width, _roomRectangle.Height);
+                _roomRectangle.X + 8, _roomRectangle.Y + 8, _roomRectangle.Width - 16, _roomRectangle.Height - 16);
 
             if (_lamps.Count == 0)
             {
@@ -73,18 +73,17 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                 }
             }
 
-            // blend from _bright to _dark depending on how many lamps in the room are on
+            // Blend from _bright to _dark depending on how many lamps in the room are on.
             var targetState = MathHelper.Lerp(_dark, _bright, onCount / (float)_lamps.Count);
 
             if (instantTransition)
                 _state = targetState;
             else
             {
-                // smoothly transition to the target state
+                // Smoothly transition to the target state.
                 var amount = Math.Clamp(0.025f / Math.Abs(targetState - _state) * Game1.TimeMultiplier, 0, 1);
                 _state = MathHelper.Lerp(_state, targetState, amount);
             }
-
         }
 
         private void DrawLight(SpriteBatch spriteBatch)
