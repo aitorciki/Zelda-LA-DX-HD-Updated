@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
@@ -208,15 +209,21 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         private void Draw(SpriteBatch spriteBatch)
         {
-            // draw the wings
-            spriteBatch.Draw(Resources.SprEnemies, new Vector2(EntityPosition.X - _wingRectangle.Width - 5, EntityPosition.Y - 8 - EntityPosition.Z),
+            // Snap pixels to grid if enabled.
+            var baseX = GameSettings.PixelSnapping
+                ? MathF.Round(EntityPosition.X)
+                : EntityPosition.X;
+            var baseY = GameSettings.PixelSnapping
+                ? MathF.Round(EntityPosition.Y - 8 - EntityPosition.Z)
+                : EntityPosition.Y - 8 - EntityPosition.Z;
+
+            spriteBatch.Draw(Resources.SprEnemies, new Vector2(baseX - _wingRectangle.Width - 5, baseY),
                 _wingRectangle, Color.White, 0, new Vector2(0, 9), Vector2.One,
                 (int)_flyCounter % 132 < 66 ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
-            spriteBatch.Draw(Resources.SprEnemies, new Vector2(EntityPosition.X + 5, EntityPosition.Y - 8 - EntityPosition.Z),
+            spriteBatch.Draw(Resources.SprEnemies, new Vector2(baseX + 5, baseY),
                 _wingRectangle, Color.White, 0, new Vector2(0, 9), Vector2.One,
                 ((int)_flyCounter % 132 < 66 ? SpriteEffects.FlipVertically : SpriteEffects.None) | SpriteEffects.FlipHorizontally, 0);
 
-            // draw the body
             _bodyDrawComponent.Draw(spriteBatch);
         }
 

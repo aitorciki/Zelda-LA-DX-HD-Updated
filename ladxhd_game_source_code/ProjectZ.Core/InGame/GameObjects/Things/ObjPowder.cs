@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
@@ -115,9 +116,13 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             for (var i = 0; i < _points.Length; i++)
             {
-                spriteBatch.Draw(Resources.SprItem, new Vector2(
+                var rawPosition = new Vector2(
                     _points[i].X - _sourceRectangle.Width / 2,
-                    _points[i].Y - _sourceRectangle.Height - _points[i].Z), _sourceRectangle, Color.White * _live[i]);
+                    _points[i].Y - _sourceRectangle.Height - _points[i].Z);
+                var position = GameSettings.PixelSnapping
+                    ? new Vector2(MathF.Round(rawPosition.X), MathF.Round(rawPosition.Y))
+                    : rawPosition;
+                spriteBatch.Draw(Resources.SprItem, position, _sourceRectangle, Color.White * _live[i]);
             }
         }
 

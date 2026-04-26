@@ -370,10 +370,14 @@ namespace ProjectZ.InGame.Things
             }
             else
             {
-                var normalizedPosition = new Vector2(
-                    (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale,
-                    (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale);
-
+                // Snap game pixels if Pixel Snapping is enabled.
+                var vecX = GameSettings.PixelSnapping 
+                    ? MathF.Round(position.X)
+                    : (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+                var vecY = GameSettings.PixelSnapping
+                    ? MathF.Round(position.Y)
+                    : (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+                var normalizedPosition = new Vector2(vecX, vecY);
                 DrawInstrument(spriteBatch, sprite, normalizedPosition);
             }
         }

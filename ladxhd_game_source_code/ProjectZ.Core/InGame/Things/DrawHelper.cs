@@ -157,8 +157,7 @@ namespace ProjectZ.InGame.Things
             spriteBatch.Draw(Resources.SprLight, lightRectangle, lightColor);
         }
 
-        public static void DrawCenter(SpriteBatch spriteBatch, Texture2D sprTexture, Point offset,
-            Rectangle centerRectangle, Rectangle sourceRectangle, int scale)
+        public static void DrawCenter(SpriteBatch spriteBatch, Texture2D sprTexture, Point offset, Rectangle centerRectangle, Rectangle sourceRectangle, int scale)
         {
             spriteBatch.Draw(sprTexture, new Rectangle(
                 offset.X + (centerRectangle.X + centerRectangle.Width / 2 - sourceRectangle.Width / 2) * scale,
@@ -167,22 +166,29 @@ namespace ProjectZ.InGame.Things
                 sourceRectangle.Height * scale), sourceRectangle, Color.White);
         }
 
-        public static void DrawNormalized(SpriteBatch spriteBatch, Texture2D texture,
-            Vector2 position, Rectangle sourceRectangle, Color color, float scale = 1.0f)
+        public static void DrawNormalized(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Rectangle sourceRectangle, Color color, float scale = 1.0f)
         {
-            var normalizedPosition = new Vector2(
-                (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale,
-                (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale);
-
+            // Snap game pixels if Pixel Snapping is enabled.
+            var vecX = GameSettings.PixelSnapping 
+                ? MathF.Round(position.X)
+                : (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var vecY = GameSettings.PixelSnapping
+                ? MathF.Round(position.Y)
+                : (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normalizedPosition = new Vector2(vecX, vecY);
             spriteBatch.Draw(texture, normalizedPosition, sourceRectangle, color, 0, Vector2.Zero, new Vector2(scale), SpriteEffects.None, 0);
         }
 
         public static void DrawNormalized(SpriteBatch spriteBatch, DictAtlasEntry sprite, Vector2 position, Color color)
         {
-            var normalizedPosition = new Vector2(
-                (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale,
-                (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale);
-
+            // Snap game pixels if Pixel Snapping is enabled.
+            var vecX = GameSettings.PixelSnapping 
+                ? MathF.Round(position.X)
+                : (float)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var vecY = GameSettings.PixelSnapping
+                ? MathF.Round(position.Y)
+                : (float)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normalizedPosition = new Vector2(vecX, vecY);
             spriteBatch.Draw(sprite.Texture, normalizedPosition, sprite.ScaledRectangle, color, 0, sprite.Origin, new Vector2(sprite.Scale), SpriteEffects.None, 0);
         }
     }

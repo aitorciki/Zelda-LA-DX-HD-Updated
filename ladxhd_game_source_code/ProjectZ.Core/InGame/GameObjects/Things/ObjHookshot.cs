@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.Base;
@@ -177,13 +178,21 @@ namespace ProjectZ.InGame.GameObjects.Things
             handPosition.Y += _startPositionOffset.Y;
             var direction = _hookshotPosition.ToVector3() - handPosition;
             for (var i = 0; i < 3; i++)
-                spriteBatch.Draw(_spriteChain.Texture, new Vector2(handPosition.X - 2, handPosition.Y - 2 - MapManager.ObjLink.EntityPosition.Z) +
-                                                       new Vector2(direction.X, direction.Y) * ((i + 0.75f) / 4f) +
-                                                       new Vector2(0, -direction.Z * ((i + 0.75f) / 4f)), _spriteChain.SourceRectangle, Color.White * 0.50f);
-
+            {
+                var rawPosition = new Vector2(handPosition.X - 2, handPosition.Y - 2 - MapManager.ObjLink.EntityPosition.Z) +
+                                  new Vector2(direction.X, direction.Y) * ((i + 0.75f) / 4f) +
+                                  new Vector2(0, -direction.Z * ((i + 0.75f) / 4f));
+                var chainPosition = GameSettings.PixelSnapping
+                    ? new Vector2(MathF.Round(rawPosition.X), MathF.Round(rawPosition.Y))
+                    : rawPosition;
+                spriteBatch.Draw(_spriteChain.Texture, chainPosition, _spriteChain.SourceRectangle, Color.White * 0.50f);
+            }
             // draw the hook
-            spriteBatch.Draw(_spriteHook.Texture, new Vector2(_hookshotPosition.X - 7,
-                _hookshotPosition.Y - 7 - _hookshotPosition.Z), _spriteHook.SourceRectangle, Color.White);
+            var rawHookPosition = new Vector2(_hookshotPosition.X - 7, _hookshotPosition.Y - 7 - _hookshotPosition.Z);
+            var hookPosition = GameSettings.PixelSnapping
+                ? new Vector2(MathF.Round(rawHookPosition.X), MathF.Round(rawHookPosition.Y))
+                : rawHookPosition;
+            spriteBatch.Draw(_spriteHook.Texture, hookPosition, _spriteHook.SourceRectangle, Color.White);
         }
 
         public void Despawn()

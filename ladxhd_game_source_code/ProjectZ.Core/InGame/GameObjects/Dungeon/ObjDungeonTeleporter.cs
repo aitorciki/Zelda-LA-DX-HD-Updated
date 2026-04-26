@@ -171,9 +171,15 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         {
             _sprite.Draw(spriteBatch);
 
-            // draw the circles around
+            // Draw the rotating circles.
             for (var i = 0; i < _pointPositions.Length; i++)
-                spriteBatch.Draw(Resources.SprObjects, _pointPositions[i], _pointRectangle, Color.White);
+            {
+                // Snap pixels to grid if enabled.
+                var position = GameSettings.PixelSnapping
+                    ? new Vector2(MathF.Round(_pointPositions[i].X), MathF.Round(_pointPositions[i].Y))
+                    : _pointPositions[i];
+                spriteBatch.Draw(Resources.SprObjects, position, _pointRectangle, Color.White);
+            }
         }
 
         private void DrawLight(SpriteBatch spriteBatch)

@@ -255,14 +255,18 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             // draw the body
             if (_sprite.IsVisible && _aiComponent.CurrentStateId != "spawning")
+            {
                 for (var i = 0; i < 3; i++)
                 {
-                    var position =
-                        _spawnPosition + (EntityPosition.Position - _spawnPosition) * (0.15f + (i / 2f) * 0.5f) - new Vector2(4, 4);
+                    var rawPosition = _spawnPosition + (EntityPosition.Position - _spawnPosition) * (0.15f + (i / 2f) * 0.5f) - new Vector2(4, 4);
 
+                    // Snap pixels to grid if enabled.
+                    var position = GameSettings.PixelSnapping
+                        ? new Vector2(MathF.Round(rawPosition.X), MathF.Round(rawPosition.Y))
+                        : rawPosition;
                     spriteBatch.Draw(Resources.SprEnemies, position, _tailRectangle, Color.White);
                 }
-
+            }
             // draw the head
             _sprite.Draw(spriteBatch);
         }

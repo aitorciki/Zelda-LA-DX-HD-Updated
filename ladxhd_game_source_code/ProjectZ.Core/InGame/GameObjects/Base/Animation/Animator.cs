@@ -98,9 +98,13 @@ namespace ProjectZ.InGame.GameObjects.Base
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color)
         {
-            // needed so that the objects don't wiggle around while the camera is moving
-            var normX = (int)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
-            var normY = (int)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            // Snap game pixels if Pixel Snapping is enabled.
+            var normX = GameSettings.PixelSnapping 
+                ? MathF.Round(position.X)
+                : (int)Math.Round(position.X * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normY = GameSettings.PixelSnapping 
+                ? MathF.Round(position.Y)
+                : (int)Math.Round(position.Y * MapManager.Camera.Scale) / MapManager.Camera.Scale;
 
             spriteBatch.Draw(SprTexture, new Vector2(
                 normX + (CurrentAnimation.Offset.X + CurrentFrame.Offset.X),

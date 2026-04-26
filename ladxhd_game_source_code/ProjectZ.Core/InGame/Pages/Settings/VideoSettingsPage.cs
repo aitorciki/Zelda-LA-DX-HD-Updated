@@ -18,6 +18,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceSlider     _sliderFullscreen;
     #endif
         private readonly InterfaceListLayout _toggleVerticalSync;
+        private readonly InterfaceListLayout _togglePixelSnapping;
         private readonly InterfaceListLayout _toggleOpaqueHudBg;
 
         List<string> _tooltips = new List<string>();
@@ -29,6 +30,7 @@ namespace ProjectZ.InGame.Pages
         public void SetFullscreenMode(int value) { ((InterfaceSlider)_sliderFullscreen).CurrentStep = value; ((InterfaceSlider)_sliderFullscreen).UpdateLanguageText(); }
     #endif
         public void SetVerticalSync(bool state) { ((InterfaceToggle)_toggleVerticalSync.Elements[1]).ToggleState = state; Game1.FpsSettingChanged = true; }
+        public void SetPixelSnapping(bool state) { ((InterfaceToggle)_togglePixelSnapping.Elements[1]).ToggleState = state; }
         public void SetOpaqueHudBg(bool state) => ((InterfaceToggle)_toggleOpaqueHudBg.Elements[1]).ToggleState = state;
 
         public VideoSettingsPage(int width, int height)
@@ -77,6 +79,14 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.VerticalSync = newState; Game1.FpsSettingChanged = true; });
             _contentLayout.AddElement(_toggleVerticalSync);
             _tooltips.Add("tooltip_video_fps_lock");
+
+            // Toggle: Pixel Snapping
+            _togglePixelSnapping = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_video_pixelsnap", GameSettings.PixelSnapping,
+                newState => { GameSettings.PixelSnapping = newState; });
+            _contentLayout.AddElement(_togglePixelSnapping);
+            _tooltips.Add("tooltip_video_pixelsnap");
 
             // Toggle: Disable UI Blur
             _toggleOpaqueHudBg = InterfaceToggle.GetToggleButton(

@@ -77,9 +77,13 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             if (!IsVisible)
                 return;
 
-            // this is used to align the sprite to avoid holes
-            var normX = (float)Math.Round((Position.X + DrawOffset.X) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
-            var normY = (float)Math.Round((Position.Y + DrawOffset.Y - Position.Z) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            // Snap game pixels if Pixel Snapping is enabled.
+            var normX = GameSettings.PixelSnapping
+                ? MathF.Round(Position.X + DrawOffset.X)
+                : (float)Math.Round((Position.X + DrawOffset.X) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normY = GameSettings.PixelSnapping
+                ? MathF.Round(Position.Y + DrawOffset.Y - Position.Z) 
+                : (float)Math.Round((Position.Y + DrawOffset.Y - Position.Z) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
 
             // change the draw effect
             if (SpriteShader != null)
@@ -104,8 +108,12 @@ namespace ProjectZ.InGame.GameObjects.Base.CObjects
             if (!IsVisible)
                 return;
 
-            var normX = (float)Math.Round((Position.X + DrawOffset.X - Center.X) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
-            var normY = (float)Math.Round((Position.Y + DrawOffset.Y - Center.Y - Position.Z * 0.5f + offsetY) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normX = GameSettings.PixelSnapping
+                ? MathF.Round(Position.X + DrawOffset.X - Center.X)
+                : (float)Math.Round((Position.X + DrawOffset.X - Center.X) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
+            var normY = GameSettings.PixelSnapping
+                ? MathF.Round(Position.Y + DrawOffset.Y - Center.Y - Position.Z * 0.5f + offsetY)
+                : (float)Math.Round((Position.Y + DrawOffset.Y - Center.Y - Position.Z * 0.5f + offsetY) * MapManager.Camera.Scale) / MapManager.Camera.Scale;
 
             // TODO_OPT: this does currently not support FlipVertically
             DrawHelper.DrawShadow(SprTexture, new Vector2(normX, normY),

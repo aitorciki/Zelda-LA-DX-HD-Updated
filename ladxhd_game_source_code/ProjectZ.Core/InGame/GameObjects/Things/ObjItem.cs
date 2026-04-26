@@ -387,18 +387,16 @@ namespace ProjectZ.InGame.GameObjects.Things
 
             var wingFlap = (Game1.TotalGameTime % (16 / 60f * 1000)) < (8 / 60f * 1000) ? SpriteEffects.FlipVertically : SpriteEffects.None;
 
-            // left wing
-            spriteBatch.Draw(Resources.SprItem, new Vector2(
-                    EntityPosition.X - _sourceRectangleWing.Width - 4f,
-                    EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height / 2 - 10 + _fadeOffset),
-                _sourceRectangleWing, _color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None | wingFlap, 0);
+            // Draw the wings and snap pixels if enabled.
+            var baseX = GameSettings.PixelSnapping
+                ? MathF.Round(EntityPosition.X)
+                : EntityPosition.X;
+            var baseY = GameSettings.PixelSnapping
+                ? MathF.Round(EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height / 2 - 10 + _fadeOffset)
+                : EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height / 2 - 10 + _fadeOffset;
 
-            // right wing
-            spriteBatch.Draw(Resources.SprItem, new Vector2(
-                    EntityPosition.X + 4f,
-                    EntityPosition.Y - EntityPosition.Z - _sourceRectangle.Height / 2 - 10 + _fadeOffset),
-                _sourceRectangleWing, _color, 0, Vector2.Zero, Vector2.One,
-                SpriteEffects.FlipHorizontally | wingFlap, 0);
+            spriteBatch.Draw(Resources.SprItem, new Vector2(baseX - _sourceRectangleWing.Width - 4f, baseY), _sourceRectangleWing, _color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None | wingFlap, 0);
+            spriteBatch.Draw(Resources.SprItem, new Vector2(baseX + 4f, baseY), _sourceRectangleWing, _color, 0, Vector2.Zero, Vector2.One, SpriteEffects.FlipHorizontally | wingFlap, 0);
         }
 
         private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType hitType, int damage, bool pieceOfPower)

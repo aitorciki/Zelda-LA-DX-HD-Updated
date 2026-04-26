@@ -296,10 +296,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             var tailRectangles = _blinking ? _tailRectanglesDamage : _tailRectangles;
             for (var i = _tailState; i >= 0; i--)
             {
-                spriteBatch.Draw(Resources.SprNightmares, _tailPositions[i] -
-                    new Vector2(tailRectangles[i].Width / 2f, tailRectangles[i].Height / 2f), tailRectangles[i], Color.White);
+                var rawPosition = _tailPositions[i] - new Vector2(tailRectangles[i].Width / 2f, tailRectangles[i].Height / 2f);
+                var position = GameSettings.PixelSnapping
+                    ? new Vector2(MathF.Round(rawPosition.X), MathF.Round(rawPosition.Y))
+                    : rawPosition;
+                spriteBatch.Draw(Resources.SprNightmares, position, tailRectangles[i], Color.White);
             }
-
             // draw the head
             _bodyDrawComponent.Draw(spriteBatch);
         }

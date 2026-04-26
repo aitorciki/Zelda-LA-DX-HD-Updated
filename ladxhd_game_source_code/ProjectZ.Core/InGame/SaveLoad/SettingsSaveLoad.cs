@@ -48,6 +48,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.UiScale = saveManager.GetInt("UIScale", GameSettings.UiScale);
             GameSettings.ScreenMode = saveManager.GetInt("ScreenMode", GameSettings.ScreenMode);
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
+            GameSettings.PixelSnapping = saveManager.GetBool("PixelSnapping", GameSettings.PixelSnapping);
             GameSettings.OpaqueHudBg = saveManager.GetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Graphics Settings
@@ -150,6 +151,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetInt("ScreenMode", GameSettings.ScreenMode);
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
+            saveManager.SetBool("PixelSnapping", GameSettings.PixelSnapping);
             saveManager.SetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
 
             // Graphics Settings
