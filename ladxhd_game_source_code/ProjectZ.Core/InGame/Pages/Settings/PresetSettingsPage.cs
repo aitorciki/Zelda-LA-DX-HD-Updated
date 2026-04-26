@@ -121,6 +121,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = true;
             GameSettings.ClassicSprites = false;
             GameSettings.FogEffects = true;
+            GameSettings.PixelSnapping = false;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = false;
             GameSettings.OldMovement = false;
@@ -160,6 +161,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = true;
             GameSettings.ClassicSprites = true;
             GameSettings.FogEffects = false;
+            GameSettings.PixelSnapping = false;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = true;
             GameSettings.OldMovement = false;
@@ -200,6 +202,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = true;
             GameSettings.ClassicSprites = false;
             GameSettings.FogEffects = true;
+            GameSettings.PixelSnapping = false;
             GameSettings.EnableShadows = true;
             GameSettings.ClassicMusic = false;
             GameSettings.HeartBeep = true;
@@ -243,6 +246,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ExScreenShake = false;
             GameSettings.ClassicSprites = true;
             GameSettings.FogEffects = false;
+            GameSettings.PixelSnapping = true;
             GameSettings.EnableShadows = false;
             GameSettings.ClassicMusic = true;
             GameSettings.HeartBeep = true;
