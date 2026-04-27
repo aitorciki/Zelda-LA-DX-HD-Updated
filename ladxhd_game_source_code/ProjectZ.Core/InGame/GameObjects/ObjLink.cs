@@ -1979,12 +1979,12 @@ namespace ProjectZ.InGame.GameObjects
             {
                 // slow down in the grass
                 if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.IsGrounded)
-                    _currentWalkSpeed *= 0.8f;
+                    _currentWalkSpeed *= 0.75f;
 
                 // slow down in the water
                 if (_body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water) && _body.IsGrounded)
                 {
-                    _currentWalkSpeed *= 0.8f;
+                    _currentWalkSpeed *= 0.75f;
 
                     _waterSoundCounter += Game1.DeltaTime;
                     if (_waterSoundCounter > 250)
