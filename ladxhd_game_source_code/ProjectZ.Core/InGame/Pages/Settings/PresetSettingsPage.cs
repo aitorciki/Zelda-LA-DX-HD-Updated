@@ -154,6 +154,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicCamera = true;
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorder = 1;
+            GameSettings.ClassicAlpha =  1.00f;
             GameSettings.CameraLock = true;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = false;
@@ -195,6 +196,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ModernOverworld = true;
             GameSettings.ClassicDungeon = true;
             GameSettings.ClassicBorder = 1;
+            GameSettings.ClassicAlpha =  1.00f;
             GameSettings.CameraLock = false;
             GameSettings.GlobalLights = true;
             GameSettings.ObjectLights = true;
@@ -239,6 +241,7 @@ namespace ProjectZ.InGame.Pages
             GameSettings.ClassicCamera = true;
             GameSettings.ClassicDungeon = false;
             GameSettings.ClassicBorder = 1;
+            GameSettings.ClassicAlpha =  1.00f;
             GameSettings.CameraLock = true;
             GameSettings.GlobalLights = false;
             GameSettings.ObjectLights = false;
