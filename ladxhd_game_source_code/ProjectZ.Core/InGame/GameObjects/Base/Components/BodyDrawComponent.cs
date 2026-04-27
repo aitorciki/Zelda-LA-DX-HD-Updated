@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.Map;
@@ -43,43 +44,42 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         {
             if (!IsActive)
                 return;
-
             var isOnWater = _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Water) && WaterOutline ||
                             _body.CurrentFieldState.HasFlag(MapStates.FieldStates.DeepWater) && DeepWaterOutline;
 
-            // draw the water stuff
+            // Draw the water stuff.
             if (_body.IsActive && isOnWater && _body.IsGrounded && _body.Position.Z <= 0)
             {
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                        _body.Position.X + _body.OffsetX + _body.Width / 2f - 6,
-                        _body.Position.Y - _body.Position.Z + _body.OffsetY + _body.Height - 6 + WaterOutlineOffsetY),
+                var rawWaterX = _body.Position.X + _body.OffsetX + _body.Width / 2f - 6;
+                var rawWaterY = _body.Position.Y - _body.Position.Z + _body.OffsetY + _body.Height + WaterOutlineOffsetY;
+                var waterX = GameSettings.PixelSnapping ? MathF.Round(rawWaterX) : rawWaterX;
+                var waterY = GameSettings.PixelSnapping ? MathF.Round(rawWaterY) : rawWaterY;
+
+                spriteBatch.Draw(Resources.SprObjects, new Vector2(waterX, waterY - 6),
                     new Rectangle(_sourceWater.X, _sourceWater.Y + (Game1.TotalGameTime % 133 > 66 ? 9 : 0), _sourceWater.Width, _sourceWater.Height / 2), Color.White);
-            }
 
-            _draw(spriteBatch);
+                _draw(spriteBatch);
 
-            // draw water effect
-            if (_body.IsActive && isOnWater && _body.IsGrounded && _body.Position.Z <= 0)
-            {
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                        _body.Position.X + _body.OffsetX + _body.Width / 2f - 6,
-                        _body.Position.Y - _body.Position.Z + _body.OffsetY + _body.Height - 2 + WaterOutlineOffsetY),
+                spriteBatch.Draw(Resources.SprObjects, new Vector2(waterX, waterY - 2),
                     new Rectangle(_sourceWater.X, _sourceWater.Y + _sourceWater.Height / 2 + (Game1.TotalGameTime % 133 > 66 ? 9 : 0), _sourceWater.Width, _sourceWater.Height / 2), Color.White);
             }
+            else
+            {
+                _draw(spriteBatch);
+            }
 
-            // draw grass if the body is standing on grass
+            // Draw grass if the body is standing on grass.
             if (_body.IsActive && Grass && _body.CurrentFieldState.HasFlag(MapStates.FieldStates.Grass) && _body.Position.Z < 4)
             {
                 var flip = (_body.Position.X + _body.Position.Y) % 8 > 4;
+                var rawGrassX = _body.Position.X + _body.OffsetX + _body.Width / 2f;
+                var rawGrassY = _body.Position.Y + _body.OffsetY + _body.Height - 8;
+                var grassX = GameSettings.PixelSnapping ? MathF.Round(rawGrassX) : rawGrassX;
+                var grassY = GameSettings.PixelSnapping ? MathF.Round(rawGrassY) : rawGrassY;
 
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                        _body.Position.X + _body.OffsetX + _body.Width / 2f - 8,
-                        _body.Position.Y + _body.OffsetY + _body.Height - 8), _sourceGrass, Color.White,
+                spriteBatch.Draw(Resources.SprObjects, new Vector2(grassX - 8, grassY), _sourceGrass, Color.White,
                     0, Vector2.Zero, Vector2.One, !flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
-
-                spriteBatch.Draw(Resources.SprObjects, new Vector2(
-                        _body.Position.X + _body.OffsetX + _body.Width / 2f,
-                        _body.Position.Y + _body.OffsetY + _body.Height - 8), _sourceGrass, Color.White,
+                spriteBatch.Draw(Resources.SprObjects, new Vector2(grassX, grassY), _sourceGrass, Color.White,
                     0, Vector2.Zero, Vector2.One, flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0);
             }
         }
