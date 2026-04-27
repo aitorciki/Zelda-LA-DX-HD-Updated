@@ -151,8 +151,13 @@ namespace ProjectZ.InGame.GameObjects.Things
             var distMult = 1.5f;
             for (int i = 0; i < trailCount; i++)
             {
-                var drawPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) + _sprite.DrawOffset - new Vector2(_body.VelocityTarget.X, _body.VelocityTarget.Y) * (trailCount - i) * distMult;
-                // make sure to not show the tail behind the actual spawn position
+                // If sprite snapping is enabled line up trails to the grid.
+                var rawDrawPosition = new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z) + _sprite.DrawOffset - new Vector2(_body.VelocityTarget.X, _body.VelocityTarget.Y) * (trailCount - i) * distMult;
+                var drawPosition = GameSettings.PixelSnapping
+                    ? new Vector2(MathF.Round(rawDrawPosition.X), MathF.Round(rawDrawPosition.Y))
+                    : rawDrawPosition;
+
+                // Make sure to not show the tail behind the actual spawn position.
                 if (spawnDistance > ((trailCount - i) * swordbeam_speed * distMult))
                     spriteBatch.Draw(_sprite.SprTexture, drawPosition, _sprite.SourceRectangle, _sprite.Color * (0.20f + 0.30f * ((i + 1) / (float)trailCount)),
                         _sprite.Rotation, _sprite.Center * _sprite.Scale, new Vector2(_sprite.Scale), SpriteEffects.None, 0);
@@ -164,7 +169,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 spriteBatch.End();
                 ObjectManager.SpriteBatchBegin(spriteBatch, Resources.DamageSpriteShader0);
             }
-            // draw the actual sprite
+            // Draw the actual sword shot sprite.
             _sprite.Draw(spriteBatch);
 
             if (changeColor)

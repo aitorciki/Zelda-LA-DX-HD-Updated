@@ -17,11 +17,17 @@ namespace ProjectZ.InGame.Map
         public float ShakeOffsetY;
         public float CameraFollowMultiplier = 1;
 
+        public bool CameraPixelSnapping;
+
         private float RoundedShakeX => MathF.Round(ShakeOffsetX);
         private float RoundedShakeY => MathF.Round(ShakeOffsetY);
 
-        public float RoundX => (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
-        public float RoundY => (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
+        public float RoundX => CameraPixelSnapping 
+            ? MathF.Round((Location.X + RoundedShakeX * Scale) / Scale) * Scale
+            : (int)Math.Round(Location.X + RoundedShakeX * Scale, MidpointRounding.AwayFromZero);
+        public float RoundY => CameraPixelSnapping 
+            ? MathF.Round((Location.Y + RoundedShakeY * Scale) / Scale) * Scale
+            : (int)Math.Round(Location.Y + RoundedShakeY * Scale, MidpointRounding.AwayFromZero);
 
         public Matrix TransformMatrix
         {

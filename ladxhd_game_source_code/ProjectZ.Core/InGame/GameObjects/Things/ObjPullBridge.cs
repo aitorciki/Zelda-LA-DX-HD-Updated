@@ -142,14 +142,17 @@ namespace ProjectZ.InGame.GameObjects.Things
         private void Draw(SpriteBatch spriteBatch)
         {
             var state = (int)Math.Floor((_state * _max) / 8);
-
-            var startPosition = new Vector2(EntityPosition.Position.X + 8, EntityPosition.Position.Y + (_up ? 0 : 16));
+            var rawStart = new Vector2(EntityPosition.Position.X + 8, EntityPosition.Position.Y + (_up ? 0 : 16));
+            var startPosition = GameSettings.PixelSnapping
+                ? new Vector2(MathF.Round(rawStart.X), MathF.Round(rawStart.Y))
+                : rawStart;
             var position = startPosition;
             var dir = _up ? 1 : -1;
 
             if (_state * _max <= _min)
             {
-                spriteBatch.Draw(_spritePullBridge.Texture, new Vector2(position.X, position.Y + dir * 16), _spritePullBridge.ScaledRectangle, Color.White,
+                var p = GameSettings.PixelSnapping ? new Vector2(MathF.Round(position.X), MathF.Round(position.Y + dir * 16)) : new Vector2(position.X, position.Y + dir * 16);
+                spriteBatch.Draw(_spritePullBridge.Texture, p, _spritePullBridge.ScaledRectangle, Color.White,
                     _up ? MathF.PI : 0, new Vector2(_spritePullBridge.ScaledRectangle.Width / 2f, 0), Vector2.One, SpriteEffects.None, 0);
                 return;
             }
@@ -157,25 +160,29 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (state >= 9)
             {
                 position.Y = startPosition.Y + (6 + _state * _max + 2) * dir;
-                spriteBatch.Draw(_spriteEnd.Texture, position, _spriteEnd.ScaledRectangle, Color.White,
+                var p = GameSettings.PixelSnapping ? new Vector2(MathF.Round(position.X), MathF.Round(position.Y)) : position;
+                spriteBatch.Draw(_spriteEnd.Texture, p, _spriteEnd.ScaledRectangle, Color.White,
                     _up ? MathF.PI : 0, new Vector2(_spriteEnd.ScaledRectangle.Width / 2f, 0), Vector2.One, SpriteEffects.None, 0);
             }
             else
             {
                 position.Y = startPosition.Y + (6 + _state * _max - 4) * dir;
-                spriteBatch.Draw(_spriteRope.Texture, position, _spriteRope.ScaledRectangle, Color.White,
+                var p = GameSettings.PixelSnapping ? new Vector2(MathF.Round(position.X), MathF.Round(position.Y)) : position;
+                spriteBatch.Draw(_spriteRope.Texture, p, _spriteRope.ScaledRectangle, Color.White,
                     _up ? MathF.PI : 0, new Vector2(_spriteRope.ScaledRectangle.Width / 2f, 0), Vector2.One, SpriteEffects.None, 0);
             }
 
             position = new Vector2(startPosition.X, startPosition.Y + (state * 8 + 6) * dir);
             for (var y = 0; y < state; y++)
             {
-                spriteBatch.Draw(_spriteMiddle.Texture, position, _spriteMiddle.ScaledRectangle, Color.White,
+                var p = GameSettings.PixelSnapping ? new Vector2(MathF.Round(position.X), MathF.Round(position.Y)) : position;
+                spriteBatch.Draw(_spriteMiddle.Texture, p, _spriteMiddle.ScaledRectangle, Color.White,
                     _up ? MathF.PI : 0, new Vector2(_spriteMiddle.ScaledRectangle.Width / 2f, 0), Vector2.One, SpriteEffects.None, 0);
                 position.Y -= 8 * dir;
             }
 
-            spriteBatch.Draw(_spriteStart.Texture, position, _spriteStart.ScaledRectangle, Color.White,
+            var startP = GameSettings.PixelSnapping ? new Vector2(MathF.Round(position.X), MathF.Round(position.Y)) : position;
+            spriteBatch.Draw(_spriteStart.Texture, startP, _spriteStart.ScaledRectangle, Color.White,
                 _up ? MathF.PI : 0, new Vector2(_spriteStart.ScaledRectangle.Width / 2f, 0), Vector2.One, SpriteEffects.None, 0);
 
             // draw the hook
@@ -183,7 +190,8 @@ namespace ProjectZ.InGame.GameObjects.Things
             {
                 position = startPosition;
                 position.Y = startPosition.Y + (6 + _state * _max + 5) * dir;
-                spriteBatch.Draw(_spriteHook.Texture, position, _spriteHook.ScaledRectangle, Color.White,
+                var p = GameSettings.PixelSnapping ? new Vector2(MathF.Round(position.X), MathF.Round(position.Y)) : position;
+                spriteBatch.Draw(_spriteHook.Texture, p, _spriteHook.ScaledRectangle, Color.White,
                     _up ? MathF.PI : 0, new Vector2(_spriteHook.ScaledRectangle.Width / 2f, 0), Vector2.One, SpriteEffects.None, 0);
             }
         }

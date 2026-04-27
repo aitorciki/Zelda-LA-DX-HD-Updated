@@ -1261,7 +1261,6 @@ namespace ProjectZ.InGame.GameObjects
             var fadeTime = 100;
             var speed = 500;
             var center = new Vector2(EntityPosition.X, EntityPosition.Y - 20);
-
             {
                 var time = (float)(Game1.TotalGameTime % speed);
                 var state = MathF.Sin((time / speed) * MathF.PI * 0.475f);
@@ -1269,20 +1268,21 @@ namespace ProjectZ.InGame.GameObjects
                 var transparency = MathHelper.Clamp(time / fadeTime, 0, 1) *
                                    MathHelper.Clamp((speed - time) / fadeTime, 0, 1);
                 var sourceRectangle = time < (speed / 1.65f) ? new Rectangle(194, 114, 12, 12) : new Rectangle(194, 98, 12, 12);
-
                 for (var y = 0; y < 2; y++)
                     for (var x = 0; x < 2; x++)
                     {
-                        var position = new Vector2(
+                        var rawPosition = new Vector2(
                             center.X - 6 + (x * 2 - 1) * distance,
                             center.Y - 6 + (y * 2 - 1) * distance);
+                        var position = GameSettings.PixelSnapping
+                            ? new Vector2(MathF.Round(rawPosition.X), MathF.Round(rawPosition.Y))
+                            : rawPosition;
                         spriteBatch.Draw(Resources.SprItem, position, sourceRectangle,
                             Color.White * transparency, 0, Vector2.Zero, Vector2.One,
                             (x == 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None) |
                             (y == 0 ? SpriteEffects.FlipVertically : SpriteEffects.None), 0);
                     }
             }
-
             {
                 var time = (float)((Game1.TotalGameTime + speed / 2) % speed);
                 var state = MathF.Sin((time / speed) * MathF.PI * 0.475f);
@@ -1290,16 +1290,16 @@ namespace ProjectZ.InGame.GameObjects
                 var transparency = MathHelper.Clamp(time / fadeTime, 0, 1) *
                                    MathHelper.Clamp((speed - time) / fadeTime, 0, 1);
                 var sourceRectangle = time < (speed / 1.65f) ? new Rectangle(176, 116, 16, 8) : new Rectangle(176, 100, 16, 8);
-
                 for (var y = 0; y < 2; y++)
                     for (var x = 0; x < 2; x++)
                     {
                         var rotation = (float)((x * 2 + y) * Math.PI / 2);
-
-                        var position = new Vector2(
+                        var rawPosition = new Vector2(
                             center.X + (y == 0 ? (x * 2 - 1) * distance : 0),
                             center.Y + (y == 0 ? 0 : (x * 2 - 1) * distance));
-
+                        var position = GameSettings.PixelSnapping
+                            ? new Vector2(MathF.Round(rawPosition.X), MathF.Round(rawPosition.Y))
+                            : rawPosition;
                         spriteBatch.Draw(Resources.SprItem, position, sourceRectangle,
                             Color.White * transparency, rotation, new Vector2(16, 4), Vector2.One, SpriteEffects.None, 0);
                     }
