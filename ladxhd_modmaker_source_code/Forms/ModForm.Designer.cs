@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_ModForm));
             this.picturebox_Mod = new System.Windows.Forms.PictureBox();
             this.groupBox_ModDescription = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.richTextBox_Description = new System.Windows.Forms.RichTextBox();
             this.label_ModName = new System.Windows.Forms.Label();
             this.button_Install = new System.Windows.Forms.Button();
             this.button_Close = new System.Windows.Forms.Button();
@@ -39,12 +41,10 @@
             this.button_GamePath = new System.Windows.Forms.Button();
             this.label_GamePath = new System.Windows.Forms.Label();
             this.textBox_GamePath = new System.Windows.Forms.TextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.richTextBox_Description = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.picturebox_Mod)).BeginInit();
             this.groupBox_ModDescription.SuspendLayout();
-            this.groupBox_ModGamePath.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox_ModGamePath.SuspendLayout();
             this.SuspendLayout();
             // 
             // picturebox_Mod
@@ -56,6 +56,7 @@
             this.picturebox_Mod.Location = new System.Drawing.Point(9, 0);
             this.picturebox_Mod.Name = "picturebox_Mod";
             this.picturebox_Mod.Size = new System.Drawing.Size(350, 248);
+            this.picturebox_Mod.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picturebox_Mod.TabIndex = 1;
             this.picturebox_Mod.TabStop = false;
             // 
@@ -68,6 +69,26 @@
             this.groupBox_ModDescription.Size = new System.Drawing.Size(347, 112);
             this.groupBox_ModDescription.TabIndex = 2;
             this.groupBox_ModDescription.TabStop = false;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panel1.Controls.Add(this.richTextBox_Description);
+            this.panel1.Location = new System.Drawing.Point(9, 28);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(330, 76);
+            this.panel1.TabIndex = 1;
+            // 
+            // richTextBox_Description
+            // 
+            this.richTextBox_Description.BackColor = System.Drawing.SystemColors.Window;
+            this.richTextBox_Description.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox_Description.Location = new System.Drawing.Point(1, 1);
+            this.richTextBox_Description.Name = "richTextBox_Description";
+            this.richTextBox_Description.ReadOnly = true;
+            this.richTextBox_Description.Size = new System.Drawing.Size(328, 74);
+            this.richTextBox_Description.TabIndex = 0;
+            this.richTextBox_Description.Text = "";
             // 
             // label_ModName
             // 
@@ -148,30 +169,9 @@
             this.textBox_GamePath.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox_GamePath_DragEnter);
             this.textBox_GamePath.Leave += new System.EventHandler(this.textBox_GamePath_Leave);
             // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.panel1.Controls.Add(this.richTextBox_Description);
-            this.panel1.Location = new System.Drawing.Point(9, 28);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(330, 76);
-            this.panel1.TabIndex = 1;
-            // 
-            // richTextBox_Description
-            // 
-            this.richTextBox_Description.BackColor = System.Drawing.SystemColors.Window;
-            this.richTextBox_Description.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox_Description.Location = new System.Drawing.Point(1, 1);
-            this.richTextBox_Description.Name = "richTextBox_Description";
-            this.richTextBox_Description.ReadOnly = true;
-            this.richTextBox_Description.Size = new System.Drawing.Size(328, 74);
-            this.richTextBox_Description.TabIndex = 0;
-            this.richTextBox_Description.Text = "";
-            // 
             // Form_ModForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(368, 495);
             this.Controls.Add(this.groupBox_ModGamePath);
             this.Controls.Add(this.progressBar);
@@ -190,9 +190,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picturebox_Mod)).EndInit();
             this.groupBox_ModDescription.ResumeLayout(false);
             this.groupBox_ModDescription.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.groupBox_ModGamePath.ResumeLayout(false);
             this.groupBox_ModGamePath.PerformLayout();
-            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

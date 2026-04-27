@@ -69,8 +69,7 @@ namespace LADXHD_ModMaker
             // Form_YesNoForm
             // 
             this.AcceptButton = this.Button_Yes;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.CancelButton = this.Button_No;
             this.ClientSize = new System.Drawing.Size(304, 96);
             this.Controls.Add(this.Label_Message);

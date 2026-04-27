@@ -30,8 +30,12 @@ namespace LADXHD_Patcher
         {
             foreach (Control ctrl in parent.Controls)
             {
-                ctrl.Size     = DPI.Scale(ctrl.Size);
-                ctrl.Location = DPI.Scale(ctrl.Location);
+                ctrl.Size = DPI.Scale(ctrl.Size);
+
+                if (ctrl.GetType() == typeof(TextBox))
+                    ctrl.Location = DPI.Scale(ctrl.Location, AddY:1);
+                else
+                    ctrl.Location = DPI.Scale(ctrl.Location);
 
                 if (ctrl.HasChildren)
                     ScaleControls(ctrl);

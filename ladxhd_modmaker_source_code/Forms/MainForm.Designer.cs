@@ -64,6 +64,7 @@
             this.picturebox_Main.Location = new System.Drawing.Point(9, 0);
             this.picturebox_Main.Name = "picturebox_Main";
             this.picturebox_Main.Size = new System.Drawing.Size(350, 248);
+            this.picturebox_Main.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picturebox_Main.TabIndex = 0;
             this.picturebox_Main.TabStop = false;
             // 
@@ -262,8 +263,7 @@
             // 
             // Form_MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(368, 643);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.button_Close);

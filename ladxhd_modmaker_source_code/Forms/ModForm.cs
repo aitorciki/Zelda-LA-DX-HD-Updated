@@ -127,7 +127,7 @@ namespace LADXHD_ModMaker
             if (string.IsNullOrEmpty(Config.GamePath))
             {
                 message = "The LADXHD Game Path can not be empty. It should point to the base folder of where the game is installed.";
-                Forms.OkayDialog.Display("Game Path Empty", 260, 40, 24, 16, 10, message);
+                Forms.OkayDialog.Display("Game Path Empty", DPI.Scale(260), DPI.Scale(40), DPI.Scale(24), DPI.Scale(16), 10, message);
                 return;
             }
 
@@ -136,7 +136,7 @@ namespace LADXHD_ModMaker
             if (!Config.GamePath.TestPath(true) || !GameExePath.TestPath())
             {
                 message = "The Game Path must point to a valid installation that contains the file \"Link's Awakening DX HD.exe\".";
-                Forms.OkayDialog.Display("Game Path Invalid", 260, 40, 24, 16, 10, message);
+                Forms.OkayDialog.Display("Game Path Invalid", DPI.Scale(260), DPI.Scale(40), DPI.Scale(24), DPI.Scale(16), 10, message);
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace LADXHD_ModMaker
 
             // Display that it's done.
             message = "Finished applying patches. Any \"Graphics\" mods or \"LAHDMods\" were generated in the \"Mods\" folder.";
-            Forms.OkayDialog.Display("Mod Installed", 270, 40, 25, 16, 10, message);
+            Forms.OkayDialog.Display("Mod Installed", DPI.Scale(270), DPI.Scale(40), DPI.Scale(25), DPI.Scale(16), 10, message);
             return;
         }
 

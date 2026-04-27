@@ -238,7 +238,7 @@ namespace LADXHD_ModMaker
             if (string.IsNullOrEmpty(Config.ModName))
             {
                 message = "Error: You must enter a \"Mod Name\" to continue.";
-                Forms.OkayDialog.Display("Game Path Empty", 260, 40, 33, 24, 10, message);
+                Forms.OkayDialog.Display("Mod Name Empty", DPI.Scale(260), DPI.Scale(40), DPI.Scale(33), DPI.Scale(24), 10, message);
                 return;
             }
 
@@ -246,7 +246,7 @@ namespace LADXHD_ModMaker
             if (string.IsNullOrEmpty(Config.Description))
             {
                 message = "Error: You must enter a \"Mod Description\" to continue.";
-                Forms.OkayDialog.Display("Game Path Empty", 270, 40, 22, 24, 10, message);
+                Forms.OkayDialog.Display("Description Empty", DPI.Scale(270), DPI.Scale(40), DPI.Scale(22), DPI.Scale(24), 10, message);
                 return;
             }
 
@@ -254,7 +254,7 @@ namespace LADXHD_ModMaker
             if (string.IsNullOrEmpty(Config.GamePath))
             {
                 message = "The LADXHD Game Path can not be empty. It should point to the base folder of where the game is installed.";
-                Forms.OkayDialog.Display("Game Path Empty", 260, 40, 24, 16, 10, message);
+                Forms.OkayDialog.Display("Game Path Empty", DPI.Scale(260), DPI.Scale(40), DPI.Scale(24), DPI.Scale(16), 10, message);
                 return;
             }
 
@@ -263,7 +263,7 @@ namespace LADXHD_ModMaker
             if (!Config.GamePath.TestPath(true) || !GameExePath.TestPath())
             {
                 message = "The Game Path must point to a valid installation that contains the file \"Link's Awakening DX HD.exe\".";
-                Forms.OkayDialog.Display("Game Path Invalid", 260, 40, 24, 16, 10, message);
+                Forms.OkayDialog.Display("Game Path Invalid", DPI.Scale(260), DPI.Scale(40), DPI.Scale(24), DPI.Scale(16), 10, message);
                 return;
             }
 
@@ -271,7 +271,7 @@ namespace LADXHD_ModMaker
             if (string.IsNullOrEmpty(_outputPath) || !_outputPath.TestPath(true))
             {
                 message = "Error: Select a valid \"Output Path\" to continue.";
-                Forms.OkayDialog.Display("Game Path Invalid", 260, 40, 36, 24, 10, message);
+                Forms.OkayDialog.Display("Output Path Invalid", DPI.Scale(260), DPI.Scale(40), DPI.Scale(36), DPI.Scale(24), 10, message);
                 return;
             }
 
@@ -282,7 +282,7 @@ namespace LADXHD_ModMaker
 
             // Display that it's done.
             message = "Finished generating. Mod can be found in the \"Output Path\" in a folder named \"~ModOutput\".";
-            Forms.OkayDialog.Display("Mod Created", 260, 40, 33, 16, 10, message);
+            Forms.OkayDialog.Display("Mod Created", DPI.Scale(260), DPI.Scale(40), DPI.Scale(33), DPI.Scale(16), 10, message);
             return;
         }
 
