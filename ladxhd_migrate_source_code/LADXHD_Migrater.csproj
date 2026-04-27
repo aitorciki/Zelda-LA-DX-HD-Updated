@@ -69,6 +69,7 @@
     <Compile Include="Forms\YesNoForm.Designer.cs">
       <DependentUpon>YesNoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Imported\DPIScaling.cs" />
     <Compile Include="Imported\Extensions.cs" />
     <Compile Include="Imported\FileItem.cs" />
     <Compile Include="Imported\Resources.cs" />

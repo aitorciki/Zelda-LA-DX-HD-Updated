@@ -133,7 +133,7 @@ namespace LADXHD_Migrater
             // If something didn't work out.
             catch (Exception ex)
             {
-                Forms.OkayDialog.Display("Exception Caught", 250, 40, 27, 9, 15, "Exception: " + ex.Message);
+                Forms.OkayDialog.Display("Exception Caught", DPI.Scale(250), DPI.Scale(40), DPI.Scale(27), DPI.Scale(9), 15, "Exception: " + ex.Message);
             }
 
             // Return whether or not it actually succeeded.
@@ -187,7 +187,7 @@ namespace LADXHD_Migrater
                 if (dotnet.ExitCode != 0)
                 {
                     string message = string.IsNullOrWhiteSpace(error) ? output : error;
-                    Forms.OkayDialog.Display(errorTitle, 250, 40, 27, 9, 15, message);
+                    Forms.OkayDialog.Display(errorTitle, DPI.Scale(250), DPI.Scale(40), DPI.Scale(27), DPI.Scale(9), 15, message);
                     return false;
                 }
             }

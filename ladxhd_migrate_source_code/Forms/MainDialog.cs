@@ -94,11 +94,11 @@ namespace LADXHD_Migrater
         {
             if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
             {
-                Forms.OkayDialog.Display("Error: Assets Missing", 250, 40, 26, 16, 15,
+                Forms.OkayDialog.Display("Error: Assets Missing", DPI.Scale(250), DPI.Scale(40), DPI.Scale(26), DPI.Scale(16), 15,
                     "Either the original \"Content\" folder, \"Data\" folder, or both are missing from the \"assets_original\" folder.");
                 return false;
             }
-            bool verify = Forms.YesNoDialog.Display("Confirm Migration", 250, 40, 31, 16, true, 
+            bool verify = Forms.YesNoDialog.Display("Confirm Migration", DPI.Scale(250), DPI.Scale(40), DPI.Scale(31), DPI.Scale(16), true, 
                 "Are you sure you wish to migrate assets? This will apply current patches and overwrite your assets!");
             return verify;
         }
@@ -108,26 +108,26 @@ namespace LADXHD_Migrater
             // If the original "Content" or "Data" folder is missing.
             if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
             {
-                Forms.OkayDialog.Display("Error: Assets Missing", 250, 40, 26, 16, 15,
+                Forms.OkayDialog.Display("Error: Assets Missing", DPI.Scale(250), DPI.Scale(40), DPI.Scale(26), DPI.Scale(16), 15,
                     "Either the original \"Content\" folder, \"Data\" folder, or both are missing from the \"assets_original\" folder.");
                 return false;
             }
             // If the updated "Content" or "Data" folder is missing.
             if (!Config.Update_Content.TestPath() || !Config.Update_Data.TestPath())
             {
-                Forms.OkayDialog.Display("Assets Missing", 250, 40, 34, 16, 15,
+                Forms.OkayDialog.Display("Assets Missing", DPI.Scale(250), DPI.Scale(40), DPI.Scale(34), DPI.Scale(16), 15,
                     "Either the \"Content\" folder, \"Data\" folder, or both are missing from \"ladxhd_game_source_code\".");
                 return false;
             }
             // Ask the user if they want to create patches.
-            bool verify = Forms.YesNoDialog.Display("Confirm Create Patches", 250, 40, 31, 16, true, 
+            bool verify = Forms.YesNoDialog.Display("Confirm Create Patches", DPI.Scale(250), DPI.Scale(40), DPI.Scale(31), DPI.Scale(16), true, 
                 "Are you sure you wish to create patches? This will overwrite all current patches with recent changes!");
             return verify;
         }
 
         private static bool VerifyCleanFiles()
         {
-            bool verify = Forms.YesNoDialog.Display("Clean Build Files", 250, 40, 29, 9, true, 
+            bool verify = Forms.YesNoDialog.Display("Clean Build Files", DPI.Scale(250), DPI.Scale(40), DPI.Scale(29), DPI.Scale(9), true, 
                 "Are you sure you wish to clean build files? This will remove all instances of \'obj\', \'bin\', \'Publish\', and \'zelda_ladxhd_build\' folders if they currently exist.");
             return verify;
         }
@@ -144,7 +144,7 @@ namespace LADXHD_Migrater
             Functions.MigrateFiles();
 
             // Let the user know that files were migrated.
-            Forms.OkayDialog.Display("Finished Migration", 280, 40, 45, 26, 15, 
+            Forms.OkayDialog.Display("Finished Migration", DPI.Scale(280), DPI.Scale(40), DPI.Scale(45), DPI.Scale(26), 15, 
                 "Updated Content/Data files to latest versions.");
 
             // Enable the dialog's controls.
@@ -163,7 +163,7 @@ namespace LADXHD_Migrater
             Functions.CreatePatches();
 
             // Let the user know that the patches were created.
-            Forms.OkayDialog.Display("Patches Created", 250, 40, 27, 9, 15,
+            Forms.OkayDialog.Display("Patches Created", DPI.Scale(250), DPI.Scale(40), DPI.Scale(27), DPI.Scale(9), 15,
                 "Finished creating xdelta patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.");
 
             // Enable the dialog's controls.
@@ -182,7 +182,7 @@ namespace LADXHD_Migrater
             Functions.CleanBuildFiles();
 
             // Let the user know that it finished.
-            Forms.OkayDialog.Display("Finished", 260, 40, 26, 26, 15,
+            Forms.OkayDialog.Display("Finished", DPI.Scale(260), DPI.Scale(40), DPI.Scale(26), DPI.Scale(26), 15,
                 "Finished cleaning build files (obj/bin/Publish folders).");
 
             // Enable the dialog's controls.
@@ -198,7 +198,7 @@ namespace LADXHD_Migrater
             Functions.CreateBuild();
 
             // Let the user know it's finished.
-            Forms.OkayDialog.Display("Finished", 250, 40, 28, 16, 15,
+            Forms.OkayDialog.Display("Finished", DPI.Scale(250), DPI.Scale(40), DPI.Scale(28), DPI.Scale(16), 15,
                 "Finished build process. If the build was successful, it can be found in the \"~Publish\" folder.");
 
             // Enable the dialog's controls.

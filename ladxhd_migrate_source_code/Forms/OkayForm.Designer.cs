@@ -57,8 +57,7 @@ namespace LADXHD_Migrater
             // Form_OkayForm
             // 
             this.AcceptButton = this.Button_OK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(304, 96);
             this.Controls.Add(this.Button_OK);
             this.Controls.Add(this.Label_Message);
@@ -76,7 +75,7 @@ namespace LADXHD_Migrater
 
         }
         #endregion
-        private System.Windows.Forms.Button Button_OK;
-        private System.Windows.Forms.Label  Label_Message;
+        public System.Windows.Forms.Button Button_OK;
+        public System.Windows.Forms.Label  Label_Message;
     }
 }
