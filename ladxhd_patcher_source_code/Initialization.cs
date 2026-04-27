@@ -17,6 +17,10 @@ namespace LADXHD_Patcher
 
         private const int ATTACH_PARENT_PROCESS = -1;
 
+        // Import to make the application DPI aware for high DPI displays.
+        [DllImport("user32.dll")]
+        private static extern bool SetProcessDPIAware();
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -25,6 +29,10 @@ namespace LADXHD_Patcher
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Initialize DPI scaling.
+            SetProcessDPIAware();
+            DPI.Init();
 
             // Check for silent mode arguments
             bool silentMode = args.Any(arg => 

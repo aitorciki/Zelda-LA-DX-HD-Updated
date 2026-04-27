@@ -14,6 +14,28 @@ namespace LADXHD_Patcher
             MainDialog  = new Form_MainForm();
             OkayDialog  = new Form_OkayForm();
             YesNoDialog = new Form_YesNoForm();
+
+            // The size of forms needs to be manually scaled.
+            MainDialog.Size = DPI.Scale(new Size(384, 533));
+            OkayDialog.Size = DPI.Scale(new Size(320, 135));
+            YesNoDialog.Size = DPI.Scale(new Size(320, 135));
+
+            // Scale the controls through a loop.
+            ScaleControls(MainDialog);
+            ScaleControls(OkayDialog);
+            ScaleControls(YesNoDialog);
+        }
+
+        static void ScaleControls(Control parent)
+        {
+            foreach (Control ctrl in parent.Controls)
+            {
+                ctrl.Size     = DPI.Scale(ctrl.Size);
+                ctrl.Location = DPI.Scale(ctrl.Location);
+
+                if (ctrl.HasChildren)
+                    ScaleControls(ctrl);
+            }
         }
 
         public static void CreatePatcherText()
@@ -25,8 +47,8 @@ namespace LADXHD_Patcher
             MainDialog.TextBox_NoClick = new TransparentLabel
             {
                 Text      = "",
-                Size      = new Size(326, 114),
-                Location  = new Point(10, 14),
+                Size      = DPI.Scale(new Size(326, 114)),
+                Location  = DPI.Scale(new Point(10, 14)),
                 TabIndex  = 16
             };
             MainDialog.groupBox_Main.Controls.Add(MainDialog.TextBox_NoClick);
@@ -34,8 +56,8 @@ namespace LADXHD_Patcher
             // The Advanced RichTextBox allows for justified text.
             MainDialog.TextBox_Info = new AdvRichTextBox
             {
-                Size        = new Size(326, 114),
-                Location    = new Point(10, 14),
+                Size        = DPI.Scale(new Size(326, 114)),
+                Location    = DPI.Scale(new Point(10, 14)),
                 TabStop     = false,
                 BorderStyle = BorderStyle.None,
                 ReadOnly    = true,
@@ -73,8 +95,8 @@ namespace LADXHD_Patcher
             // Add a "Success" label.
             MainDialog.Label_Success = new TransparentLabel();
             MainDialog.Label_Success.Text = "Patching Successful!";
-            MainDialog.Label_Success.Size = new Size(130, 13);
-            MainDialog.Label_Success.Location = new Point(132, 433);
+            MainDialog.Label_Success.Size = DPI.Scale(new Size(130, 13));
+            MainDialog.Label_Success.Location = DPI.Scale(new Point(132, 433));
             MainDialog.Label_Success.Visible = false;
             MainDialog.Label_Success.ForeColor = Color.FromName("White");
             MainDialog.Controls.Add(MainDialog.Label_Success);
@@ -84,22 +106,26 @@ namespace LADXHD_Patcher
         {
             if (isAndroid)
             {
-                MainDialog.ClientSize = new Size(368, 518);
-                MainDialog.groupBox_Graphics.Size = new Size(347, 72);
-                MainDialog.button_Patch.Location = new Point(9, 480);
-                MainDialog.button_Exit.Location = new Point(251, 480);
-                MainDialog.button_ChangeLog.Location = new Point(130, 480);
-                MainDialog.progressBar.Location = new Point(9, 456);
+                MainDialog.Size = DPI.Scale(new Size(384, 556));
+                MainDialog.MinimumSize = DPI.Scale(new Size(384, 556));
+                MainDialog.MaximumSize = DPI.Scale(new Size(384, 556));
+                MainDialog.groupBox_Graphics.Size = DPI.Scale(new Size(347, 72));
+                MainDialog.button_Patch.Location = DPI.Scale(new Point(9, 480));
+                MainDialog.button_Exit.Location = DPI.Scale(new Point(251, 480));
+                MainDialog.button_ChangeLog.Location = DPI.Scale(new Point(130, 480));
+                MainDialog.progressBar.Location = DPI.Scale(new Point(9, 456));
                 MainDialog.checkBox_AndroidMods.Visible = true;
             }
             else
             {
-                MainDialog.ClientSize = new Size(368, 494);
-                MainDialog.groupBox_Graphics.Size = new Size(347, 48);
-                MainDialog.button_Patch.Location = new Point(9, 456);
-                MainDialog.button_Exit.Location = new Point(251, 456);
-                MainDialog.button_ChangeLog.Location = new Point(130, 456);
-                MainDialog.progressBar.Location = new Point(9, 432);
+                MainDialog.Size = DPI.Scale(new Size(384, 533));
+                MainDialog.MinimumSize = DPI.Scale(new Size(384, 533));
+                MainDialog.MaximumSize = DPI.Scale(new Size(384, 533));
+                MainDialog.groupBox_Graphics.Size = DPI.Scale(new Size(347, 48));
+                MainDialog.button_Patch.Location = DPI.Scale(new Point(9, 456));
+                MainDialog.button_Exit.Location = DPI.Scale(new Point(251, 456));
+                MainDialog.button_ChangeLog.Location = DPI.Scale(new Point(130, 456));
+                MainDialog.progressBar.Location = DPI.Scale(new Point(9, 432));
                 MainDialog.checkBox_AndroidMods.Visible = false;
             }
         }

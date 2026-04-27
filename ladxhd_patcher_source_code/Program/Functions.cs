@@ -91,7 +91,7 @@ namespace LADXHD_Patcher
             if (_silentMode)
                 Console.WriteLine("WARNING: " + message);
             else
-                Forms.OkayDialog.Display(title, width, height, titleSize, titleHeight, bodySize, message);
+                Forms.OkayDialog.Display(title, DPI.Scale(width), DPI.Scale(height), DPI.Scale(titleSize), DPI.Scale(titleHeight), bodySize, message);
         }
 
         private static void ResetProgress()
@@ -755,7 +755,7 @@ namespace LADXHD_Patcher
         {
             string title = "Original Executable Not Found";
             string message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
-            Forms.OkayDialog.Display(title, 250, 40, 27, 10, 15, message);
+            Forms.OkayDialog.Display(title, DPI.Scale(250), DPI.Scale(40), DPI.Scale(27), DPI.Scale(10), 15, message);
         }
 
         private static bool CompareHashes(string hash1, string hash2, string exePath)
@@ -822,7 +822,7 @@ namespace LADXHD_Patcher
             string message = Config.SelectedPlatform == Platform.Android
                 ? "Create an APK using game files patching to v" + Config.Version + "?"
                 : "Are you sure you wish to patch the game to v" + Config.Version + "?";
-            return Forms.YesNoDialog.Display(title, 280, 20, 24, 24, true, message);
+            return Forms.YesNoDialog.Display(title, DPI.Scale(280), DPI.Scale(20), DPI.Scale(24), DPI.Scale(24), true, message);
         }
 
         private static void ReportFinished()
@@ -839,7 +839,7 @@ namespace LADXHD_Patcher
                     string message = _patchFromBackup
                         ? "Creating an APK from v1.0.0 backup files was successful. The game version is set to v"+ Config.Version + "." 
                         : "Creating an APK from original v1.0.0 files was successful. The game version is set to v"+ Config.Version + ".";
-                    Forms.OkayDialog.Display(title, 260, 40, 34, 16, 10, message);
+                    Forms.OkayDialog.Display(title, DPI.Scale(260), DPI.Scale(40), DPI.Scale(34), DPI.Scale(16), 10, message);
                     ShowPatchingSuccessLabel();
                 }
                 else
@@ -848,7 +848,7 @@ namespace LADXHD_Patcher
                     string message = _patchFromBackup
                         ? "Patching the game from v1.0.0 backup files was successful. The game was updated to v"+ Config.Version + "." 
                         : "Patching Link's Awakening DX HD v1.0.0 was successful. The game was updated to v"+ Config.Version + ".";
-                    Forms.OkayDialog.Display(title, 260, 40, 34, 16, 10, message);
+                    Forms.OkayDialog.Display(title, DPI.Scale(260), DPI.Scale(40), DPI.Scale(34), DPI.Scale(16), 10, message);
                     ShowPatchingSuccessLabel();
                 }
             }

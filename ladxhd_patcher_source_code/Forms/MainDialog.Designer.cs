@@ -37,11 +37,11 @@
             this.picturebox_Main = new System.Windows.Forms.PictureBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox_Graphics = new System.Windows.Forms.GroupBox();
+            this.checkBox_AndroidMods = new System.Windows.Forms.CheckBox();
             this.combBox_API = new System.Windows.Forms.ComboBox();
             this.label_API = new System.Windows.Forms.Label();
             this.comboBox_Platform = new System.Windows.Forms.ComboBox();
             this.label_Platform = new System.Windows.Forms.Label();
-            this.checkBox_AndroidMods = new System.Windows.Forms.CheckBox();
             this.MainTooltip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picturebox_Main)).BeginInit();
             this.groupBox_Graphics.SuspendLayout();
@@ -94,6 +94,7 @@
             this.picturebox_Main.Location = new System.Drawing.Point(9, 0);
             this.picturebox_Main.Name = "picturebox_Main";
             this.picturebox_Main.Size = new System.Drawing.Size(347, 241);
+            this.picturebox_Main.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picturebox_Main.TabIndex = 4;
             this.picturebox_Main.TabStop = false;
             // 
@@ -117,6 +118,19 @@
             this.groupBox_Graphics.TabIndex = 7;
             this.groupBox_Graphics.TabStop = false;
             // 
+            // checkBox_AndroidMods
+            // 
+            this.checkBox_AndroidMods.AutoSize = true;
+            this.checkBox_AndroidMods.Location = new System.Drawing.Point(9, 46);
+            this.checkBox_AndroidMods.Name = "checkBox_AndroidMods";
+            this.checkBox_AndroidMods.Size = new System.Drawing.Size(157, 17);
+            this.checkBox_AndroidMods.TabIndex = 14;
+            this.checkBox_AndroidMods.Text = "Pack Mods Folder Into APK";
+            this.MainTooltip.SetToolTip(this.checkBox_AndroidMods, "Packs all the \"Mods\" folders directly\r\ninto the APK. This can work around\r\nan iss" +
+        "ue on some Android versions\r\nwhere mods with subfolders crash.");
+            this.checkBox_AndroidMods.UseVisualStyleBackColor = true;
+            this.checkBox_AndroidMods.CheckedChanged += new System.EventHandler(this.checkBox_AndroidMods_CheckedChanged);
+            // 
             // combBox_API
             // 
             this.combBox_API.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -132,10 +146,9 @@
             // 
             // label_API
             // 
-            this.label_API.AutoSize = true;
             this.label_API.Location = new System.Drawing.Point(178, 19);
             this.label_API.Name = "label_API";
-            this.label_API.Size = new System.Drawing.Size(41, 13);
+            this.label_API.Size = new System.Drawing.Size(49, 18);
             this.label_API.TabIndex = 12;
             this.label_API.Text = "Target:";
             this.MainTooltip.SetToolTip(this.label_API, "The target graphics API. It\'s suggested\r\nto use Direct-X for Windows. OpenGL is\r\n" +
@@ -160,32 +173,17 @@
             // 
             // label_Platform
             // 
-            this.label_Platform.AutoSize = true;
             this.label_Platform.Location = new System.Drawing.Point(6, 19);
             this.label_Platform.Name = "label_Platform";
-            this.label_Platform.Size = new System.Drawing.Size(48, 13);
+            this.label_Platform.Size = new System.Drawing.Size(53, 18);
             this.label_Platform.TabIndex = 10;
             this.label_Platform.Text = "Platform:";
             this.MainTooltip.SetToolTip(this.label_Platform, "The selected platform to patch the game \r\nfor. Note that this is a destructive pr" +
         "ocess\r\nso it is a good idea to backup the original.");
             // 
-            // checkBox_AndroidMods
-            // 
-            this.checkBox_AndroidMods.AutoSize = true;
-            this.checkBox_AndroidMods.Location = new System.Drawing.Point(9, 46);
-            this.checkBox_AndroidMods.Name = "checkBox_AndroidMods";
-            this.checkBox_AndroidMods.Size = new System.Drawing.Size(157, 17);
-            this.checkBox_AndroidMods.TabIndex = 14;
-            this.checkBox_AndroidMods.Text = "Pack Mods Folder Into APK";
-            this.MainTooltip.SetToolTip(this.checkBox_AndroidMods, "Packs all the \"Mods\" folders directly\r\ninto the APK. This can work around\r\nan iss" +
-        "ue on some Android versions\r\nwhere mods with subfolders crash.");
-            this.checkBox_AndroidMods.UseVisualStyleBackColor = true;
-            this.checkBox_AndroidMods.CheckedChanged += new System.EventHandler(this.checkBox_AndroidMods_CheckedChanged);
-            // 
             // Form_MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(368, 494);
             this.Controls.Add(this.groupBox_Graphics);
             this.Controls.Add(this.progressBar);
