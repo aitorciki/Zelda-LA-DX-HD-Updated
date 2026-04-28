@@ -469,35 +469,29 @@ namespace ProjectZ.InGame.GameObjects
         //====================
         // Mod File Values
         //====================
-        bool swordbeam_level1 = false;
-        bool swordbeam_always = false;
-
-        float sword_charge_time = 670;
-        float boots_charge_time = 533;
-
-        float feather_velocity = 2.35f;
-
-        bool light_source = false;
-        int light_red = 255;
-        int light_grn = 255;
-        int light_blu = 255;
-        float light_bright = 1.0f;
-        int light_size = 120;
-
-        float dmg_shader_mark0 = 0.100f;
-        float dmg_shader_mark1 = 0.725f;
-
-        float dmg_shader_color1_red = 255;
-        float dmg_shader_color1_grn = 181;
-        float dmg_shader_color1_blu =  49;
-
-        float dmg_shader_color2_red = 222;
-        float dmg_shader_color2_grn = 0;
-        float dmg_shader_color2_blu = 0;
-
-        float dmg_shader_color3_red = 0;
-        float dmg_shader_color3_grn = 0;
-        float dmg_shader_color3_blu = 0;
+        bool   swordbeam_level1       = false;
+        bool   swordbeam_always       = false;
+        float  sword_charge_time      = 670;
+        float  boots_charge_time      = 533;
+        float  feather_velocity       = 2.35f;
+        float  corner_sidestep        = 2.50f;
+        bool   light_source           = false;
+        int    light_red              = 255;
+        int    light_grn              = 255;
+        int    light_blu              = 255;
+        float  light_bright           = 1.0f;
+        int    light_size             = 120;
+        float  dmg_shader_mark0       = 0.100f;
+        float  dmg_shader_mark1       = 0.725f;
+        float  dmg_shader_color1_red  = 255;
+        float  dmg_shader_color1_grn  = 181;
+        float  dmg_shader_color1_blu  = 49;
+        float  dmg_shader_color2_red  = 222;
+        float  dmg_shader_color2_grn  = 0;
+        float  dmg_shader_color2_blu  = 0;
+        float  dmg_shader_color3_red  = 0;
+        float  dmg_shader_color3_grn  = 0;
+        float  dmg_shader_color3_blu  = 0;
 
         public ObjLink() : base((Map.Map)null)
         {
@@ -536,6 +530,8 @@ namespace ProjectZ.InGame.GameObjects
                 HoleOnPull = OnHolePull,
                 HoleAbsorb = OnHoleAbsorb,
                 MoveCollision = OnMoveCollision,
+                CornerCorrection = true,
+                CornerCorrectionThreshold = corner_sidestep,
                 CollisionTypes = Values.CollisionTypes.Normal |
                                  Values.CollisionTypes.Enemy |
                                  Values.CollisionTypes.PlayerItem |

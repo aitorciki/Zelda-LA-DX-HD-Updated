@@ -42,6 +42,16 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public Values.BodyCollision VelocityCollision;
         public Values.BodyCollision LastVelocityCollision;
 
+        // Pushes a body to the side when colliding with a corner within a certain
+        // pixel range. Used exclusively on Link but could be added to other "bodies".
+        public bool CornerCorrection = false;
+        public float CornerCorrectionThreshold = 2f;
+
+        // Allows walking up "pixel stairs" that are 1-pixel high. This used to be used in 2D underground
+        // sections, but goes largely unused due to useage of 1-way colliders and their "push up" mechanic.
+        public bool EnableStepUp;
+        public int MaxStepHeight = 1;
+
         public float JumpStartHeight;
         public float MaxJumpHeight = 4;
         public float Drag = 0.8f;
@@ -54,12 +64,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         public float Bounciness2D = 0;
         public float SpeedMultiply = 1;
         public float AbsorbPercentage = 0.85f;
-        // not sure why this was changed from beeing zero
         public float AbsorbStop = 0.15f;
         public float MaxSlideDistance = 6.0f;
-
-        public bool EnableStepUp;
-        public int MaxStepHeight = 1;
 
         public float Width
         {
@@ -93,7 +99,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Components
         
         public bool SimpleMovement = false;             // Used to make the X/Y movement happen in one step.
         public bool IgnoreCollision = false;            // Outright ignore all collision.
-        public bool IgnoreInsideCollision = true;       // If alread inside a collider, ignore collision.
+        public bool IgnoreInsideCollision = true;       // If already inside a collider, ignore remaining collision.
 
         public bool IsActive = true;
         public bool IsGrounded = true;

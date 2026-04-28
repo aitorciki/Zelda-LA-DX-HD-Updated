@@ -117,6 +117,11 @@ boots_charge_time = 500
 feather_velocity = 2.35
 
 //: ObjLink
+// The number of collision pixels along an edge to perform corner auto-correction. This is a feature that nudges Link to the side when pushing against the edge of collision, allowing him to sidestep and continue walking.
+// Default: 2.50
+corner_sidestep = 2.50
+
+//: ObjLink
 // Light source around Link (like the lamp from The Legend of Zelda: A Link to the Past). Color values should be 0-255. Brightness 0.00-1.00. Higher values may cause issues or crash the game.
 // Defaults: false / 255 / 255 / 255 / 0.70 / 46
 light_source = false

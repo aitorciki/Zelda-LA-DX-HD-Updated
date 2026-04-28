@@ -154,6 +154,7 @@ public static class AdvancedSettings
             { "light_blu",                      "Light: Blue Value"                 },
             { "light_bright",                   "Light: Brightness"                 },
             { "light_size",                     "Light: Radius"                     },
+            { "corner_sidestep",                "Corner Side-Stepping"              },
             { "dmg_shader_mark0",               "Damage Shader Mark 0"              },
             { "dmg_shader_mark1",               "Damage Shader Mark 1"              },
             { "dmg_shader_color1_red",          "Damage Shader Red C1"              },

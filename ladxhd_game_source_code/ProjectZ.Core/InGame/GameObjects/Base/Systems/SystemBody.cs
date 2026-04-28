@@ -291,7 +291,8 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
 
             var collisionType = Values.BodyCollision.None;
 
-            // move body in one step without aligning it to colliding objects
+            // Move body in one step without aligning it to colliding objects. This is
+            // used exclusively on the Beamos laser; probably to reduce resource usage.
             if (body.SimpleMovement)
             {
                 var collidingBox = Box.Empty;
@@ -304,7 +305,7 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
                 }
                 else
                 {
-                    // the returned collision type is not as precise as with the other method
+                    // The returned collision type is not as precise as with the other method.
                     collisionType |= (direction % 2 == 0 ? Values.BodyCollision.Horizontal : Values.BodyCollision.Vertical);
 
                     if (direction == 0)
@@ -324,79 +325,121 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             {
                 var collidingBox = Box.Empty;
 
-                // move horizontally
+                // --- Horizontal Movement ---
                 if (!Collision(body, body.Position.X + offset.X, body.Position.Y, offset.X < 0 ? 0 : 2, collisionTypes, ignoreField, ref collidingBox))
                 {
                     body.Position.X += offset.X;
                 }
                 else
                 {
-                    var nullBox = Box.Empty;
-                    collisionType |= offset.X < 0 ? Values.BodyCollision.Left : Values.BodyCollision.Right;
-                    collisionType |= Values.BodyCollision.Horizontal;
+                    // --- Corner Correction (Horizontal) ---
+                    bool correctedX = false;
 
-                    // try to move around the object if there is space around it
-                    if (slide)
+                    if (body.CornerCorrection && Math.Abs(offset.X) >= Math.Abs(offset.Y))
                     {
-                        var sliderOffset = Math.Abs(offset.X * 0.5f);
+                        float playerTop     = body.Position.Y + body.OffsetY;
+                        float playerBottom  = playerTop + body.Height;
+                        float wallTop       = collidingBox.Y;
+                        float wallBottom    = collidingBox.Front;
 
-                        if (offset.Y >= 0 && !Collision(body, body.Position.X + offset.X,
-                            body.Position.Y + body.MaxSlideDistance, offset.X < 0 ? 0 : 2, collisionTypes, ignoreField, ref nullBox))
-                        {
-                            body.SlideOffset.Y += sliderOffset;
-                        }
-                        else if (offset.Y <= 0 && !Collision(body, body.Position.X + offset.X,
-                            body.Position.Y - body.MaxSlideDistance, offset.X < 0 ? 0 : 2, collisionTypes, ignoreField, ref nullBox))
-                        {
-                            body.SlideOffset.Y -= sliderOffset;
-                        }
-                    }
+                        // How many pixels is the player overlapping each corner of the wall?
+                        float overlapTop    = playerBottom - wallTop;   // Player bottom past wall's top edge.
+                        float overlapBottom = wallBottom - playerTop;   // Wall's bottom edge past player top.
 
-                    // align with the collided object
-                    if (offset.X < 0 &&
-                        Math.Abs(body.Position.X - collidingBox.Right + body.OffsetX) < Math.Abs(offset.X) &&
-                        !Collision(body, collidingBox.Right - body.OffsetX, body.Position.Y, 0, collisionTypes, ignoreField, ref nullBox))
-                    {
-                        body.Position.X = collidingBox.Right - body.OffsetX;
-                    }
-                    else if (offset.X > 0 &&
-                             Math.Abs(body.Position.X - (collidingBox.X - (body.Width + body.OffsetX))) < Math.Abs(offset.X) &&
-                             !Collision(body, collidingBox.X - (body.Width + body.OffsetX), body.Position.Y, 2, collisionTypes, ignoreField, ref nullBox))
-                    {
-                        body.Position.X = collidingBox.X - (body.Width + body.OffsetX);
-                    }
+                        // Amount to nudge. Note the additiona "0.01 overcorrection" which helps when analog is slightly vertical.
+                        float nudge = 0f;
 
-                    // try to push the colliding object
-                    // if this is done before the alignment it can happen that the body walks into the object it is pushing
-                    if (isPusher && Math.Abs(offset.X) >= Math.Abs(offset.Y))
-                    {
-                        var pushRectangle = new Box(
-                            body.Position.X + offset.X + body.OffsetX, body.Position.Y + body.OffsetY, body.Position.Z, body.Width, body.Height, body.Depth);
-                        Game1.GameManager.MapManager.CurrentMap.Objects.PushObject(
-                            pushRectangle, new Vector2(Math.Sign(offset.X), 0), PushableComponent.PushType.Continues);
-                    }
+                        // Grazing the top corner of the wall -> nudge player upward.
+                        if (overlapTop > 0 && overlapTop <= body.CornerCorrectionThreshold && overlapBottom > body.Height)
+                            nudge = -overlapTop - 0.01f;
 
-                    // Try stair-step before blocking horizontal movement
-                    if (body.EnableStepUp && body.IsGrounded && offset.X != 0 && offset.Y == 0)
-                    {
-                        for (int step = 1; step <= body.MaxStepHeight; step++)
+                        // Grazing the bottom corner of the wall -> nudge player downward.
+                        else if (overlapBottom > 0 && overlapBottom <= body.CornerCorrectionThreshold && overlapTop > body.Height)
+                            nudge = overlapBottom + 0.01f;
+
+                        if (nudge != 0f)
                         {
                             var testBox = Box.Empty;
-
-                            // Check if step-up is possible.
-                            if (Collision(body, body.Position.X, body.Position.Y - step, 1, collisionTypes, ignoreField, ref testBox))
-                                break;
-
-                            var posX = body.Position.X + offset.X;
-                            var posY = body.Position.Y - step;
-                            var direction = offset.X < 0 ? 0 : 2;
-
-                            // Check if forward movement is possible by stepping up the step height.
-                            if (!Collision(body, posX, posY, direction, collisionTypes, ignoreField, ref testBox))
+                            if (!Collision(body, body.Position.X + offset.X, body.Position.Y + nudge,
+                                    offset.X < 0 ? 0 : 2, collisionTypes, ignoreField, ref testBox))
                             {
-                                body.Position.Y -= step;
+                                body.Position.Y += nudge;
                                 body.Position.X += offset.X;
-                                return Values.BodyCollision.None;
+                                correctedX = true;
+                            }
+                        }
+                    }
+
+                    if (!correctedX)
+                    {
+                        var nullBox = Box.Empty;
+                        collisionType |= offset.X < 0 ? Values.BodyCollision.Left : Values.BodyCollision.Right;
+                        collisionType |= Values.BodyCollision.Horizontal;
+
+                        // Try to move around the object if there is space around it
+                        if (slide)
+                        {
+                            var sliderOffset = Math.Abs(offset.X * 0.5f);
+
+                            if (offset.Y >= 0 && !Collision(body, body.Position.X + offset.X,
+                                body.Position.Y + body.MaxSlideDistance, offset.X < 0 ? 0 : 2, collisionTypes, ignoreField, ref nullBox))
+                            {
+                                body.SlideOffset.Y += sliderOffset;
+                            }
+                            else if (offset.Y <= 0 && !Collision(body, body.Position.X + offset.X,
+                                body.Position.Y - body.MaxSlideDistance, offset.X < 0 ? 0 : 2, collisionTypes, ignoreField, ref nullBox))
+                            {
+                                body.SlideOffset.Y -= sliderOffset;
+                            }
+                        }
+
+                        // Align with the collided object.
+                        if (offset.X < 0 &&
+                            Math.Abs(body.Position.X - collidingBox.Right + body.OffsetX) < Math.Abs(offset.X) &&
+                            !Collision(body, collidingBox.Right - body.OffsetX, body.Position.Y, 0, collisionTypes, ignoreField, ref nullBox))
+                        {
+                            body.Position.X = collidingBox.Right - body.OffsetX;
+                        }
+                        else if (offset.X > 0 &&
+                                 Math.Abs(body.Position.X - (collidingBox.X - (body.Width + body.OffsetX))) < Math.Abs(offset.X) &&
+                                 !Collision(body, collidingBox.X - (body.Width + body.OffsetX), body.Position.Y, 2, collisionTypes, ignoreField, ref nullBox))
+                        {
+                            body.Position.X = collidingBox.X - (body.Width + body.OffsetX);
+                        }
+
+                        // Try to push the colliding object.
+                        // If this is done before the alignment it can happen that the body walks into the object it is pushing.
+                        if (isPusher && Math.Abs(offset.X) >= Math.Abs(offset.Y))
+                        {
+                            var pushRectangle = new Box(
+                                body.Position.X + offset.X + body.OffsetX, body.Position.Y + body.OffsetY, body.Position.Z, body.Width, body.Height, body.Depth);
+                            Game1.GameManager.MapManager.CurrentMap.Objects.PushObject(
+                                pushRectangle, new Vector2(Math.Sign(offset.X), 0), PushableComponent.PushType.Continues);
+                        }
+
+                        // (2D Only) Try stair-stepping before blocking horizontal movement. While this code still exists, it largely
+                        // goes unused due to using 1-way colliders in underground sections to push the player above the "stairs" pixels. 
+                        if (body.EnableStepUp && body.IsGrounded && offset.X != 0 && offset.Y == 0)
+                        {
+                            for (int step = 1; step <= body.MaxStepHeight; step++)
+                            {
+                                var testBox = Box.Empty;
+
+                                // Check if step-up is possible.
+                                if (Collision(body, body.Position.X, body.Position.Y - step, 1, collisionTypes, ignoreField, ref testBox))
+                                    break;
+
+                                var posX = body.Position.X + offset.X;
+                                var posY = body.Position.Y - step;
+                                var direction = offset.X < 0 ? 0 : 2;
+
+                                // Check if forward movement is possible by stepping up the step height.
+                                if (!Collision(body, posX, posY, direction, collisionTypes, ignoreField, ref testBox))
+                                {
+                                    body.Position.Y -= step;
+                                    body.Position.X += offset.X;
+                                    return Values.BodyCollision.None;
+                                }
                             }
                         }
                     }
@@ -407,55 +450,96 @@ namespace ProjectZ.InGame.GameObjects.Base.Systems
             {
                 var collidingBox = Box.Empty;
 
-                // move vertically
+                // --- Vertical Movement ---
                 if (!Collision(body, body.Position.X, body.Position.Y + offset.Y, offset.Y < 0 ? 1 : 3, collisionTypes, ignoreField, ref collidingBox))
                 {
                     body.Position.Y += offset.Y;
                 }
                 else
                 {
-                    var nullBox = Box.Empty;
-                    collisionType |= offset.Y < 0 ? Values.BodyCollision.Top : Values.BodyCollision.Bottom;
-                    collisionType |= Values.BodyCollision.Vertical;
+                    // --- Corner Correction (Vertical) ---
+                    bool correctedY = false;
 
-                    // try to move around the object if there is space around it
-                    if (slide)
+                    if (body.CornerCorrection && Math.Abs(offset.Y) > Math.Abs(offset.X))
                     {
-                        var sliderOffset = Math.Abs(offset.Y * 0.5f);
+                        float playerLeft   = body.Position.X + body.OffsetX;
+                        float playerRight  = playerLeft + body.Width;
+                        float wallLeft     = collidingBox.X;
+                        float wallRight    = collidingBox.Right;
 
-                        if (offset.X >= 0 && !Collision(body, body.Position.X + body.MaxSlideDistance,
-                            body.Position.Y + offset.Y, offset.Y < 0 ? 1 : 3, collisionTypes, ignoreField, ref nullBox))
+                        // How many pixels is the player overlapping each corner of the wall?
+                        float overlapLeft  = playerRight - wallLeft;   // Player right edge past wall's left edge.
+                        float overlapRight = wallRight - playerLeft;   // Wall's right edge past player left.
+
+                        // Amount to nudge. Note the additiona "0.01 overcorrection" which helps when analog is slightly horizontal.
+                        float nudge = 0f;
+
+                        // Grazing the left corner of the wall -> nudge player left.
+                        if (overlapLeft > 0 && overlapLeft <= body.CornerCorrectionThreshold && overlapRight > body.Width)
+                            nudge = -overlapLeft - 0.01f;
+
+                        // Grazing the right corner of the wall -> nudge player right.
+                        else if (overlapRight > 0 && overlapRight <= body.CornerCorrectionThreshold && overlapLeft > body.Width)
+                            nudge = overlapRight + 0.01f;
+
+                        if (nudge != 0f)
                         {
-                            body.SlideOffset.X += sliderOffset;
+                            var testBox = Box.Empty;
+                            if (!Collision(body, body.Position.X + nudge, body.Position.Y + offset.Y,
+                                    offset.Y < 0 ? 1 : 3, collisionTypes, ignoreField, ref testBox))
+                            {
+                                body.Position.X += nudge;
+                                body.Position.Y += offset.Y;
+                                correctedY = true;
+                            }
                         }
-                        else if (offset.X <= 0 && !Collision(body, body.Position.X - body.MaxSlideDistance,
-                            body.Position.Y + offset.Y, offset.Y < 0 ? 1 : 3, collisionTypes, ignoreField, ref nullBox))
+                    }
+
+                    if (!correctedY)
+                    {
+                        var nullBox = Box.Empty;
+                        collisionType |= offset.Y < 0 ? Values.BodyCollision.Top : Values.BodyCollision.Bottom;
+                        collisionType |= Values.BodyCollision.Vertical;
+
+                        // Try to move around the object if there is space around it.
+                        if (slide)
                         {
-                            body.SlideOffset.X -= sliderOffset;
+                            var sliderOffset = Math.Abs(offset.Y * 0.5f);
+
+                            if (offset.X >= 0 && !Collision(body, body.Position.X + body.MaxSlideDistance,
+                                body.Position.Y + offset.Y, offset.Y < 0 ? 1 : 3, collisionTypes, ignoreField, ref nullBox))
+                            {
+                                body.SlideOffset.X += sliderOffset;
+                            }
+                            else if (offset.X <= 0 && !Collision(body, body.Position.X - body.MaxSlideDistance,
+                                body.Position.Y + offset.Y, offset.Y < 0 ? 1 : 3, collisionTypes, ignoreField, ref nullBox))
+                            {
+                                body.SlideOffset.X -= sliderOffset;
+                            }
                         }
-                    }
 
-                    // align with the floor
-                    if (offset.Y < 0 &&
-                        Math.Abs(body.Position.Y - (collidingBox.Front - body.OffsetY)) < Math.Abs(offset.Y) &&
-                        !Collision(body, body.Position.X, collidingBox.Front - body.OffsetY, 1, collisionTypes, ignoreField, ref nullBox))
-                    {
-                        body.Position.Y = collidingBox.Front - body.OffsetY;
-                    }
-                    else if (offset.Y > 0 &&
-                             Math.Abs(body.Position.Y - (collidingBox.Y - (body.Height + body.OffsetY))) < Math.Abs(offset.Y) &&
-                             !Collision(body, body.Position.X, collidingBox.Y - (body.Height + body.OffsetY), 3, collisionTypes, ignoreField, ref nullBox))
-                    {
-                        body.Position.Y = collidingBox.Y - (body.Height + body.OffsetY);
-                    }
+                        // Align with the floor.
+                        if (offset.Y < 0 &&
+                            Math.Abs(body.Position.Y - (collidingBox.Front - body.OffsetY)) < Math.Abs(offset.Y) &&
+                            !Collision(body, body.Position.X, collidingBox.Front - body.OffsetY, 1, collisionTypes, ignoreField, ref nullBox))
+                        {
+                            body.Position.Y = collidingBox.Front - body.OffsetY;
+                        }
+                        else if (offset.Y > 0 &&
+                                 Math.Abs(body.Position.Y - (collidingBox.Y - (body.Height + body.OffsetY))) < Math.Abs(offset.Y) &&
+                                 !Collision(body, body.Position.X, collidingBox.Y - (body.Height + body.OffsetY), 3, collisionTypes, ignoreField, ref nullBox))
+                        {
+                            body.Position.Y = collidingBox.Y - (body.Height + body.OffsetY);
+                        }
 
-                    // try to push the colliding object
-                    if (isPusher && Math.Abs(offset.X) <= Math.Abs(offset.Y))
-                    {
-                        var pushRectangle = new Box(
-                            body.Position.X + body.OffsetX, body.Position.Y + offset.Y + body.OffsetY, body.Position.Z, body.Width, body.Height, body.Depth);
-                        Game1.GameManager.MapManager.CurrentMap.Objects.PushObject(
-                            pushRectangle, new Vector2(0, Math.Sign(offset.Y)), PushableComponent.PushType.Continues);
+                        // Try to push the colliding object.
+                        if (isPusher && Math.Abs(offset.X) <= Math.Abs(offset.Y))
+                        {
+                            var pushRectangle = new Box(
+                                body.Position.X + body.OffsetX, body.Position.Y + offset.Y + body.OffsetY, body.Position.Z, body.Width, body.Height, body.Depth);
+                            Game1.GameManager.MapManager.CurrentMap.Objects.PushObject(
+                                pushRectangle, new Vector2(0, Math.Sign(offset.Y)), PushableComponent.PushType.Continues);
+                        }
                     }
                 }
             }
