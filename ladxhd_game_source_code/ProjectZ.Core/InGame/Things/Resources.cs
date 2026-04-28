@@ -32,6 +32,7 @@ namespace ProjectZ.InGame.Things
         public static Effect LightShader;
         public static Effect LightFadeShader;
         public static Effect ThanosShader;
+        public static Effect PixelGrid;
 
         // some sprites need different parameters set
         // we try to use as little different sprites effects as possible
@@ -518,6 +519,8 @@ namespace ProjectZ.InGame.Things
             ShockShader1.FloatParameter.Add("mark0", 0.0f);
             ShockShader1.FloatParameter.Add("mark1", 0.35f);
             ShockShader1.FloatParameter.Add("mark2", 0.625f);
+
+            PixelGrid = content.Load<Effect>("Shader/PixelGrid");
         }
 
         public static void AddSoundEffect(ContentManager content, string fileName)

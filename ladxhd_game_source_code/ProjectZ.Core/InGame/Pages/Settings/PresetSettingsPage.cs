@@ -316,8 +316,9 @@ namespace ProjectZ.InGame.Pages
                 VideoSettingsPage.SetGameScaleValue(GameSettings.GameScale);
                 VideoSettingsPage.SetUserInterfaceScale(GameSettings.UiScale);
                 VideoSettingsPage.SetVerticalSync(GameSettings.VerticalSync);
-                VideoSettingsPage.SetPixelSnapping(GameSettings.PixelSnapping);
                 VideoSettingsPage.SetOpaqueHudBg(GameSettings.OpaqueHudBg);
+                VideoSettingsPage.SetPixelSnapping(GameSettings.PixelSnapping);
+                VideoSettingsPage.SetPixelGrid(GameSettings.PixelGrid);
             }
             if (Game1.UiPageManager.InsideElement.TryGetValue(typeof(GraphicsSettingsPage), out var graphicsPage))
             {

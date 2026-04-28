@@ -36,8 +36,9 @@
         public static int     UiScale         =  11;
         public static int     ScreenMode      =  0;
         public static bool    VerticalSync    =  true;
-        public static bool    PixelSnapping   =  false;
         public static bool    OpaqueHudBg     =  false;
+        public static bool    PixelSnapping   =  false;
+        public static bool    PixelGrid       =  false;
 
         // Graphics Settings
     #if ANDROID
@@ -151,8 +152,9 @@
             UiScale         =  11;
             ScreenMode      =  0;
             VerticalSync    =  true;
-            PixelSnapping   =  false;
             OpaqueHudBg     =  false;
+            PixelSnapping   =  false;
+            PixelGrid       =  false;
 
             // Graphics Settings
             EnableShadows   =  true;

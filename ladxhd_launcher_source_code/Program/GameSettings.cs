@@ -29,6 +29,8 @@ public static class GameSettings
     public static bool ExScreenShake     = false;
     public static bool VerticalSync      = true;
     public static bool OpaqueHudBg       = false;
+    public static bool PixelSnapping     = false;
+    public static bool PixelGrid         = false;
     public static bool EnableShadows     = true;
     public static bool FogEffects        = true;
     public static bool GlobalLights      = true;
@@ -166,6 +168,8 @@ public static class GameSettings
             case "ExScreenShake":   ExScreenShake   = v; break;
             case "VerticalSync":    VerticalSync    = v; break;
             case "OpaqueHudBg":     OpaqueHudBg     = v; break;
+            case "PixelSnapping":   PixelSnapping   = v; break;
+            case "PixelGrid":       PixelGrid       = v; break;
             case "EnableShadows":   EnableShadows   = v; break;
             case "FogEffects":      FogEffects      = v; break;
             case "GlobalLights":    GlobalLights    = v; break;
@@ -226,6 +230,8 @@ public static class GameSettings
             { "ExScreenShake",    $"b ExScreenShake {ExScreenShake}" },
             { "VerticalSync",     $"b VerticalSync {VerticalSync}" },
             { "OpaqueHudBg",      $"b OpaqueHudBg {OpaqueHudBg}" },
+            { "PixelSnapping",    $"b PixelSnapping {PixelSnapping}" },
+            { "PixelGrid",        $"b PixelGrid {PixelGrid}" },
             { "EnableShadows",    $"b EnableShadows {EnableShadows}" },
             { "FogEffects",       $"b FogEffects {FogEffects}" },
             { "GlobalLights",     $"b GlobalLights {GlobalLights}" },

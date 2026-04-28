@@ -13,6 +13,11 @@ editor_mode = false
 // Default: 20
 max_game_scale = 20
 
+//: Game1
+// Modifies the transparency of the pixel grid when enabled. The pixel grid shader can be enabled in "Video Options" and requires "Pixel Snapping" to also be enabled. Accepts a value between 0.00 and 1.00.
+// Default: 0.20
+pixel_grid_alpha = 0.20
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 [Game: User Interface]

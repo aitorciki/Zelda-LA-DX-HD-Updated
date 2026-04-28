@@ -54,6 +54,8 @@ public partial class SettingsView : UserControl
         n_UiScale.Value                     = (decimal)GameSettings.UiScale;
         x_VerticalSync.IsChecked            = GameSettings.VerticalSync;
         x_OpaqueHudBg.IsChecked             = GameSettings.OpaqueHudBg;
+        x_PixelSnapping.IsChecked           = GameSettings.PixelSnapping;
+        x_PixelSnapping.IsChecked           = GameSettings.PixelGrid;
         c_ScreenMode.SelectedIndex          = GameSettings.ScreenMode;
 
         // Graphics Settings
@@ -147,6 +149,8 @@ public partial class SettingsView : UserControl
         GameSettings.UiScale            = (int)(n_UiScale.Value ?? 0);
         GameSettings.VerticalSync       = x_VerticalSync.IsChecked == true;
         GameSettings.OpaqueHudBg        = x_OpaqueHudBg.IsChecked == true;
+        GameSettings.PixelGrid          = x_OpaqueHudBg.IsChecked == true;
+        GameSettings.PixelSnapping      = x_PixelSnapping.IsChecked == true;
         GameSettings.ScreenMode         = c_ScreenMode.SelectedIndex;
 
         // Graphics Settings

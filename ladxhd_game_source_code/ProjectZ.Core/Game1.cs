@@ -128,6 +128,11 @@ namespace ProjectZ
 
         public static bool FinishedLoading => _finishedLoading;
 
+        // LAHDMod Values
+        private int   max_game_scale   = 20;
+        private bool  editor_mode      = false;
+        private float pixel_grid_alpha = 0.20f;
+
     #if ANDROID
         public static void SetAndroidSurfaceSizeHint(int width, int height)
         {
@@ -154,9 +159,6 @@ namespace ProjectZ
                     (float)viewport.Height / WindowHeight, 1f);
             }
         }
-        // lahdmod values
-        private int  max_game_scale = 20;
-        private bool editor_mode = false;
 
         public Game1(bool editorMode, bool loadSave, int loadSlot)
         {
@@ -574,6 +576,8 @@ namespace ProjectZ
 
             ScreenManager.Draw(SpriteBatch);
 
+            var drawPixelGrid = GameSettings.PixelSnapping && GameSettings.PixelGrid && InProgress;
+
             if (!GameSettings.OpaqueHudBg)
                 BlurImage();
             {
@@ -600,9 +604,20 @@ namespace ProjectZ
                 }
             #else
                 var viewport = GraphicsDevice.Viewport;
-            #endif
 
-                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+                if (drawPixelGrid)
+                {
+                    var gridOffset = MapManager.Camera.PixelGridOffset;
+                    Resources.PixelGrid?.Parameters["TextureSize"]?.SetValue(new Vector2(viewport.Width / MapManager.Camera.Scale, viewport.Height / MapManager.Camera.Scale));
+                    Resources.PixelGrid?.Parameters["GridOpacity"]?.SetValue(pixel_grid_alpha);
+                    Resources.PixelGrid?.Parameters["Offset"]?.SetValue(gridOffset);
+                }
+            #endif
+                if (drawPixelGrid)
+                    SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, Resources.PixelGrid);
+                else
+                    SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+
             #if ANDROID
                 SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
             #else

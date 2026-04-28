@@ -176,6 +176,7 @@ $dungeon3D  = @("dungeon3.map.data")
 $bowwowanim = @("bowwow_water.ani")
 $dungeonani = @("mapDungeon.ani", "mapManboPond.ani")
 $boomerang  = @("boomerangOrig.ani")
+$shaderFile = @("PixelGrid.xnb")
 
 $FileTargets = @{
     "eng.lng"             = $langFiles
@@ -198,8 +199,8 @@ $FileTargets = @{
     "BowWow.ani"          = $bowwowanim
     "mapPlayer.ani"       = $dungeonani
     "boomerang.ani"       = $boomerang
+    "ShockEffect.xnb"     = $shaderFile
 }
-
 
 function Build-ReverseMap($Targets)
 {

@@ -53,6 +53,7 @@ namespace LADXHD_Patcher
         private static string[] bowwowanim = new[] { "bowwow_water.ani" };
         private static string[] dungeonani = new[] { "mapDungeon.ani", "mapManboPond.ani" };
         private static string[] boomerang  = new[] { "boomerangOrig.ani" };
+        private static string[] shaderFile = new[] { "PixelGrid.xnb" };
 
         // THE "KEY" IS THE MASTER FILE THAT CREATES OTHER FILES FROM IT. THE "VALUE" IS THE STRING ARRAY THAT HOLDS THOSE FILES
 
@@ -77,7 +78,8 @@ namespace LADXHD_Patcher
             { "dungeon3_1.map.data",  dungeon3D },
             { "BowWow.ani",          bowwowanim },
             { "mapPlayer.ani",       dungeonani },
-            { "boomerang.ani",        boomerang }
+            { "boomerang.ani",        boomerang },
+            { "ShockEffect.xnb",     shaderFile }
         };
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

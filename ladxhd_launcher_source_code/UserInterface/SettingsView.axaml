@@ -33,108 +33,6 @@
             <ScrollViewer Margin="10,10,2,10">
                 <StackPanel Spacing="10" Margin="12,2,22,10">
 
-                    <!-- Video Settings -->
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Video Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
-                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
-                            <Canvas Height="108">
-                                <NumericUpDown x:Name="n_GameScale" Canvas.Left="0" Canvas.Top="0" Value="0" Minimum="-3" Maximum="21" Increment="1" Width="120" />
-                                <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Game Scale" Foreground="White"
-                                           ToolTip.Tip="Determines the size of a &quot;game pixel&quot; relative to the Game Boy resolution. For example, a scale of 10 means that the resolution of a game pixel is 10x10 screen pixels. Below 1x is a percentage of an original pixel."/>
-                                <NumericUpDown x:Name="n_UiScale" Canvas.Left="232" Canvas.Top="0" Value="0" Minimum="0" Maximum="11" Increment="1" Width="120" />
-                                <TextBlock Canvas.Left="358" Canvas.Top="7" Text="UI Scale" Foreground="White"
-                                           ToolTip.Tip="This is how large the UI appears. The scaling value is arbitrary and does not correlate with the original games. Just choose whichever scale you prefer."/>
-                                <CheckBox x:Name="x_VerticalSync" Canvas.Left="0" Canvas.Top="36" Content="Vertical Sync" Foreground="White"
-                                           ToolTip.Tip="This locks the framerate to your current screen refresh rate. If disabled then framerate will be as high as possible."/>
-                                <CheckBox x:Name="x_OpaqueHudBg" Canvas.Left="232" Canvas.Top="36" Content="Disable UI Blur" Foreground="White"
-                                           ToolTip.Tip="Disables all UI blur effects and uses solid backgrounds instead. This can improve performance on lower-end devices."/>
-                                <ComboBox x:Name="c_ScreenMode" Canvas.Left="0" Canvas.Top="74" SelectedIndex="0" Width="120">
-                                    <ComboBoxItem Content="Window" />
-                                    <ComboBoxItem Content="Borderless" />
-                                    <ComboBoxItem Content="Exclusive" />
-                                </ComboBox>
-                                <TextBlock Canvas.Left="126" Canvas.Top="81" Text="Screen Mode" Foreground="White" VerticalAlignment="Center"
-                                           ToolTip.Tip="Sets the current screen mode: Window, Borderless Fullscreen, and Exclusive Fullscreen. It is recommended to use Borderless unless you absolutely need Exclusive for some specific purpose, such as compatibility with external software. Alt + Enter can quickly toggle between Window and Borderless Fullscreen."/>
-                            </Canvas>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Graphics Settings -->
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Graphics Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
-                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
-                            <Canvas Height="144">
-                                <CheckBox x:Name="x_EnableShadows" Canvas.Left="0" Canvas.Top="0" Content="Dynamic Shadows" Foreground="White"
-                                           ToolTip.Tip="When enabled, shadows are dynamically generated around all sprites using their shape as a reference. When disabled, sprite shadows are instead used but only for Link, enemies, and NPCs that are in the air."/>
-                                <CheckBox x:Name="x_FogEffects" Canvas.Left="232" Canvas.Top="0" Content="Fog Effects" Foreground="White"
-                                           ToolTip.Tip="Disables the fog effect used in the Mysterious Woods, which is the forest just above Mabe Village."/>
-                                <CheckBox x:Name="x_GlobalLights" Canvas.Left="0" Canvas.Top="36" Content="Global Lighting" Foreground="White"
-                                           ToolTip.Tip="Enables global lighting that is applied across maps. This lighting is used to darken the environment and enhances lighting effects cast by objects."/>
-                                <CheckBox x:Name="x_ObjectLights" Canvas.Left="232" Canvas.Top="36" Content="Object Lighting" Foreground="White"
-                                           ToolTip.Tip="Enables lighting effects cast by objects. While object lighting does not require global lighting it has almost no effect without it."/>
-                                <CheckBox x:Name="x_ScreenShake" Canvas.Left="0" Canvas.Top="72" Content="Screen Shake Effects" Foreground="White"
-                                           ToolTip.Tip="Enables or disables original screen shake effects. This includes smashing into things with Pegasus Boots, getting electrocuted, dungeon entrances opening up, bosses shaking the screen, and more."/>
-                                <CheckBox x:Name="x_ExScreenShake" Canvas.Left="232" Canvas.Top="72" Content="Extra Screen Shake Effects" Foreground="White"
-                                           ToolTip.Tip="Enables or disables extra screen shake effects that were not in the original game. This includes when Link takes damage, when bombs explode, new environment effects, and new boss and enemy effects."/>
-                                <NumericUpDown x:Name="n_SeqScaleAmplify" Canvas.Left="0" Canvas.Top="110" Value="0" Minimum="0" Maximum="3" Increment="1" Width="120"/>
-                                <TextBlock Canvas.Left="126" Canvas.Top="117" Text="Sequence Scale Amplifier" Foreground="White"
-                                           ToolTip.Tip="Added to UI Scale specifically for in-game sequences. So if UI Scale is 3, and this is set to 2, sequence scale will be 5. This includes photo sequences, pictures, and in-game cutscenes. The max safe value is usually +2. Too high of a value can not guarantee that it will not exceed the bounds of the screen."/>
-                            </Canvas>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Audio Settings -->
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Audio Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
-                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
-                            <Canvas Height="102">
-                                <NumericUpDown x:Name="n_MusicVolume" Canvas.Left="0" Canvas.Top="0" Value="0" Minimum="0" Maximum="100" Increment="1" Width="120" />
-                                <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Music Volume" Foreground="White"
-                                           ToolTip.Tip="The volume of the game's music."/>
-                                <NumericUpDown x:Name="n_EffectVolume" Canvas.Left="232" Canvas.Top="0" Value="0" Minimum="0" Maximum="100" Increment="1" Width="120" />
-                                <TextBlock Canvas.Left="358" Canvas.Top="7" Text="Effect Volume" Foreground="White"
-                                           ToolTip.Tip="The volume of the game's sound effects."/>
-                                <CheckBox x:Name="x_ClassicMusic" Canvas.Left="0" Canvas.Top="36" Content="Classic Music Cues" Foreground="White"
-                                           ToolTip.Tip="Determines when music changes on the overworld. Disabled (modern) closely respects the tilemap while enabled (classic) respects the original game. The difference between enabled &amp; disabled is subtle. Use east Mabe Village as a test."/>
-                                <CheckBox x:Name="x_MuteInactive" Canvas.Left="232" Canvas.Top="36" Content="Mute Inactive Window" Foreground="White"
-                                           ToolTip.Tip="Mutes all audio and sound effects when the game window is not the currently focused window."/>
-                                <CheckBox x:Name="x_HeartBeep" Canvas.Left="0" Canvas.Top="72" Content="Low Hearts Alarm" Foreground="White"
-                                           ToolTip.Tip="Disables the periodic beeping sound effect when hearts fall below a certain threshold."/>
-                                <CheckBox x:Name="x_MutePowerups" Canvas.Left="232" Canvas.Top="72" Content="No Powerup Music" Foreground="White"
-                                           ToolTip.Tip="When picking up a Guardian Acorn or Piece of Power, this option disables the music that plays."/>
-                            </Canvas>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Control Settings -->
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Control Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
-                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
-                            <Canvas Height="138">
-                                <NumericUpDown x:Name="n_DeadZone" Canvas.Left="0" Canvas.Top="0" Value="0" Minimum="0" Maximum="1.00" Increment="0.01" FormatString="0.00" Width="120" />
-                                <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Dead Zone" Foreground="White"
-                                           ToolTip.Tip="The percentage of range that the joystick is pressed before it responds to input. Unless you have a Dead Zone set in other software, it is recommended not to reduce it lower than 10% as it may cause your joystick to float. Higher values than default can be useful for controllers that have &quot;drifting&quot; issues."/>
-                                <ComboBox x:Name="c_Controller" Canvas.Left="232" Canvas.Top="0" SelectedIndex="0" Width="120">
-                                    <ComboBoxItem Content="XBox" />
-                                    <ComboBoxItem Content="Playstation" />
-                                    <ComboBoxItem Content="Nintendo" />
-                                </ComboBox>
-                                <TextBlock Canvas.Left="358" Canvas.Top="7" Text="Gamepad Type" Foreground="White" VerticalAlignment="Center"
-                                           ToolTip.Tip="Chooses the type of controller to display button prompts for. Supports XBox, Playstation, and Nintendo style controllers."/>
-                                <CheckBox x:Name="x_TriggersScale" Canvas.Left="0" Canvas.Top="36" Content="Triggers Scale Game" Foreground="White"
-                                           ToolTip.Tip="Enables changing the current Game Scale with the two top-front controller buttons (LB/RB, L1/R1, L/R). If the option &quot;Six Inventory Buttons&quot; is enabled, the two top-back buttons/triggers (LT/RT, L2,R2, or ZL,ZR) will instead change the Game Scale."/>
-                                <CheckBox x:Name="x_SixButtons" Canvas.Left="232" Canvas.Top="36" Content="Six Inventory Buttons" Foreground="White"
-                                           ToolTip.Tip="Enables six controller buttons that can be used for inventory items instead of four. This makes it so items can be equipped on the two top-front buttons (LB/RB, L1/R1, L/R) and moves the game scale adjustments to the two top-back buttons/triggers (LT/RT, L2/R2, ZL/ZR)."/>
-                                <CheckBox x:Name="x_OldMovement" Canvas.Left="0" Canvas.Top="72" Content="Classic Movement" Foreground="White"
-                                           ToolTip.Tip="This option mimics the way movement works in the original games by giving Link the ability to walk backwards. Combine with &quot;Digital Analog&quot; to fully replicate how movement works in the original game."/>
-                                <CheckBox x:Name="x_DigitalAnalog" Canvas.Left="232" Canvas.Top="72" Content="Digital Analog" Foreground="White"
-                                           ToolTip.Tip="Removes the analog stick range and makes it move Link in eight directions along 45 degree angles (Up, Down, Left, Right, and Diagonals). This will make controlling Link feel more like the original game as if it were played in an emulator."/>
-                                <CheckBox x:Name="x_SwapButtons" Canvas.Left="0" Canvas.Top="108" Content="Swap Confirm &amp; Cancel" Foreground="White"
-                                           ToolTip.Tip="Swaps the confirm and cancel buttons used in menus and dialogs."/>
-                            </Canvas>
-                        </Border>
-                    </StackPanel>
-
                     <!-- Game Settings -->
                     <StackPanel Spacing="4">
                         <TextBlock Text="Game Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
@@ -235,6 +133,112 @@
                                            ToolTip.Tip="Locks the modern camera in place. When this option is disabled, the right analog stick can pan the camera around. Has no effect with classic camera."/>
                                 <CheckBox x:Name="x_SmoothCamera" Canvas.Left="0" Canvas.Top="144" Content="Smooth Camera" Foreground="White"
                                            ToolTip.Tip="Whenever the camera changes targets, this adds a smooth panning effect. When disabled, the camera will snap into place. Affects both cameras, but classic camera benefits the most."/>
+                            </Canvas>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Video Settings -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Video Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
+                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
+                            <Canvas Height="138">
+                                <NumericUpDown x:Name="n_GameScale" Canvas.Left="0" Canvas.Top="0" Value="0" Minimum="-3" Maximum="21" Increment="1" Width="120" />
+                                <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Game Scale" Foreground="White"
+                                           ToolTip.Tip="Determines the size of a &quot;game pixel&quot; relative to the Game Boy resolution. For example, a scale of 10 means that the resolution of a game pixel is 10x10 screen pixels. Below 1x is a percentage of an original pixel."/>
+                                <NumericUpDown x:Name="n_UiScale" Canvas.Left="232" Canvas.Top="0" Value="0" Minimum="0" Maximum="11" Increment="1" Width="120" />
+                                <TextBlock Canvas.Left="358" Canvas.Top="7" Text="UI Scale" Foreground="White"
+                                           ToolTip.Tip="This is how large the UI appears. The scaling value is arbitrary and does not correlate with the original games. Just choose whichever scale you prefer."/>
+                                <ComboBox x:Name="c_ScreenMode" Canvas.Left="0" Canvas.Top="36" SelectedIndex="0" Width="120">
+                                    <ComboBoxItem Content="Window" />
+                                    <ComboBoxItem Content="Borderless" />
+                                    <ComboBoxItem Content="Exclusive" />
+                                </ComboBox>
+                                <TextBlock Canvas.Left="126" Canvas.Top="43" Text="Screen Mode" Foreground="White" VerticalAlignment="Center"
+                                           ToolTip.Tip="Sets the current screen mode: Window, Borderless Fullscreen, and Exclusive Fullscreen. It is recommended to use Borderless unless you absolutely need Exclusive for some specific purpose, such as compatibility with external software. Alt + Enter can quickly toggle between Window and Borderless Fullscreen."/>
+								<CheckBox x:Name="x_VerticalSync" Canvas.Left="0" Canvas.Top="72" Content="Vertical Sync" Foreground="White"
+                                           ToolTip.Tip="This locks the framerate to your current screen refresh rate. If disabled then framerate will be as high as possible."/>
+                                <CheckBox x:Name="x_OpaqueHudBg" Canvas.Left="232" Canvas.Top="72" Content="Disable UI Blur" Foreground="White"
+                                           ToolTip.Tip="Disables all UI blur effects and uses solid backgrounds instead. This can improve performance on lower-end devices."/>
+                                <CheckBox x:Name="x_PixelSnapping" Canvas.Left="0" Canvas.Top="108" Content="Pixel Snapping" Foreground="White"
+                                           ToolTip.Tip="Enabling this option locks sprite pixel edges similar to an LCD grid. The minimum distance any object can move is one full game pixel. When disabled, objects can move in subpixel steps which appears much &quot;smoother&quot; at the cost of accuracy."/>
+                                <CheckBox x:Name="x_PixelGrid" Canvas.Left="232" Canvas.Top="108" Content="Pixel Grid" Foreground="White"
+                                           ToolTip.Tip=""/>
+                            </Canvas>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Graphics Settings -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Graphics Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
+                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
+                            <Canvas Height="144">
+                                <CheckBox x:Name="x_EnableShadows" Canvas.Left="0" Canvas.Top="0" Content="Dynamic Shadows" Foreground="White"
+                                           ToolTip.Tip="When enabled, shadows are dynamically generated around all sprites using their shape as a reference. When disabled, sprite shadows are instead used but only for Link, enemies, and NPCs that are in the air."/>
+                                <CheckBox x:Name="x_FogEffects" Canvas.Left="232" Canvas.Top="0" Content="Fog Effects" Foreground="White"
+                                           ToolTip.Tip="Disables the fog effect used in the Mysterious Woods, which is the forest just above Mabe Village."/>
+                                <CheckBox x:Name="x_GlobalLights" Canvas.Left="0" Canvas.Top="36" Content="Global Lighting" Foreground="White"
+                                           ToolTip.Tip="Enables global lighting that is applied across maps. This lighting is used to darken the environment and enhances lighting effects cast by objects."/>
+                                <CheckBox x:Name="x_ObjectLights" Canvas.Left="232" Canvas.Top="36" Content="Object Lighting" Foreground="White"
+                                           ToolTip.Tip="Enables lighting effects cast by objects. While object lighting does not require global lighting it has almost no effect without it."/>
+                                <CheckBox x:Name="x_ScreenShake" Canvas.Left="0" Canvas.Top="72" Content="Screen Shake Effects" Foreground="White"
+                                           ToolTip.Tip="Enables or disables original screen shake effects. This includes smashing into things with Pegasus Boots, getting electrocuted, dungeon entrances opening up, bosses shaking the screen, and more."/>
+                                <CheckBox x:Name="x_ExScreenShake" Canvas.Left="232" Canvas.Top="72" Content="Extra Screen Shake Effects" Foreground="White"
+                                           ToolTip.Tip="Enables or disables extra screen shake effects that were not in the original game. This includes when Link takes damage, when bombs explode, new environment effects, and new boss and enemy effects."/>
+                                <NumericUpDown x:Name="n_SeqScaleAmplify" Canvas.Left="0" Canvas.Top="110" Value="0" Minimum="0" Maximum="3" Increment="1" Width="120"/>
+                                <TextBlock Canvas.Left="126" Canvas.Top="117" Text="Sequence Scale Amplifier" Foreground="White"
+                                           ToolTip.Tip="Added to UI Scale specifically for in-game sequences. So if UI Scale is 3, and this is set to 2, sequence scale will be 5. This includes photo sequences, pictures, and in-game cutscenes. The max safe value is usually +2. Too high of a value can not guarantee that it will not exceed the bounds of the screen."/>
+                            </Canvas>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Audio Settings -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Audio Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
+                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
+                            <Canvas Height="102">
+                                <NumericUpDown x:Name="n_MusicVolume" Canvas.Left="0" Canvas.Top="0" Value="0" Minimum="0" Maximum="100" Increment="1" Width="120" />
+                                <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Music Volume" Foreground="White"
+                                           ToolTip.Tip="The volume of the game's music."/>
+                                <NumericUpDown x:Name="n_EffectVolume" Canvas.Left="232" Canvas.Top="0" Value="0" Minimum="0" Maximum="100" Increment="1" Width="120" />
+                                <TextBlock Canvas.Left="358" Canvas.Top="7" Text="Effect Volume" Foreground="White"
+                                           ToolTip.Tip="The volume of the game's sound effects."/>
+                                <CheckBox x:Name="x_ClassicMusic" Canvas.Left="0" Canvas.Top="36" Content="Classic Music Cues" Foreground="White"
+                                           ToolTip.Tip="Determines when music changes on the overworld. Disabled (modern) closely respects the tilemap while enabled (classic) respects the original game. The difference between enabled &amp; disabled is subtle. Use east Mabe Village as a test."/>
+                                <CheckBox x:Name="x_MuteInactive" Canvas.Left="232" Canvas.Top="36" Content="Mute Inactive Window" Foreground="White"
+                                           ToolTip.Tip="Mutes all audio and sound effects when the game window is not the currently focused window."/>
+                                <CheckBox x:Name="x_HeartBeep" Canvas.Left="0" Canvas.Top="72" Content="Low Hearts Alarm" Foreground="White"
+                                           ToolTip.Tip="Disables the periodic beeping sound effect when hearts fall below a certain threshold."/>
+                                <CheckBox x:Name="x_MutePowerups" Canvas.Left="232" Canvas.Top="72" Content="No Powerup Music" Foreground="White"
+                                           ToolTip.Tip="When picking up a Guardian Acorn or Piece of Power, this option disables the music that plays."/>
+                            </Canvas>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Control Settings -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Control Settings" Foreground="White" FontWeight="Bold" Margin="2,0,0,0" />
+                        <Border BorderBrush="#88FFFFFF" BorderThickness="1" CornerRadius="6" Padding="10">
+                            <Canvas Height="138">
+                                <NumericUpDown x:Name="n_DeadZone" Canvas.Left="0" Canvas.Top="0" Value="0" Minimum="0" Maximum="1.00" Increment="0.01" FormatString="0.00" Width="120" />
+                                <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Dead Zone" Foreground="White"
+                                           ToolTip.Tip="The percentage of range that the joystick is pressed before it responds to input. Unless you have a Dead Zone set in other software, it is recommended not to reduce it lower than 10% as it may cause your joystick to float. Higher values than default can be useful for controllers that have &quot;drifting&quot; issues."/>
+                                <ComboBox x:Name="c_Controller" Canvas.Left="232" Canvas.Top="0" SelectedIndex="0" Width="120">
+                                    <ComboBoxItem Content="XBox" />
+                                    <ComboBoxItem Content="Playstation" />
+                                    <ComboBoxItem Content="Nintendo" />
+                                </ComboBox>
+                                <TextBlock Canvas.Left="358" Canvas.Top="7" Text="Gamepad Type" Foreground="White" VerticalAlignment="Center"
+                                           ToolTip.Tip="Chooses the type of controller to display button prompts for. Supports XBox, Playstation, and Nintendo style controllers."/>
+                                <CheckBox x:Name="x_TriggersScale" Canvas.Left="0" Canvas.Top="36" Content="Triggers Scale Game" Foreground="White"
+                                           ToolTip.Tip="Enables changing the current Game Scale with the two top-front controller buttons (LB/RB, L1/R1, L/R). If the option &quot;Six Inventory Buttons&quot; is enabled, the two top-back buttons/triggers (LT/RT, L2,R2, or ZL,ZR) will instead change the Game Scale."/>
+                                <CheckBox x:Name="x_SixButtons" Canvas.Left="232" Canvas.Top="36" Content="Six Inventory Buttons" Foreground="White"
+                                           ToolTip.Tip="Enables six controller buttons that can be used for inventory items instead of four. This makes it so items can be equipped on the two top-front buttons (LB/RB, L1/R1, L/R) and moves the game scale adjustments to the two top-back buttons/triggers (LT/RT, L2/R2, ZL/ZR)."/>
+                                <CheckBox x:Name="x_OldMovement" Canvas.Left="0" Canvas.Top="72" Content="Classic Movement" Foreground="White"
+                                           ToolTip.Tip="This option mimics the way movement works in the original games by giving Link the ability to walk backwards. Combine with &quot;Digital Analog&quot; to fully replicate how movement works in the original game."/>
+                                <CheckBox x:Name="x_DigitalAnalog" Canvas.Left="232" Canvas.Top="72" Content="Digital Analog" Foreground="White"
+                                           ToolTip.Tip="Removes the analog stick range and makes it move Link in eight directions along 45 degree angles (Up, Down, Left, Right, and Diagonals). This will make controlling Link feel more like the original game as if it were played in an emulator."/>
+                                <CheckBox x:Name="x_SwapButtons" Canvas.Left="0" Canvas.Top="108" Content="Swap Confirm &amp; Cancel" Foreground="White"
+                                           ToolTip.Tip="Swaps the confirm and cancel buttons used in menus and dialogs."/>
                             </Canvas>
                         </Border>
                     </StackPanel>

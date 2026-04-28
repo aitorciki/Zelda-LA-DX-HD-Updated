@@ -113,6 +113,7 @@ public static class AdvancedSettings
             // Game: Advanced Settings
             { "editor_mode",                    "Editor Mode"                       },
             { "max_game_scale",                 "Maximum Game Scale"                },
+            { "pixel_grid_alpha",               "Pixel Grid Alpha"                  },
 
             // Game: User Interface
             { "menu_scale_override",            "Menus Scale Override"              },

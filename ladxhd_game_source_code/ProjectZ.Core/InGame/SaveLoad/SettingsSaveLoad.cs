@@ -48,8 +48,9 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.UiScale = saveManager.GetInt("UIScale", GameSettings.UiScale);
             GameSettings.ScreenMode = saveManager.GetInt("ScreenMode", GameSettings.ScreenMode);
             GameSettings.VerticalSync = saveManager.GetBool("VerticalSync", GameSettings.VerticalSync);
-            GameSettings.PixelSnapping = saveManager.GetBool("PixelSnapping", GameSettings.PixelSnapping);
             GameSettings.OpaqueHudBg = saveManager.GetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
+            GameSettings.PixelSnapping = saveManager.GetBool("PixelSnapping", GameSettings.PixelSnapping);
+            GameSettings.PixelGrid = saveManager.GetBool("PixelGrid", GameSettings.PixelGrid);
 
             // Graphics Settings
             GameSettings.SeqScaleAmplify = saveManager.GetInt("SeqScaleAmplify", GameSettings.SeqScaleAmplify);
@@ -151,8 +152,9 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetInt("UIScale", GameSettings.UiScale);
             saveManager.SetInt("ScreenMode", GameSettings.ScreenMode);
             saveManager.SetBool("VerticalSync", GameSettings.VerticalSync);
-            saveManager.SetBool("PixelSnapping", GameSettings.PixelSnapping);
             saveManager.SetBool("OpaqueHudBg", GameSettings.OpaqueHudBg);
+            saveManager.SetBool("PixelSnapping", GameSettings.PixelSnapping);
+            saveManager.SetBool("PixelGrid", GameSettings.PixelGrid);
 
             // Graphics Settings
             saveManager.SetInt("SeqScaleAmplify", GameSettings.SeqScaleAmplify);

@@ -62,6 +62,26 @@ namespace ProjectZ.InGame.Map
         private int _viewportWidth;
         private int _viewportHeight;
 
+        // Returns the UV offset needed to align the pixel grid with game pixels
+        public Vector2 PixelGridOffset
+        {
+            get
+            {
+                int centerX = _viewportWidth / 2;
+                int centerY = _viewportHeight / 2;
+
+                // Translation applied by the transform matrix
+                float tx = centerX - RoundX;
+                float ty = centerY - RoundY;
+
+                // How far the top-left of the screen is from a whole game pixel boundary
+                float offsetX = ((-tx) % Scale) / Scale;
+                float offsetY = ((-ty) % Scale) / Scale;
+
+                return new Vector2(offsetX, offsetY);
+            }
+        }
+
         public static bool ClassicMode => 
             (!GameSettings.ClassicCamera && 
             GameSettings.ModernOverworld && 

@@ -18,8 +18,9 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceSlider     _sliderFullscreen;
     #endif
         private readonly InterfaceListLayout _toggleVerticalSync;
-        private readonly InterfaceListLayout _togglePixelSnapping;
         private readonly InterfaceListLayout _toggleOpaqueHudBg;
+        private readonly InterfaceListLayout _togglePixelSnapping;
+        private readonly InterfaceListLayout _togglePixelGrid;
 
         List<string> _tooltips = new List<string>();
         private bool _showTooltip;
@@ -30,8 +31,9 @@ namespace ProjectZ.InGame.Pages
         public void SetFullscreenMode(int value) { ((InterfaceSlider)_sliderFullscreen).CurrentStep = value; ((InterfaceSlider)_sliderFullscreen).UpdateLanguageText(); }
     #endif
         public void SetVerticalSync(bool state) { ((InterfaceToggle)_toggleVerticalSync.Elements[1]).ToggleState = state; Game1.FpsSettingChanged = true; }
-        public void SetPixelSnapping(bool state) { ((InterfaceToggle)_togglePixelSnapping.Elements[1]).ToggleState = state; }
         public void SetOpaqueHudBg(bool state) => ((InterfaceToggle)_toggleOpaqueHudBg.Elements[1]).ToggleState = state;
+        public void SetPixelSnapping(bool state) { ((InterfaceToggle)_togglePixelSnapping.Elements[1]).ToggleState = state; }
+        public void SetPixelGrid(bool state) { ((InterfaceToggle)_togglePixelGrid.Elements[1]).ToggleState = state; }
 
         public VideoSettingsPage(int width, int height)
         {
@@ -80,14 +82,6 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(_toggleVerticalSync);
             _tooltips.Add("tooltip_video_fps_lock");
 
-            // Toggle: Pixel Snapping
-            _togglePixelSnapping = InterfaceToggle.GetToggleButton(
-                new Point(buttonWidth, buttonHeight), new Point(5, 2),
-                "settings_video_pixelsnap", GameSettings.PixelSnapping,
-                newState => { GameSettings.PixelSnapping = newState; });
-            _contentLayout.AddElement(_togglePixelSnapping);
-            _tooltips.Add("tooltip_video_pixelsnap");
-
             // Toggle: Disable UI Blur
             _toggleOpaqueHudBg = InterfaceToggle.GetToggleButton(
                 new Point(buttonWidth, buttonHeight), new Point(5, 2),
@@ -96,12 +90,31 @@ namespace ProjectZ.InGame.Pages
             _contentLayout.AddElement(_toggleOpaqueHudBg);
             _tooltips.Add("tooltip_video_opaquehud");
 
+            // Toggle: Pixel Snapping
+            _togglePixelSnapping = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_video_pixelsnap", GameSettings.PixelSnapping,
+                newState => { GameSettings.PixelSnapping = newState; _togglePixelGrid.ToggleElementColors(GameSettings.PixelSnapping); });
+            _contentLayout.AddElement(_togglePixelSnapping);
+            _tooltips.Add("tooltip_video_pixelsnap");
+
+            // Toggle: Pixel Grid
+            _togglePixelGrid = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_video_pixelgrid", GameSettings.PixelGrid,
+                newState => { GameSettings.PixelGrid = newState; });
+            _contentLayout.AddElement(_togglePixelGrid);
+            _tooltips.Add("tooltip_video_pixelgrid");
+
             // Bottom Bar / Back Button:
             _bottomBar = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
             _bottomBar.AddElement(new InterfaceButton(new Point(100, 18), new Point(2, 4), "settings_menu_back", element => { Game1.UiPageManager.PopPage(); }));
             _videoSettingsLayout.AddElement(_contentLayout);
             _videoSettingsLayout.AddElement(_bottomBar);
             PageLayout = _videoSettingsLayout;
+
+            // Set the initial state of the pixel grid.
+            _togglePixelGrid.ToggleElementColors(GameSettings.PixelSnapping);
         }
 
         public override void OnLoad(Dictionary<string, object> intent)
