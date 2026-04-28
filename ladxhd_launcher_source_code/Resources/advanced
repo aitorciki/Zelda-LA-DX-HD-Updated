@@ -234,6 +234,11 @@ arrows_cast2d = false
 fuse_timer = 1500
 
 //: ObjBomb
+// Automatically pick up a bomb when setting down a bomb.
+// Default: false
+auto_pickup = false
+
+//: ObjBomb
 // Arrows can always pick up bombs as long as it's before they explode.
 // Default: false
 arrow_pickup = false
@@ -253,6 +258,16 @@ enemy_interact = false
 // Detonates bombs when hitting them with the Fire Rod or Magic Powder.
 // Default: false
 fire_detonates = false
+
+//: ObjBomb
+// Detonates bombs by pressing the bomb button after setting down a bomb.
+// Default: false
+remote_bombs = false
+
+//: ObjBomb
+// Link's bombs can damage both him and enemies.
+// Default: false
+self_damage = false
 
 //: ObjBomb
 // Emits when bomb explodes. Color values should be 0-255. Brightness 0.00-1.00. Higher values may cause issues or crash the game.

@@ -44,20 +44,28 @@ namespace ProjectZ.InGame.GameObjects.Things
         private bool _arrowMode;
         private bool _carried;
 
-        // Default values modifiable with "lahdmod".
-        private int fuse_timer = 1500;
-        private bool item_interact = false;
-        private bool enemy_interact = false;
-        private bool fire_detonates = false;
-        private bool arrow_pickup = false;
+        ObjSpriteShadow _spriteShadow;
 
-        bool  light_source = true;
-        int   light_red = 255;
-        int   light_grn = 255;
-        int   light_blu = 255;
-        float light_bright = 1.0f;
-        int   light_size = 160;
-        float light_fade = 0.60f;
+        // Default values modifiable with "lahdmod".
+        private int   fuse_timer     = 1500;
+        private bool  item_interact  = false;
+        private bool  enemy_interact = false;
+        private bool  fire_detonates = false;
+        private bool  arrow_pickup   = false;
+        private bool  auto_pickup    = false;
+        private bool  self_damage    = false;
+        private bool  remote_bombs   = false;
+        private bool  light_source   = true;
+        private int   light_red      = 255;
+        private int   light_grn      = 255;
+        private int   light_blu      = 255;
+        private float light_bright   = 1.0f;
+        private int   light_size     = 160;
+        private float light_fade     = 0.60f;
+
+        // Public values for ObjLink to read LAHDMod values.
+        public bool AutoPickup => auto_pickup;
+        public bool RemoteBombs => remote_bombs;
 
         public ObjBomb(Map.Map map, float posX, float posY, bool playerBomb, bool floorExplode, int explosionTime = 1500) : base(map)
         {
@@ -136,7 +144,7 @@ namespace ProjectZ.InGame.GameObjects.Things
                 Map.Objects.RegisterAlwaysAnimateObject(this);
                 MapManager.ObjLink.BombList.Add(this);
             }
-            new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
+            _spriteShadow = new ObjSpriteShadow(Map, this, Values.LayerPlayer, "sprshadowm");
         }
 
         public override void Reset()
@@ -155,17 +163,20 @@ namespace ProjectZ.InGame.GameObjects.Things
         {
             if (_exploded)
             {
-                // use the collision data from the animation to deal damage
-                if (!_playerBomb)
+                // If it's an enemy bomb or the player enabled self damage.
+                if (self_damage || !_playerBomb)
                 {
+                    // Use the animator's collision rectangle to detect objects.
                     var collisionRect = _animator.CollisionRectangle;
                     if (collisionRect != Rectangle.Empty)
                     {
+                        // Convert the rectangle into a box.
                         var collisionBox = new Box(
                             EntityPosition.X + collisionRect.X,
                             EntityPosition.Y + collisionRect.Y, 0,
                             collisionRect.Width, collisionRect.Height, 16);
 
+                        // Check if Link's body box intersects the collision box.
                         if (collisionBox.Intersects(MapManager.ObjLink._body.BodyBox.Box))
                             MapManager.ObjLink.HitPlayer(collisionBox, HitType.Bomb, 4);
                     }
@@ -282,7 +293,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_playerBomb)
                 Body.Level = MapStates.GetLevel(MapManager.ObjLink._body.CurrentFieldState);
 
-            // do not throw the bomb up when the player lets it fall down (e.g. by walking into a door)
+            // Do not throw the bomb up when the player lets it fall down (e.g. by walking into a door).
             if (velocity == Vector2.Zero)
                 Body.Velocity = Vector3.Zero;
             else
@@ -305,19 +316,26 @@ namespace ProjectZ.InGame.GameObjects.Things
             _bodyShadow.IsActive = false;
             SetCarriableActive(false);
 
-            // deals damage to the player or to the enemies
+            // Deals damage to the player or to the enemies.
             if (_playerBomb || DamageEnemies)
                 _map.Objects.Hit(this, new Vector2(EntityPosition.X, EntityPosition.Y),
                     new Box(EntityPosition.X - 20, EntityPosition.Y - 20 - 5, 0, 40, 40, 16), HitType.Bomb, 2, false);
 
+            // Play explosion sound effect.
             Game1.AudioManager.PlaySoundEffect("D378-12-0C");
 
             _animator.Play("explode");
             _animator.SetFrame(1);
 
-            // shake the screen
+            // Shake the screen.
             if (GameSettings.ExScreenShake)
                 Game1.GameManager.ShakeScreen(200, 2.00f, 1.00f, 50.00f, 25.50f);
+
+            // Remove the bomb from the bomb list.
+            MapManager.ObjLink.BombList.Remove(this);
+
+            // Remove the sprite shadow.
+            _map.Objects.DeleteObjects.Add(_spriteShadow);
         }
 
         private void FinishedAnimation()

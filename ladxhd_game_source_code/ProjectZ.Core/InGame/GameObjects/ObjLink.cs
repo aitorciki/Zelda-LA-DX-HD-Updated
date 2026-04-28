@@ -3627,7 +3627,7 @@ namespace ProjectZ.InGame.GameObjects
                 "feather"       => UseFeather,
                 "toadstool"     => UseToadstool,
                 "powder"        => UsePowder,
-                "bomb"          => UseBomb,
+                "bomb"          => () => UseBomb(false),
                 "bow"           => UseArrow,
                 "shovel"        => UseShovel,
                 "stonelifter"   => UseBracelet,
@@ -4823,7 +4823,7 @@ namespace ProjectZ.InGame.GameObjects
         //  BOMBS CODE
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private void UseBomb()
+        private void UseBomb(bool autoPickup = false)
         {
             // If Link is carrying an object throw it.
             if (_carriedGameObject != null)
@@ -4832,7 +4832,8 @@ namespace ProjectZ.InGame.GameObjects
                 return;
             }
             // Return if not in any of the current states.
-            if (CurrentState != State.Idle &&
+            if (!autoPickup &&
+                CurrentState != State.Idle &&
                 CurrentState != State.Rafting &&
                 CurrentState != State.Pushing &&
                 CurrentState != State.Jumping &&
@@ -4854,23 +4855,43 @@ namespace ProjectZ.InGame.GameObjects
 
                 carriableComponent?.StartGrabbing?.Invoke();
                 StartPickup(carriableComponent);
-
                 Animation.Play("pull_" + Direction);
-
                 return;
             }
 
+            // The inside logic only runs if the player has "Remote Bombs" enabled.
+            if (BombList.Count > 0)
+            {
+                // Loop through the active bombs.
+                foreach (ObjBomb objBomb in BombList.ToList())
+                {
+                    // We can't get the value until we get a bomb object.
+                    if (objBomb.RemoteBombs)
+                    {
+                        // Detonate the bomb.
+                        objBomb.Explode();
+                        return;
+                    }
+                }
+            }
             // Remove 1 bomb from the inventory.
             if (!Game1.GameManager.RemoveItem("bomb", 1))
                 return;
 
+            // Spawn the bomb into the game world.
             var spawnPosition = new Vector2(EntityPosition.X, EntityPosition.Y) + _bombOffset[Direction];
-            Map.Objects.SpawnObject(new ObjBomb(Map, spawnPosition.X, spawnPosition.Y, true, false, 2000));
-            
+            var bombObject = new ObjBomb(Map, spawnPosition.X, spawnPosition.Y, true, false, 2000);
+            Map.Objects.SpawnObject(bombObject);
+
+            // Set Link's current state.
             CurrentState = State.Bombing;
 
-            // play animation
+            // Play the animation to set down a bomb which is shared with magic powder.
             Animation.Play("powder_" + Direction);
+
+            // If the user enabled auto-pickup, immediately run this again to instantly pick up the bomb.
+            if (bombObject.AutoPickup && !autoPickup)
+                UseBomb(true);
         }
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

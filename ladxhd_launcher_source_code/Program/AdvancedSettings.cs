@@ -181,10 +181,13 @@ public static class AdvancedSettings
 
             // Items: Bombs
             { "fuse_timer",                     "Bomb Fuse Timer"                   },
+            { "auto_pickup",                    "Automatically Pick-Up"             },
             { "arrow_pickup",                   "Arrows Always Pick-Up Bombs"       },
             { "item_interact",                  "Items Interact With Bombs"         },
             { "enemy_interact",                 "Interact With Enemy Bombs"         },
             { "fire_detonates",                 "Fire Detonates Bombs"              },
+            { "remote_bombs",                   "Remote Bombs"                      },
+            { "self_damage",                    "Self Inflicted Damage"             },
 
             // Items: Fairies
             { "sword_collect",                  "Collect With Sword"                },
