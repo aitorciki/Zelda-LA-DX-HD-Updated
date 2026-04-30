@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.IO;
+using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Things;
-using System;
 
 namespace ProjectZ.InGame.Overlay.Sequences
 {
@@ -13,7 +14,6 @@ namespace ProjectZ.InGame.Overlay.Sequences
             public Vector2 Direction;
             public float GlideCounter;
         }
-
         private readonly Seagull[] _seagulls = new Seagull[2];
         private readonly Seagull[] _smallSeagulls = new Seagull[5];
 
@@ -25,8 +25,22 @@ namespace ProjectZ.InGame.Overlay.Sequences
         private float _shoreSoundCounter;
         private float _birdSoundCounter;
 
+        private Color _beachSkyColor;
+
+        private int beach_sequence_sky_red = 66;
+        private int beach_sequence_sky_grn = 89;
+        private int beach_sequence_sky_blu = 254;
+
         public MarinBeachSequence()
         {
+            // If a mod file exists load the values from it.
+            string modFile = Path.Combine(Values.PathLAHDMods, "MarinBeachSequence.lahdmod");
+            ModFile.Parse(modFile, this);
+
+            // Sets the color of the sky at the top of the screen.
+            _beachSkyColor = new Color(beach_sequence_sky_red, beach_sequence_sky_grn, beach_sequence_sky_blu);
+
+            // Sets the width and height of the sequence window.
             _sequenceWidth = 320;
             _sequenceHeight = 128 + 48;
         }
@@ -40,7 +54,7 @@ namespace ProjectZ.InGame.Overlay.Sequences
             var center = 160;
 
             // sky background
-            Sprites.Add(new SeqColor(new Rectangle(0, 0, _sequenceWidth, top), new Color(66, 89, 254), 0));
+            Sprites.Add(new SeqColor(new Rectangle(0, 0, _sequenceWidth, top), _beachSkyColor, 0));
 
             // beach
             Sprites.Add(new SeqSprite("beach_background", new Vector2(0, top), 0));
