@@ -1,5 +1,27 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.7.9
+### The "Always More Room to Grow" Update
+  * New Video option "Pixel Snapping" which makes sprite pixels snap to game pixels like a LCD grid.
+  * New Video option "Pixel Grid Shader" which draws a pixel grid. Requires enabling "Pixel Snapping".
+  * The Pixel Grid opacity can be configured via the Launcher "Mods" section or with "Game1.lahdmod". 
+  * New Graphics option "Classic Item Sprites" which forces some item to use original DX sprites.
+  * When colliding with a corner, Link will now sidestep it. Configurable via Launcher or ObjLink.lahdmod.
+  * New bomb options: Auto-Pickup, Remote Bombs, Self-Damage. Configurable via Launcher or ObjBomb.lahdmod.
+  * Overworld map and tileset were greatly optimized removing many unused tiles (credit @GLEclipseGaming).
+  * Presets that apply the classic camera border also set the transparency of the classic border to 100%.
+  * Minor changes to the German and French photo sprites to bring them in line with other languages.
+  * Match move speed reduction of original game to 25% (from 20%) when moving through tall grass or water.
+  * Increase the detection and attack range of the Pincer enemy to more closely match the original game.
+  * Implement high DPI scaling for all of this project's tooling: Migration Tool, Patcher, and Mod Maker.
+  * Add support for "MarinBeachSequence.lahdmod" which allows recoloring the sky during the beach sequence.
+  * Fix Ocarina having Ballad of the Windfish immediately available without first learning it from Marin.
+  * Fix the currently played music track getting "loud" or "stuttering" between map transitions.
+  * Fix hitting the Genie bottle while in chase mode to play the correct sound not repelling particle.
+  * Fix defeating the Genie heart container spawn so that it will never spawn inside a torch.
+  * Fix room darkeners adding lamps outside the room into the calculation preventing full brightness.
+  * Fix mistake in "[NAME]" placeholder tag in Russian language file (credit @NoseDevilEugen).
+
 ## **v1.7.8
 ### The "Modding Improvements Continue" Update
   * Mods can now be packed into an APK by copying a "Mods" folder in the same path when patching.
