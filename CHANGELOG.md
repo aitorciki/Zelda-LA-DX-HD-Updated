@@ -1,6 +1,6 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
-## **v1.7.9
+## **v1.7.9**
 ### The "Always More Room to Grow" Update
   * New Video option "Pixel Snapping" which makes sprite pixels snap to game pixels like a LCD grid.
   * New Video option "Pixel Grid Shader" which draws a pixel grid. Requires enabling "Pixel Snapping".
@@ -22,7 +22,7 @@
   * Fix room darkeners adding lamps outside the room into the calculation preventing full brightness.
   * Fix mistake in "[NAME]" placeholder tag in Russian language file (credit @NoseDevilEugen).
 
-## **v1.7.8
+## **v1.7.8**
 ### The "Modding Improvements Continue" Update
   * Mods can now be packed into an APK by copying a "Mods" folder in the same path when patching.
   * Android version can now load "Mods" that are built into the APK file using the method above.
