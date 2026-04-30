@@ -259,8 +259,8 @@ namespace LADXHD_ModMaker
             }
 
             // Game executable not found.
-            string GameExePath = Path.Combine(Config.GamePath, "Link's Awakening DX HD.exe");
-            if (!Config.GamePath.TestPath(true) || !GameExePath.TestPath())
+            string GameExePath = Config.GetExecutable(Config.GamePath);
+            if (!GameExePath.TestPath(true) || !GameExePath.TestPath())
             {
                 message = "The Game Path must point to a valid installation that contains the file \"Link's Awakening DX HD.exe\".";
                 Forms.OkayDialog.Display("Game Path Invalid", DPI.Scale(260), DPI.Scale(40), DPI.Scale(24), DPI.Scale(16), 10, message);

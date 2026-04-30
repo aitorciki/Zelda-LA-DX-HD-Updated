@@ -145,10 +145,10 @@ namespace LADXHD_ModMaker
         private static bool VerifyGameFolder()
         {
             // Get the path to the game executable to verify we're in the correct folder.
-            string GameExePath = Path.Combine(Config.GamePath, "Link's Awakening DX HD.exe");
+            string GameExePath = Config.GetExecutable(Config.GamePath);
 
             // If we're not in the game folder do not try to apply patches.
-            if (!GameExePath.TestPath())
+            if (!GameExePath.TestPath(true) || !GameExePath.TestPath())
                 return false;
 
             // Otherwise apply patches.
