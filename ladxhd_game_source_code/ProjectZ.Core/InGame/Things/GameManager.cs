@@ -114,7 +114,7 @@ namespace ProjectZ.InGame.Things
         public int SavePositionY;
         public int SaveDirection;
         public int SaveSlot;
-        public string SaveFileVersion = "4";
+        public string SaveFileVersion = "5";
 
         private float _shakeCountX;
         private float _shakeCountY;
@@ -143,7 +143,7 @@ namespace ProjectZ.InGame.Things
 
         // 0: Marin, 1: Manbo, 2: Mamu
         public int[] OcarinaSongs = new int[3];
-        public int SelectedOcarinaSong = 0;
+        public int SelectedOcarinaSong = -1;
 
         public bool GuardianAcornIsActive;
         public int GuardianAcornCount;
@@ -1422,7 +1422,7 @@ namespace ProjectZ.InGame.Things
             GuardianAcornDamageCount = 0;
             PieceOfPowerCount = 0;
             PieceOfPowerDamageCount = 0;
-            SelectedOcarinaSong = 0;
+            SelectedOcarinaSong = -1;
             OcarinaSongs[0] = 0;
             OcarinaSongs[1] = 0;
             OcarinaSongs[2] = 0;
@@ -1448,6 +1448,7 @@ namespace ProjectZ.InGame.Things
             SaveFileFix_v1();
             SaveFileFix_v2();
             SaveFileFix_v3();
+            SaveFileFix_v4();
 
             // Item and equipment preparations.
             ItemDrawHelper.Init();
@@ -1583,9 +1584,35 @@ namespace ProjectZ.InGame.Things
                 // It's not perfect, but it's the closest value we have to the end.
                 if (notInEgg)
                     GameCleared = false;
+
+                // Increment the save version.
+                SaveManager.SetString("save_version", "4");
             }
-            // Increment the save version.
-            SaveManager.SetString("save_version", SaveFileVersion);
+        }
+
+        private void SaveFileFix_v4()
+        {
+            // Fixes ocarina defaulting to "Ballad of the Windfish" when no songs are learned.
+            string saveVersionStr = SaveManager.GetString("save_version", "0");
+            int.TryParse(saveVersionStr, out int saveVersion);
+
+            // Check if the save file is below version 5.
+            if (saveVersion < 5)
+            {
+                // Check if the player has any of the three songs.
+                var hasMarinSong = Game1.GameManager.GetItem("ocarina_maria");
+                var hasManboSong = Game1.GameManager.GetItem("ocarina_manbo");
+                var hasMamusSong = Game1.GameManager.GetItem("ocarina_frog");
+
+                // If they don't, set the current song to "-1" which represents no songs.
+                if (hasMarinSong == null && hasManboSong == null && hasMamusSong == null)
+                {
+                    SaveManager.SetString("ocarinaSong","-1");
+                    SelectedOcarinaSong = -1;
+                }
+                // Increment the save version.
+                SaveManager.SetString("save_version", "5");
+            }
         }
 
         public void RespawnPlayer()
