@@ -148,7 +148,7 @@ namespace LADXHD_ModMaker
             string GameExePath = Config.GetExecutable(Config.GamePath);
 
             // If we're not in the game folder do not try to apply patches.
-            if (!GameExePath.TestPath(true) && !GameExePath.TestPath())
+            if (!GameExePath.TestPath())
                 return false;
 
             // Otherwise apply patches.
