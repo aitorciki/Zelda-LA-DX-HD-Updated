@@ -1,5 +1,10 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.8.0**
+### The "Clash of the 2D Systems" Update
+  * This is an emergency update. The fix below greatly impacted the game making it feel awful to play.
+  * Disable "corner correction" in 2D maps which was interfering with the 2D collision snapping system.
+
 ## **v1.7.9**
 ### The "Always More Room to Grow" Update
   * New Video option "Pixel Snapping" which makes sprite pixels snap to game pixels like a LCD grid.

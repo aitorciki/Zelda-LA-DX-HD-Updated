@@ -16,12 +16,13 @@ The game can be patched to port to Windows (DX11), Windows (OpenGL), Android, an
 - As of v1.5.0, it has evolved into something I never dreamed of. Hundreds of issues fixed with tons of features.
 - As of v1.6.0, just about every small detail from the original game has been restored and/or replicated.
 - As of v1.7.0, it's been ported to multiple platforms and every single (known) bug since v1.0.0 has been fixed.
+- As of v1.8.0, modding support has been greatly enhanced and some of the most obscure bugs have been fixed.
 
 ## Building / Contributing
 
 I have compiled all this information into a wiki page here: [Building / Contributing](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/wiki/Building-&-Contributing).
 
-## Patching v1.0.0 (or v1.1.4+) to v1.7.9.
+## Patching v1.0.0 (or v1.1.4+) to v1.8.0.
 
 To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page.<br>
 If you wish to build the game yourself, see **Personal Build / Publishing**.
