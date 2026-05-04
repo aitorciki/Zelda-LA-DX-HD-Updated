@@ -6107,6 +6107,7 @@ namespace ProjectZ.InGame.GameObjects
             _body.DeepWaterOffset = -3;
             _body.Level = 0;
             _body.IsGrounded = true;
+            _body.CornerCorrection = !Is2DMode;
 
             _bootsHolding = false;
             _bootsRunning = false;
