@@ -73,6 +73,10 @@ namespace ProjectZ.InGame.GameObjects.Things
             Tags = Values.GameObjectTag.Item;
             IsVisible = true;
 
+            // The seashell can be exploited when found in bushes and Classic Camera is enabled.
+            CanReset = _itemName == "shell";
+            OnReset = Reset;
+
             // Checks if item is valid and has not been collected while also setting the save key.
             if (!ItemAndSaveKeyValid(_item, saveKey))
                 return;
@@ -93,7 +97,7 @@ namespace ProjectZ.InGame.GameObjects.Things
             if (_item.TradeItem)
                 EntityPosition.Y += 3;
 
-            // add sound for the bounces
+            // Add sound for the bounces.
             _body = new BodyComponent(EntityPosition, -4, -8, 8, 8, 8)
             {
                 RestAdditionalMovement = false,
@@ -186,6 +190,11 @@ namespace ProjectZ.InGame.GameObjects.Things
             // If a shadow was created, always animate it.
             if (SpriteShadow != null)
                 Map.Objects.RegisterAlwaysAnimateObject(SpriteShadow);
+        }
+
+        private void Reset()
+        {
+            Map.Objects.DeleteObjects.Add(this);
         }
 
         public override void Init()
