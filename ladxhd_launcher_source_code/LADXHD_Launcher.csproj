@@ -23,7 +23,9 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="System.Windows.Extensions" Version="8.0.0" Condition="'$(TargetOS)' == 'win'"/>
+    <PackageReference Include="NativeFileDialogSharp" Version="0.6.0-alpha" />
+    <PackageReference Include="System.Windows.Extensions" Version="8.0.0" Condition="'$(TargetOS)' == 'win'" />
+    <PackageReference Include="VCDiff" Version="5.0.0" />
   </ItemGroup>
   
   <PropertyGroup>
@@ -62,14 +64,17 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="UserInterface\HomeView.axaml.cs">
+    <Compile Update="Windows\Launcher\HomeView.axaml.cs">
       <DependentUpon>UserInterface\HomeView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="UserInterface\SettingsView.axaml.cs">
+    <Compile Update="Windows\Launcher\SettingsView.axaml.cs">
       <DependentUpon>UserInterface\SettingsView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="UserInterface\ModsView.axaml.cs">
+    <Compile Update="Windows\Launcher\ModsView.axaml.cs">
       <DependentUpon>UserInterface\ModsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\ModMaker\CreateModsWindow.axaml.cs">
+      <DependentUpon>CreateModsWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
