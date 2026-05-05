@@ -88,7 +88,7 @@ namespace ProjectZ.InGame.GameObjects.Enemies
                 _sprite.Color = Color.White * ((float)_liveTime / 125f);
 
             // Delete the fireball after it's timer reaches 0 or lower.
-            if (_liveTime < 0)
+            if (_liveTime <= 0)
             {
                 Delete();
                 return;
