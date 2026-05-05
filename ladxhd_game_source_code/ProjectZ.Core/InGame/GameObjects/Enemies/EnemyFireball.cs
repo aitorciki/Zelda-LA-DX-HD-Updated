@@ -83,11 +83,16 @@ namespace ProjectZ.InGame.GameObjects.Enemies
         {
             _liveTime -= Game1.DeltaTime;
 
+            // Fade the fireball out when it's timer is about to expire.
             if (_liveTime <= 125)
                 _sprite.Color = Color.White * ((float)_liveTime / 125f);
-            else if (_liveTime < 0)
-                Delete();
 
+            // Delete the fireball after it's timer reaches 0 or lower.
+            if (_liveTime < 0)
+            {
+                Delete();
+                return;
+            }
             // If the shot was reflected, try to hit an enemy.
             if (_reflected)
             {
