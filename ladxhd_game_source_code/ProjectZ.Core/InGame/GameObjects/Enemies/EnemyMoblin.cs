@@ -96,6 +96,9 @@ namespace ProjectZ.InGame.GameObjects.Enemies
 
         public override void Reset()
         {
+            if (!this.IsActive)
+                return;
+
             _animator.Continue();
             _damageField.IsActive = true;
             _hitComponent.IsActive = true;

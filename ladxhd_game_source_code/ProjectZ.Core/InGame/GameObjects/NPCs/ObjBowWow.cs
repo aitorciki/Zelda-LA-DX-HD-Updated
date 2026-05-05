@@ -250,7 +250,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _direction = AnimationHelper.GetDirection(_body.VelocityTarget);
                 _animator.Play("walk_" + _direction);
             }
-
             if (!_followMode)
             {
                 _outsideCounter -= Game1.DeltaTime;
@@ -258,7 +257,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     EndIdle();
                 return;
             }
-
             UpdatePosition();
         }
 
@@ -281,7 +279,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                     _aiComponent.ChangeState("treasure");
                     return;
                 }
-
                 if (Game1.RandomNumber.Next(0, 100) < 35)
                     _aiComponent.ChangeState("walking");
                 else
@@ -305,7 +302,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 var origin = MapManager.ObjLink.Position - new Vector2(0, 4);
                 var directionToStart = origin - EntityPosition.Position;
                 var radiusToCenter = MathF.Atan2(directionToStart.Y, directionToStart.X);
-
                 var maxDistanceX = 64.0f;
                 var maxDistanceY = 64.0f;
                 var distanceMultiplier = MathHelper.Clamp(
@@ -319,8 +315,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 rotation = Game1.RandomNumber.Next(0, 628) / 100f;
             }
-
-
             // change the direction
             SetWalkDirection(new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)));
         }
@@ -328,7 +322,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private void SetWalkDirection(Vector2 direction)
         {
             _body.VelocityTarget = direction * Game1.RandomNumber.Next(25, 40) / 25f;
-
             _direction = AnimationHelper.GetDirection(_body.VelocityTarget);
             _animator.Play("walk_" + _direction);
         }
@@ -395,7 +388,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 ToIdle();
                 return;
             }
-
             UpdatePosition();
         }
 
@@ -533,7 +525,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
                 ToIdle();
             }
-
             if (_body.VelocityTarget == Vector2.Zero)
                 ToIdle();
 
@@ -551,7 +542,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 Game1.GameManager.StartDialogPath("bowWow_dig");
                 ToIdle();
             }
-
             UpdatePosition();
         }
 
@@ -621,7 +611,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 _outsideCounter = 350;
                 _chainPull = Vector2.Zero;
             }
-
             _body.AdditionalMovementVT = _chainPull;
             _chainPull *= (float)Math.Pow(0.75f, Game1.TimeMultiplier);
             UpdateChain();
@@ -640,7 +629,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
                 EntityPosition.Z);
 
             startPosition.Z = MathHelper.Clamp(startPosition.Z, 0, 12);
-
             _chain.UpdateChain(startPosition, goalPosition);
         }
         
@@ -661,7 +649,6 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             {
                 _body.VelocityTarget.Y = -_body.VelocityTarget.Y * 0.5f;
             }
-
             if ((moveCollision & (Values.BodyCollision.Vertical | Values.BodyCollision.Horizontal)) != 0)
             {
                 _direction = AnimationHelper.GetDirection(_body.VelocityTarget);
