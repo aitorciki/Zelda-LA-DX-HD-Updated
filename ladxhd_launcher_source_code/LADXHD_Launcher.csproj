@@ -64,16 +64,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Windows\Launcher\HomeView.axaml.cs">
+    <Compile Update="Interface\Launcher\HomeView.axaml.cs">
       <DependentUpon>UserInterface\HomeView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Windows\Launcher\SettingsView.axaml.cs">
+    <Compile Update="Interface\Launcher\SettingsView.axaml.cs">
       <DependentUpon>UserInterface\SettingsView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Windows\Launcher\ModsView.axaml.cs">
+    <Compile Update="Interface\Launcher\ModsView.axaml.cs">
       <DependentUpon>UserInterface\ModsView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Windows\ModMaker\CreateModsWindow.axaml.cs">
+    <Compile Update="Interface\ModMaker\CreateModsWindow.axaml.cs">
       <DependentUpon>CreateModsWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
