@@ -1,12 +1,9 @@
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
-using NativeFileDialogSharp;
-using static LADXHD_Launcher.Functions;
+using static LADXHD_Launcher.ModMaker_Functions;
 
 namespace LADXHD_Launcher
 {
@@ -36,7 +33,7 @@ namespace LADXHD_Launcher
             // Load the INI file.
             LADXHD_IniFile.Initialize(IniPath);
             LADXHD_IniFile.LoadINIValues();
-            
+
             // Load the values from the INI file.
             Title = Config.ModName;
             ModNameLabel.Text = Config.ModName;
@@ -93,7 +90,7 @@ namespace LADXHD_Launcher
 
             // Disable form, apply patches, enable form.
             EnableComponents(false);
-            await Task.Run(() => Functions.ApplyModPatches());
+            await Task.Run(() => ModMaker_Functions.ApplyModPatches());
             EnableComponents(true);
 
             // Display that it's done.

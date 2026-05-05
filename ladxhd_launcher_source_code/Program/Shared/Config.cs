@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Avalonia.Markup.Xaml.Templates;
-using static LADXHD_Launcher.Functions;
+using static LADXHD_Launcher.ModMaker_Functions;
 
 namespace LADXHD_Launcher
 {

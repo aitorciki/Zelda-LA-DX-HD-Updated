@@ -6,7 +6,7 @@ using static LADXHD_Launcher.VCDiff;
 
 namespace LADXHD_Launcher
 {
-    internal class Functions
+    internal class ModMaker_Functions
     {
         private static int FileCount;
         private static int TotalCount;

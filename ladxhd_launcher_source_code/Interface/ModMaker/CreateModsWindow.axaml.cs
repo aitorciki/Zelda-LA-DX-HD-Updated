@@ -5,7 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using NativeFileDialogSharp;
-using static LADXHD_Launcher.Functions;
+using static LADXHD_Launcher.ModMaker_Functions;
 
 namespace LADXHD_Launcher
 {
@@ -235,7 +235,7 @@ namespace LADXHD_Launcher
             }
             // Disable form, create patches, enable components.
             EnableComponents(false);
-            await Task.Run(() => Functions.CreateModPatches());
+            await Task.Run(() => ModMaker_Functions.CreateModPatches());
             EnableComponents(true);
 
             // Display that it's done.
