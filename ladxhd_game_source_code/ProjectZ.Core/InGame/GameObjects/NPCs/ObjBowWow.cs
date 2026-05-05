@@ -40,6 +40,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
         private float _attackPlayerCooldown;
         private float _idleBobTimer;
 
+        private Rectangle _field;
+
         public ObjBowWow() : base("bowwow") { }
 
         private ObjBowWowWater _waterGraphic;
@@ -184,7 +186,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             if (follow)
             {
                 _body.CollisionTypes = Values.CollisionTypes.None;
-                _body.FieldRectangle = Rectangle.Empty;
+                _field = Rectangle.Empty;
                 MapManager.ObjLink.SetBowWowFollower(this);
                 Map.Objects.RegisterAlwaysAnimateObject(this);
                 _chainMax = 46;
@@ -402,7 +404,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
             // Update the field rectangle when Bow Wow is a follower.
             if (_followMode)
             {
-                _body.FieldRectangle = Map.GetField(MapManager.ObjLink.CenterPosition.Position);
+                _field = Map.GetField(MapManager.ObjLink.CenterPosition.Position);
             }
             // Reset the target each attack.
             _enemyTarget = null;
@@ -418,7 +420,7 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // Make sure the enemy is currently within the field rectangle.
             if (Camera.ClassicMode)
-                _enemyList.RemoveAll(obj => !_body.FieldRectangle.Contains(obj.EntityPosition.Position));
+                _enemyList.RemoveAll(obj => !_field.Contains(obj.EntityPosition.Position));
             
             // Loop through the enemies in the list.
             foreach (var obj in _enemyList)
