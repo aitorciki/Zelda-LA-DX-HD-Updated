@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Reflection;
+﻿using System;
+using System.IO;
 
 namespace LADXHD_Migrater
 {
@@ -14,7 +14,6 @@ namespace LADXHD_Migrater
         public static string Launcher_Source;
         public static string Migrate_Source;
         public static string Patcher_Source;
-        public static string ModMaker_Source;
         public static string Update_Content;
         public static string Update_Data;
         public static string Publish_Path;
@@ -28,7 +27,7 @@ namespace LADXHD_Migrater
 
         public static void Initialize()
         {
-            AppPath         = Assembly.GetExecutingAssembly().Location;
+            AppPath         = AppContext.BaseDirectory;
             BaseFolder      = Path.GetDirectoryName(AppPath);
             Patches         = Path.Combine(BaseFolder, "assets_patches");
             Orig_Content    = Path.Combine(BaseFolder, "assets_original", "Content");
@@ -37,7 +36,6 @@ namespace LADXHD_Migrater
             Launcher_Source = Path.Combine(BaseFolder, "ladxhd_launcher_source_code");
             Migrate_Source  = Path.Combine(BaseFolder, "ladxhd_migrate_source_code");
             Patcher_Source  = Path.Combine(BaseFolder, "ladxhd_patcher_source_code");
-            ModMaker_Source = Path.Combine(BaseFolder, "ladxhd_modmaker_source_code");
             Update_Content  = Path.Combine(Game_Source, "ProjectZ.Core", "Content");
             Update_Data     = Path.Combine(Game_Source, "ProjectZ.Core", "Data");
             Publish_Path    = Path.Combine(Game_Source, "~Publish");

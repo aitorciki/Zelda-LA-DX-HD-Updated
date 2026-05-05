@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using static LADXHD_Migrater.Config;
-using static LADXHD_Migrater.XDelta3;
+using static LADXHD_Migrater.VCDiff;
 
 namespace LADXHD_Migrater
 {
@@ -160,9 +160,9 @@ namespace LADXHD_Migrater
             foreach (string newFile in target)
             {
                 // Create all derivative files based on the original file.
-                string xdelta3File = Path.Combine(Config.Patches, newFile + ".xdelta");
+                string vcDiffFile = Path.Combine(Config.Patches, newFile + ".vcdiff");
                 string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), newFile);
-                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
+                VCDiff.Execute(Operation.Apply, fileItem.FullName, vcDiffFile, patchedFile);
             }
         }
 
@@ -181,13 +181,13 @@ namespace LADXHD_Migrater
                 if (fileItem.IsInFolder("bin") || fileItem.IsInFolder("obj"))
                     continue;
 
-                // Set up path to output xdelta file and create the output folder while also getting path to updated file.
-                string xdelta3File = Path.Combine(Config.Patches, fileItem.Name + ".xdelta");
+                // Set up path to output vcdiff files and create the output folder while also getting path to updated file.
+                string vcDiffFile = Path.Combine(Config.Patches, fileItem.Name + ".vcdiff");
                 string patchedFile = Path.Combine((updatePath + fileItem.DirectoryName.Replace(origPath, "")).CreatePath(), fileItem.Name);
 
                 // If a patch exists for the current file, patch it. If it doesn't then copy it.
-                if (xdelta3File.TestPath())
-                    XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile);
+                if (vcDiffFile.TestPath())
+                    VCDiff.Execute(Operation.Apply, fileItem.FullName, vcDiffFile, patchedFile);
                 else
                     File.Copy(fileItem.FullName, patchedFile, true);
 
@@ -203,10 +203,8 @@ namespace LADXHD_Migrater
 
         public static void MigrateFiles()
         {
-            XDelta3.Create();
             MigrateCopyLoop(Config.Orig_Content, Config.Update_Content);
             MigrateCopyLoop(Config.Orig_Data, Config.Update_Data);
-            XDelta3.Remove();
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -248,19 +246,17 @@ namespace LADXHD_Migrater
                 if (oldHash != newHash)
                 {
                     // Create a patch from the old file vs. the new file.
-                    string patchName = Path.Combine(Config.Patches, fileItem.Name + ".xdelta");
-                    XDelta3.Execute(Operation.Create, oldFile, fileItem.FullName, patchName);
+                    string patchName = Path.Combine(Config.Patches, fileItem.Name + ".vcdiff");
+                    VCDiff.Execute(Operation.Create, oldFile, fileItem.FullName, patchName);
                 }
             }
         }
 
         public static void CreatePatches()
         {
-            XDelta3.Create();
             Config.Patches.ClearPath();
             CreatePatchLoop(Config.Orig_Content, Config.Update_Content);
             CreatePatchLoop(Config.Orig_Data, Config.Update_Data);
-            XDelta3.Remove();
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -287,12 +283,12 @@ namespace LADXHD_Migrater
             Path.Combine(Config.Launcher_Source, "~Publish").RemovePath();
             Path.Combine(Config.Launcher_Source, "bin").RemovePath();
             Path.Combine(Config.Launcher_Source, "obj").RemovePath();
+            Path.Combine(Config.Migrate_Source, "~Publish").RemovePath();
             Path.Combine(Config.Migrate_Source, "bin").RemovePath();
             Path.Combine(Config.Migrate_Source, "obj").RemovePath();
+            Path.Combine(Config.Patcher_Source, "~Publish").RemovePath();
             Path.Combine(Config.Patcher_Source, "bin").RemovePath();
             Path.Combine(Config.Patcher_Source, "obj").RemovePath();
-            Path.Combine(Config.ModMaker_Source, "bin").RemovePath();
-            Path.Combine(Config.ModMaker_Source, "obj").RemovePath();
             Path.Combine(Config.BaseFolder, "~Publish").RemovePath();
         }
 

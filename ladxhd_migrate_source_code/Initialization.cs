@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -16,20 +18,29 @@ namespace LADXHD_Migrater
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            try
+            {
+                Application.SetDefaultFont(new Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
 
-            // Initialize DPI scaling.
-            SetProcessDPIAware();
-            DPI.Init();
+                // Initialize DPI scaling.
+                SetProcessDPIAware();
+                DPI.Init();
 
-            // Initialize the classes.
-            Forms.Initialize();
-            Config.Initialize();
-            XDelta3.Initialize();
+                // Initialize the classes.
+                Forms.Initialize();
+                Config.Initialize();
 
-            // Only run if "xdelta3.exe" is found.
-            Forms.MainDialog.ShowDialog();
+                // Show the dialog.
+                Forms.MainDialog.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                // If an error happens, try to show a message box and create a crash log.
+                MessageBox.Show(ex.ToString(), "Startup Crash", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                File.WriteAllText("crash.log", ex.ToString());
+            }
         }
     }
 }

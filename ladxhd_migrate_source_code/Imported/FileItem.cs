@@ -8,12 +8,16 @@ namespace LADXHD_Migrater
      * does not have the "BaseName" property of a file as readily available as PowerShell's Get-Item. It also over complicates things by
      * needing to distinguish between "FileInfo" and "DirectoryInfo". This class "FileItem" seeks to remedy these issues.
      *---------------------------------------------------------------------------------------------------------------------------------*/
-
+    
     public class FileItem
     {
+        // Mark these as nullable (?) because they might not exist depending on the path
+        public DirectoryInfo? Directory;
+        public DirectoryInfo? Parent;
+        public DirectoryInfo? Root;
+    
         public FileAttributes Attributes;
         public string BaseName = "";
-        public DirectoryInfo Directory;
         public string DirectoryName = "";
         public bool Exists = false;
         public string Extension = "";
@@ -25,43 +29,45 @@ namespace LADXHD_Migrater
         public DateTime LastWriteTimeUtc;
         public long Length = 0;
         public string Name = "";
-        public DirectoryInfo Parent;
-        public DirectoryInfo Root;
 
         public FileItem(string InputFile)
         {
-            // This "Info" can be file or diectory so start it as dynamic.
-            dynamic Info = null;
+            // Use the common base class 'FileSystemInfo' instead of 'dynamic'
+            FileSystemInfo info;
 
-            // If it's a folder, then create DirectoryInfo.
-            if (InputFile.TestPath(true))
+            if (InputFile.TestPath(true)) // Directory
             {
-                Info = new DirectoryInfo(InputFile);
-                this.Name = Info.Name;
-                this.BaseName = Info.Name;
-                this.DirectoryName = Info.FullName;
-                this.Parent = Info.Parent;
-                this.Root = Info.Root;
+                var dirInfo = new DirectoryInfo(InputFile);
+                info = dirInfo;
+            
+                this.Name = dirInfo.Name;
+                this.BaseName = dirInfo.Name;
+                this.DirectoryName = dirInfo.FullName;
+                this.Parent = dirInfo.Parent;
+                this.Root = dirInfo.Root;
             }
-            // If it's a file, then create FileInfo.
-            else if (InputFile.TestPath())
+            else // File (or non-existent)
             {
-                Info = new FileInfo(InputFile);
-                this.Name = Info.Name;
-                this.BaseName = this.Name.GetBaseName();
-                this.Directory = Info.Directory;
-                this.DirectoryName = Info.DirectoryName;
-                this.IsReadOnly = Info.IsReadOnly;
-                this.Length = Info.Length;
+                var fileInfo = new FileInfo(InputFile);
+                info = fileInfo;
+            
+                this.Name = fileInfo.Name;
+                this.BaseName = Path.GetFileNameWithoutExtension(this.Name);
+                this.Directory = fileInfo.Directory;
+                this.DirectoryName = fileInfo.DirectoryName ?? "";
+                this.IsReadOnly = fileInfo.IsReadOnly;
+                this.Length = fileInfo.Exists ? fileInfo.Length : 0;
             }
-            this.Attributes = Info.Attributes;
-            this.Exists = Info.Exists;
-            this.Extension = Info.Extension;
-            this.FullName = Info.FullName;
-            this.LastAccessTime = Info.LastAccessTime;
-            this.LastAccessTimeUtc = Info.LastAccessTimeUtc;
-            this.LastWriteTime = Info.LastWriteTime;
-            this.LastWriteTimeUtc = Info.LastWriteTimeUtc;
+
+            // Common properties available on FileSystemInfo base class
+            this.Attributes = info.Attributes;
+            this.Exists = info.Exists;
+            this.Extension = info.Extension;
+            this.FullName = info.FullName;
+            this.LastAccessTime = info.LastAccessTime;
+            this.LastAccessTimeUtc = info.LastAccessTimeUtc;
+            this.LastWriteTime = info.LastWriteTime;
+            this.LastWriteTimeUtc = info.LastWriteTimeUtc;
         }
 
         public bool IsInFolder(string folderName)

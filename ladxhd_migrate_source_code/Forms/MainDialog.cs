@@ -164,7 +164,7 @@ namespace LADXHD_Migrater
 
             // Let the user know that the patches were created.
             Forms.OkayDialog.Display("Patches Created", DPI.Scale(250), DPI.Scale(40), DPI.Scale(27), DPI.Scale(9), 15,
-                "Finished creating xdelta patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.");
+                "Finished creating vcdiff patches from modified files. If any files were intentionally modifed, these can be shared as a new PR for the GitHub repository.");
 
             // Enable the dialog's controls.
             ToggleDialog(true);

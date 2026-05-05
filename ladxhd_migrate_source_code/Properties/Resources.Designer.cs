@@ -159,15 +159,5 @@ namespace LADXHD_Migrater.Properties {
                 return ((byte[])(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] xdelta3_exe {
-            get {
-                object obj = ResourceManager.GetObject("xdelta3.exe", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

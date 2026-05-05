@@ -2,34 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace LADXHD_Migrater
 {
     internal static class Extensions
     {
-        public static string GetFilePath(this string InputFile)
-        {
-            // Make sure it's not null, empty, and that it exists.
-            if (InputFile == null || InputFile == "" || !InputFile.TestPath(false))
-                return "";
-
-            // Split the path on slashes and count the array size.
-            string FilePath = "";
-            string[] PathArray = InputFile.Split('\\');
-            int Count = PathArray.Length - 1;
-
-            // Loop until we reached the final index.
-            for (int i = 0; i < Count; i++)
-                FilePath = FilePath + PathArray[i] + "\\";
-
-            // Return the path minus the file name.
-            return FilePath.TrimEnd('\\');
-        }
-
         public static bool TestPath(this string InputPath, bool IsDirectory = false)
         {
             // If the value is null or empty then return false.
@@ -82,7 +61,7 @@ namespace LADXHD_Migrater
             // Return the path that was created unless NoReturn flag is set.
             if (!NoReturn)
                 return InputPath;
-            return null;
+            return "";
         }
 
         public static void RemovePath(this string inputPath)
@@ -200,13 +179,13 @@ namespace LADXHD_Migrater
                     else
                         return;
 
-                // if a folder, copy the folder, subfolders, and files to the new destination..
+                // If a folder, copy the folder, subfolders, and files to the new destination.
                 if (File.GetAttributes(SourcePath) == FileAttributes.Directory)
                 {
                     foreach (string dirPath in Directory.GetDirectories(SourcePath, "*", SearchOption.AllDirectories))
-                        Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
-                    foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",SearchOption.AllDirectories))
-                        File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+                        Directory.CreateDirectory(Path.Combine(DestinationPath, Path.GetRelativePath(SourcePath, dirPath)));
+                    foreach (string newPath in Directory.GetFiles(SourcePath, "*.*", SearchOption.AllDirectories))
+                        File.Copy(newPath, Path.Combine(DestinationPath, Path.GetRelativePath(SourcePath, newPath)), true);
                 }
                 // Copying a file is a much simpler process.
                 else
@@ -280,42 +259,6 @@ namespace LADXHD_Migrater
             }
         }
 
-        public static string GetFileName(this string InputFile)
-        {
-            // If the path is null, empty, or doesn't exist.
-            if (InputFile == null || InputFile == "" || !InputFile.TestPath(false))
-                return "";
-
-            // Return the last string in the array which is the filename.
-            string[] SplitName = InputFile.Split('\\');
-            return SplitName[SplitName.Length - 1];
-        }
-
-        public static string GetBaseName(this string FileName)
-        {
-            // If the file does not have an extension.
-            if (!FileName.Contains("."))
-                return FileName;
-
-            // When working with a path we want to keep only the filename.
-            if (FileName.Contains("\\"))
-            {
-                string[] SplitSlashes = FileName.Split('\\');
-                FileName = SplitSlashes[SplitSlashes.Length - 1];
-            }
-            // Some filenames may contain periods that are not separating the extension.
-            string NewFileName = "";
-            string[] SplitPeriods = FileName.Split('.');
-            
-            // Loop adding back text after periods besides the extension.
-            int Loops = SplitPeriods.Length - 1;
-            for (int i = 0; i < Loops; i++)
-                NewFileName += SplitPeriods[i] + ".";
-
-            // Return the result.
-            return NewFileName.TrimEnd('.');
-        }
-
         public static string Extend(this string InputString, int Length)
         {
             // Check the number of characters against the desired amount.
@@ -354,12 +297,43 @@ namespace LADXHD_Migrater
             return NewString;
         }
 
-        public static string CalculateHash(this string FilePath, string HashType)
+        public static string RemoveIllegalCharacters(this string Value)
         {
-            if (!FilePath.TestPath()) { return ""; }
-            HashAlgorithm Algorithm = HashAlgorithm.Create(HashType);
-            byte[] ByteArray = File.ReadAllBytes(FilePath);
-            return BitConverter.ToString(Algorithm.ComputeHash(ByteArray)).Replace("-", "");
+            // Create an array that contains all illegal characters.
+            string[] IllegalArray = { "<", ">", ":", "\"", "'", "/", "\\", "|", "?", "*" };
+
+            // Loop through the array of illegal characters
+            foreach (string IllegalChar in IllegalArray)
+            {
+                // Check the value against the current character and replace if exists.
+                Value = Value.Replace(IllegalChar,"");
+            }
+            // Return the modified string.
+            return Value;
+        }
+
+        public static string CalculateHash(this string filePath, string hashType)
+        {
+            // If the file doesn't exist then exit early.
+            if (!filePath.TestPath()) return "";
+
+            // Determine the algorithm and cast to the base class.
+            using HashAlgorithm? algorithm = hashType.ToUpper() switch
+            {
+                "MD5"    => MD5.Create(),
+                "SHA256" => SHA256.Create(),
+                "SHA512" => SHA512.Create(),
+                _        => null
+            };
+            // If it wasn't specified then return.
+            if (algorithm == null) return "";
+
+            // Use a Stream to avoid loading the whole file into RAM.
+            using var stream = File.OpenRead(filePath);
+            byte[] hashBytes = algorithm.ComputeHash(stream);
+
+            // Convert to hex string.
+            return BitConverter.ToString(hashBytes).Replace("-", "");
         }
 
         public static List<string> EnumToList(this IEnumerable<string> EnumArray)
@@ -454,88 +428,6 @@ namespace LADXHD_Migrater
 
             // Return the new array with the data added.
             return NewArray;
-        }
-
-        public static void DoubleBuffer(this Control InputControl, bool Enabled)
-        {
-            // Enable double buffering for the control.
-            PropertyInfo controlProperty = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance);
-            controlProperty.SetValue(InputControl, Enabled, null);
-        }
-
-        public static string ShowFileDialog(this string StartPath, string[] FileName, string[] Description)
-        {
-            // Create the open file dialog.
-            OpenFileDialog FileDialog = new OpenFileDialog();
-            FileDialog.InitialDirectory = StartPath;
-
-            // Concatenate the filter if multiple files and show the dialog.
-            string FilterString = "";
-            for (int i = 0; i < FileName.Length; i++)
-                FilterString += Description[i] + "|" + FileName[i] + "|";
-            FileDialog.Filter = FilterString.TrimEnd('|');
-            FileDialog.ShowDialog();
-
-            // Return the file that was selected.
-            return FileDialog.FileName;
-        }
-
-        public static string[] ShowMultiFileDialog(this string StartPath, string[] FileName, string[] Description)
-        {
-            // Create the open file dialog with multi-select.
-            OpenFileDialog FileDialog = new OpenFileDialog();
-            FileDialog.InitialDirectory = StartPath;
-            FileDialog.Multiselect = true;
-
-            // Concatenate the filter if multiple files and show the dialog.
-            string FilterString = "";
-            for (int i = 0; i < FileName.Length; i++)
-                FilterString += Description[i] + "|" + FileName[i] + "|";
-            FileDialog.Filter = FilterString.TrimEnd('|');
-            FileDialog.ShowDialog();
-
-            // Return the files that were selected.
-            return FileDialog.FileNames;
-        }
-
-        public static void MoveSelectedItemUp(this ListBox InputListBox)
-        {
-            // Move an item up in a ListBox.
-            Extensions.MoveSelectedItem(InputListBox, -1);
-        }
-
-        public static void MoveSelectedItemDown(this ListBox InputListBox)
-        {
-            // Move an item down in a ListBox.
-            Extensions.MoveSelectedItem(InputListBox, 1);
-        }
-
-        private static void MoveSelectedItem(ListBox InputListBox, int Direction)
-        {
-            // The index can't be null or lower than zero, and the new index must be within the upper and lower bounds.
-            if (InputListBox.SelectedItem == null || InputListBox.SelectedIndex < 0 ||
-                InputListBox.SelectedIndex + Direction < 0 || InputListBox.SelectedIndex + Direction >= InputListBox.Items.Count)
-                return;
-
-            // Calculate the new index based on the value for direction.
-            int NewIndex = InputListBox.SelectedIndex + Direction;
-
-            // See if it's a checked listbox and if it is, get the current check state before it's removed.
-            CheckedListBox CheckedListBox = InputListBox as CheckedListBox;
-            CheckState Checked = CheckState.Unchecked;
-            if (CheckedListBox != null)
-                Checked = CheckedListBox.GetItemCheckState(CheckedListBox.SelectedIndex);
-
-            // Remove the old item and insert and select the new item.
-            object Selected = InputListBox.SelectedItem;
-
-            InputListBox.Items.Remove(Selected);
-            InputListBox.Items.Insert(NewIndex, Selected);
-            InputListBox.SetSelected(NewIndex, true);
-
-            // If it was a checked listbox then restore the checkstate.
-            if (CheckedListBox != null)
-                CheckedListBox.SetItemCheckState(NewIndex, Checked);
         }
     }
 }

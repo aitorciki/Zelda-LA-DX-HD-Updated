@@ -15,15 +15,19 @@ namespace LADXHD_Migrater
             OkayDialog  = new Form_OkayForm();
             YesNoDialog = new Form_YesNoForm();
 
-            // The size of forms needs to be manually scaled.
-            MainDialog.Size = DPI.Scale(new Size(375, 420));
-            OkayDialog.Size = DPI.Scale(new Size(320, 135));
-            YesNoDialog.Size = DPI.Scale(new Size(320, 135));
+            // There is no point in doing scaling unless it's above 100%.
+            if (DPI.Value > 96)
+            {
+                // Scale the forms with DPI scaling.
+                MainDialog.Size = DPI.Scale(new Size(375, 420));
+                OkayDialog.Size = DPI.Scale(new Size(320, 135));
+                YesNoDialog.Size = DPI.Scale(new Size(320, 135));
 
-            // Scale the controls through a loop.
-            ScaleControls(MainDialog);
-            ScaleControls(OkayDialog);
-            ScaleControls(YesNoDialog);
+                // Scale the controls through a loop.
+                ScaleControls(MainDialog);
+                ScaleControls(OkayDialog);
+                ScaleControls(YesNoDialog);
+            }
         }
 
         static void ScaleControls(Control parent)
