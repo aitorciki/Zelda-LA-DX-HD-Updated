@@ -52,6 +52,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
         private string _saveKey;
         private bool _attackable = false;
         private bool _isDead = false;
+        private bool _awakened;
 
         public MBossTurtleRock() : base("turtle rock") { }
 
@@ -174,6 +175,12 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         public override void Reset()
         {
+            // This drove me nuts because for some reason, the reset here triggers when leaving the library when the ball
+            // kids run up to Link to tell him BowWow was kidnapped, which cancels the music that plays. To prevent this,
+            // use a boolean guard "_awakened" that tracks that the boss is currently actively after playing the ocarina.
+            if (_awakened)
+                Game1.AudioManager.SetMusic(-1, 2);
+
             // If the boss is dying, don't let it respawn even on field transition.
             if (_isDead)
             {
@@ -184,6 +191,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _body.Velocity = Vector3.Zero;
             _body.VelocityTarget = Vector2.Zero;
 
+            _awakened = false;
             _attackable = false;
             _partPosition = new Vector3[6];
             _partVelocity = new Vector3[6];
@@ -219,7 +227,8 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             _animator.Play("stone");
             _aiComponent.ChangeState("stone");
             _aiDamageState.CurrentLives = EnemyLives.TurtleRock;
-            Game1.AudioManager.SetMusic(-1, 2);
+
+
         }
 
         public override void Init()
@@ -422,14 +431,13 @@ namespace ProjectZ.InGame.GameObjects.Bosses
 
         private void OnDeath()
         {
+            _awakened = false;
             Game1.AudioManager.PlaySoundEffect("D378-12-0C");
-
             if (!string.IsNullOrEmpty(_saveKey))
                 Game1.GameManager.SaveManager.SetString(_saveKey, "1");
 
             // stop boss music
             Game1.AudioManager.SetMusic(-1, 2);
-
             Map.Objects.DeleteObjects.Add(this);
         }
 
@@ -523,6 +531,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             {
                 Game1.AudioManager.SetMusic(56, 2);
 
+                _awakened = true;
                 _collisionComponent.IsActive = false;
                 _damageField.IsActive = true;
                 _aiComponent.ChangeState("wobble");
