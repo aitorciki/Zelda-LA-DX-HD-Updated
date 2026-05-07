@@ -159,10 +159,17 @@ namespace LADXHD_Migrater
             // If original file has derivative modified files based off of it.
             foreach (string newFile in target)
             {
-                // Create all derivative files based on the original file.
+                // Create a path to the patch file.
                 string vcDiffFile = Path.Combine(Config.Patches, newFile + ".vcdiff");
-                string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), newFile);
-                VCDiff.Execute(Operation.Apply, fileItem.FullName, vcDiffFile, patchedFile);
+
+                // Some files may not yet exist if they haven't been created. The dictionary at the top of
+                // this class are "potential" file, especially files that are created for alternate languages.
+                if (vcDiffFile.TestPath())
+                {
+                    // Create all derivative files based on the original file.
+                    string patchedFile = Path.Combine(updatePath + fileItem.DirectoryName.Replace(origPath, ""), newFile);
+                    VCDiff.Execute(Operation.Apply, fileItem.FullName, vcDiffFile, patchedFile);
+                }
             }
         }
 
