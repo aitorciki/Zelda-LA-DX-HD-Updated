@@ -18,8 +18,9 @@ namespace LADXHD_Launcher
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
-                MainWindowInstance = (MainWindow)desktop.MainWindow;
+                var mainWindow = new MainWindow();
+                MainWindowInstance = mainWindow;
+                desktop.MainWindow = mainWindow;
             }
 
             base.OnFrameworkInitializationCompleted();

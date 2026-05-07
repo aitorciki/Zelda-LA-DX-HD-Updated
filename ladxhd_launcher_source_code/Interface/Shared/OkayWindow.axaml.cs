@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
 
@@ -11,6 +12,19 @@ namespace LADXHD_Launcher
         public OkayWindow()
         {
             InitializeComponent();
+        }
+
+        public static async Task ShowAsync(string title, string message, int timeoutSeconds = 0, bool altSound = false)
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                var window = new OkayWindow();
+                window.Display(title, message, timeoutSeconds);
+                SoundPlayer.PlayWAVSound(altSound 
+                    ? "avares://Launcher/Resources/success.wav" 
+                    : "avares://Launcher/Resources/beep.wav");
+                await window.ShowDialog(App.MainWindowInstance);
+            });
         }
 
         public void Display(string title, string message, int timeoutSeconds = 0)

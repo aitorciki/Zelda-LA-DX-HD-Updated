@@ -74,7 +74,6 @@ namespace LADXHD_Launcher
 
         private async void InstallModButton_Click(object sender, RoutedEventArgs e)
         {
-            var okayWindow = new OkayWindow();
             string message;
 
             // The game executable was not found.
@@ -82,9 +81,7 @@ namespace LADXHD_Launcher
             if (!Config.BaseFolder.TestPath(true) || !GameExePath.TestPath())
             {
                 message = "The Game Path must point to a valid installation that contains the file \"Link's Awakening DX HD.exe\".";
-                okayWindow.Display("Game Path Invalid", message, timeoutSeconds: 10);
-                SoundPlayer.PlayWAVSound("avares://Launcher/Resources/beep.wav");
-                await okayWindow.ShowDialog(this);
+                await OkayWindow.ShowAsync("Game Path Invalid", message, 10);
                 return;
             }
 
@@ -95,9 +92,7 @@ namespace LADXHD_Launcher
 
             // Display that it's done.
             message = "Finished applying patches. Any \"Graphics\" mods or \"LAHDMods\" were generated in the \"Mods\" folder.";
-            okayWindow.Display("Mod Installed", message, timeoutSeconds: 10);
-            SoundPlayer.PlayWAVSound("avares://Launcher/Resources/success.wav");
-            await okayWindow.ShowDialog(this);
+            await OkayWindow.ShowAsync("Mod Installed", message, 10, true);
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)

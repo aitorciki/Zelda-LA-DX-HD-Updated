@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Avalonia.Controls;
 
 namespace LADXHD_Launcher
@@ -9,6 +10,18 @@ namespace LADXHD_Launcher
         public YesNoWindow()
         {
             InitializeComponent();
+        }
+
+        public static async Task<bool> ShowAsync(string title, string message)
+        {
+            return await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                var window = new YesNoWindow();
+                window.Display(title, message);
+                SoundPlayer.PlayWAVSound("avares://Launcher/Resources/beep.wav");
+                await window.ShowDialog(App.MainWindowInstance);
+                return window.Result;
+            });
         }
 
         public void Display(string title, string message)

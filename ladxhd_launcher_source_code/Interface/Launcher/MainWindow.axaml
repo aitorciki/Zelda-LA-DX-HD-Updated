@@ -40,7 +40,6 @@
 			   IsHitTestVisible="False"
 			   HorizontalAlignment="Center"
 			   VerticalAlignment="Center" />
-
     </Panel>
     <Window.Styles>
 

@@ -52,14 +52,10 @@ public partial class ModsView : UserControl
     private async void RemoveAllMods(object sender, RoutedEventArgs e)
     {
         // Show a Yes/No window to the user.
-        var yesNoWindow = new YesNoWindow();
         string message = "Are you sure you wish to delete all mod files?";
-        yesNoWindow.Display("Delete All Mods?", message);
-        SoundPlayer.PlayWAVSound("avares://Launcher/Resources/beep.wav");
-        await yesNoWindow.ShowDialog(TopLevel.GetTopLevel(this) as Window);
 
         // If the user clicked "Yes" clear all the mods.
-        if (yesNoWindow.Result)
+        if (await YesNoWindow.ShowAsync("Delete All Mods?", message))
         {
             Config.AnimationMods.ClearPath();
             Config.DungeonMods.ClearPath();

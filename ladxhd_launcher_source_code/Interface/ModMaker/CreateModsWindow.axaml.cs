@@ -197,16 +197,13 @@ namespace LADXHD_Launcher
 
         private async void CreateModButton_Click(object sender, RoutedEventArgs e)
         {
-            var okayWindow = new OkayWindow();
             string message;
 
             // Mod name is empty.
             if (string.IsNullOrEmpty(Config.ModName))
             {
                 message = "Error: You must enter a \"Mod Name\" to continue.";
-                okayWindow.Display("Mod Name Empty", message, timeoutSeconds: 10);
-                SoundPlayer.PlayWAVSound("avares://Launcher/Resources/beep.wav");
-                await okayWindow.ShowDialog(this);
+                await OkayWindow.ShowAsync("Mod Name Empty", message, 10);
                 return;
             }
 
@@ -214,9 +211,7 @@ namespace LADXHD_Launcher
             if (string.IsNullOrEmpty(Config.Description))
             {
                 message = "Error: You must enter a \"Mod Description\" to continue.";
-                okayWindow.Display("Description Empty", message, timeoutSeconds: 10);
-                SoundPlayer.PlayWAVSound("avares://Launcher/Resources/beep.wav");
-                await okayWindow.ShowDialog(this);
+                await OkayWindow.ShowAsync("Description Empty", message, 10);
                 return;
             }
             // Crop off the added folder so it can be properly checked.
@@ -228,9 +223,7 @@ namespace LADXHD_Launcher
             if (string.IsNullOrEmpty(Config.OutputPath) || !realOutputPath.TestPath(true))
             {
                 message = "Error: Select a valid \"Output Path\" to continue.";
-                okayWindow.Display("Output Path Invalid", message, timeoutSeconds: 10);
-                SoundPlayer.PlayWAVSound("avares://Launcher/Resources/beep.wav");
-                await okayWindow.ShowDialog(this);
+                await OkayWindow.ShowAsync("Output Path Invalid", message, 10);
                 return;
             }
             // Disable form, create patches, enable components.
@@ -240,9 +233,7 @@ namespace LADXHD_Launcher
 
             // Display that it's done.
             message = "Finished generating. Mod can be found in the \"Output Path\" in a folder named \"~ModOutput\".";
-            okayWindow.Display("Mod Created", message, timeoutSeconds: 10);
-            SoundPlayer.PlayWAVSound("avares://Launcher/Resources/success.wav");
-            await okayWindow.ShowDialog(this);
+            await OkayWindow.ShowAsync("Mod Created", message, 10, true);
         }
 
         private void ModsGitHubButton_Click(object sender, RoutedEventArgs e)
