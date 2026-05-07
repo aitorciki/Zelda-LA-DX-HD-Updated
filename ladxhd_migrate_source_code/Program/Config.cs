@@ -14,6 +14,7 @@ namespace LADXHD_Migrater
         public static string Launcher_Source;
         public static string Migrate_Source;
         public static string Patcher_Source;
+        public static string VCDiff_Source;
         public static string Update_Content;
         public static string Update_Data;
         public static string Publish_Path;
@@ -36,6 +37,7 @@ namespace LADXHD_Migrater
             Launcher_Source = Path.Combine(BaseFolder, "ladxhd_launcher_source_code");
             Migrate_Source  = Path.Combine(BaseFolder, "ladxhd_migrate_source_code");
             Patcher_Source  = Path.Combine(BaseFolder, "ladxhd_patcher_source_code");
+            VCDiff_Source   = Path.Combine(BaseFolder, "vcdiff_source_code");
             Update_Content  = Path.Combine(Game_Source, "ProjectZ.Core", "Content");
             Update_Data     = Path.Combine(Game_Source, "ProjectZ.Core", "Data");
             Publish_Path    = Path.Combine(Game_Source, "~Publish");

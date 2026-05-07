@@ -8,10 +8,10 @@ namespace LADXHD_Migrater
      * does not have the "BaseName" property of a file as readily available as PowerShell's Get-Item. It also over complicates things by
      * needing to distinguish between "FileInfo" and "DirectoryInfo". This class "FileItem" seeks to remedy these issues.
      *---------------------------------------------------------------------------------------------------------------------------------*/
-    
+
     public class FileItem
     {
-        // Mark these as nullable (?) because they might not exist depending on the path
+        // Mark these as nullable because they might not exist depending on the path.
         public DirectoryInfo? Directory;
         public DirectoryInfo? Parent;
         public DirectoryInfo? Root;
@@ -32,10 +32,11 @@ namespace LADXHD_Migrater
 
         public FileItem(string InputFile)
         {
-            // Use the common base class 'FileSystemInfo' instead of 'dynamic'
+            // Use the common base class 'FileSystemInfo'
             FileSystemInfo info;
 
-            if (InputFile.TestPath(true)) // Directory
+            // Directory
+            if (InputFile.TestPath(true))
             {
                 var dirInfo = new DirectoryInfo(InputFile);
                 info = dirInfo;
@@ -46,7 +47,8 @@ namespace LADXHD_Migrater
                 this.Parent = dirInfo.Parent;
                 this.Root = dirInfo.Root;
             }
-            else // File (or non-existent)
+            // File (or non-existent)
+            else
             {
                 var fileInfo = new FileInfo(InputFile);
                 info = fileInfo;
@@ -59,7 +61,7 @@ namespace LADXHD_Migrater
                 this.Length = fileInfo.Exists ? fileInfo.Length : 0;
             }
 
-            // Common properties available on FileSystemInfo base class
+            // Common properties available on FileSystemInfo base class.
             this.Attributes = info.Attributes;
             this.Exists = info.Exists;
             this.Extension = info.Extension;
