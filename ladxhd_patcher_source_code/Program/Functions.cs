@@ -222,106 +222,240 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        // Writes a finalization script to TempFolder and fires it via /bin/sh, then polls for the
-        // sentinel file the script writes on success. Shared by the Linux and macOS paths.
-        // Wine's WaitForExit() is unreliable for native processes, so we use fire-and-forget
-        // plus a sentinel file written by the script as its very last step.
-        private static void RunUnixFinalizeScript(string scriptResource)
+        // Sets the executable bit (chmod +x) on a file.
+        private static void SetExecutableBit(string path)
         {
-            if (!WineHost.IsWine)
-                return;
-
-            // Normalize line endings to LF in case the embedded resource contains CRLFs
-            // then write raw bytes so File.WriteAllText's StreamWriter cannot convert \n → \r\n.
-            byte[] scriptBytes   = Resources.GetResourceBytes(scriptResource);
-            string scriptContent = System.Text.Encoding.UTF8.GetString(scriptBytes).Replace("\r\n", "\n");
-            scriptBytes          = System.Text.Encoding.UTF8.GetBytes(scriptContent);
-            string scriptWinPath = Path.Combine(Config.TempFolder, "finalize.sh");
-            File.WriteAllBytes(scriptWinPath, scriptBytes);
-
-            // Use relative paths to bypass drive mapping issues (CrossOver/Proton/etc).
-            // Config.TempFolder is always a subfolder of Config.BaseFolder.
-            string relativeTemp    = Path.GetFileName(Config.TempFolder);
-            string relativeScript  = "./" + relativeTemp + "/finalize.sh";
-            string executableName  = Path.GetFileNameWithoutExtension(Config.ZeldaEXE);
-            string sentinelWinPath = Path.Combine(Config.TempFolder, "finalize.done");
-
-            try
+            if (!File.Exists(path)) return;
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
             {
-                var psi = new ProcessStartInfo
+                File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute |
+                                           UnixFileMode.GroupRead | UnixFileMode.GroupExecute |
+                                           UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
+            }
+        }
+
+        // Ad-hoc codesign an executable, dylib, or app bundle.
+        private static void CodeSign(string path)
+        {
+            if (!OperatingSystem.IsMacOS() || (!File.Exists(path) && !Directory.Exists(path))) return;
+            var psi = new ProcessStartInfo
+            {
+                FileName = "codesign",
+                Arguments = $"--sign - --force --deep \"{path}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            Process.Start(psi)?.WaitForExit();
+        }
+
+        private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive, string[]? excludeFolders = null)
+        {
+            var dir = new DirectoryInfo(sourceDir);
+            if (!dir.Exists) return;
+
+            Directory.CreateDirectory(destinationDir);
+
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string targetFilePath = Path.Combine(destinationDir, file.Name);
+                file.CopyTo(targetFilePath, true);
+            }
+
+            if (recursive)
+            {
+                foreach (DirectoryInfo subDir in dir.GetDirectories())
                 {
-                    FileName         = "/bin/sh",
-                    Arguments        = $"\"{relativeScript}\" \".\" \"{executableName}\" \"{relativeTemp}\"",
-                    WorkingDirectory = Config.BaseFolder,
-                    UseShellExecute  = false,
-                };
-                Process.Start(psi);
-            }
-            catch
-            {
-                return;
-            }
+                    if (excludeFolders != null && excludeFolders.Contains(subDir.Name))
+                        continue;
 
-            // Poll for the sentinel file written by the script on successful completion.
-            // This is the synchronisation mechanism — without it the patcher exits before the
-            // script finishes chmod, codesign, and the app bundle copy.
-            const int interval =   500; // ms between checks
-            const int timeout  = 60000; // ms — generous to allow for cp -rp of large game data
-            int elapsed = 0;
-            while (!File.Exists(sentinelWinPath) && elapsed < timeout)
-            {
-                System.Threading.Thread.Sleep(interval);
-                elapsed += interval;
+                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                    CopyDirectory(subDir.FullName, newDestinationDir, true, excludeFolders);
+                }
             }
         }
 
-        private static void RunLinuxFinalizeScript()
+        private static void RunLinuxFinalization()
         {
-            RunUnixFinalizeScript("finalize_linux.sh");
-        }
-
-        private static void RunMacOSFinalizeScript()
-        {
-            // Write Icon.icns and the rendered Info.plist to TempFolder so the script can copy
-            // them into the bundle without needing access to managed resources.
             string executableName = Path.GetFileNameWithoutExtension(Config.ZeldaEXE);
-            string arch           = Config.SelectedPlatform == Platform.MacOS_x86 ? "x86_64" : "arm64";
-            string icnsIcon       = Path.Combine(Config.TempFolder, "Icon.icns");
+            string exePath = Path.Combine(Config.BaseFolder, executableName);
+            SetExecutableBit(exePath);
 
-            File.WriteAllBytes(icnsIcon, Resources.GetResourceBytes("Icon.icns"));
+            string launcherPath = Path.Combine(Config.BaseFolder, "Launcher");
+            if (File.Exists(launcherPath))
+                SetExecutableBit(launcherPath);
+        }
+
+        // Finalizing for macOS requires:
+        //   * setting the executable bit on the game binary
+        //   * signing all binaries (executable and libraries)
+        //   * bundling as an app bundle, and signing the bundle
+        //   * repeating for the launcher if available
+        private static void RunMacOSFinalization()
+        {
+            string name = Path.GetFileNameWithoutExtension(Config.ZeldaEXE);
+            string baseFolder = Config.BaseFolder;
+            string tempFolder = Config.TempFolder;
+            
+            string bundle = Path.Combine(baseFolder, $"{name}.app");
+            string bundleTmp = Path.Combine(tempFolder, $"{name}.app");
+
+            // Clean slate
+            if (Directory.Exists(bundleTmp))
+                Directory.Delete(bundleTmp, true);
+
+            // Set executable bit and codesign standalone binary
+            string mainExe = Path.Combine(baseFolder, name);
+            SetExecutableBit(mainExe);
+            CodeSign(mainExe);
+
+            // Codesign dylibs
+            string[] gameDylibs = { "libopenal.dylib", "libSDL2-2.0.0.dylib" };
+            foreach (var dylib in gameDylibs)
+            {
+                string dylibPath = Path.Combine(baseFolder, dylib);
+                if (File.Exists(dylibPath))
+                    CodeSign(dylibPath);
+            }
+
+            // Create bundle structure
+            string contentsPath = Path.Combine(bundleTmp, "Contents");
+            string macOSPath = Path.Combine(contentsPath, "MacOS");
+            string resourcesPath = Path.Combine(contentsPath, "Resources");
+            
+            Directory.CreateDirectory(macOSPath);
+            Directory.CreateDirectory(resourcesPath);
+
+            // Copy binary and dylibs
+            File.Copy(mainExe, Path.Combine(macOSPath, name), true);
+            SetExecutableBit(Path.Combine(macOSPath, name));
+            foreach (var dylib in gameDylibs)
+            {
+                string dylibPath = Path.Combine(baseFolder, dylib);
+                if (File.Exists(dylibPath))
+                    File.Copy(dylibPath, Path.Combine(macOSPath, dylib), true);
+            }
+
+            // Copy Data (excluding Backup), Content, and Mods
+            string dataSrc = Path.Combine(baseFolder, "Data");
+            if (Directory.Exists(dataSrc))
+                CopyDirectory(dataSrc, Path.Combine(macOSPath, "Data"), true, new[] { "Backup" });
+
+            string contentSrc = Path.Combine(baseFolder, "Content");
+            if (Directory.Exists(contentSrc))
+                CopyDirectory(contentSrc, Path.Combine(macOSPath, "Content"), true, null);
+
+            string modsSrc = Path.Combine(baseFolder, "Mods");
+            if (Directory.Exists(modsSrc))
+                CopyDirectory(modsSrc, Path.Combine(macOSPath, "Mods"), true, null);
+
+            // Write Resources
+            string arch = Config.SelectedPlatform == Platform.MacOS_x86 ? "x86_64" : "arm64";
+            File.WriteAllBytes(Path.Combine(resourcesPath, "Icon.icns"), Resources.GetResourceBytes("Icon.icns"));
 
             string template = System.Text.Encoding.UTF8.GetString(Resources.GetResourceBytes("Info.plist.template"));
             string plist = template
-                .Replace("{EXECUTABLE}", executableName)
-                .Replace("{VERSION}",    Config.Version)
-                .Replace("{ARCH}",       arch);
-            File.WriteAllText(Path.Combine(Config.TempFolder, "Info.plist"), plist,
-                              new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+                .Replace("{EXECUTABLE}", name)
+                .Replace("{VERSION}", Config.Version)
+                .Replace("{ARCH}", arch);
+            File.WriteAllText(Path.Combine(contentsPath, "Info.plist"), plist, new System.Text.UTF8Encoding(false));
 
-            RunUnixFinalizeScript("finalize_macos.sh");
+            // Create Content symlink
+            File.CreateSymbolicLink(Path.Combine(resourcesPath, "Content"), "../MacOS/Content");
+
+            // Codesign the app bundle
+            CodeSign(bundleTmp);
+
+            // Move completed bundle
+            if (Directory.Exists(bundle))
+                Directory.Delete(bundle, true);
+            Directory.Move(bundleTmp, bundle);
+
+            // Handle Launcher
+            string launcherSrc = Path.Combine(baseFolder, "Launcher");
+            if (File.Exists(launcherSrc))
+            {
+                SetExecutableBit(launcherSrc);
+                CodeSign(launcherSrc);
+
+                string[] launcherDylibs = { "libAvaloniaNative.dylib", "libHarfBuzzSharp.dylib", "libSkiaSharp.dylib" };
+                foreach (var dylib in launcherDylibs)
+                {
+                    string dylibPath = Path.Combine(baseFolder, dylib);
+                    if (File.Exists(dylibPath))
+                        CodeSign(dylibPath);
+                }
+
+                string launcherBundle = Path.Combine(baseFolder, $"{name} Launcher.app");
+                string launcherTmp = Path.Combine(tempFolder, $"{name} Launcher.app");
+
+                if (Directory.Exists(launcherTmp))
+                    Directory.Delete(launcherTmp, true);
+
+                // Start with a copy of the game bundle
+                CopyDirectory(bundle, launcherTmp, true);
+
+                // Add launcher binary and its dylibs
+                string launcherDestMacOS = Path.Combine(launcherTmp, "Contents", "MacOS");
+                File.Copy(launcherSrc, Path.Combine(launcherDestMacOS, "Launcher"), true);
+                SetExecutableBit(Path.Combine(launcherDestMacOS, "Launcher"));
+
+                foreach (var dylib in launcherDylibs)
+                {
+                    string dylibPath = Path.Combine(baseFolder, dylib);
+                    if (File.Exists(dylibPath))
+                        File.Copy(dylibPath, Path.Combine(launcherDestMacOS, dylib), true);
+                }
+
+                // Update Info.plist for Launcher
+                string launcherPlistPath = Path.Combine(launcherTmp, "Contents", "Info.plist");
+                string launcherPlist = File.ReadAllText(launcherPlistPath)
+                    .Replace($"<string>{name}</string>", "<string>Launcher</string>")
+                    .Replace("com.projectz.game", "com.projectz.launcher");
+                File.WriteAllText(launcherPlistPath, launcherPlist, new System.Text.UTF8Encoding(false));
+
+                // Codesign the launcher bundle
+                CodeSign(launcherTmp);
+
+                if (Directory.Exists(launcherBundle))
+                    Directory.Delete(launcherBundle, true);
+                Directory.Move(launcherTmp, launcherBundle);
+            }
         }
 
-        private static void HostFinalizationFunctions()
+        private async static Task HostFinalizationFunctions()
         {
             bool isLinux = Config.SelectedPlatform == Platform.Linux_x86 || Config.SelectedPlatform == Platform.Linux_Arm64;
             bool isMacOS = Config.SelectedPlatform == Platform.MacOS_x86 || Config.SelectedPlatform == Platform.MacOS_Arm64;
-            
-            // Finalization steps are platform-specific and should only run when patching on that platform.
-            if (isLinux && WineHost.IsLinux)
+
+            if (isLinux && OperatingSystem.IsLinux())
             {
-                RunLinuxFinalizeScript();
+                try { RunLinuxFinalization(); }
+                catch {
+                    await ShowWarning(
+                        "Patching Complete",
+                        "The game was patched successfully, but the Linux finalization steps failed to apply.\n" +
+                        "Please check https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/LINUX.md."
+                    );
+                }
             }
-            else if (isMacOS && WineHost.IsMacOS)
+            else if (isMacOS && OperatingSystem.IsMacOS())
             {
-                RunMacOSFinalizeScript();
+                try { RunMacOSFinalization(); }
+                catch {
+                    await ShowWarning(
+                        "Patching Complete",
+                        "The game was patched successfully, but the macOS finalization steps failed to apply.\n" +
+                        "Please check https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/MACOS.md."
+                    );
+                }
             }
         }
 
-        /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-                POST PATCHING CODE : ADDITIONAL FILE AND FOLDER HANDLING
+        POST PATCHING CODE : ADDITIONAL FILE AND FOLDER HANDLING
 
-        -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
         private static void CopyNewFiles()
         {
@@ -892,7 +1026,7 @@ namespace LADXHD_Patcher
             ExtractLauncher();
 
             // Linux / macOS finalization functions depend on both game and launcher being extracted.
-            HostFinalizationFunctions();
+            await HostFinalizationFunctions();
 
             // Report finished, remove temp path, enable dialog.
             await ReportFinished();
@@ -939,7 +1073,7 @@ namespace LADXHD_Patcher
                 ExtractLauncher();
 
                 Console.WriteLine("Performing platform-specific finalization...");
-                HostFinalizationFunctions();
+                HostFinalizationFunctions().GetAwaiter().GetResult();
 
                 Console.WriteLine("Cleaning up...");
                 Config.TempFolder.RemovePath();
