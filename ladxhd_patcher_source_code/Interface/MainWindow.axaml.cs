@@ -109,13 +109,13 @@ namespace LADXHD_Patcher
             // Offset for the extra row when Android is selected
             double offset = isAndroid ? 30 : 0;
 
-            Canvas.SetTop(progressBar,   518 + offset);
-            Canvas.SetTop(successLabel,  518 + offset);
-            Canvas.SetTop(buttonGrid,    542 + offset);
+            Canvas.SetTop(progressBar,   498 + offset);
+            Canvas.SetTop(successLabel,  498 + offset);
+            Canvas.SetTop(buttonGrid,    522 + offset);
 
-            this.Height    = isAndroid ? 620 : 590;
-            this.MinHeight = isAndroid ? 620 : 590;
-            this.MaxHeight = isAndroid ? 620 : 590;
+            this.Height    = isAndroid ? 600 : 570;
+            this.MinHeight = isAndroid ? 600 : 570;
+            this.MaxHeight = isAndroid ? 600 : 570;
         }
 
         private void CheckBox_AndroidMods_CheckedChanged(object sender, RoutedEventArgs e)

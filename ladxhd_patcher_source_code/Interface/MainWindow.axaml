@@ -2,23 +2,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="768"
+        mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="570"
         x:Class="LADXHD_Patcher.MainWindow"
         Title="Link's Awakening DX HD Patcher v1.8.0"
         Width="420"
-        Height="590"
+        Height="570"
         MinWidth="420"
-        MinHeight="590"
+        MinHeight="570"
         MaxWidth="420"
-        MaxHeight="590"
+        MaxHeight="570"
 		CanMaximize="False"
         WindowStartupLocation="CenterScreen"
         Icon="avares://Patcher/Resources/Icon.ico">
 
 		<Canvas Grid.Row="1">
-			<Image Source="avares://Patcher/Resources/la.png" Canvas.Left="10" Canvas.Top="10" Width="400" Height="280" />
+			<Image Source="avares://Patcher/Resources/la.png" Canvas.Left="10" Canvas.Top="10" Width="400" Height="260" />
 
-			<Border Canvas.Left="10" Canvas.Top="300" Width="400" Height="140" BorderBrush="#88FFFFFF" BorderThickness="1" Padding="8">
+			<Border Canvas.Left="10" Canvas.Top="280" Width="400" Height="140" BorderBrush="#88FFFFFF" BorderThickness="1" Padding="8">
 				<StackPanel>
 					<TextBlock TextWrapping="Wrap" FontSize="11.5">
 						<Run FontWeight="Bold" Text="Legend of Zelda: Link's Awakening DX HD v1.8.0"/>
@@ -29,7 +29,7 @@
 				</StackPanel>
 			</Border>
 
-			<Border Canvas.Left="10" Canvas.Top="448" Width="400" Height="60"
+			<Border Canvas.Left="10" Canvas.Top="428" Width="400" Height="60"
 					BorderBrush="#88FFFFFF" BorderThickness="1" Padding="8">
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
 
@@ -54,14 +54,14 @@
 				</StackPanel>
 			</Border>
 
-            <Border x:Name="androidOptionsPanel" Canvas.Left="10" Canvas.Top="510" Width="400" Height="30"
+            <Border x:Name="androidOptionsPanel" Canvas.Left="10" Canvas.Top="490" Width="400" Height="30"
                     IsVisible="False">
                 <CheckBox x:Name="CheckBox_AndroidMods" Margin="0,8,0,0" FontSize="11.5" Content="Pack installed mods into APK"
                     IsCheckedChanged="CheckBox_AndroidMods_CheckedChanged"/>
             </Border>
 
             <ProgressBar x:Name="progressBar"
-                     Canvas.Left="10" Canvas.Top="518" Width="400" Height="14" Minimum="0" Maximum="100" Value="0"/>
+                     Canvas.Left="10" Canvas.Top="498" Width="400" Height="14" Minimum="0" Maximum="100" Value="0"/>
 
             <TextBlock x:Name="successLabel" Text="Success!" FontSize="11.5"
                        Canvas.Left="10" Canvas.Top="518" Width="400" Height="14"
@@ -70,7 +70,7 @@
                        IsVisible="False"
                        ZIndex="1"/>
 
-			<Grid Canvas.Left="10" Canvas.Top="542" Width="400" Height="38" x:Name="buttonGrid">
+			<Grid Canvas.Left="10" Canvas.Top="522" Width="400" Height="38" x:Name="buttonGrid">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
