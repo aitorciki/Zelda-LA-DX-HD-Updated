@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+VisualStudioVersion = 17.14.37111.16 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LADXHD_Patcher", "LADXHD_Patcher.csproj", "{08D8D414-663F-432E-B25C-26C1FFF46AC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LADXHD_Patcher", "LADXHD_Patcher.csproj", "{8236373D-FD2F-4A1C-9EED-40989B77DF2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{08D8D414-663F-432E-B25C-26C1FFF46AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08D8D414-663F-432E-B25C-26C1FFF46AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08D8D414-663F-432E-B25C-26C1FFF46AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08D8D414-663F-432E-B25C-26C1FFF46AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8236373D-FD2F-4A1C-9EED-40989B77DF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8236373D-FD2F-4A1C-9EED-40989B77DF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8236373D-FD2F-4A1C-9EED-40989B77DF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8236373D-FD2F-4A1C-9EED-40989B77DF2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {939210DF-707B-4B3F-B19A-7B61B56FDEAC}
+		SolutionGuid = {CB09803F-4930-4A0F-9759-FDB38C8FE33B}
 	EndGlobalSection
 EndGlobal

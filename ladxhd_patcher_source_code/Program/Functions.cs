@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using System.Windows.Forms;
-using LADXHD_Migrater;
+using System.Threading.Tasks;
 using static LADXHD_Patcher.Config;
-using static LADXHD_Patcher.XDelta3;
+using static LADXHD_Patcher.VCDiff;
 
 namespace LADXHD_Patcher
 {
-    internal class Functions
+    public class Functions
     {
-        private static int    _patchProgress;
         private static int    _fileCount;
         private static int    _totalCount;
         private static int    _filesPatched;
+
         private static bool   _silentMode;
         private static bool   _patchFromBackup;
         private static string _executable;
-
-        private static Dictionary<string, object> resources = ResourceHelper.GetAllResources();
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -88,12 +85,19 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static void ShowWarning(string title, string message, int width, int height, int titleSize, int titleHeight, int bodySize)
+        private async static Task ShowWarning(string title, string message)
         {
             if (_silentMode)
                 Console.WriteLine("WARNING: " + message);
             else
-                Forms.OkayDialog.Display(title, DPI.Scale(width), DPI.Scale(height), DPI.Scale(titleSize), DPI.Scale(titleHeight), bodySize, message);
+                await OkayWindow.ShowAsync(title, message, timeoutSeconds: 10);
+        }
+
+        public interface IProgressWindow
+        {
+            void UpdateProgressBar(int value);
+            void ShowSuccessLabel();
+            void HideSuccessLabel();
         }
 
         private static void ResetProgress()
@@ -101,13 +105,8 @@ namespace LADXHD_Patcher
             // Reset the variables.
             _fileCount = 0;
             _totalCount = 0;
-            _patchProgress = 0;
-
-            // Update the bar to have zero progress.
-            Forms.MainDialog.UpdateProgressBar(_patchProgress);
-
-            // Hide the "success" label.
-            Forms.MainDialog.Label_Success.Visible = false;
+            Config.ActiveWindow?.UpdateProgressBar(0);
+            Config.ActiveWindow?.HideSuccessLabel();
         }
 
         private static void UpdateProgress()
@@ -115,29 +114,18 @@ namespace LADXHD_Patcher
             // Update the file count.
             _fileCount++;
 
-            // Get the percentage of progress.
-            int progress = (int)(_fileCount * 100.0 / _totalCount);
-
             // Update the progress bar and process UI events (GUI mode only).
             if (!_silentMode)
             {
-                if (_fileCount % 10 == 0 || _fileCount == _totalCount)
-                    Forms.MainDialog.UpdateProgressBar(progress);
-
-                Application.DoEvents();
+                int progress = _totalCount > 0 ? (int)(_fileCount * 100.0 / _totalCount) : 0;
+                Config.ActiveWindow?.UpdateProgressBar(progress);
             }
         }
 
         private static void ShowPatchingSuccessLabel()
         {
-            // When patching is finished show a "Success" message over the progress bar.
-            if (Forms.MainDialog.progressBar.Value >= 100)
-            {
-                Forms.MainDialog.progressBar.SendToBack();
-                Forms.MainDialog.Label_Success.Visible = true;
-                Forms.MainDialog.Label_Success.BringToFront();
-                Application.DoEvents();
-            }
+            if (!_silentMode)
+                Config.ActiveWindow?.ShowSuccessLabel();
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +155,7 @@ namespace LADXHD_Patcher
             Utilities.ExtractResourcesZip("7zip.zip", Config.TempFolder);;
 
             // Write the base APK from resources.
-            File.WriteAllBytes(apkUnsigned, (byte[])resources["android_base.apk"]);
+            File.WriteAllBytes(apkUnsigned, Resources.GetResourceBytes("android_base.apk"));
 
             // Mods can be written into the APK so we need the command to 7-zip to be a bit more dynamic.
             var sevenZipArgs = new List<string> { "a", "-tzip", apkUnsigned, @"assets\Content\*", @"assets\Data\*" };
@@ -200,7 +188,7 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static void Dungeon3PatchFix()
+        private async static Task Dungeon3PatchFix()
         {
             // I fucked up. After the dungeon name change the file "dungeon3_1.map" no longer exists.
             string d3map = Path.Combine(Config.BaseFolder, "Data", "Maps", "dungeon3_1.map");
@@ -213,18 +201,18 @@ namespace LADXHD_Patcher
             if (d3map.TestPath())
             {
                 // Patch the file directly into the maps folder.
-                string xdelta3File = Path.Combine(Config.TempFolder, "patches", "dungeon3.map.xdelta");
+                string vcDiffFile  = Path.Combine(Config.TempFolder, "patches", "dungeon3.map.vcdiff");
                 string patchedFile = Path.Combine(Config.BaseFolder, "Data", "Maps", "dungeon3.map");
 
                 if (Config.SelectedPlatform == Platform.Android)
                     patchedFile = Path.Combine(Config.TempFolder, "android", "com.zelda.ladxhd", "assets", "Data", "Maps", "dungeon3.map");
 
-                XDelta3.Execute(Operation.Apply, d3map, xdelta3File, patchedFile);
+                VCDiff.Execute(Operation.Apply, d3map, vcDiffFile, patchedFile);
             }
             // If the dungeon 3 map file was not able to be patched, output an error message.
             else
             {
-                ShowWarning("Patching \"dungeon3.map\" Failed", "Unable to locate or patch the correct map file for dungeon 3. The patch may succeed but this dungeon will crash the game!", 260, 40, 34, 16, 10);
+                await ShowWarning("Patching \"dungeon3.map\" Failed", "Unable to locate or patch the correct map file for dungeon 3. The patch may succeed but this dungeon will crash the game!");
             }
         }
 
@@ -245,7 +233,7 @@ namespace LADXHD_Patcher
 
             // Normalize line endings to LF in case the embedded resource contains CRLFs
             // then write raw bytes so File.WriteAllText's StreamWriter cannot convert \n → \r\n.
-            byte[] scriptBytes   = (byte[])resources[scriptResource];
+            byte[] scriptBytes   = Resources.GetResourceBytes(scriptResource);
             string scriptContent = System.Text.Encoding.UTF8.GetString(scriptBytes).Replace("\r\n", "\n");
             scriptBytes          = System.Text.Encoding.UTF8.GetBytes(scriptContent);
             string scriptWinPath = Path.Combine(Config.TempFolder, "finalize.sh");
@@ -298,11 +286,11 @@ namespace LADXHD_Patcher
             // them into the bundle without needing access to managed resources.
             string executableName = Path.GetFileNameWithoutExtension(Config.ZeldaEXE);
             string arch           = Config.SelectedPlatform == Platform.MacOS_x86 ? "x86_64" : "arm64";
+            string icnsIcon       = Path.Combine(Config.TempFolder, "Icon.icns");
 
-            File.WriteAllBytes(Path.Combine(Config.TempFolder, "Icon.icns"),
-                               (byte[])resources["Icon.icns"]);
+            File.WriteAllBytes(icnsIcon, Resources.GetResourceBytes("Icon.icns"));
 
-            string template = System.Text.Encoding.UTF8.GetString((byte[])resources["Info.plist.template"]);
+            string template = System.Text.Encoding.UTF8.GetString(Resources.GetResourceBytes("Info.plist.template"));
             string plist = template
                 .Replace("{EXECUTABLE}", executableName)
                 .Replace("{VERSION}",    Config.Version)
@@ -349,26 +337,26 @@ namespace LADXHD_Patcher
             string iconPath = Path.Combine(dataPath, "Icon").CreatePath();
 
             // Write the icon to the "Data\Icon" folder.
-            string iconFile = Path.Combine(iconPath, "Icon.ico");
-            File.WriteAllBytes(iconFile, (byte[])resources["Icon.ico"]);
+            string iconIcoFile = Path.Combine(iconPath, "Icon.ico");
+            File.WriteAllBytes(iconIcoFile, Resources.GetResourceBytes("Icon.ico"));
 
             // Write the bitmap icon to the "Data\Icon" folder.
             string iconBmpFile = Path.Combine(iconPath, "Icon.bmp");
-            File.WriteAllBytes(iconBmpFile, (byte[])resources["Icon.bmp"]);
+            File.WriteAllBytes(iconBmpFile, Resources.GetResourceBytes("Icon.bmp"));
 
             // Write the png icon to the the "Data\Icon" folder.
             string iconPngFile = Path.Combine(iconPath, "Icon.png");
-            File.WriteAllBytes(iconPngFile, (byte[])resources["Icon.png"]);
+            File.WriteAllBytes(iconPngFile, Resources.GetResourceBytes("Icon.png"));
 
             // Write the svg icon to the the "Data\Icon" folder.
             string iconSvgFile = Path.Combine(iconPath, "Icon.svg");
-            File.WriteAllBytes(iconSvgFile, (byte[])resources["Icon.svg"]);
+            File.WriteAllBytes(iconSvgFile, Resources.GetResourceBytes("Icon.svg"));
 
             // If it's the Windows OpenGL build then it needs SDL2.dll.
             if (Config.SelectedPlatform == Platform.Windows && Config.SelectedGraphics == GraphicsAPI.OpenGL)
             {
                 string SdlPath = Path.Combine(Config.BaseFolder, "SDL2.dll");
-                File.WriteAllBytes(SdlPath, (byte[])resources["SDL2.dll"]);
+                File.WriteAllBytes(SdlPath, Resources.GetResourceBytes("SDL2.dll"));
             }
         }
 
@@ -426,10 +414,10 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static void PostPatchingFunctions()
+        private async static Task PostPatchingFunctions()
         {
             // Because of a mistake I made not keeping "dungeon3_1.map" around, it now needs a special fix.
-            Dungeon3PatchFix();
+            await Dungeon3PatchFix();
 
             // We need the new FNT files for Chinese font, the new editor fonts, and a bitmap icon for OpenGL.
             CopyNewFiles();
@@ -474,7 +462,7 @@ namespace LADXHD_Patcher
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        PATCHING CODE : PATCH FILES USING XDELTA PATCHES FROM "Resources.resx" TO UPDATE TO THE LATEST VERSION.
+        PATCHING CODE : PATCH FILES USING VCDIFF PATCHES TO UPDATE TO THE LATEST VERSION.
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -520,10 +508,10 @@ namespace LADXHD_Patcher
             foreach (string newFile in targets)
             {
                 // Set up the path to the patch.
-                string xdelta3File = Path.Combine(Config.TempFolder, "patches", newFile + ".xdelta");
+                string vcdiffFile = Path.Combine(Config.TempFolder, "patches", newFile + ".vcdiff");
 
                 // Make sure a patch exists.
-                if (!xdelta3File.TestPath())
+                if (!vcdiffFile.TestPath())
                     continue;
 
                 // Where the patched file will be temporarily held.
@@ -537,7 +525,7 @@ namespace LADXHD_Patcher
                     newFilePath = Path.Combine(overridePath, newFile);
 
                 // Apply the patch to the file.
-                XDelta3.Execute(Operation.Apply, fileItem.FullName, xdelta3File, patchedFile, newFilePath);
+                VCDiff.Execute(Operation.Apply, fileItem.FullName, vcdiffFile, patchedFile, newFilePath);
             }
         }
 
@@ -551,7 +539,7 @@ namespace LADXHD_Patcher
             if (!realD3.TestPath() && !backD3.TestPath())
             {
                 Config.BackupPath.CreatePath(false);
-                File.WriteAllBytes(backD3, (byte[])resources["dungeon3_1.map"]);
+                File.WriteAllBytes(backD3, Resources.GetResourceBytes("d3map"));
             }
         }
 
@@ -577,111 +565,114 @@ namespace LADXHD_Patcher
             }
         }
 
-        private static void PatchGameFiles()
+        private async static Task PatchGameFiles()
         {
-            // Check to see if we are on Android.
-            bool isAndroid = Config.SelectedPlatform == Platform.Android;
-            bool isWindows = Config.SelectedPlatform == Platform.Windows;
-            bool isLinux   = Config.SelectedPlatform == Platform.Linux_x86 || Config.SelectedPlatform == Platform.Linux_Arm64;
-            bool isMacOS   = Config.SelectedPlatform == Platform.MacOS_x86 || Config.SelectedPlatform == Platform.MacOS_Arm64;
-
-            // Create the backup path if it doesn't exist.
-            Config.BackupPath.CreatePath();
-
-            // The v1.0.0 executable must be in the base path for Linux without the extension.
-            if (isLinux || isMacOS)
-                PrepareLinuxFiles();
-
-            // Remove any garbage files that will just mess up the patcher.
-            RemoveBadBackupFiles();
-            _filesPatched = 0;
-
-            // Dungeon 3 map has caused me grief. Let's put an end to it.
-            VerifyCreateDungeon3Map();
-
-            // Build fast lookup of game files (name -> full path)
-            BuildGameFileLookup();
-
-            // Get a count of how many files there are.
-            _totalCount = _gameFileLookup.Count;
-
-            // Loop through all files in the collection.
-            foreach (var kvp in _gameFileLookup)
+            await Task.Run(async () =>
             {
-                // We don't need a perfect representation of progress just a rough idea of the time left.
-                UpdateProgress();
+                // Check to see if we are on Android.
+                bool isAndroid = Config.SelectedPlatform == Platform.Android;
+                bool isWindows = Config.SelectedPlatform == Platform.Windows;
+                bool isLinux   = Config.SelectedPlatform == Platform.Linux_x86 || Config.SelectedPlatform == Platform.Linux_Arm64;
+                bool isMacOS   = Config.SelectedPlatform == Platform.MacOS_x86 || Config.SelectedPlatform == Platform.MacOS_Arm64;
 
-                string fileName = kvp.Key.TrimEnd('#');
-                string fullPath = kvp.Value;
+                // Create the backup path if it doesn't exist.
+                Config.BackupPath.CreatePath();
 
-                // Get the file as a file item which gives us some cool properties to reference.
-                FileItem fileItem = new FileItem(fullPath);
+                // The v1.0.0 executable must be in the base path for Linux without the extension.
+                if (isLinux || isMacOS)
+                    PrepareLinuxFiles();
 
-                // On Android we only want files in Content or Data folders.
-                if (isAndroid && (fileItem.IsInFolder("Mods") || (!fileItem.IsInFolder("Content") && !fileItem.IsInFolder("Data"))))
-                    continue;
+                // Remove any garbage files that will just mess up the patcher.
+                RemoveBadBackupFiles();
+                _filesPatched = 0;
+
+                // Dungeon 3 map has caused me grief. Let's put an end to it.
+                VerifyCreateDungeon3Map();
+
+                // Build fast lookup of game files (name -> full path)
+                BuildGameFileLookup();
+
+                // Get a count of how many files there are.
+                _totalCount = _gameFileLookup.Count;
+
+                // Loop through all files in the collection.
+                foreach (var kvp in _gameFileLookup)
+                {
+                    // We don't need a perfect representation of progress just a rough idea of the time left.
+                    UpdateProgress();
+
+                    string fileName = kvp.Key.TrimEnd('#');
+                    string fullPath = kvp.Value;
+
+                    // Get the file as a file item which gives us some cool properties to reference.
+                    FileItem fileItem = new FileItem(fullPath);
+
+                    // On Android we only want files in Content or Data folders.
+                    if (isAndroid && (fileItem.IsInFolder("Mods") || (!fileItem.IsInFolder("Content") && !fileItem.IsInFolder("Data"))))
+                        continue;
     
-                // On Windows we skip the patcher or the Mods folder.
-                else if ((isWindows || isLinux || isMacOS) && (fileItem.Name == "xdelta3.exe" || fileItem.IsInFolder("Mods")))
-                    continue;
+                    // On Windows we skip the patcher or the Mods folder.
+                    else if ((isWindows || isLinux || isMacOS) && fileItem.IsInFolder("Mods"))
+                        continue;
 
-                // Get the backup path to test for existing backups and create new ones to it.
-                string backupPath = Path.Combine(Config.BackupPath, fileName);
-                string xdelta3File = Path.Combine(Config.TempFolder, "patches", fileName + ".xdelta");
-                bool patchExists = xdelta3File.TestPath();
+                    // Get the backup path to test for existing backups and create new ones to it.
+                    string backupPath = Path.Combine(Config.BackupPath, fileName);
+                    string vcDiffFile = Path.Combine(Config.TempFolder, "patches", fileName + ".vcdiff");
+                    bool patchExists = vcDiffFile.TestPath();
 
-                // Default both input and output to the file item path.
-                string inputFile = fullPath;
-                string outputFile = fullPath;
-                string overridePath = "";
+                    // Default both input and output to the file item path.
+                    string inputFile = fullPath;
+                    string outputFile = fullPath;
+                    string overridePath = "";
 
-                // Android handles backups and multi-files a bit differently.
-                if (isAndroid)
-                {
-                    // If a patch and a backup exist set the input to the backup file.
-                    if (patchExists && backupPath.TestPath())
-                        inputFile = backupPath;
-
-                    // Set the destination path to the Android folder.
-                    string relative = fileItem.DirectoryName.Replace(Config.BaseFolder, "").TrimStart('\\');
-                    string destPath = Path.Combine(Config.TempFolder, "android", "com.zelda.ladxhd", "assets", relative).CreatePath();
-
-                    // Update the output file using the destination path and set the override for MultiFilePatches.
-                    outputFile = Path.Combine(destPath, fileName);
-                    overridePath = destPath;
-
-                    // If the patch doesn't exist, we can just copy the file to the Android folder.
-                    if (!patchExists)
-                        fullPath.CopyPath(outputFile, true);
-                }
-                // Windows is a bit simpler.
-                else if (isWindows || isLinux || isMacOS)
-                {
-                    // If a patch file exists.
-                    if (patchExists)
+                    // Android handles backups and multi-files a bit differently.
+                    if (isAndroid)
                     {
-                        // If a backup doesn't exist, create one. If one does exist, overwrite the current file with it.
-                        if (!backupPath.TestPath())
-                            fullPath.CopyPath(backupPath, true);
-                        else
-                            backupPath.CopyPath(fullPath, true);
+                        // If a patch and a backup exist set the input to the backup file.
+                        if (patchExists && backupPath.TestPath())
+                            inputFile = backupPath;
+
+                        // Set the destination path to the Android folder.
+                        string relative = fileItem.DirectoryName.Replace(Config.BaseFolder, "").TrimStart('\\');
+                        string destPath = Path.Combine(Config.TempFolder, "android", "com.zelda.ladxhd", "assets", relative).CreatePath();
+
+                        // Update the output file using the destination path and set the override for MultiFilePatches.
+                        outputFile = Path.Combine(destPath, fileName);
+                        overridePath = destPath;
+
+                        // If the patch doesn't exist, we can just copy the file to the Android folder.
+                        if (!patchExists)
+                            fullPath.CopyPath(outputFile, true);
                     }
+                    // Windows is a bit simpler.
+                    else if (isWindows || isLinux || isMacOS)
+                    {
+                        // If a patch file exists.
+                        if (patchExists)
+                        {
+                            // If a backup doesn't exist, create one. If one does exist, overwrite the current file with it.
+                            if (!backupPath.TestPath())
+                                fullPath.CopyPath(backupPath, true);
+                            else
+                                backupPath.CopyPath(fullPath, true);
+                        }
+                    }
+                    // If this file creates other files do so now.
+                    if (fileTargets.TryGetValue(fileName, out _))
+                        HandleMultiFilePatches(inputFile, overridePath);
+
+                    // If this file is not patched directly then move on to the next.
+                    if (!patchExists)
+                        continue;
+
+                    // Patch the file.
+                    string patchedFile = Path.Combine(Config.TempFolder, "patchedFiles", fileName);
+                    VCDiff.Execute(Operation.Apply, inputFile, vcDiffFile, patchedFile, outputFile);
+                    _filesPatched++;
                 }
-                // If this file creates other files do so now.
-                if (fileTargets.TryGetValue(fileName, out _))
-                    HandleMultiFilePatches(inputFile, overridePath);
-
-                // If this file is not patched directly then move on to the next.
-                if (!patchExists)
-                    continue;
-
-                // Patch the file.
-                string patchedFile = Path.Combine(Config.TempFolder, "patchedFiles", fileName);
-                XDelta3.Execute(Operation.Apply, inputFile, xdelta3File, patchedFile, outputFile);
-                _filesPatched++;
-            }
-            // There's stuff to do after patching. This function just gathers it all into one method.
-            PostPatchingFunctions();
+                // There's stuff to do after patching. This function just gathers it all into one method.
+                await PostPatchingFunctions();
+            });
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -740,9 +731,9 @@ namespace LADXHD_Patcher
             // MacOS may have additional files included with the launcher.
             if (isMacOS)
             {
-                Path.Combine(Config.BaseFolder + "\\libAvaloniaNative.dylib").RemovePath();
-                Path.Combine(Config.BaseFolder + "\\libHarfBuzzSharp.dylib").RemovePath();
-                Path.Combine(Config.BaseFolder + "\\libSkiaSharp.dylib").RemovePath();
+                Path.Combine(Config.BaseFolder, "libAvaloniaNative.dylib").RemovePath();
+                Path.Combine(Config.BaseFolder, "libHarfBuzzSharp.dylib").RemovePath();
+                Path.Combine(Config.BaseFolder, "libSkiaSharp.dylib").RemovePath();
             }
             // Write the zipfile, extract it, then delete it.
             Utilities.ExtractResourcesZip(zipName, Config.BaseFolder);
@@ -753,20 +744,13 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static void DisplayExecutableError()
-        {
-            string title = "Original Executable Not Found";
-            string message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
-            Forms.OkayDialog.Display(title, DPI.Scale(250), DPI.Scale(40), DPI.Scale(27), DPI.Scale(10), 15, message);
-        }
-
-        private static bool CompareHashes(string hash1, string hash2, string exePath)
+        private static bool CompareHashes(string hash1, string hash2, string exePath, bool isBackup = false)
         {
             // If the hashes match then we have what we are looking for.
             if (exePath.TestPath() && hash1 == hash2)
             {
                 _executable = exePath;
-                _patchFromBackup = false;
+                _patchFromBackup = isBackup;
                 return true;
             }
             // If they don't match blank out the executable path.
@@ -774,48 +758,55 @@ namespace LADXHD_Patcher
             return false;
         }
 
-        private static bool SetSourceFile()
+        private async static Task<bool> SetSourceFile(bool ShowError = true)
         {
             // Start with the hash of the file found in the main folder.
             string exeCheck = Config.ZeldaEXE;
             string goodHash = "F4ADFBA864B852908705EA6A18A48F18";
 
             // Checks the file path, hashes, and sets the variables.
-            bool CheckFile(string path) { return CompareHashes(goodHash, path.CalculateHash("MD5"), path); }
+            bool CheckFile(string path, bool isBackup) { return CompareHashes(goodHash, path.CalculateHash("MD5"), path, isBackup); }
 
             // First check the executable found in the main folder.
-            if (CheckFile(exeCheck)) { return true; }
+            if (CheckFile(exeCheck, false)) { return true; }
 
             // Try the same executable without the extension.
             exeCheck = exeCheck.Substring(0, exeCheck.Length - 4);
-            if (CheckFile(exeCheck)) { return true; }
+            if (CheckFile(exeCheck, false)) { return true; }
 
             // If it's already been patched try to find the executable in the backup path.
             exeCheck = Path.Combine(Config.BackupPath, "Link's Awakening DX HD.exe");
-            if (CheckFile(exeCheck)) { return true; }
+            if (CheckFile(exeCheck, true)) {return true; }
 
             // If it doesn't exist with the extension check without it.
             exeCheck = exeCheck.Substring(0, exeCheck.Length - 4);
-            if (CheckFile(exeCheck)) { return true; }
+            if (CheckFile(exeCheck, true)) { return true; }
 
             // If we still don't have the good hash then we're screwed.
+            if (ShowError)
+            {
+                var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
+                Debug.WriteLine("Trying to show the error.");
+                await OkayWindow.ShowAsync("Original Executable Not Found", message, timeoutSeconds: 10);
+            }
             return false;
         }
 
-        private static bool ValidateExist()
+        private async static Task<bool> ValidateExist()
         {
             // If the executable was not resolved by the function above.
             if (!_executable.TestPath())
             {
                 // Show an error message to the user.
-                DisplayExecutableError();
+                var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
+                await OkayWindow.ShowAsync("Original Executable Not Found", message, timeoutSeconds: 10);
                 return false;
             }
             // We can continue with the patching.
             return true;
         }
 
-        private static bool ValidateStart()
+        private async static Task<bool> ValidateStart()
         {
             // The verification message changes if Android is selected to patch.
             string title = Config.SelectedPlatform == Platform.Android
@@ -824,11 +815,13 @@ namespace LADXHD_Patcher
             string message = Config.SelectedPlatform == Platform.Android
                 ? "Create an APK using game files patching to v" + Config.Version + "?"
                 : "Are you sure you wish to patch the game to v" + Config.Version + "?";
-            return Forms.YesNoDialog.Display(title, DPI.Scale(280), DPI.Scale(20), DPI.Scale(24), DPI.Scale(24), true, message);
+            return await YesNoWindow.ShowAsync(title, message);
         }
 
-        private static void ReportFinished()
+        private async static Task ReportFinished()
         {
+            string message;
+
             if (_silentMode)
             {
                 Console.WriteLine("Patched " + _filesPatched + " files.");
@@ -837,37 +830,30 @@ namespace LADXHD_Patcher
             {
                 if (Config.SelectedPlatform == Platform.Android)
                 {
-                    string title = "APK Created";
-                    string message = _patchFromBackup
+                    message = _patchFromBackup
                         ? "Creating an APK from v1.0.0 backup files was successful. The game version is set to v"+ Config.Version + "." 
                         : "Creating an APK from original v1.0.0 files was successful. The game version is set to v"+ Config.Version + ".";
-                    Forms.OkayDialog.Display(title, DPI.Scale(260), DPI.Scale(40), DPI.Scale(34), DPI.Scale(16), 10, message);
+                    await OkayWindow.ShowAsync("APK Created", message, timeoutSeconds: 10);
                     ShowPatchingSuccessLabel();
                 }
                 else
                 {
-                    string title = "Patching Complete";
-                    string message = _patchFromBackup
+                    message = _patchFromBackup
                         ? "Patching the game from v1.0.0 backup files was successful. The game was updated to v"+ Config.Version + "." 
                         : "Patching Link's Awakening DX HD v1.0.0 was successful. The game was updated to v"+ Config.Version + ".";
-                    Forms.OkayDialog.Display(title, DPI.Scale(260), DPI.Scale(40), DPI.Scale(34), DPI.Scale(16), 10, message);
+                    await OkayWindow.ShowAsync("Patching Complete", message, timeoutSeconds: 10);
                     ShowPatchingSuccessLabel();
                 }
             }
         }
 
-        private static void TryRemoveTempPath()
+        private async static Task TryRemoveTempPath()
         {
             // Try to remove the temp path.
-            try
-            {
-                Config.TempFolder.RemovePath();
-            }
+            try { Config.TempFolder.RemovePath(); }
+
             // If it fails, show an error message.
-            catch
-            {
-                ShowWarning("Patching Complete", "The game was patched successfully, but the patcher failed to delete the \"temp\" folder. Please report this as an issue on the Github repo!", 260, 40, 28, 10, 10);
-            }
+            catch { await ShowWarning("Patching Complete", "The game was patched successfully, but the patcher failed to delete the \"temp\" folder. Please report this as an issue on the Github repo!"); }
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -876,18 +862,21 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        public static void StartPatching()
+        public async static Task StartPatching()
         {
+            // It's not important but reset it anyway.
+            _silentMode = false;
+
             // Reset progress bar and set whether we are patching from v1.0.0 or backup files.
             ResetProgress();
 
             // Validate if patching should take place.
-            if (!SetSourceFile()) return;
-            if (!ValidateExist()) return;
-            if (!ValidateStart()) return;
+            if (!await SetSourceFile()) return;
+            if (!await ValidateExist()) return;
+            if (!await ValidateStart()) return;
 
             // Disables dialog functionality. 
-            Forms.MainDialog.ToggleDialog(false);
+            App.MainWindowInstance.EnableComponents(false);
 
             // Remove temp path and recreate it.
             Config.TempFolder.RemovePath();
@@ -896,10 +885,8 @@ namespace LADXHD_Patcher
             // Extract patches.
             ExtractPatches();
 
-            // Create XDelta executable and patch files.
-            XDelta3.Create();
-            PatchGameFiles();
-            XDelta3.Remove();
+            // Create vcdiff patch files.
+            await PatchGameFiles();
 
             //Extract the launcher.
             ExtractLauncher();
@@ -908,9 +895,9 @@ namespace LADXHD_Patcher
             HostFinalizationFunctions();
 
             // Report finished, remove temp path, enable dialog.
-            ReportFinished();
-            TryRemoveTempPath();
-            Forms.MainDialog.ToggleDialog(true);
+            await ReportFinished();
+            await TryRemoveTempPath();
+            App.MainWindowInstance.EnableComponents(true);
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -925,7 +912,7 @@ namespace LADXHD_Patcher
             Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Silent Mode");
             Console.WriteLine("============================================");
 
-            SetSourceFile();
+            SetSourceFile(false).GetAwaiter().GetResult();
 
             // Validate executable exists
             if (!_executable.TestPath())
@@ -945,11 +932,8 @@ namespace LADXHD_Patcher
                 Console.WriteLine("Extracting patches...");
                 ExtractPatches();
 
-                Console.WriteLine("Creating xdelta3...");
-                XDelta3.Create();
-
                 Console.WriteLine("Patching game files...");
-                PatchGameFiles();
+                PatchGameFiles().GetAwaiter().GetResult();
 
                 Console.WriteLine("Extracting launcher...");
                 ExtractLauncher();
@@ -958,7 +942,6 @@ namespace LADXHD_Patcher
                 HostFinalizationFunctions();
 
                 Console.WriteLine("Cleaning up...");
-                XDelta3.Remove();
                 Config.TempFolder.RemovePath();
 
                 Console.WriteLine("============================================");
@@ -972,11 +955,7 @@ namespace LADXHD_Patcher
                 Console.WriteLine("ERROR: Patching failed - " + ex.Message);
                 
                 // Cleanup on failure
-                try
-                {
-                    XDelta3.Remove();
-                    TryRemoveTempPath();
-                }
+                try { TryRemoveTempPath().GetAwaiter().GetResult(); }
                 catch { }
 
                 return 2;

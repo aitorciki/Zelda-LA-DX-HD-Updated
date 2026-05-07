@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using LADXHD_Patcher;
 using static LADXHD_Patcher.Config;
 
-namespace LADXHD_Migrater
+namespace LADXHD_Patcher
 {
     internal class CleanUp
     {

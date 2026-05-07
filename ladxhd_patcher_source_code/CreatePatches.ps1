@@ -1,5 +1,5 @@
 #========================================================================================================================================
-# LINK'S AWAKENING DX HD: XDELTA PATCH CREATOR FOR GAME PATCHER
+# LINK'S AWAKENING DX HD: VCDIFF PATCH CREATOR FOR GAME PATCHER
 # By: Bighead
 #========================================================================================================================================
 # PURPOSE
@@ -15,9 +15,9 @@
 <#
 
   Information:
-  - Generate xdelta patches to update v1.0.0 or v1.1.4+ to the latest build.
-  - XDelta3 patches must share a name with the file they are patching + ".xdelta" extension.
-  - For example, the file "musicOverworld.data" the patch should be "musicOverworld.data.xdelta"
+  - Generate vcdiff patches to update v1.0.0 or v1.1.4+ to the latest build.
+  - VCDiff patches must share a name with the file they are patching + ".vcdiff" extension.
+  - For example, the file "musicOverworld.data" the patch should be "musicOverworld.data.vcdiff"
   - This script can be automatically ran from "publish.bat" in "ladxhd_game_source_code" folder.
   - It can automatically run the launcher "publish.bat" script in "ladxhd_launcher_source_code" folder.
 
@@ -26,6 +26,7 @@
   - Original v1.0.0 of the game.
   - New builds of the game.
   - Both must be fully built and playable.
+  - VCDiff CLI App (source code is in LADXHD-Updated repository)
   - 7-Zip (for Android build).
 
   Configuration:
@@ -41,15 +42,15 @@
   - The new builds should be set to their respective folders.
   - Right click this script, select "Run with PowerShell".
   - Generated patches can be found in the "Resources" folder.
-  - Obviously, the xdelta patches can be found in this folder.
+  - Obviously, the vcdiff patches can be found in this folder.
 
   What to do with patches:
   - Open "LADXHD_Patcher.sln" in Visual Studio 2022.
   - In Solution Explorer, go to "Properties >> Resources.resx"
   - Double click "Resources.resx" to open it in a window.
-  - Select all "xdelta3 patches" currently in Resources.resx and delete them.
+  - Select all "vcdiff patches" currently in Resources.resx and delete them.
   - Drag and drop all the new patches from the "patches" folder in "Resources.resx".
-  - For easier identification and sorting later, set Neutral Comment to "xdelta3 patch".
+  - For easier identification and sorting later, set Neutral Comment to "vcdiff patch".
 
   Now what?:
   - Edit the version number in "Program >> Config" to set the new version of the game.
@@ -98,10 +99,10 @@ $MacOS86Path = Join-path $PublishPath ("\MacOS-x86_64")
 $MacOSArPath = Join-path $PublishPath ("\MacOS-Arm64")
 
 #========================================================================================================================================
-# SETUP XDELTA & OUTPUTS
+# SETUP VCDIFF & OUTPUTS
 #========================================================================================================================================
 
-$XDelta3Path = Join-Path $PatcherPath ("\Resources\xdelta3.exe")
+$VCDiffPath  = Join-Path $PatcherPath ("\vcdiff.exe")
 $PatchesPath = Join-Path $PatcherPath ("\Patches")
 
 $WinDXPatches = Join-Path $PatchesPath ("\LADXHD (Win-DX) Patches")
@@ -141,7 +142,7 @@ if ($CreateMcArm -and (!(Test-Path $McArmPatches))) {
 #========================================================================================================================================
 # MISCELLANEOUS
 #========================================================================================================================================
-$host.UI.RawUI.WindowTitle = "Link's Awakening DX HD: XDelta Patch Generation Script"
+$host.UI.RawUI.WindowTitle = "Link's Awakening DX HD: VCDiff Patch Generation Script"
 
 function PauseBeforeClose
 {
@@ -365,11 +366,11 @@ function VerifyOriginal()
     return $true
 }
 
-function VerifyXDelta()
+function VerifyVCDiff()
 {
-    if (!(Test-Path $XDelta3Path)) 
+    if (!(Test-Path $VCDiffPath)) 
     {
-        Write-Host 'Missing "xdelta3.exe" in "Resources" folder.'
+        Write-Host 'Missing "vcdiff.exe" in "Resources" folder.'
         return $false
     }
     return $true
@@ -415,10 +416,9 @@ function GeneratePatches([bool]$CreatePatches, [string]$GamePath, [string]$Patch
 
         if ($OldMD5 -ne $NewMD5) 
         {
-            $PatchFile = Join-Path $PatchOutput ($file.Name + ".xdelta")
-
+            $PatchFile = Join-Path $PatchOutput ($file.Name + ".vcdiff")
             Write-Host ("Generating patch for: " + $file.Name)
-            & $XDelta3Path -f -e -s $OldFilePath $NewFilePath $PatchFile
+            & $VCDiffPath -create $OldFilePath $NewFilePath $PatchFile -quiet
         }
     }
     Write-Host ""
@@ -433,7 +433,7 @@ function GeneratePatches([bool]$CreatePatches, [string]$GamePath, [string]$Patch
     CreateMacOSExtraFilesZip -CreatePatches $CreatePatches -GamePath $GamePath -Platform $Platform
 }
 
-if ((VerifyOriginal) -and (VerifyXDelta))
+if ((VerifyOriginal) -and (VerifyVCDiff))
 {
     GeneratePatches -CreatePatches $CreateWinDX -GamePath $WinDXInPath -PatchOutput $WinDXPatches -Platform "Win_DX"
     GeneratePatches -CreatePatches $CreateWinGL -GamePath $WinGLInPath -PatchOutput $WinGLPatches -Platform "Win_GL"
@@ -442,7 +442,7 @@ if ((VerifyOriginal) -and (VerifyXDelta))
     GeneratePatches -CreatePatches $CreateLiArm -GamePath $LinuxArPath -PatchOutput $LiArmPatches -Platform "Linux_Arm64"
     GeneratePatches -CreatePatches $CreateMcx86 -GamePath $MacOS86Path -PatchOutput $Mcx86Patches -Platform "MacOS_x86"
     GeneratePatches -CreatePatches $CreateMcArm -GamePath $MacOSArPath -PatchOutput $McArmPatches -Platform "MacOS_Arm64"
-    
+
     PublishAndPackLauncher
 
     Write-Host "------------------------------------------------------------------------------------------"

@@ -4,21 +4,32 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using Avalonia.Platform;
 
 namespace LADXHD_Patcher
 {
+    internal class Resources
+    {
+        public static byte[] GetResourceBytes(string resName)
+        {
+            var uri = new Uri($"avares://Patcher/Resources/{resName}");
+            using var stream = AssetLoader.Open(uri);
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
+        }
+    }
+
     public class Utilities
     {
-        private static Dictionary<string, object> resources = ResourceHelper.GetAllResources();
-
         public static void ExtractResourcesZip(string zipName, string destination)
         {
             // All zip files are temporarily written to the temp folder.
-            string zipFilePath = Path.Combine(Config.TempFolder, zipName);
-            File.WriteAllBytes(zipFilePath, (byte[])resources[zipName]);
+            string zipPath = Path.Combine(Config.TempFolder, zipName);
+            File.WriteAllBytes(zipPath, Resources.GetResourceBytes(zipName));
 
             // Because .NET Framework 4.8 can not ovewrite files with ExtractToDirectory we do it manually.
-            using (ZipArchive archive = ZipFile.OpenRead(zipFilePath))
+            using (ZipArchive archive = ZipFile.OpenRead(zipPath))
             {
                 // Loop through the entires in the archive.
                 foreach (ZipArchiveEntry entry in archive.Entries)
@@ -39,7 +50,7 @@ namespace LADXHD_Patcher
                 }
             }
             // Remove the zip file after we are done.
-            zipFilePath.RemovePath();
+            zipPath.RemovePath();
         }
 
         public static void RunProcess(string fileName, string workingDir, List<string> args)

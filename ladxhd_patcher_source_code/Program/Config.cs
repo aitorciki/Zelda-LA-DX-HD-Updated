@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using LADXHD_Migrater;
+using static LADXHD_Patcher.Functions;
 
 namespace LADXHD_Patcher
 {
@@ -9,7 +9,6 @@ namespace LADXHD_Patcher
     {
         public const string Version = "1.8.0";
 
-        public static string AppPath;
         public static string BaseFolder;
         public static string TempFolder;
         public static string ZeldaEXE;
@@ -36,6 +35,8 @@ namespace LADXHD_Patcher
 
         public static bool AndroidMods;
 
+        public static IProgressWindow? ActiveWindow { get; set; }
+
         public enum Platform { Windows, Android, Linux_x86, Linux_Arm64, MacOS_x86, MacOS_Arm64 }
         public static Platform SelectedPlatform;
 
@@ -44,8 +45,7 @@ namespace LADXHD_Patcher
 
         public static void Initialize()
         {
-            AppPath       = Assembly.GetExecutingAssembly().Location;
-            BaseFolder    = AppContext.BaseDirectory;;
+            BaseFolder    = AppContext.BaseDirectory;
             TempFolder    = Path.Combine(BaseFolder, "~temp");
             ZeldaEXE      = Path.Combine(BaseFolder, "Link's Awakening DX HD.exe");
             BackupPath    = Path.Combine(BaseFolder, "Data", "Backup");
