@@ -35,18 +35,25 @@ namespace ProjectZ.InGame.Overlay
             if (Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
                 return false;
 
-            string _setKey = Game1.LanguageManager.CurrentSubLanguageIndex switch
+            var setKey = _key;
+
+            if (GameSettings.Uncensored)
+                setKey = _key + "_redux";
+            else
             {
-                1 => _key + "_mod",
-                2 => _key + "_alt",
-                _ => _key
-            };
-            string testString = Game1.LanguageManager.GetString(_setKey, "noKey");
+                setKey = Game1.LanguageManager.CurrentSubLanguageIndex switch
+                {
+                    1 => _key + "_mod",
+                    2 => _key + "_alt",
+                    _ => _key
+                };
+            }
+            var testString = Game1.LanguageManager.GetString(setKey, "noKey");
 
             if (testString == "noKey")
                 Game1.GameManager.StartDialog(_key);
             else
-                Game1.GameManager.StartDialog(_setKey);
+                Game1.GameManager.StartDialog(setKey);
 
             return true;
         }
@@ -72,7 +79,8 @@ namespace ProjectZ.InGame.Overlay
         }
     }
 
-    class DialogActionDialog : DialogAction
+    class DialogActionDialog : DialogAction 
+
     {
         private readonly string _key;
         private readonly string _choiceKey;
@@ -87,16 +95,34 @@ namespace ProjectZ.InGame.Overlay
 
         public override bool Execute()
         {
+            var setKey = _key;
+            var choices = new string[_choicesKeys.Length];
             var choiceHeader = Game1.LanguageManager.GetString(_choiceKey, "error");
 
-            var choices = new string[_choicesKeys.Length];
             for (var i = 0; i < _choicesKeys.Length; i++)
                 choices[i] = Game1.LanguageManager.GetString(_choicesKeys[i], "error");
 
             if (Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
                 return false;
 
-            Game1.GameManager.InGameOverlay.TextboxOverlay.StartChoice(_key, choiceHeader, choices);
+            if (GameSettings.Uncensored)
+                setKey = _key + "_redux";
+            else
+            {
+                setKey = Game1.LanguageManager.CurrentSubLanguageIndex switch
+                {
+                    1 => _key + "_mod",
+                    2 => _key + "_alt",
+                    _ => _key
+                };
+            }
+            var testString = Game1.LanguageManager.GetString(setKey, "noKey");
+
+            if (testString == "noKey")
+                Game1.GameManager.InGameOverlay.TextboxOverlay.StartChoice(_key, choiceHeader, choices);
+            else
+                Game1.GameManager.InGameOverlay.TextboxOverlay.StartChoice(setKey, choiceHeader, choices);
+
             return true;
         }
     }
