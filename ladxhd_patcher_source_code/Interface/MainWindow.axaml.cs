@@ -25,25 +25,24 @@ namespace LADXHD_Patcher
         public MainWindow()
         {
             InitializeComponent();
-            combBox_Platform.SelectedIndex = 0;
-            combBox_API.SelectedIndex = 0;
+            ComboBox_Platform.SelectedIndex = 0;
+            ComboBox_API.SelectedIndex = 0;
             Config.ActiveWindow = this;
-//            checkBox_AndroidMods.Visible = false;
         }
 
         public void EnableComponents(bool toggle)
         {
-            combBox_Platform.IsEnabled = toggle;
-            combBox_API.IsEnabled      = toggle;
-            PatchButton.IsEnabled      = toggle;
-            ChangeLogButton.IsEnabled  = toggle;
-            ExitButton.IsEnabled       = toggle;
+            ComboBox_Platform.IsEnabled = toggle;
+            ComboBox_API.IsEnabled      = toggle;
+            Button_Patch.IsEnabled      = toggle;
+            Button_ChangeLog.IsEnabled  = toggle;
+            Button_Exit.IsEnabled       = toggle;
         }
 
         private void comboBox_Platform_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // The combobox will be null on initialization.
-            if (combBox_API == null) return;
+            if (ComboBox_API == null) return;
 
             // Get the combobox that was triggered.
             ComboBox comboBox = (ComboBox)sender;
@@ -52,52 +51,52 @@ namespace LADXHD_Patcher
             {
                 Config.SelectedPlatform = Platform.Windows;
 
-                combBox_API.Items.Clear();
-                combBox_API.Items.Add("DirectX");
-                combBox_API.Items.Add("OpenGL");
-                PatchButton.Content = "Patch";
+                ComboBox_API.Items.Clear();
+                ComboBox_API.Items.Add("DirectX");
+                ComboBox_API.Items.Add("OpenGL");
+                Button_Patch.Content = "Patch";
             }
             if (comboBox.SelectedIndex == 1)
             {
                 Config.SelectedPlatform = Platform.Android;
 
-                combBox_API.Items.Clear();
-                combBox_API.Items.Add("OpenGL");
-                PatchButton.Content = "Create APK";
+                ComboBox_API.Items.Clear();
+                ComboBox_API.Items.Add("OpenGL");
+                Button_Patch.Content = "Create APK";
             }
             if (comboBox.SelectedIndex == 2)
             {
                 Config.SelectedPlatform = Platform.Linux_x86;
 
-                combBox_API.Items.Clear();
-                combBox_API.Items.Add("OpenGL");
-                PatchButton.Content = "Patch";
+                ComboBox_API.Items.Clear();
+                ComboBox_API.Items.Add("OpenGL");
+                Button_Patch.Content = "Patch";
             }
             if (comboBox.SelectedIndex == 3)
             {
                 Config.SelectedPlatform = Platform.Linux_Arm64;
 
-                combBox_API.Items.Clear();
-                combBox_API.Items.Add("OpenGL");
-                PatchButton.Content = "Patch";
+                ComboBox_API.Items.Clear();
+                ComboBox_API.Items.Add("OpenGL");
+                Button_Patch.Content = "Patch";
             }
             if (comboBox.SelectedIndex == 4)
             {
                 Config.SelectedPlatform = Platform.MacOS_x86;
 
-                combBox_API.Items.Clear();
-                combBox_API.Items.Add("OpenGL");
-                PatchButton.Content = "Patch";
+                ComboBox_API.Items.Clear();
+                ComboBox_API.Items.Add("OpenGL");
+                Button_Patch.Content = "Patch";
             }
             if (comboBox.SelectedIndex == 5)
             {
                 Config.SelectedPlatform = Platform.MacOS_Arm64;
 
-                combBox_API.Items.Clear();
-                combBox_API.Items.Add("OpenGL");
-                PatchButton.Content = "Patch";
+                ComboBox_API.Items.Clear();
+                ComboBox_API.Items.Add("OpenGL");
+                Button_Patch.Content = "Patch";
             }
-            combBox_API.SelectedIndex = 0;
+            ComboBox_API.SelectedIndex = 0;
             ShowAndroidCheckbox(comboBox.SelectedIndex == 1);
         }
 
@@ -134,12 +133,12 @@ namespace LADXHD_Patcher
                 Config.SelectedGraphics = GraphicsAPI.OpenGL;
         }
 
-        private async void PatchButton_Click(object sender, RoutedEventArgs e)
+        private async void Button_Patch_Click(object sender, RoutedEventArgs e)
         {
             await Functions.StartPatching();
         }
 
-        private void ChangeLogButton_Click(object sender, RoutedEventArgs e)
+        private void Button_ChangeLog_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
             {
@@ -148,7 +147,7 @@ namespace LADXHD_Patcher
             });
         }
 
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        private void Button_Exit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

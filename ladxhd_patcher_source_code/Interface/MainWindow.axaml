@@ -34,7 +34,7 @@
 				<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
 
 					<TextBlock Text="Platform:" VerticalAlignment="Center" FontSize="11.5"/>
-					<ComboBox x:Name="combBox_Platform" Width="130" SelectedIndex="0" FontSize="11.5"
+					<ComboBox x:Name="ComboBox_Platform" Width="130" SelectedIndex="0" FontSize="11.5"
                         SelectionChanged="comboBox_Platform_SelectionChanged">
 						<ComboBoxItem>Windows</ComboBoxItem>
 						<ComboBoxItem>Android</ComboBoxItem>
@@ -45,7 +45,7 @@
 					</ComboBox>
 
 					<TextBlock Text="Target:" VerticalAlignment="Center" Margin="6,0,0,0" FontSize="11.5"/>
-					<ComboBox x:Name="combBox_API" Width="130" SelectedIndex="0" FontSize="11.5"
+					<ComboBox x:Name="ComboBox_API" Width="130" SelectedIndex="0" FontSize="11.5"
                         SelectionChanged="combBox_API_SelectionChanged">
 						<ComboBoxItem>DirectX</ComboBoxItem>
 						<ComboBoxItem>OpenGL</ComboBoxItem>
@@ -77,26 +77,26 @@
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 
-				<Button x:Name="PatchButton" Grid.Column="0" Content="Patch" Height="38" 
+				<Button x:Name="Button_Patch" Grid.Column="0" Content="Patch" Height="38" 
 						HorizontalAlignment="Stretch" 
 						HorizontalContentAlignment="Center" 
 						VerticalContentAlignment="Center" 
 						Margin="0,0,4,0"
-	 					Click="PatchButton_Click"/>
+	 					Click="Button_Patch_Click"/>
 
-				<Button x:Name="ChangeLogButton" Grid.Column="1" Content="Changelog" Height="38" 
+				<Button x:Name="Button_ChangeLog" Grid.Column="1" Content="Changelog" Height="38" 
 						HorizontalAlignment="Stretch" 
 						HorizontalContentAlignment="Center" 
 						VerticalContentAlignment="Center" 
 						Margin="4,0,4,0"
-                        Click="ChangeLogButton_Click"/>
+                        Click="Button_ChangeLog_Click"/>
 
-				<Button x:Name="ExitButton" Grid.Column="2" Content="Exit" Height="38" 
+				<Button x:Name="Button_Exit" Grid.Column="2" Content="Exit" Height="38" 
 						HorizontalAlignment="Stretch" 
 						HorizontalContentAlignment="Center" 
 						VerticalContentAlignment="Center" 
 						Margin="4,0,0,0"
-	 					Click="ExitButton_Click"/>
+	 					Click="Button_Exit_Click"/>
 
 			</Grid>
 		</Canvas>
