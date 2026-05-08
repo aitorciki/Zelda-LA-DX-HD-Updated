@@ -487,13 +487,15 @@ namespace ProjectZ.InGame.GameSystems
                 // Don't restart the music when in dungeons, in caves, if a powerup is active, or intro music is playing.
                 bool restart1 = !introMusic && (map.IsOverworld || !map.DungeonMode && !map.DungeonCastle && !map.IsCave);
                 bool restart2 = !gm.PieceOfPowerIsActive && !gm.GuardianAcornIsActive;
+                bool restart3 = map.IsOverworld;
 
-                // Clear the music from all slots.
+                // Conditionally clear the music from all slots.
                 if (restart1)
                     Game1.AudioManager.SetMusic(-1, 0);
                 if (restart2)
                     Game1.AudioManager.SetMusic(-1, 1);
-                Game1.AudioManager.SetMusic(-1, 2);
+                if (restart3)
+                    Game1.AudioManager.SetMusic(-1, 2);
 
                 // Stop whatever music was playing.
                 if (restart1)

@@ -45,6 +45,9 @@ namespace ProjectZ.InGame.GameObjects.Things
                     return dungeonClear;
                 }
             }
+            // Hack to stop any music in slot 2 when walking into a house.
+            Game1.AudioManager.SetMusic(-1, 2);
+
             // Return the actual song assigned to "ObjMusic".
             return songNr;
         }
