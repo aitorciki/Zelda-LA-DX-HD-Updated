@@ -1,9 +1,9 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+VisualStudioVersion = 17.14.37111.16 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LADXHD_Migrater", "LADXHD_Migrater.csproj", "{9F751F39-73BC-4057-8588-7597B8C67FC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LADXHD_Migrater", "LADXHD_Migrater.csproj", "{6A429E5F-39AC-4B8A-90C3-F68F360664EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9F751F39-73BC-4057-8588-7597B8C67FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F751F39-73BC-4057-8588-7597B8C67FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F751F39-73BC-4057-8588-7597B8C67FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F751F39-73BC-4057-8588-7597B8C67FC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A429E5F-39AC-4B8A-90C3-F68F360664EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A429E5F-39AC-4B8A-90C3-F68F360664EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A429E5F-39AC-4B8A-90C3-F68F360664EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A429E5F-39AC-4B8A-90C3-F68F360664EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {03A9BC26-EA7A-4A9B-8821-CE6348782820}
+		SolutionGuid = {7727179D-DAFC-4CCB-85AB-ED0290D10CD5}
 	EndGlobalSection
 EndGlobal

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using static LADXHD_Migrater.Config;
 using static LADXHD_Migrater.VCDiff;
 
@@ -9,7 +10,6 @@ namespace LADXHD_Migrater
 {
     internal class Functions
     {
-        private static Dictionary<string, object> resources = ResourceHelper.GetAllResources();
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -100,35 +100,35 @@ namespace LADXHD_Migrater
             string smallFont_chn_fileB = Path.Combine(Config.Update_Content, "Fonts", "smallFont_chn_redux.fnt");
 
             // Write the files to the "Content\Fonts" folder.
-            File.WriteAllBytes(smallFont_chn_fileA, (byte[])resources["smallFont_chn.fnt"]);
-            File.WriteAllBytes(smallFont_chn_fileB, (byte[])resources["smallFont_chn_redux.fnt"]);
+            File.WriteAllBytes(smallFont_chn_fileA, Resources.GetResourceBytes("smallFont_chn.fnt"));
+            File.WriteAllBytes(smallFont_chn_fileB, Resources.GetResourceBytes("smallFont_chn_redux.fnt"));
 
             // Set up the path to the replacement fonts used for multi-platform support.
             string editorFontA = Path.Combine(Config.Update_Content, "Fonts", "Courier-Prime.ttf");
             string editorFontB = Path.Combine(Config.Update_Content, "Fonts", "NotoSans-Regular.ttf");
 
             // Write the files to the "Content\Fonts" folder.
-            File.WriteAllBytes(editorFontA, (byte[])resources["Courier-Prime.ttf"]);
-            File.WriteAllBytes(editorFontB, (byte[])resources["NotoSans-Regular.ttf"]);
+            File.WriteAllBytes(editorFontA, Resources.GetResourceBytes("Courier-Prime.ttf"));
+            File.WriteAllBytes(editorFontB, Resources.GetResourceBytes("NotoSans-Regular.ttf"));
 
             // Set up the path to the Icon.
             string iconPath = Path.Combine(Config.Update_Data, "Icon").CreatePath();
 
             // Write the icon to the "Data\Icon" folder.
             string iconFile = Path.Combine(iconPath, "Icon.ico");
-            File.WriteAllBytes(iconFile, (byte[])resources["Icon.ico"]);
+            File.WriteAllBytes(iconFile, Resources.GetResourceBytes("Icon.ico"));
 
             // Write the bitmap icon to the "Data\Icon" folder.
             string iconBmpFile = Path.Combine(iconPath, "Icon.bmp");
-            File.WriteAllBytes(iconBmpFile, (byte[])resources["Icon.bmp"]);
+            File.WriteAllBytes(iconBmpFile, Resources.GetResourceBytes("Icon.bmp"));
 
             // Write the png icon to the the "Data\Icon" folder.
             string iconPngFile = Path.Combine(iconPath, "Icon.png");
-            File.WriteAllBytes(iconPngFile, (byte[])resources["Icon.png"]);
+            File.WriteAllBytes(iconPngFile, Resources.GetResourceBytes("Icon.png"));
 
             // Write the svg icon to the the "Data\Icon" folder.
             string iconSvgFile = Path.Combine(iconPath, "Icon.svg");
-            File.WriteAllBytes(iconSvgFile, (byte[])resources["Icon.svg"]);
+            File.WriteAllBytes(iconSvgFile,Resources.GetResourceBytes("Icon.svg"));
 
             // Extract the Android buttons to the data path.
             string extractPath = Path.Combine(Config.Update_Data, "Buttons").CreatePath();
@@ -139,7 +139,7 @@ namespace LADXHD_Migrater
 
             // Create the zip file and extract the buttons.
             string zipFilePath = Path.Combine(extractPath, "android_buttons.zip");
-            File.WriteAllBytes(zipFilePath, (byte[])resources["android_buttons.zip"]);
+            File.WriteAllBytes(zipFilePath, Resources.GetResourceBytes("android_buttons.zip"));
             ZipFile.ExtractToDirectory(zipFilePath, extractPath);
             zipFilePath.RemovePath();
         }
@@ -308,44 +308,71 @@ namespace LADXHD_Migrater
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        public static void CreateBuild()
+        public async static Task CreateBuild()
         {
             // Try to build the game.
-            if (DotNet.BuildGame())
+            if (await DotNet.BuildGame())
             {
                 // Stores where to move the result.
-                string MoveDestination = "";
+                string finalGamePath = "";
                 string publishFolder = Path.Combine(Config.BaseFolder, "~Publish").CreatePath();
 
                 // If it succeeded, move the folder to the main folder.
                 if (Config.SelectedPlatform == Platform.Windows)
                 {
                     if (Config.SelectedGraphics == GraphicsAPI.DirectX)
-                        MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_dx");
+                        finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_dx");
                     else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
-                        MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_gl");
+                        finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_gl");
                 }
                 else if (Config.SelectedPlatform == Platform.Android)
-                    MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_android");
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_android");
                 
-                else if (Config.SelectedPlatform == Platform.Linux_x86)
-                    MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_x86_64");
+                else if (Config.SelectedPlatform == Platform.Linux_x64)
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_x86_64");
                 
                 else if (Config.SelectedPlatform == Platform.Linux_Arm64)
-                    MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_arm64");
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_arm64");
                 
                 else if (Config.SelectedPlatform == Platform.MacOS_Arm64)
-                    MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_arm64");
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_arm64");
 
                 else if (Config.SelectedPlatform == Platform.MacOS_x64)
-                    MoveDestination = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_x64");
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_x86_64");
 
                 // Move the publish folder to the root directory.
-                Config.Build_Path.MovePath(MoveDestination, true);
+                Config.Build_Path.MovePath(finalGamePath, true);
 
                 // Remove the old publish folder if it's empty.
                 if (Config.Publish_Path.IsPathEmpty())
                     Config.Publish_Path.RemovePath();
+
+                // Build the matching launcher and copy it into the game output folder.
+                if (await DotNet.BuildLauncher())
+                {
+                    string launcherPublish = Path.Combine(Config.Launcher_Source, "~Publish");
+                    if (launcherPublish.TestPath())
+                    {
+                        // Copy launcher files into the already-moved game folder.
+                        foreach (string file in launcherPublish.GetFiles("*", true))
+                        {
+                            FileItem item = new FileItem(file);
+                            string dest = Path.Combine(finalGamePath, item.Name);
+                            File.Copy(file, dest, true);
+                        }
+                        launcherPublish.RemovePath();
+                    }
+                }
+                // Remove any leftover files that are unnecessary.
+                HashSet<string> junkFiles = new HashSet<string> { "nfd.lib", "nfd.pdb", "_Microsoft.Android.Resource.Designer.dll" };
+                foreach (string file in finalGamePath.GetFiles("*"))
+                {
+                    FileItem item = new FileItem(file);
+                    if (junkFiles.Contains(item.Name))
+                    {
+                        item.FullName.RemovePath();
+                    }
+                }
             }
         }
     }
