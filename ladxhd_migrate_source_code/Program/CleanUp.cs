@@ -16,12 +16,19 @@ namespace LADXHD_Migrater
             "cave bird.map.data",
             "dungeon 7_2d.map.data",
             "dungeon_end.map.data",
+            "dungeon3_1.map",
+            "dungeon3_1.map.data",
+            "dungeon3_2.map",
+            "dungeon3_2.map.data",
+            "dungeon3_3.map",
+            "dungeon3_3.map.data",
+            "dungeon3_4.map",
+            "dungeon3_4.map.data"
         };
 
         private static readonly string[] removeMapPatterns =
         {
-            "0 test map*",
-            "dungeon3_*"
+            "0 test map*"
         };
 
         public static void RemoveJunkMapFiles()
