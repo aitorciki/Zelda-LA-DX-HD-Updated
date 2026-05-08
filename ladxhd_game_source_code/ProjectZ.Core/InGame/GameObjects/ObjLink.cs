@@ -1641,7 +1641,7 @@ namespace ProjectZ.InGame.GameObjects
 
                 // Return the traded item.
                 var tradedItem = Game1.GameManager.SaveManager.GetString("tradded_item");
-                var item = new GameItemCollected(tradedItem);
+                var item = new GameItemCollected(tradedItem) { Count = 1 };
                 MapManager.ObjLink.PickUpItem(item, true);
                 _pickupDialogOverride = "npc_hidden_4";
             }
