@@ -403,6 +403,8 @@ function GeneratePatches([bool]$CreatePatches, [string]$GamePath, [string]$Patch
     Write-Host ("Generating " + $Platform + " patches for Link's Awakening DX HD ...")
     Write-Host ""
 
+    $ManifestLines = [System.Collections.Generic.List[string]]::new()
+
     foreach ($file in Get-ChildItem -LiteralPath $GamePath -Recurse -File) 
     {
         $RelativePath = $file.FullName.Substring($GamePath.Length).TrimStart('\')
@@ -417,9 +419,21 @@ function GeneratePatches([bool]$CreatePatches, [string]$GamePath, [string]$Patch
         if ($OldMD5 -ne $NewMD5) 
         {
             $PatchFile = Join-Path $PatchOutput ($file.Name + ".vcdiff")
-            Write-Host ("Generating patch for: " + $file.Name)
-            & $VCDiffPath -create $OldFilePath $NewFilePath $PatchFile -quiet
+            $ManifestLines.Add("$OldFilePath|$NewFilePath|$PatchFile")
         }
+    }
+
+    if ($ManifestLines.Count -gt 0)
+    {
+        $ManifestFile = Join-Path $PatchOutput ("patch_manifest.txt")
+        $ManifestLines | Set-Content -Path $ManifestFile -Encoding UTF8
+        Write-Host ""
+        & $VCDiffPath -manifest $ManifestFile
+        Remove-Item -Path $ManifestFile -Force -ErrorAction SilentlyContinue | Out-Null
+    }
+    else
+    {
+        Write-Host "No changed files found."
     }
     Write-Host ""
     Write-Host ('Generating "patches_' + $Platform.ToLower() + '.zip" for patcher program.')

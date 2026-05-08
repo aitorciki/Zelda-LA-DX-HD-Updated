@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-Title LADXHD: Migration Tool Publish Script
+Title LADXHD: VCDiff Publish Script
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Clean Previous Builds
@@ -34,6 +34,20 @@ if %errorlevel% neq 0 ( echo Windows build failed! & pause & exit /b 1 )
 ::echo Building MacOS Arm64...
 ::dotnet publish LADXHD_Migrater.csproj -r osx-arm64 /p:PublishProfile=macOS-arm64
 ::if %errorlevel% neq 0 ( echo MacOS Arm64 build failed! & pause & exit /b 1 )
+
+::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+:: Rename output executable to just "vcdiff".
+::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+echo.
+echo Renaming output executables...
+cd %cd%\~Publish
+for /r %%f in (vcdiff-cli.*) do (
+    if /I "%%~nf"=="vcdiff-cli" (
+        echo Renaming: "%%f" to "vcdiff%%~xf"
+        ren "%%f" "vcdiff%%~xf"
+    )
+)
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Finish
