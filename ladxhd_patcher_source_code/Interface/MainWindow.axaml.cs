@@ -56,7 +56,7 @@ namespace LADXHD_Patcher
                 ComboBox_API.Items.Add("OpenGL");
                 Button_Patch.Content = "Patch";
             }
-            if (comboBox.SelectedIndex == 1)
+            else if (comboBox.SelectedIndex == 1)
             {
                 Config.SelectedPlatform = Platform.Android;
 
@@ -64,7 +64,7 @@ namespace LADXHD_Patcher
                 ComboBox_API.Items.Add("OpenGL");
                 Button_Patch.Content = "Create APK";
             }
-            if (comboBox.SelectedIndex == 2)
+            else if (comboBox.SelectedIndex == 2)
             {
                 Config.SelectedPlatform = Platform.Linux_x86;
 
@@ -72,7 +72,7 @@ namespace LADXHD_Patcher
                 ComboBox_API.Items.Add("OpenGL");
                 Button_Patch.Content = "Patch";
             }
-            if (comboBox.SelectedIndex == 3)
+            else if (comboBox.SelectedIndex == 3)
             {
                 Config.SelectedPlatform = Platform.Linux_Arm64;
 
@@ -80,7 +80,7 @@ namespace LADXHD_Patcher
                 ComboBox_API.Items.Add("OpenGL");
                 Button_Patch.Content = "Patch";
             }
-            if (comboBox.SelectedIndex == 4)
+            else if (comboBox.SelectedIndex == 4)
             {
                 Config.SelectedPlatform = Platform.MacOS_x86;
 
@@ -88,7 +88,7 @@ namespace LADXHD_Patcher
                 ComboBox_API.Items.Add("OpenGL");
                 Button_Patch.Content = "Patch";
             }
-            if (comboBox.SelectedIndex == 5)
+            else if (comboBox.SelectedIndex == 5)
             {
                 Config.SelectedPlatform = Platform.MacOS_Arm64;
 
