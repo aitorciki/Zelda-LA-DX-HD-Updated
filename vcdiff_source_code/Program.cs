@@ -173,7 +173,7 @@ namespace vcdiff_cli
             Console.Error.WriteLine("");
             Console.Error.WriteLine("Manifest Notes:");
             Console.Error.WriteLine("  - A \"manifest\" is just a standard text document (manifest.txt) with entries.");
-            Console.Error.WriteLine("  - Each line in a manifest is the arugments separated by pipe \"|\" character.");
+            Console.Error.WriteLine("  - Each line in a manifest is the arguments separated by pipe \"|\" character.");
             Console.Error.WriteLine("  - For create manifests, each line is: oldFile|newFile|patchFile");
             Console.Error.WriteLine("  - For apply manifests, each line is: oldFile|patchFile|newFile");
         }
