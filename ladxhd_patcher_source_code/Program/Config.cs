@@ -68,8 +68,6 @@ namespace LADXHD_Patcher
             KeyStore      = Path.Combine(TempFolder, "android", "keystore.jks");
             JavaExe       = Path.Combine(TempFolder, "android", "java", "bin", "java.exe");
             SevenZip      = Path.Combine(TempFolder, "7z.exe");
-
-            CleanUp.Init();
         }
     }
 }
