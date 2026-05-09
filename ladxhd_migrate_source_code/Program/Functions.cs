@@ -100,35 +100,35 @@ namespace LADXHD_Migrater
             string smallFont_chn_fileB = Path.Combine(Config.Update_Content, "Fonts", "smallFont_chn_redux.fnt");
 
             // Write the files to the "Content\Fonts" folder.
-            File.WriteAllBytes(smallFont_chn_fileA, Resources.GetResourceBytes("smallFont_chn.fnt"));
-            File.WriteAllBytes(smallFont_chn_fileB, Resources.GetResourceBytes("smallFont_chn_redux.fnt"));
+            File.WriteAllBytes(smallFont_chn_fileA, Resources.GetBytes("smallFont_chn.fnt"));
+            File.WriteAllBytes(smallFont_chn_fileB, Resources.GetBytes("smallFont_chn_redux.fnt"));
 
             // Set up the path to the replacement fonts used for multi-platform support.
             string editorFontA = Path.Combine(Config.Update_Content, "Fonts", "Courier-Prime.ttf");
             string editorFontB = Path.Combine(Config.Update_Content, "Fonts", "NotoSans-Regular.ttf");
 
             // Write the files to the "Content\Fonts" folder.
-            File.WriteAllBytes(editorFontA, Resources.GetResourceBytes("Courier-Prime.ttf"));
-            File.WriteAllBytes(editorFontB, Resources.GetResourceBytes("NotoSans-Regular.ttf"));
+            File.WriteAllBytes(editorFontA, Resources.GetBytes("Courier-Prime.ttf"));
+            File.WriteAllBytes(editorFontB, Resources.GetBytes("NotoSans-Regular.ttf"));
 
             // Set up the path to the Icon.
             string iconPath = Path.Combine(Config.Update_Data, "Icon").CreatePath();
 
             // Write the icon to the "Data\Icon" folder.
             string iconFile = Path.Combine(iconPath, "Icon.ico");
-            File.WriteAllBytes(iconFile, Resources.GetResourceBytes("Icon.ico"));
+            File.WriteAllBytes(iconFile, Resources.GetBytes("Icon.ico"));
 
             // Write the bitmap icon to the "Data\Icon" folder.
             string iconBmpFile = Path.Combine(iconPath, "Icon.bmp");
-            File.WriteAllBytes(iconBmpFile, Resources.GetResourceBytes("Icon.bmp"));
+            File.WriteAllBytes(iconBmpFile, Resources.GetBytes("Icon.bmp"));
 
             // Write the png icon to the the "Data\Icon" folder.
             string iconPngFile = Path.Combine(iconPath, "Icon.png");
-            File.WriteAllBytes(iconPngFile, Resources.GetResourceBytes("Icon.png"));
+            File.WriteAllBytes(iconPngFile, Resources.GetBytes("Icon.png"));
 
             // Write the svg icon to the the "Data\Icon" folder.
             string iconSvgFile = Path.Combine(iconPath, "Icon.svg");
-            File.WriteAllBytes(iconSvgFile,Resources.GetResourceBytes("Icon.svg"));
+            File.WriteAllBytes(iconSvgFile,Resources.GetBytes("Icon.svg"));
 
             // Extract the Android buttons to the data path.
             string extractPath = Path.Combine(Config.Update_Data, "Buttons").CreatePath();
@@ -139,7 +139,7 @@ namespace LADXHD_Migrater
 
             // Create the zip file and extract the buttons.
             string zipFilePath = Path.Combine(extractPath, "android_buttons.zip");
-            File.WriteAllBytes(zipFilePath, Resources.GetResourceBytes("android_buttons.zip"));
+            File.WriteAllBytes(zipFilePath, Resources.GetBytes("android_buttons.zip"));
             ZipFile.ExtractToDirectory(zipFilePath, extractPath);
             zipFilePath.RemovePath();
         }

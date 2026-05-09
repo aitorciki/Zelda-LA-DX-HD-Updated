@@ -10,7 +10,7 @@ namespace LADXHD_Patcher
 {
     internal class Resources
     {
-        public static byte[] GetResourceBytes(string resName)
+        public static byte[] GetBytes(string resName)
         {
             var uri = new Uri($"avares://Patcher/Resources/{resName}");
             using var stream = AssetLoader.Open(uri);
@@ -26,7 +26,7 @@ namespace LADXHD_Patcher
         {
             // All zip files are temporarily written to the temp folder.
             string zipPath = Path.Combine(Config.TempFolder, zipName);
-            File.WriteAllBytes(zipPath, Resources.GetResourceBytes(zipName));
+            File.WriteAllBytes(zipPath, Resources.GetBytes(zipName));
 
             // Because .NET Framework 4.8 can not ovewrite files with ExtractToDirectory we do it manually.
             using (ZipArchive archive = ZipFile.OpenRead(zipPath))

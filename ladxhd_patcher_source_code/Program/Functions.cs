@@ -155,7 +155,7 @@ namespace LADXHD_Patcher
             Utilities.ExtractResourcesZip("7zip.zip", Config.TempFolder);;
 
             // Write the base APK from resources.
-            File.WriteAllBytes(apkUnsigned, Resources.GetResourceBytes("android_base.apk"));
+            File.WriteAllBytes(apkUnsigned, Resources.GetBytes("android_base.apk"));
 
             // Mods can be written into the APK so we need the command to 7-zip to be a bit more dynamic.
             var sevenZipArgs = new List<string> { "a", "-tzip", apkUnsigned, @"assets\Content\*", @"assets\Data\*" };
@@ -350,9 +350,9 @@ namespace LADXHD_Patcher
 
             // Write Resources
             string arch = Config.SelectedPlatform == Platform.MacOS_x86 ? "x86_64" : "arm64";
-            File.WriteAllBytes(Path.Combine(resourcesPath, "Icon.icns"), Resources.GetResourceBytes("Icon.icns"));
+            File.WriteAllBytes(Path.Combine(resourcesPath, "Icon.icns"), Resources.GetBytes("Icon.icns"));
 
-            string template = System.Text.Encoding.UTF8.GetString(Resources.GetResourceBytes("Info.plist.template"));
+            string template = System.Text.Encoding.UTF8.GetString(Resources.GetBytes("Info.plist.template"));
             string plist = template
                 .Replace("{EXECUTABLE}", name)
                 .Replace("{VERSION}", Config.Version)
@@ -472,25 +472,25 @@ namespace LADXHD_Patcher
 
             // Write the icon to the "Data\Icon" folder.
             string iconIcoFile = Path.Combine(iconPath, "Icon.ico");
-            File.WriteAllBytes(iconIcoFile, Resources.GetResourceBytes("Icon.ico"));
+            File.WriteAllBytes(iconIcoFile, Resources.GetBytes("Icon.ico"));
 
             // Write the bitmap icon to the "Data\Icon" folder.
             string iconBmpFile = Path.Combine(iconPath, "Icon.bmp");
-            File.WriteAllBytes(iconBmpFile, Resources.GetResourceBytes("Icon.bmp"));
+            File.WriteAllBytes(iconBmpFile, Resources.GetBytes("Icon.bmp"));
 
             // Write the png icon to the the "Data\Icon" folder.
             string iconPngFile = Path.Combine(iconPath, "Icon.png");
-            File.WriteAllBytes(iconPngFile, Resources.GetResourceBytes("Icon.png"));
+            File.WriteAllBytes(iconPngFile, Resources.GetBytes("Icon.png"));
 
             // Write the svg icon to the the "Data\Icon" folder.
             string iconSvgFile = Path.Combine(iconPath, "Icon.svg");
-            File.WriteAllBytes(iconSvgFile, Resources.GetResourceBytes("Icon.svg"));
+            File.WriteAllBytes(iconSvgFile, Resources.GetBytes("Icon.svg"));
 
             // If it's the Windows OpenGL build then it needs SDL2.dll.
             if (Config.SelectedPlatform == Platform.Windows && Config.SelectedGraphics == GraphicsAPI.OpenGL)
             {
                 string SdlPath = Path.Combine(Config.BaseFolder, "SDL2.dll");
-                File.WriteAllBytes(SdlPath, Resources.GetResourceBytes("SDL2.dll"));
+                File.WriteAllBytes(SdlPath, Resources.GetBytes("SDL2.dll"));
             }
         }
 
@@ -673,7 +673,7 @@ namespace LADXHD_Patcher
             if (!realD3.TestPath() && !backD3.TestPath())
             {
                 Config.BackupPath.CreatePath(false);
-                File.WriteAllBytes(backD3, Resources.GetResourceBytes("d3map"));
+                File.WriteAllBytes(backD3, Resources.GetBytes("d3map"));
             }
         }
 

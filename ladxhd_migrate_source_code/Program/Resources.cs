@@ -6,7 +6,7 @@ namespace LADXHD_Migrater
 {
     internal class Resources
     {
-        public static byte[] GetResourceBytes(string resName)
+        public static byte[] GetBytes(string resName)
         {
             var uri = new Uri($"avares://Migrater/Resources/{resName}");
             using var stream = AssetLoader.Open(uri);
