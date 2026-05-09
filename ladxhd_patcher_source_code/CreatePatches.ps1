@@ -64,6 +64,7 @@
 $OldGamePath = "H:\Projects\Zelda Link's Awakening\original"
 $SevenZipExe = "C:\Program Files\7-Zip\7z.exe"
 $PubLauncher = $true
+$MakePatcher = $true
 
 $CreateWinDX = $true
 $CreateWinGL = $true
@@ -353,6 +354,37 @@ function PublishAndPackLauncher()
 }
 
 #========================================================================================================================================
+# PUBLISH LAUNCHER AND PACK INTO ZIP IN "RESOURCES" FOLDER
+#========================================================================================================================================
+
+function BuildAllPatchers()
+{
+    Write-Host "------------------------------------------------------------------------------------------"
+    Write-Host ""
+    Write-Host "Building all Patchers:"
+    Write-Host ""
+
+    $PatcherBat = Join-Path $PatcherPath ("publish.bat")
+
+    if (!(Test-Path $PatcherBat))
+    {
+        Write-Host "Could not find publish.bat at: $PatcherBat"
+        return
+    }
+    & cmd.exe /c "`"$PatcherBat`""
+    
+    if ($LASTEXITCODE -ne 0)
+    {
+        Write-Host "Patchers publish failed with exit code: $LASTEXITCODE"
+    }
+    else
+    {
+        Write-Host "Patchers published successfully."
+    }
+    Write-Host ""
+}
+
+#========================================================================================================================================
 # VERIFICATION
 #========================================================================================================================================
 
@@ -459,12 +491,19 @@ if ((VerifyOriginal) -and (VerifyVCDiff))
 
     PublishAndPackLauncher
 
-    Write-Host "------------------------------------------------------------------------------------------"
-    Write-Host ""
-    Write-Host "Patch generation complete. Patches can be found in folder:"
-    Write-Host $PatchFolder
-    Write-Host ""
-    Write-Host "------------------------------------------------------------------------------------------"
+    if ($MakePatcher)
+    {
+        BuildAllPatchers
+    }
+    else
+    {
+        Write-Host "------------------------------------------------------------------------------------------"
+        Write-Host ""
+        Write-Host "Patch generation complete. Patches can be found in folder:"
+        Write-Host $PatchFolder
+        Write-Host ""
+        Write-Host "------------------------------------------------------------------------------------------"
+    }
 }
 
 Write-Host ""
