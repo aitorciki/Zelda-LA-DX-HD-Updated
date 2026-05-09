@@ -171,9 +171,7 @@ namespace ProjectZ.InGame.Audio
         {
             // See if we should play music and if there is any nuances to take care of before playing the music.
             if (CheckSetMusicConditions(trackID, priority))
-            {
                 PlayMusic(startPlaying);
-            }
         }
 
         public bool IsMusicPlayerActive()
@@ -199,6 +197,11 @@ namespace ProjectZ.InGame.Audio
 
         public void PlayMusic(bool startPlaying = true)
         {
+            // Suppress playback during map transitions. When the map is fully loaded, it will
+            // call "PlayMusic" again so if the priority is active the song will not be skipped.
+            if (startPlaying && MapManager.ObjLink != null && MapManager.ObjLink.IsTransitioning)
+                startPlaying = false;
+
             for (var i = MusicChannels - 1; i >= 0; i--)
             {
                 if (_musicArray[i] >= 0)
