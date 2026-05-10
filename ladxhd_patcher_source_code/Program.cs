@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia;
+using Mono.Options;
 using static LADXHD_Patcher.Config;
 
 namespace LADXHD_Patcher
@@ -30,44 +30,35 @@ namespace LADXHD_Patcher
         [STAThread]
         public static int Main(string[] args)
         {
-            bool silentMode = args.Any(arg =>
-                arg.Equals("--silent", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("-s", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("/silent", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("/s", StringComparison.OrdinalIgnoreCase));
+            bool showHelp   = false;
+            bool silentMode = false;
+            string? platformStr = null;
+            string? graphicsStr = null;
 
-            bool showHelp = args.Any(arg =>
-                arg.Equals("--help", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("-h", StringComparison.OrdinalIgnoreCase) ||
-                arg.Equals("/?", StringComparison.OrdinalIgnoreCase));
+            var opts = new OptionSet {
+                { "s|silent",   "Run in silent mode (no GUI, for automated installs).", _ => silentMode = true },
+                { "platform=",  "Target platform: windows, android, linux-x86, linux-arm64, macos-x86, macos-arm64. Default: windows.", v => platformStr = v },
+                { "graphics=",  "Target graphics API: directx, opengl. Default: directx (windows), opengl (others).", v => graphicsStr = v },
+                { "h|?|help",   "Show this help message.", _ => showHelp = true },
+            };
 
-            if (silentMode || showHelp)
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    TryAttachConsole();
+            opts.Parse(args); // unrecognized args are silently ignored
 
             if (showHelp)
             {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    TryAttachConsole();
+
                 Console.WriteLine();
                 Console.WriteLine("LADXHD Patcher v" + Config.Version);
-                Console.WriteLine();
                 Console.WriteLine("Usage: LADXHD.Patcher.exe [options]");
                 Console.WriteLine();
                 Console.WriteLine("Options:");
-                Console.WriteLine("  --silent, -s              Run in silent mode (no GUI, for automated installs)");
-                Console.WriteLine("  --platform <value>        Target platform (default: windows)");
-                Console.WriteLine("                            Values: windows, android, linux-x86, linux-arm64,");
-                Console.WriteLine("                                    macos-x86, macos-arm64");
-                Console.WriteLine("  --graphics <value>        Target graphics API");
-                Console.WriteLine("                            Default: directx (windows), opengl (all others)");
-                Console.WriteLine("                            Values: directx, opengl");
-                Console.WriteLine("  --help, -h                Show this help message");
+                opts.WriteOptionDescriptions(Console.Out);
                 Console.WriteLine();
-                Console.WriteLine("Exit codes:");
-                Console.WriteLine("  0  Success");
-                Console.WriteLine("  1  Game executable not found");
-                Console.WriteLine("  2  Patching failed");
-                Console.WriteLine("  3  Invalid arguments");
+                Console.WriteLine("Exit codes: 0=Success, 1=Exe not found, 2=Patching failed, 3=Invalid arguments");
                 Console.WriteLine();
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     TryFreeConsole();
                 return 0;
@@ -75,12 +66,48 @@ namespace LADXHD_Patcher
 
             if (silentMode)
             {
-                if (!TryParseTargetArgs(args, out Platform platform, out GraphicsAPI graphics))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    TryAttachConsole();
+
+                Platform platform;
+                GraphicsAPI graphics;
+
+                try
                 {
+                    platform = platformStr?.ToLowerInvariant() switch {
+                        null          => Platform.Windows,
+                        "windows"     => Platform.Windows,
+                        "android"     => Platform.Android,
+                        "linux-x86"   => Platform.Linux_x86,
+                        "linux-arm64" => Platform.Linux_Arm64,
+                        "macos-x86"   => Platform.MacOS_x86,
+                        "macos-arm64" => Platform.MacOS_Arm64,
+                        _ => throw new ArgumentException($"Invalid --platform value '{platformStr}'. Valid values: windows, android, linux-x86, linux-arm64, macos-x86, macos-arm64")
+                    };
+
+                    if (graphicsStr != null)
+                    {
+                        graphics = graphicsStr.ToLowerInvariant() switch {
+                            "directx" => GraphicsAPI.DirectX,
+                            "opengl"  => GraphicsAPI.OpenGL,
+                            _ => throw new ArgumentException($"Invalid --graphics value '{graphicsStr}'. Valid values: directx, opengl")
+                        };
+                        if (graphics == GraphicsAPI.DirectX && platform != Platform.Windows)
+                            throw new ArgumentException("--graphics directx is only supported on Windows. Use --graphics opengl for other platforms.");
+                    }
+                    else
+                    {
+                        graphics = (platform == Platform.Windows) ? GraphicsAPI.DirectX : GraphicsAPI.OpenGL;
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.Error.WriteLine("ERROR: " + ex.Message);
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         TryFreeConsole();
                     return 3;
                 }
+
                 Config.Initialize();
                 Config.SelectedPlatform = platform;
                 Config.SelectedGraphics = graphics;
@@ -108,95 +135,5 @@ namespace LADXHD_Patcher
                 .UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace();
-
-        private static bool TryParseTargetArgs(string[] args, out Platform platform, out GraphicsAPI graphics)
-        {
-            platform = Platform.Windows;
-            graphics = GraphicsAPI.DirectX;
-
-            Platform? platformArg = ParsePlatformArg(args, out bool platformParseError);
-            if (platformParseError)
-            {
-                Console.WriteLine("ERROR: Invalid --platform value. Valid values: windows, android, linux-x86, linux-arm64, macos-x86, macos-arm64");
-                return false;
-            }
-
-            GraphicsAPI? graphicsArg = ParseGraphicsArg(args, out bool graphicsParseError);
-            if (graphicsParseError)
-            {
-                Console.WriteLine("ERROR: Invalid --graphics value. Valid values: directx, opengl");
-                return false;
-            }
-
-            platform = platformArg ?? Platform.Windows;
-
-            if (graphicsArg.HasValue)
-            {
-                if (graphicsArg.Value == GraphicsAPI.DirectX && platform != Platform.Windows)
-                {
-                    Console.WriteLine("ERROR: --graphics directx is only supported on Windows. Use --graphics opengl for other platforms.");
-                    return false;
-                }
-                graphics = graphicsArg.Value;
-            }
-            else
-            {
-                graphics = (platform == Platform.Windows) ? GraphicsAPI.DirectX : GraphicsAPI.OpenGL;
-            }
-
-            return true;
-        }
-
-        private static Platform? ParsePlatformArg(string[] args, out bool parseError)
-        {
-            parseError = false;
-            for (int i = 0; i < args.Length; i++)
-            {
-                string value = null;
-                if (args[i].StartsWith("--platform=", StringComparison.OrdinalIgnoreCase))
-                    value = args[i].Substring("--platform=".Length);
-                else if (args[i].Equals("--platform", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
-                    value = args[i + 1];
-
-                if (value != null)
-                {
-                    switch (value.ToLowerInvariant())
-                    {
-                        case "windows":     return Platform.Windows;
-                        case "android":     return Platform.Android;
-                        case "linux-x86":   return Platform.Linux_x86;
-                        case "linux-arm64": return Platform.Linux_Arm64;
-                        case "macos-x86":   return Platform.MacOS_x86;
-                        case "macos-arm64": return Platform.MacOS_Arm64;
-                        default: parseError = true; return null;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private static GraphicsAPI? ParseGraphicsArg(string[] args, out bool parseError)
-        {
-            parseError = false;
-            for (int i = 0; i < args.Length; i++)
-            {
-                string value = null;
-                if (args[i].StartsWith("--graphics=", StringComparison.OrdinalIgnoreCase))
-                    value = args[i].Substring("--graphics=".Length);
-                else if (args[i].Equals("--graphics", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
-                    value = args[i + 1];
-
-                if (value != null)
-                {
-                    switch (value.ToLowerInvariant())
-                    {
-                        case "directx": return GraphicsAPI.DirectX;
-                        case "opengl":  return GraphicsAPI.OpenGL;
-                        default: parseError = true; return null;
-                    }
-                }
-            }
-            return null;
-        }
     }
 }
