@@ -2,7 +2,7 @@
 This is just a simple command line cross-platform application that can create and apply ".vcdiff" patches. VCDiff is the algorithm that "XDelta" is based off of, so file size is very similar when creating patches with VCDiff. This application was created to be used with the **Link's Awakening DX HD Updated** project to generate patches for the patcher program. 
 
 ## Usage
-Pre-compiled builds for all OS can be found in `builds.zip`. Arguments are set up in the same was as XDelta so it can be a drop-in replacement. There is also the addition of a "manifest mode" that can batch files which is exponentially faster than having to open/close the program for every single patch. 
+Pre-compiled builds for all OS can be found in the `.builds` folder. Arguments are set up in the same was as XDelta so it can be a drop-in replacement. There is also the addition of a "manifest mode" that can batch files which is exponentially faster than having to open/close the program for every single patch. 
 
 #### Arguments:
 ```
