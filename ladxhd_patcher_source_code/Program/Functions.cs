@@ -79,6 +79,8 @@ namespace LADXHD_Patcher
             { "ShockEffect.xnb",     shaderFile }
         };
 
+        private static readonly HashSet<string> _targetList = fileTargets.Values.SelectMany(v => v).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         PROGRESS CODE : TRACK AND UPDATE THE PROGRESS BAR BY KEEPING TRACK OF THE FILE COUNTS.
@@ -738,6 +740,10 @@ namespace LADXHD_Patcher
                     string fileName = kvp.Key.TrimEnd('#');
                     string fullPath = kvp.Value;
 
+                    // If it's a file that relies on a file with a different name, skip it.
+                    if (_targetList.Contains(fileName))
+                        continue;
+
                     // Get the file as a file item which gives us some cool properties to reference.
                     FileItem fileItem = new FileItem(fullPath);
 
@@ -967,7 +973,7 @@ namespace LADXHD_Patcher
                     message = _patchFromBackup
                         ? "Creating an APK from v1.0.0 backup files was successful. The game version is set to v"+ Config.Version + "." 
                         : "Creating an APK from original v1.0.0 files was successful. The game version is set to v"+ Config.Version + ".";
-                    await OkayWindow.ShowAsync("APK Created", message, timeoutSeconds: 10);
+                    await OkayWindow.ShowAsync("APK Created", message, timeoutSeconds: 10, true);
                     ShowPatchingSuccessLabel();
                 }
                 else
@@ -975,7 +981,7 @@ namespace LADXHD_Patcher
                     message = _patchFromBackup
                         ? "Patching the game from v1.0.0 backup files was successful. The game was updated to v"+ Config.Version + "." 
                         : "Patching Link's Awakening DX HD v1.0.0 was successful. The game was updated to v"+ Config.Version + ".";
-                    await OkayWindow.ShowAsync("Patching Complete", message, timeoutSeconds: 10);
+                    await OkayWindow.ShowAsync("Patching Complete", message, timeoutSeconds: 10, true);
                     ShowPatchingSuccessLabel();
                 }
             }

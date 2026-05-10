@@ -64,7 +64,7 @@
                      Canvas.Left="10" Canvas.Top="498" Width="400" Height="14" Minimum="0" Maximum="100" Value="0"/>
 
             <TextBlock x:Name="successLabel" Text="Success!" FontSize="11.5"
-                       Canvas.Left="10" Canvas.Top="518" Width="400" Height="14"
+                       Canvas.Left="10" Canvas.Top="498" Width="400" Height="14"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
                        TextAlignment="Center"
                        IsVisible="False"
