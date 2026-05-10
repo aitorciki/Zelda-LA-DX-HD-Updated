@@ -64,10 +64,20 @@ namespace LADXHD_Patcher
             WLauncher     = Path.Combine(BaseFolder, "Launcher.exe");
 
             ApkSign       = Path.Combine(TempFolder, "android", "apksigner.jar");
-            ZipAlign      = Path.Combine(TempFolder, "android", "zipalign.exe");
             KeyStore      = Path.Combine(TempFolder, "android", "keystore.jks");
-            JavaExe       = Path.Combine(TempFolder, "android", "java", "bin", "java.exe");
-            SevenZip      = Path.Combine(TempFolder, "7z.exe");
+
+            if (OperatingSystem.IsWindows())
+            {
+                ZipAlign  = Path.Combine(TempFolder, "android", "zipalign.exe");
+                JavaExe   = Path.Combine(TempFolder, "android", "java", "bin", "java.exe");
+                SevenZip  = Path.Combine(TempFolder, "7z.exe");
+            }
+            else
+            {
+                ZipAlign  = "zipalign";
+                JavaExe   = "java";
+                SevenZip  = "7z";
+            }
         }
     }
 }

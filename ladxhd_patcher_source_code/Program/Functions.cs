@@ -136,8 +136,58 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static void GenerateAPKFile()
+        private static bool IsToolAvailable(string tool)
         {
+            if (OperatingSystem.IsWindows()) return true; // Bundled tools are extracted on Windows
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = OperatingSystem.IsWindows() ? "where" : "which",
+                    Arguments = tool,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true
+                };
+                using var proc = Process.Start(psi);
+                proc?.WaitForExit();
+                return proc?.ExitCode == 0;
+            }
+            catch { return false; }
+        }
+
+        private static async Task<bool> VerifyAndroidTools()
+        {
+            if (OperatingSystem.IsWindows()) return true;
+
+            var missingTools = new List<string>();
+            if (!IsToolAvailable(Config.JavaExe)) missingTools.Add("java");
+            if (!IsToolAvailable(Config.ZipAlign)) missingTools.Add("zipalign");
+            if (!IsToolAvailable(Config.SevenZip))
+            {
+                if (IsToolAvailable("7za")) Config.SevenZip = "7za";
+                else missingTools.Add("7z (or 7za)");
+            }
+
+            // apksigner.jar is bundled in android_tools.zip and extracted to the temp folder.
+            // We should verify that we can actually run java, which is checked above.
+            // On non-Windows, we rely on the system 'java' to run the bundled .jar.
+            if (missingTools.Count > 0)
+            {
+                string message = "The following tools are required for APK generation but were not found in your PATH:\n\n" +
+                                 string.Join(", ", missingTools);
+                throw new Exception(message);
+            }
+
+            return true;
+        }
+
+        private static async Task GenerateAPKFile()
+        {
+            // Verify tools are available on Linux/macOS, will throw if missing.
+            await VerifyAndroidTools();
+                // throw new Exception("Android tools (java, zipalign, 7z) are missing or not in PATH.");
+
             // Paths to the temporary and final APK files.
             string androidPath = Path.Combine(Config.TempFolder, "android").CreatePath();
             string stageRoot   = Path.Combine(androidPath, "com.zelda.ladxhd");
@@ -153,18 +203,24 @@ namespace LADXHD_Patcher
             apkFinalize.RemovePath();
 
             // Extract tools and the stripped base APK.
-            Utilities.ExtractResourcesZip("android_tools.zip", androidPath);;
-            Utilities.ExtractResourcesZip("7zip.zip", Config.TempFolder);;
+            Utilities.ExtractResourcesZip("android_tools.zip", androidPath);
+            if (OperatingSystem.IsWindows())
+            {
+                Utilities.ExtractResourcesZip("7zip.zip", Config.TempFolder);
+            }
 
             // Write the base APK from resources.
             File.WriteAllBytes(apkUnsigned, Resources.GetBytes("android_base.apk"));
 
             // Mods can be written into the APK so we need the command to 7-zip to be a bit more dynamic.
-            var sevenZipArgs = new List<string> { "a", "-tzip", apkUnsigned, @"assets\Content\*", @"assets\Data\*" };
+            // 7-Zip internal paths should use the internal separator (usually \ is fine, but we'll use Path.Combine style logic)
+            string assetsContent = Path.Combine("assets", "Content", "*");
+            string assetsData    = Path.Combine("assets", "Data", "*");
+            var sevenZipArgs = new List<string> { "a", "-tzip", apkUnsigned, assetsContent, assetsData };
 
             // If the user wants to pack mods then add it to the command.
             if (Config.AndroidMods)
-                sevenZipArgs.Add(@"assets\Mods\*");
+                sevenZipArgs.Add(Path.Combine("assets", "Mods", "*"));
 
             // Add the remaining arguments to the 7-Zip command.
             sevenZipArgs.AddRange(new[] { "-r", "-mx=9", "-mm=Deflate" });
@@ -172,16 +228,25 @@ namespace LADXHD_Patcher
             // Inject only Content/Data into the base APK, then align/sign/verify.
             Utilities.RunProcess(Config.SevenZip, stageRoot, sevenZipArgs);
             Utilities.RunProcess(Config.ZipAlign, stageRoot, new List<string> { "-P", "16", "-f", "-v", "4", apkUnsigned, apkAligned });
-            Utilities.RunProcess(Config.JavaExe,  stageRoot, new List<string> { "-jar", Config.ApkSign, "sign", "--ks", Config.KeyStore, "--ks-key-alias", "zelda-la", "--ks-pass", "pass:zeldala", "--out", apkSigned, apkAligned });
-            Utilities.RunProcess(Config.ZipAlign, stageRoot, new List<string> { "-c", "-P", "16", "-v", "4", apkSigned });
-            Utilities.RunProcess(Config.JavaExe,  stageRoot, new List<string> { "-jar", Config.ApkSign, "verify", "-v", apkSigned });
 
-            // Remove the temporary APK files we no longer need.
-            apkUnsigned.RemovePath();
-            apkAligned.RemovePath();
+            // Use apksigner.jar with java on all platforms.
+            Utilities.RunProcess(Config.JavaExe, stageRoot, new List<string> { "-jar", Config.ApkSign, "sign", "--ks", Config.KeyStore, "--ks-key-alias", "zelda-la", "--ks-pass", "pass:zeldala", "--out", apkSigned, apkAligned });
+            Utilities.RunProcess(Config.JavaExe, stageRoot, new List<string> { "-jar", Config.ApkSign, "verify", "-v", apkSigned });
 
-            // Move the final APK to the root folder.
-            apkSigned.MovePath(apkFinalize, true);
+            // Verify the signed APK exists before moving it.
+            if (apkSigned.TestPath())
+            {
+                // Remove the temporary APK files we no longer need.
+                apkUnsigned.RemovePath();
+                apkAligned.RemovePath();
+
+                // Move the final APK to the root folder.
+                apkSigned.MovePath(apkFinalize, true);
+            }
+            else
+            {
+                throw new Exception("The signed APK was not generated.");
+            }
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -434,8 +499,8 @@ namespace LADXHD_Patcher
                 try { RunLinuxFinalization(); }
                 catch {
                     await ShowWarning(
-                        "Patching Complete",
-                        "The game was patched successfully, but the Linux finalization steps failed to apply.\n" +
+                        "Patching partially complete",
+                        "The game was patched, but the Linux finalization steps failed to apply.\n" +
                         "Please check https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/LINUX.md."
                     );
                 }
@@ -445,8 +510,8 @@ namespace LADXHD_Patcher
                 try { RunMacOSFinalization(); }
                 catch {
                     await ShowWarning(
-                        "Patching Complete",
-                        "The game was patched successfully, but the macOS finalization steps failed to apply.\n" +
+                        "Patching partially complete",
+                        "The game was patched, but the macOS finalization steps failed to apply.\n" +
                         "Please check https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/MACOS.md."
                     );
                 }
@@ -582,7 +647,7 @@ namespace LADXHD_Patcher
                     Config.ModsPath.CopyPath(modsStagePath, true);
                 }
                 // Generate the APK file.
-                GenerateAPKFile();
+                await GenerateAPKFile();
             }
             else if (Config.SelectedPlatform == Platform.MacOS_x86 || Config.SelectedPlatform == Platform.MacOS_Arm64)
             {
@@ -773,7 +838,7 @@ namespace LADXHD_Patcher
                             inputFile = backupPath;
 
                         // Set the destination path to the Android folder.
-                        string relative = fileItem.DirectoryName.Replace(Config.BaseFolder, "").TrimStart('\\');
+                        string relative = fileItem.DirectoryName.Replace(Config.BaseFolder, "").TrimStart(Path.DirectorySeparatorChar);
                         string destPath = Path.Combine(Config.TempFolder, "android", "com.zelda.ladxhd", "assets", relative).CreatePath();
 
                         // Update the output file using the destination path and set the override for MultiFilePatches.
@@ -1018,26 +1083,38 @@ namespace LADXHD_Patcher
             // Disables dialog functionality. 
             App.MainWindowInstance.EnableComponents(false);
 
-            // Remove temp path and recreate it.
-            Config.TempFolder.RemovePath();
-            Config.TempFolder.CreatePath(true);
+            try
+            {
+                // Remove temp path and recreate it.
+                Config.TempFolder.RemovePath();
+                Config.TempFolder.CreatePath(true);
 
-            // Extract patches.
-            ExtractPatches();
+                // Extract patches.
+                ExtractPatches();
 
-            // Create vcdiff patch files.
-            await PatchGameFiles();
+                // Create vcdiff patch files.
+                await PatchGameFiles();
 
-            //Extract the launcher.
-            ExtractLauncher();
+                //Extract the launcher.
+                ExtractLauncher();
 
-            // Linux / macOS finalization functions depend on both game and launcher being extracted.
-            await HostFinalizationFunctions();
+                // Linux / macOS finalization functions depend on both game and launcher being extracted.
+                await HostFinalizationFunctions();
 
-            // Report finished, remove temp path, enable dialog.
-            await ReportFinished();
-            await TryRemoveTempPath();
-            App.MainWindowInstance.EnableComponents(true);
+                // Report finished.
+                await ReportFinished();
+            }
+            catch (Exception ex)
+            {
+                // If the exception hasn't been handled with a more specific message yet, show it here.
+                await ShowWarning("Patching Failed", ex.Message);
+            }
+            finally
+            {
+                // Clean up and re-enable dialog regardless of success or failure.
+                await TryRemoveTempPath();
+                App.MainWindowInstance.EnableComponents(true);
+            }
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
