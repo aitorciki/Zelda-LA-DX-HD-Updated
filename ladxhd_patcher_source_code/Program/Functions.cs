@@ -15,7 +15,9 @@ namespace LADXHD_Patcher
         private static int    _totalCount;
         private static int    _filesPatched;
 
-        private static bool   _silentMode;
+        public  static bool   HeadlessMode { get => _headlessMode; set => _headlessMode = value; }
+        public  static int    ExitCode   { get; private set; }
+        private static bool   _headlessMode;
         private static bool   _patchFromBackup;
         private static string _executable;
 
@@ -87,12 +89,12 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private async static Task ShowWarning(string title, string message)
+        private async static Task ShowWarning(string title, string message, bool altSound = false)
         {
-            if (_silentMode)
+            if (_headlessMode)
                 Console.WriteLine("WARNING: " + message);
             else
-                await OkayWindow.ShowAsync(title, message, timeoutSeconds: 10);
+                await OkayWindow.ShowAsync(title, message, timeoutSeconds: 10, altSound: altSound);
         }
 
         public interface IProgressWindow
@@ -117,7 +119,7 @@ namespace LADXHD_Patcher
             _fileCount++;
 
             // Update the progress bar and process UI events (GUI mode only).
-            if (!_silentMode)
+            if (!_headlessMode)
             {
                 int progress = _totalCount > 0 ? (int)(_fileCount * 100.0 / _totalCount) : 0;
                 Config.ActiveWindow?.UpdateProgressBar(progress);
@@ -126,7 +128,7 @@ namespace LADXHD_Patcher
 
         private static void ShowPatchingSuccessLabel()
         {
-            if (!_silentMode)
+            if (!_headlessMode)
                 Config.ActiveWindow?.ShowSuccessLabel();
         }
 
@@ -136,8 +138,58 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private static void GenerateAPKFile()
+        private static bool IsToolAvailable(string tool)
         {
+            if (OperatingSystem.IsWindows()) return true; // Bundled tools are extracted on Windows
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = OperatingSystem.IsWindows() ? "where" : "which",
+                    Arguments = tool,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true
+                };
+                using var proc = Process.Start(psi);
+                proc?.WaitForExit();
+                return proc?.ExitCode == 0;
+            }
+            catch { return false; }
+        }
+
+        private static async Task<bool> VerifyAndroidTools()
+        {
+            if (OperatingSystem.IsWindows()) return true;
+
+            var missingTools = new List<string>();
+            if (!IsToolAvailable(Config.JavaExe)) missingTools.Add("java");
+            if (!IsToolAvailable(Config.ZipAlign)) missingTools.Add("zipalign");
+            if (!IsToolAvailable(Config.SevenZip))
+            {
+                if (IsToolAvailable("7za")) Config.SevenZip = "7za";
+                else missingTools.Add("7z (or 7za)");
+            }
+
+            // apksigner.jar is bundled in android_tools.zip and extracted to the temp folder.
+            // We should verify that we can actually run java, which is checked above.
+            // On non-Windows, we rely on the system 'java' to run the bundled .jar.
+            if (missingTools.Count > 0)
+            {
+                string message = "The following tools are required for APK generation but were not found in your PATH:\n\n" +
+                                 string.Join(", ", missingTools);
+                throw new Exception(message);
+            }
+
+            return true;
+        }
+
+        private static async Task GenerateAPKFile()
+        {
+            // Verify tools are available on Linux/macOS, will throw if missing.
+            await VerifyAndroidTools();
+                // throw new Exception("Android tools (java, zipalign, 7z) are missing or not in PATH.");
+
             // Paths to the temporary and final APK files.
             string androidPath = Path.Combine(Config.TempFolder, "android").CreatePath();
             string stageRoot   = Path.Combine(androidPath, "com.zelda.ladxhd");
@@ -153,18 +205,24 @@ namespace LADXHD_Patcher
             apkFinalize.RemovePath();
 
             // Extract tools and the stripped base APK.
-            Utilities.ExtractResourcesZip("android_tools.zip", androidPath);;
-            Utilities.ExtractResourcesZip("7zip.zip", Config.TempFolder);;
+            Utilities.ExtractResourcesZip("android_tools.zip", androidPath);
+            if (OperatingSystem.IsWindows())
+            {
+                Utilities.ExtractResourcesZip("7zip.zip", Config.TempFolder);
+            }
 
             // Write the base APK from resources.
             File.WriteAllBytes(apkUnsigned, Resources.GetBytes("android_base.apk"));
 
             // Mods can be written into the APK so we need the command to 7-zip to be a bit more dynamic.
-            var sevenZipArgs = new List<string> { "a", "-tzip", apkUnsigned, @"assets\Content\*", @"assets\Data\*" };
+            // 7-Zip internal paths should use the internal separator (usually \ is fine, but we'll use Path.Combine style logic)
+            string assetsContent = Path.Combine("assets", "Content", "*");
+            string assetsData    = Path.Combine("assets", "Data", "*");
+            var sevenZipArgs = new List<string> { "a", "-tzip", apkUnsigned, assetsContent, assetsData };
 
             // If the user wants to pack mods then add it to the command.
             if (Config.AndroidMods)
-                sevenZipArgs.Add(@"assets\Mods\*");
+                sevenZipArgs.Add(Path.Combine("assets", "Mods", "*"));
 
             // Add the remaining arguments to the 7-Zip command.
             sevenZipArgs.AddRange(new[] { "-r", "-mx=9", "-mm=Deflate" });
@@ -172,16 +230,25 @@ namespace LADXHD_Patcher
             // Inject only Content/Data into the base APK, then align/sign/verify.
             Utilities.RunProcess(Config.SevenZip, stageRoot, sevenZipArgs);
             Utilities.RunProcess(Config.ZipAlign, stageRoot, new List<string> { "-P", "16", "-f", "-v", "4", apkUnsigned, apkAligned });
-            Utilities.RunProcess(Config.JavaExe,  stageRoot, new List<string> { "-jar", Config.ApkSign, "sign", "--ks", Config.KeyStore, "--ks-key-alias", "zelda-la", "--ks-pass", "pass:zeldala", "--out", apkSigned, apkAligned });
-            Utilities.RunProcess(Config.ZipAlign, stageRoot, new List<string> { "-c", "-P", "16", "-v", "4", apkSigned });
-            Utilities.RunProcess(Config.JavaExe,  stageRoot, new List<string> { "-jar", Config.ApkSign, "verify", "-v", apkSigned });
 
-            // Remove the temporary APK files we no longer need.
-            apkUnsigned.RemovePath();
-            apkAligned.RemovePath();
+            // Use apksigner.jar with java on all platforms.
+            Utilities.RunProcess(Config.JavaExe, stageRoot, new List<string> { "-jar", Config.ApkSign, "sign", "--ks", Config.KeyStore, "--ks-key-alias", "zelda-la", "--ks-pass", "pass:zeldala", "--out", apkSigned, apkAligned });
+            Utilities.RunProcess(Config.JavaExe, stageRoot, new List<string> { "-jar", Config.ApkSign, "verify", "-v", apkSigned });
 
-            // Move the final APK to the root folder.
-            apkSigned.MovePath(apkFinalize, true);
+            // Verify the signed APK exists before moving it.
+            if (apkSigned.TestPath())
+            {
+                // Remove the temporary APK files we no longer need.
+                apkUnsigned.RemovePath();
+                apkAligned.RemovePath();
+
+                // Move the final APK to the root folder.
+                apkSigned.MovePath(apkFinalize, true);
+            }
+            else
+            {
+                throw new Exception("The signed APK was not generated.");
+            }
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -434,8 +501,8 @@ namespace LADXHD_Patcher
                 try { RunLinuxFinalization(); }
                 catch {
                     await ShowWarning(
-                        "Patching Complete",
-                        "The game was patched successfully, but the Linux finalization steps failed to apply.\n" +
+                        "Patching partially complete",
+                        "The game was patched, but the Linux finalization steps failed to apply.\n" +
                         "Please check https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/LINUX.md."
                     );
                 }
@@ -445,8 +512,8 @@ namespace LADXHD_Patcher
                 try { RunMacOSFinalization(); }
                 catch {
                     await ShowWarning(
-                        "Patching Complete",
-                        "The game was patched successfully, but the macOS finalization steps failed to apply.\n" +
+                        "Patching partially complete",
+                        "The game was patched, but the macOS finalization steps failed to apply.\n" +
                         "Please check https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/blob/main/MACOS.md."
                     );
                 }
@@ -582,7 +649,7 @@ namespace LADXHD_Patcher
                     Config.ModsPath.CopyPath(modsStagePath, true);
                 }
                 // Generate the APK file.
-                GenerateAPKFile();
+                await GenerateAPKFile();
             }
             else if (Config.SelectedPlatform == Platform.MacOS_x86 || Config.SelectedPlatform == Platform.MacOS_Arm64)
             {
@@ -750,7 +817,7 @@ namespace LADXHD_Patcher
                     // On Android we only want files in Content or Data folders.
                     if (isAndroid && (fileItem.IsInFolder("Mods") || (!fileItem.IsInFolder("Content") && !fileItem.IsInFolder("Data"))))
                         continue;
-    
+        
                     // On Windows we skip the patcher or the Mods folder.
                     else if ((isWindows || isLinux || isMacOS) && fileItem.IsInFolder("Mods"))
                         continue;
@@ -773,7 +840,7 @@ namespace LADXHD_Patcher
                             inputFile = backupPath;
 
                         // Set the destination path to the Android folder.
-                        string relative = fileItem.DirectoryName.Replace(Config.BaseFolder, "").TrimStart('\\');
+                        string relative = fileItem.DirectoryName.Replace(Config.BaseFolder, "").TrimStart(Path.DirectorySeparatorChar);
                         string destPath = Path.Combine(Config.TempFolder, "android", "com.zelda.ladxhd", "assets", relative).CreatePath();
 
                         // Update the output file using the destination path and set the override for MultiFilePatches.
@@ -898,7 +965,7 @@ namespace LADXHD_Patcher
             return false;
         }
 
-        private async static Task<bool> SetSourceFile(bool ShowError = true)
+        private async static Task<bool> SetSourceFile()
         {
             // Start with the hash of the file found in the main folder.
             string exeCheck = Config.ZeldaEXE;
@@ -923,27 +990,10 @@ namespace LADXHD_Patcher
             if (CheckFile(exeCheck, true)) { return true; }
 
             // If we still don't have the good hash then we're screwed.
-            if (ShowError)
-            {
-                var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
-                Debug.WriteLine("Trying to show the error.");
-                await OkayWindow.ShowAsync("Original Executable Not Found", message, timeoutSeconds: 10);
-            }
-            return false;
-        }
+            var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
+            await ShowWarning("Original Executable Not Found", message);
 
-        private async static Task<bool> ValidateExist()
-        {
-            // If the executable was not resolved by the function above.
-            if (!_executable.TestPath())
-            {
-                // Show an error message to the user.
-                var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
-                await OkayWindow.ShowAsync("Original Executable Not Found", message, timeoutSeconds: 10);
-                return false;
-            }
-            // We can continue with the patching.
-            return true;
+            return false;
         }
 
         private async static Task<bool> ValidateStart()
@@ -962,9 +1012,12 @@ namespace LADXHD_Patcher
         {
             string message;
 
-            if (_silentMode)
+            if (_headlessMode)
             {
-                Console.WriteLine("Patched " + _filesPatched + " files.");
+                Console.WriteLine("============================================");
+                Console.WriteLine("SUCCESS: Game patched to v" + Config.Version);
+                Console.WriteLine("");
+                Console.WriteLine("Files patched: " + _filesPatched);
             }
             else
             {
@@ -973,7 +1026,7 @@ namespace LADXHD_Patcher
                     message = _patchFromBackup
                         ? "Creating an APK from v1.0.0 backup files was successful. The game version is set to v"+ Config.Version + "." 
                         : "Creating an APK from original v1.0.0 files was successful. The game version is set to v"+ Config.Version + ".";
-                    await OkayWindow.ShowAsync("APK Created", message, timeoutSeconds: 10, true);
+                    await ShowWarning("APK Created", message, true);
                     ShowPatchingSuccessLabel();
                 }
                 else
@@ -981,7 +1034,7 @@ namespace LADXHD_Patcher
                     message = _patchFromBackup
                         ? "Patching the game from v1.0.0 backup files was successful. The game was updated to v"+ Config.Version + "." 
                         : "Patching Link's Awakening DX HD v1.0.0 was successful. The game was updated to v"+ Config.Version + ".";
-                    await OkayWindow.ShowAsync("Patching Complete", message, timeoutSeconds: 10, true);
+                    await ShowWarning("Patching Complete", message, true);
                     ShowPatchingSuccessLabel();
                 }
             }
@@ -1004,101 +1057,67 @@ namespace LADXHD_Patcher
 
         public async static Task StartPatching()
         {
-            // It's not important but reset it anyway.
-            _silentMode = false;
-
-            // Reset progress bar and set whether we are patching from v1.0.0 or backup files.
+            // Reset exit code and progress bar.
+            ExitCode = 2;
             ResetProgress();
 
-            // Validate if patching should take place.
-            if (!await SetSourceFile()) return;
-            if (!await ValidateExist()) return;
-            if (!await ValidateStart()) return;
-
-            // Disables dialog functionality. 
-            App.MainWindowInstance.EnableComponents(false);
-
-            // Remove temp path and recreate it.
-            Config.TempFolder.RemovePath();
-            Config.TempFolder.CreatePath(true);
-
-            // Extract patches.
-            ExtractPatches();
-
-            // Create vcdiff patch files.
-            await PatchGameFiles();
-
-            //Extract the launcher.
-            ExtractLauncher();
-
-            // Linux / macOS finalization functions depend on both game and launcher being extracted.
-            await HostFinalizationFunctions();
-
-            // Report finished, remove temp path, enable dialog.
-            await ReportFinished();
-            await TryRemoveTempPath();
-            App.MainWindowInstance.EnableComponents(true);
-        }
-
-/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-        SILENT PATCHING FUNCTION: WHEN THE PATCHER IS RAN FROM THE COMMAND LINE.
-        - Returns exit code: 0 = success, 1 = exe not found, 2 = patching failed
-
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-        public static int StartPatchingSilent()
-        {
-            Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Silent Mode");
-            Console.WriteLine("============================================");
-
-            SetSourceFile(false).GetAwaiter().GetResult();
-
-            // Validate executable exists
-            if (!_executable.TestPath())
+            if (_headlessMode)
             {
-                Console.WriteLine("ERROR: Could not find \"Link's Awakening DX HD.exe\" to patch.");
-                Console.WriteLine("Make sure this patcher is in the same folder as the game.");
-                return 1;
+                Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Headless Mode");
+                Console.WriteLine("============================================");
             }
 
-            Console.WriteLine("Found game executable. Starting patch process...");
+            // Locate the v1.0.0 executable and set _executable / _patchFromBackup.
+            // In headless mode suppress the dialog; ShowWarning will print to console instead.
+            if (!await SetSourceFile())
+            {
+                if (_headlessMode) ExitCode = 1;
+                return;
+            }
+
+            if (_headlessMode)
+            {
+                Console.WriteLine("Found game executable. Starting patch process...");
+            }
+            else
+            {
+                // GUI-only: confirm the user wants to patch.
+                if (!await ValidateStart()) return;
+                App.MainWindowInstance.EnableComponents(false);
+            }
 
             try
             {
-                _silentMode = true;
-
+                // Remove temp path and recreate it.
+                Config.TempFolder.RemovePath();
                 Config.TempFolder.CreatePath(true);
-                Console.WriteLine("Extracting patches...");
+
+                if (_headlessMode) Console.WriteLine("Extracting patches...");
                 ExtractPatches();
 
-                Console.WriteLine("Patching game files...");
-                PatchGameFiles().GetAwaiter().GetResult();
+                if (_headlessMode) Console.WriteLine("Patching game files...");
+                await PatchGameFiles();
 
-                Console.WriteLine("Extracting launcher...");
+                if (_headlessMode) Console.WriteLine("Extracting launcher...");
                 ExtractLauncher();
 
-                Console.WriteLine("Performing platform-specific finalization...");
-                HostFinalizationFunctions().GetAwaiter().GetResult();
+                if (_headlessMode) Console.WriteLine("Performing platform-specific finalization...");
+                await HostFinalizationFunctions();
 
-                Console.WriteLine("Cleaning up...");
-                Config.TempFolder.RemovePath();
-
-                Console.WriteLine("============================================");
-                Console.WriteLine("SUCCESS: Game patched to v" + Config.Version);
-                Console.WriteLine("");
-                Console.WriteLine("Files patched: " + _filesPatched);
-                return 0;
+                // All steps completed successfully.
+                ExitCode = 0;
+                await ReportFinished();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR: Patching failed - " + ex.Message);
-                
-                // Cleanup on failure
-                try { TryRemoveTempPath().GetAwaiter().GetResult(); }
-                catch { }
-
-                return 2;
+                await ShowWarning("Patching Failed", ex.Message);
+            }
+            finally
+            {
+                if (_headlessMode) Console.WriteLine("Cleaning up...");
+                await TryRemoveTempPath();
+                if (!_headlessMode)
+                    App.MainWindowInstance.EnableComponents(true);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using static LADXHD_Patcher.Functions;
 
 namespace LADXHD_Patcher
@@ -43,6 +44,14 @@ namespace LADXHD_Patcher
         public enum GraphicsAPI { DirectX, OpenGL }
         public static GraphicsAPI SelectedGraphics;
 
+        public static Platform GetNativePlatform()
+        {
+            bool isArm64 = RuntimeInformation.OSArchitecture == Architecture.Arm64;
+            if (OperatingSystem.IsLinux()) return isArm64 ? Platform.Linux_Arm64 : Platform.Linux_x86;
+            if (OperatingSystem.IsMacOS()) return isArm64 ? Platform.MacOS_Arm64 : Platform.MacOS_x86;
+            return Platform.Windows;
+        }
+
         public static void Initialize()
         {
             BaseFolder    = AppContext.BaseDirectory;
@@ -64,10 +73,20 @@ namespace LADXHD_Patcher
             WLauncher     = Path.Combine(BaseFolder, "Launcher.exe");
 
             ApkSign       = Path.Combine(TempFolder, "android", "apksigner.jar");
-            ZipAlign      = Path.Combine(TempFolder, "android", "zipalign.exe");
             KeyStore      = Path.Combine(TempFolder, "android", "keystore.jks");
-            JavaExe       = Path.Combine(TempFolder, "android", "java", "bin", "java.exe");
-            SevenZip      = Path.Combine(TempFolder, "7z.exe");
+
+            if (OperatingSystem.IsWindows())
+            {
+                ZipAlign  = Path.Combine(TempFolder, "android", "zipalign.exe");
+                JavaExe   = Path.Combine(TempFolder, "android", "java", "bin", "java.exe");
+                SevenZip  = Path.Combine(TempFolder, "7z.exe");
+            }
+            else
+            {
+                ZipAlign  = "zipalign";
+                JavaExe   = "java";
+                SevenZip  = "7z";
+            }
         }
     }
 }
