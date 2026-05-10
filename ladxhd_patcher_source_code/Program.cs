@@ -75,7 +75,7 @@ namespace LADXHD_Patcher
                 try
                 {
                     platform = platformStr?.ToLowerInvariant() switch {
-                        null          => Platform.Windows,
+                        null          => Config.GetNativePlatform(),
                         "windows"     => Platform.Windows,
                         "android"     => Platform.Android,
                         "linux-x86"   => Platform.Linux_x86,

@@ -25,7 +25,7 @@ namespace LADXHD_Patcher
         public MainWindow()
         {
             InitializeComponent();
-            ComboBox_Platform.SelectedIndex = 0;
+            ComboBox_Platform.SelectedIndex = (int)Config.GetNativePlatform();
             ComboBox_API.SelectedIndex = 0;
             Config.ActiveWindow = this;
         }

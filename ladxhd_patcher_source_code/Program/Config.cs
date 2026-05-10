@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using static LADXHD_Patcher.Functions;
 
 namespace LADXHD_Patcher
@@ -42,6 +43,14 @@ namespace LADXHD_Patcher
 
         public enum GraphicsAPI { DirectX, OpenGL }
         public static GraphicsAPI SelectedGraphics;
+
+        public static Platform GetNativePlatform()
+        {
+            bool isArm64 = RuntimeInformation.OSArchitecture == Architecture.Arm64;
+            if (OperatingSystem.IsLinux()) return isArm64 ? Platform.Linux_Arm64 : Platform.Linux_x86;
+            if (OperatingSystem.IsMacOS()) return isArm64 ? Platform.MacOS_Arm64 : Platform.MacOS_x86;
+            return Platform.Windows;
+        }
 
         public static void Initialize()
         {
