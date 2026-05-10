@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using Avalonia;
 using static LADXHD_Patcher.Config;
 
@@ -84,10 +85,16 @@ namespace LADXHD_Patcher
                 Config.SelectedPlatform = platform;
                 Config.SelectedGraphics = graphics;
 
-                int result = Functions.StartPatchingSilent();
+                // Initialize Avalonia platform services (needed for AssetLoader) without
+                // entering an event loop or creating any window.
+                BuildAvaloniaApp().SetupWithoutStarting();
+
+                Functions.SilentMode = true;
+                Task.Run(() => Functions.StartPatching()).GetAwaiter().GetResult();
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     TryFreeConsole();
-                return result;
+                return Functions.ExitCode;
             }
 
             // GUI mode — Avalonia takes over from here.

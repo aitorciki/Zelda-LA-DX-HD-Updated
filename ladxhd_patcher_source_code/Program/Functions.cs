@@ -15,6 +15,8 @@ namespace LADXHD_Patcher
         private static int    _totalCount;
         private static int    _filesPatched;
 
+        public  static bool   SilentMode { get => _silentMode; set => _silentMode = value; }
+        public  static int    ExitCode   { get; private set; }
         private static bool   _silentMode;
         private static bool   _patchFromBackup;
         private static string _executable;
@@ -87,12 +89,12 @@ namespace LADXHD_Patcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        private async static Task ShowWarning(string title, string message)
+        private async static Task ShowWarning(string title, string message, bool altSound = false)
         {
             if (_silentMode)
                 Console.WriteLine("WARNING: " + message);
             else
-                await OkayWindow.ShowAsync(title, message, timeoutSeconds: 10);
+                await OkayWindow.ShowAsync(title, message, timeoutSeconds: 10, altSound: altSound);
         }
 
         public interface IProgressWindow
@@ -815,7 +817,7 @@ namespace LADXHD_Patcher
                     // On Android we only want files in Content or Data folders.
                     if (isAndroid && (fileItem.IsInFolder("Mods") || (!fileItem.IsInFolder("Content") && !fileItem.IsInFolder("Data"))))
                         continue;
-    
+        
                     // On Windows we skip the patcher or the Mods folder.
                     else if ((isWindows || isLinux || isMacOS) && fileItem.IsInFolder("Mods"))
                         continue;
@@ -963,7 +965,7 @@ namespace LADXHD_Patcher
             return false;
         }
 
-        private async static Task<bool> SetSourceFile(bool ShowError = true)
+        private async static Task<bool> SetSourceFile()
         {
             // Start with the hash of the file found in the main folder.
             string exeCheck = Config.ZeldaEXE;
@@ -988,27 +990,10 @@ namespace LADXHD_Patcher
             if (CheckFile(exeCheck, true)) { return true; }
 
             // If we still don't have the good hash then we're screwed.
-            if (ShowError)
-            {
-                var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
-                Debug.WriteLine("Trying to show the error.");
-                await OkayWindow.ShowAsync("Original Executable Not Found", message, timeoutSeconds: 10);
-            }
-            return false;
-        }
+            var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
+            await ShowWarning("Original Executable Not Found", message);
 
-        private async static Task<bool> ValidateExist()
-        {
-            // If the executable was not resolved by the function above.
-            if (!_executable.TestPath())
-            {
-                // Show an error message to the user.
-                var message = "Could not find the original \"Link's Awakening DX HD.exe\" to patch. It is suggested to start over with the original release of v1.0.0 and run it from there.";
-                await OkayWindow.ShowAsync("Original Executable Not Found", message, timeoutSeconds: 10);
-                return false;
-            }
-            // We can continue with the patching.
-            return true;
+            return false;
         }
 
         private async static Task<bool> ValidateStart()
@@ -1029,7 +1014,10 @@ namespace LADXHD_Patcher
 
             if (_silentMode)
             {
-                Console.WriteLine("Patched " + _filesPatched + " files.");
+                Console.WriteLine("============================================");
+                Console.WriteLine("SUCCESS: Game patched to v" + Config.Version);
+                Console.WriteLine("");
+                Console.WriteLine("Files patched: " + _filesPatched);
             }
             else
             {
@@ -1038,7 +1026,7 @@ namespace LADXHD_Patcher
                     message = _patchFromBackup
                         ? "Creating an APK from v1.0.0 backup files was successful. The game version is set to v"+ Config.Version + "." 
                         : "Creating an APK from original v1.0.0 files was successful. The game version is set to v"+ Config.Version + ".";
-                    await OkayWindow.ShowAsync("APK Created", message, timeoutSeconds: 10, true);
+                    await ShowWarning("APK Created", message, true);
                     ShowPatchingSuccessLabel();
                 }
                 else
@@ -1046,7 +1034,7 @@ namespace LADXHD_Patcher
                     message = _patchFromBackup
                         ? "Patching the game from v1.0.0 backup files was successful. The game was updated to v"+ Config.Version + "." 
                         : "Patching Link's Awakening DX HD v1.0.0 was successful. The game was updated to v"+ Config.Version + ".";
-                    await OkayWindow.ShowAsync("Patching Complete", message, timeoutSeconds: 10, true);
+                    await ShowWarning("Patching Complete", message, true);
                     ShowPatchingSuccessLabel();
                 }
             }
@@ -1069,19 +1057,34 @@ namespace LADXHD_Patcher
 
         public async static Task StartPatching()
         {
-            // It's not important but reset it anyway.
-            _silentMode = false;
-
-            // Reset progress bar and set whether we are patching from v1.0.0 or backup files.
+            // Reset exit code and progress bar.
+            ExitCode = 2;
             ResetProgress();
 
-            // Validate if patching should take place.
-            if (!await SetSourceFile()) return;
-            if (!await ValidateExist()) return;
-            if (!await ValidateStart()) return;
+            if (_silentMode)
+            {
+                Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Silent Mode");
+                Console.WriteLine("============================================");
+            }
 
-            // Disables dialog functionality. 
-            App.MainWindowInstance.EnableComponents(false);
+            // Locate the v1.0.0 executable and set _executable / _patchFromBackup.
+            // In silent mode suppress the dialog; ShowWarning will print to console instead.
+            if (!await SetSourceFile())
+            {
+                if (_silentMode) ExitCode = 1;
+                return;
+            }
+
+            if (_silentMode)
+            {
+                Console.WriteLine("Found game executable. Starting patch process...");
+            }
+            else
+            {
+                // GUI-only: confirm the user wants to patch.
+                if (!await ValidateStart()) return;
+                App.MainWindowInstance.EnableComponents(false);
+            }
 
             try
             {
@@ -1089,93 +1092,32 @@ namespace LADXHD_Patcher
                 Config.TempFolder.RemovePath();
                 Config.TempFolder.CreatePath(true);
 
-                // Extract patches.
+                if (_silentMode) Console.WriteLine("Extracting patches...");
                 ExtractPatches();
 
-                // Create vcdiff patch files.
+                if (_silentMode) Console.WriteLine("Patching game files...");
                 await PatchGameFiles();
 
-                //Extract the launcher.
+                if (_silentMode) Console.WriteLine("Extracting launcher...");
                 ExtractLauncher();
 
-                // Linux / macOS finalization functions depend on both game and launcher being extracted.
+                if (_silentMode) Console.WriteLine("Performing platform-specific finalization...");
                 await HostFinalizationFunctions();
 
-                // Report finished.
+                // All steps completed successfully.
+                ExitCode = 0;
                 await ReportFinished();
             }
             catch (Exception ex)
             {
-                // If the exception hasn't been handled with a more specific message yet, show it here.
                 await ShowWarning("Patching Failed", ex.Message);
             }
             finally
             {
-                // Clean up and re-enable dialog regardless of success or failure.
+                if (_silentMode) Console.WriteLine("Cleaning up...");
                 await TryRemoveTempPath();
-                App.MainWindowInstance.EnableComponents(true);
-            }
-        }
-
-/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-        SILENT PATCHING FUNCTION: WHEN THE PATCHER IS RAN FROM THE COMMAND LINE.
-        - Returns exit code: 0 = success, 1 = exe not found, 2 = patching failed
-
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-        public static int StartPatchingSilent()
-        {
-            Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Silent Mode");
-            Console.WriteLine("============================================");
-
-            SetSourceFile(false).GetAwaiter().GetResult();
-
-            // Validate executable exists
-            if (!_executable.TestPath())
-            {
-                Console.WriteLine("ERROR: Could not find \"Link's Awakening DX HD.exe\" to patch.");
-                Console.WriteLine("Make sure this patcher is in the same folder as the game.");
-                return 1;
-            }
-
-            Console.WriteLine("Found game executable. Starting patch process...");
-
-            try
-            {
-                _silentMode = true;
-
-                Config.TempFolder.CreatePath(true);
-                Console.WriteLine("Extracting patches...");
-                ExtractPatches();
-
-                Console.WriteLine("Patching game files...");
-                PatchGameFiles().GetAwaiter().GetResult();
-
-                Console.WriteLine("Extracting launcher...");
-                ExtractLauncher();
-
-                Console.WriteLine("Performing platform-specific finalization...");
-                HostFinalizationFunctions().GetAwaiter().GetResult();
-
-                Console.WriteLine("Cleaning up...");
-                Config.TempFolder.RemovePath();
-
-                Console.WriteLine("============================================");
-                Console.WriteLine("SUCCESS: Game patched to v" + Config.Version);
-                Console.WriteLine("");
-                Console.WriteLine("Files patched: " + _filesPatched);
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ERROR: Patching failed - " + ex.Message);
-                
-                // Cleanup on failure
-                try { TryRemoveTempPath().GetAwaiter().GetResult(); }
-                catch { }
-
-                return 2;
+                if (!_silentMode)
+                    App.MainWindowInstance.EnableComponents(true);
             }
         }
     }
