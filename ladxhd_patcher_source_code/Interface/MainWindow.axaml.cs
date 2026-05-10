@@ -135,7 +135,7 @@ namespace LADXHD_Patcher
 
         private async void Button_Patch_Click(object sender, RoutedEventArgs e)
         {
-            Functions.SilentMode = false;
+            Functions.HeadlessMode = false;
             await Functions.StartPatching();
         }
 

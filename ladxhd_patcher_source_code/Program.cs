@@ -10,7 +10,7 @@ namespace LADXHD_Patcher
 {
     internal class Program
     {
-        // Windows-only console attachment for silent mode output.
+        // Windows-only console attachment for headless mode output.
         [SupportedOSPlatform("windows")]
         [DllImport("kernel32.dll")]
         private static extern bool AttachConsole(int dwProcessId);
@@ -31,12 +31,12 @@ namespace LADXHD_Patcher
         public static int Main(string[] args)
         {
             bool showHelp   = false;
-            bool silentMode = false;
+            bool headlessMode = false;
             string? platformStr = null;
             string? graphicsStr = null;
 
             var opts = new OptionSet {
-                { "s|silent",   "Run in silent mode (no GUI, for automated installs).", _ => silentMode = true },
+                { "headless|s|silent",   "Run in headless mode (no GUI, for automated installs).", _ => headlessMode = true },
                 { "platform=",  "Target platform: windows, android, linux-x86, linux-arm64, macos-x86, macos-arm64. Default: windows.", v => platformStr = v },
                 { "graphics=",  "Target graphics API: directx, opengl. Default: directx (windows), opengl (others).", v => graphicsStr = v },
                 { "h|?|help",   "Show this help message.", _ => showHelp = true },
@@ -64,7 +64,7 @@ namespace LADXHD_Patcher
                 return 0;
             }
 
-            if (silentMode)
+            if (headlessMode)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     TryAttachConsole();
@@ -112,11 +112,11 @@ namespace LADXHD_Patcher
                 Config.SelectedPlatform = platform;
                 Config.SelectedGraphics = graphics;
 
-                // Initialize Avalonia platform services (needed for AssetLoader) without
-                // entering an event loop or creating any window.
+                // Initialize Avalonia platform services (needed for AssetLoader in headless mode)
+                // without entering an event loop or creating any window.
                 BuildAvaloniaApp().SetupWithoutStarting();
 
-                Functions.SilentMode = true;
+                Functions.HeadlessMode = true;
                 Task.Run(() => Functions.StartPatching()).GetAwaiter().GetResult();
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

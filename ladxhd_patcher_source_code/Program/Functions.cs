@@ -15,9 +15,9 @@ namespace LADXHD_Patcher
         private static int    _totalCount;
         private static int    _filesPatched;
 
-        public  static bool   SilentMode { get => _silentMode; set => _silentMode = value; }
+        public  static bool   HeadlessMode { get => _headlessMode; set => _headlessMode = value; }
         public  static int    ExitCode   { get; private set; }
-        private static bool   _silentMode;
+        private static bool   _headlessMode;
         private static bool   _patchFromBackup;
         private static string _executable;
 
@@ -91,7 +91,7 @@ namespace LADXHD_Patcher
 
         private async static Task ShowWarning(string title, string message, bool altSound = false)
         {
-            if (_silentMode)
+            if (_headlessMode)
                 Console.WriteLine("WARNING: " + message);
             else
                 await OkayWindow.ShowAsync(title, message, timeoutSeconds: 10, altSound: altSound);
@@ -119,7 +119,7 @@ namespace LADXHD_Patcher
             _fileCount++;
 
             // Update the progress bar and process UI events (GUI mode only).
-            if (!_silentMode)
+            if (!_headlessMode)
             {
                 int progress = _totalCount > 0 ? (int)(_fileCount * 100.0 / _totalCount) : 0;
                 Config.ActiveWindow?.UpdateProgressBar(progress);
@@ -128,7 +128,7 @@ namespace LADXHD_Patcher
 
         private static void ShowPatchingSuccessLabel()
         {
-            if (!_silentMode)
+            if (!_headlessMode)
                 Config.ActiveWindow?.ShowSuccessLabel();
         }
 
@@ -1012,7 +1012,7 @@ namespace LADXHD_Patcher
         {
             string message;
 
-            if (_silentMode)
+            if (_headlessMode)
             {
                 Console.WriteLine("============================================");
                 Console.WriteLine("SUCCESS: Game patched to v" + Config.Version);
@@ -1061,21 +1061,21 @@ namespace LADXHD_Patcher
             ExitCode = 2;
             ResetProgress();
 
-            if (_silentMode)
+            if (_headlessMode)
             {
-                Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Silent Mode");
+                Console.WriteLine("LADXHD Patcher v" + Config.Version + " - Headless Mode");
                 Console.WriteLine("============================================");
             }
 
             // Locate the v1.0.0 executable and set _executable / _patchFromBackup.
-            // In silent mode suppress the dialog; ShowWarning will print to console instead.
+            // In headless mode suppress the dialog; ShowWarning will print to console instead.
             if (!await SetSourceFile())
             {
-                if (_silentMode) ExitCode = 1;
+                if (_headlessMode) ExitCode = 1;
                 return;
             }
 
-            if (_silentMode)
+            if (_headlessMode)
             {
                 Console.WriteLine("Found game executable. Starting patch process...");
             }
@@ -1092,16 +1092,16 @@ namespace LADXHD_Patcher
                 Config.TempFolder.RemovePath();
                 Config.TempFolder.CreatePath(true);
 
-                if (_silentMode) Console.WriteLine("Extracting patches...");
+                if (_headlessMode) Console.WriteLine("Extracting patches...");
                 ExtractPatches();
 
-                if (_silentMode) Console.WriteLine("Patching game files...");
+                if (_headlessMode) Console.WriteLine("Patching game files...");
                 await PatchGameFiles();
 
-                if (_silentMode) Console.WriteLine("Extracting launcher...");
+                if (_headlessMode) Console.WriteLine("Extracting launcher...");
                 ExtractLauncher();
 
-                if (_silentMode) Console.WriteLine("Performing platform-specific finalization...");
+                if (_headlessMode) Console.WriteLine("Performing platform-specific finalization...");
                 await HostFinalizationFunctions();
 
                 // All steps completed successfully.
@@ -1114,9 +1114,9 @@ namespace LADXHD_Patcher
             }
             finally
             {
-                if (_silentMode) Console.WriteLine("Cleaning up...");
+                if (_headlessMode) Console.WriteLine("Cleaning up...");
                 await TryRemoveTempPath();
-                if (!_silentMode)
+                if (!_headlessMode)
                     App.MainWindowInstance.EnableComponents(true);
             }
         }
