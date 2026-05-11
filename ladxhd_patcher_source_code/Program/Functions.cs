@@ -253,40 +253,6 @@ namespace LADXHD_Patcher
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        POST PATCHING CODE : DUNGEON 3 FIX
-       
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-        private async static Task Dungeon3PatchFix()
-        {
-            // I fucked up. After the dungeon name change the file "dungeon3_1.map" no longer exists.
-            string d3map = Path.Combine(Config.BaseFolder, "Data", "Maps", "dungeon3_1.map");
-
-            // If it doesn't exist in the original path, check the backup folder.
-            if (!d3map.TestPath())
-                d3map = Path.Combine(Config.BackupPath, "dungeon3_1.map");
-
-            // Look for the backup dungeon 3 file as it should still exist.
-            if (d3map.TestPath())
-            {
-                // Patch the file directly into the maps folder.
-                string vcDiffFile  = Path.Combine(Config.TempFolder, "patches", "dungeon3.map.vcdiff");
-                string patchedFile = Path.Combine(Config.BaseFolder, "Data", "Maps", "dungeon3.map");
-
-                if (Config.SelectedPlatform == Platform.Android)
-                    patchedFile = Path.Combine(Config.TempFolder, "android", "com.zelda.ladxhd", "assets", "Data", "Maps", "dungeon3.map");
-
-                VCDiff.Execute(Operation.Apply, d3map, vcDiffFile, patchedFile);
-            }
-            // If the dungeon 3 map file was not able to be patched, output an error message.
-            else
-            {
-                await ShowWarning("Patching \"dungeon3.map\" Failed", "Unable to locate or patch the correct map file for dungeon 3. The patch may succeed but this dungeon will crash the game!");
-            }
-        }
-
-/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
         POST PATCHING CODE : LINUX / MACOS FINALIZATION SCRIPTS
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -619,9 +585,6 @@ namespace LADXHD_Patcher
 
         private async static Task PostPatchingFunctions()
         {
-            // Because of a mistake I made not keeping "dungeon3_1.map" around, it now needs a special fix.
-            await Dungeon3PatchFix();
-
             // We need the new FNT files for Chinese font, the new editor fonts, and a bitmap icon for OpenGL.
             CopyNewFiles();
 
@@ -732,18 +695,21 @@ namespace LADXHD_Patcher
             }
         }
 
-        private static void VerifyCreateDungeon3Map()
+        private static void RestoreOriginalDungeon3Map()
         {
-            // Check for either instance of the original "dungeon3_1.map" which is required for patching.
-            string realD3 = Path.Combine(Config.BaseFolder, "Data", "Maps", "dungeon3_1.map");
-            string backD3 = Path.Combine(Config.BackupPath, "dungeon3_1.map");
+            // Get all possible locations to find the dungeon 3 map and data files.
+            string mapsPath  = Path.Combine(Config.BaseFolder, "Data", "Maps");
+            string[] d3Files = { "dungeon3.map", "dungeon3_1.map", "dungeon3.map.data", "dungeon3_1.map.data" };
 
-            // If neither exist then recreate the original map file for patching.
-            if (!realD3.TestPath() && !backD3.TestPath())
+            // Delete all versions of these files.
+            foreach (string file in d3Files)
             {
-                Config.BackupPath.CreatePath(false);
-                File.WriteAllBytes(backD3, Resources.GetBytes("d3map"));
+                Path.Combine(mapsPath, file).RemovePath();
+                Path.Combine(Config.BackupPath, file).RemovePath();
             }
+            // Write the v1.0.0 "dungeon3_1.map" and "dungeon3_1.map.data" files in the "Data\Maps" folder.
+            File.WriteAllBytes(Path.Combine(mapsPath, "dungeon3_1.map"), Resources.GetBytes("d3map"));
+            File.WriteAllBytes(Path.Combine(mapsPath, "dungeon3_1.map.data"), Resources.GetBytes("d3mapdata"));
         }
 
         private static void PrepareLinuxFiles()
@@ -789,8 +755,8 @@ namespace LADXHD_Patcher
                 RemoveBadBackupFiles();
                 _filesPatched = 0;
 
-                // Dungeon 3 map has caused me grief. Let's put an end to it.
-                VerifyCreateDungeon3Map();
+                // Restore v1.0.0 version of "dungeon3_1.map" and "dungeon3_1.map.data".
+                RestoreOriginalDungeon3Map();
 
                 // Build fast lookup of game files (name -> full path)
                 BuildGameFileLookup();
