@@ -32,7 +32,7 @@
 							   Text="Mod Description:"
 							   ToolTip.Tip="A brief description of the mod.">
 					</TextBlock>
-					<TextBox x:Name="ModDescBox" Watermark="Enter mod description..." Margin="0,7,0,0" MaxLength="500" FontSize="11.5" Width="380" Height="120" AcceptsReturn="True" TextWrapping="Wrap" 
+					<TextBox x:Name="ModDescBox" Watermark="Enter mod description..." Margin="0,7,0,0" FontSize="11.5" Width="380" Height="120" AcceptsReturn="True" TextWrapping="Wrap" 
 							 LostFocus="ModDescBox_LostFocus"/>
 
 					<TextBlock Margin="4,8,0,0" TextWrapping="Wrap" FontSize="11.5" FontWeight="Bold"

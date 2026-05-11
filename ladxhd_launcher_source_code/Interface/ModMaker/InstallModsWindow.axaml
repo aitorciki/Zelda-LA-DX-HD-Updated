@@ -24,7 +24,7 @@
 							   Text="Mod Description:"
 							   ToolTip.Tip="The mod's description.">
 					</TextBlock>
-					<TextBox x:Name="ModDescBox" Watermark="Mod description..." Margin="0,7,0,0" MaxLength="500" FontSize="11.5" Width="380" Height="150" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
+					<TextBox x:Name="ModDescBox" Watermark="Mod description..." Margin="0,7,0,0" FontSize="11.5" Width="380" Height="150" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True"/>
 				</StackPanel>
 			</Border>
 
