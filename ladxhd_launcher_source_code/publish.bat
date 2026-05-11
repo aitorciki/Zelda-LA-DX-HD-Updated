@@ -43,6 +43,19 @@ dotnet publish LADXHD_Launcher.csproj -r osx-arm64 /p:PublishProfile=macOS-arm64
 if %errorlevel% neq 0 ( echo MacOS Arm64 build failed! & pause & exit /b 1 )
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+:: Clean up unnecessary files
+::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+echo.
+echo Cleaning up junk files...
+for /r "%~dp0~Publish" %%f in (nfd.lib nfd.pdb) do (
+  if exist "%%f" (
+    echo Deleting: %%f
+    del "%%f"
+  )
+)
+
+::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Package Builds
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -54,19 +67,6 @@ if [%Copy_to_Resources%]==[true] (
         powershell -ExecutionPolicy Bypass -File "%~dp0zip_resources.ps1"
     )
     if %errorlevel% neq 0 ( echo Packaging failed! & pause & exit /b 1 )
-)
-
-::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-:: Clean up unnecessary files
-::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-echo.
-echo Cleaning up junk files...
-for /r "%~dp0~Publish" %%f in (nfd.lib nfd.pdb) do (
-  if exist "%%f" (
-    echo Deleting: %%f
-    del "%%f"
-  )
 )
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
