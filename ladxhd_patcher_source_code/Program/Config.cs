@@ -8,7 +8,7 @@ namespace LADXHD_Patcher
 {
     public class Config
     {
-        public const string Version = "1.8.0";
+        public const string Version = "1.8.1";
 
         public static string BaseFolder;
         public static string TempFolder;

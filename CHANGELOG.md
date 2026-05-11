@@ -1,5 +1,22 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.8.1**
+### The "Next Generation Tooling" Update
+  * This update was mainly a focus on updating the tooling, but also comes with the usual bug fixes.
+  * Rewrite the Patcher to be cross platform using Avalonia. It is available on all desktop platforms.
+  * All patching is now using "vcdiff" instead of "xdelta" which is faster and supports cross platform.
+  * The LADXHD Mod Maker has been deprecated. Mods are now created and installed with the Launcher.
+  * The new mod distribution format is ".lahdpak" files which are a zip file containing modded files.
+  * Update the LADXHD Migration Tool to build with .NET 8.0 and rewrite the GUI to use Avalonia.
+  * Dialog in language files of any type can now be replaced with "_redux", "_mod", and "_alt" tags.
+  * Add Cukeman "Uncensored" lines to German translation from the original Link's Awakening.
+  * Fix some music starting when a map transition starts before the fadeout and the next map is loaded.
+  * Fix BowWow occasionally getting stuck moving between fields while a follower (affected all cameras).
+  * Fix despawned moblins in the cave where BowWow is kidnapped from firing arrows in Classic Camera.
+  * Fix Turtle Rock causing the ball children music to reset when BowWow is kidnapped in Classic Camera.
+  * Fix a bug that allowed duplicating seashells when "Classic Camera" was the active camera.
+  * Fix fireball to properly despawn after it fades out instead of remaining alive indefinitely.
+
 ## **v1.8.0**
 ### The "Clash of the 2D Systems" Update
   * This is an emergency update. The fix below greatly impacted the game making it feel awful to play.
@@ -14,7 +31,7 @@
   * When colliding with a corner, Link will now sidestep it. Configurable via Launcher or ObjLink.lahdmod.
   * New bomb options: Auto-Pickup, Remote Bombs, Self-Damage. Configurable via Launcher or ObjBomb.lahdmod.
   * Overworld map and tileset were greatly optimized removing many unused tiles (credit @GLEclipseGaming).
-  * Presets that apply the classic camera border also set the transparency of the classic border to 100%.
+  * Presets that apply the Classic Camera border also set the transparency of the classic border to 100%.
   * Minor changes to the German and French photo sprites to bring them in line with other languages.
   * Match move speed reduction of original game to 25% (from 20%) when moving through tall grass or water.
   * Increase the detection and attack range of the Pincer enemy to more closely match the original game.
@@ -292,7 +309,7 @@
   * Fix enemy Piranha damage state to not activate until its jump animation plays so it doesn't die as a fin.
   * Fix miniboss Giant Buzz Blob shots getting stuck on the screen edge by adding to "always animate" list.
   * Fix dungeon 3 "push buttons" in the room with the 3 green bombites and two green Zols to be more accurate.
-  * Fix dungeon 7 "ball" used to destroy pillars to bounce off the screen edge when classic camera is active.
+  * Fix dungeon 7 "ball" used to destroy pillars to bounce off the screen edge when Classic Camera is active.
   * Fix the offset of all instruments in all dungeons to match their exact positions from the original game.
   * Fix cave shortcut near level 4 to exit passageway with Link walking down instead of left.
 
@@ -317,8 +334,8 @@
   * Fix the sword modifier to break pots/skulls to not allow breaking Spiny Beetle skulls with level 1 sword.
   * Fix moblin cave "ObjPushButton" to not be activated until the first instrument has been collected.
   * Fix dungeon doors to remain closed after grabbing the instrument. A return visit will open the doors.
-  * Fix dungeon 7 teleporter to center classic camera on first version of top floor (before pillars destroyed).
-  * Fix dungeon 7 nightmare key block puzzle solving in classic camera when pushing blocks outward and resetting.
+  * Fix dungeon 7 teleporter to center Classic Camera on first version of top floor (before pillars destroyed).
+  * Fix dungeon 7 nightmare key block puzzle solving in Classic Camera when pushing blocks outward and resetting.
   * Fix map teleport via Manbo's song to not appear while inside dungeons and instead warp to the entrance.
   * Fix Classic Camera panning effect when transitioning to the final room in the Egg with the pit to final boss.
   * Fix ending sequence properly setting "modern" camera depending on which options were enabled when starting.
@@ -477,10 +494,10 @@
 ### **General:**
   * Fix the Marin dungeon sequence (a.k.a. longstanding Marin beach spawning issue) from firing when it shouldn't.
   * Picking up the sword at the beginning of the game on the beach now deals damage (spin will kill that urchin now).
-  * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes classic camera bugs.
+  * Created a new object for Classic Camera that focuses the camera during a map transition. This fixes Classic Camera bugs.
   * Fix all Classic Camera respawning issues including: respawning on current field, field edge, and not respawning at all.
   * Rework pushable stones so that their behavior when pushed is much closer to how it is in the original games.
-  * Pushable stones respawn when pushed down holes and when changing fields when classic camera is active.
+  * Pushable stones respawn when pushed down holes and when changing fields when Classic Camera is active.
   * Properly clear the sword damage box and the shield block box when they are no longer in use (fixes strange interactions).
   * Implement ability to grab and pull on most objects. This has no practical use case but was possible in the original game.
   * Rework grab box so it interacts with objects more precisely and rework pulling animation to match the original game.
@@ -586,7 +603,7 @@
   * The enemy Flame Trap has been added to the "always animate" list so it can't be exploited by keeping it out of camera bounds.
   * Increase the body box size of sworded enemies to 16x16 pixels: Moblins, Pig-Moblins, Shrouded Stalfos, and Darknuts.
   * Enemies that respawned in the original game when changing fields now respawn here: Bombite, Spiny Beetle, Hardhat Beetle.
-  * Fix the burning state to reset when changing fields in classic camera. Enemy should return to normal state and remove burn.
+  * Fix the burning state to reset when changing fields in Classic Camera. Enemy should return to normal state and remove burn.
   * Fix the sound effect played when enemies are either drowned or dunked into lava (splash sound instead of fall down hole sound).
   * Fix a hole in Moldorm room to drop the player in the correct location. Also move all drop points left by one tile (16 pixels).
   * Fix missing explosion sounds when defeating some nightmares. This includes the bosses from Level 5 dungeon and onwards.
@@ -597,7 +614,7 @@
   * Fix enemy Cheep Cheep from launching the player if jumped on just right while slightly in the water.
   * Fix enemy Crows from being invincible while perched in a tree. Only the Crow near Kanalet Castle should be invincible on the tree.
   * Fix enemy Darknut size and fix the spawn position when blowing up the walls they are imprisoned inside.
-  * Fix enemy Gel to properly respawn when changing fields in classic camera instead of burning to death off screen.
+  * Fix enemy Gel to properly respawn when changing fields in Classic Camera instead of burning to death off screen.
   * Fix enemy Goomba to lose it's collision box when set on fire (does not affect Goombas on 3D maps, aka Level 7 dungeon).
   * Fix enemy Hardhat Beetle to be killable by Bow Wow or bombs. This also spawns a bomb after death. Also remove initial idle delay.
   * Fix enemy Karakoro to be walkable when thrown into a hole. Also fix resetting their states during a Classic Camera field transition.
@@ -606,9 +623,9 @@
   * Fix enemy Like Like taking damage from items when swallowed. Link now also takes damage from outside sources when trapped.
   * Fix enemy Mini-Moldrom to make the falling sound effect when it is pushed into a hole and falls.
   * Fix enemy Pincer stun state, when it can deal damage, activation range, and replicate narrow window to kill instantly with powder.
-  * Fix enemy Red Zol to spawn Gels in classic camera after burning & respawning after a field change. Also shrink their damage box.
+  * Fix enemy Red Zol to spawn Gels in Classic Camera after burning & respawning after a field change. Also shrink their damage box.
   * Fix enemy Sea Urchins to properly deal damage when touched from the sides. This was a really tricky problem.
-  * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in classic camera.
+  * Fix enemy Spiny Beetle crashing the game when carrying its carried object from the current field in Classic Camera.
   * Fix enemy Spiny Beetle AI behavior to act much closer to how they do in the original game.
   * Fix enemy Three-of-a-Kind face transitions to be 0.25 seconds instead of 0.50 seconds. This is closer to the original game.
   * Fix enemy Three-of-a-Kind to drop hearts when matching three hearts and drop rupees when matching three diamonds.
@@ -659,13 +676,13 @@
   * Fix the stone in the forest passageway to the bat (Li'l Devil/Mad Batter, whatever you want to call it) to play the secret sound.
   * Fix number of bushes outside Sales House O'Bananas so that there is two blocking the path instead of three.
   * Fix jumping into water. It would play Link's "stand" animation for a single frame before it played his swimming animation.
-  * Fix sequence of trading bananas to monkeys with classic camera enabled by adding monkeys to always animate list.
+  * Fix sequence of trading bananas to monkeys with Classic Camera enabled by adding monkeys to always animate list.
   * Fix the monkey respawning when fighting with Bow Wow, Classic Camera is enabled, and a field change takes place.
   * Fix the owl "freeze" trigger to only not apply during the egg opening sequence and the end credits.
   * Fix trading the stick to Tarin for the honeycomb. Talking to him would just show a message that says "error".
   * Fix the goat at animal village to be able to turn to face the player. This required implementing her sprites and animations.
   * Fix bushes to show the proper smoke graphics and sound effects when sprinkling Magic Powder on them.
-  * Fix bushes & rocks from respawning that cover stairs when changing fields when classic camera is active.
+  * Fix bushes & rocks from respawning that cover stairs when changing fields when Classic Camera is active.
   * Fix bushes & rocks that open up into passageways to play the "secret sound" when revealing the staircase.
   * Fix the dresser in the Raft House to have the same interaction message as all other dressers.
   * Fix the camera in Manbo's cave to not fall below the cave's main field which is just a black screen.
@@ -680,7 +697,7 @@
   * Fix collision blockers in a cave on the way to Level 8 dungeon with a large gap. Flying could move the camera to a bad field.
   * Fix collision of the Hen House roof. It may have been possible to get into the sky with a clever jump.
   * Fix Hen House NPC to be at his original position and make it so cuccos do not collide with him (like the original game).
-  * Fix setting most enemies on fire then resetting them by transitioning fields when classic camera is enabled.
+  * Fix setting most enemies on fire then resetting them by transitioning fields when Classic Camera is enabled.
   * Fix owl when breaking open the egg to spawn immediately after the song is played instead of from a certain distance.
 
 ### **Dungeons:**
@@ -691,7 +708,7 @@
   * Jars that contain a fairy and are respawned no longer contain a new fairy after it has been respawned.
   * Pull bridges found in dungeon 8 now reset on a field change when Classic Camera is enabled.
   * Barriers have been added to always animate lists which should fix all the issues people experienced with them over time.
-  * Ice Blocks (found in underground maps in dungeon 8) respawn when changing fields when classic camera is active.
+  * Ice Blocks (found in underground maps in dungeon 8) respawn when changing fields when Classic Camera is active.
   * It's now possible to return to the Great Fairy in the Color Dungeon to restore clothes back to green.
   * Fix the falling animation when being dropped into a 2D underground map: Link flips and faces north.
   * Fix visible tiles in the Color Dungeon that should not have been visible near where the nightmare key was obtained.
@@ -700,7 +717,7 @@
   * Fix dungeon teleporters (spawned after defeating mini-boss) to not teleport Link if he's standing on it when it spawns.
   * Fix several 2D maps in dungeon 3, dungeon 6, and dungeon 8 to not change and update Link's position on the minimap.
   * Fix the pull levers found in dungeon 4 and dungeon 7 to not be able to be grabbed from the sides.
-  * Fix dungeon 1 to remove a crystal structure that did not exit in the original game. It could also get in the way of classic camera.
+  * Fix dungeon 1 to remove a crystal structure that did not exit in the original game. It could also get in the way of Classic Camera.
   * Fix dungeon 2 underground area that has a vase to be able to throw the vase while climbing a ladder.
   * Fix dungeon 3 bombable walls around the nightmare key room to not have cracks. This is how it was in the original game.
   * Fix dungeon 4 button near the water so it's possible to walk onto the button from the water.
@@ -714,8 +731,8 @@
   * Fix dungeon 8 bombable walls around the switch to not have cracks. This is how it was in the original games.
   * Fix dungeon 8 block to be movable near a stairway in a room north of the map with the Peahat enemies.
   * Fix dungeon 8 chest spawned from Dodongo Snakes to where the snakes must be killed from the ledge above.
-  * Fix Egg dungeon when classic camera is enabled. Two of the paths would not take the player to the jump at the end.
-  * Fix Egg camera transition to the final maze room when classic camera is enabled. It would not transition smoothly.
+  * Fix Egg dungeon when Classic Camera is enabled. Two of the paths would not take the player to the jump at the end.
+  * Fix Egg camera transition to the final maze room when Classic Camera is enabled. It would not transition smoothly.
   * Fix Egg boss room from showing a black circle in the top left corner while the dialog is shown.
   * Fix Manbo's Song when played in the Egg to teleport the player to the entrance and not the pond.
   * Fix running into final stairs with boots which doubled the player's animation speed and bounced off the wall at the end.
@@ -789,7 +806,7 @@
   * Fix Trendy Game crane to start playing its "activation" sound immediately after picking up an item.
   * Fix playing "item get" sound when unlocking the photo album after the very first photo event.
   * Fix enemy Pairodd activation range to be closer to original game. Also conveyor belts should not affect them.
-  * Fix Pairodd to not shoot a projectile immediately after resetting the room they are in when classic camera is active.
+  * Fix Pairodd to not shoot a projectile immediately after resetting the room they are in when Classic Camera is active.
   * Fix some incorrect positions of enemies on different maps and fix them activating too soon.
   * Fix dungeon teleporters to drop an item when teleportation to begins. This affected all dungeons except (old) dungeon 3 and dungeon 7.
   * Fix dungeon 2 room with a Spark and dungeon barriers where the Spark wouldn't take the correct path.
@@ -797,7 +814,7 @@
   * Fix miniboss music continuing to play when leaving the room and it wasn't defeated. Affects Dodongo Snakes (dungeon 3/6/8) and Hinox (dungeon 7).
   * Fix similar but slightly different miniboss scenarios: Lanmola (from the desert) and Turtle Rock (entrance to dungeon 8).
   * Fix various stones/blocks in different maps that should either be or not be pushable compared to original game.
-  * Fix cucco attack swarm to stop on field transition, not freeze on the screen edge (both classic camera), and reset the attack counter when done.
+  * Fix cucco attack swarm to stop on field transition, not freeze on the screen edge (both Classic Camera), and reset the attack counter when done.
   * Fix a potential "hitch" in the air when falling jumping/falling into 2D maps from a hole above (such as dungeon 1 Moldorm pit).
   * Fix keyboard keys when in editor mode to actually map to a real keyboard.
   * Many other small fixes and tweaks spread out everywhere. This version had too many changes to keep track of everything.
@@ -872,15 +889,15 @@
   * Fix Lower Face Shrine mural sequence to not close out the image prematurely allowing the dialog to finish.
   * Fix misplaced collider on Tal Tal Mountain Range just under the bird key cave near the triple waterfalls.
   * Fix Dungeon 7 pillars so that they can be hit from behind with the ball.
-  * Fix Dungeon 7 boss Evil Eagle issues: classic camera, freezing player during intro, attack locking, and reduce fly away time.
+  * Fix Dungeon 7 boss Evil Eagle issues: Classic Camera, freezing player during intro, attack locking, and reduce fly away time.
   * Fix mountain photo bridge sequence to work with Classic Camera mode.
 
 ## **v1.4.3**
 ### **The "Nostalgic Screen-Effect" Update**
   * Scaling has been reworked to scale based on the resolution of the original game. Game scale now goes to 20x.
   * Implement a "Classic Camera" that aims to replicate the screen-scrolling based system of the original game.
-  * Add a classic camera option "Dungeon Only" which only applies it when inside of dungeons.
-  * Implemented a "graying out" system for currently invalid options. For example, some options don't work with classic camera (and vice versa).
+  * Add a Classic Camera option "Dungeon Only" which only applies it when inside of dungeons.
+  * Implemented a "graying out" system for currently invalid options. For example, some options don't work with Classic Camera (and vice versa).
   * Movement has been modified to be more like the original game. "Classic Movement" option only restores the ability to "moonwalk" (walk backwards).
   * Jump height is now variable when holding the button down longer when on 2D maps.
   * When charging + jumping, a brief "standing" animation is played in between so Link doesn't appear to "slide".
@@ -892,7 +909,7 @@
   * Instruments can no longer be collected with items like the Boomerang and Hookshot.
   * When adjusting scale with the controller, it should now save when quitting. Previously it only saved when adjusting from menus.
   * Zombies no longer spawn when the game is currently frozen such as playing ocarina or when owl is speaking.
-  * Remove Hardhat beetle initialize state which did nothing. This affected classic camera where it would just stand there for a bit.
+  * Remove Hardhat beetle initialize state which did nothing. This affected Classic Camera where it would just stand there for a bit.
   * Fix playing the jumping "flip" animation when cancelling a sword charge while in air.
   * Fix the "falling" animation while in 2D mode. It should play a flip even when not jumping.
   * Fix diving and then walking to land causing permanent invincibility until walking into the water again.
