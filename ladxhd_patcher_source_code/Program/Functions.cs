@@ -577,6 +577,24 @@ namespace LADXHD_Patcher
             }
         }
 
+        private static void MoveFirstVersionSaveGames()
+        {
+            // Don't move saves unless it's actually v1.0.0 and a "portable.txt" doesn't exist. 
+            if (_patchFromBackup || Config.PortableTxt.TestPath())
+                return;
+
+            // Throw together some paths.
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string oldSavePath = Path.Combine(Config.BaseFolder, "SaveFiles");
+            string oldSettings = Path.Combine(Config.BaseFolder, "settings");
+            string newSavePath = Path.Combine(appDataPath, "Zelda_LA", "SaveFiles");
+            string newSettings = Path.Combine(appDataPath, "Zelda_LA", "settings");
+
+            // Move the save folder and settings to the global save path.
+            oldSavePath.MovePath(newSavePath);
+            oldSettings.MovePath(newSettings);
+        }
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         POST PATCHING CODE : MASTER FUNCTION : STUFF THAT IS DONE AFTER PATCHING HAS FINISHED.
@@ -587,6 +605,9 @@ namespace LADXHD_Patcher
         {
             // We need the new FNT files for Chinese font, the new editor fonts, and a bitmap icon for OpenGL.
             CopyNewFiles();
+
+            // If the user is patching v1.0.0 try to keep their save games.
+            MoveFirstVersionSaveGames();
 
             // They will probably be there again so remove them one more time.
             RemoveBadBackupFiles();
