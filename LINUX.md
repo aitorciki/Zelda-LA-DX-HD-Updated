@@ -1,11 +1,8 @@
 # 🐧 Patching, building and emulating on Linux
 
-## Using the Windows patcher
+## Using the patcher
 
-The patcher available on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page can be run with [Wine](https://www.winehq.org/).
-
-> [!Note]
-> No extra Wine setup should be required, but depending on the Wine distribution you are using you might need to install [wine-mono](https://github.com/wine-mono/wine-mono/releases/latest) using their .msi if the patcher fails to start.
+The patcher available on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page runs natively on Linux — no Wine required.
 
 When [running the patcher](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated?tab=readme-ov-file#patching-v100-or-v114-to-v173) choose `Linux` as the platform, and `OpenGL` as the target. The patcher should take care of making the resulting binaries executable:
 
@@ -15,7 +12,7 @@ When [running the patcher](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated?
 ```
 
 > [!Note]
-> launcher and game binaries need to be kept in the same directory for the launcher to work correctly.
+> Launcher and game binaries need to be kept in the same directory for the launcher to work correctly.
 
 If the patcher fails to perform these steps and the resulting files aren't executable, you can fix them manually:
 
