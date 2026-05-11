@@ -1,0 +1,92 @@
+name: Build Patcher
+
+on:
+  push:
+    paths:
+      - 'ladxhd_patcher_source_code/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      matrix:
+        include:
+          - profile: macOS-arm64
+            rid: osx-arm64
+            runner: macos-latest
+            ext: ''
+          - profile: macOS-x64
+            rid: osx-x64
+            runner: macos-latest
+            ext: ''
+          - profile: Linux-arm64
+            rid: linux-arm64
+            runner: ubuntu-latest
+            ext: ''
+          - profile: Linux-x64
+            rid: linux-x64
+            runner: ubuntu-latest
+            ext: ''
+          - profile: Windows
+            rid: win-x64
+            runner: windows-latest
+            ext: '.exe'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        working-directory: ladxhd_patcher_source_code
+        run: dotnet restore LADXHD_Patcher.csproj
+
+      - name: Get game version
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(dotnet msbuild ladxhd_game_source_code/ProjectZ.Desktop/ProjectZ.Desktop.csproj -getProperty:Version)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Publish
+        shell: bash
+        working-directory: ladxhd_patcher_source_code
+        run: |
+          dotnet publish LADXHD_Patcher.csproj \
+            -r ${{ matrix.rid }} \
+            -p:PublishProfile=${{ matrix.profile }}
+
+      - name: Rename patcher file
+        shell: bash
+        run: |
+          mv ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/Patcher${{ matrix.ext }} \
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
+
+      - name: Sign binary (macOS)
+        if: runner.os == 'macOS'
+        env:
+          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}
+        run: |
+          codesign --force --deep --sign - "$APP_PATH"
+          codesign --verify --verbose "$APP_PATH"
+
+      - name: Copy fix-permissions.sh (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          cp ladxhd_patcher_source_code/fix-macos-permissions.sh \
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/fix-permissions.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: LADXHD.Patcher.v${{ steps.get_version.outputs.version }}_${{ matrix.profile }}-${{ github.run_id }}
+          path: |
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/
+            !ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/nfd.lib
+            !ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/nfd.pdb
