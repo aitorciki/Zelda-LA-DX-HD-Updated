@@ -712,22 +712,31 @@ namespace LADXHD_Patcher
             File.WriteAllBytes(Path.Combine(mapsPath, "dungeon3_1.map.data"), Resources.GetBytes("d3mapdata"));
         }
 
-        private static void PrepareLinuxFiles()
+        private static void PrepareZeldaLAExecutable(bool isLinux, bool isMacOS)
         {
-            // The path where we want the extensionless executable.
-            string exePath = Config.ZeldaEXE.Substring(0, Config.ZeldaEXE.Length - 4);
+            // Set the path to both potential executables.
+            string winEXE = Config.ZeldaEXE;
+            string altEXE = Config.ZeldaEXE.Substring(0, Config.ZeldaEXE.Length - 4);
 
-            // If the correct file isn't already in place move it.
+            // Set the path to what the executable should be.
+            string exePath = (isLinux || isMacOS) ? altEXE : winEXE;
+
+            // If patching from backup remove all versions of the executable.
+            if (_patchFromBackup)
+            {
+                winEXE.RemovePath();
+                altEXE.RemovePath();
+            }
+            // If coming from backup or patching v1.0.0 to Linux/MacOS it will need renamed.
             if (_executable != exePath)
                 _executable.MovePath(exePath, true);
 
-            // Remove any Linux specific files as they are not needed.
-            string[] linuxFiles = new string[]{ Config.ZeldaEXE, "System.IO.Compression.Native.a", "System.Native.a", 
-                "System.Net.Http.Native.a", "System.Net.Security.Native.a", "System.Security.Cryptography.Native.OpenSsl.a",
-                "libopenal.dylib", "libSDL2-2.0.0.dylib"};
+            // Remove any Linux / MacOS specific files.
+            string[] libFiles = new string[]{ "System.IO.Compression.Native.a", "System.Native.a", "System.Net.Http.Native.a", 
+                "System.Net.Security.Native.a", "System.Security.Cryptography.Native.OpenSsl.a", "libopenal.dylib", "libSDL2-2.0.0.dylib",
+                "libAvaloniaNative.dylib", "libHarfBuzzSharp.dylib", "libopenal.dylib", "libSDL2-2.0.0.dylib", "libSkiaSharp.dylib"};
 
-            // Remove the patched executable and any linux specific files.
-            foreach (string file in linuxFiles) 
+            foreach (string file in libFiles) 
             {
                 string filePath = Path.Combine(Config.BaseFolder, file);
                 filePath.RemovePath();
@@ -747,9 +756,8 @@ namespace LADXHD_Patcher
                 // Create the backup path if it doesn't exist.
                 Config.BackupPath.CreatePath();
 
-                // The v1.0.0 executable must be in the base path for Linux without the extension.
-                if (isLinux || isMacOS)
-                    PrepareLinuxFiles();
+                // The v1.0.0 executable must be in the base path.
+                PrepareZeldaLAExecutable(isLinux, isMacOS);
 
                 // Remove any garbage files that will just mess up the patcher.
                 RemoveBadBackupFiles();
