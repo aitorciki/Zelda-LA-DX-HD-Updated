@@ -1,3 +1,4 @@
 # Ensure shell scripts are always stored and checked out with Unix (LF) line endings.
 # This prevents Windows tooling from converting \n → \r\n, which breaks /bin/sh execution.
 *.sh text eol=lf
+*.command text eol=lf
