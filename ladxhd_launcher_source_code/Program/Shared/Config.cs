@@ -7,7 +7,7 @@ namespace LADXHD_Launcher
 {
     internal class Config
     {
-        public const string Version = "1.0.0";
+        public const string Version = "2.0.0";
 
         public static string AppPath = "";
         public static string AppName = "";
