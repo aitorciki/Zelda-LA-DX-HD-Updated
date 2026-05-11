@@ -27,6 +27,7 @@ namespace LADXHD_Patcher
 
         public static string Launcher;
         public static string WLauncher;
+        public static string PortableTxt;
 
         public static string ApkSign;
         public static string ZipAlign;
@@ -71,6 +72,7 @@ namespace LADXHD_Patcher
 
             Launcher      = Path.Combine(BaseFolder, "Launcher");
             WLauncher     = Path.Combine(BaseFolder, "Launcher.exe");
+            PortableTxt   = Path.Combine(BaseFolder, "portable.txt");
 
             ApkSign       = Path.Combine(TempFolder, "android", "apksigner.jar");
             KeyStore      = Path.Combine(TempFolder, "android", "keystore.jks");
