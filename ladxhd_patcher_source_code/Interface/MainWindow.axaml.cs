@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using static System.Net.Mime.MediaTypeNames;
 using static LADXHD_Patcher.Config;
 using static LADXHD_Patcher.Functions;
 
@@ -28,6 +29,12 @@ namespace LADXHD_Patcher
             ComboBox_Platform.SelectedIndex = (int)Config.GetNativePlatform();
             ComboBox_API.SelectedIndex = 0;
             Config.ActiveWindow = this;
+            this.Title = "Link's Awakening DX HD Patcher v" + Config.Version;
+            Label_Title.Text = "Link's Awakening DX HD Patcher v" + Config.Version;
+            Label_Description.Text = "Patches v1.0.0 (or versions beyond v1.1.4) to " + Config.Version + " with the \"Patch\" button below. All patchers " +
+                "created since v1.1.4 back up the v1.0.0 files so that future patches no longer require v1.0.0. When updating with this version of the patcher, " +
+                "future versions of the patcher can use the stored backup files. Backups are stored in the \"Data\\Backup\" folder. Do not move or delete them!";
+			
         }
 
         public void EnableComponents(bool toggle)

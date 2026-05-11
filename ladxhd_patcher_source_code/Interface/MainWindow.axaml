@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="570"
         x:Class="LADXHD_Patcher.MainWindow"
-        Title="Link's Awakening DX HD Patcher v1.8.0"
+        Title="Link's Awakening DX HD Patcher vX.X.X"
         Width="420"
         Height="570"
         MinWidth="420"
@@ -21,10 +21,10 @@
 			<Border Canvas.Left="10" Canvas.Top="280" Width="400" Height="140" BorderBrush="#88FFFFFF" BorderThickness="1" Padding="8">
 				<StackPanel>
 					<TextBlock TextWrapping="Wrap" FontSize="11.5">
-						<Run FontWeight="Bold" Text="Legend of Zelda: Link's Awakening DX HD v1.8.0"/>
+						<Run x:Name="Label_Title" FontWeight="Bold" Text="Legend of Zelda: Link's Awakening DX HD vX.X.X"/>
 					</TextBlock>
 					<TextBlock TextWrapping="Wrap" FontSize="11.5" Margin="0,16,0,0">
-						<Run Text="Patches v1.0.0 (or versions beyond v1.1.4) to v1.8.0 with the &quot;Patch&quot; button below. All patchers created since v1.1.4 back up the v1.0.0 files so that future patches no longer require v1.0.0. When updating with this version of the patcher, future versions of the patcher can use the stored backup files. Backups are stored in the &quot;Data\Backup&quot; folder. Do not move or delete them!"/>
+						<Run x:Name="Label_Description" Text="Patches v1.0.0 (or versions beyond v1.1.4) to vX.X.X with the &quot;Patch&quot; button below. All patchers created since v1.1.4 back up the v1.0.0 files so that future patches no longer require v1.0.0. When updating with this version of the patcher, future versions of the patcher can use the stored backup files. Backups are stored in the &quot;Data\Backup&quot; folder. Do not move or delete them!"/>
 					</TextBlock>
 				</StackPanel>
 			</Border>
