@@ -1,11 +1,15 @@
 # 🍎 Patching and building on MacOS
 
-## Using the Windows patcher
+## Using the patcher
 
-The patcher available on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page can be run with [Wine](https://www.winehq.org/).
+The patcher available on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page runs natively on macOS — no Wine required.
 
-> [!Note]
-> No extra Wine setup should be required, but depending on the Wine distribution you are using you might need to install [wine-mono](https://github.com/wine-mono/wine-mono/releases/latest) using their .msi if the patcher fails to start.
+> [!Important]
+> macOS quarantines files downloaded from the internet and will refuse to run them. Before launching the patcher, run the included `fix-permissions.sh` script from the same folder. It removes the quarantine flag and sets the executable bit on the patcher and its libraries:
+>
+> ```bash
+> $ sh fix-permissions.sh
+> ```
 
 When [running the patcher](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated?tab=readme-ov-file#patching-v100-or-v114-to-v173) choose `MacOS` as the platform, and `OpenGL` as the target. The patcher should take care of signing the binaries and making them executable, as well as creating .app bundles ready to launch or move to `/Applications`:
 
@@ -81,7 +85,7 @@ The resulting application will be available in `ladxhd_game_source_code/~Publish
 
 ## Creating .app bundles manually
 
-The patcher will generate ready to use .app bundles for game and launcher when ran via Wine on macOS. When that setup is not possible and the game is patched from a different platform, it is still possible to create macOS apps once the files are available on a macOS host. Here is the script used by the patcher slightly adapted to be executed manually. The script takes the path to the `Links Awakening DX HD` directory as a single parameter, or can be called without parameters when invoked from inside that directory (defaults to `.`).
+The patcher will generate ready to use .app bundles for game and launcher when run on macOS. When that setup is not possible and the game is patched from a different platform, it is still possible to create macOS apps once the files are available on a macOS host. Here is the script used by the patcher slightly adapted to be executed manually. The script takes the path to the `Links Awakening DX HD` directory as a single parameter, or can be called without parameters when invoked from inside that directory (defaults to `.`).
 
 ```bash
 #!/bin/sh
@@ -89,7 +93,7 @@ The patcher will generate ready to use .app bundles for game and launcher when r
 set -e
 
 # Change to sync with patcher / game version.
-VERSION="1.7.4"
+VERSION="1.8.1"
 
 CURRENT_DIR=$(pwd)
 TMP_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'ladxhd-app-bundle')
@@ -113,6 +117,13 @@ chmod +x "$BASE/$NAME"
 codesign --sign - --force "$BASE/$NAME"
 for dylib in libopenal.dylib libSDL2-2.0.0.dylib; do
     [ -f "$BASE/$dylib" ] && codesign --sign - --force "$BASE/$dylib"
+done
+
+# If files have been patched on a different host and later copied,
+# we need to remove the quarantine attribute from binaries.
+xattr -d com.apple.quarantine "$BASE/$NAME"
+for dylib in libopenal.dylib libSDL2-2.0.0.dylib; do
+    [ -f "$BASE/$dylib" ] && xattr -d com.apple.quarantine "$BASE/$dylib"
 done
 
 # Create bundle directory structure inside temp directory.
@@ -198,6 +209,11 @@ if [ -f "$BASE/Launcher" ]; then
     codesign --sign - --force "$BASE/Launcher"
     for dylib in libAvaloniaNative.dylib libHarfBuzzSharp.dylib libSkiaSharp.dylib; do
         [ -f "$BASE/$dylib" ] && codesign --sign - --force "$BASE/$dylib"
+    done
+
+    xattr -d com.apple.quarantine "$BASE/Launcher"
+    for dylib in libAvaloniaNative.dylib libHarfBuzzSharp.dylib libSkiaSharp.dylib; do
+        [ -f "$BASE/$dylib" ] && xattr -d com.apple.quarantine "$BASE/$dylib"
     done
 
     LAUNCHER_BUNDLE="$BASE/$NAME Launcher.app"
