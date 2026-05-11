@@ -183,7 +183,7 @@ namespace LADXHD_Migrater
             EnableComponents(false);
 
             // Clean out the junk files.
-            Functions.CleanBuildFiles();
+            await Task.Run(() => Functions.CleanBuildFiles());
 
             // Let the user know that it finished.
             string message = "Finished cleaning build files (obj/bin/Publish folders).";

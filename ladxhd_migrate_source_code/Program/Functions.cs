@@ -295,6 +295,7 @@ namespace LADXHD_Migrater
             Path.Combine(Config.Migrate_Source, "obj").RemovePath();
             Path.Combine(Config.Patcher_Source, "~Publish").RemovePath();
             Path.Combine(Config.Patcher_Source, "bin").RemovePath();
+            Path.Combine(Config.Patcher_Source, "Patches").RemovePath();
             Path.Combine(Config.Patcher_Source, "obj").RemovePath();
             Path.Combine(Config.VCDiff_Source, "~Publish").RemovePath();
             Path.Combine(Config.VCDiff_Source, "bin").RemovePath();
