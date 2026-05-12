@@ -1,3 +1,4 @@
+#pragma warning disable
 //
 // Options.cs
 //
@@ -2014,3 +2015,4 @@ namespace Mono.Options
 		}
 	}
 }
+#pragma warning restore
