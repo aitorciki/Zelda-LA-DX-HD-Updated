@@ -74,21 +74,18 @@ namespace ProjectZ.InGame.Things
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "ItemDrawHelper.lahdmod");
 
-            if (GameFS.Exists(modFile))
+            ModFile.ParseStatic(modFile, typeof(ItemDrawHelper));
+
+            Color redCloak = new Color(tunic_red_r, tunic_red_g, tunic_red_b);
+            Color grnCloak = new Color(tunic_grn_r, tunic_grn_g, tunic_grn_b);
+            Color bluCloak = new Color(tunic_blu_r, tunic_blu_g, tunic_blu_b);
+
+            CloakColors = new Color[] { grnCloak, bluCloak, redCloak };
+
+            if (!instrument_color_cycle)
             {
-                ModFile.ParseStatic(modFile, typeof(ItemDrawHelper));
-
-                Color redCloak = new Color(tunic_red_r, tunic_red_g, tunic_red_b);
-                Color grnCloak = new Color(tunic_grn_r, tunic_grn_g, tunic_grn_b);
-                Color bluCloak = new Color(tunic_blu_r, tunic_blu_g, tunic_blu_b);
-
-                CloakColors = new Color[] { grnCloak, bluCloak, redCloak };
-
-                if (!instrument_color_cycle)
-                {
-                    _relictColorOne = Color.Transparent;
-                    _relictColorTwo = Color.Transparent;
-                }
+                _relictColorOne = Color.Transparent;
+                _relictColorTwo = Color.Transparent;
             }
             SpriteLetter = Resources.GetSprite("ui letter");
             SpriteHeart = Resources.GetSprite("ui heart");

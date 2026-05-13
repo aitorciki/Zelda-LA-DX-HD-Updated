@@ -18,7 +18,7 @@ namespace ProjectZ.InGame.Overlay
 
         private bool? _lastSixButtonsState = null;
 
-        HudOverlay _hudOverlay => Game1.GameManager.InGameOverlay.InGameHud; 
+        HUDOverlay _hudOverlay => Game1.GameManager.InGameOverlay.InGameHud; 
 
         public ItemSlotOverlay()
         {

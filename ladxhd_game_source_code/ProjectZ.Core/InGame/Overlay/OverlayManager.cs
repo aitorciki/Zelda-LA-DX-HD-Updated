@@ -38,7 +38,7 @@ namespace ProjectZ.InGame.Overlay
         public bool InventoryState { get => _currentMenuState == MenuState.Inventory; }
 
         public TextboxOverlay TextboxOverlay;
-        public HudOverlay InGameHud;
+        public HUDOverlay InGameHud;
 
         private InventoryOverlay _inventoryOverlay;
         private MapOverlay _mapOverlay;
@@ -193,7 +193,7 @@ namespace ProjectZ.InGame.Overlay
 
             // Set up the overlays.
             TextboxOverlay = new TextboxOverlay();
-            InGameHud = new HudOverlay();
+            InGameHud = new HUDOverlay();
             _mapOverlay = new MapOverlay(_mapSize.X, _mapSize.Y, _marginMap, false);
             _inventoryOverlay = new InventoryOverlay(_inventorySize.X, _inventorySize.Y);
             _dungeonOverlay = new DungeonOverlay(_dungeonSize.X, _dungeonSize.Y);

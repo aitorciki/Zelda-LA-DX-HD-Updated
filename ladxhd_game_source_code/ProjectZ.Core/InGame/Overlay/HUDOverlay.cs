@@ -8,7 +8,7 @@ using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Overlay
 {
-    public class HudOverlay
+    public class HUDOverlay
     {
         private readonly ItemSlotOverlay _itemSlotOverlay = new ItemSlotOverlay();
 
@@ -90,7 +90,7 @@ namespace ProjectZ.InGame.Overlay
         public int  ItemsOffsetX => custom_items_offsetx;
         public int  ItemsOffsetY => custom_items_offsety;
 
-        public HudOverlay()
+        public HUDOverlay()
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "HUDOverlay.lahdmod");
