@@ -148,7 +148,7 @@ namespace ProjectZ
         {
             get
             {
-                var gd = Instance?.GraphicsDevice;
+                var gd = Graphics?.GraphicsDevice;
                 if (gd == null || WindowWidth <= 0 || WindowHeight <= 0)
                     return Matrix.Identity;
 
@@ -310,8 +310,8 @@ namespace ProjectZ
         #endif
 
             // Hook device reset function & create a new SpriteBatch to draw textures.
-            GraphicsDevice.DeviceReset += OnDeviceReset;
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
+            Graphics.GraphicsDevice.DeviceReset += OnDeviceReset;
+            SpriteBatch = new SpriteBatch(Graphics.GraphicsDevice);
 
             // Initialize controller and input handler.
             ControlHandler.Initialize();
@@ -382,9 +382,9 @@ namespace ProjectZ
                 _startDelayElapsed += gameTime.ElapsedGameTime.TotalSeconds;
 
             #if ANDROID
-                if (GraphicsDevice != null)
+                if (Graphics.GraphicsDevice != null)
                 {
-                    var pp = GraphicsDevice.PresentationParameters;
+                    var pp = Graphics.GraphicsDevice.PresentationParameters;
                     if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
                     {
                         if (WindowWidth != pp.BackBufferWidth || WindowHeight != pp.BackBufferHeight)
@@ -392,9 +392,9 @@ namespace ProjectZ
                     }
                 }
             #else
-                if (GraphicsDevice != null)
+                if (Graphics.GraphicsDevice != null)
                 {
-                    var pp = GraphicsDevice.PresentationParameters;
+                    var pp = Graphics.GraphicsDevice.PresentationParameters;
                     var ppW = pp.BackBufferWidth > 0 ? pp.BackBufferWidth : Window.ClientBounds.Width;
                     var ppH = pp.BackBufferHeight > 0 ? pp.BackBufferHeight : Window.ClientBounds.Height;
                     if (WindowWidth != ppW || WindowHeight != ppH)
@@ -439,9 +439,9 @@ namespace ProjectZ
 
         #if ANDROID
             // On Android use PP as the source of truth, not ClientBounds
-            if (GraphicsDevice != null)
+            if (Graphics.GraphicsDevice != null)
             {
-                var pp = GraphicsDevice.PresentationParameters;
+                var pp = Graphics.GraphicsDevice.PresentationParameters;
                 if (pp.BackBufferWidth > 0 && pp.BackBufferHeight > 0)
                 {
                     if (WindowWidth != pp.BackBufferWidth || WindowHeight != pp.BackBufferHeight)
@@ -556,7 +556,7 @@ namespace ProjectZ
         {
             if (!_startDelayFinished)
             {
-                GraphicsDevice.Clear(Color.Black);
+                Graphics.GraphicsDevice.Clear(Color.Black);
                 return;
             }
             _firstFrameDrawn = true;
@@ -567,64 +567,61 @@ namespace ProjectZ
 
             if (MainRenderTarget == null)
             {
-                GraphicsDevice.Clear(Color.CadetBlue);
+                Graphics.GraphicsDevice.Clear(Color.CadetBlue);
                 ScreenManager.Draw(SpriteBatch);
                 return;
             }
             Graphics.GraphicsDevice.SetRenderTarget(MainRenderTarget);
-            GraphicsDevice.Clear(Color.CadetBlue);
-
+            Graphics.GraphicsDevice.Clear(Color.CadetBlue);
             ScreenManager.Draw(SpriteBatch);
 
             var drawPixelGrid = GameSettings.PixelSnapping && GameSettings.PixelGrid && InProgress;
 
-            if (!GameSettings.OpaqueHudBg)
-                BlurImage();
+            Graphics.GraphicsDevice.SetRenderTarget(null);
+            Graphics.GraphicsDevice.Clear(Color.Black);
+
+        #if ANDROID
+            var pp = Graphics.GraphicsDevice.PresentationParameters;
+            var targetWidth = pp.BackBufferWidth;
+            var targetHeight = pp.BackBufferHeight;
+            if (targetWidth <= 0 || targetHeight <= 0)
             {
-                Graphics.GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.Clear(Color.Black);
-
-            #if ANDROID
-                var pp = GraphicsDevice.PresentationParameters;
-                var targetWidth = pp.BackBufferWidth;
-                var targetHeight = pp.BackBufferHeight;
-
-                if (targetWidth <= 0 || targetHeight <= 0)
-                {
-                    var cb = Window.ClientBounds;
-                    targetWidth = cb.Width;
-                    targetHeight = cb.Height;
-                }
-
-                if (targetWidth <= 0 || targetHeight <= 0)
-                {
-                    var viewport = GraphicsDevice.Viewport;
-                    targetWidth = viewport.Width;
-                    targetHeight = viewport.Height;
-                }
-            #else
-                var viewport = GraphicsDevice.Viewport;
-
-                if (drawPixelGrid)
-                {
-                    var gridOffset = MapManager.Camera.PixelGridOffset;
-                    Resources.PixelGrid?.Parameters["TextureSize"]?.SetValue(new Vector2(viewport.Width / MapManager.Camera.Scale, viewport.Height / MapManager.Camera.Scale));
-                    Resources.PixelGrid?.Parameters["GridOpacity"]?.SetValue(pixel_grid_alpha);
-                    Resources.PixelGrid?.Parameters["Offset"]?.SetValue(gridOffset);
-                }
-            #endif
-                if (drawPixelGrid)
-                    SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, Resources.PixelGrid);
-                else
-                    SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
-
-            #if ANDROID
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
-            #else
-                SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-            #endif
-                SpriteBatch.End();
+                var cb = Window.ClientBounds;
+                targetWidth = cb.Width;
+                targetHeight = cb.Height;
             }
+            var viewport = Graphics.GraphicsDevice.Viewport;
+            if (targetWidth <= 0 || targetHeight <= 0)
+            {
+                targetWidth = viewport.Width;
+                targetHeight = viewport.Height;
+            }
+        #else
+            var viewport = Graphics.GraphicsDevice.Viewport;
+            var targetWidth = viewport.Width;
+            var targetHeight = viewport.Height;
+        #endif
+
+            // If the pixel grid is enabled, draw the grid over the game world.
+            if (drawPixelGrid)
+            {
+                var gridOffset = MapManager.Camera.PixelGridOffset;
+                Resources.PixelGrid?.Parameters["TextureSize"]?.SetValue(new Vector2(targetWidth / MapManager.Camera.Scale, targetHeight / MapManager.Camera.Scale));
+                Resources.PixelGrid?.Parameters["GridOpacity"]?.SetValue(pixel_grid_alpha);
+                Resources.PixelGrid?.Parameters["Offset"]?.SetValue(gridOffset);
+            }
+            if (drawPixelGrid)
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, Resources.PixelGrid);
+            else
+                SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+
+            SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
+            SpriteBatch.End();
+
+
+
+
+
 
             // If the blurring effect is not disabled.
             if (!GameSettings.OpaqueHudBg)
@@ -634,7 +631,7 @@ namespace ProjectZ
                     Resources.BlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
                     Resources.RoundedCornerBlurEffect.Parameters["sprBlur"].SetValue(_renderTarget2);
                 }
-                var vp = GraphicsDevice.Viewport;
+                var vp = Graphics.GraphicsDevice.Viewport;
 
                 // These are the dimensions SV_Position is normalized against in the current pass.
                 Resources.BlurEffect.Parameters["width"].SetValue(vp.Width);
@@ -643,7 +640,7 @@ namespace ProjectZ
                 Resources.RoundedCornerBlurEffect.Parameters["screenHeight"].SetValue(vp.Height);
 
                 // Also prevent texture-unit-1 wrap at runtime (belt-and-suspenders).
-                GraphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
+                Graphics.GraphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
 
                 SpriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.AnisotropicClamp, null, null, Resources.RoundedCornerBlurEffect, GetMatrix);
 
@@ -849,7 +846,7 @@ namespace ProjectZ
                     }
                 #endif
 
-                    var dm = Game1.Graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
+                    var dm = Graphics.GraphicsDevice.Adapter.CurrentDisplayMode;
                     Graphics.PreferredBackBufferWidth  = dm.Width;
                     Graphics.PreferredBackBufferHeight = dm.Height;
                     Graphics.HardwareModeSwitch = true;
@@ -946,12 +943,12 @@ namespace ProjectZ
             int w = 0, h = 0;
 
             #if ANDROID
-                if (GraphicsDevice == null) return;
+                if (Graphics.GraphicsDevice == null) return;
             #endif
 
-            if (GraphicsDevice != null)
+            if (Graphics.GraphicsDevice != null)
             {
-                var pp = GraphicsDevice.PresentationParameters;
+                var pp = Graphics.GraphicsDevice.PresentationParameters;
                 w = pp.BackBufferWidth;
                 h = pp.BackBufferHeight;
             }
@@ -975,7 +972,7 @@ namespace ProjectZ
                         Graphics.PreferredBackBufferWidth  = Math.Max(w, minW);
                         Graphics.PreferredBackBufferHeight = Math.Max(h, minH);
                         Graphics.ApplyChanges();
-                        var pp = GraphicsDevice.PresentationParameters;
+                        var pp = Graphics.GraphicsDevice.PresentationParameters;
                         w = pp.BackBufferWidth > 0 ? pp.BackBufferWidth : Window.ClientBounds.Width;
                         h = pp.BackBufferHeight > 0 ? pp.BackBufferHeight : Window.ClientBounds.Height;
                     }
@@ -992,9 +989,9 @@ namespace ProjectZ
             // Pull the current actual client size.
         #if ANDROID
             int w = 0, h = 0;
-            if (GraphicsDevice != null)
+            if (Graphics.GraphicsDevice != null)
             {
-                var pp = GraphicsDevice.PresentationParameters;
+                var pp = Graphics.GraphicsDevice.PresentationParameters;
                 w = pp.BackBufferWidth;
                 h = pp.BackBufferHeight;
             }

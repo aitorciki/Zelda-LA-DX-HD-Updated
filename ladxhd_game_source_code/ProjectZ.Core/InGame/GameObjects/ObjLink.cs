@@ -4908,7 +4908,7 @@ namespace ProjectZ.InGame.GameObjects
                 (CurrentState != State.Swimming || !Map.Is2dMap))
                 return;
 
-            // Remove one powder from the inventory,
+            // Remove one arrow from the inventory,
             if (!Game1.GameManager.RemoveItem("bow", 1))
                 return;
 
