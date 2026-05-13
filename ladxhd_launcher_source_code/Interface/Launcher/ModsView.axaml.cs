@@ -65,7 +65,7 @@ public partial class ModsView : UserControl
             Config.MapsMods.ClearPath();
             Config.SoundsMods.ClearPath();
             Config.LAHDModPath.ClearPath();
-            Config.ZScripts.ClearPath();
+            Config.ZScripts.RemovePath();
         }
     }
 
