@@ -152,7 +152,7 @@ namespace ProjectZ.InGame.GameObjects
                 yield break;
 
             bool inSection = false;
-            foreach (string fileLine in File.ReadAllLines(advancedFile))
+            foreach (string fileLine in GameFS.ReadAllLines(advancedFile))
             {
                 if (fileLine.TrimStart().StartsWith("//: "))
                 {

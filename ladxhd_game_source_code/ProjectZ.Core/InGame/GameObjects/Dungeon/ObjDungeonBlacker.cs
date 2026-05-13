@@ -50,7 +50,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private string[] ParseModFile(string modFile, string mapName)
         {
             // Loop through each line of the text file.
-            foreach (string line in File.ReadAllLines(modFile))
+            foreach (string line in GameFS.ReadAllLines(modFile))
             {
                 // Ignore empty lines and comment lines.
                 if (string.IsNullOrEmpty(line) || line.Substring(0,2) == "//") 
