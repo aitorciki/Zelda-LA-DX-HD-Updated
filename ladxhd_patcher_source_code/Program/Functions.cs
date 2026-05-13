@@ -580,15 +580,19 @@ namespace LADXHD_Patcher
         private static void MoveFirstVersionSaveGames()
         {
             // Don't move saves unless it's actually v1.0.0 and a "portable.txt" doesn't exist. 
-            if (_patchFromBackup || Config.PortableTxt.TestPath())
+            if (_patchFromBackup || Config.PortableTxt.TestPath() || Config.SelectedPlatform == Platform.Android)
                 return;
 
             // Throw together some paths.
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string oldSavePath = Path.Combine(Config.BaseFolder, "SaveFiles");
             string oldSettings = Path.Combine(Config.BaseFolder, "settings");
             string newSavePath = Path.Combine(appDataPath, "Zelda_LA", "SaveFiles");
             string newSettings = Path.Combine(appDataPath, "Zelda_LA", "settings");
+
+            // Create the folder in the location.
+            string zeldaSavePath = Path.Combine(appDataPath, "Zelda_LA");
+            zeldaSavePath.CreatePath();
 
             // Move the save folder and settings to the global save path.
             oldSavePath.MovePath(newSavePath);
