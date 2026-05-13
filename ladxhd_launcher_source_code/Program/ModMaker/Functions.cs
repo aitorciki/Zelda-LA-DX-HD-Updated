@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using Avalonia.Controls;
 using static LADXHD_Launcher.VCDiff;
 
 namespace LADXHD_Launcher
@@ -166,6 +168,63 @@ namespace LADXHD_Launcher
             }
         }
 
+
+        private static void MergeLanguageFiles(string sourcePath, string destinationPath)
+        {
+            // If the source doesn't exist then skip it.
+            if (!sourcePath.TestPath())
+                return;
+
+            // Create the destination if it doesn't exist.
+            destinationPath.CreatePath(false);
+
+            // Loop through all language files in the folder.
+            foreach (string file in sourcePath.GetFiles("*.lng", true))
+            {
+                // Get the file as a file item.
+                FileItem sourceFile = new FileItem(file);
+
+                // Use the relative path to the file to get the finalized output path.
+                string relative = sourceFile.DirectoryName.Replace(sourcePath, "").TrimStart(Path.DirectorySeparatorChar);
+                string destination = Path.Combine(destinationPath, relative).CreatePath();
+
+                // Set the path to where the file should be copied.
+                string targetPath = Path.Combine(destination, sourceFile.Name);
+
+                // Create a dictionary to store the merged key-value pairs.
+                var merged = new Dictionary<string, string>();
+
+                // Load existing destination file into the dictionary.
+                if (File.Exists(targetPath))
+                {
+                    foreach (string line in File.ReadAllLines(targetPath))
+                    {
+                        // Get the separator index and skip if the line doesn't contain one.
+                        int separator = line.IndexOf(' ');
+                        if (separator <= 0 || line.TrimStart().StartsWith("//")) continue;
+
+                        // Store the key value pair in the merged dictionary.
+                        string key = line[..separator];
+                        string value = line[(separator + 1)..];
+                        merged[key] = value;
+                    }
+                }
+                // Overlay new mod values, overwriting any matching keys.
+                foreach (string line in File.ReadAllLines(sourceFile.FullName))
+                {
+                    // Get the separator index and skip if the line doesn't contain one.
+                    int separator = line.IndexOf(' ');
+                    if (separator <= 0 || line.TrimStart().StartsWith("//")) continue;
+
+                    // Store the key value pair in the merged dictionary which overwrites the old value if it exists.
+                    string key = line[..separator];
+                    string value = line[(separator + 1)..];
+                    merged[key] = value;
+                }
+                // Write the merged result.
+                File.WriteAllLines(targetPath, merged.Select(kvp => $"{kvp.Key} {kvp.Value}"));
+            }
+        }
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         DICTIONARY LOOK UP TABLE: MINIMIZES TIME SPENT IN POINTLESS LOOPS
@@ -353,7 +412,7 @@ namespace LADXHD_Launcher
         private static void ApplyPatchLoop()
         {
             // Create the output paths.
-            // Config.OutputPath.CreatePath(true);
+            Config.OutputPath.CreatePath(true);
 
             // Get all patch files found in the patches folder recursively.
             var fileCollection = Config.OutGraphicsMods.GetFiles("*.*", true);
@@ -393,10 +452,12 @@ namespace LADXHD_Launcher
             CopyModFiles(Config.OutAnimationMods, Config.AnimationMods);
             CopyModFiles(Config.OutDungeonMods, Config.DungeonMods);
             CopyModFiles(Config.OutMusicMods, Config.MusicMods);
-            CopyModFiles(Config.OutLanguageMods, Config.LanguageMods);
             CopyModFiles(Config.OutMapsMods, Config.MapsMods);
             CopyModFiles(Config.OutSoundsMods, Config.SoundsMods);
             CopyModFiles(Config.OutLAHDModPath, Config.LAHDModPath);
+
+            // Language files are merged together so it needs its own function.
+            MergeLanguageFiles(Config.OutLanguageMods, Config.LanguageMods);
 
             // Copy a "scripts.zScripts" file if it exists.
             if (Config.OutZScripts.TestPath())
