@@ -575,7 +575,8 @@ namespace ProjectZ
             Graphics.GraphicsDevice.Clear(Color.CadetBlue);
             ScreenManager.Draw(SpriteBatch);
 
-            var drawPixelGrid = GameSettings.PixelSnapping && GameSettings.PixelGrid && InProgress;
+            if (!GameSettings.OpaqueHudBg)
+                BlurImage();
 
             Graphics.GraphicsDevice.SetRenderTarget(null);
             Graphics.GraphicsDevice.Clear(Color.Black);
@@ -602,6 +603,8 @@ namespace ProjectZ
             var targetHeight = viewport.Height;
         #endif
 
+            var drawPixelGrid = GameSettings.PixelSnapping && GameSettings.PixelGrid && InProgress;
+
             // If the pixel grid is enabled, draw the grid over the game world.
             if (drawPixelGrid)
             {
@@ -617,11 +620,6 @@ namespace ProjectZ
 
             SpriteBatch.Draw(MainRenderTarget, new Rectangle(0, 0, targetWidth, targetHeight), Color.White);
             SpriteBatch.End();
-
-
-
-
-
 
             // If the blurring effect is not disabled.
             if (!GameSettings.OpaqueHudBg)
