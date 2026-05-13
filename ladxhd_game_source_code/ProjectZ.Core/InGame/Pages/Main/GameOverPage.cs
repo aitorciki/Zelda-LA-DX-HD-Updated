@@ -12,12 +12,14 @@ namespace ProjectZ.InGame.Pages
     {
         private InterfaceListLayout _pageLayout;
         private InterfaceListLayout _layout0;
+        private InterfaceImage _gameOverImage;
 
         public GameOverPage(int width, int height)
         {
             _pageLayout = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
-
             _layout0 = new InterfaceListLayout { Size = new Point(width, 75), ContentAlignment = InterfaceElement.Gravities.Bottom };
+            _gameOverImage = new InterfaceImage(Resources.GetSprite("ui game over"), Point.Zero);
+
             var layout1 = new InterfaceListLayout { Size = new Point(width - 10, 55) };
             var layout2 = new InterfaceListLayout { Size = new Point(width, 75), ContentAlignment = InterfaceElement.Gravities.Top, Selectable = true };
 
@@ -25,8 +27,7 @@ namespace ProjectZ.InGame.Pages
             _pageLayout.AddElement(layout1);
             _pageLayout.AddElement(layout2);
 
-            // yes no layout
-            _layout0.AddElement(new InterfaceImage(Resources.GetSprite("ui game over"), Point.Zero));
+            _layout0.AddElement(_gameOverImage);
             layout2.AddElement(new InterfaceButton(new Point(85, 20), Point.Zero, "gameover_continue", OnClickContinue) { Margin = new Point(2, 2) });
             layout2.AddElement(new InterfaceButton(new Point(85, 20), Point.Zero, "gameover_quit", OnClickQuit) { Margin = new Point(2, 2) });
 
@@ -35,6 +36,8 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
+            _gameOverImage.UpdateSprite(Resources.GetSprite("ui game over"));
+
             // select the "Back to Game" button
             PageLayout.Deselect(false);
             PageLayout.Select(InterfaceElement.Directions.Top, false);

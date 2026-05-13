@@ -12,8 +12,14 @@ namespace ProjectZ.InGame.Interface
         public Vector2 Origin;
         public SpriteEffects Effects;
 
-        private readonly Texture2D _sprImage;
+        private Texture2D _sprImage;
         private readonly Vector2 _drawOffset;
+
+        public void UpdateSprite(DictAtlasEntry sprite)
+        {
+            _sprImage = sprite.Texture;
+            SourceRectangle = sprite.ScaledRectangle;
+        }
 
         public InterfaceImage(DictAtlasEntry sprite, Point margin)
         {
