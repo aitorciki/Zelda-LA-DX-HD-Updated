@@ -268,7 +268,7 @@ namespace LADXHD_Migrater
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        CLEAN BUILD FILES CODE : REMOVE ALL "bin" / "obj" FOLDERS AND REMOVE PREVIOUS BUILD FOLDERS "publish" / "zelda_ladxhd_build"
+        CLEAN BUILD FILES CODE : REMOVE ALL "bin" / "obj" FOLDERS AND REMOVE PREVIOUS BUILD FOLDERS "publish" / "zelda_ladxhd_build".
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
