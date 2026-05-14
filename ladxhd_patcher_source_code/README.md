@@ -23,7 +23,6 @@ As long as everything is in the default folders of this repo, then one only need
 
 With that said, it would still be helpful to know what goes into the patcher. Lets start with the `Resources` folder.
 - **android_base.apk** : This is the APK that was built by Visual Studio when publishing, minus the assets. The publishing scripts will automatically move the updated version here, replacing the old version of this file.
-- **rcodesign.exe** : This is used to code sign the MacOS versions. The local `Name.pem` file is not included in the repo and would need to be generated manually by whoever is interested in creating a patcher.
 - **SDL2.dll** : This is needed for the Windows OpenGL build. When patching is done, it is copied to the output folder.
 - **Icon.*** : Various Icon files for different versions of the games.
 - **d3map** :  This is `dungeon_3.map` renamed. It is copied to `Data\Maps` folder after patching. There is a long story of why this needs to be done, the short version is this is a brute force method to make sure it's correct.

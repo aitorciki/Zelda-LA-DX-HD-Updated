@@ -90,7 +90,7 @@ for /r "%~dp0~Publish" %%f in (nfd.lib nfd.pdb) do (
 :: Uses a personal signing key. Users building for MacOS would need to generate their own key using "rcodesign.exe". 
 :: This can be done with command: rcodesign generate-self-signed-certificate --person-name NAME > \path\to\NAME.pem
 
-set CodeSignApp="%Root%\Resources\rcodesign.exe"
+set CodeSignApp="%Root%\publish\rcodesign.exe"
 set CodeSignKey="%USERPROFILE%\LADXHD\Bighead.pem"
 
 echo.
