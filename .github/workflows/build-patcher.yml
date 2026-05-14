@@ -51,7 +51,7 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          VERSION=$(dotnet msbuild ladxhd_game_source_code/ProjectZ.Desktop/ProjectZ.Desktop.csproj -getProperty:Version)
+          VERSION=$(dotnet msbuild ladxhd_patcher_source_code/LADXHD_Patcher.csproj -getProperty:Version)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Publish
