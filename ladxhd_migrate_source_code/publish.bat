@@ -1,7 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
-cd /d "%~dp0"
+for %%I in ("%~dp0.") do set "Root=%%~fI"
+cd /d "%Root%"
 Title LADXHD: Migration Tool Publish Script
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -43,12 +44,25 @@ if %errorlevel% neq 0 ( echo MacOS Arm64 build failed! & pause & exit /b 1 )
 
 echo.
 echo Renaming output executables...
-cd %cd%\~Publish
-for /r %%f in (Migrater.*) do (
-    if /I "%%~nf"=="Migrater" (
-        echo Renaming: "%%f" to "LADXHD_Migrater%%~xf"
-        ren "%%f" "LADXHD_Migrater%%~xf"
-    )
+if exist "%Root%\~Publish\Windows\Migrater.exe" (
+    echo Renaming: "%Root%\~Publish\Windows\Migrater.exe" to "LADXHD_Migrater.exe"
+    ren "%Root%\~Publish\Windows\Migrater.exe" "LADXHD_Migrater.exe"
+)
+if exist "%Root%\~Publish\Linux-x64\Migrater" (
+    echo Renaming: "%Root%\~Publish\Linux-x64\Migrater" to "LADXHD_Migrater"
+    ren "%Root%\~Publish\Linux-x64\Migrater" "LADXHD_Migrater"
+)
+if exist "%Root%\~Publish\Linux-arm64\Migrater" (
+    echo Renaming: "%Root%\~Publish\Linux-arm64\Migrater" to "LADXHD_Migrater"
+    ren "%Root%\~Publish\Linux-arm64\Migrater" "LADXHD_Migrater"
+)
+if exist "%Root%\~Publish\macOS-x64\Migrater.app" (
+    echo Renaming: "%Root%\~Publish\macOS-x64\Migrater.app" to "LADXHD_Migrater.app"
+    ren "%Root%\~Publish\macOS-x64\Migrater.app" "LADXHD_Migrater.app"
+)
+if exist "%Root%\~Publish\macOS-arm64\Migrater.app" (
+    echo Renaming: "%Root%\~Publish\macOS-arm64\Migrater.app" to "LADXHD_Migrater.app"
+    ren "%Root%\~Publish\macOS-arm64\Migrater.app" "LADXHD_Migrater.app"
 )
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -63,6 +77,23 @@ for /r "%~dp0~Publish" %%f in (nfd.lib nfd.pdb) do (
     del "%%f"
   )
 )
+
+::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+:: Sign the MacOS Launcher
+::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+:: Uses a personal signing key. Users building for MacOS would need to generate their own key using "rcodesign.exe". 
+:: This can be done with command: rcodesign generate-self-signed-certificate --person-name NAME > \path\to\NAME.pem
+
+set CodeSignApp="%Root%\publish\rcodesign.exe"
+set CodeSignKey="%USERPROFILE%\LADXHD\Bighead.pem"
+
+echo.
+echo Signing MacOS-x64 executable...
+%CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-x64\LADXHD_Migrater.app\Contents\MacOS\Migrater"
+
+echo.
+echo Signing MacOS-Arm64 executable...
+%CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-arm64\LADXHD_Migrater.app\Contents\MacOS\Migrater"
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Finish
