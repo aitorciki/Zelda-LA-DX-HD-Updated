@@ -3,4 +3,9 @@
     <GameVersion>1.8.1</GameVersion>
     <Version>$(GameVersion)</Version>
   </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.Contains('android'))">
+    <ApplicationDisplayVersion>$(GameVersion)</ApplicationDisplayVersion>
+    <ApplicationVersion>$([System.String]::Copy('$(GameVersion)').Replace('.',''))</ApplicationVersion>
+  </PropertyGroup>
 </Project>
