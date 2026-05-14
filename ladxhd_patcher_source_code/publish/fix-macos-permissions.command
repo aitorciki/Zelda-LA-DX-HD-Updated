@@ -9,20 +9,20 @@ Link's Awakening DX HD - macOS Permissions Fix
 
 EOF
 
-PATCHER_FILE=$(find . -name "LADXHD.Patcher.v*" 2>/dev/null | head -n 1)
+PATCHER_APP=$(find . -name "LADXHD.Patcher.v*.app" 2>/dev/null | head -n 1)
 
-if [ -z "$PATCHER_FILE" ]; then
-    echo "Error: Could not find a file starting with 'LADXHD.Patcher.v' in this folder."
+if [ -z "$PATCHER_APP" ]; then
+    echo "Error: Could not find a file matching 'LADXHD.Patcher.v*.app' in this folder."
     exit 1
 fi
 
-echo "Found: $PATCHER_FILE"
+echo "Found: $PATCHER_APP"
 
 echo "Removing quarantine flag..."
-xattr -d com.apple.quarantine "$PATCHER_FILE" ./*.dylib 2>/dev/null
+xattr -dr com.apple.quarantine "$PATCHER_APP" 2>/dev/null
 
 echo "Setting execution permissions..."
-chmod +x "$PATCHER_FILE"
+chmod +x "$PATCHER_APP/Contents/MacOS/Patcher"
 
 printf "\nDone! You can now run the patcher.\n\n"
 

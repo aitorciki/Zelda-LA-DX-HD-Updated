@@ -55,6 +55,19 @@ namespace LADXHD_Patcher
         public static void Initialize()
         {
             BaseFolder    = AppContext.BaseDirectory;
+
+#if MACOS
+            // When running inside a .app bundle the binary lives at
+            // Foo.app/Contents/MacOS/ — navigate up to the folder containing
+            // the .app so companion files (game exe, Data/, Mods/, etc.) are reachable.
+            var contentsDir = Path.GetFullPath(Path.Combine(BaseFolder, ".."));
+            if (Path.GetFileName(contentsDir) == "Contents" &&
+                File.Exists(Path.Combine(contentsDir, "Info.plist")))
+            {
+                BaseFolder = Path.GetFullPath(Path.Combine(contentsDir, "..", ".."));
+            }
+#endif
+
             TempFolder    = Path.Combine(BaseFolder, "~temp");
             ZeldaEXE      = Path.Combine(BaseFolder, "Link's Awakening DX HD.exe");
             BackupPath    = Path.Combine(BaseFolder, "Data", "Backup");
