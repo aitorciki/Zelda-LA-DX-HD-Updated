@@ -67,8 +67,8 @@ namespace ProjectZ.InGame.Overlay
         private int _currentLine;
         private int _currentLineAddition;
 
-        private const int MaxCharacters = 26;
-        private const int MaxLines = 3;
+        private int MaxCharacters;
+        private int MaxLines;
 
         private float _choicePercentage;
         private int _currentChoiceSelection;
@@ -95,6 +95,8 @@ namespace ProjectZ.InGame.Overlay
 
         // LAHDMod File Values 
         private float textbox_scale = 0;
+        private int   max_textbox_characters = 26;
+        private int   max_textbox_lines = 3;
 
         private int   textbox_font_color_red = 248;
         private int   textbox_font_color_grn = 248;
@@ -104,12 +106,14 @@ namespace ProjectZ.InGame.Overlay
         private int   textbox_background_grn = 0;
         private int   textbox_background_blu = 0;
         private float textbox_background_alpha = 0.85f;
-
         public TextboxOverlay()
         {
             // If a mod file exists load the values from it.
             string modFile = Path.Combine(Values.PathLAHDMods, "TextboxOverlay.lahdmod");
             ModFile.Parse(modFile, this);
+
+            MaxCharacters = max_textbox_characters;
+            MaxLines = max_textbox_lines;
 
             _fontColor = new Color(textbox_font_color_red, textbox_font_color_grn, textbox_font_color_blu);
             _backgroundColor = new Color(textbox_background_red, textbox_background_grn, textbox_background_blu) * textbox_background_alpha;
