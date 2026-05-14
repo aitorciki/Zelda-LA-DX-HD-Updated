@@ -1,0 +1,79 @@
+name: Build Migrater
+
+on:
+  push:
+    paths:
+      - 'ladxhd_migrate_source_code/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      matrix:
+        include:
+          - profile: macOS-arm64
+            rid: osx-arm64
+            runner: macos-latest
+            ext: '.app'
+          - profile: macOS-x64
+            rid: osx-x64
+            runner: macos-latest
+            ext: '.app'
+          - profile: Linux-arm64
+            rid: linux-arm64
+            runner: ubuntu-latest
+            ext: ''
+          - profile: Linux-x64
+            rid: linux-x64
+            runner: ubuntu-latest
+            ext: ''
+          - profile: Windows
+            rid: win-x64
+            runner: windows-latest
+            ext: '.exe'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        working-directory: ladxhd_migrate_source_code
+        run: dotnet restore LADXHD_Migrater.csproj
+
+      - name: Publish
+        shell: bash
+        working-directory: ladxhd_migrate_source_code
+        run: |
+          dotnet publish LADXHD_Migrater.csproj \
+            -r ${{ matrix.rid }} \
+            -p:PublishProfile=${{ matrix.profile }}
+
+      - name: Rename migrater file
+        shell: bash
+        run: |
+          mv ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/Migrater${{ matrix.ext }} \
+            ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD_Migrater${{ matrix.ext }}
+
+      - name: Sign binary (macOS)
+        if: runner.os == 'macOS'
+        env:
+          APP_PATH: ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD_Migrater${{ matrix.ext }}
+        run: |
+          codesign --force --deep --sign - "$APP_PATH"
+          codesign --verify --verbose "$APP_PATH"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: LADXHD_Migrater_${{ matrix.profile }}-${{ github.run_id }}
+          path: |
+            ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/
+            !ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/nfd.lib
+            !ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/nfd.pdb
