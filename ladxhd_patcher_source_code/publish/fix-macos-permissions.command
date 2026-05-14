@@ -6,6 +6,7 @@ cat <<EOF
 ----------------------------------------------
 Link's Awakening DX HD - macOS Permissions Fix
 ----------------------------------------------
+
 EOF
 
 PATCHER_FILE=$(find . -name "LADXHD.Patcher.v*" 2>/dev/null | head -n 1)
@@ -16,10 +17,13 @@ if [ -z "$PATCHER_FILE" ]; then
 fi
 
 echo "Found: $PATCHER_FILE"
-echo "Removing quarantine flag and setting execution permissions..."
 
+echo "Removing quarantine flag..."
 xattr -d com.apple.quarantine "$PATCHER_FILE" ./*.dylib 2>/dev/null
+
+echo "Setting execution permissions..."
 chmod +x "$PATCHER_FILE"
 
-echo "Done! You can now run the patcher."
+printf "\nDone! You can now run the patcher.\n\n"
+
 read -rp "Press Enter to exit..."

@@ -79,8 +79,8 @@ jobs:
       - name: Copy fix-permissions.sh (macOS)
         if: runner.os == 'macOS'
         run: |
-          cp ladxhd_patcher_source_code/fix-macos-permissions.sh \
-            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/fix-permissions.sh
+          cp ladxhd_patcher_source_code/publish/fix-macos-permissions.command \
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/fix-permissions.command
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6

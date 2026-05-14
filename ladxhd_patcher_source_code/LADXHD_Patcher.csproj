@@ -65,7 +65,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="permissions.command" />
     <None Remove="publish.bat" />
     <None Remove="vcdiff.exe" />
   </ItemGroup>

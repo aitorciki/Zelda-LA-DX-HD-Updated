@@ -83,12 +83,12 @@ set CodeSignKey="%USERPROFILE%\LADXHD\Bighead.pem"
 echo.
 echo Signing MacOS-x64 executable...
 %CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-x64\LADXHD.Patcher.v%GameVersion%"
-copy "%Root%\fix-macos-permissions.sh" "%Root%\~Publish\macOS-x64\fix-permissions.sh"
+copy "%Root%\publish\fix-macos-permissions.command" "%Root%\~Publish\macOS-x64\fix-permissions.command"
 
 echo.
 echo Signing MacOS-Arm64 executable...
 %CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-arm64\LADXHD.Patcher.v%GameVersion%"
-copy "%Root%\fix-macos-permissions.sh" "%Root%\~Publish\macOS-x64\fix-permissions.sh"
+copy "%Root%\publish\fix-macos-permissions.command" "%Root%\~Publish\macOS-arm64\fix-permissions.command"
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Finish
