@@ -29,6 +29,19 @@ namespace LADXHD_Migrater
         public static void Initialize()
         {
             AppPath         = AppContext.BaseDirectory;
+
+#if MACOS
+            // When running inside a .app bundle the binary lives at
+            // Foo.app/Contents/MacOS/ — navigate up to the folder containing
+            // the .app so companion files are reachable.
+            var contentsDir = Path.GetFullPath(Path.Combine(AppPath, ".."));
+            if (Path.GetFileName(contentsDir) == "Contents" &&
+                File.Exists(Path.Combine(contentsDir, "Info.plist")))
+            {
+                AppPath = Path.GetFullPath(Path.Combine(contentsDir, "..", "..")) + Path.DirectorySeparatorChar;
+            }
+#endif
+
             BaseFolder      = Path.GetDirectoryName(AppPath);
             Patches         = Path.Combine(BaseFolder, "assets_patches");
             Orig_Content    = Path.Combine(BaseFolder, "assets_original", "Content");

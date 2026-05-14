@@ -16,11 +16,11 @@ jobs:
           - profile: macOS-arm64
             rid: osx-arm64
             runner: macos-latest
-            ext: ''
+            ext: '.app'
           - profile: macOS-x64
             rid: osx-x64
             runner: macos-latest
-            ext: ''
+            ext: '.app'
           - profile: Linux-arm64
             rid: linux-arm64
             runner: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          VERSION=$(dotnet msbuild ladxhd_game_source_code/ProjectZ.Desktop/ProjectZ.Desktop.csproj -getProperty:Version)
+          VERSION=$(dotnet msbuild ladxhd_patcher_source_code/LADXHD_Patcher.csproj -getProperty:Version)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Publish
@@ -71,7 +71,7 @@ jobs:
       - name: Sign binary (macOS)
         if: runner.os == 'macOS'
         env:
-          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}
+          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
         run: |
           codesign --force --deep --sign - "$APP_PATH"
           codesign --verify --verbose "$APP_PATH"
@@ -79,8 +79,8 @@ jobs:
       - name: Copy fix-permissions.sh (macOS)
         if: runner.os == 'macOS'
         run: |
-          cp ladxhd_patcher_source_code/fix-macos-permissions.sh \
-            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/fix-permissions.sh
+          cp ladxhd_patcher_source_code/publish/fix-macos-permissions.command \
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/fix-permissions.command
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6

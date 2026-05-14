@@ -50,12 +50,25 @@ if %errorlevel% neq 0 ( echo MacOS Arm64 build failed! & pause & exit /b 1 )
 
 echo.
 echo Renaming output executables...
-cd %cd%\~Publish
-for /r %%f in (Patcher.*) do (
-    if /I "%%~nf"=="Patcher" (
-        echo Renaming: "%%f" to "LADXHD.Patcher.v%GameVersion%%%~xf"
-        ren "%%f" "LADXHD.Patcher.v%GameVersion%%%~xf"
-    )
+if exist "%Root%\~Publish\Windows\Patcher.exe" (
+    echo Renaming: "%Root%\~Publish\Windows\Patcher.exe" to "LADXHD.Patcher.v%GameVersion%.exe"
+    ren "%Root%\~Publish\Windows\Patcher.exe" "LADXHD.Patcher.v%GameVersion%.exe"
+)
+if exist "%Root%\~Publish\Linux-x64\Patcher" (
+    echo Renaming: "%Root%\~Publish\Linux-x64\Patcher" to "LADXHD.Patcher.v%GameVersion%"
+    ren "%Root%\~Publish\Linux-x64\Patcher" "LADXHD.Patcher.v%GameVersion%"
+)
+if exist "%Root%\~Publish\Linux-arm64\Patcher" (
+    echo Renaming: "%Root%\~Publish\Linux-arm64\Patcher" to "LADXHD.Patcher.v%GameVersion%"
+    ren "%Root%\~Publish\Linux-arm64\Patcher" "LADXHD.Patcher.v%GameVersion%"
+)
+if exist "%Root%\~Publish\macOS-x64\Patcher.app" (
+    echo Renaming: "%Root%\~Publish\macOS-x64\Patcher.app" to "LADXHD.Patcher.v%GameVersion%.app"
+    ren "%Root%\~Publish\macOS-x64\Patcher.app" "LADXHD.Patcher.v%GameVersion%.app"
+)
+if exist "%Root%\~Publish\macOS-arm64\Patcher.app" (
+    echo Renaming: "%Root%\~Publish\macOS-arm64\Patcher.app" to "LADXHD.Patcher.v%GameVersion%.app"
+    ren "%Root%\~Publish\macOS-arm64\Patcher.app" "LADXHD.Patcher.v%GameVersion%.app"
 )
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -77,18 +90,18 @@ for /r "%~dp0~Publish" %%f in (nfd.lib nfd.pdb) do (
 :: Uses a personal signing key. Users building for MacOS would need to generate their own key using "rcodesign.exe". 
 :: This can be done with command: rcodesign generate-self-signed-certificate --person-name NAME > \path\to\NAME.pem
 
-set CodeSignApp="%Root%\Resources\rcodesign.exe"
+set CodeSignApp="%Root%\publish\rcodesign.exe"
 set CodeSignKey="%USERPROFILE%\LADXHD\Bighead.pem"
 
 echo.
 echo Signing MacOS-x64 executable...
-%CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-x64\LADXHD.Patcher.v%GameVersion%"
-copy "%Root%\fix-macos-permissions.sh" "%Root%\~Publish\macOS-x64\fix-permissions.sh"
+%CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-x64\LADXHD.Patcher.v%GameVersion%.app\Contents\MacOS\Patcher"
+copy "%Root%\publish\fix-macos-permissions.command" "%Root%\~Publish\macOS-x64\fix-permissions.command"
 
 echo.
 echo Signing MacOS-Arm64 executable...
-%CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-arm64\LADXHD.Patcher.v%GameVersion%"
-copy "%Root%\fix-macos-permissions.sh" "%Root%\~Publish\macOS-x64\fix-permissions.sh"
+%CodeSignApp% sign --pem-source %CodeSignKey% "%Root%\~Publish\macOS-arm64\LADXHD.Patcher.v%GameVersion%.app\Contents\MacOS\Patcher"
+copy "%Root%\publish\fix-macos-permissions.command" "%Root%\~Publish\macOS-arm64\fix-permissions.command"
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Finish
