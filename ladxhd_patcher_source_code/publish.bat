@@ -55,12 +55,12 @@ if exist "%Root%\~Publish\Windows\Patcher.exe" (
     ren "%Root%\~Publish\Windows\Patcher.exe" "LADXHD.Patcher.v%GameVersion%.exe"
 )
 if exist "%Root%\~Publish\Linux-x64\Patcher" (
-    echo Renaming: "%Root%\~Publish\Linux-x64\Patcher" to "LADXHD.Patcher.v%GameVersion%"
-    ren "%Root%\~Publish\Linux-x64\Patcher" "LADXHD.Patcher.v%GameVersion%"
+    echo Renaming: "%Root%\~Publish\Linux-x64\Patcher" to "LADXHD.Patcher.v%GameVersion%.bin"
+    ren "%Root%\~Publish\Linux-x64\Patcher" "LADXHD.Patcher.v%GameVersion%.bin"
 )
 if exist "%Root%\~Publish\Linux-arm64\Patcher" (
-    echo Renaming: "%Root%\~Publish\Linux-arm64\Patcher" to "LADXHD.Patcher.v%GameVersion%"
-    ren "%Root%\~Publish\Linux-arm64\Patcher" "LADXHD.Patcher.v%GameVersion%"
+    echo Renaming: "%Root%\~Publish\Linux-arm64\Patcher" to "LADXHD.Patcher.v%GameVersion%.bin"
+    ren "%Root%\~Publish\Linux-arm64\Patcher" "LADXHD.Patcher.v%GameVersion%.bin"
 )
 if exist "%Root%\~Publish\macOS-x64\Patcher.app" (
     echo Renaming: "%Root%\~Publish\macOS-x64\Patcher.app" to "LADXHD.Patcher.v%GameVersion%.app"

@@ -16,22 +16,27 @@ jobs:
           - profile: macOS-arm64
             rid: osx-arm64
             runner: macos-latest
+            ext_src: '.app'
             ext: '.app'
           - profile: macOS-x64
             rid: osx-x64
             runner: macos-latest
+            ext_src: '.app'
             ext: '.app'
           - profile: Linux-arm64
             rid: linux-arm64
             runner: ubuntu-latest
-            ext: ''
+            ext_src: ''
+            ext: '.bin'
           - profile: Linux-x64
             rid: linux-x64
             runner: ubuntu-latest
-            ext: ''
+            ext_src: ''
+            ext: '.bin'
           - profile: Windows
             rid: win-x64
             runner: windows-latest
+            ext_src: '.exe'
             ext: '.exe'
 
     steps:
@@ -65,7 +70,7 @@ jobs:
       - name: Rename patcher file
         shell: bash
         run: |
-          mv ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/Patcher${{ matrix.ext }} \
+          mv ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/Patcher${{ matrix.ext_src }} \
             ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
 
       - name: Sign binary (macOS)

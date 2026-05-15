@@ -49,12 +49,12 @@ if exist "%Root%\~Publish\Windows\Migrater.exe" (
     ren "%Root%\~Publish\Windows\Migrater.exe" "LADXHD_Migrater.exe"
 )
 if exist "%Root%\~Publish\Linux-x64\Migrater" (
-    echo Renaming: "%Root%\~Publish\Linux-x64\Migrater" to "LADXHD_Migrater"
-    ren "%Root%\~Publish\Linux-x64\Migrater" "LADXHD_Migrater"
+    echo Renaming: "%Root%\~Publish\Linux-x64\Migrater" to "LADXHD_Migrater.bin"
+    ren "%Root%\~Publish\Linux-x64\Migrater" "LADXHD_Migrater.bin"
 )
 if exist "%Root%\~Publish\Linux-arm64\Migrater" (
-    echo Renaming: "%Root%\~Publish\Linux-arm64\Migrater" to "LADXHD_Migrater"
-    ren "%Root%\~Publish\Linux-arm64\Migrater" "LADXHD_Migrater"
+    echo Renaming: "%Root%\~Publish\Linux-arm64\Migrater" to "LADXHD_Migrater.bin"
+    ren "%Root%\~Publish\Linux-arm64\Migrater" "LADXHD_Migrater.bin"
 )
 if exist "%Root%\~Publish\macOS-x64\Migrater.app" (
     echo Renaming: "%Root%\~Publish\macOS-x64\Migrater.app" to "LADXHD_Migrater.app"
