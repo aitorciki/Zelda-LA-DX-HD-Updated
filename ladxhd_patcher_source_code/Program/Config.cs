@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using static LADXHD_Patcher.Functions;
 
@@ -7,7 +8,9 @@ namespace LADXHD_Patcher
 {
     public class Config
     {
-        public const string Version = "1.8.1";
+        public static string Version => Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion.Split('+')[0] ?? "unknown";
 
         public static string BaseFolder;
         public static string TempFolder;
