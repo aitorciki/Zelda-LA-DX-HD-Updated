@@ -1,5 +1,21 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.8.2**
+### The "Aiming for Stability" Update
+  * This version mostly focuses on stability as the last few versions had major breaking changes.
+  * Make the "Pixel Grid Shader" option work on Android. Like desktop, it requires "Pixel Snapping".
+  * Importing mods with language files will merge them and keep the most recent lines that conflict.
+  * Implemented new tilesets for caves, houses, and reworked maps that use them (credit @GLEclipseGaming).
+  * Translate the "Print" text in the Spanish Photo album textures (credit @IPeluchito).
+  * Separate sword sprites from "link0.png" to "weapons.png" so modders can easily modify the sword.
+  * Modify grass hitbox to be closer to original game. This mostly affects the "Classic Sword" option.
+  * Fix Android crashing when building the APK with some mods that included "ObjDungeonBlacker.lahdmod".
+  * Fix the "Game Over" texture to change when changing language. It only worked when first loaded.
+  * Fix the Launcher "Mods" options "HUD Overlay" and "Link Tunic Colors" to actually work in-game.
+  * Fix the Launcher crashing when using "Remove All Mods" when a custom "scripts.zScript" was present. 
+  * Fix the Patcher to move v1.0.0 save files to the global save directory when applying a patch.
+  * Fix the Patcher to not try to move v1.0.0 save files when generating an Android APK file.
+
 ## **v1.8.1**
 ### The "Next Generation Tooling" Update
   * This update was mainly a focus on updating the tooling, but also comes with the usual bug fixes.

@@ -64,7 +64,7 @@
 $OldGamePath = "H:\Projects\Zelda Link's Awakening\original"
 $SevenZipExe = "C:\Program Files\7-Zip\7z.exe"
 $PubLauncher = $true
-$MakePatcher = $true
+$MakePatcher = $false
 
 $CreateWinDX = $true
 $CreateWinGL = $true

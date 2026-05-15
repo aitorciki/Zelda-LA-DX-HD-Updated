@@ -22,7 +22,7 @@ The game can be patched to port to Windows (DX11), Windows (OpenGL), Android, an
 
 I have compiled all this information into a wiki page here: [Building / Contributing](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/wiki/Building-&-Contributing).
 
-## Patching v1.0.0 (or v1.1.4+) to v1.8.1.
+## Patching v1.0.0 (or v1.1.4+) to v1.8.2.
 
 To download the latest update, there is a patcher on the [Releases](https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated/releases) page.<br>
 If you wish to build the game yourself, see **Personal Build / Publishing**.
