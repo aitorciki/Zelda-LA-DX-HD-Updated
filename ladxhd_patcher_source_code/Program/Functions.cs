@@ -303,6 +303,15 @@ namespace LADXHD_Patcher
                     if (excludeFolders != null && excludeFolders.Contains(subDir.Name))
                         continue;
 
+                    // Preserve symlinks rather than copying their contents.
+                    if (subDir.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                    {
+                        string? linkTarget = subDir.LinkTarget;
+                        if (linkTarget != null)
+                            Directory.CreateSymbolicLink(Path.Combine(destinationDir, subDir.Name), linkTarget);
+                        continue;
+                    }
+
                     string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
                     CopyDirectory(subDir.FullName, newDestinationDir, true, excludeFolders);
                 }
@@ -370,10 +379,10 @@ namespace LADXHD_Patcher
                     File.Copy(dylibPath, Path.Combine(macOSPath, dylib), true);
             }
 
-            // Copy Data (excluding Backup), Content, and Mods
+            // Copy Data, Content, and Mods
             string dataSrc = Path.Combine(baseFolder, "Data");
             if (Directory.Exists(dataSrc))
-                CopyDirectory(dataSrc, Path.Combine(macOSPath, "Data"), true, new[] { "Backup" });
+                CopyDirectory(dataSrc, Path.Combine(macOSPath, "Data"), true, null);
 
             string contentSrc = Path.Combine(baseFolder, "Content");
             if (Directory.Exists(contentSrc))
