@@ -379,10 +379,10 @@ namespace LADXHD_Patcher
                     File.Copy(dylibPath, Path.Combine(macOSPath, dylib), true);
             }
 
-            // Copy Data (excluding Backup), Content, and Mods
+            // Copy Data, Content, and Mods
             string dataSrc = Path.Combine(baseFolder, "Data");
             if (Directory.Exists(dataSrc))
-                CopyDirectory(dataSrc, Path.Combine(macOSPath, "Data"), true, new[] { "Backup" });
+                CopyDirectory(dataSrc, Path.Combine(macOSPath, "Data"), true, null);
 
             string contentSrc = Path.Combine(baseFolder, "Content");
             if (Directory.Exists(contentSrc))
