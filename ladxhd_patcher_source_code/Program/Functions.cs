@@ -303,6 +303,15 @@ namespace LADXHD_Patcher
                     if (excludeFolders != null && excludeFolders.Contains(subDir.Name))
                         continue;
 
+                    // Preserve symlinks rather than copying their contents.
+                    if (subDir.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                    {
+                        string? linkTarget = subDir.LinkTarget;
+                        if (linkTarget != null)
+                            Directory.CreateSymbolicLink(Path.Combine(destinationDir, subDir.Name), linkTarget);
+                        continue;
+                    }
+
                     string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
                     CopyDirectory(subDir.FullName, newDestinationDir, true, excludeFolders);
                 }
