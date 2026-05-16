@@ -51,6 +51,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\shared\Mono.Options.cs" Link="Imported\Mono.Options.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaXaml Remove="Patches\**" />
     <AvaloniaXaml Remove="~Publish\**" />
     <Compile Remove="Patches\**" />

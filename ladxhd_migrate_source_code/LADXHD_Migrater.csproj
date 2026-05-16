@@ -47,6 +47,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\shared\Mono.Options.cs" Link="Imported\Mono.Options.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
 
