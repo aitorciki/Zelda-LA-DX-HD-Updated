@@ -34,16 +34,21 @@ namespace LADXHD_Migrater
         public static void RemoveJunkMapFiles()
         {
             string mapsPath = Path.Combine(Config.Update_Data, "Maps");
+            string dungeonPath = Path.Combine(Config.Update_Data, "Dungeon");
 
-            foreach (string file in miniMapData)
-                Path.Combine(Config.Update_Data, "Dungeon", file).RemovePath();
+            if (dungeonPath.TestPath(true))
+                foreach (string file in miniMapData)
+                    Path.Combine(dungeonPath, file).RemovePath();
 
-            foreach (string file in removeMaps)
-                Path.Combine(mapsPath, file).RemovePath();
+            if (mapsPath.TestPath(true))
+            {
+                foreach (string file in removeMaps)
+                    Path.Combine(mapsPath, file).RemovePath();
 
-            foreach (string pattern in removeMapPatterns)
-                foreach (string file in mapsPath.GetFiles(pattern))
-                    file.RemovePath();
+                foreach (string pattern in removeMapPatterns)
+                    foreach (string file in mapsPath.GetFiles(pattern))
+                        file.RemovePath();
+            }
         }
     }
 }
