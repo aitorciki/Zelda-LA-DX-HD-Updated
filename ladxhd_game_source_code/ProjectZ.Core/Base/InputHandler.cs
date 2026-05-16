@@ -46,6 +46,8 @@ namespace ProjectZ.Base
 
     public class InputHandler : GameComponent
     {
+        public const int MaxGamePads = 4;
+
         public static KeyboardState KeyboardState => _keyboardState;
         public static KeyboardState LastKeyboardState => _lastKeyboardState;
         public static MouseState MouseState => _mouseState;
@@ -56,6 +58,9 @@ namespace ProjectZ.Base
 
         private static MouseState _mouseState;
         private static MouseState _lastMouseState;
+
+        private static readonly GamePadState[] _gamePadStates = new GamePadState[MaxGamePads];
+        private static readonly GamePadState[] _lastGamePadStates = new GamePadState[MaxGamePads];
 
         private static GamePadState _gamePadState;
         private static GamePadState _lastGamePadState;
@@ -71,6 +76,15 @@ namespace ProjectZ.Base
         public static GamePadState GamePadState => _gamePadState;
         public static GamePadState LastGamePadState => _lastGamePadState;
 
+        private static readonly Buttons[] _digitalButtons = new[]
+        {
+            Buttons.A, Buttons.B, Buttons.X, Buttons.Y,
+            Buttons.Back, Buttons.Start, Buttons.BigButton,
+            Buttons.LeftShoulder, Buttons.RightShoulder,
+            Buttons.LeftStick, Buttons.RightStick,
+            Buttons.DPadUp, Buttons.DPadDown, Buttons.DPadLeft, Buttons.DPadRight
+        };
+
     #if ANDROID
         private static TouchCollection _touchState;
         private static TouchCollection _lastTouchState;
@@ -85,11 +99,11 @@ namespace ProjectZ.Base
 
         private const float TriggerPressThreshold = 0.5f;
 
-        public InputHandler(Game game)
-            : base(game)
+        public InputHandler(Game game) : base(game)
         {
             // Rather than using a predefined alphabet which limits which characters the user is
             // allowed to type for a name, we capture the input and filter out invalid chars later.
+
         #if !ANDROID
             Game.Window.TextInput += OnTextInput;
         #endif
@@ -113,23 +127,87 @@ namespace ProjectZ.Base
             _touchState = TouchPanel.GetState();
         #endif
 
+            for (int i = 0; i < MaxGamePads; i++)
+            {
+                _lastGamePadStates[i] = _gamePadStates[i];
+                _gamePadStates[i] = GamePad.GetState(i);
+            }
             DetectGamePad();
 
             _lastGamePadState = _gamePadState;
-            _gamePadState = GamePad.GetState(_gamePadIndex);
+            _gamePadState = BuildMergedState(_gamePadStates);
 
             // Prevents input when Window is in the background (do we really want this?).
             if (!Game1.WasActive)
                 ResetInputState();
         }
 
+        private static GamePadState BuildMergedState(GamePadState[] states)
+        {
+            bool anyConnected = false;
+
+            Vector2 bestLeft = Vector2.Zero;
+            float bestLeftMag = 0f;
+            Vector2 bestRight = Vector2.Zero;
+            float bestRightMag = 0f;
+
+            float leftTrig = 0f;
+            float rightTrig = 0f;
+
+            Buttons merged = 0;
+
+            bool dUp = false, dDown = false, dLeft = false, dRight = false;
+
+            for (int i = 0; i < states.Length; i++)
+            {
+                var s = states[i];
+                if (!s.IsConnected)
+                    continue;
+
+                anyConnected = true;
+
+                var l = s.ThumbSticks.Left;
+                float lm = l.LengthSquared();
+                if (lm > bestLeftMag) { bestLeftMag = lm; bestLeft = l; }
+
+                var r = s.ThumbSticks.Right;
+                float rm = r.LengthSquared();
+                if (rm > bestRightMag) { bestRightMag = rm; bestRight = r; }
+
+                if (s.Triggers.Left  > leftTrig)  leftTrig  = s.Triggers.Left;
+                if (s.Triggers.Right > rightTrig) rightTrig = s.Triggers.Right;
+
+                for (int b = 0; b < _digitalButtons.Length; b++)
+                {
+                    var btn = _digitalButtons[b];
+                    if (s.IsButtonDown(btn))
+                        merged |= btn;
+                }
+                if (s.DPad.Up    == ButtonState.Pressed) dUp    = true;
+                if (s.DPad.Down  == ButtonState.Pressed) dDown  = true;
+                if (s.DPad.Left  == ButtonState.Pressed) dLeft  = true;
+                if (s.DPad.Right == ButtonState.Pressed) dRight = true;
+            }
+
+            if (!anyConnected)
+                return default;
+
+            return new GamePadState(
+                new GamePadThumbSticks(bestLeft, bestRight),
+                new GamePadTriggers(leftTrig, rightTrig),
+                new GamePadButtons(merged),
+                new GamePadDPad(
+                    dUp    ? ButtonState.Pressed : ButtonState.Released,
+                    dDown  ? ButtonState.Pressed : ButtonState.Released,
+                    dLeft  ? ButtonState.Pressed : ButtonState.Released,
+                    dRight ? ButtonState.Pressed : ButtonState.Released));
+        }
+
         public static void DetectGamePad()
         {
-            // Try 0..3 and pick the first connected pad.
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < MaxGamePads; i++)
             {
-                var st = GamePad.GetState(i);
-                if (st.IsConnected)
+                if (_gamePadStates[i].IsConnected)
                 {
                     _gamePadIndex = i;
                     return;
@@ -146,6 +224,9 @@ namespace ProjectZ.Base
             _lastKeyboardState = _keyboardState;
             _lastMouseState = _mouseState;
             _lastGamePadState = _gamePadState;
+
+            for (int i = 0; i < MaxGamePads; i++)
+                _lastGamePadStates[i] = _gamePadStates[i];
 
         #if ANDROID
             _lastTouchState = _touchState;
