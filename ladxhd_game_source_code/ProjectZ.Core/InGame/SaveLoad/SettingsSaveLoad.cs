@@ -20,6 +20,7 @@ namespace ProjectZ.InGame.SaveLoad
             GameSettings.StoreSavePos = saveManager.GetBool("StoreSavePos", GameSettings.StoreSavePos);
             GameSettings.LastSavePos = saveManager.GetInt("LastSavePos", GameSettings.LastSavePos);
             GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
+            GameSettings.SharedStorage = saveManager.GetBool("SharedStorage", GameSettings.SharedStorage);
             GameSettings.ItemsOnRight = saveManager.GetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             GameSettings.EpilepsySafe = saveManager.GetBool("EpilepsySafe", GameSettings.EpilepsySafe);
 
@@ -124,6 +125,7 @@ namespace ProjectZ.InGame.SaveLoad
             saveManager.SetBool("StoreSavePos", GameSettings.StoreSavePos);
             saveManager.SetInt("LastSavePos", GameSettings.LastSavePos);
             saveManager.SetBool("Autosave", GameSettings.Autosave);
+            saveManager.SetBool("SharedStorage", GameSettings.SharedStorage);
             saveManager.SetBool("ItemsOnRight", GameSettings.ItemsOnRight);
             saveManager.SetBool("EpilepsySafe", GameSettings.EpilepsySafe);
 

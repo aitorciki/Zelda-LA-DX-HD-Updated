@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
+using ProjectZ.Base;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
@@ -22,8 +23,15 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static bool CopySaveFile(int from, int to)
         {
-            return CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + from), Path.Combine(Values.PathSaveFolder, SaveFileName + to)) &&
-                   CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + from), Path.Combine(Values.PathSaveFolder, SaveFileNameGame + to));
+            var success =
+                CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + from),     Path.Combine(Values.PathSaveFolder, SaveFileName + to)) &&
+                CopySaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + from), Path.Combine(Values.PathSaveFolder, SaveFileNameGame + to));
+
+            // Mirror the resulting slot to shared storage if enabled.
+            if (success)
+                MirrorPairToShared(to);
+
+            return success;
         }
 
         public static bool CopySaveFile(string fromFile, string toFile)
@@ -54,8 +62,15 @@ namespace ProjectZ.InGame.SaveLoad
 
         public static bool DeleteSaveFile(int slot)
         {
-            return DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)) &&
-                   DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
+            var success =
+                DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileName + slot)) &&
+                DeleteSaveFile(Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot));
+
+            // Mirror the deletion to shared storage if enabled.
+            if (success)
+                MirrorDeleteToShared(slot);
+
+            return success;
         }
 
         private static bool DeleteSaveFile(string filePath)
@@ -85,6 +100,9 @@ namespace ProjectZ.InGame.SaveLoad
 
             playerSaveState?.Save(Path.Combine(Values.PathSaveFolder, SaveFileName + gameManager.SaveSlot), Values.SaveRetries);
             playerSaveState = null;
+
+            // Mirror the saved slot to shared storage if enabled.
+            MirrorPairToShared(gameManager.SaveSlot);
 
             if (showIcon)
                 Game1.GameManager.InGameOverlay.InGameHud.ShowSaveIcon();
@@ -333,5 +351,72 @@ namespace ProjectZ.InGame.SaveLoad
 
             return item;
         }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+        //
+        //  SHARED STORAGE MIRRORING
+        //
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static void MirrorPairToShared(int slot)
+        {
+        #if ANDROID
+            if (!GameSettings.SharedStorage)
+                return;
+            if (!AndroidStorage.HasAllFilesAccess())
+                return;
+            try
+            {
+                var sharedDir = AndroidStorage.GetSharedSavePath();
+                Directory.CreateDirectory(sharedDir);
+
+                var scopedSave = Path.Combine(Values.PathSaveFolder, SaveFileName + slot);
+                var scopedSaveGame = Path.Combine(Values.PathSaveFolder, SaveFileNameGame + slot);
+                var sharedSave = Path.Combine(sharedDir, SaveFileName + slot);
+                var sharedSaveGame = Path.Combine(sharedDir, SaveFileNameGame + slot);
+
+                CopyViaTemp(scopedSave, sharedSave);
+                CopyViaTemp(scopedSaveGame, sharedSaveGame);
+            }
+            catch { }
+        #endif
+        }
+
+        private static void MirrorDeleteToShared(int slot)
+        {
+        #if ANDROID
+            if (!GameSettings.SharedStorage)
+                return;
+            if (!AndroidStorage.HasAllFilesAccess())
+                return;
+            try
+            {
+                var sharedDir = AndroidStorage.GetSharedSavePath();
+                var sharedSave = Path.Combine(sharedDir, SaveFileName + slot);
+                var sharedSaveGame = Path.Combine(sharedDir, SaveFileNameGame + slot);
+
+                if (File.Exists(sharedSave)) 
+                    File.Delete(sharedSave);
+
+                if (File.Exists(sharedSaveGame)) 
+                    File.Delete(sharedSaveGame);
+            }
+            catch { }
+        #endif
+        }
+
+        #if ANDROID
+        private static void CopyViaTemp(string src, string dst)
+        {
+            if (!File.Exists(src))
+                return;
+
+            var tmp = dst + ".tmp";
+            File.Copy(src, tmp, overwrite: true);
+            if (File.Exists(dst)) 
+                File.Delete(dst);
+            File.Move(tmp, dst);
+        }
+        #endif
     }
 }

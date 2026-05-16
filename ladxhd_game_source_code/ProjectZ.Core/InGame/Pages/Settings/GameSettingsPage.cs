@@ -2,10 +2,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Base;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
-using ProjectZ.InGame.Things;
+using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Screens;
+using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages
 {
@@ -21,6 +23,7 @@ namespace ProjectZ.InGame.Pages
         private readonly InterfaceListLayout _toggleClassicSword;
         private readonly InterfaceListLayout _toggleSavePosition;
         private readonly InterfaceListLayout _toggleAutosave;
+        private readonly InterfaceListLayout _toggleSharedStorage;
         private readonly InterfaceListLayout _toggleItemSlotSide;
         private readonly InterfaceListLayout _toggleEpilepsySafe;
 
@@ -42,7 +45,14 @@ namespace ProjectZ.InGame.Pages
             _content = content;
             EnableTooltips = true;
             var buttonWidth = 320;
+
+        #if ANDROID
+            var buttonHeight = 12;
+            var sliderHeight = 10;
+        #else
             var buttonHeight = 14;
+            var sliderHeight = 11;
+        #endif
 
             // Game Settings Layout
             _gameSettingsList = new InterfaceListLayout { Size = new Point(width, height - 12), Selectable = true };
@@ -56,7 +66,7 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Sub-Language
             _sliderSubLanguage = new InterfaceSlider("settings_game_sublanguage",
-                buttonWidth, 11, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, Game1.LanguageManager.CurrentSubLanguageIndex,
                 number => { Game1.LanguageManager.CurrentSubLanguageIndex = number; })
                 { SetString = number => LangSliderAdjustment(number) };
             _contentLayout.AddElement(_sliderSubLanguage);
@@ -64,7 +74,7 @@ namespace ProjectZ.InGame.Pages
 
             // Slider: Menu Brick Border
             _sliderMenuBricks = new InterfaceSlider("settings_game_menubricks",
-                buttonWidth, 11, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
+                buttonWidth, sliderHeight, new Point(1, 2), 0, 2, 1, GameSettings.MenuBorder,
                 number => { GameSettings.MenuBorder = number; })
                 { SetString = number => MenuBorderScaleSliderAdjustment(number) };
             _contentLayout.AddElement(_sliderMenuBricks);
@@ -93,6 +103,16 @@ namespace ProjectZ.InGame.Pages
                 newState => { GameSettings.Autosave = newState; });
             _contentLayout.AddElement(_toggleAutosave);
             _tooltips.Add("tooltip_game_autosave");
+
+        #if ANDROID
+            // Toggle: Saves in Shared Storage
+            _toggleSharedStorage = InterfaceToggle.GetToggleButton(
+                new Point(buttonWidth, buttonHeight), new Point(5, 2),
+                "settings_game_sharedstorage", GameSettings.SharedStorage, 
+                HandleSharedStorageToggle);
+            _contentLayout.AddElement(_toggleSharedStorage);
+            _tooltips.Add("tooltip_game_sharedstorage");
+        #endif
 
             // Toggle: Items on Right
             _toggleItemSlotSide = InterfaceToggle.GetToggleButton(
@@ -195,6 +215,32 @@ namespace ProjectZ.InGame.Pages
                 _ => Game1.LanguageManager.GetString("settings_game_menubricksA", "error")
             };
         }
+
+        #if ANDROID
+        private void HandleSharedStorageToggle(bool newState)
+        {
+            if (!newState)
+            {
+                GameSettings.SharedStorage = false;
+                return;
+            }
+
+            if (!AndroidStorage.HasAllFilesAccess())
+            {
+                ((InterfaceToggle)_toggleSharedStorage.Elements[1]).SetToggle(false);
+                AndroidStorage.RequestAllFilesAccess();
+                return;
+            }
+
+            GameSettings.SharedStorage = true;
+            for (var slot = 0; slot < SaveStateManager.SaveCount; slot++)
+            {
+                if (SaveGameSaveLoad.SaveExists(slot))
+                    SaveGameSaveLoad.MirrorPairToShared(slot);
+            }
+            SharedSaveSync.SyncFromSharedIfEnabled();
+        }
+        #endif
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 position, float height, float alpha)
         {

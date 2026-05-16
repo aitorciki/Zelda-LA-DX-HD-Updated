@@ -280,6 +280,9 @@ namespace ProjectZ.InGame.Pages
 
         public override void OnLoad(Dictionary<string, object> intent)
         {
+            // Sync newer saves in from shared storage before reading from scoped.
+            SharedSaveSync.SyncFromSharedIfEnabled();
+
             SaveStateManager.LoadSaveData();
 
             UpdateUi();

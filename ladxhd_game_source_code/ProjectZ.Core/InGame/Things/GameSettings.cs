@@ -7,6 +7,7 @@
         public static bool    ClassicSword    =  false;
         public static bool    StoreSavePos    =  false;
         public static bool    Autosave        =  true;
+        public static bool    SharedStorage   =  false;
         public static int     LastSavePos     =  0;
         public static bool    ItemsOnRight    =  false;
         public static bool    EpilepsySafe    =  false;
