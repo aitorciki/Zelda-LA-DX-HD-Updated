@@ -48,6 +48,10 @@ namespace ProjectZ.Base
     {
         public const int MaxGamePads = 4;
 
+        // If this ends up causing issues for players down the road,
+        // this boolean can be used to toggle multi-input on or off.
+        public static bool MergeControllerInput = true;
+
         public static KeyboardState KeyboardState => _keyboardState;
         public static KeyboardState LastKeyboardState => _lastKeyboardState;
         public static MouseState MouseState => _mouseState;
@@ -134,8 +138,11 @@ namespace ProjectZ.Base
             }
             DetectGamePad();
 
+            // Use the toggle to ascertain whether input 1 or all input is used.
             _lastGamePadState = _gamePadState;
-            _gamePadState = BuildMergedState(_gamePadStates);
+            _gamePadState = MergeControllerInput
+                ? BuildMergedState(_gamePadStates)
+                : _gamePadStates[_gamePadIndex];
 
             // Prevents input when Window is in the background (do we really want this?).
             if (!Game1.WasActive)
