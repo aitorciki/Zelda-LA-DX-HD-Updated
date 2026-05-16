@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using ProjectZ.InGame.SaveLoad;
 using Microsoft.Xna.Framework;
 
@@ -7,7 +8,8 @@ namespace ProjectZ.InGame.Things
 {
     public partial class Values
     {
-        public static string VersionString = "v1.8.2";
+        public static readonly string VersionString = "v" + (Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+')[0]);
 
         public static Color ColorBackgroundLight = Color.Black * 0.8f;
         public static Color ColorBackgroundDark = Color.Black * 0.85f;
