@@ -9,19 +9,6 @@ Title LADXHD: Game Publish Script
 set RunCreatePatches=true
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-:: Path Variables for WSL
-::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
-SET "WIN_PATH=%~dp0"
-SET "WIN_PATH=%WIN_PATH:~0,-1%"
-FOR /F "usebackq delims=" %%i IN (`wsl wslpath -u "%WIN_PATH%"`) DO SET "WSL_PATH=%%i"
-
-SET "WSL_HOME=$HOME"
-SET "WSL_DOTNET=$HOME/.dotnet/dotnet"
-SET "MGFXC_PATH=$HOME/.wine-mgfxc"
-SET "WSL_PREFIX=export MGFXC_WINE_PATH=$HOME/.wine-mgfxc && cd %WSL_PATH% && $HOME/.dotnet/dotnet"
-
-::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 :: Clean Previous Builds
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -61,28 +48,28 @@ echo Publishing Android APK...
 dotnet publish ProjectZ.Android\ProjectZ.Android.csproj -c Release -f net8.0-android --no-restore -p:PublishProfile=FolderProfile_Android
 if %errorlevel% neq 0 ( echo Android build failed! & pause & exit /b 1 )
 
-echo Restoring Linux packages in WSL...
-wsl bash -c "%WSL_PREFIX% restore ProjectZ.Linux/ProjectZ.Linux.csproj"
+echo Restoring Linux packages...
+dotnet restore ProjectZ.Linux\ProjectZ.Linux.csproj
 if %errorlevel% neq 0 ( echo Linux restore failed! & pause & exit /b 1 )
 
 echo Publishing Linux x64...
-wsl bash -c "%WSL_PREFIX% publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-x64 --no-restore -p:PublishProfile=FolderProfile_Linux"
+dotnet publish ProjectZ.Linux\ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-x64 --no-restore -p:PublishProfile=FolderProfile_Linux
 if %errorlevel% neq 0 ( echo Linux x86_64 build failed! & pause & exit /b 1 )
 
 echo Publishing Linux Arm64...
-wsl bash -c "%WSL_PREFIX% publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-arm64 --no-restore -p:PublishProfile=FolderProfile_Linux_Arm"
+dotnet publish ProjectZ.Linux\ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-arm64 --no-restore -p:PublishProfile=FolderProfile_Linux_Arm
 if %errorlevel% neq 0 ( echo Linux Arm64 build failed! & pause & exit /b 1 )
 
-echo Restoring MacOS packages in WSL...
-wsl bash -c "%WSL_PREFIX% restore ProjectZ.MacOS/ProjectZ.MacOS.csproj"
+echo Restoring MacOS packages...
+dotnet restore ProjectZ.MacOS\ProjectZ.MacOS.csproj
 if %errorlevel% neq 0 ( echo MacOS restore failed! & pause & exit /b 1 )
 
 echo Publishing MacOS arm64...
-wsl bash -c "%WSL_PREFIX% publish ProjectZ.MacOS/ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-arm64 --no-restore -p:PublishProfile=FolderProfile_MacOS"
+dotnet publish ProjectZ.MacOS\ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-arm64 --no-restore -p:PublishProfile=FolderProfile_MacOS
 if %errorlevel% neq 0 ( echo MacOS Arm64 build failed! & pause & exit /b 1 )
 
 echo Publishing MacOS x64...
-wsl bash -c "%WSL_PREFIX% publish ProjectZ.MacOS/ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-x64 --no-restore -p:PublishProfile=FolderProfile_MacOS_x64"
+dotnet publish ProjectZ.MacOS\ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-x64 --no-restore -p:PublishProfile=FolderProfile_MacOS_x64
 if %errorlevel% neq 0 ( echo MacOS x86_64 build failed! & pause & exit /b 1 )
 
 ::───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
