@@ -14,6 +14,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
         private readonly Animator _animatorTop1;
         private readonly Animator _animatorTop2;
         private readonly Animator _animatorBottom;
+        private readonly BoxCollisionComponent _collisionComponent;
 
         private readonly string _strKey;
 
@@ -57,19 +58,19 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _animatorBottom.Play("idle");
             _animatorBottom.Pause();
 
-            var opened = !string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1";
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(new CBox(posX + 8, posY + 48, 0, 16, 16, 16), Values.CollisionTypes.Normal));
 
-            if (!opened)
+            if (!string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1")
             {
+                _collisionComponent.IsActive = true;
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
-                AddComponent(CollisionComponent.Index, new BoxCollisionComponent(new CBox(posX + 8, posY + 48, 0, 16, 16, 16), Values.CollisionTypes.Normal));
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             }
             else
             {
+                _collisionComponent.IsActive = false;
                 _animatorBottom.Play("opened");
             }
-
             AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
         }
 
@@ -135,8 +136,7 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
                     _opened = true;
                     Game1.AudioManager.PlaySoundEffect("D360-02-02");
                     Game1.AudioManager.PlayMusic();
-
-                    RemoveComponent(CollisionComponent.Index);
+                    _collisionComponent.IsActive = false;
                 }
             }
         }
