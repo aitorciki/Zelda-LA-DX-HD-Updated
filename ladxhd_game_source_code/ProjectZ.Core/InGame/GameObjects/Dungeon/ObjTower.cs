@@ -58,20 +58,23 @@ namespace ProjectZ.InGame.GameObjects.Dungeon
             _animatorBottom.Play("idle");
             _animatorBottom.Pause();
 
-            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(new CBox(posX + 8, posY + 48, 0, 16, 16, 16), Values.CollisionTypes.Normal));
+            var inactive = !string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1";
+            var collider = new CBox(posX + 8, posY + 48, 0, 16, 16, 16);
 
-            if (!string.IsNullOrEmpty(strKey) && Game1.GameManager.SaveManager.GetString(strKey) == "1")
+            AddComponent(CollisionComponent.Index, _collisionComponent = new BoxCollisionComponent(collider, Values.CollisionTypes.Normal));
+            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+
+            if (inactive)
+            {
+                _collisionComponent.IsActive = false;
+                _animatorBottom.Play("opened");
+            }
+            else
             {
                 _collisionComponent.IsActive = true;
                 AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(OnKeyChange));
                 AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
             }
-            else
-            {
-                _collisionComponent.IsActive = false;
-                _animatorBottom.Play("opened");
-            }
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
         }
 
         private void Open()
