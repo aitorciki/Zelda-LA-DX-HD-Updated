@@ -33,23 +33,29 @@ namespace LADXHD_Migrater
             bool migrateAssets = false;
             bool createPatches = false;
             bool cleanBuild = false;
+            bool buildRequested = false;
             string? buildPlatform = null;
             string? graphicsStr = null;
 
             var opts = new OptionSet {
-                { "migrate-assets|m",  "Run asset migration in headless mode.",     _ => migrateAssets = true },
+                { "migrate-assets|m",  "Run asset migration in headless mode.",      _ => migrateAssets = true },
                 { "create-patches|p",  "Create vcdiff patches from modified files.", _ => createPatches = true },
                 { "clean-build|c",     "Remove all bin/obj/Publish folders.",        _ => cleanBuild = true },
-                { "build|b:",          "Build for platform [windows|android|linux-x86|linux-arm64|macos-x86|macos-arm64]. Default: windows.", v => buildPlatform = v },
+                { "build|b:",          "Build for platform [windows|android|linux-x86|linux-arm64|macos-x86|macos-arm64]. Default: current platform.", v => { buildRequested = true; buildPlatform = v; } },
                 { "graphics=",         "Target graphics API: directx, opengl. Default: directx (windows), opengl (others).", v => graphicsStr = v },
-                { "headless",          "Deprecated. Use --migrate-assets instead.", _ => showHelp = true },
-                { "h|?|help",          "Show this help message.",                   _ => showHelp = true },
+                { "headless",          "Deprecated. Use --migrate-assets instead.",  _ => showHelp = true },
+                { "h|?|help",          "Show this help message.",                    _ => showHelp = true },
             };
 
             opts.Parse(args);
 
-            if (buildPlatform != null && string.IsNullOrWhiteSpace(buildPlatform))
-                buildPlatform = "windows";
+            if (buildRequested && buildPlatform == null)
+            {
+                Config.SelectedPlatform = Config.GetNativePlatform();
+                Config.SelectedGraphics = (Config.SelectedPlatform == Config.Platform.Windows)
+                    ? Config.GraphicsAPI.DirectX
+                    : Config.GraphicsAPI.OpenGL;
+            }
 
             if (showHelp)
             {
@@ -69,7 +75,7 @@ namespace LADXHD_Migrater
                 ExitHeadless(0);
             }
 
-            if (migrateAssets || createPatches || cleanBuild || buildPlatform != null)
+            if (migrateAssets || createPatches || cleanBuild || buildRequested)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     AttachConsole(ATTACH_PARENT_PROCESS);
@@ -78,7 +84,7 @@ namespace LADXHD_Migrater
                 Config.Initialize();
                 BuildAvaloniaApp().SetupWithoutStarting();
 
-                if (buildPlatform != null)
+                if (buildRequested && buildPlatform != null)
                 {
                     try
                     {
@@ -185,7 +191,7 @@ namespace LADXHD_Migrater
                     ExitHeadless(0);
                 }
 
-                if (buildPlatform != null)
+                if (buildRequested)
                 {
                     try
                     {
