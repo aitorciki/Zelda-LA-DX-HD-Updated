@@ -12,6 +12,14 @@ namespace LADXHD_Migrater
     {
         public static bool HeadlessMode;
 
+        public static async Task Notify(string title, string message, int timeoutSeconds = 0, bool altSound = false)
+        {
+            if (HeadlessMode)
+                Console.WriteLine($"[{title}] {message}");
+            else
+                await OkayWindow.ShowAsync(title, message, timeoutSeconds, altSound);
+        }
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         FILE MAPPING CODE : NOT ALL FILES AND PATCHES ARE 1:1 FROM ORIGINAL GAME VERSION. NEW FILES NEED A "BASE" TO BE CREATED FROM USING A PATCH
@@ -310,72 +318,71 @@ namespace LADXHD_Migrater
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        public async static Task CreateBuild()
+        public async static Task<bool> CreateBuild()
         {
-            // Try to build the game.
-            if (await DotNet.BuildGame())
+            if (!await DotNet.BuildGame())
+                return false;
+
+            string finalGamePath = "";
+            string publishFolder = Path.Combine(Config.BaseFolder, "~Publish").CreatePath();
+
+            if (Config.SelectedPlatform == Platform.Windows)
             {
-                // Stores where to move the result.
-                string finalGamePath = "";
-                string publishFolder = Path.Combine(Config.BaseFolder, "~Publish").CreatePath();
+                if (Config.SelectedGraphics == GraphicsAPI.DirectX)
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_dx");
+                else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
+                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_gl");
+            }
+            else if (Config.SelectedPlatform == Platform.Android)
+                finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_android");
+            
+            else if (Config.SelectedPlatform == Platform.Linux_x64)
+                finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_x86_64");
+            
+            else if (Config.SelectedPlatform == Platform.Linux_Arm64)
+                finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_arm64");
+            
+            else if (Config.SelectedPlatform == Platform.MacOS_Arm64)
+                finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_arm64");
 
-                // If it succeeded, move the folder to the main folder.
-                if (Config.SelectedPlatform == Platform.Windows)
+            else if (Config.SelectedPlatform == Platform.MacOS_x64)
+                finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_x86_64");
+
+            // Move the publish folder to the root directory.
+            Config.Build_Path.MovePath(finalGamePath, true);
+
+            // Remove the old publish folder if it's empty.
+            if (Config.Publish_Path.IsPathEmpty())
+                Config.Publish_Path.RemovePath();
+
+            // Build the matching launcher and copy it into the game output folder.
+            if (await DotNet.BuildLauncher())
+            {
+                string launcherPublish = Path.Combine(Config.Launcher_Source, "~Publish");
+                if (launcherPublish.TestPath())
                 {
-                    if (Config.SelectedGraphics == GraphicsAPI.DirectX)
-                        finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_dx");
-                    else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
-                        finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_windows_gl");
-                }
-                else if (Config.SelectedPlatform == Platform.Android)
-                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_android");
-                
-                else if (Config.SelectedPlatform == Platform.Linux_x64)
-                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_x86_64");
-                
-                else if (Config.SelectedPlatform == Platform.Linux_Arm64)
-                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_linux_arm64");
-                
-                else if (Config.SelectedPlatform == Platform.MacOS_Arm64)
-                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_arm64");
-
-                else if (Config.SelectedPlatform == Platform.MacOS_x64)
-                    finalGamePath = Path.Combine(publishFolder, "zelda_ladxhd_build_macos_x86_64");
-
-                // Move the publish folder to the root directory.
-                Config.Build_Path.MovePath(finalGamePath, true);
-
-                // Remove the old publish folder if it's empty.
-                if (Config.Publish_Path.IsPathEmpty())
-                    Config.Publish_Path.RemovePath();
-
-                // Build the matching launcher and copy it into the game output folder.
-                if (await DotNet.BuildLauncher())
-                {
-                    string launcherPublish = Path.Combine(Config.Launcher_Source, "~Publish");
-                    if (launcherPublish.TestPath())
+                    // Copy launcher files into the already-moved game folder.
+                    foreach (string file in launcherPublish.GetFiles("*", true))
                     {
-                        // Copy launcher files into the already-moved game folder.
-                        foreach (string file in launcherPublish.GetFiles("*", true))
-                        {
-                            FileItem item = new FileItem(file);
-                            string dest = Path.Combine(finalGamePath, item.Name);
-                            File.Copy(file, dest, true);
-                        }
-                        launcherPublish.RemovePath();
+                        FileItem item = new FileItem(file);
+                        string dest = Path.Combine(finalGamePath, item.Name);
+                        File.Copy(file, dest, true);
                     }
-                }
-                // Remove any leftover files that are unnecessary.
-                HashSet<string> junkFiles = new HashSet<string> { "nfd.lib", "nfd.pdb", "_Microsoft.Android.Resource.Designer.dll" };
-                foreach (string file in finalGamePath.GetFiles("*"))
-                {
-                    FileItem item = new FileItem(file);
-                    if (junkFiles.Contains(item.Name))
-                    {
-                        item.FullName.RemovePath();
-                    }
+                    launcherPublish.RemovePath();
                 }
             }
+            // Remove any leftover files that are unnecessary.
+            HashSet<string> junkFiles = new HashSet<string> { "nfd.lib", "nfd.pdb", "_Microsoft.Android.Resource.Designer.dll" };
+            foreach (string file in finalGamePath.GetFiles("*"))
+            {
+                FileItem item = new FileItem(file);
+                if (junkFiles.Contains(item.Name))
+                {
+                    item.FullName.RemovePath();
+                }
+            }
+            
+            return true;
         }
     }
 }

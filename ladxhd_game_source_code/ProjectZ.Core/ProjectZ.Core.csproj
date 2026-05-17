@@ -11,7 +11,7 @@
     <!-- Add Android build support on Windows/macOS. -->
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) or $([MSBuild]::IsOSPlatform('OSX'))">$(TargetFrameworks);net8.0-android</TargetFrameworks>
     <!-- Add DirectX build support on Windows. -->
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(TargetFrameworks);net8.0-windows</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('Windows')) or '$(EnableWindowsTargeting)' == 'true'">$(TargetFrameworks);net8.0-windows</TargetFrameworks>
 
     <!-- Desktop-specific RIDs (exclude from Android to fix build errors). -->
     <RuntimeIdentifiers Condition="'$(TargetFramework)' != 'net8.0-android'">win-x64;linux-x64;linux-arm64;osx-arm64;osx-x64</RuntimeIdentifiers>

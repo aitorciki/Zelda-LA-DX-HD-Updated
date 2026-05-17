@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace LADXHD_Migrater
 {
@@ -25,6 +26,14 @@ namespace LADXHD_Migrater
 
         public enum GraphicsAPI { DirectX, OpenGL }
         public static GraphicsAPI SelectedGraphics;
+
+        public static Platform GetNativePlatform()
+        {
+            bool isArm64 = RuntimeInformation.OSArchitecture == Architecture.Arm64;
+            if (OperatingSystem.IsLinux()) return isArm64 ? Platform.Linux_Arm64 : Platform.Linux_x64;
+            if (OperatingSystem.IsMacOS()) return isArm64 ? Platform.MacOS_Arm64 : Platform.MacOS_x64;
+            return Platform.Windows;
+        }
 
         public static void Initialize()
         {

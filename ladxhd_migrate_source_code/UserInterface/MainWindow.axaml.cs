@@ -10,8 +10,16 @@ namespace LADXHD_Migrater
         public MainWindow()
         {
             InitializeComponent();
-            ComboBox_Platform.SelectedIndex = 0;
-            ComboBox_API.SelectedIndex = 0;
+            ComboBox_Platform.SelectedIndex = Config.GetNativePlatform() switch
+            {
+                Config.Platform.Windows     => 0,
+                Config.Platform.Android     => 1,
+                Config.Platform.Linux_x64   => 2,
+                Config.Platform.Linux_Arm64 => 3,
+                Config.Platform.MacOS_x64   => 4,
+                Config.Platform.MacOS_Arm64 => 5,
+                _ => 0
+            };
         }
 
         public void EnableComponents(bool toggle)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using static LADXHD_Migrater.Config;
 
@@ -9,167 +8,54 @@ namespace LADXHD_Migrater
 {
     internal class DotNet
     {
-        private static string WslPrefix(string wslPath) => $"export MGFXC_WINE_PATH={WinePath} && cd {wslPath} && dotnet";
-
-        private static string ToWslPath(string windowsPath)
-        {
-            string full = Path.GetFullPath(windowsPath);
-            string drive = full.Substring(0, 1).ToLower();
-            string rest = full.Substring(2).Replace('\\', '/');
-            return $"/mnt/{drive}{rest}";
-        }
-        private static string WinePath = GetWslWinePath();
-
-        private static string GetWslWinePath()
-        {
-            // Try to get the path to Wine which includes the username in WSL.
-            try
-            {
-                var p = Process.Start(new ProcessStartInfo("wsl", "echo $HOME")
-                {
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                });
-                string? home = p?.StandardOutput.ReadLine()?.Trim();
-                p?.WaitForExit();
-                if (!string.IsNullOrEmpty(home))
-                    return home + "/.wine-mgfxc";
-            }
-            catch { }
-
-            // Fallback to lowercased Windows username if nothing is found.
-            return "/home/" + Environment.UserName.ToLower() + "/.wine-mgfxc";
-        }
-
         public async static Task<bool> BuildGame()
         {
-            string restoreArgs;
-            string publishArgs;
-
             if (!Config.Game_Source.TestPath()) return false;
+
+            if ((OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()) &&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MGFXC_WINE_PATH")))
+            {
+                string url = OperatingSystem.IsMacOS()
+                    ? "https://tinyurl.com/mgfxc-macos"
+                    : "https://tinyurl.com/mgfxc-linux";
+                await Functions.Notify("Wine Not Configured", $"MGFXC_WINE_PATH environment variable is not set. Shader compilation will fail.\n\nSee {url}");
+                return false;
+            }
 
             try
             {
-                if (Config.SelectedPlatform == Platform.Windows)
-                {
-                    if (!await RunProcess("dotnet", "restore", false, "Restore Error")) return false;
+                (string? buildFolder, string? csproj, string? framework, string? rid, string? profile, string? extra, string? exe) =
+                    (Config.SelectedPlatform, Config.SelectedGraphics) switch
+                    {
+                        (Platform.Windows, GraphicsAPI.DirectX) => ("Windows-DX", "ProjectZ.Desktop/ProjectZ.Desktop.csproj", "net8.0-windows", "win-x64", "FolderProfile_DX", "-p:EnableWindowsTargeting=true", "Link's Awakening DX HD.exe"),
+                        (Platform.Windows, GraphicsAPI.OpenGL) => ("Windows-GL", "ProjectZ.Desktop/ProjectZ.Desktop.csproj", "net8.0", "win-x64", "FolderProfile_GL", "-p:EnableWindowsTargeting=true", "Link's Awakening DX HD.exe"),
+                        (Platform.Android, _) => ("Android", "ProjectZ.Android/ProjectZ.Android.csproj", "net8.0-android", null, "FolderProfile_Android", null, "com.zelda.ladxhd-Signed.apk"),
+                        (Platform.Linux_x64, _) => ("Linux-x86_64","ProjectZ.Linux/ProjectZ.Linux.csproj", "net8.0", "linux-x64", "FolderProfile_Linux", null, "Link's Awakening DX HD"),
+                        (Platform.Linux_Arm64, _) => ("Linux-Arm64", "ProjectZ.Linux/ProjectZ.Linux.csproj", "net8.0", "linux-arm64", "FolderProfile_Linux_Arm", null, "Link's Awakening DX HD"),
+                        (Platform.MacOS_Arm64, _) => ("MacOS-Arm64", "ProjectZ.MacOS/ProjectZ.MacOS.csproj", "net8.0", "osx-arm64", "FolderProfile_MacOS", null, "Link's Awakening DX HD"),
+                        (Platform.MacOS_x64, _) => ("MacOS-x86_64", "ProjectZ.MacOS/ProjectZ.MacOS.csproj", "net8.0", "osx-x64", "FolderProfile_MacOS_x64", null, "Link's Awakening DX HD"),
+                        _ => (null, null, null, null, null, null, null)
+                    };
 
-                    if (Config.SelectedGraphics == GraphicsAPI.DirectX)
-                    {
-                        Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-DX");
-                        restoreArgs = "build ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 --no-restore";
-                        publishArgs = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0-windows -r win-x64 --no-restore -p:PublishProfile=FolderProfile_DX";
-                        if (!await RunProcess("dotnet", restoreArgs, false, "Build Error")) return false;
-                        if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                    }
-                    else if (Config.SelectedGraphics == GraphicsAPI.OpenGL)
-                    {
-                        Config.Build_Path = Path.Combine(Config.Publish_Path, "Windows-GL");
-                        restoreArgs = "build ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 --no-restore";
-                        publishArgs = "publish ProjectZ.Desktop\\ProjectZ.Desktop.csproj -c Release -f net8.0 -r win-x64 --no-restore -p:PublishProfile=FolderProfile_GL";
-                        if (!await RunProcess("dotnet", restoreArgs, false, "Build Error")) return false;
-                        if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                    }
-                }
-                else if (Config.SelectedPlatform == Platform.Android)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Android");
-                    if (!await RunProcess("dotnet", "restore", false, "Restore Error")) return false;
-                    publishArgs = "publish ProjectZ.Android\\ProjectZ.Android.csproj -c Release -f net8.0-android --no-restore -p:PublishProfile=FolderProfile_Android";
-                    if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                }
-                else if (Config.SelectedPlatform == Platform.Linux_x64)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Linux-x86_64");
-                #if WINDOWS
-                    string prefix = WslPrefix(ToWslPath(Config.Game_Source));
-                    restoreArgs = $"bash -c \"{prefix} restore ProjectZ.Linux/ProjectZ.Linux.csproj\"";
-                    publishArgs = $"bash -c \"{prefix} publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-x64 --no-restore -p:PublishProfile=FolderProfile_Linux\"";
-                    if (!await RunProcess("wsl", restoreArgs, true, "Restore Error")) return false;
-                    if (!await RunProcess("wsl", publishArgs, true, "Build Error")) return false;
-                #else
-                    restoreArgs = "restore ProjectZ.Linux/ProjectZ.Linux.csproj";
-                    publishArgs = "publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-x64 --no-restore -p:PublishProfile=FolderProfile_Linux";
-                    if (!await RunProcess("dotnet", restoreArgs, false, "Restore Error")) return false;
-                    if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                #endif
-                }
-                else if (Config.SelectedPlatform == Platform.Linux_Arm64)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "Linux-Arm64");
-                #if WINDOWS
-                    string prefix = WslPrefix(ToWslPath(Config.Game_Source));
-                    restoreArgs = $"bash -c \"{prefix} restore ProjectZ.Linux/ProjectZ.Linux.csproj\"";
-                    publishArgs = $"bash -c \"{prefix} publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-arm64 --no-restore -p:PublishProfile=FolderProfile_Linux_Arm\"";
-                    if (!await RunProcess("wsl", restoreArgs, true, "Restore Error")) return false;
-                    if (!await RunProcess("wsl", publishArgs, true, "Build Error")) return false;
-                #else
-                    restoreArgs = "restore ProjectZ.Linux/ProjectZ.Linux.csproj";
-                    publishArgs = "publish ProjectZ.Linux/ProjectZ.Linux.csproj -c Release -f net8.0 -r linux-arm64 --no-restore -p:PublishProfile=FolderProfile_Linux_Arm";
-                    if (!await RunProcess("dotnet", restoreArgs, false, "Restore Error")) return false;
-                    if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                #endif
-                }
-                else if (Config.SelectedPlatform == Platform.MacOS_Arm64)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "MacOS-Arm64");
-                #if WINDOWS
-                    string prefix = WslPrefix(ToWslPath(Config.Game_Source));
-                    restoreArgs = $"bash -c \"{prefix} restore ProjectZ.MacOS/ProjectZ.MacOS.csproj\"";
-                    publishArgs = $"bash -c \"{prefix} publish ProjectZ.MacOS/ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-arm64 --no-restore -p:PublishProfile=FolderProfile_MacOS\"";
-                    if (!await RunProcess("wsl", restoreArgs, true, "Restore Error")) return false;
-                    if (!await RunProcess("wsl", publishArgs, true, "Build Error")) return false;
-                #else
-                    restoreArgs = "restore ProjectZ.MacOS/ProjectZ.MacOS.csproj";
-                    publishArgs = "publish ProjectZ.MacOS/ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-arm64 --no-restore -p:PublishProfile=FolderProfile_MacOS";
-                    if (!await RunProcess("dotnet", restoreArgs, false, "Restore Error")) return false;
-                    if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                #endif
-                }
-                else if (Config.SelectedPlatform == Platform.MacOS_x64)
-                {
-                    Config.Build_Path = Path.Combine(Config.Publish_Path, "MacOS-x86_64");
-                #if WINDOWS
-                    string prefix = WslPrefix(ToWslPath(Config.Game_Source));
-                    restoreArgs = $"bash -c \"{prefix} restore ProjectZ.MacOS/ProjectZ.MacOS.csproj\"";
-                    publishArgs = $"bash -c \"{prefix} publish ProjectZ.MacOS/ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-x64 --no-restore -p:PublishProfile=FolderProfile_MacOS_x64\"";
-                    if (!await RunProcess("wsl", restoreArgs, true, "Restore Error")) return false;
-                    if (!await RunProcess("wsl", publishArgs, true, "Build Error")) return false;
-                #else
-                    restoreArgs = "restore ProjectZ.MacOS/ProjectZ.MacOS.csproj";
-                    publishArgs = "publish ProjectZ.MacOS/ProjectZ.MacOS.csproj -c Release -f net8.0 -r osx-x64 --no-restore -p:PublishProfile=FolderProfile_MacOS_x64";
-                    if (!await RunProcess("dotnet", restoreArgs, false, "Restore Error")) return false;
-                    if (!await RunProcess("dotnet", publishArgs, false, "Build Error")) return false;
-                #endif
-                }
+                if (buildFolder == null) return false;
+
+                Config.Build_Path = Path.Combine(Config.Publish_Path, buildFolder);
+
+                string args = $"publish {csproj} -c Release -f {framework}";
+                if (!string.IsNullOrEmpty(rid)) args += $" -r {rid}";
+                if (!string.IsNullOrEmpty(extra)) args += $" {extra}";
+                args += $" -p:PublishProfile={profile} --disable-build-servers -p:UsedAvaloniaProducts=";
+
+                if (!await RunProcess("dotnet", args, "Build Error")) return false;
+
+                string exePath = Path.Combine(Config.Build_Path, exe!);
+                return exePath.TestPath();
             }
             catch (Exception ex)
             {
-                await OkayWindow.ShowAsync("Exception Caught", "Exception: " + ex.Message, 10);
+                await Functions.Notify("Exception Caught", "Exception: " + ex.Message, 10);
+                return false;
             }
-
-            if (Config.SelectedPlatform == Platform.Windows)
-            {
-                string exePath = Path.Combine(Config.Build_Path, "Link's Awakening DX HD.exe");
-                return exePath.TestPath();
-            }
-            else if (Config.SelectedPlatform == Platform.Android)
-            {
-                string apkPath = Path.Combine(Config.Build_Path, "com.zelda.ladxhd-Signed.apk");
-                return apkPath.TestPath();
-            }
-            else if (Config.SelectedPlatform == Platform.Linux_x64 || Config.SelectedPlatform == Platform.Linux_Arm64)
-            {
-                string linuxBinPath = Path.Combine(Config.Build_Path, "Link's Awakening DX HD");
-                return linuxBinPath.TestPath();
-            }
-            else if (Config.SelectedPlatform == Platform.MacOS_Arm64 || Config.SelectedPlatform == Platform.MacOS_x64)
-            {
-                string macBinPath = Path.Combine(Config.Build_Path, "Link's Awakening DX HD");
-                return macBinPath.TestPath();
-            }
-            return false;
         }
 
         public async static Task<bool> BuildLauncher()
@@ -185,22 +71,21 @@ namespace LADXHD_Migrater
                 Platform.MacOS_Arm64 => ("osx-arm64","macOS-arm64"),
                 _                    => ("","")
             };
-            
-            if (string.IsNullOrEmpty(rid) || string.IsNullOrEmpty(profile)) 
+
+            if (string.IsNullOrEmpty(rid) || string.IsNullOrEmpty(profile))
                 return true;
 
-            string args = $"publish LADXHD_Launcher.csproj -r {rid} /p:PublishProfile={profile}";
-            return await RunProcess("dotnet", args, false, "Launcher Build Error", Config.Launcher_Source);
+            string args = $"publish LADXHD_Launcher.csproj -r {rid} -p:PublishProfile={profile} --disable-build-servers -p:UsedAvaloniaProducts=";
+            return await RunProcess("dotnet", args, "Launcher Build Error", Config.Launcher_Source);
         }
 
-        private async static Task<bool> RunProcess(string executable, string arguments, bool useWsl, string errorTitle, string workingDirectory = "")
+        private async static Task<bool> RunProcess(string executable, string arguments, string errorTitle, string workingDirectory = "")
         {
             using (Process process = new Process())
             {
                 process.StartInfo = new ProcessStartInfo
                 {
-                    // Use explicit workingDirectory if provided, otherwise fall back to existing logic.
-                    WorkingDirectory = useWsl ? "" : (string.IsNullOrEmpty(workingDirectory) ? Config.Game_Source : workingDirectory),
+                    WorkingDirectory = string.IsNullOrEmpty(workingDirectory) ? Config.Game_Source : workingDirectory,
                     FileName = executable,
                     Arguments = arguments,
                     UseShellExecute = false,
@@ -209,20 +94,37 @@ namespace LADXHD_Migrater
                     CreateNoWindow = true
                 };
 
+                if (Functions.HeadlessMode)
+                {
+                    process.OutputDataReceived += (_, e) => { if (e.Data != null) Console.WriteLine(e.Data); };
+                    process.ErrorDataReceived  += (_, e) => { if (e.Data != null) Console.Error.WriteLine(e.Data); };
+                }
+
                 process.Start();
 
-                string output = await process.StandardOutput.ReadToEndAsync();
-                string error  = await process.StandardError.ReadToEndAsync();
-
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
+                if (Functions.HeadlessMode)
                 {
-                    string message = string.IsNullOrWhiteSpace(error) ? output : error;
-                    if (message.Length > 500)
-                        message = message.Substring(message.Length - 500);
-                    await OkayWindow.ShowAsync(errorTitle, message, 10);
-                    return false;
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                        return false;
+                }
+                else
+                {
+                    string output = await process.StandardOutput.ReadToEndAsync();
+                    string error = await process.StandardError.ReadToEndAsync();
+                    await process.WaitForExitAsync();
+
+                    if (process.ExitCode != 0)
+                    {
+                        string message = string.IsNullOrWhiteSpace(error) ? output : error;
+                        if (message.Length > 500)
+                            message = message.Substring(message.Length - 500);
+                        await Functions.Notify(errorTitle, message, 10);
+                        return false;
+                    }
                 }
             }
             return true;
