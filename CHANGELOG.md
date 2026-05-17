@@ -1,5 +1,18 @@
 # **The Legend of Zelda: Link's Awakening DX HD Changelog:**
 
+## **v1.8.3**
+### The "Multi-Platform is Hard" Update
+  * New Android option "Saves in Shared Storage" which reads/writes saves outside of scoped storage.
+  * Add ".bin" extension to Linux executables to simplify running them (credit @aitorciki).
+  * Minor color adjustments to cave/house tilesets & fix wrong tile in upgrade bat & moblin caves.
+  * Allow up to four connected controllers to function simultaneously instead of just "input #1".
+  * Game version is now loaded from a central file "Directory.Build.props" (credit @aitorciki).
+  * Add CLI option (headless mode) to Migration Tool to migrate assets from v1.0.0 (credit @aitorciki).
+  * Potentially fix a rare issue where the level 7 tower collision was not working allowing early entry.
+  * Fix a crash in Migration Tool when importing assets from fresh repo download (credit @aitorciki).
+  * Fix MacOS patcher perserving symlinks when deep-copying MacOS app bundle structure (credit @aitorciki).
+  * Fix MacOS patcher mod installation in MacOS app bundles, was skipping backup folder (credit @aitorciki).
+
 ## **v1.8.2**
 ### The "Aiming for Stability" Update
   * This version mostly focuses on stability as the last few versions had major breaking changes.

@@ -8,9 +8,8 @@ namespace LADXHD_Patcher
 {
     public class Config
     {
-        public static string Version => Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            ?.InformationalVersion.Split('+')[0] ?? "unknown";
+        public static readonly string Version = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+')[0];
 
         public static string BaseFolder;
         public static string TempFolder;

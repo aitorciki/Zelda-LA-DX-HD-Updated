@@ -8,8 +8,8 @@ namespace ProjectZ.InGame.Things
 {
     public partial class Values
     {
-        public static readonly string VersionString = "v" + (Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+')[0]);
+        public static readonly string VersionString = "v" + Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+')[0];
 
         public static Color ColorBackgroundLight = Color.Black * 0.8f;
         public static Color ColorBackgroundDark = Color.Black * 0.85f;
