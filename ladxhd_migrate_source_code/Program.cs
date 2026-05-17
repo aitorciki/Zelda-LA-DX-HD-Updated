@@ -19,6 +19,13 @@ namespace LADXHD_Migrater
 
         private const int ATTACH_PARENT_PROCESS = -1;
 
+        private static void ExitHeadless(int exitCode)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                FreeConsole();
+            Environment.Exit(exitCode);
+        }
+
         [STAThread]
         public static async Task<int> Main(string[] args)
         {
@@ -44,11 +51,11 @@ namespace LADXHD_Migrater
             if (buildPlatform != null && string.IsNullOrWhiteSpace(buildPlatform))
                 buildPlatform = "windows";
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                AttachConsole(ATTACH_PARENT_PROCESS);
-
             if (showHelp)
             {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    AttachConsole(ATTACH_PARENT_PROCESS);
+
                 Console.WriteLine();
                 Console.WriteLine("LADXHD Migrater");
                 Console.WriteLine("Usage: Migrater [options]");
@@ -58,11 +65,15 @@ namespace LADXHD_Migrater
                 Console.WriteLine();
                 Console.WriteLine("Exit codes: 0=Success, 1=Source assets missing, 2=Operation failed, 3=Invalid arguments");
                 Console.WriteLine();
-                return 0;
+
+                ExitHeadless(0);
             }
 
             if (migrateAssets || createPatches || cleanBuild || buildPlatform != null)
             {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    AttachConsole(ATTACH_PARENT_PROCESS);
+
                 Functions.HeadlessMode = true;
                 Config.Initialize();
                 BuildAvaloniaApp().SetupWithoutStarting();
@@ -105,90 +116,90 @@ namespace LADXHD_Migrater
                     catch (ArgumentException ex)
                     {
                         Console.Error.WriteLine("ERROR: " + ex.Message);
-                        return 3;
+                        ExitHeadless(3);
                     }
                 }
-            }
 
-            if (migrateAssets)
-            {
-                if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
+                if (migrateAssets)
                 {
-                    Console.Error.WriteLine("ERROR: assets_original/Content or assets_original/Data is missing.");
-                    return 1;
-                }
+                    if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
+                    {
+                        Console.Error.WriteLine("ERROR: assets_original/Content or assets_original/Data is missing.");
+                        ExitHeadless(1);
+                    }
 
-                try
-                {
-                    Functions.MigrateFiles();
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine("ERROR: " + ex.Message);
-                    return 2;
-                }
+                    try
+                    {
+                        Functions.MigrateFiles();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine("ERROR: " + ex.Message);
+                        ExitHeadless(2);
+                    }
 
-                Console.WriteLine("Migration complete.");
-                return 0;
-            }
-
-            if (createPatches)
-            {
-                if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
-                {
-                    Console.Error.WriteLine("ERROR: assets_original/Content or assets_original/Data is missing.");
-                    return 1;
-                }
-                if (!Config.Update_Content.TestPath() || !Config.Update_Data.TestPath())
-                {
-                    Console.Error.WriteLine("ERROR: ladxhd_game_source_code Content or Data is missing.");
-                    return 1;
+                    Console.WriteLine("Migration complete.");
+                    ExitHeadless(0);
                 }
 
-                try
+                if (createPatches)
                 {
-                    Functions.CreatePatches();
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine("ERROR: " + ex.Message);
-                    return 2;
+                    if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
+                    {
+                        Console.Error.WriteLine("ERROR: assets_original/Content or assets_original/Data is missing.");
+                        ExitHeadless(1);
+                    }
+                    if (!Config.Update_Content.TestPath() || !Config.Update_Data.TestPath())
+                    {
+                        Console.Error.WriteLine("ERROR: ladxhd_game_source_code Content or Data is missing.");
+                        ExitHeadless(1);
+                    }
+
+                    try
+                    {
+                        Functions.CreatePatches();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine("ERROR: " + ex.Message);
+                        ExitHeadless(2);
+                    }
+
+                    Console.WriteLine("Patches created.");
+                    ExitHeadless(0);
                 }
 
-                Console.WriteLine("Patches created.");
-                return 0;
-            }
+                if (cleanBuild)
+                {
+                    try
+                    {
+                        Functions.CleanBuildFiles();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine("ERROR: " + ex.Message);
+                        ExitHeadless(2);
+                    }
 
-            if (cleanBuild)
-            {
-                try
-                {
-                    Functions.CleanBuildFiles();
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine("ERROR: " + ex.Message);
-                    return 2;
-                }
-
-                Console.WriteLine("Build files cleaned.");
-                return 0;
-            }
-
-            if (buildPlatform != null)
-            {
-                try
-                {
-                    await Functions.CreateBuild();
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine("ERROR: " + ex.Message);
-                    return 2;
+                    Console.WriteLine("Build files cleaned.");
+                    ExitHeadless(0);
                 }
 
-                Console.WriteLine("Build complete.");
-                return 0;
+                if (buildPlatform != null)
+                {
+                    try
+                    {
+                        await Functions.CreateBuild();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine("ERROR: " + ex.Message);
+                        ExitHeadless(2);
+                    }
+
+                    Console.WriteLine("Build complete.");
+                    ExitHeadless(0);
+                }
             }
 
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
