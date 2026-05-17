@@ -16,27 +16,22 @@ jobs:
           - profile: macOS-arm64
             rid: osx-arm64
             runner: macos-latest
-            ext_src: '.app'
             ext: '.app'
           - profile: macOS-x64
             rid: osx-x64
             runner: macos-latest
-            ext_src: '.app'
             ext: '.app'
           - profile: Linux-arm64
             rid: linux-arm64
             runner: ubuntu-latest
-            ext_src: ''
-            ext: '.bin'
+            ext: ''
           - profile: Linux-x64
             rid: linux-x64
             runner: ubuntu-latest
-            ext_src: ''
-            ext: '.bin'
+            ext: ''
           - profile: Windows
             rid: win-x64
             runner: windows-latest
-            ext_src: '.exe'
             ext: '.exe'
 
     steps:
@@ -63,7 +58,7 @@ jobs:
       - name: Rename migrater file
         shell: bash
         run: |
-          mv ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/Migrater${{ matrix.ext_src }} \
+          mv ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/Migrater${{ matrix.ext }} \
             ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD-Migrater${{ matrix.ext }}
 
       - name: Sign binary (macOS)
