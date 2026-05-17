@@ -1,3 +1,26 @@
+
+###############################################################################################################
+#                                                                                                             #
+#  Zelda-LA-DX-HD-Updated - SYNC REPOSITORY TO GITLAB                                                         #
+#                                                                                                             #
+###############################################################################################################
+#                                                                                                             #
+#  PURPOSE:                                                                                                   #
+#  Sync the repository to GitLab as a backup for the "just-in-case" situation.                                #
+#                                                                                                             #
+#  MAIN REPOSITORY:                                                                                           #
+#  https://github.com/BigheadSMZ/Zelda-LA-DX-HD-Updated                                                       #
+#                                                                                                             #
+#  BACKUP REPOSITORY:                                                                                         #
+#  https://gitlab.com/bighead.zimm/zelda-la-dx-hd-updated                                                     #
+#                                                                                                             #
+#  NOTICE:                                                                                                    #
+#  Because I keep hitting the GitLab 10GB limit, this script no longer mirrors the history. Going forward,    #
+#  each run pushes a fresh snapshot of the current files to the GitLab backup repo. This really sucks, but    #
+#  backing up the game and preserving the progress is more important than fully preserving how it got there.  #
+#                                                                                                             #
+###############################################################################################################
+
 name: Mirror to GitLab
 on:
   push:
