@@ -6,7 +6,6 @@ namespace LADXHD_Migrater
 {
     internal class Config
     {
-        public static string AppPath;
         public static string BaseFolder;
         public static string Patches;
         public static string Orig_Content;
@@ -37,17 +36,17 @@ namespace LADXHD_Migrater
 
         public static void Initialize()
         {
-            AppPath = AppContext.BaseDirectory;
+            BaseFolder  = AppContext.BaseDirectory;
 
 #if MACOS
             // When running inside a .app bundle the binary lives at
             // Foo.app/Contents/MacOS/ — navigate up to the folder containing
             // the .app so companion files are reachable.
-            var contentsDir = Path.GetFullPath(Path.Combine(AppPath, ".."));
+            var contentsDir = Path.GetFullPath(Path.Combine(BaseFolder, ".."));
             if (Path.GetFileName(contentsDir) == "Contents" &&
                 File.Exists(Path.Combine(contentsDir, "Info.plist")))
             {
-                AppPath = Path.GetFullPath(Path.Combine(contentsDir, "..", "..")) + Path.DirectorySeparatorChar;
+                BaseFolder  = Path.GetFullPath(Path.Combine(contentsDir, "..", "..")) + Path.DirectorySeparatorChar;
             }
 #endif
 
@@ -59,11 +58,10 @@ namespace LADXHD_Migrater
             var appImage = Environment.GetEnvironmentVariable("APPIMAGE");
             if (!string.IsNullOrEmpty(appImage) && File.Exists(appImage))
             {
-                AppPath = Path.GetDirectoryName(appImage) + Path.DirectorySeparatorChar;
+                BaseFolder  = Path.GetDirectoryName(appImage) + Path.DirectorySeparatorChar;
             }
 #endif
 
-            BaseFolder      = Path.GetDirectoryName(AppPath);
             Patches         = Path.Combine(BaseFolder, "assets_patches");
             Orig_Content    = Path.Combine(BaseFolder, "assets_original", "Content");
             Orig_Data       = Path.Combine(BaseFolder, "assets_original", "Data");
