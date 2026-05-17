@@ -71,12 +71,12 @@ jobs:
         shell: bash
         run: |
           mv ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/Patcher${{ matrix.ext_src }} \
-            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD-Patcher${{ matrix.ext }}
 
       - name: Sign binary (macOS)
         if: runner.os == 'macOS'
         env:
-          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
+          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD-Patcher${{ matrix.ext }}
         run: |
           codesign --force --deep --sign - "$APP_PATH"
           codesign --verify --verbose "$APP_PATH"
