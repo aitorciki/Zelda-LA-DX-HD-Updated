@@ -90,7 +90,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: LADXHD.Patcher.v${{ steps.get_version.outputs.version }}_${{ matrix.profile }}-${{ github.run_id }}
+          name: LADXHD-Patcher-v${{ steps.get_version.outputs.version }}-${{ matrix.profile }}-${{ github.run_id }}
           path: |
             ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/
             !ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/nfd.lib

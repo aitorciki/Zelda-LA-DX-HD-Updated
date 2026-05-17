@@ -64,12 +64,12 @@ jobs:
         shell: bash
         run: |
           mv ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/Migrater${{ matrix.ext_src }} \
-            ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD_Migrater${{ matrix.ext }}
+            ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD-Migrater${{ matrix.ext }}
 
       - name: Sign binary (macOS)
         if: runner.os == 'macOS'
         env:
-          APP_PATH: ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD_Migrater${{ matrix.ext }}
+          APP_PATH: ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD-Migrater${{ matrix.ext }}
         run: |
           codesign --force --deep --sign - "$APP_PATH"
           codesign --verify --verbose "$APP_PATH"
@@ -77,7 +77,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: LADXHD_Migrater_${{ matrix.profile }}-${{ github.run_id }}
+          name: LADXHD-Migrater-${{ matrix.profile }}-${{ github.run_id }}
           path: |
             ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/
             !ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/nfd.lib
