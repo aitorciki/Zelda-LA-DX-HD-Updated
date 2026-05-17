@@ -38,10 +38,6 @@ namespace ProjectZ.InGame.Pages
         {
             Game1.AudioManager.PauseMusic();
 
-#if ANDROID
-                VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight, true);
-#endif
-
             // select the "Back to Game" button
             PageLayout.Deselect(false);
             PageLayout.Select(InterfaceElement.Directions.Top, false);
@@ -50,10 +46,6 @@ namespace ProjectZ.InGame.Pages
         public override void OnPop(Dictionary<string, object> intent)
         {
             Game1.AudioManager.ResumeMusic();
-
-#if ANDROID
-                VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight, false);
-#endif
         }
 
         public override void Update(CButtons pressedButtons, GameTime gameTime)

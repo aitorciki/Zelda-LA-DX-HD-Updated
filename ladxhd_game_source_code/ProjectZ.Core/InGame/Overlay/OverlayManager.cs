@@ -807,18 +807,23 @@ namespace ProjectZ.InGame.Overlay
             if (_currentMenuState == MenuState.None)
             {
                 SetState(newState);
-#if ANDROID
-                VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight, true);
-#endif
             }
             else
             {
                 _mapOpened = false;
                 CloseOverlay();
-#if ANDROID
-                VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight,false);
-#endif
             }
+        }
+
+        private bool AndroidDpadSwapState(MenuState state)
+        {
+            if (state == MenuState.Menu || state == MenuState.Inventory || state == MenuState.PhotoBook)
+                return true;
+
+            if (state == MenuState.GameSequence && _currentSequenceName == "map")
+                return true;
+
+            return false;
         }
 
         private void SetState(MenuState newState)
@@ -855,6 +860,12 @@ namespace ProjectZ.InGame.Overlay
             _fadeDir = 1;
             _lastMenuState = _currentMenuState;
             _currentMenuState = newState;
+
+        #if ANDROID
+            if (AndroidDpadSwapState(newState))
+                VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight, true);
+        #endif
+
         }
 
         public void CloseOverlay()
@@ -862,6 +873,11 @@ namespace ProjectZ.InGame.Overlay
             // Play the menu closing sound when closing the options menu or inventory menu.
             if (_currentMenuState == MenuState.Inventory || _currentMenuState == MenuState.Menu)
                 Game1.AudioManager.PlaySoundEffect("D360-18-12");
+
+        #if ANDROID
+            if (AndroidDpadSwapState(_currentMenuState))
+                VirtualController.Initialize(Game1.WindowWidth, Game1.WindowHeight, false);
+        #endif
 
             _fading = true;
             _fadeDir = -1;
