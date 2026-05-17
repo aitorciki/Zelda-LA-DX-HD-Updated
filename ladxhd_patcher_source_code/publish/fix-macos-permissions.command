@@ -9,11 +9,11 @@ Link's Awakening DX HD - macOS Permissions Fix
 
 EOF
 
-PATCHER_APP=$(find . -name "LADXHD.Patcher.v*.app" 2>/dev/null | head -n 1)
+PATCHER_APP="LADXHD-Patcher.app"
 
-if [ -z "$PATCHER_APP" ]; then
-    echo "Error: Could not find a file matching 'LADXHD.Patcher.v*.app' in this folder."
-    exit 1
+if [ ! -d "$PATCHER_APP" ]; then
+	echo "Error: Could not find 'LADXHD-Patcher.app' in this folder."
+	exit 1
 fi
 
 echo "Found: $PATCHER_APP"

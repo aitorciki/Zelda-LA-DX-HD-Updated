@@ -16,27 +16,22 @@ jobs:
           - profile: macOS-arm64
             rid: osx-arm64
             runner: macos-latest
-            ext_src: '.app'
             ext: '.app'
           - profile: macOS-x64
             rid: osx-x64
             runner: macos-latest
-            ext_src: '.app'
             ext: '.app'
           - profile: Linux-arm64
             rid: linux-arm64
             runner: ubuntu-latest
-            ext_src: ''
-            ext: '.bin'
+            ext: ''
           - profile: Linux-x64
             rid: linux-x64
             runner: ubuntu-latest
-            ext_src: ''
-            ext: '.bin'
+            ext: ''
           - profile: Windows
             rid: win-x64
             runner: windows-latest
-            ext_src: '.exe'
             ext: '.exe'
 
     steps:
@@ -70,13 +65,13 @@ jobs:
       - name: Rename patcher file
         shell: bash
         run: |
-          mv ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/Patcher${{ matrix.ext_src }} \
-            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
+          mv ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/Patcher${{ matrix.ext }} \
+            ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD-Patcher${{ matrix.ext }}
 
       - name: Sign binary (macOS)
         if: runner.os == 'macOS'
         env:
-          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD.Patcher.v${{ steps.get_version.outputs.version }}${{ matrix.ext }}
+          APP_PATH: ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/LADXHD-Patcher${{ matrix.ext }}
         run: |
           codesign --force --deep --sign - "$APP_PATH"
           codesign --verify --verbose "$APP_PATH"
@@ -90,7 +85,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: LADXHD.Patcher.v${{ steps.get_version.outputs.version }}_${{ matrix.profile }}-${{ github.run_id }}
+          name: LADXHD-Patcher-v${{ steps.get_version.outputs.version }}-${{ matrix.profile }}-${{ github.run_id }}
           path: |
             ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/
             !ladxhd_patcher_source_code/~Publish/${{ matrix.profile }}/nfd.lib
