@@ -146,7 +146,7 @@ namespace LADXHD_Migrater
             }
             catch (Exception ex)
             {
-                await OkayWindow.ShowAsync("Exception Caught", "Exception: " + ex.Message, 10);
+                await Functions.Notify("Exception Caught", "Exception: " + ex.Message, 10);
             }
 
             if (Config.SelectedPlatform == Platform.Windows)
@@ -221,7 +221,7 @@ namespace LADXHD_Migrater
                     string message = string.IsNullOrWhiteSpace(error) ? output : error;
                     if (message.Length > 500)
                         message = message.Substring(message.Length - 500);
-                    await OkayWindow.ShowAsync(errorTitle, message, 10);
+                    await Functions.Notify(errorTitle, message, 10);
                     return false;
                 }
             }

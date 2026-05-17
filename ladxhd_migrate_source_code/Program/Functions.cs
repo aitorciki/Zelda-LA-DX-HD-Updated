@@ -12,6 +12,14 @@ namespace LADXHD_Migrater
     {
         public static bool HeadlessMode;
 
+        public static async Task Notify(string title, string message, int timeoutSeconds = 0, bool altSound = false)
+        {
+            if (HeadlessMode)
+                Console.WriteLine($"[{title}] {message}");
+            else
+                await OkayWindow.ShowAsync(title, message, timeoutSeconds, altSound);
+        }
+
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         FILE MAPPING CODE : NOT ALL FILES AND PATCHES ARE 1:1 FROM ORIGINAL GAME VERSION. NEW FILES NEED A "BASE" TO BE CREATED FROM USING A PATCH
