@@ -37,7 +37,7 @@ namespace LADXHD_Migrater
 
         public static void Initialize()
         {
-            AppPath         = AppContext.BaseDirectory;
+            AppPath = AppContext.BaseDirectory;
 
 #if MACOS
             // When running inside a .app bundle the binary lives at
@@ -48,6 +48,18 @@ namespace LADXHD_Migrater
                 File.Exists(Path.Combine(contentsDir, "Info.plist")))
             {
                 AppPath = Path.GetFullPath(Path.Combine(contentsDir, "..", "..")) + Path.DirectorySeparatorChar;
+            }
+#endif
+
+#if LINUX
+            // When running as an AppImage, AppContext.BaseDirectory points inside
+            // the read-only mount at /tmp/.mount_XXXXX/usr/bin/. The AppImage runtime
+            // sets $APPIMAGE to the full path of the .AppImage file, so its parent
+            // directory is the folder where the user dropped the migration tool.
+            var appImage = Environment.GetEnvironmentVariable("APPIMAGE");
+            if (!string.IsNullOrEmpty(appImage) && File.Exists(appImage))
+            {
+                AppPath = Path.GetDirectoryName(appImage) + Path.DirectorySeparatorChar;
             }
 #endif
 

@@ -56,7 +56,7 @@ namespace LADXHD_Patcher
 
         public static void Initialize()
         {
-            BaseFolder    = AppContext.BaseDirectory;
+            BaseFolder = AppContext.BaseDirectory;
 
 #if MACOS
             // When running inside a .app bundle the binary lives at
@@ -70,6 +70,17 @@ namespace LADXHD_Patcher
             }
 #endif
 
+#if LINUX
+            // When running as an AppImage, AppContext.BaseDirectory points inside
+            // the read-only mount at /tmp/.mount_XXXXX/usr/bin/. The AppImage runtime
+            // sets $APPIMAGE to the full path of the .AppImage file, so its parent
+            // directory is the folder where the user dropped the patcher.
+            var appImage = Environment.GetEnvironmentVariable("APPIMAGE");
+            if (!string.IsNullOrEmpty(appImage) && File.Exists(appImage))
+            {
+                BaseFolder = Path.GetDirectoryName(appImage);
+            }
+#endif
             TempFolder    = Path.Combine(BaseFolder, "~temp");
             ZeldaEXE      = Path.Combine(BaseFolder, "Link's Awakening DX HD.exe");
             BackupPath    = Path.Combine(BaseFolder, "Data", "Backup");

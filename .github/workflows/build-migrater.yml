@@ -5,48 +5,54 @@ on:
     paths:
       - 'ladxhd_migrate_source_code/**'
   workflow_dispatch:
-
+  
 jobs:
   build:
     runs-on: ${{ matrix.runner }}
-
+    
     strategy:
+      fail-fast: false
       matrix:
         include:
           - profile: macOS-arm64
             rid: osx-arm64
             runner: macos-latest
             ext: '.app'
+            appimage_arch: ''
           - profile: macOS-x64
             rid: osx-x64
             runner: macos-latest
             ext: '.app'
+            appimage_arch: ''
           - profile: Linux-arm64
             rid: linux-arm64
             runner: ubuntu-latest
-            ext: ''
+            ext: '.AppImage'
+            appimage_arch: 'aarch64'
           - profile: Linux-x64
             rid: linux-x64
             runner: ubuntu-latest
-            ext: ''
+            ext: '.AppImage'
+            appimage_arch: 'x86_64'
           - profile: Windows
             rid: win-x64
             runner: windows-latest
             ext: '.exe'
-
+            appimage_arch: ''
+            
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
+        
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
-
+          
       - name: Restore dependencies
         working-directory: ladxhd_migrate_source_code
         run: dotnet restore LADXHD_Migrater.csproj
-
+        
       - name: Publish
         shell: bash
         working-directory: ladxhd_migrate_source_code
@@ -54,13 +60,14 @@ jobs:
           dotnet publish LADXHD_Migrater.csproj \
             -r ${{ matrix.rid }} \
             -p:PublishProfile=${{ matrix.profile }}
-
-      - name: Rename migrater file
+            
+      - name: Rename migrater file (non-Linux)
+        if: runner.os != 'Linux'
         shell: bash
         run: |
           mv ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/Migrater${{ matrix.ext }} \
             ladxhd_migrate_source_code/~Publish/${{ matrix.profile }}/LADXHD-Migrater${{ matrix.ext }}
-
+            
       - name: Sign binary (macOS)
         if: runner.os == 'macOS'
         env:
@@ -68,7 +75,57 @@ jobs:
         run: |
           codesign --force --deep --sign - "$APP_PATH"
           codesign --verify --verbose "$APP_PATH"
+          
+      - name: Build AppImage (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        env:
+          PROFILE: ${{ matrix.profile }}
+          ARCH: ${{ matrix.appimage_arch }}
+        run: |
+          set -e
 
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+
+          wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage \
+            -O /tmp/appimagetool
+          chmod +x /tmp/appimagetool
+
+          PUBLISH_DIR="ladxhd_migrate_source_code/~Publish/${PROFILE}"
+          APPDIR="${PUBLISH_DIR}/AppDir"
+          OUTPUT="${PUBLISH_DIR}/LADXHD-Migrater-${ARCH}.AppImage"
+
+          mkdir -p "${APPDIR}/usr/bin"
+          mkdir -p "${APPDIR}/usr/share/applications"
+          mkdir -p "${APPDIR}/usr/share/icons/hicolor/256x256/apps"
+
+          find "${PUBLISH_DIR}" -mindepth 1 -maxdepth 1 ! -name AppDir \
+            -exec mv {} "${APPDIR}/usr/bin/" \;
+
+          chmod +x "${APPDIR}/usr/bin/Migrater"
+
+          cat > "${APPDIR}/LADXHD-Migrater.desktop" <<EOF
+          [Desktop Entry]
+          Name=LADXHD Migrater
+          Comment=Migration Tool for Zelda: Link's Awakening DX HD
+          Exec=Migrater
+          Icon=LADXHD-Migrater
+          StartupWMClass=Migrater
+          Type=Application
+          Categories=Utility;Game;
+          EOF
+
+          cp "${APPDIR}/LADXHD-Migrater.desktop" "${APPDIR}/usr/share/applications/"
+          cp ladxhd_migrate_source_code/Resources/Icon.png "${APPDIR}/LADXHD-Migrater.png"
+          cp "${APPDIR}/LADXHD-Migrater.png" "${APPDIR}/usr/share/icons/hicolor/256x256/apps/"
+
+          ln -s usr/bin/Migrater "${APPDIR}/AppRun"
+
+          ARCH="${ARCH}" /tmp/appimagetool "${APPDIR}" "${OUTPUT}"
+
+          rm -rf "${APPDIR}"
+          
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
