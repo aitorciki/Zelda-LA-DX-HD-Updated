@@ -195,7 +195,12 @@ namespace LADXHD_Migrater
                 {
                     try
                     {
-                        await Functions.CreateBuild();
+                        bool success = await Functions.CreateBuild();
+                        if (!success)
+                        {
+                            Console.Error.WriteLine("ERROR: Build failed.");
+                            ExitHeadless(2);
+                        }
                     }
                     catch (Exception ex)
                     {

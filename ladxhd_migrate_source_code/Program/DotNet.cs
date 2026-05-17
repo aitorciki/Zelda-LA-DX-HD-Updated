@@ -12,6 +12,16 @@ namespace LADXHD_Migrater
         {
             if (!Config.Game_Source.TestPath()) return false;
 
+            if ((OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()) &&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MGFXC_WINE_PATH")))
+            {
+                string url = OperatingSystem.IsMacOS()
+                    ? "https://tinyurl.com/mgfxc-macos"
+                    : "https://tinyurl.com/mgfxc-linux";
+                await Functions.Notify("Wine Not Configured", $"MGFXC_WINE_PATH environment variable is not set. Shader compilation will fail.\n\nSee {url}");
+                return false;
+            }
+
             try
             {
                 (string? buildFolder, string? csproj, string? framework, string? rid, string? profile, string? extra, string? exe) =
