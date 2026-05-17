@@ -44,7 +44,7 @@ namespace LADXHD_Migrater
                 string args = $"publish {csproj} -c Release -f {framework}";
                 if (!string.IsNullOrEmpty(rid)) args += $" -r {rid}";
                 if (!string.IsNullOrEmpty(extra)) args += $" {extra}";
-                args += $" -p:PublishProfile={profile}";
+                args += $" -p:PublishProfile={profile} --disable-build-servers -p:UsedAvaloniaProducts=";
 
                 if (!await RunProcess("dotnet", args, "Build Error")) return false;
 
@@ -75,7 +75,7 @@ namespace LADXHD_Migrater
             if (string.IsNullOrEmpty(rid) || string.IsNullOrEmpty(profile))
                 return true;
 
-            string args = $"publish LADXHD_Launcher.csproj -r {rid} -p:PublishProfile={profile}";
+            string args = $"publish LADXHD_Launcher.csproj -r {rid} -p:PublishProfile={profile} --disable-build-servers -p:UsedAvaloniaProducts=";
             return await RunProcess("dotnet", args, "Launcher Build Error", Config.Launcher_Source);
         }
 
@@ -89,14 +89,29 @@ namespace LADXHD_Migrater
                     FileName = executable,
                     Arguments = arguments,
                     UseShellExecute = false,
-                    RedirectStandardOutput = !Functions.HeadlessMode,
-                    RedirectStandardError = !Functions.HeadlessMode,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 };
 
+                if (Functions.HeadlessMode)
+                {
+                    process.OutputDataReceived += (_, e) => { if (e.Data != null) Console.WriteLine(e.Data); };
+                    process.ErrorDataReceived  += (_, e) => { if (e.Data != null) Console.Error.WriteLine(e.Data); };
+                }
+
                 process.Start();
 
-                if (!Functions.HeadlessMode)
+                if (Functions.HeadlessMode)
+                {
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                        return false;
+                }
+                else
                 {
                     string output = await process.StandardOutput.ReadToEndAsync();
                     string error = await process.StandardError.ReadToEndAsync();
@@ -110,12 +125,6 @@ namespace LADXHD_Migrater
                         await Functions.Notify(errorTitle, message, 10);
                         return false;
                     }
-                }
-                else
-                {
-                    process.WaitForExit();
-                    if (process.ExitCode != 0)
-                        return false;
                 }
             }
             return true;

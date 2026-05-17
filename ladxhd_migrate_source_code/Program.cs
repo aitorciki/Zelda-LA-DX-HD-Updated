@@ -1,7 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Threading.Tasks;
 using Avalonia;
 using Mono.Options;
 
@@ -9,25 +9,8 @@ namespace LADXHD_Migrater
 {
     internal class Program
     {
-        [SupportedOSPlatform("windows")]
-        [DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int dwProcessId);
-
-        [SupportedOSPlatform("windows")]
-        [DllImport("kernel32.dll")]
-        private static extern bool FreeConsole();
-
-        private const int ATTACH_PARENT_PROCESS = -1;
-
-        private static void ExitHeadless(int exitCode)
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                FreeConsole();
-            Environment.Exit(exitCode);
-        }
-
         [STAThread]
-        public static async Task<int> Main(string[] args)
+        public static int Main(string[] args)
         {
             bool showHelp = false;
             bool migrateAssets = false;
@@ -38,28 +21,25 @@ namespace LADXHD_Migrater
             string? graphicsStr = null;
 
             var opts = new OptionSet {
-                { "migrate-assets|m",  "Run asset migration in headless mode.",      _ => migrateAssets = true },
+                { "migrate-assets|m",  "Run asset migration in headless mode.",     _ => migrateAssets = true },
                 { "create-patches|p",  "Create vcdiff patches from modified files.", _ => createPatches = true },
                 { "clean-build|c",     "Remove all bin/obj/Publish folders.",        _ => cleanBuild = true },
                 { "build|b:",          "Build for platform [windows|android|linux-x86|linux-arm64|macos-x86|macos-arm64]. Default: current platform.", v => { buildRequested = true; buildPlatform = v; } },
                 { "graphics=",         "Target graphics API: directx, opengl. Default: directx (windows), opengl (others).", v => graphicsStr = v },
-                { "headless",          "Deprecated. Use --migrate-assets instead.",  _ => showHelp = true },
-                { "h|?|help",          "Show this help message.",                    _ => showHelp = true },
+                { "headless",          "Deprecated. Use --migrate-assets instead.", _ => showHelp = true },
+                { "h|?|help",          "Show this help message.",                   _ => showHelp = true },
             };
 
             opts.Parse(args);
 
             if (showHelp)
-            {
-                ShowHelp(opts);
-                return 0;
-            }
+                return ShowHelp(opts);
 
             if (buildRequested && buildPlatform == null)
                 SetNativePlatform();
 
             if (migrateAssets || createPatches || cleanBuild || buildRequested)
-                await RunHeadlessAsync(migrateAssets, createPatches, cleanBuild, buildRequested, buildPlatform, graphicsStr);
+                return RunHeadless(migrateAssets, createPatches, cleanBuild, buildRequested, buildPlatform, graphicsStr);
 
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
             return 0;
@@ -71,11 +51,9 @@ namespace LADXHD_Migrater
                 .WithInterFont()
                 .LogToTrace();
 
-        private static void ShowHelp(Mono.Options.OptionSet opts)
+        private static int ShowHelp(Mono.Options.OptionSet opts)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                AttachConsole(ATTACH_PARENT_PROCESS);
-
+            TryReconnectConsole();
             Console.WriteLine();
             Console.WriteLine("LADXHD Migrater");
             Console.WriteLine("Usage: Migrater [options]");
@@ -85,8 +63,7 @@ namespace LADXHD_Migrater
             Console.WriteLine();
             Console.WriteLine("Exit codes: 0=Success, 1=Source assets missing, 2=Operation failed, 3=Invalid arguments");
             Console.WriteLine();
-
-            ExitHeadless(0);
+            return 0;
         }
 
         private static void SetNativePlatform()
@@ -95,6 +72,34 @@ namespace LADXHD_Migrater
             Config.SelectedGraphics = (Config.SelectedPlatform == Config.Platform.Windows)
                 ? Config.GraphicsAPI.DirectX
                 : Config.GraphicsAPI.OpenGL;
+        }
+
+        private static int RunHeadless(bool migrateAssets, bool createPatches, bool cleanBuild, bool buildRequested, string? buildPlatform, string? graphicsStr)
+        {
+            TryReconnectConsole();
+            Functions.HeadlessMode = true;
+            Config.Initialize();
+            BuildAvaloniaApp().SetupWithoutStarting();
+
+            if (buildRequested && buildPlatform != null)
+            {
+                try
+                {
+                    ParsePlatform(buildPlatform, graphicsStr);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.Error.WriteLine("ERROR: " + ex.Message);
+                    return 3;
+                }
+            }
+
+            if (migrateAssets)      return RunMigrate();
+            if (createPatches)     return RunCreatePatches();
+            if (cleanBuild)        return RunCleanBuild();
+            if (buildRequested)    return RunBuild();
+
+            return 0;
         }
 
         private static void ParsePlatform(string buildPlatform, string? graphicsStr)
@@ -131,40 +136,12 @@ namespace LADXHD_Migrater
             Config.SelectedGraphics = graphics;
         }
 
-        private static async Task RunHeadlessAsync(bool migrateAssets, bool createPatches, bool cleanBuild, bool buildRequested, string? buildPlatform, string? graphicsStr)
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                AttachConsole(ATTACH_PARENT_PROCESS);
-
-            Functions.HeadlessMode = true;
-            Config.Initialize();
-            BuildAvaloniaApp().SetupWithoutStarting();
-
-            if (buildRequested && buildPlatform != null)
-            {
-                try
-                {
-                    ParsePlatform(buildPlatform, graphicsStr);
-                }
-                catch (ArgumentException ex)
-                {
-                    Console.Error.WriteLine("ERROR: " + ex.Message);
-                    ExitHeadless(3);
-                }
-            }
-
-            if (migrateAssets)      RunMigrate();
-            if (createPatches)      RunCreatePatches();
-            if (cleanBuild)         RunCleanBuild();
-            if (buildRequested)     await RunBuildAsync();
-        }
-
-        private static void RunMigrate()
+        private static int RunMigrate()
         {
             if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
             {
                 Console.Error.WriteLine("ERROR: assets_original/Content or assets_original/Data is missing.");
-                ExitHeadless(1);
+                return 1;
             }
 
             try
@@ -174,24 +151,24 @@ namespace LADXHD_Migrater
             catch (Exception ex)
             {
                 Console.Error.WriteLine("ERROR: " + ex.Message);
-                ExitHeadless(2);
+                return 2;
             }
 
             Console.WriteLine("Migration complete.");
-            ExitHeadless(0);
+            return 0;
         }
 
-        private static void RunCreatePatches()
+        private static int RunCreatePatches()
         {
             if (!Config.Orig_Content.TestPath() || !Config.Orig_Data.TestPath())
             {
                 Console.Error.WriteLine("ERROR: assets_original/Content or assets_original/Data is missing.");
-                ExitHeadless(1);
+                return 1;
             }
             if (!Config.Update_Content.TestPath() || !Config.Update_Data.TestPath())
             {
                 Console.Error.WriteLine("ERROR: ladxhd_game_source_code Content or Data is missing.");
-                ExitHeadless(1);
+                return 1;
             }
 
             try
@@ -201,14 +178,14 @@ namespace LADXHD_Migrater
             catch (Exception ex)
             {
                 Console.Error.WriteLine("ERROR: " + ex.Message);
-                ExitHeadless(2);
+                return 2;
             }
 
             Console.WriteLine("Patches created.");
-            ExitHeadless(0);
+            return 0;
         }
 
-        private static void RunCleanBuild()
+        private static int RunCleanBuild()
         {
             try
             {
@@ -217,32 +194,73 @@ namespace LADXHD_Migrater
             catch (Exception ex)
             {
                 Console.Error.WriteLine("ERROR: " + ex.Message);
-                ExitHeadless(2);
+                return 2;
             }
 
             Console.WriteLine("Build files cleaned.");
-            ExitHeadless(0);
+            return 0;
         }
 
-        private static async Task RunBuildAsync()
+        private static int RunBuild()
         {
             try
             {
-                bool success = await Functions.CreateBuild();
+                bool success = Functions.CreateBuild().GetAwaiter().GetResult();
                 if (!success)
                 {
                     Console.Error.WriteLine("ERROR: Build failed.");
-                    ExitHeadless(2);
+                    return 2;
                 }
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine("ERROR: " + ex.Message);
-                ExitHeadless(2);
+                return 2;
             }
 
             Console.WriteLine("Build complete.");
-            ExitHeadless(0);
+            return 0;
+        }
+
+        // ---- Windows console re-attachment (headless mode) ----
+
+        [SupportedOSPlatform("windows")]
+        [DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int dwProcessId);
+
+        [SupportedOSPlatform("windows")]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CreateFile(string lpFileName, uint dwDesiredAccess, uint dwShareMode, IntPtr lpSecurityAttributes, uint dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+
+        [SupportedOSPlatform("windows")]
+        [DllImport("kernel32.dll")]
+        private static extern bool SetStdHandle(int nStdHandle, IntPtr hHandle);
+
+        [SupportedOSPlatform("windows")]
+        private static void TryReconnectConsole()
+        {
+            const int  ATTACH_PARENT_PROCESS = -1;
+            const int  STD_OUTPUT_HANDLE     = -11;
+            const int  STD_ERROR_HANDLE      = -12;
+            const uint GENERIC_READ          = 0x80000000;
+            const uint GENERIC_WRITE         = 0x40000000;
+            const uint OPEN_EXISTING         = 3;
+            const uint FILE_SHARE_WRITE      = 2;
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+            if (!AttachConsole(ATTACH_PARENT_PROCESS)) return;
+
+            IntPtr hOut = CreateFile("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+            if (hOut != new IntPtr(-1))
+            {
+                SetStdHandle(STD_OUTPUT_HANDLE, hOut);
+                SetStdHandle(STD_ERROR_HANDLE, hOut);
+            }
+
+            var stream = new FileStream(new Microsoft.Win32.SafeHandles.SafeFileHandle(hOut, false), FileAccess.Write);
+            var writer = new StreamWriter(stream) { AutoFlush = true };
+            Console.SetOut(writer);
+            Console.SetError(writer);
         }
     }
 }
