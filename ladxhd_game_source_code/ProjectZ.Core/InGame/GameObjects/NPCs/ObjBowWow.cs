@@ -410,8 +410,8 @@ namespace ProjectZ.InGame.GameObjects.NPCs
 
             // Make sure the enemy is currently within the field rectangle.
             if (Camera.ClassicMode)
-                _enemyList.RemoveAll(obj => _body.FieldRectangle.Contains(obj.EntityPosition.Position));
-            
+                _enemyList.RemoveAll(obj => !_body.FieldRectangle.Contains(obj.EntityPosition.Position));
+
             // Loop through the enemies in the list.
             foreach (var obj in _enemyList)
             {
