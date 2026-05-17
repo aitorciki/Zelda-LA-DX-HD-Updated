@@ -16,7 +16,7 @@
 #                                                                                                             #
 #  NOTICE:                                                                                                    #
 #  Because I keep hitting the GitLab 10GB limit, this script no longer mirrors the history. Going forward,    #
-#  each run pushes a fresh snapshot of the current files to the GitLab backup repo. This really sucks, but    #
+#  each run pushes a fresh snapshot of the current files to the GitLab backup repo. This is not ideal, but    #
 #  backing up the game and preserving the progress is more important than fully preserving how it got there.  #
 #                                                                                                             #
 ###############################################################################################################
