@@ -648,6 +648,7 @@ namespace LADXHD_Patcher
                 // Generate the APK file.
                 await GenerateAPKFile();
             }
+            // MacOS has additional library files that are required.
             else if (Config.SelectedPlatform == Platform.MacOS_x86 || Config.SelectedPlatform == Platform.MacOS_Arm64)
             {
                 // The files are different depending on MacOS CPU.
@@ -746,8 +747,12 @@ namespace LADXHD_Patcher
             File.WriteAllBytes(Path.Combine(mapsPath, "dungeon3_1.map.data"), Resources.GetBytes("d3mapdata"));
         }
 
-        private static void PrepareZeldaLAExecutable(bool isLinux, bool isMacOS)
+        private static void PrepareZeldaLAExecutable(bool isAndroid, bool isLinux, bool isMacOS)
         {
+            // If we're patching for Android, we don't need to touch the executable.
+            if (isAndroid)
+                return;
+
             // Set the path to both potential executables.
             string winEXE = Config.ZeldaEXE;
             string altEXE = Config.ZeldaEXE.Substring(0, Config.ZeldaEXE.Length - 4);
@@ -781,7 +786,7 @@ namespace LADXHD_Patcher
         {
             await Task.Run(async () =>
             {
-                // Check to see if we are on Android.
+                // Check to see which platform we are patching for.
                 bool isAndroid = Config.SelectedPlatform == Platform.Android;
                 bool isWindows = Config.SelectedPlatform == Platform.Windows;
                 bool isLinux   = Config.SelectedPlatform == Platform.Linux_x86 || Config.SelectedPlatform == Platform.Linux_Arm64;
@@ -791,7 +796,7 @@ namespace LADXHD_Patcher
                 Config.BackupPath.CreatePath();
 
                 // The v1.0.0 executable must be in the base path.
-                PrepareZeldaLAExecutable(isLinux, isMacOS);
+                PrepareZeldaLAExecutable(isAndroid, isLinux, isMacOS);
 
                 // Remove any garbage files that will just mess up the patcher.
                 RemoveBadBackupFiles();
