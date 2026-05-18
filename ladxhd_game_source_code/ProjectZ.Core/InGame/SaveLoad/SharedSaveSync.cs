@@ -47,44 +47,58 @@ namespace ProjectZ.InGame.SaveLoad
             var scopedSaveGame = Path.Combine(scopedDir, SaveGameSaveLoad.SaveFileNameGame + slot);
 
             // If shared doesn't have a complete pair, there's nothing to sync.
-            if (!File.Exists(sharedSave) || !File.Exists(sharedSaveGame))
+            var sharedSaveExists     = File.Exists(sharedSave);
+            var sharedSaveGameExists = File.Exists(sharedSaveGame);
+            var scopedSaveExists     = File.Exists(scopedSave);
+            var scopedSaveGameExists = File.Exists(scopedSaveGame);
+
+            if (!sharedSaveExists || !sharedSaveGameExists)
                 return;
 
             // Determine if shared is newer than scoped.
             var sharedTime = MinWriteTime(sharedSave, sharedSaveGame);
 
             // If scoped is missing the pair entirely, shared wins unconditionally.
-            if (!File.Exists(scopedSave) || !File.Exists(scopedSaveGame))
+            if (!scopedSaveExists || !scopedSaveGameExists)
             {
-                CopyPair(sharedSave, sharedSaveGame, scopedSave, scopedSaveGame);
+                TryCopyPair(sharedSave, sharedSaveGame, scopedSave, scopedSaveGame);
                 return;
             }
-
             // Both sides have the pair; compare timestamps.
             var scopedTime = MaxWriteTime(scopedSave, scopedSaveGame);
 
             // This avoids needlessly re-copying when both sides are identical.
             if (sharedTime > scopedTime)
-                CopyPair(sharedSave, sharedSaveGame, scopedSave, scopedSaveGame);
-            
+                TryCopyPair(sharedSave, sharedSaveGame, scopedSave, scopedSaveGame);
         }
 
-        private static void CopyPair(string srcSave, string srcSaveGame,
-                                     string dstSave, string dstSaveGame)
+        private static void TryCopyPair(string srcSave, string srcSaveGame, string dstSave, string dstSaveGame)
         {
-            // Copy through temp files so a mid-copy failure can't leave a
-            // half-written destination. Same pattern as SaveManager.Save.
-            var tmpSave     = dstSave + ".tmp";
-            var tmpSaveGame = dstSaveGame + ".tmp";
+            try { CopyPair(srcSave, srcSaveGame, dstSave, dstSaveGame); }
+            catch { }
+        }
 
-            File.Copy(srcSave,     tmpSave,     overwrite: true);
-            File.Copy(srcSaveGame, tmpSaveGame, overwrite: true);
+        private static void CopyPair(string srcSave, string srcSaveGame, string dstSave, string dstSaveGame)
+        {
+            // Uses Java.IO instead of System.IO.File.Copy because on Samsung Android 16+
+            // (One UI 8.5), .NET's libc-level filesystem calls into "/Android/data/<pkg>/"
+            // can be silently killed by SELinux policy when the process holds
+            // MANAGE_EXTERNAL_STORAGE. Routing through Android's framework I/O channel
+            // is treated as app-internal access and is allowed. 
+            // Verified on Z Fold 7 (issue #843).
+            JavaStreamCopy(srcSave, dstSave);
+            JavaStreamCopy(srcSaveGame, dstSaveGame);
+        }
 
-            if (File.Exists(dstSave))     File.Delete(dstSave);
-            if (File.Exists(dstSaveGame)) File.Delete(dstSaveGame);
+        private static void JavaStreamCopy(string srcPath, string dstPath)
+        {
+            using var input = new Java.IO.FileInputStream(srcPath);
+            using var output = new Java.IO.FileOutputStream(dstPath);
 
-            File.Move(tmpSave,     dstSave);
-            File.Move(tmpSaveGame, dstSaveGame);
+            var buffer = new byte[8192];
+            int read;
+            while ((read = input.Read(buffer)) > 0)
+                output.Write(buffer, 0, read);
         }
 
         private static DateTime MinWriteTime(string a, string b)
