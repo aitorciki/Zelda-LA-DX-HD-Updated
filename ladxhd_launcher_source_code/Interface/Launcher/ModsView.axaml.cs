@@ -9,286 +9,285 @@ using Avalonia.Media;
 using NativeFileDialogSharp;
 using static LADXHD_Launcher.AdvancedSettings;
 
-namespace LADXHD_Launcher;
-
-public partial class ModsView : UserControl
+namespace LADXHD_Launcher
 {
-    private MainWindow? _parent;
-
-    public ModsView() { InitializeComponent(); }
-
-    public ModsView(MainWindow parent)
+    public partial class ModsView : UserControl
     {
-        InitializeComponent();
-        _parent = parent;
-    }
+        private MainWindow? _parent;
 
-    private async void InstallModPack(object sender, RoutedEventArgs e)
-    {
-        // Open a dialog to select a lahdpak file.
-        DialogResult? selected = Dialog.FileOpen("lahdpak");
-        if (!selected.IsOk)
-            return;
-        string pakPath = selected.Path;
+        public ModsView() { InitializeComponent(); }
 
-        // Extract the .lahdpak to a temp folder and point Config at it.
-        Config.TempFolder = Path.Combine(Path.GetTempPath(), "LADXHD_ModInstall");
-        if (Directory.Exists(Config.TempFolder))
-            Directory.Delete(Config.TempFolder, true);
-        ZipFile.ExtractToDirectory(pakPath, Config.TempFolder);
-
-        // Show the mods window to the user.
-        var installModWindow = new InstallModsWindow();
-        await installModWindow.ShowDialog(TopLevel.GetTopLevel(this) as Window);
-    }
-
-    private async void CreateModPack(object sender, RoutedEventArgs e)
-    {
-        // Show the mods window to the user.
-        var createModWindow = new CreateModsWindow();
-        await createModWindow.ShowDialog(TopLevel.GetTopLevel(this) as Window);
-    }
-
-    private async void RemoveAllMods(object sender, RoutedEventArgs e)
-    {
-        // Show a Yes/No window to the user.
-        string message = "Are you sure you wish to delete all mod files?";
-
-        // If the user clicked "Yes" clear all the mods.
-        if (await YesNoWindow.ShowAsync("Delete All Mods?", message))
+        public ModsView(MainWindow parent)
         {
-            Config.AnimationMods.ClearPath();
-            Config.DungeonMods.ClearPath();
-            Config.GraphicsMods.ClearPath();
-            Config.MusicMods.ClearPath();
-            Config.LanguageMods.ClearPath();
-            Config.MapsMods.ClearPath();
-            Config.SoundsMods.ClearPath();
-            Config.LAHDModPath.ClearPath();
-            Config.ZScripts.RemovePath();
-        }
-    }
-
-    private static decimal? GetOverride(Dictionary<string, decimal> overrides, string key)
-    {
-        // Exact match first
-        if (overrides.TryGetValue(key, out decimal exact))
-            return exact;
-
-        // Partial suffix match
-        foreach (var entry in overrides)
-        {
-            if (entry.Key.StartsWith("*") && key.EndsWith(entry.Key[1..]))
-                return entry.Value;
+            InitializeComponent();
+            _parent = parent;
         }
 
-        return null;
-    }
-
-    public void LoadValues()
-    {
-        // Suppress the sound effects so the checkbox sound doesn't fire a bunch of times.
-        SoundPlayer.SuppressSound = true;
-
-        // Remove only auto-generated groups.
-        while (ModsPanel.Children.Count > 1)
-            ModsPanel.Children.RemoveAt(1);
-
-        foreach (var section in AdvancedSettings.Sections)
+        private async void InstallModPack(object sender, RoutedEventArgs e)
         {
-            // Count total options
-            int optionCount = 0;
-            foreach (var g in section.Groups) optionCount += g.Options.Count;
+            // Open a dialog to select a lahdpak file.
+            DialogResult? selected = Dialog.FileOpen("lahdpak");
+            if (!selected.IsOk)
+                return;
+            string pakPath = selected.Path;
 
-            // Detect "lives-style" section: many options, single group, no sub-tooltips.
-            bool twoColumn = false;
+            // Extract the .lahdpak to a temp folder and point Config at it.
+            Config.TempPath = Path.Combine(Path.GetTempPath(), "LADXHD_ModInstall");
+            if (Directory.Exists(Config.TempPath))
+                Directory.Delete(Config.TempPath, true);
+            ZipFile.ExtractToDirectory(pakPath, Config.TempPath);
 
-            // Section header: create a new combobox.
-            var header = new TextBlock
+            // Show the mods window to the user.
+            var installModWindow = new InstallModsWindow();
+            await installModWindow.ShowDialog(TopLevel.GetTopLevel(this) as Window);
+        }
+
+        private async void CreateModPack(object sender, RoutedEventArgs e)
+        {
+            // Show the mods window to the user.
+            var createModWindow = new CreateModsWindow();
+            await createModWindow.ShowDialog(TopLevel.GetTopLevel(this) as Window);
+        }
+
+        private async void RemoveAllMods(object sender, RoutedEventArgs e)
+        {
+            // Show a Yes/No window to the user.
+            string message = "Are you sure you wish to delete all mod files?";
+
+            // If the user clicked "Yes" clear all the mods.
+            if (await YesNoWindow.ShowAsync("Delete All Mods?", message))
             {
-                Text       = section.Header,
-                Foreground = Brushes.White,
-                FontWeight = FontWeight.Bold,
-                Margin     = new Thickness(2, 0, 0, 0)
-            };
-            // If a comment was set then set the tooltip.
-            if (!string.IsNullOrEmpty(section.HeaderTooltip))
-                ToolTip.SetTip(header, section.HeaderTooltip);
+                Config.AnimationMods.ClearPath();
+                Config.DungeonMods.ClearPath();
+                Config.GraphicsMods.ClearPath();
+                Config.MusicMods.ClearPath();
+                Config.LanguageMods.ClearPath();
+                Config.MapsMods.ClearPath();
+                Config.SoundsMods.ClearPath();
+                Config.LAHDModPath.ClearPath();
+                Config.ZScripts.RemovePath();
+            }
+        }
 
-            int rowHeight = 36;
-            int rows      = twoColumn
-                ? (int)Math.Ceiling(optionCount / 2.0)
-                : optionCount;
-            int canvasH   = rows * rowHeight;
+        private static decimal? GetOverride(Dictionary<string, decimal> overrides, string key)
+        {
+            // Exact match first
+            if (overrides.TryGetValue(key, out decimal exact))
+                return exact;
 
-            var canvas = new Canvas { Height = canvasH };
-
-            int col = 0;
-            int row = 0;
-
-            foreach (var group in section.Groups)
+            // Partial suffix match
+            foreach (var entry in overrides)
             {
-                foreach (var option in group.Options)
-                {
-                    double x = twoColumn && col == 1 ? 232 : 0;
-                    double y = row * rowHeight;
-
-                    string tooltip = option.Tooltip;
-
-                    // Checkbox: Option is boolean so present with a checkbox.
-                    if (option.IsBool)
-                    {
-                        // Create a new checkbox.
-                        var cb = new CheckBox
-                        {
-                            Content    = OptionLabels.Get(option.Key),
-                            Foreground = Brushes.White,
-                            IsChecked  = option.BoolValue
-                        };
-                        // Set a tooltip if comments were found.
-                        if (!string.IsNullOrEmpty(tooltip))
-                            ToolTip.SetTip(cb, tooltip);
-
-                        string sHeader = section.Header;
-                        string key     = option.Key;
-                        cb.IsCheckedChanged += (s, e) =>
-                            AdvancedSettings.UpdateValue(sHeader, key,
-                                (cb.IsChecked == true).ToString().ToLower());
-
-                        Canvas.SetLeft(cb, x);
-                        Canvas.SetTop(cb, y);
-                        canvas.Children.Add(cb);
-                    }
-                    // Numeric Up/Down: Option is a number so present with a numeric up/down.
-                    else
-                    {
-                        // Width and offset of numeric up/downs.
-                        const double nudWidth  = 140;
-                        const double lblOffset = nudWidth + 6;
-
-                        decimal? minOverride = GetOverride(AdvancedSettings.MinOverrides, option.Key);
-                        decimal? maxOverride = GetOverride(AdvancedSettings.MaxOverrides, option.Key);
-
-                        decimal minVal = minOverride ?? (group.AllowNegative ? decimal.MinValue : 0);
-                        decimal maxVal = maxOverride ?? decimal.MaxValue;
-
-                        // Apply the values to the numeric up/downs.
-                        var nud = new NumericUpDown
-                        {
-                            Width        = nudWidth,
-                            Minimum      = minVal,
-                            Maximum      = maxVal,
-                            Increment    = option.Increment,
-                            Value        = (decimal)(option.IsFloat ? option.FloatValue : option.IntValue),
-                            FormatString = option.FormatString
-                        };
-                        var lbl = new TextBlock
-                        {
-                            Text       = OptionLabels.Get(option.Key),
-                            Foreground = Brushes.White
-                        };
-                        if (!string.IsNullOrEmpty(tooltip))
-                        {
-                            ToolTip.SetTip(nud, tooltip);
-                            ToolTip.SetTip(lbl, tooltip);
-                        }
-
-                        string sHeader = section.Header;
-                        string key     = option.Key;
-                        nud.ValueChanged += (s, e) =>
-                        {
-                            string val = option.IsFloat
-                                ? ((float)(nud.Value ?? 0)).ToString("F" + option.DecimalPlaces,
-                                    System.Globalization.CultureInfo.InvariantCulture)
-                                : ((int)(nud.Value ?? 0)).ToString();
-                            AdvancedSettings.UpdateValue(sHeader, key, val);
-                        };
-                        Canvas.SetLeft(nud, x);
-                        Canvas.SetTop(nud, y);
-                        Canvas.SetLeft(lbl, x + lblOffset);
-                        Canvas.SetTop(lbl, y + 7);
-                        canvas.Children.Add(nud);
-                        canvas.Children.Add(lbl);
-                    }
-
-                    if (twoColumn)
-                    {
-                        col++;
-                        if (col > 1) { col = 0; row++; }
-                    }
-                    else
-                    {
-                        row++;
-                    }
-                }
+                if (entry.Key.StartsWith("*") && key.EndsWith(entry.Key[1..]))
+                    return entry.Value;
             }
 
-            var border = new Border
-            {
-                BorderBrush     = new SolidColorBrush(Color.Parse("#88FFFFFF")),
-                BorderThickness = new Thickness(1),
-                CornerRadius    = new CornerRadius(6),
-                Padding         = new Thickness(10),
-                Child           = canvas
-            };
-
-            var sectionPanel = new StackPanel { Spacing = 4 };
-            sectionPanel.Children.Add(header);
-            sectionPanel.Children.Add(border);
-            ModsPanel.Children.Add(sectionPanel);
+            return null;
         }
-        // Ok it's fine now.
-        SoundPlayer.SuppressSound = false;
-    }
 
-    private void BackButton_Click(object sender, RoutedEventArgs e)
-    {
-        _parent?.NavigateTo(_parent.HomeView);
-        SoundPlayer.PlayXnbSound(SoundPlayer.SoundClose);
-    }
-
-    private async void ResetButton_Click(object sender, RoutedEventArgs e)
-    {
-        string targetDir = File.Exists(Path.Combine(Config.BaseFolder, "portable.txt"))
-            ? Config.BaseFolder
-            : Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData), "Zelda_LA");
-        string advancedPath = Path.Combine(targetDir, "advanced");
-
-        // Delete the existing file
-        if (File.Exists(advancedPath))
-            File.Delete(advancedPath);
-
-        // Re-extract from resources
-        var resources = ResourceHelper.GetAllResources();
-        if (resources.ContainsKey("advanced"))
-            File.WriteAllBytes(advancedPath, (byte[])resources["advanced"]);
-
-        // Reload on background thread
-        await System.Threading.Tasks.Task.Run(() =>
+        public void LoadValues()
         {
-            AdvancedSettings.Load(AppContext.BaseDirectory);
-        });
+            // Suppress the sound effects so the checkbox sound doesn't fire a bunch of times.
+            SoundPlayer.SuppressSound = true;
 
-        // Back on UI thread — rebuild controls then show notification and play sound
-        LoadValues();
+            // Remove only auto-generated groups.
+            while (ModsPanel.Children.Count > 1)
+                ModsPanel.Children.RemoveAt(1);
+
+            foreach (var section in AdvancedSettings.Sections)
+            {
+                // Count total options
+                int optionCount = 0;
+                foreach (var g in section.Groups) optionCount += g.Options.Count;
+
+                // Detect "lives-style" section: many options, single group, no sub-tooltips.
+                bool twoColumn = false;
+
+                // Section header: create a new combobox.
+                var header = new TextBlock
+                {
+                    Text       = section.Header,
+                    Foreground = Brushes.White,
+                    FontWeight = FontWeight.Bold,
+                    Margin     = new Thickness(2, 0, 0, 0)
+                };
+                // If a comment was set then set the tooltip.
+                if (!string.IsNullOrEmpty(section.HeaderTooltip))
+                    ToolTip.SetTip(header, section.HeaderTooltip);
+
+                int rowHeight = 36;
+                int rows      = twoColumn
+                    ? (int)Math.Ceiling(optionCount / 2.0)
+                    : optionCount;
+                int canvasH   = rows * rowHeight;
+
+                var canvas = new Canvas { Height = canvasH };
+
+                int col = 0;
+                int row = 0;
+
+                foreach (var group in section.Groups)
+                {
+                    foreach (var option in group.Options)
+                    {
+                        double x = twoColumn && col == 1 ? 232 : 0;
+                        double y = row * rowHeight;
+
+                        string tooltip = option.Tooltip;
+
+                        // Checkbox: Option is boolean so present with a checkbox.
+                        if (option.IsBool)
+                        {
+                            // Create a new checkbox.
+                            var cb = new CheckBox
+                            {
+                                Content    = OptionLabels.Get(option.Key),
+                                Foreground = Brushes.White,
+                                IsChecked  = option.BoolValue
+                            };
+                            // Set a tooltip if comments were found.
+                            if (!string.IsNullOrEmpty(tooltip))
+                                ToolTip.SetTip(cb, tooltip);
+
+                            string sHeader = section.Header;
+                            string key     = option.Key;
+                            cb.IsCheckedChanged += (s, e) =>
+                                AdvancedSettings.UpdateValue(sHeader, key,
+                                    (cb.IsChecked == true).ToString().ToLower());
+
+                            Canvas.SetLeft(cb, x);
+                            Canvas.SetTop(cb, y);
+                            canvas.Children.Add(cb);
+                        }
+                        // Numeric Up/Down: Option is a number so present with a numeric up/down.
+                        else
+                        {
+                            // Width and offset of numeric up/downs.
+                            const double nudWidth  = 140;
+                            const double lblOffset = nudWidth + 6;
+
+                            decimal? minOverride = GetOverride(AdvancedSettings.MinOverrides, option.Key);
+                            decimal? maxOverride = GetOverride(AdvancedSettings.MaxOverrides, option.Key);
+
+                            decimal minVal = minOverride ?? (group.AllowNegative ? decimal.MinValue : 0);
+                            decimal maxVal = maxOverride ?? decimal.MaxValue;
+
+                            // Apply the values to the numeric up/downs.
+                            var nud = new NumericUpDown
+                            {
+                                Width        = nudWidth,
+                                Minimum      = minVal,
+                                Maximum      = maxVal,
+                                Increment    = option.Increment,
+                                Value        = (decimal)(option.IsFloat ? option.FloatValue : option.IntValue),
+                                FormatString = option.FormatString
+                            };
+                            var lbl = new TextBlock
+                            {
+                                Text       = OptionLabels.Get(option.Key),
+                                Foreground = Brushes.White
+                            };
+                            if (!string.IsNullOrEmpty(tooltip))
+                            {
+                                ToolTip.SetTip(nud, tooltip);
+                                ToolTip.SetTip(lbl, tooltip);
+                            }
+
+                            string sHeader = section.Header;
+                            string key     = option.Key;
+                            nud.ValueChanged += (s, e) =>
+                            {
+                                string val = option.IsFloat
+                                    ? ((float)(nud.Value ?? 0)).ToString("F" + option.DecimalPlaces,
+                                        System.Globalization.CultureInfo.InvariantCulture)
+                                    : ((int)(nud.Value ?? 0)).ToString();
+                                AdvancedSettings.UpdateValue(sHeader, key, val);
+                            };
+                            Canvas.SetLeft(nud, x);
+                            Canvas.SetTop(nud, y);
+                            Canvas.SetLeft(lbl, x + lblOffset);
+                            Canvas.SetTop(lbl, y + 7);
+                            canvas.Children.Add(nud);
+                            canvas.Children.Add(lbl);
+                        }
+
+                        if (twoColumn)
+                        {
+                            col++;
+                            if (col > 1) { col = 0; row++; }
+                        }
+                        else
+                        {
+                            row++;
+                        }
+                    }
+                }
+
+                var border = new Border
+                {
+                    BorderBrush     = new SolidColorBrush(Color.Parse("#88FFFFFF")),
+                    BorderThickness = new Thickness(1),
+                    CornerRadius    = new CornerRadius(6),
+                    Padding         = new Thickness(10),
+                    Child           = canvas
+                };
+
+                var sectionPanel = new StackPanel { Spacing = 4 };
+                sectionPanel.Children.Add(header);
+                sectionPanel.Children.Add(border);
+                ModsPanel.Children.Add(sectionPanel);
+            }
+            // Ok it's fine now.
+            SoundPlayer.SuppressSound = false;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _parent?.NavigateTo(_parent.HomeView);
+            SoundPlayer.PlayXnbSound(SoundPlayer.SoundClose);
+        }
+
+        private async void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            string targetDir = File.Exists(Path.Combine(Config.RootPath, "portable.txt"))
+                ? Config.RootPath
+                : Path.Combine(Environment.GetFolderPath(
+                    Environment.SpecialFolder.LocalApplicationData), "Zelda_LA");
+            string advancedPath = Path.Combine(targetDir, "advanced");
+
+            // Delete the existing file
+            if (File.Exists(advancedPath))
+                File.Delete(advancedPath);
+
+            // Re-extract from resources
+            File.WriteAllBytes(advancedPath, LADXHD_Launcher.Resources.GetBytes("advanced"));
+
+            // Reload on background thread
+            await System.Threading.Tasks.Task.Run(() =>
+            {
+                AdvancedSettings.Load(AppContext.BaseDirectory);
+            });
+
+            // Back on UI thread — rebuild controls then show notification and play sound
+            LoadValues();
 
 
-        await System.Threading.Tasks.Task.Delay(250);
-        _parent?.ShowNotification(MainWindow.NotificationType.Reset);
-        SoundPlayer.PlayXnbSound(SoundPlayer.SoundReset);
-    }
+            await System.Threading.Tasks.Task.Delay(250);
+            _parent?.ShowNotification(MainWindow.NotificationType.Reset);
+            SoundPlayer.PlayXnbSound(SoundPlayer.SoundReset);
+        }
 
-    private void SaveButton_Click(object sender, RoutedEventArgs e)
-    {
-        AdvancedSettings.Save(AppContext.BaseDirectory);
-        _parent?.ShowNotification(MainWindow.NotificationType.Save);
-        _parent?.NavigateTo(_parent.HomeView);
-        SoundPlayer.PlayXnbSound(SoundPlayer.SoundXSave);
-    }
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            AdvancedSettings.Save(AppContext.BaseDirectory);
+            _parent?.ShowNotification(MainWindow.NotificationType.Save);
+            _parent?.NavigateTo(_parent.HomeView);
+            SoundPlayer.PlayXnbSound(SoundPlayer.SoundXSave);
+        }
 
-    private void ExitButton_Click(object sender, RoutedEventArgs e)
-    {
-        _parent?.Close();
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            _parent?.Close();
+        }
     }
 }

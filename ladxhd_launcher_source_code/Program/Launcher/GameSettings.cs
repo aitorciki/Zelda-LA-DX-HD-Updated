@@ -103,13 +103,8 @@ public static class GameSettings
     {
         string path = GetSettingsPath(gameDirectory);
 
-        System.Diagnostics.Debug.WriteLine(gameDirectory);
-        System.Diagnostics.Debug.WriteLine(path);
-
         if (!File.Exists(path))
             return;
-        else
-            System.Diagnostics.Debug.WriteLine("success");
 
         foreach (string line in File.ReadAllLines(path))
         {

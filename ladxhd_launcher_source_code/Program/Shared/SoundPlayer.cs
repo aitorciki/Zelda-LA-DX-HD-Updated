@@ -150,13 +150,13 @@ public static class SoundPlayer
 
     public static void Initialize()
     {
-        SoundSave   = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-01-01.xnb");
-        SoundXSave  = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-35-23.xnb");
-        SoundOpen   = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-17-11.xnb");
-        SoundClose  = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-18-12.xnb");
-        SoundClick  = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-10-0A.xnb");
-        SoundSelect = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-19-13.xnb");
-        SoundReset  = Path.Combine(Config.BaseFolder, "Content", "SoundEffects", "D360-27-1B.xnb");
+        SoundSave   = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-01-01.xnb");
+        SoundXSave  = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-35-23.xnb");
+        SoundOpen   = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-17-11.xnb");
+        SoundClose  = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-18-12.xnb");
+        SoundClick  = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-10-0A.xnb");
+        SoundSelect = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-19-13.xnb");
+        SoundReset  = Path.Combine(Config.RootPath, "Content", "SoundEffects", "D360-27-1B.xnb");
 
         Task.Run(() =>
         {

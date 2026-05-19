@@ -1,42 +1,18 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Resources;
-using LADXHD_Launcher.Properties;
+using System.IO;
+using Avalonia.Platform;
 
 namespace LADXHD_Launcher
 {
-    public static class ResourceHelper
+    internal class Resources
     {
-        public static Dictionary<string, object> GetAllResources()
+        public static byte[] GetBytes(string resName)
         {
-            Dictionary<string, object> resources = new Dictionary<string, object>();
-
-            ResourceSet resourceSet = Resources.ResourceManager.GetResourceSet
-            (
-                CultureInfo.CurrentUICulture,
-                true,
-                true
-            );
-            foreach (DictionaryEntry entry in resourceSet)
-            {
-                resources[(string)entry.Key] = entry.Value;
-            }
-            return resources;
-        }
-
-        public static T GetResource<T>(string name)
-        {
-            object resource = Resources.ResourceManager.GetObject(name);
-            if (resource is T typed)
-            {
-                return typed;
-            }
-            throw new InvalidOperationException
-            (
-                $"Resource '{name}' is not of type {typeof(T).Name}."
-            );
+            var uri = new Uri($"avares://Launcher/Resources/{resName}");
+            using var stream = AssetLoader.Open(uri);
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
         }
     }
 }

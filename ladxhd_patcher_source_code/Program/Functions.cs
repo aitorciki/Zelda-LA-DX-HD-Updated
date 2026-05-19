@@ -17,6 +17,7 @@ namespace LADXHD_Patcher
 
         public  static bool   HeadlessMode { get => _headlessMode; set => _headlessMode = value; }
         public  static int    ExitCode   { get; private set; }
+
         private static bool   _headlessMode;
         private static bool   _patchFromBackup;
         private static string _executable;
@@ -680,8 +681,8 @@ namespace LADXHD_Patcher
                 // Get a file item of the file.
                 var fileItem = new FileItem(file);
 
-                // Always skip files in the "Backup" and "Temp" folders.
-                if (fileItem.IsInFolder("Backup") || fileItem.IsInFolder("~temp"))
+                // Always skip files in the mods, backup, and temp folders.
+                if (fileItem.IsInFolder("Mods") || fileItem.IsInFolder("Backup") || fileItem.IsInFolder("~temp"))
                     continue;
 
                 // Get the name of the file for the key.
@@ -828,11 +829,7 @@ namespace LADXHD_Patcher
                     FileItem fileItem = new FileItem(fullPath);
 
                     // On Android we only want files in Content or Data folders.
-                    if (isAndroid && (fileItem.IsInFolder("Mods") || (!fileItem.IsInFolder("Content") && !fileItem.IsInFolder("Data"))))
-                        continue;
-        
-                    // On Windows we skip the patcher or the Mods folder.
-                    else if ((isWindows || isLinux || isMacOS) && fileItem.IsInFolder("Mods"))
+                    if (isAndroid && (!fileItem.IsInFolder("Content") && !fileItem.IsInFolder("Data")))
                         continue;
 
                     // Get the backup path to test for existing backups and create new ones to it.

@@ -24,9 +24,21 @@
 				   Height="768" />
 		</Viewbox>
 
+        <!-- Update Button in content row -->
+        <Canvas Grid.Row="0">
+            <Button Canvas.Left="3" Canvas.Top="3" Width="239" Height="44"
+                    x:Name="UpdateButton"
+                    Click="UpdateButton_Click"
+                    IsVisible="False"
+                    Background="Transparent" BorderThickness="0" Padding="0">
+                <Image Source="avares://Launcher/Resources/button_update.png"
+                       Stretch="Fill" />
+            </Button>
+        </Canvas>
+
         <!-- Sound Toggle Button in content row -->
         <Canvas Grid.Row="0">
-            <Button Canvas.Left="500" Canvas.Top="10" Width="40" Height="30"
+            <Button Canvas.Left="502" Canvas.Top="10" Width="40" Height="30"
                     Click="SoundToggle_Click"
                     Background="Transparent" BorderThickness="0" Padding="0">
                 <Image x:Name="SoundButtonImage"

@@ -35,7 +35,7 @@
   <PropertyGroup Condition="'$(TargetOS)' == 'win'">
     <OutputType>WinExe</OutputType>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <TargetFramework>net8.0-windows</TargetFramework>
   </PropertyGroup>
@@ -55,34 +55,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\icon.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Update="Interface\Launcher\HomeView.axaml.cs">
-      <DependentUpon>UserInterface\HomeView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Interface\Launcher\SettingsView.axaml.cs">
-      <DependentUpon>UserInterface\SettingsView.axaml</DependentUpon>
+      <DependentUpon>Interface\Launcher\HomeView.axaml</DependentUpon>
+    </Compile>    
+    <Compile Update="Interface\Launcher\MainWindow.axaml.cs">
+      <DependentUpon>Interface\Launcher\MainWindow.axaml</DependentUpon>
     </Compile>
     <Compile Update="Interface\Launcher\ModsView.axaml.cs">
-      <DependentUpon>UserInterface\ModsView.axaml</DependentUpon>
+      <DependentUpon>Interface\Launcher\ModsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Interface\Launcher\SettingsView.axaml.cs">
+      <DependentUpon>Interface\Launcher\SettingsView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Interface\ModMaker\CreateModsWindow.axaml.cs">
-      <DependentUpon>CreateModsWindow.axaml</DependentUpon>
+      <DependentUpon>Interface\ModMaker\CreateModsWindow.axaml</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Compile Update="Interface\ModMaker\InstallModsWindow.axaml.cs">
+      <DependentUpon>Interface\ModMaker\InstallModsWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Interface\Patcher\ProgressWindow.axaml.cs">
+      <DependentUpon>Interface\Patcher\ProgressWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Interface\Shared\OkayWindow.axaml.cs">
+      <DependentUpon>Interface\Shared\OkayWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Interface\Shared\YesNoWindow.axaml.cs">
+      <DependentUpon>Interface\Shared\YesNoWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <Target Name="DebugPlatformConstants" BeforeTargets="BeforeBuild">

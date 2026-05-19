@@ -95,11 +95,6 @@ namespace LADXHD_Launcher
        
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-        public interface IProgressWindow
-        {
-            void UpdateProgressBar(int value);
-        }
-
         private static void ResetProgress()
         {
             // Reset the variables.
@@ -125,7 +120,7 @@ namespace LADXHD_Launcher
         private static bool VerifyGameFolder()
         {
             // Get the path to the game executable to verify we're in the correct folder.
-            string GameExePath = Config.GetGameExecutable(Config.BaseFolder);
+            string GameExePath = Config.GetGameExecutable(Config.RootPath);
 
             // If we're not in the game folder do not try to apply patches.
             if (!GameExePath.TestPath())
@@ -301,7 +296,7 @@ namespace LADXHD_Launcher
         private static void CreatePatchLoop()
         {
             // Create the necessary output paths.
-            Config.TempFolder = Path.Combine(Path.GetTempPath(), "LADXHD_ModInstall").CreatePath(true);
+            Config.TempPath = Path.Combine(Path.GetTempPath(), "LADXHD_ModInstall").CreatePath(true);
             Config.OutGraphicsMods.CreatePath(true);
 
             // Get all files found in the base folder recursively.
@@ -362,7 +357,7 @@ namespace LADXHD_Launcher
             InstallImageFile();
 
             // Remove the temporary folder.
-            Config.TempFolder.RemovePath();
+            Config.TempPath.RemovePath();
         }
 
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

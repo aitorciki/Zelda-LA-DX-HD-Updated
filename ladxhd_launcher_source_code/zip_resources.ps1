@@ -11,10 +11,10 @@ $Host.UI.RawUI.WindowTitle = "LADXHD: Launcher Packing Script"
 
 Set-Location (Split-Path $script:MyInvocation.MyCommand.Path)
 Set-Location ..
-$BaseFolder   = Get-Location
-$LauncherPath = Join-path $BaseFolder ("\ladxhd_launcher_source_code")
+$RootPath   = Get-Location
+$LauncherPath = Join-path $RootPath ("\ladxhd_launcher_source_code")
 $PublishPath  = Join-path $LauncherPath ("\~Publish")
-$PatcherPath  = Join-path $BaseFolder ("\ladxhd_patcher_source_code")
+$PatcherPath  = Join-path $RootPath ("\ladxhd_patcher_source_code")
 $ResourcePath = Join-path $PatcherPath ("\Resources")
 
 #========================================================================================================================================

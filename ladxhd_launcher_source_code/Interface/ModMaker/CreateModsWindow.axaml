@@ -13,7 +13,7 @@
         MaxHeight="680"
 		CanMaximize="False"
         WindowStartupLocation="CenterScreen"
-        Icon="avares://Launcher/Resources/icon.ico">
+        Icon="avares://Launcher/Resources/Icon.ico">
 
 		<Canvas Grid.Row="1">
 			<Image Source="avares://Launcher/Resources/la.png" Canvas.Left="10" Canvas.Top="0" Width="400" Height="260" />

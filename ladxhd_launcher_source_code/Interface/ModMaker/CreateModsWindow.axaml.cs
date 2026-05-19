@@ -27,7 +27,7 @@ namespace LADXHD_Launcher
             OutputPathBox.AddHandler(DragDrop.DropEvent, OutputPathBox_Drop);
 
             // Update the title with the current version.
-            this.Title = "Link's Awakening DX HD Mod Maker v" + Config.Version;
+            this.Title = "Link's Awakening DX HD Mod Maker v" + Config.CurrentVersion;
         }
 
         private void EnableComponents(bool toggle)

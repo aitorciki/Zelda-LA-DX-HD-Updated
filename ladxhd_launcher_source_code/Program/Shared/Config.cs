@@ -1,17 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 using static LADXHD_Launcher.ModMaker_Functions;
 
 namespace LADXHD_Launcher
 {
+    public interface IProgressWindow
+    {
+        void UpdateProgressBar(int value);
+    }
+
     internal class Config
     {
-        public const string Version = "2.0.0";
+        public static string CurrentVersion = "v" + Assembly.GetExecutingAssembly().
+            GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion.Split('+')[0];
+
+        public static string GithubVersion = "";
 
         public static string AppPath = "";
         public static string AppName = "";
-        public static string BaseFolder = "";
+        public static string RootPath = "";
         public static string ZeldaEXE = "";
 
         public static string ModName = "";
@@ -21,7 +31,9 @@ namespace LADXHD_Launcher
         public static string BackupPath = "";
 
         public static string ImagePath = "";
-        public static string TempFolder = "";
+        public static string TempPath = "";
+        public static string PatchesPath = "";
+        public static string PatchedPath = "";
         public static string OutputPath = "";
 
         public static string AnimationMods = "";
@@ -44,34 +56,68 @@ namespace LADXHD_Launcher
         public static string OutLAHDModPath = "";
         public static string OutZScripts = "";
 
+        public static Action? UpdateAvailable { get; set; }
+
         public static IProgressWindow? ActiveWindow { get; set; }
 
         public static string LauncherConfig => Path.Combine(
-            File.Exists(Path.Combine(BaseFolder, "portable.txt"))
-                ? BaseFolder
+            File.Exists(Path.Combine(RootPath, "portable.txt"))
+                ? RootPath
                 : Path.Combine(Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData), "Zelda_LA"), "launcher.cfg");
-
-        private static Dictionary<string, object> resources = ResourceHelper.GetAllResources();
 
         public static void Initialize()
         {
-            BaseFolder = AppContext.BaseDirectory;
-            DataPath   = Path.Combine(BaseFolder, "Data");
+            RootPath   = AppContext.BaseDirectory;
+            DataPath   = Path.Combine(RootPath, "Data");
             BackupPath = Path.Combine(DataPath, "Backup");
 
             #if WINDOWS
-                AppPath  = Path.Combine(BaseFolder, "LADXHD_Launcher.exe");
-                ZeldaEXE = Path.Combine(BaseFolder, "Link's Awakening DX HD.exe");
+                AppPath  = Path.Combine(RootPath, "Launcher.exe");
+                ZeldaEXE = Path.Combine(RootPath, "Link's Awakening DX HD.exe");
             #elif LINUX
-                AppPath  = Path.Combine(BaseFolder, "LADXHD_Launcher");
-                ZeldaEXE = Path.Combine(BaseFolder, "Link's Awakening DX HD");
+                AppPath  = Path.Combine(RootPath, "Launcher");
+                ZeldaEXE = Path.Combine(RootPath, "Link's Awakening DX HD");
             #elif MACOS
-                AppPath  = Path.Combine(BaseFolder, "LADXHD_Launcher");
-                ZeldaEXE = Path.Combine(BaseFolder, "Link's Awakening DX HD");
+                AppPath  = Path.Combine(RootPath, "Launcher");
+                ZeldaEXE = Path.Combine(RootPath, "Link's Awakening DX HD");
             #endif
 
+            CleanupOldLauncher();
             SetModCreatePaths();
             CreateDefaultFiles();
+            CheckForUpdateAsync();
+        }
+
+        private static void CleanupOldLauncher()
+        {
+        #if WINDOWS
+            string contentFolder = Path.Combine(RootPath, "Content");
+            string oldPath = Path.Combine(contentFolder, Path.GetFileNameWithoutExtension(AppPath) + ".old");
+            if (File.Exists(oldPath))
+                File.Delete(oldPath);
+        #endif
+        }
+
+        public static async Task CheckForUpdateAsync()
+        {
+            try
+            {
+                // Get the latest version from the Github repo.
+                string? ver = await Github.GetLatestTagAsync();
+                if (string.IsNullOrEmpty(ver)) return;
+
+                // Set the latest version.
+                GithubVersion = ver;
+
+                // Parse them as integers to compare them.
+                var latest  = Version.Parse(GithubVersion.TrimStart('v'));
+                var current = Version.Parse(CurrentVersion.TrimStart('v'));
+
+                // If the latest version is newer than the current version show the button.
+                if (latest > current)
+                    UpdateAvailable?.Invoke();
+            }
+            catch { }
         }
 
         public static string GetGameExecutable(string path)
@@ -169,9 +215,9 @@ namespace LADXHD_Launcher
         private static void CreateDefaultFiles()
         {
             // Get the target path. User may store saves locally with portable.txt file.
-            string portable  = Path.Combine(BaseFolder, "portable.txt");
+            string portable  = Path.Combine(RootPath, "portable.txt");
             string targetDir = File.Exists(portable)
-                ? BaseFolder
+                ? RootPath
                 : Path.Combine(Environment.GetFolderPath(
                     Environment.SpecialFolder.LocalApplicationData), "Zelda_LA");
 
@@ -183,25 +229,20 @@ namespace LADXHD_Launcher
             string advancedPath = Path.Combine(targetDir, "advanced");
 
             // Create "settings" file if it is missing.
-            if (!File.Exists(settingsPath) && resources.ContainsKey("settings"))
-                File.WriteAllBytes(settingsPath, (byte[])resources["settings"]);
+            if (!File.Exists(settingsPath))
+                File.WriteAllBytes(settingsPath, Resources.GetBytes("settings"));
 
-            // Create "advanced" if missing or merge new with old if it exists.
-            if (resources.ContainsKey("advanced"))
+            // It doesn't exist so simply create a new one.
+            if (!File.Exists(advancedPath))
+                File.WriteAllBytes(advancedPath, Resources.GetBytes("advanced"));
+
+            // It does exist so it's about to get complicated...
+            else
             {
-                // It doesn't exist so simply create a new one.
-                if (!File.Exists(advancedPath))
-                {
-                    File.WriteAllBytes(advancedPath, (byte[])resources["advanced"]);
-                }
-                // It does exist so it's about to get complicated...
-                else
-                {
-                    // Load the user's stored values and merge them into the new file.
-                    var oldValues = LoadRawValues(advancedPath);
-                    File.WriteAllBytes(advancedPath, (byte[])resources["advanced"]);
-                    MergeValuesIntoFile(advancedPath, oldValues);
-                }
+                // Load the user's stored values and merge them into the new file.
+                var oldValues = LoadRawValues(advancedPath);
+                File.WriteAllBytes(advancedPath, Resources.GetBytes("advanced"));
+                MergeValuesIntoFile(advancedPath, oldValues);
             }
         }
 
@@ -283,17 +324,17 @@ namespace LADXHD_Launcher
 
         public static void SetModCreatePaths()
         {
-            DataPath      = Path.Combine(BaseFolder, "Data");
+            DataPath      = Path.Combine(RootPath, "Data");
             BackupPath    = Path.Combine(DataPath, "Backup");
-            AnimationMods = Path.Combine(BaseFolder, "Mods", "Animations");
-            DungeonMods   = Path.Combine(BaseFolder, "Mods", "Dungeon");
-            GraphicsMods  = Path.Combine(BaseFolder, "Mods", "Graphics");
-            MusicMods     = Path.Combine(BaseFolder, "Mods", "Music");
-            LanguageMods  = Path.Combine(BaseFolder, "Mods", "Languages");
-            MapsMods      = Path.Combine(BaseFolder, "Mods", "Maps");
-            SoundsMods    = Path.Combine(BaseFolder, "Mods", "SoundEffects");
-            LAHDModPath   = Path.Combine(BaseFolder, "Mods", "LAHDMods");
-            ZScripts      = Path.Combine(BaseFolder, "Mods", "scripts.zScript");
+            AnimationMods = Path.Combine(RootPath, "Mods", "Animations");
+            DungeonMods   = Path.Combine(RootPath, "Mods", "Dungeon");
+            GraphicsMods  = Path.Combine(RootPath, "Mods", "Graphics");
+            MusicMods     = Path.Combine(RootPath, "Mods", "Music");
+            LanguageMods  = Path.Combine(RootPath, "Mods", "Languages");
+            MapsMods      = Path.Combine(RootPath, "Mods", "Maps");
+            SoundsMods    = Path.Combine(RootPath, "Mods", "SoundEffects");
+            LAHDModPath   = Path.Combine(RootPath, "Mods", "LAHDMods");
+            ZScripts      = Path.Combine(RootPath, "Mods", "scripts.zScript");
         }
 
         public static void UpdateOutputPaths(string output)
@@ -314,16 +355,16 @@ namespace LADXHD_Launcher
         public static void UpdateOutputPaths_ApplyPatches()
         {
             // The paths when applying patches.
-            OutputPath       = Path.Combine(BaseFolder, "Mods", "Graphics");
-            OutAnimationMods = Path.Combine(TempFolder, "Mods", "Animations");
-            OutDungeonMods   = Path.Combine(TempFolder, "Mods", "Dungeon");
-            OutGraphicsMods  = Path.Combine(TempFolder, "Mods", "Graphics");
-            OutMusicMods     = Path.Combine(TempFolder, "Mods", "Music");
-            OutLanguageMods  = Path.Combine(TempFolder, "Mods", "Languages");
-            OutMapsMods      = Path.Combine(TempFolder, "Mods", "Maps");
-            OutSoundsMods    = Path.Combine(TempFolder, "Mods", "SoundEffects");
-            OutLAHDModPath   = Path.Combine(TempFolder, "Mods", "LAHDMods");
-            OutZScripts      = Path.Combine(TempFolder, "Mods", "scripts.zScript");
+            OutputPath       = Path.Combine(RootPath, "Mods", "Graphics");
+            OutAnimationMods = Path.Combine(TempPath, "Mods", "Animations");
+            OutDungeonMods   = Path.Combine(TempPath, "Mods", "Dungeon");
+            OutGraphicsMods  = Path.Combine(TempPath, "Mods", "Graphics");
+            OutMusicMods     = Path.Combine(TempPath, "Mods", "Music");
+            OutLanguageMods  = Path.Combine(TempPath, "Mods", "Languages");
+            OutMapsMods      = Path.Combine(TempPath, "Mods", "Maps");
+            OutSoundsMods    = Path.Combine(TempPath, "Mods", "SoundEffects");
+            OutLAHDModPath   = Path.Combine(TempPath, "Mods", "LAHDMods");
+            OutZScripts      = Path.Combine(TempPath, "Mods", "scripts.zScript");
         }
     }
 }

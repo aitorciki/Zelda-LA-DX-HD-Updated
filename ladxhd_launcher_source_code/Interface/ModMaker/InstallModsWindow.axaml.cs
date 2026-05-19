@@ -21,12 +21,12 @@ namespace LADXHD_Launcher
             // When the window is closed delete the temp folder.
             this.Closed += (_, _) =>
             {
-                if (Directory.Exists(Config.TempFolder))
-                    Directory.Delete(Config.TempFolder, true);
+                if (Directory.Exists(Config.TempPath))
+                    Directory.Delete(Config.TempPath, true);
             };
 
             // If there is no INI file there is no mod to install.
-            string IniPath = Path.Combine(Config.TempFolder, "LAHDMOD.ini");
+            string IniPath = Path.Combine(Config.TempPath, "LAHDMOD.ini");
             if (!IniPath.TestPath())
                 this.Close();
 
@@ -46,7 +46,7 @@ namespace LADXHD_Launcher
             // If the extensions is in the list then set the image path.
             foreach (string ext in validExt) 
             {
-                string testImage = Path.Combine(Config.TempFolder, "Image" + ext);
+                string testImage = Path.Combine(Config.TempPath, "Image" + ext);
 
                 if (File.Exists(testImage))
                 {
@@ -77,8 +77,8 @@ namespace LADXHD_Launcher
             string message;
 
             // The game executable was not found.
-            string GameExePath = Config.GetGameExecutable(Config.BaseFolder);
-            if (!Config.BaseFolder.TestPath(true) || !GameExePath.TestPath())
+            string GameExePath = Config.GetGameExecutable(Config.RootPath);
+            if (!Config.RootPath.TestPath(true) || !GameExePath.TestPath())
             {
                 message = "The Game Path must point to a valid installation that contains the file \"Link's Awakening DX HD.exe\".";
                 await OkayWindow.ShowAsync("Game Path Invalid", message, 10);

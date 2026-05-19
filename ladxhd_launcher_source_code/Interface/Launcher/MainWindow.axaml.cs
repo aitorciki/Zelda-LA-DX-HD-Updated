@@ -48,12 +48,19 @@ public partial class MainWindow : Window
         SoundPlayer.SuppressSound = false;
 
         this.SizeChanged += (s, e) => Config.SaveLauncherConfig();
-
+        this.KeyDown += MainWindow_KeyDown;
         this.PropertyChanged += (s, e) =>
         {
             if (e.Property == WindowStateProperty && WindowState == WindowState.Maximized)
                 WindowState = WindowState.Normal;
         };
+    }
+
+    private void MainWindow_KeyDown(object sender, Avalonia.Input.KeyEventArgs e)
+    {
+        // Forces an update by pressing Shift + F1.
+        if (e.Key == Avalonia.Input.Key.F1 && e.KeyModifiers == Avalonia.Input.KeyModifiers.Shift)
+            _homeView.ForceUpdate();
     }
 
     public void ShowLoadingMessage()
