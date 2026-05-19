@@ -51,7 +51,7 @@
   </ItemGroup>
 
   <!-- Both projects require the MonoGame Content Builder to build content. -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
   </ItemGroup>
 
@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <!-- Build the MonoGame "Content" folder. -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
     <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb">
       <OutputFolder>$(MSBuildProjectName)/$(TargetFramework)/%(Filename)</OutputFolder>
     </MonoGameContentReference>
