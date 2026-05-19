@@ -50,9 +50,21 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <!-- Both projects require the MonoGame Content Builder to build content. -->
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
+  </ItemGroup>
+
   <!-- Include ProjectZ.Core which is the game data. -->
   <ItemGroup>
     <ProjectReference Include="..\ProjectZ.Core\ProjectZ.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Build the MonoGame "Content" folder. -->
+  <ItemGroup>
+    <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb">
+      <OutputFolder>$(MSBuildProjectName)/$(TargetFramework)/%(Filename)</OutputFolder>
+    </MonoGameContentReference>
   </ItemGroup>
 
   <!-- Copy the "Data" folder into the output and "SDL2.dll" for the OpenGL build. -->
