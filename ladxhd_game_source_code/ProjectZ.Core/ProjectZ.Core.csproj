@@ -25,6 +25,7 @@
 
   <!-- Global: Packages to include in all projects. -->
   <ItemGroup>
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
     <PackageReference Include="MonoGame.Extended" Version="5.4.0" />
     <PackageReference Include="NativeFileDialogSharp" Version="0.6.0-alpha" Condition="'$(TargetFramework)' != 'net8.0-android'" />
     <PackageReference Include="NVorbis" Version="0.10.5" />
@@ -46,6 +47,16 @@
   <!-- Android -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.4.1" />
+  </ItemGroup>
+
+  <!--
+    Build the MonoGame content once, from the Core project.
+    This avoids the .mgcontent lock collision that occurs when multiple platform
+    projects (Android, DesktopGL, etc.) each reference the same .mgcb file.
+    MGCB runs as part of the Core build; platform projects just include the output.
+  -->
+  <ItemGroup>
+    <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
 
 </Project>

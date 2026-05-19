@@ -40,7 +40,6 @@
   <!-- Add the MonoGame references. -->
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.4.1" />
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
   </ItemGroup>
 
   <!-- Include the Android files that are needed. -->
@@ -61,13 +60,6 @@
   <!-- Include ProjectZ.Core which is the game data. -->
   <ItemGroup>
     <ProjectReference Include="..\ProjectZ.Core\ProjectZ.Core.csproj" />
-  </ItemGroup>
-
-  <!-- Build the MonoGame "Content" folder. -->
-  <ItemGroup>
-    <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb">
-      <OutputFolder>$(MSBuildProjectName)/$(TargetFramework)/%(Filename)</OutputFolder>
-    </MonoGameContentReference>
   </ItemGroup>
 
   <!-- Package the "Data" folder as Android assets into the APK. -->
