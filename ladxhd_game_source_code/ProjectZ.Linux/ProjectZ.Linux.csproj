@@ -34,7 +34,6 @@
   <!-- Add the MonoGame references. -->
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
   </ItemGroup>
 
   <!-- Embed Icon.bmp so MonoGame's SdlGameWindow can set the window icon. -->
@@ -47,13 +46,6 @@
   <!-- Include ProjectZ.Core which is the game data. -->
   <ItemGroup>
     <ProjectReference Include="..\ProjectZ.Core\ProjectZ.Core.csproj" />
-  </ItemGroup>
-
-  <!-- Build the MonoGame "Content" folder. -->
-  <ItemGroup>
-    <MonoGameContentReference Include="..\ProjectZ.Core\Content\Content.mgcb">
-      <OutputFolder>$(MSBuildProjectName)/$(TargetFramework)/%(Filename)</OutputFolder>
-    </MonoGameContentReference>
   </ItemGroup>
 
   <!-- Copy the "Data" folder into the output. -->
