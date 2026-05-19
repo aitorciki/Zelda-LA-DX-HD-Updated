@@ -17,7 +17,7 @@ namespace ProjectZ.InGame.Screens
         private Texture2D _sprWaves;
         private Texture2D _sprCloud;
 
-        public static Texture2D _sprIntro_eng, _sprIntro_chn, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ind, _sprIntro_ita, _sprIntro_por, _sprIntro_rus;
+        public static Texture2D _sprIntro_eng, _sprIntro_chn, _sprIntro_deu, _sprIntro_esp, _sprIntro_fre, _sprIntro_ind, _sprIntro_ita, _sprIntro_por, _sprIntro_rus, _sprIntro_swe;
 
         public static Texture2D _sprIntro
         {
@@ -35,6 +35,7 @@ namespace ProjectZ.InGame.Screens
                     "por" => _sprIntro_por,
                     "pte" => _sprIntro_por,
                     "rus" => _sprIntro_rus,
+                    "swe" => _sprIntro_swe,
                     _     => _sprIntro_eng
                 };
             }
@@ -275,6 +276,7 @@ namespace ProjectZ.InGame.Screens
             _sprIntro_ita = Resources.GetTexture("intro_ita.png");
             _sprIntro_por = Resources.GetTexture("intro_por.png");
             _sprIntro_rus = Resources.GetTexture("intro_rus.png");
+            _sprIntro_swe = Resources.GetTexture("intro_swe.png");
 
             _sprCloud = Resources.GetTexture("cloud.png");
             _sprWaves = Resources.GetTexture("waves.png");
