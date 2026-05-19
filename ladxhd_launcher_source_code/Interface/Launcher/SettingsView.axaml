@@ -49,6 +49,7 @@
                                     <ComboBoxItem Content="Portuguese (Brazil)" />
                                     <ComboBoxItem Content="Portuguese (Portugal)" />
                                     <ComboBoxItem Content="Russian" />
+                                    <ComboBoxItem Content="Swedish" />
                                 </ComboBox>
                                 <TextBlock Canvas.Left="126" Canvas.Top="7" Text="Language" Foreground="White" VerticalAlignment="Center"
                                            ToolTip.Tip="Changes the current language."/>
